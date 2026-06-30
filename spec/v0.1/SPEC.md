@@ -80,8 +80,10 @@ required by this specification (notably §6 on field types and §7 on flow).
 A **conforming producer** is software or a process that emits only conforming
 documents.
 
-The reference validation tool in [`/tools`](../../tools) checks both the
-meta-schema and the §10 rules.
+The reference validation tooling in [`/tools`](../../tools) enforces the
+meta-schema in full (`tools/validate-ajv.mjs`, JSON Schema draft 2020-12 via
+ajv) and, of the §10 rules, rule 1; §10 records which of its rules are checked
+today and which are validated incrementally as the tooling matures.
 
 ---
 
@@ -429,8 +431,11 @@ A conforming document MUST additionally satisfy:
    a `draft` document still carries a `verification` record describing its
    source review. (§9)
 
-The GovSchema validation tool (`tools/`) checks the meta-schema and rule 1 today;
-rules 2–5 are validated incrementally as the tool matures.
+The GovSchema validation tooling (`tools/`) enforces the full meta-schema
+(`tools/validate-ajv.mjs`, JSON Schema draft 2020-12) and rule 1 today; rules 2–5
+are validated incrementally as the tooling matures. The zero-dependency
+`tools/validate.mjs` additionally checks the structural subset of the meta-schema
+and rule 1 with no install step. CI (`.github/workflows/validate.yml`) runs both.
 
 ---
 
