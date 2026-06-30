@@ -12,7 +12,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Validate all GovSchema documents
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+      # Zero-dependency structural validation + registry hygiene (no install).
+      - name: Validate all GovSchema documents (structural)
         run: node tools/validate.mjs
+      # Full JSON Schema draft 2020-12 meta-schema conformance (ajv). This
+      # enforces the SPEC §2 conformance claim on every push and pull request,
+      # rather than leaving it as a manual step.
+      - name: Install validation dependencies
+        working-directory: tools
+        run: npm ci
+      - name: Validate all GovSchema documents (ajv 2020-12 meta-schema)
+        run: node tools/validate-ajv.mjs
+      # Discovery catalog integrity (zero-dependency). Lives outside registry/
+      # so the registry stray-file rule is unaffected.
       - name: Check discovery catalog integrity
         run: node discovery/check.mjs
