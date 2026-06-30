@@ -9,8 +9,10 @@
 //   3. tier is 1, 2, or 3 and status is "candidate" or "published";
 //   4. processType is a spec process.type value;
 //   5. every entry marked "published" actually resolves to a schema under
-//      registry/<proposedId>/<version>/schema.json (so the catalog can never
-//      claim something is shipped when it isn't).
+//      registry/<proposedId>/<version>/schema.json — or, for a time-versioned
+//      form carrying an "edition" (spec v0.2 §5.7), under
+//      registry/<proposedId>/<edition>/<version>/schema.json (so the catalog can
+//      never claim something is shipped when it isn't).
 //
 // Usage: node discovery/check.mjs   (exit 0 if clean, 1 otherwise)
 
@@ -23,6 +25,7 @@ const ROOT = join(HERE, "..");
 const CATALOG = join(HERE, "catalog.json");
 
 const ID_RE = /^[a-z]{2}(\/[a-z0-9-]+){2,}$/;
+const EDITION_RE = /^[a-z0-9][a-z0-9-]*$/; // spec v0.2 §5.7 edition.label grammar
 const TIERS = new Set([1, 2, 3]);
 const STATUSES = new Set(["candidate", "published"]);
 const PROCESS_TYPES = new Set([
@@ -54,13 +57,18 @@ for (const [i, c] of (catalog.candidates || []).entries()) {
   if (!STATUSES.has(c.status)) errs.push(`${at}: status must be candidate or published`);
   if (!PROCESS_TYPES.has(c.processType))
     errs.push(`${at}: processType "${c.processType}" is not a spec process.type`);
+  if (c.edition !== undefined && !EDITION_RE.test(c.edition))
+    errs.push(`${at}: edition "${c.edition}" does not match the spec v0.2 edition.label grammar`);
   if (c.status === "published") {
     if (!c.version) {
       errs.push(`${at}: published entries must declare a version`);
     } else {
-      const schemaPath = join(ROOT, "registry", c.proposedId, c.version, "schema.json");
-      if (!existsSync(schemaPath))
-        errs.push(`${at}: marked published but no schema at registry/${c.proposedId}/${c.version}/schema.json`);
+      // Time-versioned forms (spec v0.2 §5.7) carry an extra <edition> path layer.
+      const rel = c.edition !== undefined
+        ? join(c.proposedId, c.edition, c.version, "schema.json")
+        : join(c.proposedId, c.version, "schema.json");
+      if (!existsSync(join(ROOT, "registry", rel)))
+        errs.push(`${at}: marked published but no schema at registry/${rel}`);
     }
   }
 }
