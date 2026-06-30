@@ -16,3 +16,4 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0002 | [URN-style external identifier (colon GSID)](./0002-colon-gsid-external-identifier.md) | Proposed (deferred) |
 | 0003 | [Labelled enum options](./0003-labelled-enum-options.md) | Proposed (v0.2) |
 | 0004 | [Conditional flow](./0004-conditional-flow.md) | Proposed (v0.2) |
+| 0005 | [Edition / tax-year axis for time-versioned forms](./0005-edition-axis-time-versioned-forms.md) | Accepted — Option C, for v0.2 |
