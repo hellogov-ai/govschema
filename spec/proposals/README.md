@@ -12,4 +12,7 @@ proposal becomes normative only when it is accepted and folded into them.
 
 | #    | Title                                  | Status   |
 | ---- | -------------------------------------- | -------- |
-| 0001 | [Document-model reconciliation](./0001-document-model-reconciliation.md) | Proposed |
+| 0001 | [Document-model reconciliation](./0001-document-model-reconciliation.md) | Accepted |
+| 0002 | [URN-style external identifier (colon GSID)](./0002-colon-gsid-external-identifier.md) | Proposed (deferred) |
+| 0003 | [Labelled enum options](./0003-labelled-enum-options.md) | Proposed (v0.2) |
+| 0004 | [Conditional flow](./0004-conditional-flow.md) | Proposed (v0.2) |

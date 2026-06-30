@@ -1,12 +1,29 @@
 # GSP-0001: Document-model reconciliation
 
-- **Status:** Proposed — awaiting Founding Engineer decision (routes to CEO if
-  it touches identity/versioning, per [GOVERNANCE.md](../../GOVERNANCE.md))
+- **Status:** **Accepted** (2026-06-30) — folded into `spec/v0.1` and the registry.
 - **Author:** Standards Engineer
 - **Date:** 2026-06-30
 - **Issue:** GOV-14
 - **Affects:** `spec/v0.1/SPEC.md`, `spec/v0.1/govschema.schema.json`,
   `tools/validate.mjs`, every published schema, every consumer
+
+> **Decision (2026-06-30).** Resolved by standards sign-off via the GOV-14
+> decision interaction; the recommendation was accepted in full:
+> 1. **Option A** — the conservative core (the meta-schema, CI, and the two
+>    existing reference schemas) is canonical for v0.1.
+> 2. **Identifier:** the **path form** `us/dos/...` is the sole v0.1 identifier.
+> 3. **DS-82** was **re-authored in place** at `1.0.0` (pre-publication, never
+>    validly conformed — correcting a never-valid artifact, not editing a
+>    published version).
+>
+> **Executed under GOV-14:** `spec/v0.1/SPEC.md` rewritten to match the
+> meta-schema; DS-82 re-authored as `schema.json` (flat fields, `validation.enum`,
+> linear `steps`, embedded verification) and its `document.govschema.json`
+> removed; dangling references fixed; the deferred Model-B constructs filed as
+> [GSP-0002](./0002-colon-gsid-external-identifier.md),
+> [GSP-0003](./0003-labelled-enum-options.md), and
+> [GSP-0004](./0004-conditional-flow.md). The whole registry passes CI and full
+> JSON-Schema validation against the meta-schema.
 
 ## 1. Summary
 

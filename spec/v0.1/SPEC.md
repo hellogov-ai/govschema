@@ -1,7 +1,7 @@
 # GovSchema Specification
 
 **Version:** 0.1 (DRAFT)
-**Status:** Draft — pending CEO/standards sign-off (one-way-door review)
+**Status:** Draft — v0.x is pre-stabilization; the format may change between minor versions while the standard is being founded.
 **Date:** 2026-06-30
 **Editor:** Founding Engineer, GovSchema
 **This document:** `spec/v0.1/SPEC.md`
@@ -11,6 +11,13 @@
 > government services reliably and verifiably. GovSchema is **independent** and is
 > **not** affiliated with or endorsed by any government. GovSchema describes
 > processes; it does **not** submit forms on anyone's behalf.
+
+> **Normative artifact.** The machine-readable meta-schema
+> [`spec/v0.1/govschema.schema.json`](./govschema.schema.json) (JSON Schema
+> 2020-12) is the normative definition of the GovSchema document format. This prose
+> specification explains and constrains it. **Where this prose and the meta-schema
+> disagree, the meta-schema governs.** The few requirements that cannot be expressed
+> in JSON Schema are listed in §10.
 
 ---
 
@@ -22,10 +29,10 @@ A *GovSchema document* is a versioned, machine-readable definition of a single
 government form or process. It captures:
 
 - the **fields** an applicant must supply (with types and validation rules),
-- the **flow** (ordered steps and the conditions that govern them),
+- the **flow** (the ordered steps of a multi-step process),
 - the **provenance** (which government source it was derived from, and when), and
-- the **verification** state (whether the document has been confirmed against the
-  live government source, and how).
+- the **verification** state (how and when the document was confirmed against the
+  live government source).
 
 A GovSchema document is consumed by agent developers. It lets an agent know what a
 government process requires *before* interacting with it, validate user-supplied
@@ -38,8 +45,7 @@ acts for.
 - GovSchema is **not a government system** and carries no government endorsement.
 - GovSchema is **not** authoritative over the government source. The live
   government source is always authoritative; a GovSchema document is a *description*
-  of it, and its accuracy is asserted only through the verification practice
-  (see §9).
+  of it, and its accuracy is asserted only through the verification record (§9).
 
 ### 1.3 Audience
 
@@ -47,7 +53,7 @@ Two audiences are served by every document:
 
 1. **Agent developers** — who consume the machine-readable definition.
 2. **The humans those agents act for** — who are served by the human-readable
-   `label`, `description`, and `helpText` fields, which MUST be written in plain
+   `title`, `label`, and `description` members, which MUST be written in plain
    language.
 
 ### 1.4 Requirements language
@@ -64,16 +70,18 @@ only when, they appear in all capitals.
 A document is a **conforming GovSchema 0.1 document** if and only if:
 
 1. It is a single JSON value that validates against the GovSchema 0.1 meta-schema
-   (`spec/v0.1/govschema-document.schema.json`), and
+   (`spec/v0.1/govschema.schema.json`) for the `govschemaVersion` it declares, and
 2. It satisfies every **MUST**/**MUST NOT** requirement in this specification that
    cannot be expressed in JSON Schema (these are listed in §10).
 
 A **conforming consumer** is software that, given a conforming document, behaves as
-required by this specification (notably §6.4 on unknown values and §7 on flow
-evaluation).
+required by this specification (notably §6 on field types and §7 on flow).
 
 A **conforming producer** is software or a process that emits only conforming
 documents.
+
+The reference validation tool in [`/tools`](../../tools) checks both the
+meta-schema and the §10 rules.
 
 ---
 
@@ -86,12 +94,17 @@ documents.
 2. **Provenance is mandatory.** A field that cannot be traced to a government
    source is not a standard; it is a guess. Every document MUST cite its source.
 3. **Verification is first-class, not a footnote.** Every document carries an
-   explicit verification block (§9). An unverified document is valid but MUST
-   declare itself unverified, so consumers can decide whether to trust it.
-4. **Two-audience text.** Machine identifiers are stable and terse; human text is
-   plain-language and MUST NOT assume legal or bureaucratic literacy.
-5. **Forward-compatible.** Consumers MUST ignore unknown object members rather than
-   reject them, so that minor revisions do not break older consumers (§6.4).
+   explicit verification record (§9) and a lifecycle `status`. A document that has
+   not been confirmed against its live source MUST declare `status: draft`, so
+   consumers can decide whether to trust it.
+4. **Two-audience text.** Machine identifiers (`name`, `id`) are stable and terse;
+   human text (`title`, `label`, `description`) is plain-language and MUST NOT
+   assume legal or bureaucratic literacy.
+5. **Strict and small.** A v0.1 document is *closed*: the meta-schema sets
+   `additionalProperties: false` at every level, so unknown members are rejected
+   rather than ignored. The first stable line keeps the smallest core it can commit
+   to; richer constructs are tracked as proposals (§12) and added in later spec
+   versions, not smuggled in as unrecognized members.
 6. **Jurisdiction-neutral.** No structure privileges any one country. Encodings use
    international standards (ISO 3166) so the same format describes a US, UK, or any
    other jurisdiction's process.
@@ -102,263 +115,239 @@ documents.
 
 A GovSchema document is a JSON object with these top-level members:
 
-| Member          | Required | Description                                            |
-|-----------------|----------|--------------------------------------------------------|
-| `govschema`     | yes      | Spec format version this document targets (§5.1).      |
-| `id`            | yes      | Canonical GovSchema identifier — GSID (§5.2).          |
-| `version`       | yes      | SemVer version of *this* document (§5.3).              |
-| `status`        | yes      | Lifecycle status: `draft`/`published`/`deprecated`.    |
-| `title`         | yes      | Human-readable process title.                          |
-| `description`   | no       | Plain-language summary of the process.                 |
-| `jurisdiction`  | yes      | Jurisdiction object (§5.4).                            |
-| `authority`     | yes      | Issuing government body (§5.5).                         |
-| `source`        | yes      | Provenance of the description (§8).                    |
-| `verification`  | yes      | Verification state (§9).                                |
-| `fields`        | yes      | Array of field definitions (§6).                        |
-| `flow`          | no       | Ordered steps and transitions (§7).                     |
-| `locale`        | no       | BCP 47 language tag(s) the human text is written in.   |
-| `extensions`    | no       | Namespaced vendor/experimental data (§10.3).            |
+| Member             | Required | Description                                            |
+|--------------------|----------|--------------------------------------------------------|
+| `$schema`          | yes      | URI of the meta-schema this document conforms to (§5.0).|
+| `govschemaVersion` | yes      | Spec format version this document targets (§5.1).       |
+| `id`               | yes      | Registry identifier — the document's registry path (§5.2).|
+| `version`          | yes      | SemVer version of *this* document (§5.3).               |
+| `title`            | yes      | Human-readable process title.                           |
+| `status`           | yes      | Lifecycle status: `draft`/`verified`/`deprecated` (§9). |
+| `jurisdiction`     | yes      | Jurisdiction object (§5.4).                             |
+| `authority`        | yes      | Issuing government body (§5.5).                         |
+| `source`           | yes      | Provenance of the description (§8).                     |
+| `verification`     | yes      | Verification record (§9).                               |
+| `fields`           | yes      | Non-empty array of field definitions (§6).              |
+| `description`      | no       | Plain-language summary of the process.                  |
+| `process`          | no       | Process type and source language (§5.6).                |
+| `license`          | no       | SPDX / Creative Commons identifier for the content.     |
+| `steps`            | no       | Ordered description of the process flow (§7).           |
 
-The normative shape is the meta-schema; this table is a summary.
+The normative shape is the meta-schema; this table is a summary. No other top-level
+members are permitted (§3 principle 5).
 
 ---
 
 ## 5. Identity, versioning, and jurisdiction conventions
 
-> These conventions are the **one-way-door** parts of the standard. They are hard to
-> change once schemas and consumers depend on them, and are the primary subject of
-> CEO/standards sign-off.
+> §5.1–5.2 are the **one-way-door** parts of the standard: they are hard to change
+> once schemas and consumers depend on them. They were settled by standards
+> sign-off under [GSP-0001](../proposals/0001-document-model-reconciliation.md).
 
-### 5.1 Spec version (`govschema`)
+### 5.0 Meta-schema reference (`$schema`)
 
-The `govschema` member MUST be the string `"0.1"` for documents targeting this
-specification. It identifies the *format* version, not the document's own version.
-The value is `MAJOR.MINOR`; a consumer written for `0.1` MUST accept any `0.1`
-document and SHOULD reject a `MAJOR` it does not recognize.
+`$schema` MUST be the URI of the GovSchema meta-schema the document conforms to:
+`https://govschema.org/spec/v0.1/govschema.schema.json` for this spec version.
 
-### 5.2 Canonical identifier (GSID)
+### 5.1 Spec version (`govschemaVersion`)
 
-Every document has a globally unique **GovSchema Identifier (GSID)** in the `id`
-member, of the form:
+`govschemaVersion` MUST be a [Semantic Versioning 2.0.0][SemVer] string identifying
+the *spec format* version the document targets (e.g. `0.1.0`), not the document's
+own version. A consumer written for spec MAJOR.MINOR `0.1` SHOULD accept any `0.1.x`
+document and SHOULD reject a spec MAJOR it does not recognize.
 
-```
-govschema:{jurisdiction}:{authority}:{process}
-```
+### 5.2 Identifier and registry path (`id`)
 
-- `{jurisdiction}` — ISO 3166-1 alpha-2 country code, lowercased; OPTIONALLY a
-  subdivision suffixed with a hyphen using the ISO 3166-2 subdivision code,
-  lowercased (e.g. `us`, `us-ca`, `gb`).
-- `{authority}` — a stable, lowercased slug for the issuing body (e.g. `dos`,
-  `hmpo`, `dmv`). Slugs match `^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`.
-- `{process}` — a stable, lowercased slug for the form/process
-  (e.g. `passport-renewal-adult`). Same slug grammar as `{authority}`.
+Every document has a registry identifier in the `id` member. It is a lowercase,
+slash-separated path that:
 
-The GSID does **not** include the version; a GSID names the process across all of
-its versions. Examples:
+- begins with an ISO 3166-1 alpha-2 country code (lowercased), and
+- continues with stable lowercase slugs for subdivision (when subnational),
+  authority, and process,
+
+matching `^[a-z]{2}(/[a-z0-9-]+){2,}$`. Examples:
 
 ```
-govschema:gb:hmpo:passport-renewal-adult
-govschema:us-ca:dmv:vehicle-registration-renewal
-govschema:us:dos:passport-renewal-ds82
+gb/hmpo/passport-renewal-adult
+us/ca/dmv/vehicle-registration-renewal
+us/dos/passport-renewal-ds82
 ```
+
+The `id` is **the single source of truth linking a document to its location.** A
+document MUST be stored at:
+
+```
+registry/<id>/<version>/schema.json
+```
+
+The path MUST be reconstructible from `id` and `version` alone, and `id` MUST equal
+the document's path under `registry/` excluding the version directory (§10 rule 1).
+The `id` does **not** include the version; it names the process across all of its
+versions.
+
+> A URN-style external citation identifier (e.g. `govschema:us:dos:...`) was
+> considered and **deferred** to a later spec version
+> ([GSP-0002](../proposals/0002-colon-gsid-external-identifier.md)); v0.1 uses the
+> registry path form as the sole identifier.
 
 ### 5.3 Document version (`version`)
 
-The `version` member is a [Semantic Versioning 2.0.0][SemVer] string for *this
-document's content*:
+`version` is a [SemVer][SemVer] string for *this document's content*. The normative
+MAJOR/MINOR/PATCH rules live in [VERSIONING.md](../../VERSIONING.md); in summary:
 
-- **PATCH** — editorial fixes, clarified help text, corrected typos; no change to
+- **PATCH** — editorial fixes, clarified text, corrected typos; no change to
   fields, types, validation, or flow semantics.
-- **MINOR** — backward-compatible additions: new OPTIONAL field, new enum value, a
-  new step that does not alter existing required inputs.
+- **MINOR** — backward-compatible additions: a new OPTIONAL field, a new enum value,
+  a new step that does not alter existing required inputs.
 - **MAJOR** — backward-incompatible change: a field removed or made required, a type
   or validation tightened, a flow change that invalidates previously-valid inputs.
 
-A consumer that has validated user data against version *X* MUST re-validate when
-the document advances to a higher MAJOR.
+A published `(id, version)` is immutable (VERSIONING.md §3). A consumer that has
+validated user data against version *X* MUST re-validate when the document advances
+to a higher MAJOR.
 
 ### 5.4 Jurisdiction (`jurisdiction`)
 
 ```json
-"jurisdiction": { "country": "gb", "subdivision": null }
+"jurisdiction": { "country": "US", "subdivision": "US-CA", "level": "subnational" }
 ```
 
-- `country` — REQUIRED. ISO 3166-1 alpha-2, lowercased.
-- `subdivision` — OPTIONAL. ISO 3166-2 subdivision code (the part after the hyphen,
-  lowercased, e.g. `ca` for California). `null` or absent means national scope.
+- `country` — REQUIRED. ISO 3166-1 alpha-2, **uppercase** (`^[A-Z]{2}$`).
+- `subdivision` — OPTIONAL. ISO 3166-2 subdivision code, the full hyphenated form
+  (`^[A-Z]{2}-[A-Z0-9]{1,3}$`, e.g. `US-CA`). Absent means national scope.
+- `level` — REQUIRED. One of `national`, `subnational`, `municipal`, `supranational`.
 
-The `jurisdiction` member MUST be consistent with the `{jurisdiction}` token in the
-GSID.
+The `country` (and `subdivision`, when present) MUST be consistent with the country
+(and subdivision) tokens in `id` (§10 rule 2). Note `id` uses lowercase path tokens
+while `jurisdiction` uses uppercase ISO codes; e.g. `id` `us/ca/...` ↔ `country`
+`US`, `subdivision` `US-CA`.
 
 ### 5.5 Authority (`authority`)
 
 ```json
 "authority": {
-  "slug": "hmpo",
   "name": "His Majesty's Passport Office",
+  "abbreviation": "HMPO",
   "url": "https://www.gov.uk/government/organisations/hm-passport-office"
 }
 ```
 
-- `slug` — REQUIRED, matches the `{authority}` token in the GSID.
 - `name` — REQUIRED, the body's official name.
+- `abbreviation` — OPTIONAL, a short form.
 - `url` — OPTIONAL, the authority's official homepage.
 
-### 5.6 Registry path mapping
+### 5.6 Process (`process`)
 
-When published to the GovSchema registry, a document is stored at:
+OPTIONAL classification of the process:
 
-```
-registry/{country}/{subdivision?}/{authority}/{process}/{version}/document.govschema.json
-```
-
-The path is derived deterministically from the GSID and `version`. Examples:
-
-```
-GSID  govschema:gb:hmpo:passport-renewal-adult            v1.0.0
-path  registry/gb/hmpo/passport-renewal-adult/1.0.0/
-
-GSID  govschema:us-ca:dmv:vehicle-registration-renewal    v1.0.0
-path  registry/us/ca/dmv/vehicle-registration-renewal/1.0.0/
-```
-
-This mapping is normative: a conforming registry MUST store documents at this path,
-and the path MUST be reconstructible from the document's `id` and `version` alone.
+- `type` — one of `application`, `registration`, `renewal`, `amendment`, `filing`,
+  `request`, `other`.
+- `language` — [BCP 47] language tag of the source form (e.g. `en-US`).
 
 ---
 
 ## 6. Fields
 
-`fields` is an array of **field definition** objects. Order is meaningful: it is the
-default presentation order when a document has no `flow`.
+`fields` is a non-empty array of **field definition** objects. Order is meaningful:
+it is the default presentation order when a document has no `steps`.
 
 ### 6.1 Field definition members
 
 | Member        | Required | Description                                               |
 |---------------|----------|-----------------------------------------------------------|
-| `id`          | yes      | Machine identifier, unique within the document.           |
-| `label`       | yes      | Plain-language label shown to humans.                     |
+| `name`        | yes      | Stable machine key, unique within the document.           |
+| `label`       | yes      | Plain-language label as it appears on the source form.    |
 | `type`        | yes      | One of the GovSchema types (§6.2).                        |
 | `required`    | no       | Whether a value MUST be supplied. Default `false`.        |
-| `description` | no       | Longer plain-language explanation.                        |
-| `helpText`    | no       | Guidance on how to fill the field correctly.              |
-| `constraints` | no       | Validation rules (§6.3).                                  |
-| `options`     | cond.    | Allowed values; REQUIRED when `type` is `enum`.           |
-| `items`       | cond.    | Element definition; REQUIRED when `type` is `array`.      |
-| `fields`      | cond.    | Sub-fields; REQUIRED when `type` is `object`.             |
-| `sensitive`   | no       | `true` if the value is PII/sensitive. Default `false`.    |
-| `source`      | no       | Field-level provenance: the name/number on the live form. |
+| `description` | no       | Longer plain-language explanation or guidance.            |
+| `sourceRef`   | no       | Where the field appears on the source form (e.g. `Box 4a`).|
+| `validation`  | no       | Validation rules (§6.3).                                  |
 
-`id` MUST match `^[a-z][a-z0-9_]*$` and MUST be unique among sibling fields. A
-producer SHOULD set `sensitive: true` for any field carrying personal identifiers
-(name, date of birth, passport/ID numbers, SSN, addresses), so consumers can apply
-appropriate handling.
+`name` MUST match `^[a-z][a-zA-Z0-9_]*$` and MUST be unique among all fields in the
+document (§10 rule 3).
+
+> v0.1 fields are **flat**: there is no nested-object or array element model and no
+> labelled-option or PII (`sensitive`) member. Composite inputs (e.g. an address)
+> are expressed as several flat fields with a shared `name` prefix. Richer field
+> models are tracked for a later spec version (§12).
 
 ### 6.2 Types
 
-| `type`     | JSON value      | Notes                                              |
-|------------|-----------------|----------------------------------------------------|
-| `string`   | string          | Free text; constrain with `pattern`/`maxLength`.   |
-| `number`   | number          | Real number.                                       |
-| `integer`  | integer         | Whole number.                                      |
-| `boolean`  | boolean         | Yes/no.                                            |
-| `date`     | string          | Full date, `YYYY-MM-DD` ([RFC 3339] full-date).    |
-| `datetime` | string          | Timestamp, [RFC 3339] date-time.                   |
-| `enum`     | string          | One of `options` (§6.3.1).                         |
-| `object`   | object          | Composite; defined by nested `fields`.             |
-| `array`    | array           | List; element shape defined by `items`.            |
-| `file`     | object          | A document upload; described by metadata (§6.5).   |
+| `type`     | JSON value | Notes                                                  |
+|------------|------------|--------------------------------------------------------|
+| `string`   | string     | Free text; constrain with `pattern`/`maxLength`.       |
+| `number`   | number     | Real number.                                           |
+| `integer`  | integer    | Whole number.                                          |
+| `boolean`  | boolean    | Yes/no.                                                |
+| `date`     | string     | Full date, `YYYY-MM-DD` ([RFC 3339] full-date).        |
+| `enum`     | string     | One of the values listed in `validation.enum` (§6.3.1).|
+| `file`     | —          | A document upload, referenced by metadata, not bytes (§6.4).|
+| `object`   | object     | A composite value carried opaquely. Prefer flat fields where possible.|
 
-### 6.3 Constraints
+### 6.3 Validation
 
-`constraints` is an object using a **constrained subset of JSON Schema 2020-12
+`validation` is an object using a **constrained subset of JSON Schema 2020-12
 validation keywords**, so existing validators can be reused. Permitted keywords:
 
-- For `string`: `minLength`, `maxLength`, `pattern`, `format`.
-- For `number`/`integer`: `minimum`, `maximum`, `exclusiveMinimum`,
-  `exclusiveMaximum`, `multipleOf`.
-- For `array`: `minItems`, `maxItems`, `uniqueItems`.
-- General: `const`, `default`.
+- For `string`: `minLength`, `maxLength`, `pattern`.
+- For `number`/`integer`: `minimum`, `maximum`.
+- For `enum`: `enum` (§6.3.1).
 
-Permitted `format` values (string): `email`, `date`, `date-time`, `uri`,
-`phone-e164`, `postal-code`, `iso-country`, `iso-subdivision`. Producers MUST NOT
-use `format` to express a constraint that a consumer cannot enforce as advisory;
-per JSON Schema, `format` is **annotation by default** and consumers MAY treat it as
-advisory unless a profile says otherwise.
+No other keywords are permitted in v0.1 (`validation` is closed). A richer
+constraint vocabulary (`format`, `exclusiveMinimum`, `multipleOf`, `minItems`, file
+byte/media-type limits) is deferred to a later spec version (§12).
 
-#### 6.3.1 Enumerated options
+#### 6.3.1 Enumerated values
 
-When `type` is `enum`, `options` is a non-empty array of `{ "value", "label" }`
-objects. `value` is the machine token submitted; `label` is the plain-language text
-shown to humans. `value`s MUST be unique within the field.
+When `type` is `enum`, `validation.enum` is a non-empty array of the allowed values.
+v0.1 lists **values only**; a human-facing label per value is not part of the v0.1
+field model — describe the choices in the field's `description` where needed.
+(Labelled options are a tracked v0.2 proposal,
+[GSP-0003](../proposals/0003-labelled-enum-options.md).)
 
-### 6.4 Forward compatibility (unknown members)
+### 6.4 File fields
 
-A conforming consumer MUST ignore object members it does not recognize, at every
-level of the document, rather than reject the document. This lets `0.1.x` documents
-carry additive members that a `0.1` consumer can safely skip.
-
-### 6.5 File fields
-
-A `file` field's value is metadata describing an upload, not the bytes. Its nested
-`constraints` MAY include `maxBytes` (integer) and `mediaTypes` (array of IANA media
-type strings, e.g. `["application/pdf", "image/jpeg"]`). GovSchema never transports
-file contents.
+A `file` field's value is metadata describing an upload, not the bytes. GovSchema
+never transports file contents. v0.1 has no member for file size or media-type
+constraints; state any such requirement in the field `description`. (File
+constraints are deferred — §12.)
 
 ---
 
-## 7. Flow
+## 7. Flow (`steps`)
 
-`flow` describes the order and conditionality of a multi-step process. It is
-OPTIONAL; a document without `flow` is a flat form whose presentation order is the
-`fields` array order.
+`steps` is an OPTIONAL ordered description of a multi-step process. A document
+without `steps` is a flat form whose presentation order is the `fields` array order.
 
-### 7.1 Flow model
+### 7.1 Step model
 
 ```json
-"flow": {
-  "start": "eligibility",
-  "steps": [
-    {
-      "id": "eligibility",
-      "title": "Check you can renew online",
-      "fields": ["held_previous_passport", "passport_lost_or_stolen"],
-      "transitions": [
-        { "to": "applicant_details", "when": { "field": "passport_lost_or_stolen", "equals": false } },
-        { "to": "use_paper_form",    "when": { "field": "passport_lost_or_stolen", "equals": true  } }
-      ]
-    }
-  ]
-}
+"steps": [
+  {
+    "id": "identify_vehicle",
+    "title": "Identify the vehicle",
+    "fields": ["vehicleIdentificationNumber", "licensePlateNumber"],
+    "next": "confirm_details"
+  },
+  { "id": "confirm_details", "title": "Confirm registration details", "fields": ["currentMileage"] }
+]
 ```
 
-- `start` — REQUIRED, the `id` of the first step.
-- `steps` — REQUIRED, array of step objects.
-- Each **step**: `id` (unique within the flow), `title`, OPTIONAL `description`,
-  `fields` (ordered array of field `id`s presented at this step), and OPTIONAL
-  `transitions`.
-- Each **transition**: `to` (a step `id`, or the literal `"__end__"` to terminate),
-  and OPTIONAL `when` condition (§7.2). Transitions are evaluated top-to-bottom; the
-  **first** whose condition holds is taken. A transition with no `when` is an
-  unconditional fallthrough and SHOULD be last.
+- Each **step**: `id` (REQUIRED, matches `^[a-z][a-zA-Z0-9_-]*$`, unique within the
+  flow), `title` (REQUIRED), OPTIONAL `fields` (an ordered array of field `name`s
+  presented at this step), and OPTIONAL `next` (the `id` of the next step; omitted
+  on the final step).
 
-Every field `id` referenced by any step MUST exist in `fields`. Every `to` MUST name
-an existing step or `"__end__"`. A flow MUST NOT contain an unconditional cycle
-(a cycle reachable with all `when` conditions absent).
+The v0.1 flow is **linear**: each step names at most one successor via `next`.
+Every field `name` referenced by a step MUST exist in `fields`, and every `next`
+MUST name an existing step (§10 rule 4).
 
-### 7.2 Conditions
-
-A condition is a small, closed expression structure (no executable code). v0.1
-supports:
-
-- **Comparison:** `{ "field": "<id>", "equals": <value> }` — also `notEquals`, `in`
-  (array), `greaterThan`, `lessThan` (numbers/dates).
-- **Boolean composition:** `{ "all": [ <cond>, ... ] }`, `{ "any": [ <cond>, ... ] }`,
-  `{ "not": <cond> }`.
-
-`field` MUST reference a field `id` that appears in an earlier or current step.
-Conditions are pure and side-effect-free; a conforming consumer evaluates them
-against collected field values only.
+> Conditional flow — branching `transitions` with `when` conditions, e.g. an
+> eligibility gate that routes an applicant to an in-person path — is the most
+> requested richer construct and is the first tracked additive proposal,
+> [GSP-0004](../proposals/0004-conditional-flow.md). In v0.1, model such logic as a
+> linear step that collects the gating fields and describe the routing rule in the
+> step `description` and the verification record.
 
 ---
 
@@ -366,48 +355,60 @@ against collected field values only.
 
 ```json
 "source": {
-  "url": "https://www.gov.uk/renew-adult-passport",
-  "officialFormId": "—",
+  "url": "https://www.dmv.ca.gov/portal/vehicle-registration/registration-renewals/",
   "retrievedAt": "2026-06-30",
-  "notes": "Online renewal service; no paper form number for the digital flow."
+  "documentRef": "REG 156"
 }
 ```
 
 - `url` — REQUIRED. The canonical government page or form the document describes.
-- `officialFormId` — OPTIONAL. The government's own form identifier (e.g. `DS-82`).
 - `retrievedAt` — REQUIRED. Full-date the source was last read by the producer.
-- `notes` — OPTIONAL. Free text on scope or caveats.
+- `documentRef` — OPTIONAL. The government's own form identifier (e.g. `DS-82`,
+  `REG 156`), when one exists.
 
-A document MUST cite exactly one primary `source`. Additional supporting references
-MAY be carried under `extensions` (§10.3).
+A document MUST cite exactly one primary `source`.
 
 ---
 
-## 9. Verification
+## 9. Lifecycle status and verification
+
+### 9.1 Status (`status`)
+
+`status` is one of:
+
+- `draft` — derived from a source but not independently confirmed current.
+- `verified` — a verification practice has confirmed the document matches the live
+  source, and `verification.lastVerifiedAt` is current per the practice's cadence.
+- `deprecated` — the source process changed or was retired. Deprecated documents are
+  retained for reproducibility, never deleted.
+
+A `verified` document whose `verification.nextReviewBy` has passed SHOULD be treated
+by consumers as `draft` until re-verified.
+
+### 9.2 Verification record (`verification`)
 
 ```json
 "verification": {
-  "status": "unverified",
-  "method": null,
-  "lastVerifiedAt": null,
-  "verifiedAgainst": null
+  "method": "manual-source-review-v1",
+  "lastVerifiedAt": "2026-06-30",
+  "verifiedBy": "GovSchema Engineering",
+  "nextReviewBy": "2026-12-30",
+  "notes": "Reference/example schema; not yet independently re-verified."
 }
 ```
 
-- `status` — REQUIRED. One of:
-  - `unverified` — derived from the source but not confirmed against it by a
-    verification practice.
-  - `automated` — confirmed by an automated check against the live source.
-  - `human-reviewed` — confirmed by a human reviewer.
-- `method` — OPTIONAL. Identifier of the verification practice applied (the
-  GovSchema verification-practice methodology is specified separately; see GOV-6).
-- `lastVerifiedAt` — OPTIONAL full-date; REQUIRED when `status` is not `unverified`.
-- `verifiedAgainst` — OPTIONAL. The `source.url` value at the time of verification,
-  for drift detection.
+- `method` — REQUIRED. Identifier of the verification practice used (see
+  [`practices/`](../../practices)), e.g. `manual-source-review-v1`.
+- `lastVerifiedAt` — REQUIRED. Full-date the source was last reviewed under that
+  practice.
+- `verifiedBy` — OPTIONAL. Who performed the review.
+- `nextReviewBy` — OPTIONAL. Full-date by which re-verification is due.
+- `notes` — OPTIONAL. Free text stating the verification claim honestly (e.g. that a
+  document is a source-derived reference not yet independently re-verified).
 
-Verification semantics (the *how*) are deliberately out of scope for this document
-and are defined by the verification-practice methodology. This specification only
-fixes the **shape** of the verification claim so consumers can read it uniformly.
+Verification *semantics* (the *how*) are defined by the verification practice the
+`method` names; this specification fixes only the **shape** of the claim so
+consumers can read it uniformly.
 
 ---
 
@@ -415,45 +416,49 @@ fixes the **shape** of the verification claim so consumers can read it uniformly
 
 A conforming document MUST additionally satisfy:
 
-1. **GSID/jurisdiction consistency** — the `{jurisdiction}` token in `id` MUST equal
-   `jurisdiction.country` (plus `-{subdivision}` when present). (§5.2, §5.4)
-2. **GSID/authority consistency** — the `{authority}` token in `id` MUST equal
-   `authority.slug`. (§5.2, §5.5)
-3. **Field id uniqueness** — `id`s MUST be unique among sibling fields. (§6.1)
-4. **Flow reference integrity** — every step `fields` entry and every transition
-   `to` MUST resolve; no unconditional cycles. (§7.1)
-5. **Condition field scope** — a condition's `field` MUST be in scope. (§7.2)
-6. **Verification date presence** — `lastVerifiedAt` REQUIRED when `status` ≠
-   `unverified`. (§9)
+1. **id / path consistency** — `id` MUST equal the document's path under `registry/`
+   excluding the version directory. (§5.2)
+2. **id / jurisdiction consistency** — the country token in `id` MUST equal
+   `jurisdiction.country` lowercased; when a subdivision token is present in `id` it
+   MUST be consistent with `jurisdiction.subdivision`. (§5.2, §5.4)
+3. **Field name uniqueness** — `name`s MUST be unique among all fields. (§6.1)
+4. **Flow reference integrity** — every step `fields` entry MUST resolve to a
+   defined field `name`, and every `next` MUST name an existing step. (§7.1)
+5. **Verification consistency with status** — when `status` is `verified`,
+   `verification.lastVerifiedAt` MUST be present and current per the named practice;
+   a `draft` document still carries a `verification` record describing its
+   source review. (§9)
 
-The GovSchema validation tool (`tools/`) checks both the meta-schema and these
-rules.
-
-### 10.3 Extensions
-
-`extensions` is an OPTIONAL object whose members are namespaced keys of the form
-`x-{vendor}-{name}`. Consumers MUST ignore extension members they do not recognize.
-Extensions MUST NOT alter the meaning of standard members.
+The GovSchema validation tool (`tools/`) checks the meta-schema and rule 1 today;
+rules 2–5 are validated incrementally as the tool matures.
 
 ---
 
 ## 11. Media type and file conventions
 
-- File name: `document.govschema.json` within the registry version directory.
+- File name: **`schema.json`** within the registry version directory
+  (`registry/<id>/<version>/schema.json`).
 - Suggested media type: `application/govschema+json`.
-- Encoding: UTF-8. Documents MUST be valid JSON. YAML MAY be used for authoring but
-  the registry stores canonical JSON.
+- Encoding: UTF-8. Documents MUST be valid JSON.
 
 ---
 
-## 12. Open questions for v0.2 (non-normative)
+## 12. Open questions and deferred constructs (non-normative)
 
-- A richer condition language (string matching, arithmetic) vs. keeping conditions
-  intentionally minimal.
-- Localization: multiple language variants of human text within one document vs.
-  sibling locale documents.
-- Cross-document references (a process that depends on another process's output).
-- Signing/attestation of verified documents.
+These were considered during founding and deferred from v0.1 to keep the first
+stable core small. Each is tracked as a proposal under
+[`spec/proposals/`](../proposals/):
+
+- **Conditional flow** — branching `transitions`/`when` conditions
+  ([GSP-0004], the first targeted additive).
+- **Labelled enum options** — `{value, label}` pairs ([GSP-0003]).
+- **URN-style external identifier** — colon GSID for external citation ([GSP-0002]).
+- **Nested field model** — object/array fields with nested `fields`/`items`.
+- **Richer constraints** — `format`, `exclusiveMinimum`, `multipleOf`, array
+  constraints, and file `maxBytes`/`mediaTypes`.
+- **PII marking** — a `sensitive` member so consumers can apply special handling.
+- **Extensions** — a namespaced `extensions` object for vendor/experimental data.
+- **Localization** — multiple language variants of human text within one document.
 
 ---
 
@@ -473,3 +478,6 @@ Extensions MUST NOT alter the meaning of standard members.
 [JSON Schema 2020-12]: https://json-schema.org/specification-links#2020-12
 [SemVer]: https://semver.org/spec/v2.0.0.html
 [BCP 47]: https://www.rfc-editor.org/info/bcp47
+[GSP-0002]: ../proposals/0002-colon-gsid-external-identifier.md
+[GSP-0003]: ../proposals/0003-labelled-enum-options.md
+[GSP-0004]: ../proposals/0004-conditional-flow.md
