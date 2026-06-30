@@ -44,10 +44,30 @@ Requires Node ≥ 18. No `npm install` needed — there are no dependencies.
 
 ## Deploy
 
-Pushes to `main` that touch `site/**` trigger
+The site is a static `dist/` directory, so any static host works. The build is
+fully reproducible from `content/` + `assets/`.
+
+**Current host — Vercel.** Live at **https://govschema.vercel.app**. Deployed to
+the `govschema` project on the `hellogov-ai` Vercel team using the foundation's
+provisioned credentials. From this directory:
+
+```sh
+# VERCEL_TOKEN and VERCEL_ORG_ID are provided by the environment.
+# VERCEL_PROJECT_ID pins the deploy to the existing `govschema` project so a
+# fresh checkout never creates a stray project.
+VERCEL_PROJECT_ID=prj_RiugKaZOLw4xiBsys6qieyqINPeh \
+  vercel deploy --prod --yes --token "$VERCEL_TOKEN"
+```
+
+Vercel runs `node build.mjs` (see [`vercel.json`](./vercel.json)) and serves
+`dist/`, so the deployed bytes are reproducible from `content/` + `assets/`.
+Re-running the command ships the latest build and re-aliases
+`govschema.vercel.app`.
+
+**Alternative — GitHub Pages.** When the GovSchema GitHub organisation exists,
+pushes to `main` touching `site/**` trigger
 [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), which builds
-`dist/` and publishes it to GitHub Pages. The build is fully reproducible from
-`content/` + `assets/`.
+`dist/` and publishes it to Pages. (Kept ready; not the active host today.)
 
 ## Editing copy
 
