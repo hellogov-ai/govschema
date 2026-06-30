@@ -5,14 +5,16 @@
 // rules that the foundation enforces on every published schema:
 //   1. the document is valid JSON and a conforming GovSchema document
 //      (required members, types, enums, semver, id pattern);
-//   2. the document's `id` matches its path under registry/;
-//   3. the version directory name matches the document's `version`;
+//   2. the document's `id` matches its path under registry/ (excluding the
+//      <edition> directory too, for time-versioned forms — spec v0.2, GSP-0005);
+//   3. the version directory name matches the document's `version`, and an
+//      `edition`-bearing document's <edition> directory matches edition.label;
 //   4. cross-references are consistent (step.fields and step.next resolve).
 //
 // This intentionally implements only the subset of JSON Schema the meta-schema
 // uses, so the registry can be validated in CI with no install step. For full
 // JSON Schema draft 2020-12 validation, run any standard validator (e.g. ajv)
-// against spec/v0.1/govschema.schema.json.
+// against the spec/vN/govschema.schema.json the document targets.
 //
 // Usage:
 //   node tools/validate.mjs                 # validate every schema in registry/
@@ -38,6 +40,21 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const STATUSES = ["draft", "verified", "deprecated"];
 const LEVELS = ["national", "subnational", "municipal", "supranational"];
 const FIELD_TYPES = ["string", "number", "integer", "boolean", "date", "enum", "file", "object"];
+// Edition axis (spec v0.2+, GSP-0005). The `edition` member is OPTIONAL; when
+// present it pins a time-versioned form's tax/award year and adds an <edition>
+// registry-path layer. Keep this vocabulary in sync with
+// spec/v0.2/govschema.schema.json ($defs/edition).
+const EDITION_SCHEMES = ["us-tax-year", "gb-tax-year", "award-year"];
+const EDITION_LABEL_RE = /^[a-z0-9][a-z0-9-]*$/;
+
+// Whether a govschemaVersion (e.g. "0.2.0") is at least the given (major, minor).
+function meetsMinor(version, major, minor) {
+  const m = /^(\d+)\.(\d+)\./.exec(version || "");
+  if (!m) return false;
+  const maj = Number(m[1]);
+  const min = Number(m[2]);
+  return maj > major || (maj === major && min >= minor);
+}
 
 function findSchemas(dir) {
   const out = [];
@@ -108,6 +125,27 @@ function validateDocument(doc, errs) {
       errs.push(`verification.lastVerifiedAt must be YYYY-MM-DD: ${v.lastVerifiedAt}`);
   }
 
+  // Edition (OPTIONAL, spec v0.2+). Validate shape here; path consistency
+  // (rule 6) is checked in validatePath/main once the file location is known.
+  if (doc.edition != null) {
+    const e = doc.edition;
+    if (typeof e !== "object" || Array.isArray(e)) {
+      errs.push("edition must be an object");
+    } else {
+      for (const k of Object.keys(e))
+        if (k !== "scheme" && k !== "label")
+          errs.push(`edition has unknown member: ${k}`);
+      if (!EDITION_SCHEMES.includes(e.scheme))
+        errs.push(`edition.scheme must be one of ${EDITION_SCHEMES.join(", ")}: ${e.scheme}`);
+      if (typeof e.label !== "string" || !EDITION_LABEL_RE.test(e.label))
+        errs.push(`edition.label must match ${EDITION_LABEL_RE}: ${e.label}`);
+    }
+    // The edition axis is a v0.2 feature; a v0.1 document carrying it would be
+    // rejected by the v0.1 meta-schema (additionalProperties:false).
+    if (!meetsMinor(doc.govschemaVersion, 0, 2))
+      errs.push(`edition requires govschemaVersion >= 0.2.0: ${doc.govschemaVersion}`);
+  }
+
   const fieldNames = new Set();
   if (!Array.isArray(doc.fields) || doc.fields.length === 0) {
     errs.push("fields must be a non-empty array");
@@ -143,14 +181,27 @@ function validateDocument(doc, errs) {
   }
 }
 
-function validatePath(file, errs) {
+function validatePath(file, errs, hasEdition) {
   const rel = relative(REGISTRY, file).split(sep);
-  // expected: <id-parts...>/<version>/schema.json
-  if (rel.length < 4 || rel[rel.length - 1] !== "schema.json") {
-    errs.push(`file is not at registry/<id>/<version>/schema.json: ${rel.join("/")}`);
+  // Layout: registry/<id-parts...>/<version>/schema.json, or, for a
+  // time-versioned form (doc carries `edition`, spec v0.2+):
+  //   registry/<id-parts...>/<edition>/<version>/schema.json
+  // The document's `edition` member is the discriminator: only it tells us
+  // whether the segment above <version> is an edition or part of <id>.
+  const min = hasEdition ? 5 : 4;
+  const shape = hasEdition
+    ? "registry/<id>/<edition>/<version>/schema.json"
+    : "registry/<id>/<version>/schema.json";
+  if (rel.length < min || rel[rel.length - 1] !== "schema.json") {
+    errs.push(`file is not at ${shape}: ${rel.join("/")}`);
     return;
   }
   const versionDir = rel[rel.length - 2];
+  if (hasEdition) {
+    const editionDir = rel[rel.length - 3];
+    const idFromPath = rel.slice(0, rel.length - 3).join("/");
+    return { versionDir, editionDir, idFromPath };
+  }
   const idFromPath = rel.slice(0, rel.length - 2).join("/");
   return { versionDir, idFromPath };
 }
@@ -191,12 +242,19 @@ function main() {
     }
 
     validateDocument(doc, errs);
-    const paths = validatePath(file, errs);
+    const hasEdition =
+      doc && typeof doc.edition === "object" && doc.edition != null && !Array.isArray(doc.edition);
+    const paths = validatePath(file, errs, hasEdition);
     if (paths) {
       if (doc.id && doc.id !== paths.idFromPath)
         errs.push(`id "${doc.id}" does not match path "${paths.idFromPath}"`);
       if (doc.version && doc.version !== paths.versionDir)
         errs.push(`version "${doc.version}" does not match version directory "${paths.versionDir}"`);
+      // Rule 6: the <edition> path segment MUST equal edition.label.
+      if (hasEdition && doc.edition.label && doc.edition.label !== paths.editionDir)
+        errs.push(
+          `edition.label "${doc.edition.label}" does not match edition directory "${paths.editionDir}"`
+        );
     }
 
     const label = relative(ROOT, file);

@@ -48,7 +48,10 @@ A GovSchema document is one JSON object describing one government process: its
 jurisdiction and authority, the exact live source it was derived from, the
 fields an agent must collect (typed, validated, and traced to the source form),
 an optional process flow, and a verification record. It validates against the
-meta-schema in [`spec/v0.1/govschema.schema.json`](./spec/v0.1/govschema.schema.json).
+meta-schema for the spec line it targets — the current line is
+[`spec/v0.2/govschema.schema.json`](./spec/v0.2/govschema.schema.json) (which adds
+an `edition` axis for time-versioned forms; v0.1 documents remain conforming and
+validate against [`spec/v0.1`](./spec/v0.1/govschema.schema.json)).
 
 See the reference schemas:
 - [`registry/us/ca/dmv/vehicle-registration-renewal/1.0.0`](./registry/us/ca/dmv/vehicle-registration-renewal/1.0.0/schema.json)
@@ -92,7 +95,7 @@ the registry.
 
 We welcome new schemas, corrections, re-verifications, and tooling. Start with
 [CONTRIBUTING.md](./CONTRIBUTING.md) and the
-[specification](./spec/v0.1/README.md). All participation is under our
+[specification](./spec/v0.2/README.md). All participation is under our
 [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## License
