@@ -17,3 +17,22 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0003 | [Labelled enum options](./0003-labelled-enum-options.md) | Proposed (v0.2) |
 | 0004 | [Conditional flow](./0004-conditional-flow.md) | Proposed (v0.2) |
 | 0005 | [Edition / tax-year axis for time-versioned forms](./0005-edition-axis-time-versioned-forms.md) | Accepted — Option C, for v0.2 |
+| 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Proposed (v0.2 candidate) |
+| 0007 | [File field constraints (`maxBytes`, `mediaTypes`)](./0007-file-field-constraints.md) | Proposed (v0.2 candidate) |
+| 0008 | [`datetime` scalar type](./0008-datetime-scalar.md) | Proposed (v0.2 candidate) |
+| 0009 | [Composite & repeating values — structured `object` + `array`](./0009-composite-repeating-values.md) | Proposed (v0.2 candidate) — ⚠ one-way-door, CEO flag |
+| 0010 | [Namespaced `extensions`](./0010-namespaced-extensions.md) | Proposed (v0.2 candidate) |
+
+GSP-0006–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
+docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).
+They are **Proposed** (non-normative); per-GSP acceptance into `spec/v0.2` is
+gated on CEO sign-off.
+
+## Considered and rejected
+
+These candidates were evaluated and deliberately not advanced. Recording them
+keeps the rejection on the record and avoids re-litigating without new evidence.
+
+| Candidate | Disposition | Rationale |
+| --------- | ----------- | --------- |
+| Top-level `locale` member (GOV-61 item 7a) | **Out of scope** | Redundant with the existing `process.language` (§5.6, BCP 47). Revisit **only** if a concrete need emerges that a language tag alone cannot carry — e.g. a BCP-47 region/formatting requirement distinct from the source language. Reversible: re-open if a real case appears. |
