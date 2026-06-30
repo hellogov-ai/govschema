@@ -1,0 +1,273 @@
+{
+  "$schema": "https://govschema.org/spec/v0.1/govschema.schema.json",
+  "govschemaVersion": "0.1.0",
+  "id": "us/usps/change-of-address",
+  "version": "1.0.0",
+  "title": "United States Postal Service Change of Address (Mail Forwarding)",
+  "description": "Request that the U.S. Postal Service forward an individual's, family's, or business's mail after a move, permanently or temporarily, using the official Change of Address process (PS Form 3575 / the online Mover's Guide). This document describes the mover type, schedule, old and new addresses, contact details, and identity-verification path. It does not submit the request; the live usps.com source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "United States Postal Service",
+    "abbreviation": "USPS",
+    "url": "https://www.usps.com/"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.usps.com/manage/forward.htm",
+    "retrievedAt": "2026-06-30",
+    "documentRef": "PS Form 3575"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-06-30",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2026-12-30",
+    "notes": "Source-derived reference schema authored from the official USPS 'Standard Forward Mail' page and the PS Form 3575 / online Mover's Guide structure. Mover type (individual/family/business), permanent vs. temporary forwarding, the 15-day temporary minimum, old/new address, and contact fields were confirmed against the source; individual input fields reflect the form's structure but are not yet independently re-verified item-by-item. Conditional requiredness (name vs. business name by mover type) cannot be expressed in the v0.1 linear flow and is recorded in field descriptions; see GSP-0004. Identity-verification fee and current pricing are intentionally not encoded. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "moverType",
+      "label": "Who is moving?",
+      "type": "enum",
+      "required": true,
+      "description": "individual = one person; family = everyone moving shares the same last name; business = a business is relocating. The choice determines which name fields apply.",
+      "sourceRef": "Change of Address — Individual / Family / Business",
+      "validation": { "enum": ["individual", "family", "business"] }
+    },
+    {
+      "name": "changeType",
+      "label": "Is this move permanent or temporary?",
+      "type": "enum",
+      "required": true,
+      "description": "permanent = you are moving for good and mail should be rerouted to the new address; temporary = you are relocating for 15 days up to 1 year and mail should be forwarded for a fixed period, then returned to the old address.",
+      "sourceRef": "Change of Address — Permanent or Temporary",
+      "validation": { "enum": ["permanent", "temporary"] }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required for an individual or family move; omit for a business move (use businessName instead).",
+      "sourceRef": "Change of Address — Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Change of Address — Name",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required for an individual or family move. For a family move this is the shared household last name; mail is forwarded for everyone with that last name at the old address. Omit for a business move.",
+      "sourceRef": "Change of Address — Name (family moves share one last name)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "businessName",
+      "label": "Business name",
+      "type": "string",
+      "required": false,
+      "description": "Required for a business move; omit for an individual or family move.",
+      "sourceRef": "Change of Address — Business name",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "moveEffectiveDate",
+      "label": "Move effective (start) date",
+      "type": "date",
+      "required": true,
+      "description": "The date mail forwarding should begin, YYYY-MM-DD. For PS Form 3575 the Postal Service limits backdating of the start date to no more than 45 days before the submission date.",
+      "sourceRef": "Change of Address — Move effective date / Start date"
+    },
+    {
+      "name": "temporaryEndDate",
+      "label": "Temporary forwarding end date",
+      "type": "date",
+      "required": false,
+      "description": "Required only when changeType is 'temporary': the date forwarding should stop and mail return to the old address, YYYY-MM-DD. Temporary forwarding runs a minimum of 15 days and up to 1 year.",
+      "sourceRef": "Change of Address — Temporary end date"
+    },
+    {
+      "name": "oldAddressLine1",
+      "label": "Old address — street address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The address you are moving from.",
+      "sourceRef": "Change of Address — Old (from) address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "oldAddressLine2",
+      "label": "Old address — apartment, suite, or unit (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Change of Address — Old (from) address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "oldAddressCity",
+      "label": "Old address — city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Change of Address — Old (from) address",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "oldAddressState",
+      "label": "Old address — state or territory",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Two-letter USPS state or territory abbreviation, e.g. CA, NY, TX.",
+      "sourceRef": "Change of Address — Old (from) address",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "oldAddressPostalCode",
+      "label": "Old address — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. 5-digit or ZIP+4 format, e.g. 90210 or 90210-1234.",
+      "sourceRef": "Change of Address — Old (from) address",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "newAddressLine1",
+      "label": "New address — street address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The address you are moving to.",
+      "sourceRef": "Change of Address — New (to) address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "newAddressLine2",
+      "label": "New address — apartment, suite, or unit (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Change of Address — New (to) address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "newAddressCity",
+      "label": "New address — city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Change of Address — New (to) address",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "newAddressState",
+      "label": "New address — state or territory",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Two-letter USPS state or territory abbreviation, e.g. CA, NY, TX.",
+      "sourceRef": "Change of Address — New (to) address",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "newAddressPostalCode",
+      "label": "New address — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. 5-digit or ZIP+4 format, e.g. 90210 or 90210-1234.",
+      "sourceRef": "Change of Address — New (to) address",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "phone",
+      "label": "Phone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "Change of Address — Contact information",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. A valid email address; used by USPS to send a confirmation. The online process sends a confirmation code to this address.",
+      "sourceRef": "Change of Address — Contact information",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "identityVerificationMethod",
+      "label": "How will you verify your identity?",
+      "type": "enum",
+      "required": true,
+      "description": "online_card = verify online using a credit or debit card whose billing address matches the old or new address (USPS charges a small identity-verification fee; the current amount is published on the live source); in_person = verify at a Post Office with acceptable photo ID. The fee is intentionally not encoded here.",
+      "sourceRef": "Change of Address — Identity verification (online card or in-person photo ID)",
+      "validation": { "enum": ["online_card", "in_person"] }
+    }
+  ],
+  "steps": [
+    {
+      "id": "move_basics",
+      "title": "About your move",
+      "fields": ["moverType", "changeType"],
+      "next": "who_is_moving"
+    },
+    {
+      "id": "who_is_moving",
+      "title": "Who is moving",
+      "fields": ["firstName", "middleName", "lastName", "businessName"],
+      "next": "schedule"
+    },
+    {
+      "id": "schedule",
+      "title": "When to start forwarding",
+      "fields": ["moveEffectiveDate", "temporaryEndDate"],
+      "next": "old_address"
+    },
+    {
+      "id": "old_address",
+      "title": "Address you are moving from",
+      "fields": [
+        "oldAddressLine1",
+        "oldAddressLine2",
+        "oldAddressCity",
+        "oldAddressState",
+        "oldAddressPostalCode"
+      ],
+      "next": "new_address"
+    },
+    {
+      "id": "new_address",
+      "title": "Address you are moving to",
+      "fields": [
+        "newAddressLine1",
+        "newAddressLine2",
+        "newAddressCity",
+        "newAddressState",
+        "newAddressPostalCode"
+      ],
+      "next": "contact_and_verification"
+    },
+    {
+      "id": "contact_and_verification",
+      "title": "Contact and identity verification",
+      "fields": ["phone", "email", "identityVerificationMethod"]
+    }
+  ]
+}
