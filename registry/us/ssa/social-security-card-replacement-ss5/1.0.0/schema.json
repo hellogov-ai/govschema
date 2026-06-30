@@ -1,0 +1,338 @@
+{
+  "$schema": "https://govschema.org/spec/v0.1/govschema.schema.json",
+  "govschemaVersion": "0.1.0",
+  "id": "us/ssa/social-security-card-replacement-ss5",
+  "version": "1.0.0",
+  "title": "United States Social Security Card Replacement (Form SS-5)",
+  "description": "Request a replacement Social Security card for an individual using Social Security Administration Form SS-5 (Application for a Social Security Card). This document describes the online-vs-in-person eligibility branch, the applicant inputs, and the identity/citizenship evidence required. A simple replacement (no name change, not a first card) can in most states be requested online with a personal my Social Security account; a name change or a first-ever card must be done in person or by mail. It does not submit the form; the live ssa.gov source is always authoritative (see verification).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "U.S. Social Security Administration",
+    "abbreviation": "SSA",
+    "url": "https://www.ssa.gov/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.ssa.gov/number-card/replace-card",
+    "retrievedAt": "2026-06-30",
+    "documentRef": "SS-5"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-06-30",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2026-12-30",
+    "notes": "Source-derived reference schema authored from the official SSA 'Replace your Social Security card' page and Form SS-5 (12-2024). The online-vs-in-person branch (online available in most states for a replacement only; not for a first card or a legal name change) and the SS-5 item set were confirmed against the source; individual input fields reflect the form's structure but are not yet independently re-verified item-by-item. Conditional requiredness (parents' details required under 18; citizenship evidence required if born outside the U.S.) cannot be expressed in the v0.1 linear flow and is recorded in field descriptions; see GSP-0004. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isFirstCard",
+      "label": "Is this the first Social Security card for this person?",
+      "type": "boolean",
+      "required": true,
+      "description": "A first-ever (original) card cannot be requested online and must be applied for in person or by mail with original documents. Answer false for a replacement of an existing card.",
+      "sourceRef": "Replace your card — online not available for an original card"
+    },
+    {
+      "name": "isLegalNameChange",
+      "label": "Are you changing the name on the card (legal name change)?",
+      "type": "boolean",
+      "required": true,
+      "description": "A legal name change (e.g. after marriage or a court order) cannot be done online and must be applied for in person or by mail with supporting documents. Answer false for a same-name replacement.",
+      "sourceRef": "Replace your card — online not available for a name change"
+    },
+    {
+      "name": "applicationChannel",
+      "label": "How will you apply?",
+      "type": "enum",
+      "required": true,
+      "description": "online = request a replacement using a personal my Social Security account (available in most states; only for a same-name replacement, not a first card or name change); in_person = at a local Social Security office or Card Center; by_mail = mail the SS-5 with original documents. If isFirstCard or isLegalNameChange is true, online is not available; you may still start online and self-schedule an appointment.",
+      "sourceRef": "Replace your card — online (my Social Security) vs. in person / by mail",
+      "validation": { "enum": ["online", "in_person", "by_mail"] }
+    },
+    {
+      "name": "cardLastName",
+      "label": "Last name to show on the card",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your complete last name exactly as it should appear on the card.",
+      "sourceRef": "SS-5 item 1 — Name to be shown on card",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "cardFirstName",
+      "label": "First name to show on the card",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "SS-5 item 1 — Name to be shown on card",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "cardMiddleName",
+      "label": "Middle name to show on the card",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "SS-5 item 1 — Name to be shown on card",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nameAtBirth",
+      "label": "Full name at birth (if different)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only if your name at birth differs from the name to show on the card.",
+      "sourceRef": "SS-5 item 2 — Full name at birth if other than above",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "otherNamesUsed",
+      "label": "Other names used",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Any other names you have used, such as a nickname or a prior married name.",
+      "sourceRef": "SS-5 item 3 — Other names used",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "citizenshipStatus",
+      "label": "Citizenship status",
+      "type": "enum",
+      "required": true,
+      "description": "us_citizen = U.S. citizen; legal_alien_authorized_to_work = legal alien allowed to work; legal_alien_not_authorized_to_work = legal alien not allowed to work; other = other status explained on the live form. Determines which evidence of citizenship/immigration status is required.",
+      "sourceRef": "SS-5 item 5 — Citizenship",
+      "validation": { "enum": ["us_citizen", "legal_alien_authorized_to_work", "legal_alien_not_authorized_to_work", "other"] }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. F = Female, M = Male, X = Unspecified or another sex identity, where the live form offers it.",
+      "sourceRef": "SS-5 item 8 — Sex",
+      "validation": { "enum": ["F", "M", "X"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD.",
+      "sourceRef": "SS-5 item 4 — Date of birth"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth (city and state, or city and country)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Do not abbreviate.",
+      "sourceRef": "SS-5 item 4 — Place of birth",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "mothersNameAtBirth",
+      "label": "Mother's name at her birth",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required for applicants under age 18; requested otherwise.",
+      "sourceRef": "SS-5 item 9 — Mother's name at her birth",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "mothersSSN",
+      "label": "Mother's Social Security number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. 9 digits. Required for an applicant under age 18 (may be left blank if unknown).",
+      "sourceRef": "SS-5 item 9 — Mother's Social Security number",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "fathersName",
+      "label": "Father's name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required for applicants under age 18; requested otherwise.",
+      "sourceRef": "SS-5 item 10 — Father's name",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "fathersSSN",
+      "label": "Father's Social Security number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. 9 digits. Required for an applicant under age 18 (may be left blank if unknown).",
+      "sourceRef": "SS-5 item 10 — Father's Social Security number",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "everHadCardBefore",
+      "label": "Has a Social Security card ever been requested for this person before?",
+      "type": "boolean",
+      "required": true,
+      "description": "Indicates a replacement/correction rather than an original. For a replacement this is true.",
+      "sourceRef": "SS-5 item 11 — Previously filed for a card"
+    },
+    {
+      "name": "currentSSN",
+      "label": "Current Social Security number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The 9-digit number currently assigned to this person, for a replacement or correction.",
+      "sourceRef": "SS-5 item 11 — Social Security number previously assigned",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "previousCardName",
+      "label": "Name shown on the most recent Social Security card",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only if it differs from the name to show on the card.",
+      "sourceRef": "SS-5 item 12 — Name shown on most recent card",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "mailingAddressLine1",
+      "label": "Mailing address — street address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Where the card should be mailed.",
+      "sourceRef": "SS-5 item 16 — Mailing address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "mailingAddressLine2",
+      "label": "Mailing address — apartment, suite, or unit (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "SS-5 item 16 — Mailing address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Mailing address — city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "SS-5 item 16 — Mailing address",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Mailing address — state or territory",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Two-letter USPS state or territory abbreviation, e.g. CA, NY, TX.",
+      "sourceRef": "SS-5 item 16 — Mailing address",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "mailingAddressPostalCode",
+      "label": "Mailing address — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. 5-digit or ZIP+4 format, e.g. 90210 or 90210-1234.",
+      "sourceRef": "SS-5 item 16 — Mailing address",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "daytimePhone",
+      "label": "Daytime phone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "SS-5 item 15 — Daytime phone number",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "relationshipToApplicant",
+      "label": "Your relationship to the person on the card",
+      "type": "enum",
+      "required": true,
+      "description": "Who is signing the application. self = the applicant; natural_or_adoptive_parent; legal_guardian; other = another relationship explained on the live form.",
+      "sourceRef": "SS-5 item 18 — Relationship to the person in item 1",
+      "validation": { "enum": ["self", "natural_or_adoptive_parent", "legal_guardian", "other"] }
+    },
+    {
+      "name": "identityDocument",
+      "label": "Proof of identity (document)",
+      "type": "file",
+      "required": true,
+      "description": "An original or certified document proving identity — typically a U.S. driver's license, state-issued ID card, or U.S. passport. SSA requires originals or certified copies; provide as PDF, JPEG, or PNG when preparing the application.",
+      "sourceRef": "Documents you need — proof of identity"
+    },
+    {
+      "name": "citizenshipEvidence",
+      "label": "Proof of U.S. citizenship or immigration status (document)",
+      "type": "file",
+      "required": false,
+      "description": "Required if you were born outside the U.S. or are not a U.S. citizen: a U.S. birth certificate, U.S. passport, Certificate of Naturalization/Citizenship, or current immigration documents establishing work-authorized status. Provide as PDF, JPEG, or PNG.",
+      "sourceRef": "Documents you need — proof of citizenship or immigration status (if born outside the U.S.)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "channel_and_eligibility",
+      "title": "Choose how to apply",
+      "fields": ["isFirstCard", "isLegalNameChange", "applicationChannel"],
+      "next": "applicant_identity"
+    },
+    {
+      "id": "applicant_identity",
+      "title": "Name and identity",
+      "fields": [
+        "cardLastName",
+        "cardFirstName",
+        "cardMiddleName",
+        "nameAtBirth",
+        "otherNamesUsed",
+        "citizenshipStatus",
+        "sex",
+        "dateOfBirth",
+        "placeOfBirth"
+      ],
+      "next": "parents"
+    },
+    {
+      "id": "parents",
+      "title": "Parents' information",
+      "fields": ["mothersNameAtBirth", "mothersSSN", "fathersName", "fathersSSN"],
+      "next": "prior_card"
+    },
+    {
+      "id": "prior_card",
+      "title": "Previous card",
+      "fields": ["everHadCardBefore", "currentSSN", "previousCardName"],
+      "next": "contact_and_signer"
+    },
+    {
+      "id": "contact_and_signer",
+      "title": "Mailing address and signer",
+      "fields": [
+        "mailingAddressLine1",
+        "mailingAddressLine2",
+        "mailingAddressCity",
+        "mailingAddressState",
+        "mailingAddressPostalCode",
+        "daytimePhone",
+        "relationshipToApplicant"
+      ],
+      "next": "evidence"
+    },
+    {
+      "id": "evidence",
+      "title": "Supporting documents",
+      "fields": ["identityDocument", "citizenshipEvidence"]
+    }
+  ]
+}
