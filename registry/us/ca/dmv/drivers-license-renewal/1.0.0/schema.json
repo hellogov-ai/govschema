@@ -1,0 +1,209 @@
+{
+  "$schema": "https://govschema.org/spec/v0.1/govschema.schema.json",
+  "govschemaVersion": "0.1.0",
+  "id": "us/ca/dmv/drivers-license-renewal",
+  "version": "1.0.0",
+  "title": "California Driver's License Renewal",
+  "description": "Renew an individual's California driver's license through the California Department of Motor Vehicles. This document describes the renewal-method branch (online, by mail, or in person), the conditions that force an in-person renewal, and the licence-holder inputs. It pairs with the published us/ca/dmv/vehicle-registration-renewal to show one authority with multiple processes. It does not submit the renewal; the live dmv.ca.gov source is always authoritative (see verification).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "subdivision": "US-CA",
+    "level": "subnational"
+  },
+  "authority": {
+    "name": "California Department of Motor Vehicles",
+    "abbreviation": "CA DMV",
+    "url": "https://www.dmv.ca.gov/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/renew-your-driver-license-dl/",
+    "retrievedAt": "2026-06-30",
+    "documentRef": "DL renewal notice (DL 410)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-06-30",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2026-12-30",
+    "notes": "Source-derived reference schema authored from the official CA DMV 'Renew your driver's license' page. The renewal-method branch (online within 90 days before / 12 months after expiration; by mail; in person) and the in-person triggers (REAL ID upgrade, address/personal-description change, certain ages, vision or medical changes) were confirmed against the source; individual input fields reflect the renewal flow but are not yet independently re-verified item-by-item. Conditional requiredness (in-person triggers) cannot be expressed in the v0.1 linear flow and is recorded in field descriptions; see GSP-0004. Fees are intentionally not encoded. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "driverLicenseNumber",
+      "label": "California driver's license number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. A California DL number is one letter followed by 7 digits, e.g. D1234567.",
+      "sourceRef": "Renewal notice / license card — DL number",
+      "validation": { "pattern": "^[A-Z][0-9]{7}$" }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your name as it appears on the current licence.",
+      "sourceRef": "Renew DL — Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Renew DL — Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Renew DL — Name",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD. Drivers turning a qualifying age (generally 70 and older) may be required to complete part of the renewal in person; the live source states the current age rules.",
+      "sourceRef": "Renew DL — Date of birth"
+    },
+    {
+      "name": "last4SSN",
+      "label": "Last four digits of your Social Security number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Used by DMV to verify identity for an online or mail renewal.",
+      "sourceRef": "Renew DL online — identity verification",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "licenseExpirationDate",
+      "label": "Current licence expiration date",
+      "type": "date",
+      "required": true,
+      "description": "Full date, YYYY-MM-DD. Online renewal is available from 90 days before to 12 months after this date; outside that window a different path applies. This timing rule is recorded here but cannot be enforced as a v0.1 constraint.",
+      "sourceRef": "Renew DL — eligibility window (90 days before / 12 months after expiration)"
+    },
+    {
+      "name": "renewalMethod",
+      "label": "How do you want to renew?",
+      "type": "enum",
+      "required": true,
+      "description": "online = renew on the DMV website (eligible only if no address change, no REAL ID upgrade, and within the timing window); by_mail = renew using the mailed renewal notice when eligible; in_person = renew at a DMV field office (required for the triggers below).",
+      "sourceRef": "Renew DL — online, by mail, or in person",
+      "validation": { "enum": ["online", "by_mail", "in_person"] }
+    },
+    {
+      "name": "upgradingToRealId",
+      "label": "Are you upgrading to a REAL ID at this renewal?",
+      "type": "boolean",
+      "required": true,
+      "description": "A first-time REAL ID requires an in-person visit with original identity, Social Security, and residency documents. If true, renewalMethod must be in_person.",
+      "sourceRef": "Renew DL — REAL ID upgrade requires in person"
+    },
+    {
+      "name": "addressOrNameChange",
+      "label": "Has your address or personal description changed since your last licence?",
+      "type": "boolean",
+      "required": true,
+      "description": "A change of address or personal description generally cannot be completed in the basic online renewal and may require a different DMV transaction or an in-person visit. If true, check the live source for the correct path.",
+      "sourceRef": "Renew DL — changes requiring a different path"
+    },
+    {
+      "name": "visionOrMedicalChange",
+      "label": "Have you had a vision change (e.g. recent eye surgery) or a new medical condition affecting driving?",
+      "type": "boolean",
+      "required": true,
+      "description": "Recent vision surgery (such as LASIK) or a new disability/medical condition affecting safe driving generally requires an in-person renewal with a vision exam. If true, renewalMethod must be in_person.",
+      "sourceRef": "Renew DL — conditions requiring in-person renewal (vision/medical)"
+    },
+    {
+      "name": "residenceAddressLine1",
+      "label": "Residence address — street address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your California residence address.",
+      "sourceRef": "Renew DL — Residence address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "residenceAddressLine2",
+      "label": "Residence address — apartment, suite, or unit (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Renew DL — Residence address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "residenceAddressCity",
+      "label": "Residence address — city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Renew DL — Residence address",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "residenceAddressPostalCode",
+      "label": "Residence address — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. 5-digit or ZIP+4 format, e.g. 90210 or 90210-1234. The state is California (US-CA).",
+      "sourceRef": "Renew DL — Residence address",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "mailingAddressDiffers",
+      "label": "Is your mailing address different from your residence address?",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, provide a separate mailing address on the live source where the new licence should be sent.",
+      "sourceRef": "Renew DL — Mailing address (if different)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identify",
+      "title": "Identify your licence",
+      "fields": [
+        "driverLicenseNumber",
+        "lastName",
+        "firstName",
+        "middleName",
+        "dateOfBirth",
+        "last4SSN",
+        "licenseExpirationDate"
+      ],
+      "next": "renewal_path"
+    },
+    {
+      "id": "renewal_path",
+      "title": "Choose how to renew",
+      "fields": ["renewalMethod", "upgradingToRealId", "addressOrNameChange", "visionOrMedicalChange"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Address",
+      "fields": [
+        "residenceAddressLine1",
+        "residenceAddressLine2",
+        "residenceAddressCity",
+        "residenceAddressPostalCode",
+        "mailingAddressDiffers"
+      ]
+    }
+  ]
+}
