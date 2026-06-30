@@ -34,6 +34,7 @@ specification line is explicitly pre-stable (`v0.x`).
 | ---------------- | ----------------------------------------------------------------------- |
 | [`spec/`](./spec) | The GovSchema specification and its machine-readable meta-schema.      |
 | [`registry/`](./registry) | All published schemas, one immutable directory per version.    |
+| [`discovery/`](./discovery) | The discovery catalog — a prioritized backlog of processes to schematize next. |
 | [`practices/`](./practices) | Verification practices — documented methods for confirming a schema matches its source. |
 | [`tools/`](./tools) | Tooling to validate schemas (zero-dependency, CI-ready).             |
 | [`site/`](./site) | The landing/marketing site — a data-driven static generator (zero-dependency). |
