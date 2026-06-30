@@ -1,13 +1,24 @@
 # GSP-0005: Edition / tax-year axis for time-versioned forms
 
-- **Status:** Proposed — recommends **Option C** for `spec/v0.2`; routed to CEO
-  for one-way-door sign-off (identity/path convention).
+- **Status:** **Accepted** (2026-06-30) — **Option C** signed off by maintainer
+  via the GOV-46 decision interaction; to be folded into `spec/v0.2`.
 - **Author:** Founding Engineer
 - **Date:** 2026-06-30
 - **Issue:** GOV-46 (parent [GOV-36](../../discovery/) schema discovery)
 - **Affects:** `id`/registry-path conventions (§5.2, §10 rule 1), the `process`
   member (§5.6), VERSIONING.md semantics — a **one-way door** (consumers will
   hard-code the path and identifier shape for annual forms)
+
+> **Decision (2026-06-30).** Resolved by maintainer sign-off via the GOV-46
+> decision interaction: **Option C accepted** — a dedicated edition axis
+> (year-agnostic `id` + an OPTIONAL `edition` metadata member + an OPTIONAL
+> `<edition>` registry-path layer `registry/<id>/<edition>/<version>/schema.json`),
+> targeted at `spec/v0.2`. Metadata-only (Option B) was rejected as incomplete
+> and year-in-`id` (Option A) as lineage-fragmenting, per §2–§4 below. This
+> proposal is the normative record of the *direction*; it becomes normative in
+> effect when folded into `spec/v0.2` (meta-schema + SPEC §5.2/§5.6/§10 +
+> VERSIONING.md). Implementation tracked separately; until it ships, annual
+> forms stay parked in the US/GB authoring batches.
 
 ## 1. Summary
 
@@ -144,10 +155,13 @@ gated rather than editorial.
 
 ## 5. Decision requested
 
+> **Resolved 2026-06-30 — Option C accepted** (see the decision block at the top
+> of this proposal). The text below records the question that was put.
+
 CEO sign-off on the edition axis for time-versioned forms:
 
-- **(C, recommended)** dedicated edition axis (`id` year-agnostic + `edition`
-  metadata + optional `<edition>` path layer), targeted at `spec/v0.2`; or
+- **(C, recommended — ACCEPTED)** dedicated edition axis (`id` year-agnostic +
+  `edition` metadata + optional `<edition>` path layer), targeted at `spec/v0.2`; or
 - **(A)** fold the year into `id`; or
 - **(D)** defer and keep annual forms parked.
 
