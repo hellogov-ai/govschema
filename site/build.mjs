@@ -256,6 +256,7 @@ function renderPage(page, site) {
   <meta property="og:title" content="${attr(page.title || site.name)}" />
   <meta property="og:description" content="${attr((page.meta && page.meta.description) || site.description)}" />
   <meta property="og:type" content="website" />
+  ${site.url ? `<meta property="og:url" content="${attr(site.url)}" />` : ""}
   ${site.url ? `<link rel="canonical" href="${attr(site.url)}" />` : ""}
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="assets/styles.css" />
