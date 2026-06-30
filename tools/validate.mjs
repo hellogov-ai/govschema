@@ -49,6 +49,22 @@ function findSchemas(dir) {
   return out;
 }
 
+// Registry hygiene: a GovSchema document MUST be a file named exactly
+// `schema.json` at registry/<id>/<version>/schema.json (see registry/README.md).
+// Any other `*.json` under registry/ is a document that findSchemas() — and
+// therefore CI — would silently skip: a non-conforming or mis-named schema
+// masquerading as published content. Surface those as hard errors so the
+// registry can never contain a document that escapes validation.
+function findStrayDocuments(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    if (statSync(p).isDirectory()) out.push(...findStrayDocuments(p));
+    else if (entry.endsWith(".json") && entry !== "schema.json") out.push(p);
+  }
+  return out;
+}
+
 function validateDocument(doc, errs) {
   const req = [
     "$schema", "govschemaVersion", "id", "version", "title",
@@ -142,12 +158,27 @@ function validatePath(file, errs) {
 function main() {
   const args = process.argv.slice(2);
   const files = args.length ? args : findSchemas(REGISTRY);
-  if (files.length === 0) {
-    console.log("No schemas found under registry/. Nothing to validate.");
-    return;
+
+  let strayFailed = 0;
+
+  // When scanning the whole registry, no GovSchema document may hide from CI
+  // under a non-conforming filename. (Skipped when explicit paths are given.)
+  if (!args.length) {
+    for (const stray of findStrayDocuments(REGISTRY)) {
+      console.error(`FAIL ${relative(ROOT, stray)}`);
+      console.error(
+        "  - registry documents MUST be named schema.json (registry/README.md); " +
+          "rename or remove this file"
+      );
+      strayFailed++;
+    }
   }
 
   let failed = 0;
+  if (files.length === 0 && strayFailed === 0) {
+    console.log("No schemas found under registry/. Nothing to validate.");
+    return;
+  }
   for (const file of files) {
     const errs = [];
     let doc;
@@ -179,9 +210,10 @@ function main() {
   }
 
   console.log(
-    `\n${files.length - failed}/${files.length} document(s) passed.`
+    `\n${files.length - failed}/${files.length} document(s) passed.` +
+      (strayFailed ? ` ${strayFailed} non-conforming registry file(s).` : "")
   );
-  process.exit(failed ? 1 : 0);
+  process.exit(failed || strayFailed ? 1 : 0);
 }
 
 main();
