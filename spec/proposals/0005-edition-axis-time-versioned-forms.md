@@ -1,7 +1,11 @@
 # GSP-0005: Edition / tax-year axis for time-versioned forms
 
-- **Status:** **Accepted** (2026-06-30) — **Option C** signed off by maintainer
-  via the GOV-46 decision interaction; to be folded into `spec/v0.2`.
+- **Status:** **Accepted & folded** — **Option C** signed off by maintainer via
+  the GOV-46 decision interaction (2026-06-30) and folded into `spec/v0.2` under
+  GOV-48 (meta-schema `$defs/edition`, SPEC §5.2/§5.7/§10 rule 1+6, VERSIONING.md
+  §4, `tools/`). Normative as of `govschemaVersion` `0.2.0`. The concrete `edition`
+  shape (`{scheme, label}`, closed scheme enum) and `<edition>` path grammar are
+  the consumer-pinned, one-way-door surface — finalized in v0.2 review.
 - **Author:** Founding Engineer
 - **Date:** 2026-06-30
 - **Issue:** GOV-46 (parent [GOV-36](../../discovery/) schema discovery)

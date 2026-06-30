@@ -71,8 +71,45 @@ while the standard is being founded. The first stable line is `v1`, which is a
 one-way-door governance decision reserved for the CEO/maintainers (see
 [GOVERNANCE.md](./GOVERNANCE.md)).
 
+> **v0.2 (additive MINOR).** v0.2 adds an OPTIONAL `edition` axis for
+> time-versioned forms (§4) without removing or tightening anything; every
+> conforming v0.1 document is also a conforming v0.2 document. It ships as a
+> sibling `spec/v0.2` directory because v0.x keeps one directory per minor while
+> the standard is being founded.
+
 ## 3. Immutability
 
 Once published, a version directory is never edited or deleted. Corrections ship
 as a new version. This guarantees reproducibility: a pinned `(id, version)`
 always resolves to the same bytes.
+
+## 4. Edition axis (time-versioned forms)
+
+*Introduced in spec v0.2 ([GSP-0005]); applies to schemas whose `govschemaVersion`
+is `0.2.0` or later.*
+
+Some government forms ship a **fresh edition every tax or award year** — the US
+1040, Form 4868, FAFSA, the UK SA100. v0.2 gives these a third axis, `edition`
+(SPEC §5.7), which is **orthogonal to the SemVer `version`** above:
+
+- A **new tax/award year is a new edition, NOT a version bump.** The 2025 1040 and
+  the 2024 1040 are *siblings*, not successive versions: they are different forms a
+  consumer selects between by **year**, not by compatibility. Modelling a new year
+  as a `version` MAJOR/MINOR would abuse SemVer — the 2025 edition does not "break
+  consumers of" the 2024 edition.
+- **Editions coexist.** In early 2026 an agent may file a 2025 return and a late
+  2024 return; neither edition deprecates the other. Each edition lives at its own
+  path, `registry/<id>/<edition>/<version>/schema.json`, and is immutable.
+- **`version` keeps its exact meaning, per edition.** Within one edition, the
+  MAJOR/MINOR/PATCH rules in §1 apply unchanged: the 2025 edition may go
+  `1.0.0` → `1.0.1` (fixed a label) → `1.1.0` (added an optional field we missed).
+  The 2024 edition versions independently.
+- **`id` stays year-agnostic.** It names the process across *all* editions and
+  versions; the year lives only in the `edition` member and the `<edition>` path
+  segment, never folded into `id`.
+
+"Current edition" is resolved the same way as "latest version": list the
+`<edition>` directories under an `id` and take the maximum per the edition scheme.
+Non-time-versioned schemas carry no `edition` and are entirely unaffected.
+
+[GSP-0005]: ./spec/proposals/0005-edition-axis-time-versioned-forms.md

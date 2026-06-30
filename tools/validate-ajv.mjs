@@ -4,10 +4,12 @@
 // Companion to the zero-dependency `validate.mjs`. Where `validate.mjs`
 // implements only the structural subset of JSON Schema that the meta-schema
 // uses (so the registry can be checked with no install step), this tool runs
-// the *full* JSON Schema draft 2020-12 meta-schema
-// (`spec/v0.1/govschema.schema.json`) over every registry document using ajv +
-// ajv-formats. It is the authority for SPEC §2's conformance clause: a document
-// conforms to GovSchema 0.1 only if it validates against the meta-schema.
+// the *full* JSON Schema draft 2020-12 meta-schema over every registry document
+// using ajv + ajv-formats. It is the authority for SPEC §2's conformance clause:
+// a document conforms to GovSchema N only if it validates against the meta-schema
+// for the spec line it targets. Each document is validated against the
+// meta-schema selected by its `govschemaVersion` (see META_SCHEMAS below), so a
+// v0.1 document keeps validating against spec/v0.1 even after spec/v0.2 ships.
 //
 // This requires the dev dependencies declared in tools/package.json:
 //   cd tools && npm ci
@@ -27,7 +29,20 @@ import addFormats from "ajv-formats";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const REGISTRY = join(ROOT, "registry");
-const META_SCHEMA = join(ROOT, "spec", "v0.1", "govschema.schema.json");
+
+// One meta-schema per published spec MAJOR.MINOR line. A document is validated
+// against the meta-schema for the `govschemaVersion` it declares (SPEC §2), so a
+// v0.1 document keeps validating against v0.1 even after v0.2 ships.
+const META_SCHEMAS = {
+  "0.1": join(ROOT, "spec", "v0.1", "govschema.schema.json"),
+  "0.2": join(ROOT, "spec", "v0.2", "govschema.schema.json"),
+};
+
+// Map a govschemaVersion (e.g. "0.2.0") to its spec line key (e.g. "0.2").
+function specLine(version) {
+  const m = /^(\d+)\.(\d+)\./.exec(version || "");
+  return m ? `${m[1]}.${m[2]}` : null;
+}
 
 function findSchemas(dir) {
   const out = [];
@@ -46,20 +61,22 @@ function main() {
   const ajv = new Ajv2020({ allErrors: true, strict: false });
   addFormats(ajv);
 
-  let metaSchema;
-  try {
-    metaSchema = JSON.parse(readFileSync(META_SCHEMA, "utf8"));
-  } catch (e) {
-    console.error(`FATAL: cannot read meta-schema ${relative(ROOT, META_SCHEMA)}: ${e.message}`);
-    process.exit(2);
-  }
-
-  let validate;
-  try {
-    validate = ajv.compile(metaSchema);
-  } catch (e) {
-    console.error(`FATAL: meta-schema does not compile: ${e.message}`);
-    process.exit(2);
+  // Compile every published meta-schema up front; dispatch per document below.
+  const validators = {};
+  for (const [line, path] of Object.entries(META_SCHEMAS)) {
+    let metaSchema;
+    try {
+      metaSchema = JSON.parse(readFileSync(path, "utf8"));
+    } catch (e) {
+      console.error(`FATAL: cannot read meta-schema ${relative(ROOT, path)}: ${e.message}`);
+      process.exit(2);
+    }
+    try {
+      validators[line] = ajv.compile(metaSchema);
+    } catch (e) {
+      console.error(`FATAL: meta-schema ${relative(ROOT, path)} does not compile: ${e.message}`);
+      process.exit(2);
+    }
   }
 
   if (files.length === 0) {
@@ -79,10 +96,23 @@ function main() {
       continue;
     }
 
-    if (validate(doc)) {
-      console.log(`ok   ${label}`);
-    } else {
+    // Select the meta-schema for the spec line this document targets (SPEC §2).
+    const line = specLine(doc.govschemaVersion);
+    const validate = line && validators[line];
+    if (!validate) {
       console.error(`FAIL ${label}`);
+      console.error(
+        `  - (root) unknown/unsupported govschemaVersion: ${doc.govschemaVersion}` +
+          ` (known spec lines: ${Object.keys(validators).join(", ")})`
+      );
+      failed++;
+      continue;
+    }
+
+    if (validate(doc)) {
+      console.log(`ok   ${label} [v${line}]`);
+    } else {
+      console.error(`FAIL ${label} [v${line}]`);
       for (const err of validate.errors) {
         const where = err.instancePath || "(root)";
         console.error(`  - ${where} ${err.message}` + (err.params && Object.keys(err.params).length ? ` ${JSON.stringify(err.params)}` : ""));
