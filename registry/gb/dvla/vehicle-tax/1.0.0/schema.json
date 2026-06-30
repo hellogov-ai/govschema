@@ -1,0 +1,118 @@
+{
+  "$schema": "https://govschema.org/spec/v0.1/govschema.schema.json",
+  "govschemaVersion": "0.1.0",
+  "id": "gb/dvla/vehicle-tax",
+  "version": "1.0.0",
+  "title": "United Kingdom Vehicle Tax (Vehicle Excise Duty)",
+  "description": "Tax a vehicle (or set up the Direct Debit) in Great Britain using the official DVLA online service. This document describes the reference number that identifies the vehicle, the payment period, and the payment method the service collects. It does not submit the request and it does not encode Vehicle Excise Duty rates: the amount due is determined by DVLA from the vehicle record and changes over time, so it is looked up against the live source, not stored here (see VERIFICATION.md). The live vehicletax.service.gov.uk source is always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/vehicle-tax",
+    "retrievedAt": "2026-06-30"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-06-30",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2026-12-30",
+    "notes": "Source-derived reference schema authored from the official GOV.UK 'Tax your vehicle' guidance page. Confirmed against the source: you tax a vehicle using a reference number from a recent DVLA tax reminder/'last chance' letter (V11), the vehicle log book (V5C, in your name), or the green 'new keeper' slip (V5C/2); payment is by Direct Debit, debit card, or credit card. The amount of Vehicle Excise Duty depends on the vehicle and is NOT encoded here — it is time-varying (set annually) and computed by DVLA, so it is treated like other time-sensitive pricing (cf. the USPS fee) and looked up against the live source. Because the schema carries no annually-versioned data, it needs no tax-year axis; this resolves the catalog's 'annual axis' caveat for this process and is flagged for Founding Engineer confirmation against the wider time-versioning spec decision. The screen-by-screen field order/labels have not yet been independently captured. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "referenceSource",
+      "label": "Where is your reference number from?",
+      "type": "enum",
+      "required": true,
+      "description": "v11_reminder = a recent vehicle tax reminder or 'last chance' warning letter from DVLA (16-digit reference); v5c_logbook = your vehicle log book (V5C), which must be in your name (11-digit reference); v5c2_new_keeper_slip = the green 'new keeper' slip from a log book if you have just bought the vehicle (12-digit reference).",
+      "sourceRef": "Tax your vehicle — What you'll need",
+      "validation": { "enum": ["v11_reminder", "v5c_logbook", "v5c2_new_keeper_slip"] }
+    },
+    {
+      "name": "referenceNumber",
+      "label": "Reference number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The reference number from the document selected in referenceSource. Lengths differ by source: V11 reminder = 16 digits, V5C log book = 11 digits, V5C/2 new keeper slip = 12 digits. Enter digits only, without spaces.",
+      "sourceRef": "Tax your vehicle — Reference number",
+      "validation": { "pattern": "^[0-9]{11,16}$" }
+    },
+    {
+      "name": "paymentPeriod",
+      "label": "How long do you want to tax the vehicle for?",
+      "type": "enum",
+      "required": true,
+      "description": "single_6_months = one payment covering 6 months; single_12_months = one payment covering 12 months; monthly_direct_debit = pay monthly by Direct Debit. The actual amount for each option is shown by the live service and is not encoded here.",
+      "sourceRef": "Tax your vehicle — Payment period",
+      "validation": { "enum": ["single_6_months", "single_12_months", "monthly_direct_debit"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "How do you want to pay?",
+      "type": "enum",
+      "required": true,
+      "description": "direct_debit = set up a Direct Debit from a bank account (required for the monthly option, also available for 6- or 12-month payments); debit_card or credit_card = a one-off card payment.",
+      "sourceRef": "Tax your vehicle — Payment method",
+      "validation": { "enum": ["direct_debit", "debit_card", "credit_card"] }
+    },
+    {
+      "name": "bankAccountHolderName",
+      "label": "Name on the bank account",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when paymentMethod is 'direct_debit': the name of the account holder authorising the Direct Debit.",
+      "sourceRef": "Tax your vehicle — Direct Debit details",
+      "validation": { "minLength": 1, "maxLength": 140 }
+    },
+    {
+      "name": "bankSortCode",
+      "label": "Sort code",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when paymentMethod is 'direct_debit': UK sort code as six digits, without dashes, e.g. 200000.",
+      "sourceRef": "Tax your vehicle — Direct Debit details",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Account number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when paymentMethod is 'direct_debit': UK account number, normally 8 digits.",
+      "sourceRef": "Tax your vehicle — Direct Debit details",
+      "validation": { "pattern": "^[0-9]{6,8}$" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "identify_vehicle",
+      "title": "Identify the vehicle",
+      "fields": ["referenceSource", "referenceNumber"],
+      "next": "choose_payment"
+    },
+    {
+      "id": "choose_payment",
+      "title": "Choose how long and how to pay",
+      "fields": ["paymentPeriod", "paymentMethod"],
+      "next": "direct_debit_details"
+    },
+    {
+      "id": "direct_debit_details",
+      "title": "Direct Debit details",
+      "fields": ["bankAccountHolderName", "bankSortCode", "bankAccountNumber"]
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "$schema": "https://govschema.org/spec/v0.1/govschema.schema.json",
+  "govschemaVersion": "0.1.0",
+  "id": "gb/dvla/driving-licence-renewal-photocard",
+  "version": "1.0.0",
+  "title": "United Kingdom Photocard Driving Licence Renewal",
+  "description": "Renew a 10-year photocard driving licence in Great Britain using the official DVLA online service. This document describes the driver number, identity, current address, photo source, and declarations the service collects. It does not submit the renewal; the live driver-vehicle-licensing.service.gov.uk source is always authoritative (see VERIFICATION.md). The renewal fee is intentionally not encoded.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/renew-driving-licence",
+    "retrievedAt": "2026-06-30"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-06-30",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2026-12-30",
+    "notes": "Source-derived reference schema authored from the official GOV.UK 'Renew your driving licence' guidance page. The service confirmation, the £14 online fee (intentionally not encoded as data), the residency-of-Great-Britain eligibility, the rule that you cannot renew online if your name or title has changed, and the requirement to return the old photocard were confirmed against the source; individual input fields reflect the known DVLA online flow but the screen-by-screen field order and labels have not yet been independently captured. The new photo is reused from a valid UK passport record where available, otherwise a new photo path applies. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "drivingLicenceNumber",
+      "label": "Driving licence number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The 16-character driver number from the front of the current photocard (field 5).",
+      "sourceRef": "Renew driving licence — Driving licence number",
+      "validation": { "pattern": "^[A-Z9]{5}[0-9]{6}[A-Z9]{2}[0-9][A-Z]{2}$" }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must match the name on the current licence; you cannot renew online if your name has changed.",
+      "sourceRef": "Renew driving licence — Your details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First and middle names",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Renew driving licence — Your details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD.",
+      "sourceRef": "Renew driving licence — Your details"
+    },
+    {
+      "name": "nationalInsuranceNumber",
+      "label": "National Insurance number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Two letters, six digits, and a final letter (A-D), without spaces, e.g. QQ123456C. Speeds up identity confirmation.",
+      "sourceRef": "Renew driving licence — National Insurance number",
+      "validation": { "pattern": "^[A-Z]{2}[0-9]{6}[A-D]$" }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Current address — building and street",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The address your new licence should be sent to.",
+      "sourceRef": "Renew driving licence — Address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "addressLine2",
+      "label": "Current address — second line (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Renew driving licence — Address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "addressTown",
+      "label": "Town or city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Renew driving licence — Address",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "addressPostcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. A UK postcode in uppercase, e.g. SW1A 1AA.",
+      "sourceRef": "Renew driving licence — Address",
+      "validation": { "pattern": "^[A-Z]{1,2}[0-9][0-9A-Z]? ?[0-9][A-Z]{2}$" }
+    },
+    {
+      "name": "photoSource",
+      "label": "Photo for your new licence",
+      "type": "enum",
+      "required": true,
+      "description": "reuse_passport_photo = let DVLA take the photo and signature from a valid UK passport record (provide passportNumber); new_photo = supply a new photo (e.g. at a Post Office or by post) when no usable passport photo is available.",
+      "sourceRef": "Renew driving licence — Photo",
+      "validation": { "enum": ["reuse_passport_photo", "new_photo"] }
+    },
+    {
+      "name": "passportNumber",
+      "label": "UK passport number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when photoSource is 'reuse_passport_photo': the number of a current valid UK passport whose photo and signature DVLA may reuse.",
+      "sourceRef": "Renew driving licence — Use passport photo",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "noNameOrTitleChange",
+      "label": "My name and title have not changed",
+      "type": "boolean",
+      "required": true,
+      "description": "Online renewal is only available if your name or title has not changed. Confirm true to use this service; a name or title change must be handled by post.",
+      "sourceRef": "Renew driving licence — You cannot renew online if your name or title has changed"
+    },
+    {
+      "name": "eyesightAndHealthDeclaration",
+      "label": "I meet the eyesight standard and have declared any notifiable medical conditions",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirm you can meet the legal eyesight requirement and have told DVLA about any medical condition that affects your driving.",
+      "sourceRef": "Renew driving licence — Health declaration"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Your identity",
+      "fields": ["drivingLicenceNumber", "lastName", "firstNames", "dateOfBirth", "nationalInsuranceNumber"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Your address",
+      "fields": ["addressLine1", "addressLine2", "addressTown", "addressPostcode"],
+      "next": "photo"
+    },
+    {
+      "id": "photo",
+      "title": "Photo for your new licence",
+      "fields": ["photoSource", "passportNumber"],
+      "next": "declarations"
+    },
+    {
+      "id": "declarations",
+      "title": "Declarations",
+      "fields": ["noNameOrTitleChange", "eyesightAndHealthDeclaration"]
+    }
+  ]
+}
