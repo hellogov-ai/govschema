@@ -18,7 +18,7 @@ GovSchema document and answers eligibility questions:
    eligible.** A document can mark a field as a gating question
    (`fieldRole: eligibility`, GSP-0014 §2) and an agent can type-check that
    the answer is a `boolean`, but nothing says *which* answer disqualifies.
-   Confirmed by scanning every schema currently in the registry (38 schemas):
+   Confirmed by scanning every schema currently in the registry (40 schemas):
    zero boolean fields set any `validation` constraint today, and
    `us/dos/passport-renewal-ds82` carries six eligibility-role booleans
    (`passportLostOrStolen`, `passportIssuedWithin15Years`, ...) entirely as
@@ -117,10 +117,12 @@ member at all: `{"when": {"field": "passportLostOrStolen", "equals": true},
 "to": null, "exitReason": "..."}`. That is a real, already-accepted
 mechanism — but it exists only for documents that model flow, and the
 **Agent-Ready Schema** maturity tier (GSP-0012) is exactly the tier that
-requires "every real branch ... expressed as `steps[].transitions`." Every
-schema in the registry today predates `spec/v0.3` and none reach that tier
-yet (confirmed: zero registry schemas use `steps[].transitions` or
-`fieldRole` today). `eligibleValues` is not a replacement for the flow-level
+requires "every real branch ... expressed as `steps[].transitions`." Almost
+every schema in the registry predates `spec/v0.3` and does not reach that
+tier: as of this writing exactly one schema,
+`us/irs/employer-identification-number-ss4` (GOV-319, landed after this
+proposal was first drafted), uses `fieldRole`/`steps[].transitions` at all.
+`eligibleValues` is not a replacement for the flow-level
 mechanism; it is a lighter, flow-independent field-level annotation usable
 by schemas below Agent-Ready maturity (the entire registry today), and a
 cheap, directly-on-the-field fact for a consumer that does not want to
@@ -167,11 +169,13 @@ summary-rendering consumer (like GOV-374's demo) can key its masking
 decision off that member with no spec change at all.
 
 Recommend **no new member** for this half of GOV-386. The actual gap is
-adoption, not spec surface: of the 38 schemas currently in the registry,
-only 2 (`us/uscis/permanent-resident-card-replacement-i90`,
-`gb/companies-house/company-incorporation-in01`) set `classification`
-anywhere, and none of the schemas in the registry carrying an SSN- or
-passport-number-shaped field (e.g. DS-82) use it yet. That is a
+adoption, not spec surface: of the 40 schemas currently in the registry,
+**zero** set the `classification` field member anywhere (independently
+verified by walking every `fields[]` entry in the registry, not just
+grepping for the string — two schemas contain the word "classification" in
+unrelated prose, which is not the same thing). None of the schemas in the
+registry carrying an SSN- or passport-number-shaped field (e.g. DS-82) use
+it yet. That is a
 registry-authoring backlog item — going back and setting `classification` on
 the fields GSP-0006's own problem statement named (SSN, passport number,
 date of birth) — not a standards-evolution question, and does not need CEO
