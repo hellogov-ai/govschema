@@ -83,7 +83,7 @@ corrected to match.
 - **Field requiredness for items without an explicit conditional note**
   (e.g. `mothersBirthSurname`, telephone numbers) was inferred from the form's
   layout, not confirmed against an authoritative field-by-field requiredness
-  specification — the REG1 PDF marks conditional items in prose ("if
+  specification. The REG1 PDF marks conditional items in prose ("if
   different", "if applicable") but does not tag every item as strictly
   required or optional.
 - **The MyWelfare online screens themselves** were not reviewed (the service

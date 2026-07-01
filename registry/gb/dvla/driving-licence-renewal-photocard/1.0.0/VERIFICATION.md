@@ -85,7 +85,7 @@ part of the flow.
   service in Northern Ireland"; this document models the GB (England, Scotland,
   Wales) online/Post-Office/post service only. `jurisdiction.level` is
   `national`, matching the `gb/dvla/vehicle-tax` precedent for a GB-wide DVLA
-  process. Northern Ireland residency is not modelled as a field — it is a hard
+  process. Northern Ireland residency is not modelled as a field. It is a hard
   eligibility gate, not a branch within this service.
 - **Renewal only.** A first-ever provisional licence (never previously held one,
   or applied before 1 March 1973) is a separate `apply-first-provisional-driving-licence`
@@ -98,7 +98,7 @@ part of the flow.
 - **Name/title-change identity evidence is out of scope.** A change forces
   `applicationChannel = post` per the source, but the specific identity
   documents required (per `gov.uk/id-for-driving-licence`) are not modelled as
-  fields in this version — that page's branching (UK-passport-number entry,
+  fields in this version. That page's branching (UK-passport-number entry,
   UKVI share code, or a substantial by-post document list with further
   name/gender-change sub-branches) is complex enough to warrant its own review
   pass. A future minor version can add it once independently reviewed.
@@ -107,8 +107,8 @@ part of the flow.
   sources suggests the renewal flow re-collects or re-confirms the applicant's
   address, so no address field is included.
 - **Fees are intentionally not encoded as amounts**, consistent with other
-  reference schemas (e.g. `gb/dvla/vehicle-tax`, `gb/hmpo/passport-application-first-adult`)
-  — DVLA fees change periodically and are out of scope for a field-collection
+  reference schemas (e.g. `gb/dvla/vehicle-tax`, `gb/hmpo/passport-application-first-adult`).
+  DVLA fees change periodically and are out of scope for a field-collection
   schema; they are described qualitatively in field/document descriptions only.
 - **Not time-versioned.** Applying GSP-0005 §2's coexistence test: the process
   does not encode a year-varying value and its "editions" would not meaningfully

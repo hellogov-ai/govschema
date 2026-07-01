@@ -64,7 +64,7 @@ from the "Renew My Driving Licence" page itself (which restates them) and from
 - **Official form ids:** `D501` (Driving Licence Medical Report Form), `D502`
   (Driving Licence Eyesight Report Form). Both are downloadable PDFs referenced
   from the medical-fitness page; neither was itself parsed field-by-field for
-  this version — the report-content facts modelled (Part 1 applicant
+  this version. The report-content facts modelled (Part 1 applicant
   declaration, Part 2 doctor certification, one-month submission window,
   5-year maximum term for Group 2) come from the guidance prose describing them.
 - **Retrieved / reviewed:** 2026-07-01 (Wayback snapshots dated between
@@ -132,7 +132,7 @@ they consult citizensinformation.ie directly.
   physical licence (or photo ID) and PPSN proof, not by re-entering personal
   details as form fields.
 - **Fees are described qualitatively, not encoded as a price list**, consistent
-  with other reference schemas (e.g. `gb/dvla/vehicle-tax`) — NDLS fees change
+  with other reference schemas (e.g. `gb/dvla/vehicle-tax`). NDLS fees change
   periodically and are out of scope for a field-collection schema; the fee
   amounts appear only in field descriptions for context.
 - **Not time-versioned.** Applying GSP-0005 §2's coexistence test: the process
