@@ -30,8 +30,15 @@ portal. It therefore remains `draft`, not `verified`.
     (birth-in-the-UK and born-outside-the-UK evidence branches, parental
     nationality/immigration-status evidence, naturalisation and registration
     evidence)
-  - <https://www.gov.uk/countersigning-passport-applications> (who can confirm
-    identity, eligibility and exclusion rules, passport-holding requirement)
+  - <https://www.gov.uk/confirm-identity-online-for-passport-application> (who
+    can confirm someone's identity online, eligibility and exclusion rules,
+    UK/Irish passport-holding requirement — this, not the countersigning page
+    below, is the correct source for `identityConfirmerFullName`,
+    `identityConfirmerPassportType`, and `identityConfirmerPassportNumber`)
+  - <https://www.gov.uk/countersigning-passport-applications> (the **paper-form**
+    countersignatory process; consulted only for comparison against the online
+    identity-confirmation route above, not cited as a field source in this
+    version)
 - **Official form id:** none for the online channel. HMPO's online first-adult
   service is an authenticated web application with no downloadable, fillable form
   equivalent to the DS-82/ITR-E precedents; a paper-form channel exists (per the
@@ -65,7 +72,7 @@ recorded so consumers weigh its confidence accordingly.
 | Born outside the UK on/after 1 Jan 1983: full birth certificate showing parents' details, passport used to enter the UK, evidence of one parent's British nationality | `nationalityEvidenceRoute = outside_uk_born_on_or_after_1983` (reuses `parentNationalityEvidenceType`) |
 | Applicant name, date of birth, contact/address details collected on the online form | `lastName`, `firstNames`, `dateOfBirth`, `email`, `addressLine1`, `addressTown`, `postcode` |
 | Digital photo uploaded as part of the online application | `photoFile` |
-| Identity confirmer must have known the applicant 2+ years, be able to identify them, and cannot be a relative, partner, or cohabitant; must hold a current British or Irish passport (UK-resident case) and provides their passport number during their own online confirmation step | `identityConfirmerFullName`, `identityConfirmerPassportType`, `identityConfirmerPassportNumber` |
+| Online identity confirmer must be 18+, live in the UK, have known the applicant 2+ years as a friend/neighbour/colleague, and work in (or be retired from) a recognised profession; must hold a current UK or Irish passport; cannot be a relative/partner/cohabitant, cannot work for HMPO or for UKVI on British citizenship/right-of-abode applications, and cannot be a doctor unless a personal friend; enters their own passport number during their own online confirmation step | `identityConfirmerFullName`, `identityConfirmerPassportType`, `identityConfirmerPassportNumber` |
 | Standard 34-page vs 50-page "frequent traveller" passport option; card payment only | `productRequested`, `paymentMethod` |
 
 ## Scope and jurisdiction notes
@@ -76,10 +83,14 @@ recorded so consumers weigh its confidence accordingly.
   toward. A future minor version could add a `applicationChannel` axis if the
   paper channel's fields are independently reviewed.
 - **Identity confirmer scoped to UK residents.** `identityConfirmerPassportType`'s
-  enum covers only `british`/`irish`, which the countersigning guidance states is
-  required "if you are in the UK." A broader set of accepted nationalities applies
-  when the confirmer is resident overseas; that branch was not independently
-  reviewed and is out of scope for this version.
+  enum covers only `british`/`irish`. Per
+  `confirm-identity-online-for-passport-application`, the online
+  identity-confirmation step requires the confirmer to live in the UK and hold
+  a current UK or Irish passport unconditionally — the online flow has no
+  overseas-confirmer branch at all. A broader British/Irish/EU/US/Commonwealth
+  passport list exists only for the separate paper-form countersignatory
+  route (`countersigning-passport-applications`), which is out of scope for
+  this document.
 - **Fees are intentionally not encoded**, consistent with other reference schemas
   (e.g. `gb/dvla/vehicle-tax`, `us/ca/dmv/drivers-license-renewal`) — HMPO fees
   change periodically (most recently under the Passport (Fees) Regulations 2022)
@@ -92,19 +103,25 @@ recorded so consumers weigh its confidence accordingly.
   six-way nationality-evidence branch and the father/marriage-certificate
   condition within it) is documented in field descriptions, per the limitation
   tracked in GSP-0004.
-- **Countersigning source is framed for the paper-form channel.** The
-  "Countersigning passport applications and photos" page is written in
-  paper-form/countersignatory terms ("get your paper form and one of your 2
-  print photos signed"), while this document applies its eligibility facts
-  (2-year acquaintance, relative/partner/cohabitant exclusion, British/Irish
-  passport if UK-resident) to the online identity-confirmer step
-  (`identityConfirmerFullName`, `identityConfirmerPassportType`). Those
-  eligibility facts matched verbatim on source-review, and the online service's
-  own "confirming identity online" sub-page independently confirms the same
-  confirmer completes an online step and enters
-  `identityConfirmerPassportNumber` — but the source page's framing differs
-  from the online flow it is applied to, which is noted here rather than
-  assumed identical.
+- **Identity-confirmer fields are sourced from the online confirmation flow,
+  not the paper countersigning page.** An earlier draft cited
+  `countersigning-passport-applications` for `identityConfirmerFullName` and
+  `identityConfirmerPassportType`, but that page describes the **paper-form**
+  countersignatory process ("get your paper form and one of your 2 print
+  photos signed"). The actual online flow this document models is a separate
+  page, `confirm-identity-online-for-passport-application`, linked from
+  "Apply online" — it was not cited in the original draft. Re-deriving the
+  fields from that page's raw content directly (rather than assuming the
+  paper page's rules carry over) found real differences: the online flow adds
+  an **18+ age gate** and an additional exclusion (cannot work for UK Visas
+  and Immigration on British citizenship or right-of-abode applications) that
+  the paper page does not state; it requires the confirmer to work in, or be
+  retired from, a recognised profession with **no** "person of good standing
+  in their community" alternative (the paper page offers that alternative,
+  the online page does not); and it has no overseas-confirmer branch at all —
+  "live in the UK" is unconditional on the online page, unlike the paper
+  page's separate in-UK/outside-UK passport rules. Field descriptions and
+  `sourceRef`s were corrected to cite the online page instead.
 - **Grandparent evidence and name-change evidence were removed after
   re-derivation.** An earlier draft of this document included
   `grandparentEvidenceRequired`/`grandparentNationalityEvidence` and
@@ -126,9 +143,6 @@ recorded so consumers weigh its confidence accordingly.
   screen text.
 - The **paper-form channel** (£115.50 per the landing page) was not reviewed and
   is excluded from this version.
-- The **overseas identity-confirmer** nationality list (British, Irish, EU, US, or
-  Commonwealth passports, per the countersigning guidance) was not independently
-  confirmed field-by-field and is excluded pending a follow-up review.
 - Whether a separate **place of birth** field is collected on the online form
   (as opposed to being read from the birth certificate) was not confirmed; it is
   omitted here on the assumption HMPO resolves it from the submitted certificate.
