@@ -28,6 +28,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-315) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 | 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
+| 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Proposed (v0.3) — CEO sign-off requested (GOV-318), flagged for deliberate attention |
 
 GSP-0008–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).
@@ -94,6 +95,24 @@ by normal pull-request review (the Review gate) rather than CEO sign-off, per
 violation payload fixtures) and GSP-0014 (document-requiredness fixtures),
 both already accepted; GSP-0011 (`mapping.json`) needed no new blocker since
 it was already accepted. Filed and landed together under GOV-317.
+
+GSP-0017 was drafted per RFC 0003 (GOV-302 §6), the founder-approved design
+RFC for the `spec/v0.3` agent-execution-readiness package, per the founder's
+own interaction answer on GOV-302 leaning normative. It proposes a new
+normative SPEC §14, "Agent conformance and safety boundary," generalizing
+GSP-0011 §13.4's `mapping.json`-only scope-boundary language to every
+GovSchema document and every `docs/agent-consumption.md` consumption layer —
+the six-point MUST/MUST-NOT list on consumer behavior (no-submission-
+authorization, confirm-before-submit, stricter handling for
+`classification`/`identity-document` data, surface `status`/`verification`/
+`maturity` before relying on draft data, no government-endorsement claim,
+uniform application), plus a companion `docs/agent-safety-model.md`. Drafted
+after GSP-0006 and GSP-0012 landed, per RFC 0003 §12's recommended sequencing
+(point 5), since two of the six rules key on `classification` and `maturity`.
+Unlike its schema-shape siblings, this is flagged explicitly for deliberate
+CEO attention beyond the ordinary accept-into-v0.3 review — RFC 0003 §13 Q5
+named it the item "most worth an explicit yes," since it is the first
+GovSchema conformance rule binding consumer *behavior*, not document shape.
 
 ## Considered and rejected
 
