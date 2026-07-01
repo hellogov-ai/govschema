@@ -16,7 +16,7 @@
 > [GSP-0005](../proposals/0005-edition-axis-time-versioned-forms.md). Non-edition
 > schemas are untouched. See VERSIONING.md §4.
 
-> GovSchema is an open, non-profit standard for describing government forms and
+> GovSchema is an open-source standard for describing government forms and
 > processes in a machine-readable way, so that software agents can interact with
 > government services reliably and verifiably. GovSchema is **independent** and is
 > **not** affiliated with or endorsed by any government. GovSchema describes

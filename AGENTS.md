@@ -5,7 +5,7 @@
 > Claude Code and other agents read this automatically; treat it as binding.
 
 ## 1. Mission
-GovSchema is a private, non-profit foundation building the open standards that let
+GovSchema is a private, open-source foundation building the open standards that let
 AI agents interact reliably with government services — DMV systems, passports,
 visas, company formation, and beyond.
 
@@ -29,7 +29,7 @@ same way ISO standards let machines and industries interoperate predictably.
 
 ## 5. Hard Boundaries — NEVER cross these
 - **Not government-affiliated.** Never imply official endorsement by any government
-  or agency. We are independent and non-profit.
+  or agency. We are independent and open-source.
 - **Not an agent product.** We do NOT build or sell an AI agent that fills out forms.
   We build the schema/standard layer agents are built on.
 - **Global from day one.** Not a single-country effort, even if early schemas focus

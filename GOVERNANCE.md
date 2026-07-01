@@ -1,13 +1,13 @@
 # Governance
 
 GovSchema is stewarded by the **GovSchema foundation**, an independent
-non-profit standards body. This document describes how decisions are made. It is
+open-source standards body. This document describes how decisions are made. It is
 modeled on the working style of bodies like the IETF, W3C, and ISO: open,
 documented, and change-controlled — adapted to an early-stage project.
 
 ## Independence and posture
 
-- GovSchema is **independent and non-profit**. It is **not** a government
+- GovSchema is **independent and open-source**. It is **not** a government
   entity and is **not** endorsed by, affiliated with, or certified by any
   government.
 - A GovSchema document **describes** a public government process. It does not
