@@ -1,6 +1,10 @@
 # GovSchema
 
-**Open standards for how AI agents interact with government services.**
+**GovSchema is the trusted, versioned, machine-readable contract that lets AI
+agents understand, validate, and safely prepare government forms and
+workflows — without guessing from webpages, HTML, or PDFs. Open-source and
+independent: it describes and verifies government processes; it does not
+submit them.**
 
 GovSchema publishes versioned, machine-readable **schemas** for government forms
 and processes (DMV systems, passports, visas, company formation, and beyond),
