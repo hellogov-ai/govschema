@@ -1,0 +1,381 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "de/bmi/residence-deregistration",
+  "version": "1.0.0",
+  "title": "Germany Residence Deregistration (Abmeldung)",
+  "description": "Deregister a residence (Wohnung) with the local German registration office (Meldebehörde), using the data model of the Berlin \"Abmeldung bei der Meldebehörde\" form. Deregistration is required only when moving abroad (leaving the dwelling for good, not a temporary stay abroad e.g. for study) or when giving up a main or secondary residence without moving into another dwelling in Germany — a purely domestic move requires only registering (Anmeldung) the new address, which automatically supersedes the old one; see de/bmi/residence-registration. Must be completed no earlier than 7 days before, and no later than 14 days after, moving out. No fee. Submitted in writing (in person at a Bürgeramt, or by post with a copy of an ID card or passport enclosed) — unlike registration, there is no online (EWA) channel for deregistration. This document models the primary registrant only; the form supports up to 3 people per Meldeschein, with additional people using further copies of the form (out of scope here — see GSP-0009). It does not submit the deregistration; the live Meldebehörde source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Meldebehörde (local registration office, e.g. Bürgeramt/Einwohnermeldeamt), under the Bundesmeldegesetz (Federal Registration Act)",
+    "abbreviation": "BMI",
+    "url": "https://www.bmi.bund.de"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://service.berlin.de/dienstleistung/120335/",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Abmeldung bei der Meldebehörde (ABM_Blanko)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema transcribed field-by-field from the official Berlin 'Abmeldung' form PDF, linked directly from Berlin's official service page (service.berlin.de) and fetched with a plain curl request (HTTP 200, no access block). Cross-checked against the service page's own prose for the deregistration-required conditions, the 7-day-before/14-day-after time window, the fee-free status, the in-writing-only submission channel, and the 3-person-per-form limit. Not a time-versioned/edition form: a deregistration is a one-time filing tied to a specific move, not filed 'for' a recurring period, so it is authored at the plain (non-edition) registry path per the GSP-0005 §2 coexistence test. Status remains 'draft' pending full independent field-by-field source review. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "moveOutDate",
+      "label": "Tag des Auszugs (date moved out)",
+      "type": "date",
+      "required": true,
+      "description": "Deregistration must be filed no earlier than 7 days before, and no later than 14 days after, this date.",
+      "sourceRef": "Form field \"Tag des Auszugs\""
+    },
+    {
+      "name": "previousAddressPostalCode",
+      "label": "Bisherige Wohnung — Postleitzahl (previous dwelling — postal code)",
+      "type": "string",
+      "required": true,
+      "description": "The dwelling being given up.",
+      "sourceRef": "Form field \"Postleitzahl, Gemeinde, Ortsteil\" (previous dwelling)",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "previousAddressMunicipality",
+      "label": "Bisherige Wohnung — Gemeinde (previous dwelling — municipality)",
+      "type": "string",
+      "required": true,
+      "description": "The municipality (Gemeinde) of the dwelling being given up.",
+      "sourceRef": "Form field \"Postleitzahl, Gemeinde, Ortsteil\" (previous dwelling)",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "previousAddressDistrict",
+      "label": "Bisherige Wohnung — Ortsteil (previous dwelling — district)",
+      "type": "string",
+      "required": false,
+      "description": "The city district (Ortsteil), where applicable.",
+      "sourceRef": "Form field \"Postleitzahl, Gemeinde, Ortsteil\" (previous dwelling)",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "previousAddressStreet",
+      "label": "Bisherige Wohnung — Straße (previous dwelling — street)",
+      "type": "string",
+      "required": true,
+      "description": "Street name of the dwelling being given up.",
+      "sourceRef": "Form field \"Straße, Hausnummer, Zusätze\" (previous dwelling)",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "previousAddressHouseNumber",
+      "label": "Bisherige Wohnung — Hausnummer (previous dwelling — house number)",
+      "type": "string",
+      "required": true,
+      "description": "House number of the dwelling being given up.",
+      "sourceRef": "Form field \"Straße, Hausnummer, Zusätze\" (previous dwelling)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "previousAddressAdditional",
+      "label": "Bisherige Wohnung — Zusätze (previous dwelling — additional address info)",
+      "type": "string",
+      "required": false,
+      "description": "E.g. building, floor, or apartment number.",
+      "sourceRef": "Form field \"Straße, Hausnummer, Zusätze\" (previous dwelling)",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "previousDwellingType",
+      "label": "Die bisherige Wohnung war (the previous dwelling was)",
+      "type": "enum",
+      "required": true,
+      "description": "sole_dwelling = alleinige Wohnung (the registrant's only dwelling); main_residence = Hauptwohnung; secondary_residence = Nebenwohnung.",
+      "sourceRef": "Form field \"Die bisherige Wohnung war: alleinige Wohnung / Hauptwohnung / Nebenwohnung\"",
+      "validation": { "enum": ["sole_dwelling", "main_residence", "secondary_residence"] }
+    },
+    {
+      "name": "hasFutureGermanDwelling",
+      "label": "Is there a future dwelling to record (e.g. a foreign address, or a German secondary residence being kept)?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, also give the futureAddress* fields. Typically false when leaving Germany entirely with no address to record, or when giving up the sole/only dwelling.",
+      "sourceRef": "Form field \"Künftige Wohnung\" (future dwelling) section"
+    },
+    {
+      "name": "futureAddressCountry",
+      "label": "Künftige Wohnung — Staat, falls Ausland (future dwelling — country, if abroad)",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasFutureGermanDwelling is true and the future address is outside Germany.",
+      "sourceRef": "Form field \"Postleitzahl, Gemeinde/Kreis/Land (falls Ausland: Staat)\" (future dwelling)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "futureAddressPostalCode",
+      "label": "Künftige Wohnung — Postleitzahl (future dwelling — postal code)",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasFutureGermanDwelling is true. German 5-digit postal code, or the foreign equivalent when futureAddressCountry is given.",
+      "sourceRef": "Form field \"Postleitzahl, Gemeinde/Kreis/Land\" (future dwelling)",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "futureAddressMunicipalityOrDistrict",
+      "label": "Künftige Wohnung — Gemeinde/Kreis/Land (future dwelling — municipality/district/state)",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasFutureGermanDwelling is true.",
+      "sourceRef": "Form field \"Postleitzahl, Gemeinde/Kreis/Land\" (future dwelling)",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "futureAddressStreet",
+      "label": "Künftige Wohnung — Straße (future dwelling — street)",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasFutureGermanDwelling is true.",
+      "sourceRef": "Form field \"Straße, Hausnummer, Zusätze\" (future dwelling)",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "futureAddressHouseNumber",
+      "label": "Künftige Wohnung — Hausnummer (future dwelling — house number)",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasFutureGermanDwelling is true.",
+      "sourceRef": "Form field \"Straße, Hausnummer, Zusätze\" (future dwelling)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "futureDwellingAlreadyExisted",
+      "label": "Diese Wohnung hat bereits bestanden (has this dwelling already existed as a registered residence)?",
+      "type": "boolean",
+      "required": false,
+      "description": "Applicable when hasFutureGermanDwelling is true. If true, also give futureDwellingExistedAs.",
+      "sourceRef": "Form field \"Diese Wohnung hat bereits bestanden: nein / ja, als ...\""
+    },
+    {
+      "name": "futureDwellingExistedAs",
+      "label": "... als (existed as)",
+      "type": "enum",
+      "required": false,
+      "description": "Required when futureDwellingAlreadyExisted is true.",
+      "sourceRef": "Form field \"... als Hauptwohnung / Nebenwohnung\"",
+      "validation": { "enum": ["main_residence", "secondary_residence"] }
+    },
+    {
+      "name": "futureDwellingType",
+      "label": "Die künftige Wohnung wird (the future dwelling will be)",
+      "type": "enum",
+      "required": false,
+      "description": "Applicable when hasFutureGermanDwelling is true. sole_dwelling = alleinige Wohnung; main_residence = Hauptwohnung; secondary_residence = Nebenwohnung.",
+      "sourceRef": "Form field \"Die künftige Wohnung wird: alleinige Wohnung / Hauptwohnung / Nebenwohnung\"",
+      "validation": { "enum": ["sole_dwelling", "main_residence", "secondary_residence"] }
+    },
+    {
+      "name": "additionalGermanDwellingAddress",
+      "label": "Weitere Wohnungen (in Deutschland) — Anschrift (additional dwellings in Germany — address)",
+      "type": "string",
+      "required": false,
+      "description": "Only if the registrant keeps or has another dwelling in Germany besides the previous and future dwellings above.",
+      "sourceRef": "Form field \"Weitere Wohnungen (in Deutschland): Anschrift\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "additionalGermanDwellingPreviousType",
+      "label": "Diese Wohnung war (this additional dwelling was)",
+      "type": "enum",
+      "required": false,
+      "description": "Required when additionalGermanDwellingAddress is given.",
+      "sourceRef": "Form field \"Diese Wohnung war: Hauptwohnung / Nebenwohnung\"",
+      "validation": { "enum": ["main_residence", "secondary_residence"] }
+    },
+    {
+      "name": "additionalGermanDwellingFutureType",
+      "label": "Wohnung ist künftig (this additional dwelling will be)",
+      "type": "enum",
+      "required": false,
+      "description": "Required when additionalGermanDwellingAddress is given.",
+      "sourceRef": "Form field \"Wohnung ist künftig: Hauptwohnung / Nebenwohnung\"",
+      "validation": { "enum": ["main_residence", "secondary_residence"] }
+    },
+    {
+      "name": "lastName",
+      "label": "Familienname, ggf. Doktorgrad (family name, doctoral degree if any)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form field \"Familienname, ggf. Doktorgrad\" (person 1)",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "passportName",
+      "label": "Passname (passport name)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. A separate, independently-fillable field on the form for a name as it appears on the registrant's passport, when that differs from the civil family name given in lastName.",
+      "sourceRef": "Form field \"Passname\" (person 1)",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "firstNames",
+      "label": "Vornamen (given names)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Underline the everyday first name (Rufname) if it differs from the first given name, per the form's own instruction.",
+      "sourceRef": "Form field \"Vornamen (Rufnamen unterstreichen)\" (person 1)",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "birthName",
+      "label": "Geburtsname (birth name)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. If different from the current family name.",
+      "sourceRef": "Form field \"Geburtsname\" (person 1)",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "gender",
+      "label": "Geschlecht (gender)",
+      "type": "enum",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Modeled with the same four values (male/female/diverse/unspecified) confirmed for the sibling de/bmi/residence-registration document from a Meldeschein field-tooltip (M/W/D/o.A.), by analogy — this specific Berlin Abmeldung PDF did not expose an equivalent tooltip to independently re-confirm. See VERIFICATION.md.",
+      "sourceRef": "Form field \"Geschlecht\" (person 1)",
+      "validation": { "enum": ["male", "female", "diverse", "unspecified"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Geburtsdatum (date of birth)",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form field \"Tag, Ort, Land der Geburt\" (person 1)"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Geburtsort (place of birth)",
+      "type": "string",
+      "required": true,
+      "description": "City/town of birth.",
+      "sourceRef": "Form field \"Tag, Ort, Land der Geburt\" (person 1)",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Land der Geburt (country of birth)",
+      "type": "string",
+      "required": false,
+      "description": "Given in addition to placeOfBirth only when born outside Germany.",
+      "sourceRef": "Form field \"Tag, Ort, Land der Geburt\" (person 1)",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "religiousAffiliation",
+      "label": "Religionsgesellschaft (religious affiliation)",
+      "type": "string",
+      "required": false,
+      "description": "Recorded for church-tax (Kirchensteuer) purposes; voluntary in practice though shown on the form.",
+      "sourceRef": "Form field \"Religionsgesellschaft\" (person 1)",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "nationality",
+      "label": "Staatsangehörigkeiten (nationality/nationalities)",
+      "type": "string",
+      "required": true,
+      "description": "One or more nationalities, free text.",
+      "sourceRef": "Form field \"Staatsangehörigkeiten\" (person 1)",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "religiousOrArtisticName",
+      "label": "Ordens-, Künstlername (religious order name or artistic pseudonym)",
+      "type": "string",
+      "required": false,
+      "description": "A religious order name or registered artistic pseudonym, if applicable.",
+      "sourceRef": "Form field \"Ordens- Künstlername\" (person 1)",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "identityDocumentCopy",
+      "label": "Copy of ID card or passport",
+      "type": "file",
+      "required": false,
+      "description": "Required when submissionChannel is by_mail: the service page instructs enclosing a copy of the registrant's Personalausweis (ID card) or Reisepass (passport). Not required for in-person submission, where the original is presented instead.",
+      "sourceRef": "service.berlin.de required-documents note: \"Bitte legen Sie eine Kopie von Ihrem Personalausweis oder Reisepass bei.\""
+    },
+    {
+      "name": "submissionChannel",
+      "label": "How the deregistration is submitted",
+      "type": "enum",
+      "required": true,
+      "description": "in_person_at_burgeramt = personal appearance at a Bürgeramt, where the deregistration is completed on the spot. by_mail = the completed form posted to a Bürgeramt with a copy of an ID card or passport enclosed. Unlike registration (de/bmi/residence-registration), there is no online (Elektronische Wohnsitzanmeldung) channel for deregistration.",
+      "sourceRef": "service.berlin.de: \"Bitte schriftlich erledigen. Die Abmeldung kann auch auf dem Postweg erfolgen.\"",
+      "validation": { "enum": ["in_person_at_burgeramt", "by_mail"] }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Datum, Unterschrift (date, signature)",
+      "type": "date",
+      "required": true,
+      "description": "The date of signature by one of the persons subject to the registration duty (Meldepflichtige), or a person holding written custodial/care authorization (Betreuungsvollmacht) on their behalf.",
+      "sourceRef": "Form field \"Datum, Unterschrift eines/einer der Meldepflichtigen oder einer Person mit Betreuungsvollmacht\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "previous_dwelling",
+      "title": "Bisherige Wohnung (previous dwelling)",
+      "fields": [
+        "moveOutDate",
+        "previousAddressPostalCode", "previousAddressMunicipality", "previousAddressDistrict",
+        "previousAddressStreet", "previousAddressHouseNumber", "previousAddressAdditional",
+        "previousDwellingType"
+      ],
+      "next": "future_dwelling"
+    },
+    {
+      "id": "future_dwelling",
+      "title": "Künftige Wohnung (future dwelling)",
+      "fields": [
+        "hasFutureGermanDwelling",
+        "futureAddressCountry", "futureAddressPostalCode", "futureAddressMunicipalityOrDistrict",
+        "futureAddressStreet", "futureAddressHouseNumber",
+        "futureDwellingAlreadyExisted", "futureDwellingExistedAs", "futureDwellingType"
+      ],
+      "next": "additional_dwellings"
+    },
+    {
+      "id": "additional_dwellings",
+      "title": "Weitere Wohnungen in Deutschland (additional dwellings in Germany)",
+      "fields": ["additionalGermanDwellingAddress", "additionalGermanDwellingPreviousType", "additionalGermanDwellingFutureType"],
+      "next": "registrant_details"
+    },
+    {
+      "id": "registrant_details",
+      "title": "Personal details of the registrant",
+      "fields": [
+        "lastName", "passportName", "firstNames", "birthName", "gender", "dateOfBirth", "placeOfBirth",
+        "countryOfBirth", "religiousAffiliation", "nationality", "religiousOrArtisticName"
+      ],
+      "next": "submission"
+    },
+    {
+      "id": "submission",
+      "title": "Submission and signature",
+      "fields": ["identityDocumentCopy", "submissionChannel", "signatureDate"]
+    }
+  ]
+}
