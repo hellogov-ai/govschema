@@ -80,6 +80,32 @@ an edition.
   number) fields — office-use/administrative fields, not applicant-entered
   data.
 
+## Fix-up: independent review finding (GOV-334)
+
+An independent reviewer (Review Engineer) re-derived the field set directly
+from the primary sources — not from this document's own transcription — by
+fetching the Berlin service page and the Abmeldung PDF and parsing the PDF's
+text layer and AcroForm field/annotation objects with `pdfjs-dist`. That
+review confirmed the CI validation, the domestic-move exception, the
+no-online-channel claim, the timing window, the fee-free status, the
+`identityDocumentCopy` rule, the 3-person cap, and the `gender`-enum
+disclosure above, but found one blocking gap:
+
+- **`Passname` is a separate, independently-fillable field on the source
+  PDF**, distinct from `Familienname, ggf. Doktorgrad`, with its own label and
+  its own rect in the AcroForm layer — meaning a registrant whose passport
+  name differs from their civil family name had no field to record it in.
+  Fixed by adding a new optional `passportName` field and narrowing
+  `lastName`'s label/sourceRef to the family-name field alone.
+
+- **Non-blocking parity note (also addressed here):** the PDF's "Weitere
+  Wohnungen (in Deutschland)" section repeats 3 times on the form (like the
+  person 1/2/3 repetition already disclosed above), but this document models
+  only one instance of it, consistent with the primary-registrant-only scope
+  decision. This scope choice was previously undocumented for that
+  specifically; it is now recorded here for parity with the 3-person-per-form
+  disclosure.
+
 ## What was confirmed against the source
 
 - **Process identity and requirement conditions.** Deregistration is required
