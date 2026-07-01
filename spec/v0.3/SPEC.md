@@ -563,9 +563,10 @@ question). Supersedes GSP-0004's step-only sketch; unchanged in shape.*
 ]
 ```
 
-- OPTIONAL alternative to `next` on a step, for branching flow. A step SHOULD
-  carry either `next` or `transitions`, not both — they are two shapes for the same
-  fact (the successor step), and a producer should not assert it twice.
+- OPTIONAL alternative to `next` on a step, for branching flow. A step MAY
+  carry `next` OR `transitions`, **never both** — they are two shapes for the
+  same fact (the successor step), and a producer MUST NOT assert it twice.
+  Enforced by the meta-schema (a step object with both is invalid).
 - Transitions are evaluated **top-to-bottom**; the first entry whose `when`
   matches (or that has no `when` at all) wins. A `when`-less transition is an
   unconditional fallthrough and SHOULD be last.
