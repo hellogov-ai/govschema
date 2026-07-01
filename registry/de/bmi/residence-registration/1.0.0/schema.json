@@ -4,7 +4,7 @@
   "id": "de/bmi/residence-registration",
   "version": "1.0.0",
   "title": "Germany Residence Registration (Anmeldung)",
-  "description": "Register a person's sole or main residence (alleinige Wohnung / Hauptwohnung) with the local registration authority (Meldebehörde) after moving into a dwelling in Germany, as required by the Bundesmeldegesetz (BMG) within 14 days of moving in. Two channels exist nationwide: the federal Elektronische Wohnsitzanmeldung (EWA) online service (BundID account plus eID), and in-person registration at the local Bürgeramt/Einwohnermeldeamt. This document is scoped to a single adult registrant moving into a sole or main residence; it does not cover secondary-residence-only (Nebenwohnung) registration, joint family registration of multiple household members in one submission, deregistration (Abmeldung), or minors registering without a guardian. It does not submit the registration; the live sources are always authoritative (see VERIFICATION.md).",
+  "description": "Register a person's sole or main residence (alleinige Wohnung / Hauptwohnung) with the local registration authority (Meldebehörde) after moving into a dwelling in Germany, as required by the Bundesmeldegesetz (BMG) within 14 days of moving in. Two channels exist: in-person registration at the local Bürgeramt/Einwohnermeldeamt (available throughout Germany), and the federal Elektronische Wohnsitzanmeldung (EWA) online service (BundID account plus eID), which is offered for municipalities to adopt and is rolling out municipality by municipality. This document is scoped to a single adult registrant moving into a sole or main residence; it does not cover secondary-residence-only (Nebenwohnung) registration, joint family registration of multiple household members in one submission, deregistration (Abmeldung), or minors registering without a guardian. It does not submit the registration; the live sources are always authoritative (see VERIFICATION.md).",
   "status": "draft",
   "jurisdiction": {
     "country": "DE",
@@ -196,8 +196,8 @@
       "label": "Gender",
       "type": "enum",
       "required": true,
-      "description": "Personal identifier; handle as sensitive data. The exact set of selectable options printed on the current Meldeschein widget was not independently confirmed (the extracted form only exposed the field's internal name, not its option labels); modelled here as male/female/diverse/unspecified per German civil-status law (Personenstandsgesetz §22, in force since 2019), which the registration data model is understood to follow. See VERIFICATION.md.",
-      "sourceRef": "\"Geschlecht\"",
+      "description": "Personal identifier; handle as sensitive data. Options are confirmed from the Munich Meldeschein PDF's own field tooltip (`/TU` on the `geschl` field, UTF-16BE): M (männlich) = male; W (weiblich) = female; D (divers) = diverse; o.A. (ohne Angabe) = unspecified. The 'divers'/no-entry option follows Personenstandsgesetz §22 Abs. 3 (in force since 2019). See VERIFICATION.md.",
+      "sourceRef": "\"Geschlecht\" (geschl; codes M/W/D/o.A.)",
       "validation": { "enum": ["male", "female", "diverse", "unspecified"] }
     },
     {
@@ -255,16 +255,20 @@
       "label": "Marital status",
       "type": "enum",
       "required": true,
-      "description": "Personal identifier; handle as sensitive data. The enum below reflects the marital-status categories generally used on German civil-status/registration forms; the exact option labels on the current Meldeschein widget were not independently confirmed field-by-field (see gender's caveat and VERIFICATION.md).",
-      "sourceRef": "\"Familienstand\"",
+      "description": "Personal identifier; handle as sensitive data. The full official code set is enumerated on the Munich Meldeschein PDF's own field tooltip (`/TU` on the `famst` field, UTF-16BE): LD (ledig) = single; VH (verheiratet) = married; VW (verwitwet) = widowed; GS (geschieden) = divorced; LP (eingetragene Lebenspartnerschaft) = registered_civil_partnership; LV (Lebenspartner verstorben) = civil_partner_deceased; LA (Lebenspartnerschaft aufgehoben) = civil_partnership_dissolved; EA (Ehe aufgehoben) = marriage_annulled; LE (Lebenspartner für tot erklärt) = civil_partner_declared_dead; NB (nicht bekannt) = unknown. Enum values are ordered to match the form's own code sequence.",
+      "sourceRef": "\"Familienstand\" (famst; codes LD/VH/VW/GS/LP/LV/LA/EA/LE/NB)",
       "validation": {
         "enum": [
           "single",
           "married",
-          "registered_civil_partnership",
-          "civil_partnership_dissolved",
           "widowed",
-          "divorced"
+          "divorced",
+          "registered_civil_partnership",
+          "civil_partner_deceased",
+          "civil_partnership_dissolved",
+          "marriage_annulled",
+          "civil_partner_declared_dead",
+          "unknown"
         ]
       }
     },
@@ -273,9 +277,9 @@
       "label": "Identity document type",
       "type": "enum",
       "required": true,
-      "description": "personalausweis = Personalausweis (German national ID card); reisepass = Reisepass (passport); kinderreisepass = Kinderreisepass (children's passport); other = a national passport, replacement travel document, or residence-title document (for non-German nationals) or another document code seen on some municipalities' Meldeschein templates that was not independently confirmed.",
-      "sourceRef": "\"Art\" (document type: PA / RP / KRP / ...)",
-      "validation": { "enum": ["personalausweis", "reisepass", "kinderreisepass", "other"] }
+      "description": "Codes are those enumerated on the Munich Meldeschein PDF (`/Opt` array plus the `/TU` tooltip on the Pass-/Ausweisdaten field): personalausweis = PA (Personalausweis, German national ID card); reisepass = RP (Reisepass, passport); kinderreisepass = KRP (Kinderreisepass, children's passport); kinderausweis = KA (Kinderausweis, older children's ID); ankunftsnachweis = AKN (Ankunftsnachweis, asylum-seeker's arrival certificate). other = a national passport, replacement travel document, or residence-title document held by a non-German national, which the in-person Bürgeramt process accepts but which does not appear as a distinct code on the Munich form.",
+      "sourceRef": "\"Art\" (document type: PA / RP / KRP / KA / AKN)",
+      "validation": { "enum": ["personalausweis", "reisepass", "kinderreisepass", "kinderausweis", "ankunftsnachweis", "other"] }
     },
     {
       "name": "identityDocumentIssuingAuthority",
@@ -316,7 +320,7 @@
       "label": "Registration channel",
       "type": "enum",
       "required": true,
-      "description": "online_ewa = the federal Elektronische Wohnsitzanmeldung (EWA) service, restricted to registrants aged 18+ who are German or EU citizens, moving within Germany, and hold a BundID account plus an eID-enabled Personalausweis/eID card and PIN; in_person = an appointment at the Bürgeramt/Einwohnermeldeamt, open to any nationality from age 16 (a legal guardian registers a child under 16). The EWA online channel is rolling out city by city rather than nationwide on day one.",
+      "description": "online_ewa = the federal Elektronische Wohnsitzanmeldung (EWA) service, restricted to registrants aged 18+ who are German or EU citizens, moving within Germany, and hold a BundID account plus an eID-enabled Personalausweis/eID card and PIN; in_person = an appointment at the Bürgeramt/Einwohnermeldeamt, open to any nationality from age 16 (a legal guardian registers a child under 16). The EWA online channel is offered for municipalities to adopt (the federal Einer-für-alle/Nachnutzung principle) and is rolling out municipality by municipality, so it is not yet uniformly available everywhere.",
       "sourceRef": "\"Online-Anmeldung\" / \"Anmeldung vor Ort im Bürgeramt\"",
       "validation": { "enum": ["online_ewa", "in_person"] }
     },

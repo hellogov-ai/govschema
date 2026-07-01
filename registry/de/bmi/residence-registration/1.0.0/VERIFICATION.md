@@ -61,15 +61,18 @@ document-type enumerations) it was implicitly built against.
 - **Structural confirmation (official form, different Land):** the City of
   Munich's official fillable Meldeschein PDF
   (`stadt.muenchen.de/dam/jcr:15cee8cc-bd9a-46f0-9c4b-052766dc547f/anmeldung_meldebehorde.pdf`,
-  retrieved 2026-07-01, HTTP 200). Its AcroForm field names and tooltip
-  (`/TU`) text were extracted directly from the PDF's decompressed content
-  streams (same zlib-decompress + parenthesized-string method used previously
-  for the ITR-E and SA100 PDFs) and confirm: the multi-person Sections 1-5
-  structure (this document scopes to Section 1/one registrant only), the
-  identity-document type codes `PA`/`RP`/`KRP` (+ two further codes, `KA` and
-  `AKN`, whose exact meaning was **not** independently confirmed — see below),
-  and the presence of birth-place/date, nationality, gender, marital-status,
-  and religion fields matching the Berlin-sourced field list.
+  retrieved 2026-07-01, HTTP 200). Its AcroForm field names, `/Opt` option
+  arrays, and tooltip (`/TU`) text were extracted directly from the PDF's
+  decompressed content streams (zlib-decompress; the `/TU` values are
+  **UTF-16BE hex strings** — `<FEFF…>` — and must be decoded as UTF-16BE, not
+  read as Latin-1 parenthesized strings, which is why an earlier pass missed
+  the enumerated option lists). This confirms directly, from the form's own
+  text: the multi-person Sections 1-5 structure (this document scopes to
+  Section 1/one registrant only); the identity-document type codes
+  `PA`/`RP`/`KRP`/`KA`/`AKN` and their expansions (see below); the full
+  marital-status and gender code sets (see below); and the presence of
+  birth-place/date, nationality, and religion fields matching the
+  Berlin-sourced field list.
 - **Retrieved / reviewed:** 2026-07-01
 - **Reviewer:** GovSchema Engineering (initial authoring source-review)
 
@@ -88,6 +91,26 @@ From `service.berlin.de/dienstleistung/120686/` (fetched and read in full):
 | "Gebühren: keine" (no fee) | not modelled as a field (consistent with `us/usps/change-of-address`'s deliberately-unencoded fee) |
 | "Durchschnittliche Bearbeitungszeit: sofort" (immediate) | informational only, not modelled |
 | Legal basis: BMG §17 Abs. 1 u. 3 (An-/Abmeldung), §21 Abs. 4 (mehrere Wohnungen), §23 (Erfüllung der Meldepflicht), §23a Abs. 2 u. 3 (elektronische Anmeldung), §24 Abs. 1 (Datenerhebung, Meldebestätigung), §27 (Ausnahmen) | cited in schema description; exemption cases (short stays, communal service accommodation) recorded qualitatively, not modelled as fields, since this document assumes the registrant is in scope |
+
+### Enum option codes — confirmed directly from the Munich PDF `/TU` tooltips
+
+The Munich Meldeschein PDF's per-field tooltips (UTF-16BE `/TU` strings)
+enumerate the official code sets verbatim. Decoded directly:
+
+- **`maritalStatus` (`famst` field)** — *"Hier ist der personenstandsrechtliche
+  Familienstand anzugeben:"* — LD = ledig, VH = verheiratet, VW = verwitwet,
+  GS = geschieden, LP = eingetragene Lebenspartnerschaft, LV = Lebenspartner
+  verstorben, LA = Lebenspartnerschaft aufgehoben, EA = Ehe aufgehoben, LE =
+  Lebenspartner für tot erklärt, NB = nicht bekannt. All **ten** are modelled
+  in the schema's `maritalStatus` enum (an earlier draft carried only six).
+- **`gender` (`geschl` field)** — M = männlich, W = weiblich, o.A. = ohne
+  Angabe, D = divers (with the §22 Abs. 3 PStG note). Modelled as
+  male/female/unspecified/diverse.
+- **`identityDocumentType` (Pass-/Ausweisdaten field, `/Opt` + `/TU`)** — PA =
+  Personalausweis, RP = Reisepass, KRP = Kinderreisepass, KA = Kinderausweis,
+  AKN = Ankunftsnachweis. All five are modelled as explicit enum values; `other`
+  is retained for non-German-national documents (foreign passport, residence
+  title) that the Bürgeramt accepts but that carry no distinct Munich-form code.
 
 From `wohnsitzanmeldung.gov.de` (EWA explainer): the three-phase online flow
 (data entry incl. optional family co-registration → authority review and
@@ -111,21 +134,13 @@ field names.
 
 ## What is NOT yet independently verified
 
-- **`gender` and `maritalStatus` option labels.** The Munich PDF's extracted
-  content streams exposed field *names* (`geschl1`, `famst1`, …) and tooltips,
-  but not the printed option-button labels themselves (these appear to live in
-  per-widget appearance-state names rather than literal `Tj`/`TJ` text, and
-  were not recovered by this extraction method). `gender`'s four-value enum
-  and `maritalStatus`'s six-value enum are modelled from general knowledge of
-  German civil-status law (Personenstandsgesetz §22, in force since 2019, which
-  added a third/"divers" gender option) and secondary-source paraphrases,
-  **not** a direct read of the form's own printed labels. A future revision
-  should confirm the exact wording against a filled specimen or an official
-  field-value list before promoting to `verified`.
-- **Two identity-document codes on the Munich form, `KA` and `AKN`,** appear
-  alongside the confirmed `PA`/`RP`/`KRP` codes but their expansions were not
-  independently confirmed; they are folded into `identityDocumentType`'s
-  `other` value rather than guessed at.
+- **Whether the exact enum wording matches every Land's template.** The
+  `gender`, `maritalStatus`, and `identityDocumentType` code sets are now
+  confirmed **directly** from the Munich Meldeschein PDF's own `/TU` tooltips
+  (decoded as UTF-16BE; see the confirmed-enum block above), superseding the
+  earlier "modelled from general knowledge" hedge. What remains open is only
+  whether other Länder's templates use an identical code set — the same
+  cross-template caveat noted just below, not a gap in the Munich source read.
 - **Whether the field set is truly nationally uniform.** The Bundesmeldegesetz
   sets the registration *data model* federally, and the Allgemeine
   Verwaltungsvorschrift zur Durchführung des BMG (BMGVwV) that Berlin cites
@@ -134,10 +149,17 @@ field names.
   Munich templates as representative exemplars (same convention as
   `us/ca/dmv/*` for US state DMVs), not as proof every Land's template is
   byte-identical.
-- The **EWA online channel's city-by-city rollout list** was not captured; the
-  federal source states availability in "nine of the ten largest German
-  cities" as of the retrieval date but does not enumerate them, so `channel`
-  is modelled as a flat enum without a jurisdiction-availability gate.
+- The **EWA online channel's per-municipality availability** is not modelled.
+  The federal EWA site frames the service as a joint BMI/city project offered
+  for municipalities to adopt (the "Einer für Alle" / Nachnutzung principle),
+  rolling out municipality by municipality rather than being uniformly live
+  everywhere on day one; it does not publish a machine-readable list of
+  currently-live municipalities on the pages reviewed (home, FAQ, Über uns,
+  Leistungsbeschreibung, service-description, step-by-step). `channel` is
+  therefore modelled as a flat enum without a jurisdiction-availability gate.
+  (An earlier draft cited a specific "nine of the ten largest German cities"
+  figure; that figure could not be located on any reviewed page and has been
+  removed as unsupported.)
 - Postal-code, and other string length limits are GovSchema conventions (5-digit
   German PLZ format is a well-established public fact), not citations of a
   published field-length rule.
@@ -163,10 +185,14 @@ field names.
 ## Path to a `verified` claim (next step)
 
 To advance to `status: verified`, a reviewer applies `manual-source-review-v1`
-(Procedure step 2) field-by-field against a filled specimen or an
-authoritative field-value list for the `gender`/`maritalStatus` enums
-specifically, confirms EWA city coverage if that becomes a modelled field, and
-records the outcome here with a current `verification.lastVerifiedAt`.
+(Procedure step 2) field-by-field against the live online (EWA) and in-person
+Bürgeramt flows — the address/name/document field groups still rest primarily
+on the two expat-guide transcriptions cross-checked against the Munich
+AcroForm field names, not a direct read of the live Berlin form's field list.
+The `gender`/`maritalStatus`/`identityDocumentType` enum codes are now
+confirmed directly from the Munich PDF tooltips and no longer block promotion.
+Confirm EWA per-municipality coverage if that ever becomes a modelled field,
+and record the outcome here with a current `verification.lastVerifiedAt`.
 
 ## Re-verification
 
