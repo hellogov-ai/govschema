@@ -36,7 +36,7 @@ specification line is explicitly pre-stable (`v0.x`).
 | [`registry/`](./registry) | All published schemas, one immutable directory per version.    |
 | [`discovery/`](./discovery) | The discovery catalog — a prioritized backlog of processes to schematize next. |
 | [`practices/`](./practices) | Verification practices — documented methods for confirming a schema matches its source. |
-| [`tools/`](./tools) | Tooling to validate schemas (zero-dependency, CI-ready).             |
+| [`tools/`](./tools) | Tooling to validate schemas (zero-dependency, CI-ready), plus an optional reference client and MCP server for agent consumption. |
 | [`site/`](./site) | The landing/marketing site — a data-driven static generator (zero-dependency). |
 | [`VERSIONING.md`](./VERSIONING.md) | How the spec and each schema are versioned.            |
 | [`GOVERNANCE.md`](./GOVERNANCE.md) | How decisions are made.                                |
