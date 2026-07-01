@@ -17,7 +17,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0003 | [Labelled enum options](./0003-labelled-enum-options.md) | Proposed (v0.2) |
 | 0004 | [Conditional flow](./0004-conditional-flow.md) | Superseded by GSP-0013 |
 | 0005 | [Edition / tax-year axis for time-versioned forms](./0005-edition-axis-time-versioned-forms.md) | Accepted — Option C, for v0.2 |
-| 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Proposed (v0.2 candidate) |
+| 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-313) |
 | 0007 | [File field constraints (`maxBytes`, `mediaTypes`)](./0007-file-field-constraints.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-314) |
 | 0008 | [`datetime` scalar type](./0008-datetime-scalar.md) | Proposed (v0.2 candidate) |
 | 0009 | [Composite & repeating values — structured `object` + `array`](./0009-composite-repeating-values.md) | Proposed (v0.2 candidate) — ⚠ one-way-door, CEO flag |
@@ -52,6 +52,12 @@ GSP-0014 (documents) needs its `maxBytes`/`mediaTypes` shape for
 `documents[].constraints`. No redesign — individual accept-into-v0.3 sign-off
 was recorded 2026-07-01 (GOV-314). It remains usable standalone on plain
 `type: file` fields, independent of `documents[]`.
+
+GSP-0006 was also originally a `spec/v0.2` candidate (GOV-62); RFC 0003
+recommended pulling it forward alongside the `spec/v0.3` package, since
+GSP-0014 (`documents[].category: identity-document`) and GSP-0017 (the safety
+model's stricter-handling rule) both key on `classification`. No redesign —
+individual accept-into-v0.3 sign-off was recorded 2026-07-01 (GOV-313).
 
 ## Considered and rejected
 

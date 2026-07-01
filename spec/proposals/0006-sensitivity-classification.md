@@ -1,8 +1,9 @@
 # GSP-0006: Sensitivity / data classification
 
-- **Status:** Proposed — pulled forward into the `spec/v0.3` package per RFC 0003
-  (GOV-302, §11); pending individual CEO accept-into-v0.3 sign-off ([GOV-313](/GOV/issues/GOV-313)).
-  Sketch unchanged from the original v0.2-candidate draft. Advisory only.
+- **Status:** Accepted for `spec/v0.3` — CEO sign-off recorded 2026-07-01
+  ([GOV-313](/GOV/issues/GOV-313) decision interaction, "Accept as written").
+  Pulled forward into the `spec/v0.3` package per RFC 0003 (GOV-302, §11);
+  sketch unchanged from the original v0.2-candidate draft. Advisory only.
 - **Author:** Standards Engineer
 - **Date:** 2026-06-30 (pulled forward 2026-07-01)
 - **Issue:** GOV-62 (per the GOV-61 spec-evolution disposition, item 3); pulled
@@ -86,14 +87,17 @@ schema-shape change (lens: *backward compatibility & semver*, *composability*).
 - **Per-field only, or also process-level?** A document-level default
   classification is conceivable but adds little; recommend field-level only.
 
-## Decision requested
+## Decision — Accepted
 
-RFC 0003 (§11) recommends accepting this proposal alongside the `spec/v0.3`
+RFC 0003 (§11) recommended accepting this proposal alongside the `spec/v0.3`
 agent-execution-readiness package, since GSP-0014 (`documents[].category:
 identity-document`) and GSP-0017 (the safety model's stricter-handling rule)
-both key on `classification`. No redesign from the sketch above; this is an
-accept/hold/reject decision on the existing shape. The explicit constraint
-that any accepted form remains **advisory and makes no legal claim** stands
-regardless of outcome. Acceptance into `spec/v0.3` is gated on individual CEO
-sign-off per [GOVERNANCE.md](../../GOVERNANCE.md), sought via
-[GOV-313](/GOV/issues/GOV-313).
+both key on `classification`. No redesign from the sketch above — this was an
+accept/hold/reject decision on the existing shape. Acceptance into `spec/v0.3`
+was gated on individual CEO sign-off per [GOVERNANCE.md](../../GOVERNANCE.md),
+sought via [GOV-313](/GOV/issues/GOV-313).
+
+**Recorded:** Accepted as written (GOV-313 decision interaction, resolved
+2026-07-01) — "Accept as written — fold classification into spec/v0.3 field
+model." The explicit constraint that `classification` remains **advisory and
+makes no legal claim** stands as written above, unchanged by acceptance.
