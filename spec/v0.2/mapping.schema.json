@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://govschema.org/spec/v0.2/mapping.schema.json",
+  "title": "GovSchema Field-to-Page-Element Mapping",
+  "description": "Meta-schema for mapping.json: an OPTIONAL companion artifact, sibling to a schema.json (never a member inside it), that maps a schema's field names to candidate locator signals on the live web page presenting the form (GSP-0011). Descriptive only: it says where a value for a named field goes on the page. It MUST NOT describe how to submit, navigate, or auto-complete the form — there are no members here for a submission endpoint, a next/navigation locator, or autofill/auto-submit sequencing, and additionalProperties:false throughout makes that boundary structural, not just documented. Absence of a mapping.json has no effect on the sibling schema.json's conformance to the GovSchema Document meta-schema. This is a standards artifact published by the GovSchema foundation; it does not imply endorsement by any government.",
+  "type": "object",
+  "required": ["$schema", "mappingVersion", "schema", "source", "verification", "fields"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "URI of the GovSchema mapping meta-schema this document conforms to."
+    },
+    "mappingVersion": {
+      "$ref": "#/$defs/semver",
+      "description": "Semantic version of THIS mapping artifact. Independent of the sibling schema's `version` — a mapping is re-versioned when locators change (a site redesign) even though the schema's fields, types, and rules did not, and vice versa. See GSP-0011 'Volatility mismatch'."
+    },
+    "schema": {
+      "type": "object",
+      "description": "Back-reference to the sibling GovSchema document this mapping describes. Redundant with the directory path by design (defense in depth, and it lets a mapping.json be validated in isolation without re-deriving its path).",
+      "required": ["id", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(/[a-z0-9-]+){2,}$",
+          "description": "MUST equal the sibling schema.json's `id`."
+        },
+        "version": {
+          "$ref": "#/$defs/semver",
+          "description": "MUST equal the sibling schema.json's `version`."
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "The live web page a browser-driving agent loads to resolve these locators.",
+      "required": ["url"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "description": "Record of how and when these locators were last confirmed to resolve on the live page. Structurally similar to but independent of the sibling schema's `verification` block: a schema's `status: verified` is a claim about legal-content fidelity; this is a claim about DOM/selector freshness. The two MUST NOT be conflated. See practices/.",
+      "required": ["method", "lastVerifiedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "Identifier of the selector-freshness verification practice used. Example: selector-probe-v1"
+        },
+        "lastVerifiedAt": { "type": "string", "format": "date" },
+        "nextReviewBy": { "type": "string", "format": "date" },
+        "notes": { "type": "string" }
+      }
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/mappedField" }
+    }
+  },
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-.]+)?(?:\\+[0-9A-Za-z-.]+)?$"
+    },
+    "mappedField": {
+      "type": "object",
+      "required": ["name", "locators"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9_]*$",
+          "description": "MUST resolve to a field `name` defined in the sibling schema.json's `fields` (referential integrity, enforced by tooling — see SPEC.md). mapping.json MAY omit fields with no stable page presence; the converse (every schema field has a mapping entry) is not required."
+        },
+        "locators": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Ordered list of candidate locator signals, tried in order by a consuming agent until one resolves. No single signal is authoritative or guaranteed stable.",
+          "items": { "$ref": "#/$defs/locator" }
+        }
+      }
+    },
+    "locator": {
+      "type": "object",
+      "required": ["signal", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "signal": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Locator signal kind. Open vocabulary (new signals may be added without a breaking change). Recommended, in fallback order (most to least resilient to a redesign): label-text, aria-label, name-attr, id-attr, css-selector, xpath."
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The literal text, attribute value, selector, or expression for this signal."
+        }
+      }
+    }
+  }
+}
