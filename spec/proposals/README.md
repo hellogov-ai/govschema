@@ -17,18 +17,27 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0003 | [Labelled enum options](./0003-labelled-enum-options.md) | Proposed (v0.2) |
 | 0004 | [Conditional flow](./0004-conditional-flow.md) | Superseded by GSP-0013 |
 | 0005 | [Edition / tax-year axis for time-versioned forms](./0005-edition-axis-time-versioned-forms.md) | Accepted — Option C, for v0.2 |
-| 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Accepted — for v0.3, CEO sign-off recorded 2026-07-01 (GOV-313) |
-| 0007 | [File field constraints (`maxBytes`, `mediaTypes`)](./0007-file-field-constraints.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-314) |
+| 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Folded into `spec/v0.3` (GOV-373) — CEO sign-off recorded 2026-07-01 (GOV-313) |
+| 0007 | [File field constraints (`maxBytes`, `mediaTypes`)](./0007-file-field-constraints.md) | Folded into `spec/v0.3` (GOV-373) — CEO sign-off recorded 2026-07-01 (GOV-314) |
 | 0008 | [`datetime` scalar type](./0008-datetime-scalar.md) | Proposed (v0.2 candidate) |
 | 0009 | [Composite & repeating values — structured `object` + `array`](./0009-composite-repeating-values.md) | Proposed (v0.2 candidate) — ⚠ one-way-door, CEO flag |
 | 0010 | [Namespaced `extensions`](./0010-namespaced-extensions.md) | Proposed (v0.2 candidate) |
 | 0011 | [Field-to-page-element mapping (companion `mapping.json`)](./0011-field-page-element-mapping.md) | Accepted — new registry artifact type, CEO sign-off recorded 2026-07-01 |
-| 0012 | [Schema maturity levels (badge model)](./0012-schema-maturity-levels.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-316) |
-| 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Accepted — for v0.3, CEO sign-off recorded 2026-07-01 (GOV-312) |
-| 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-315) |
+| 0012 | [Schema maturity levels (badge model)](./0012-schema-maturity-levels.md) | Folded into `spec/v0.3` (GOV-373) — CEO sign-off recorded 2026-07-01 (GOV-316) |
+| 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Folded into `spec/v0.3` (GOV-373) — CEO sign-off recorded 2026-07-01 (GOV-312) |
+| 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Folded into `spec/v0.3` (GOV-373) — CEO sign-off recorded 2026-07-01 (GOV-315) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 | 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
 | 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-318) |
+
+GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
+above whose acceptance record explicitly deferred that step (GSP-0006, GSP-0007,
+GSP-0012, GSP-0013, GSP-0014): `spec/v0.3/govschema.schema.json` and
+`spec/v0.3/SPEC.md` now exist as an additive MINOR over `spec/v0.2`, and
+`tools/validate-ajv.mjs` validates documents targeting the `0.3` line. This is
+the prerequisite the EIN/SS-4 flagship (GOV-319) needed before any of its
+deliverables could be authored. GSP-0015/0016/0017 remain out of scope for this
+fold-in (see their own paragraphs below).
 
 GSP-0008–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).

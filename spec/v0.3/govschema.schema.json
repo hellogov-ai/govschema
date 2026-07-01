@@ -1,0 +1,638 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "title": "GovSchema Document",
+  "description": "Meta-schema for a GovSchema document: a versioned, machine-readable definition of a government form or process. v0.3 is an additive MINOR over v0.2: every conforming v0.2 document is also a conforming v0.3 document. It folds in five already-accepted proposals: GSP-0006 (field `classification`), GSP-0007 (file `validation.maxBytes`/`mediaTypes`), GSP-0012 (`maturity`), GSP-0013 (the shared `Condition` grammar, field `visibleWhen`/`requiredWhen`, `crossFieldValidation`, `exclusivityGroups`, `steps[].transitions`/`exitReason`), and GSP-0014 (`documents[]`, field `fieldRole`). This is a standards artifact published by the GovSchema foundation; it does not imply endorsement by any government.",
+  "type": "object",
+  "required": [
+    "$schema",
+    "govschemaVersion",
+    "id",
+    "version",
+    "title",
+    "status",
+    "jurisdiction",
+    "authority",
+    "source",
+    "verification",
+    "fields"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "URI of the GovSchema meta-schema this document conforms to."
+    },
+    "govschemaVersion": {
+      "type": "string",
+      "$ref": "#/$defs/semver",
+      "description": "Version of the GovSchema specification this document targets."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]{2}(/[a-z0-9-]+){2,}$",
+      "description": "Registry identifier, equal to the document's path under registry/ (excluding version). Lowercase, slash-separated, starting with an ISO 3166-1 alpha-2 country code. Example: us/ca/dmv/vehicle-registration-renewal"
+    },
+    "version": {
+      "type": "string",
+      "$ref": "#/$defs/semver",
+      "description": "Semantic version of THIS schema. See VERSIONING.md for what MAJOR/MINOR/PATCH mean for a schema."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "verified", "deprecated"],
+      "description": "Lifecycle status. 'verified' requires a current verification record matching the live source."
+    },
+    "jurisdiction": {
+      "type": "object",
+      "required": ["country", "level"],
+      "additionalProperties": false,
+      "properties": {
+        "country": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code (uppercase)."
+        },
+        "subdivision": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$",
+          "description": "ISO 3166-2 subdivision code, when the process is subnational. Example: US-CA"
+        },
+        "level": {
+          "type": "string",
+          "enum": ["national", "subnational", "municipal", "supranational"]
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "abbreviation": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "process": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["application", "registration", "renewal", "amendment", "filing", "request", "other"]
+        },
+        "language": {
+          "type": "string",
+          "description": "BCP-47 language tag of the source form. Example: en-US"
+        }
+      }
+    },
+    "edition": {
+      "$ref": "#/$defs/edition",
+      "description": "OPTIONAL temporal axis for time-versioned forms. A new tax/award year is a new EDITION, not a SemVer version bump; editions coexist (§5.7). When present, the document is stored at registry/<id>/<edition.label>/<version>/schema.json and edition.label MUST equal the <edition> path segment (§10 rule 6). See GSP-0005."
+    },
+    "source": {
+      "type": "object",
+      "description": "The live government source this schema was derived from.",
+      "required": ["url", "retrievedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+        "retrievedAt": { "type": "string", "format": "date" },
+        "documentRef": {
+          "type": "string",
+          "description": "Official form number or document reference, when one exists. Example: REG 156"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "description": "Record of how and when this schema was confirmed against the live source. See practices/ for methods.",
+      "required": ["method", "lastVerifiedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "Identifier of the verification practice used. Example: manual-source-review-v1"
+        },
+        "lastVerifiedAt": { "type": "string", "format": "date" },
+        "verifiedBy": { "type": "string" },
+        "nextReviewBy": { "type": "string", "format": "date" },
+        "notes": { "type": "string" }
+      }
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX or Creative Commons identifier under which this schema content is published. Example: CC-BY-4.0"
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/field" }
+    },
+    "steps": {
+      "type": "array",
+      "description": "Optional ordered description of the process flow.",
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "documents": {
+      "type": "array",
+      "minItems": 1,
+      "description": "OPTIONAL array of document/payment/attestation requirements the applicant must satisfy, sibling to `fields`. GSP-0014 §1.",
+      "items": { "$ref": "#/$defs/document" }
+    },
+    "crossFieldValidation": {
+      "type": "array",
+      "minItems": 1,
+      "description": "OPTIONAL array of rules validating agreement between two or more fields (e.g. an end date not before a start date). GSP-0013 §3.",
+      "items": { "$ref": "#/$defs/crossFieldValidationRule" }
+    },
+    "exclusivityGroups": {
+      "type": "array",
+      "minItems": 1,
+      "description": "OPTIONAL array of mutually-exclusive boolean-field groups: at most one field in a group may be set (true) at once. GSP-0013 §5.",
+      "items": { "$ref": "#/$defs/exclusivityGroup" }
+    },
+    "maturity": {
+      "$ref": "#/$defs/maturity",
+      "description": "OPTIONAL schema maturity badge: how far along the execution-readiness path this document is, orthogonal to `status`. GSP-0012."
+    }
+  },
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-.]+)?(?:\\+[0-9A-Za-z-.]+)?$"
+    },
+    "edition": {
+      "type": "object",
+      "required": ["scheme", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "type": "string",
+          "enum": ["us-tax-year", "gb-tax-year", "award-year"],
+          "description": "The kind of edition cycle. us-tax-year: US calendar tax year (e.g. 2025). gb-tax-year: UK tax year running 6 Apr to 5 Apr (e.g. 2024-25). award-year: financial-aid award year (e.g. 2025-26). The vocabulary is extensible via an additive spec MINOR; additionalProperties:false here means a new scheme requires an explicit add."
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "description": "The edition key, e.g. 2025 or 2024-25. MUST equal the <edition> registry path segment (SPEC §10 rule 6)."
+        }
+      }
+    },
+    "fieldName": {
+      "type": "string",
+      "pattern": "^[a-z][a-zA-Z0-9_]*$"
+    },
+    "field": {
+      "type": "object",
+      "required": ["name", "label", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/fieldName",
+          "description": "Stable machine key for the field."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-facing label as it appears on the source form."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "integer", "boolean", "date", "enum", "file", "object"]
+        },
+        "required": { "type": "boolean", "default": false },
+        "description": { "type": "string" },
+        "sourceRef": {
+          "type": "string",
+          "description": "Where this field appears on the source form. Example: Section 2, Box 4a"
+        },
+        "validation": {
+          "type": "object",
+          "description": "Validation rules. The permitted keyword set depends on `type` (§6.3): file fields permit maxBytes/mediaTypes, all others permit the v0.1/v0.2 keyword set."
+        },
+        "classification": {
+          "type": "string",
+          "minLength": 1,
+          "description": "OPTIONAL, advisory, open-vocabulary hint about the kind of sensitive data this field collects (e.g. pii, sensitive-pii, financial, health). Advisory only: a consumer MAY use it to drive redaction, masking, or access control; its presence or absence is not a regulatory or legal determination. GSP-0006."
+        },
+        "fieldRole": {
+          "type": "string",
+          "enum": ["data", "eligibility"],
+          "default": "data",
+          "description": "OPTIONAL presentation/grouping hint distinguishing an ordinary data-collection field from an eligibility/gating question. Purely presentational: changes no validation behavior. Absent means 'data', preserving pre-v0.3 behavior. GSP-0014 §2."
+        },
+        "visibleWhen": {
+          "$ref": "#/$defs/condition",
+          "description": "OPTIONAL condition gating this field's visibility. Absent means always visible (unchanged pre-v0.3 behavior). GSP-0013 §2."
+        },
+        "requiredWhen": {
+          "$ref": "#/$defs/condition",
+          "description": "OPTIONAL condition gating this field's requiredness. When present, static `required` MUST be false or absent. A field's effective requiredness is always false whenever its effective visibility is false, regardless of `requiredWhen`/`required` (§10). GSP-0013 §2."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "file" } },
+            "required": ["type"]
+          },
+          "then": { "properties": { "validation": { "$ref": "#/$defs/fileValidation" } } },
+          "else": { "properties": { "validation": { "$ref": "#/$defs/nonFileValidation" } } }
+        },
+        {
+          "if": { "required": ["requiredWhen"] },
+          "then": { "properties": { "required": { "const": false } } }
+        }
+      ]
+    },
+    "nonFileValidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pattern": { "type": "string" },
+        "minLength": { "type": "integer", "minimum": 0 },
+        "maxLength": { "type": "integer", "minimum": 0 },
+        "minimum": { "type": "number" },
+        "maximum": { "type": "number" },
+        "enum": { "type": "array", "items": {} }
+      }
+    },
+    "fileValidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "OPTIONAL maximum accepted upload size in bytes, as published by the source. GSP-0007."
+        },
+        "mediaTypes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "OPTIONAL non-empty array of IANA media type strings (RFC 6838) the source accepts, e.g. application/pdf. GSP-0007."
+        }
+      }
+    },
+    "condition": {
+      "description": "The shared Condition grammar (GSP-0013 §1): a leaf field comparison, or a boolean composition (all/any/not) of nested Conditions. References field `name`s only; no executable code.",
+      "oneOf": [
+        { "$ref": "#/$defs/conditionLeaf" },
+        {
+          "type": "object",
+          "required": ["all"],
+          "additionalProperties": false,
+          "properties": {
+            "all": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/condition" } }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["any"],
+          "additionalProperties": false,
+          "properties": {
+            "any": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/condition" } }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["not"],
+          "additionalProperties": false,
+          "properties": {
+            "not": { "$ref": "#/$defs/condition" }
+          }
+        }
+      ]
+    },
+    "conditionLeaf": {
+      "type": "object",
+      "required": ["field"],
+      "additionalProperties": false,
+      "minProperties": 2,
+      "maxProperties": 2,
+      "description": "Exactly one operator alongside `field` (enforced by minProperties/maxProperties: 2, since additionalProperties is closed to the keys listed here).",
+      "properties": {
+        "field": { "$ref": "#/$defs/fieldName" },
+        "equals": {},
+        "notEquals": {},
+        "in": { "type": "array", "minItems": 1 },
+        "greaterThan": {},
+        "greaterThanOrEqual": {},
+        "lessThan": {},
+        "lessThanOrEqual": {}
+      }
+    },
+    "fieldCompare": {
+      "type": "object",
+      "required": ["field", "operator", "compareTo"],
+      "additionalProperties": false,
+      "properties": {
+        "field": { "$ref": "#/$defs/fieldName" },
+        "operator": {
+          "type": "string",
+          "enum": ["equals", "notEquals", "greaterThan", "greaterThanOrEqual", "lessThan", "lessThanOrEqual"]
+        },
+        "compareTo": { "$ref": "#/$defs/fieldName" }
+      }
+    },
+    "crossFieldValidationRule": {
+      "type": "object",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/fieldName", "description": "Unique within crossFieldValidation, for error reporting." },
+        "when": { "$ref": "#/$defs/condition" },
+        "requireAbsent": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fieldName" } },
+        "requirePresent": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fieldName" } },
+        "compare": { "$ref": "#/$defs/fieldCompare" }
+      },
+      "oneOf": [
+        {
+          "required": ["when"],
+          "anyOf": [{ "required": ["requireAbsent"] }, { "required": ["requirePresent"] }],
+          "not": { "required": ["compare"] }
+        },
+        {
+          "required": ["compare"],
+          "not": {
+            "anyOf": [{ "required": ["when"] }, { "required": ["requireAbsent"] }, { "required": ["requirePresent"] }]
+          }
+        }
+      ]
+    },
+    "exclusivityGroup": {
+      "type": "object",
+      "required": ["id", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/fieldName" },
+        "fields": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/fieldName" },
+          "description": "Boolean-typed field names; at most one may be `true` at once (§10)."
+        }
+      }
+    },
+    "document": {
+      "type": "object",
+      "required": ["id", "label", "category", "required"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/fieldName", "description": "Unique within documents[]." },
+        "label": { "type": "string", "minLength": 1 },
+        "category": {
+          "type": "string",
+          "enum": ["identity-document", "supporting-evidence", "payment", "attestation"],
+          "description": "Closed vocabulary: a consumer's handling logic branches structurally on which of these four it is."
+        },
+        "required": { "type": "boolean" },
+        "requiredWhen": {
+          "$ref": "#/$defs/condition",
+          "description": "OPTIONAL condition gating this document's requiredness. When present, static `required` MUST be false."
+        },
+        "belongsTo": {
+          "type": "string",
+          "enum": ["applicant", "dependent", "responsible-party", "other"]
+        },
+        "acceptedTypes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Open, per-schema vocabulary of source-defined document-type slugs."
+        },
+        "freshness": {
+          "type": "object",
+          "required": ["issuedWithin"],
+          "additionalProperties": false,
+          "properties": {
+            "issuedWithin": {
+              "type": ["string", "null"],
+              "pattern": "^P(?=\\d|T)(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$",
+              "description": "ISO 8601 duration (e.g. P6M), or null when no freshness requirement is published."
+            }
+          }
+        },
+        "issuingAuthority": { "type": "string" },
+        "handling": {
+          "type": "string",
+          "description": "Free-text/slug source-specific instruction about the physical document (e.g. mail-original-return-requested). Descriptive only, never actionable."
+        },
+        "constraints": {
+          "$ref": "#/$defs/fileValidation",
+          "description": "Reuses GSP-0007's shape verbatim. Meaningful only on identity-document/supporting-evidence entries."
+        },
+        "ocr": {
+          "type": "object",
+          "required": ["extractable"],
+          "additionalProperties": false,
+          "properties": {
+            "extractable": { "type": "boolean" },
+            "populatesFields": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fieldName" } }
+          },
+          "description": "Advisory only. Meaningful only on identity-document/supporting-evidence entries."
+        },
+        "amount": {
+          "type": "object",
+          "required": ["currency", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "currency": { "type": "string", "pattern": "^[A-Z]{3}$", "description": "ISO 4217 currency code." },
+            "value": { "type": "number" }
+          },
+          "description": "Meaningful only on category: payment entries."
+        },
+        "methods": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Open array of accepted payment-method slugs. Meaningful only on category: payment entries."
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact attestation text, verbatim from the source. Meaningful only on category: attestation entries."
+        },
+        "sourceRef": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["requiredWhen"] },
+          "then": { "properties": { "required": { "const": false } } }
+        },
+        {
+          "if": {
+            "properties": { "category": { "enum": ["payment", "attestation"] } },
+            "required": ["category"]
+          },
+          "then": {
+            "not": { "anyOf": [{ "required": ["constraints"] }, { "required": ["ocr"] }] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "category": { "enum": ["identity-document", "supporting-evidence"] } },
+            "required": ["category"]
+          },
+          "then": {
+            "not": { "anyOf": [{ "required": ["amount"] }, { "required": ["methods"] }, { "required": ["statement"] }] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "category": { "const": "payment" } },
+            "required": ["category"]
+          },
+          "then": { "not": { "required": ["statement"] } }
+        },
+        {
+          "if": {
+            "properties": { "category": { "const": "attestation" } },
+            "required": ["category"]
+          },
+          "then": { "not": { "anyOf": [{ "required": ["amount"] }, { "required": ["methods"] }] } }
+        }
+      ]
+    },
+    "maturity": {
+      "type": "object",
+      "required": ["level", "criteria", "method", "assertedBy", "assertedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["structural-reference", "verified-schema", "agent-ready-schema", "execution-tested-schema"],
+          "description": "Derived, not an independent input: MUST equal the highest tier in `criteria` whose value, and every lower tier's value, is true."
+        },
+        "criteria": { "$ref": "#/$defs/maturityCriteria" },
+        "method": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Identifier of the maturity-assessment practice used, e.g. maturity-self-assessment-v1."
+        },
+        "assertedBy": { "type": "string", "minLength": 1 },
+        "assertedAt": { "type": "string", "format": "date" }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "level": { "const": "structural-reference" },
+            "criteria": {
+              "properties": {
+                "structuralReference": { "const": true },
+                "verifiedSchema": { "const": false },
+                "agentReadySchema": { "const": false },
+                "executionTestedSchema": { "const": false }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "level": { "const": "verified-schema" },
+            "criteria": {
+              "properties": {
+                "structuralReference": { "const": true },
+                "verifiedSchema": { "const": true },
+                "agentReadySchema": { "const": false },
+                "executionTestedSchema": { "const": false }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "level": { "const": "agent-ready-schema" },
+            "criteria": {
+              "properties": {
+                "structuralReference": { "const": true },
+                "verifiedSchema": { "const": true },
+                "agentReadySchema": { "const": true },
+                "executionTestedSchema": { "const": false }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "level": { "const": "execution-tested-schema" },
+            "criteria": {
+              "properties": {
+                "structuralReference": { "const": true },
+                "verifiedSchema": { "const": true },
+                "agentReadySchema": { "const": true },
+                "executionTestedSchema": { "const": true }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "maturityCriteria": {
+      "type": "object",
+      "required": ["structuralReference", "verifiedSchema", "agentReadySchema", "executionTestedSchema"],
+      "additionalProperties": false,
+      "description": "A cumulative ladder, no gaps: a higher tier MUST NOT be true while a lower tier is false (enforced jointly with `level` above via oneOf).",
+      "properties": {
+        "structuralReference": { "type": "boolean" },
+        "verifiedSchema": { "type": "boolean" },
+        "agentReadySchema": { "type": "boolean" },
+        "executionTestedSchema": { "type": "boolean" }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "title"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9_-]*$" },
+        "title": { "type": "string" },
+        "fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Names of fields collected in this step."
+        },
+        "next": {
+          "type": "string",
+          "description": "id of the next step, or omitted for the final step. Unchanged linear-flow member; a step SHOULD carry either `next` or `transitions`, not invent a third routing mechanism."
+        },
+        "transitions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/transition" },
+          "description": "OPTIONAL branching alternative to `next`: evaluated top-to-bottom, first matching `when` wins. GSP-0013 §4."
+        }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "required": ["to"],
+      "additionalProperties": false,
+      "properties": {
+        "to": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-zA-Z0-9_-]*$",
+          "description": "id of the next step, or null to end the flow here (§10)."
+        },
+        "exitReason": {
+          "type": "string",
+          "description": "OPTIONAL free-text/slug explaining why the flow ended here. Meaningful mainly alongside to: null."
+        },
+        "when": {
+          "$ref": "#/$defs/condition",
+          "description": "OPTIONAL condition for this transition. A when-less transition is an unconditional fallthrough and SHOULD be last."
+        }
+      }
+    }
+  }
+}
