@@ -1,10 +1,5 @@
 <p align="center">
-  <img src="assets/brand/logo-lockup.png" alt="GovSchema — open standards for agent–government interaction" width="480">
-</p>
-
-<p align="center">
-  <em>The trusted, versioned, machine-readable contract that lets AI agents understand,<br>
-  validate, and safely prepare government forms — without guessing from webpages.</em>
+  <img src="assets/hero.png" alt="GovSchema — open standards for agent–government interaction. The trusted, versioned, machine-readable contract that lets AI agents understand, validate, and safely prepare government forms — without guessing from webpages." width="100%">
 </p>
 
 # GovSchema
