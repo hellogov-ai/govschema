@@ -23,6 +23,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0009 | [Composite & repeating values — structured `object` + `array`](./0009-composite-repeating-values.md) | Proposed (v0.2 candidate) — ⚠ one-way-door, CEO flag |
 | 0010 | [Namespaced `extensions`](./0010-namespaced-extensions.md) | Proposed (v0.2 candidate) |
 | 0011 | [Field-to-page-element mapping (companion `mapping.json`)](./0011-field-page-element-mapping.md) | Accepted — new registry artifact type, CEO sign-off recorded 2026-07-01 |
+| 0012 | [Schema maturity levels (badge model)](./0012-schema-maturity-levels.md) | Proposed (v0.3) — CEO sign-off requested (GOV-316) |
 | 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Accepted — for v0.3, CEO sign-off recorded 2026-07-01 (GOV-312) |
 | 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-315) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
@@ -72,6 +73,16 @@ type for `requiredWhen` and GSP-0007's `maxBytes`/`mediaTypes` shape for
 `fields[]`. Drafted after GSP-0013, GSP-0006, and GSP-0007 landed, per RFC
 0003 §12's recommended sequencing; individual accept-into-v0.3 sign-off was
 recorded 2026-07-01 (GOV-315).
+
+GSP-0012 was drafted per RFC 0003 (GOV-302 §2), the founder-approved design
+RFC for the `spec/v0.3` agent-execution-readiness package. It defines a new
+top-level `maturity` member (`level`/`criteria`/`method`/`assertedBy`/
+`assertedAt`) and four cumulative tiers — Structural Reference / Verified
+Schema / Agent-Ready Schema / Execution-Tested Schema — whose middle two tiers
+read directly off GSP-0013's `steps[].transitions`/`to: null` and GSP-0014's
+`documents[]`/`fieldRole`. Drafted after both landed, per RFC 0003 §12's
+recommended sequencing (point 4); CEO accept-into-v0.3 sign-off requested on
+GOV-316.
 
 ## Considered and rejected
 

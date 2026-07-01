@@ -23,11 +23,16 @@ was actually applied.
 | -------------------------- | --------------------------------------------------------------------- |
 | `manual-source-review-v1` | A human compares each schema field against the live source.           |
 | `selector-probe-v1`       | An automated headless-browser probe confirms `mapping.json` locators still resolve. |
+| `maturity-self-assessment-v1` (proposed, GSP-0012) | A producer self-declares `maturity.criteria` against the document's own shape. |
 
-See [`manual-source-review-v1.md`](./manual-source-review-v1.md) and
-[`selector-probe-v1.md`](./selector-probe-v1.md). These check different
-things and are never conflated: the former verifies a schema's legal-content
-fidelity; the latter verifies a mapping's selector freshness. See GSP-0011.
+See [`manual-source-review-v1.md`](./manual-source-review-v1.md),
+[`selector-probe-v1.md`](./selector-probe-v1.md), and
+[`maturity-self-assessment-v1.md`](./maturity-self-assessment-v1.md). These
+check different things and are never conflated: the first verifies a
+schema's legal-content fidelity against the live source; the second verifies
+a mapping's selector freshness; the third verifies that a document's
+execution-readiness *claim* matches its own shape, not the live source. See
+GSP-0011 and GSP-0012.
 
 ## Adding a practice
 
