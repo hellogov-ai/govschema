@@ -11,10 +11,17 @@
 //      `edition`-bearing document's <edition> directory matches edition.label;
 //   4. cross-references are consistent (step.fields and step.next resolve).
 //
+// It also validates any OPTIONAL sibling `mapping.json` companion artifact
+// (spec v0.2, GSP-0011): structural shape plus the referential-integrity rule
+// (SPEC.md §13.2 / §10 rule 7) — every `mapping.json` field name must resolve
+// to a field defined in the sibling `schema.json`. Absence of `mapping.json`
+// is never an error and has no bearing on the sibling schema's conformance.
+//
 // This intentionally implements only the subset of JSON Schema the meta-schema
 // uses, so the registry can be validated in CI with no install step. For full
 // JSON Schema draft 2020-12 validation, run any standard validator (e.g. ajv)
-// against the spec/vN/govschema.schema.json the document targets.
+// against the spec/vN/govschema.schema.json (or mapping.schema.json) the
+// document targets.
 //
 // Usage:
 //   node tools/validate.mjs                 # validate every schema in registry/
@@ -66,18 +73,30 @@ function findSchemas(dir) {
   return out;
 }
 
+function findMappings(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    if (statSync(p).isDirectory()) out.push(...findMappings(p));
+    else if (entry === "mapping.json") out.push(p);
+  }
+  return out;
+}
+
 // Registry hygiene: a GovSchema document MUST be a file named exactly
-// `schema.json` at registry/<id>/<version>/schema.json (see registry/README.md).
-// Any other `*.json` under registry/ is a document that findSchemas() — and
-// therefore CI — would silently skip: a non-conforming or mis-named schema
-// masquerading as published content. Surface those as hard errors so the
-// registry can never contain a document that escapes validation.
+// `schema.json` at registry/<id>/<version>/schema.json (see registry/README.md),
+// with an OPTIONAL sibling `mapping.json` (GSP-0011). Any other `*.json` under
+// registry/ is a document that findSchemas()/findMappings() — and therefore CI
+// — would silently skip: a non-conforming or mis-named file masquerading as
+// published content. Surface those as hard errors so the registry can never
+// contain a document that escapes validation.
 function findStrayDocuments(dir) {
   const out = [];
   for (const entry of readdirSync(dir)) {
     const p = join(dir, entry);
     if (statSync(p).isDirectory()) out.push(...findStrayDocuments(p));
-    else if (entry.endsWith(".json") && entry !== "schema.json") out.push(p);
+    else if (entry.endsWith(".json") && entry !== "schema.json" && entry !== "mapping.json")
+      out.push(p);
   }
   return out;
 }
@@ -206,9 +225,117 @@ function validatePath(file, errs, hasEdition) {
   return { versionDir, idFromPath };
 }
 
+// Structural validation of a mapping.json document (spec/v0.2/mapping.schema.json,
+// GSP-0011). `schemaFieldNames` is the set of field names defined in the sibling
+// schema.json — undefined if the sibling could not be read, in which case the
+// referential-integrity rule (§10 rule 7) is skipped and reported separately.
+function validateMappingDocument(doc, schemaFieldNames, errs) {
+  const req = ["$schema", "mappingVersion", "schema", "source", "verification", "fields"];
+  for (const k of req) if (!(k in doc)) errs.push(`missing required member: ${k}`);
+  for (const k of Object.keys(doc))
+    if (!req.includes(k)) errs.push(`unknown member: ${k}`);
+
+  if (doc.mappingVersion != null && !SEMVER.test(doc.mappingVersion))
+    errs.push(`mappingVersion is not valid semver: ${doc.mappingVersion}`);
+
+  const s = doc.schema;
+  if (s && typeof s === "object") {
+    for (const k of Object.keys(s))
+      if (k !== "id" && k !== "version") errs.push(`schema has unknown member: ${k}`);
+    if (!ID_RE.test(s.id || "")) errs.push(`schema.id does not match required pattern: ${s.id}`);
+    if (s.version != null && !SEMVER.test(s.version))
+      errs.push(`schema.version is not valid semver: ${s.version}`);
+  } else if (s !== undefined) {
+    errs.push("schema must be an object");
+  }
+
+  const src = doc.source;
+  if (src && typeof src === "object") {
+    for (const k of Object.keys(src)) if (k !== "url") errs.push(`source has unknown member: ${k}`);
+    if (!src.url) errs.push("source.url is required");
+  } else if (src !== undefined) {
+    errs.push("source must be an object");
+  }
+
+  const v = doc.verification;
+  if (v && typeof v === "object") {
+    for (const k of Object.keys(v))
+      if (!["method", "lastVerifiedAt", "nextReviewBy", "notes"].includes(k))
+        errs.push(`verification has unknown member: ${k}`);
+    if (!v.method) errs.push("verification.method is required");
+    if (!DATE_RE.test(v.lastVerifiedAt || ""))
+      errs.push(`verification.lastVerifiedAt must be YYYY-MM-DD: ${v.lastVerifiedAt}`);
+  } else if (v !== undefined) {
+    errs.push("verification must be an object");
+  }
+
+  if (!Array.isArray(doc.fields) || doc.fields.length === 0) {
+    errs.push("fields must be a non-empty array");
+    return;
+  }
+  const seen = new Set();
+  for (const [i, f] of doc.fields.entries()) {
+    const at = `fields[${i}]`;
+    if (f && typeof f === "object") {
+      for (const k of Object.keys(f))
+        if (k !== "name" && k !== "locators") errs.push(`${at} has unknown member: ${k}`);
+    }
+    const name = f && f.name;
+    if (!FIELD_NAME_RE.test(name || "")) errs.push(`${at}.name invalid or missing: ${name}`);
+    if (name && seen.has(name)) errs.push(`${at}.name duplicated: ${name}`);
+    if (name) seen.add(name);
+    if (name && schemaFieldNames && !schemaFieldNames.has(name))
+      errs.push(`${at}.name "${name}" does not resolve to a field in the sibling schema.json`);
+
+    const locators = f && f.locators;
+    if (!Array.isArray(locators) || locators.length === 0) {
+      errs.push(`${at}.locators must be a non-empty array`);
+      continue;
+    }
+    for (const [j, loc] of locators.entries()) {
+      const lat = `${at}.locators[${j}]`;
+      if (loc && typeof loc === "object") {
+        for (const k of Object.keys(loc))
+          if (k !== "signal" && k !== "value") errs.push(`${lat} has unknown member: ${k}`);
+      }
+      if (!loc || !loc.signal) errs.push(`${lat}.signal is required`);
+      if (!loc || !loc.value) errs.push(`${lat}.value is required`);
+    }
+  }
+}
+
+// Path/back-reference consistency for mapping.json: the sibling directory's
+// <id>/[<edition>/]<version> MUST equal `schema.id` / `schema.version` inside
+// the mapping document (the same rule §10 rule 1/6 apply to schema.json itself).
+function validateMappingPath(file, doc, errs, hasEdition) {
+  const rel = relative(REGISTRY, file).split(sep);
+  const min = hasEdition ? 5 : 4;
+  const shape = hasEdition
+    ? "registry/<id>/<edition>/<version>/mapping.json"
+    : "registry/<id>/<version>/mapping.json";
+  if (rel.length < min || rel[rel.length - 1] !== "mapping.json") {
+    errs.push(`file is not at ${shape}: ${rel.join("/")}`);
+    return;
+  }
+  const versionDir = rel[rel.length - 2];
+  const idFromPath = hasEdition
+    ? rel.slice(0, rel.length - 3).join("/")
+    : rel.slice(0, rel.length - 2).join("/");
+  const s = doc.schema || {};
+  if (s.id && s.id !== idFromPath)
+    errs.push(`schema.id "${s.id}" does not match path "${idFromPath}"`);
+  if (s.version && s.version !== versionDir)
+    errs.push(`schema.version "${s.version}" does not match version directory "${versionDir}"`);
+}
+
 function main() {
   const args = process.argv.slice(2);
-  const files = args.length ? args : findSchemas(REGISTRY);
+  const files = args.length
+    ? args.filter((f) => f.endsWith("schema.json"))
+    : findSchemas(REGISTRY);
+  const mappingFiles = args.length
+    ? args.filter((f) => f.endsWith("mapping.json"))
+    : findMappings(REGISTRY);
 
   let strayFailed = 0;
 
@@ -226,10 +353,13 @@ function main() {
   }
 
   let failed = 0;
-  if (files.length === 0 && strayFailed === 0) {
+  if (files.length === 0 && mappingFiles.length === 0 && strayFailed === 0) {
     console.log("No schemas found under registry/. Nothing to validate.");
     return;
   }
+  // dirname(schema.json) -> { fieldNames, hasEdition }, so a sibling mapping.json
+  // can be checked against the schema actually on disk rather than re-deriving it.
+  const schemaDirInfo = new Map();
   for (const file of files) {
     const errs = [];
     let doc;
@@ -257,6 +387,11 @@ function main() {
         );
     }
 
+    schemaDirInfo.set(dirname(file), {
+      hasEdition,
+      fieldNames: new Set((Array.isArray(doc.fields) ? doc.fields : []).map((f) => f && f.name)),
+    });
+
     const label = relative(ROOT, file);
     if (errs.length) {
       console.error(`FAIL ${label}`);
@@ -267,11 +402,44 @@ function main() {
     }
   }
 
+  // Sibling mapping.json companions (spec v0.2, GSP-0011). Absence is never an
+  // error; presence is validated structurally plus referential integrity
+  // against the sibling schema.json actually found in the same directory.
+  let mappingFailed = 0;
+  for (const file of mappingFiles) {
+    const errs = [];
+    let doc;
+    try {
+      doc = JSON.parse(readFileSync(file, "utf8"));
+    } catch (e) {
+      console.error(`FAIL ${file}\n  - invalid JSON: ${e.message}`);
+      mappingFailed++;
+      continue;
+    }
+
+    const info = schemaDirInfo.get(dirname(file));
+    if (!info) errs.push("no sibling schema.json found in the same directory");
+    validateMappingDocument(doc, info && info.fieldNames, errs);
+    validateMappingPath(file, doc, errs, info ? info.hasEdition : false);
+
+    const label = relative(ROOT, file);
+    if (errs.length) {
+      console.error(`FAIL ${label}`);
+      for (const e of errs) console.error(`  - ${e}`);
+      mappingFailed++;
+    } else {
+      console.log(`ok   ${label}`);
+    }
+  }
+
   console.log(
     `\n${files.length - failed}/${files.length} document(s) passed.` +
+      (mappingFiles.length
+        ? ` ${mappingFiles.length - mappingFailed}/${mappingFiles.length} mapping.json companion(s) passed.`
+        : "") +
       (strayFailed ? ` ${strayFailed} non-conforming registry file(s).` : "")
   );
-  process.exit(failed || strayFailed ? 1 : 0);
+  process.exit(failed || mappingFailed || strayFailed ? 1 : 0);
 }
 
 main();

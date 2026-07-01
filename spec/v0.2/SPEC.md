@@ -508,13 +508,21 @@ A conforming document MUST additionally satisfy:
    `<edition>` path segment (the directory immediately above `<version>`) MUST
    equal `edition.label`. When `edition` is absent, no `<edition>` directory may be
    present (the segment above `<version>` is part of `id`). (§5.2, §5.7)
+7. **Mapping referential integrity** — when a `mapping.json` companion is present
+   alongside a `schema.json` (§13), every `fields[].name` in `mapping.json` MUST
+   resolve to a field `name` defined in the sibling `schema.json`'s `fields`. The
+   converse is not required: `mapping.json` MAY cover only a subset of the
+   schema's fields. (§13, [GSP-0011])
 
 The GovSchema validation tooling (`tools/`) enforces the full meta-schema
 (`tools/validate-ajv.mjs`, JSON Schema draft 2020-12, selected per the document's
 `govschemaVersion`) and rules 1 and 6 today; rules 2–5 are validated incrementally
-as the tooling matures. The zero-dependency `tools/validate.mjs` additionally
-checks the structural subset of the meta-schema and rules 1 and 6 with no install
-step. CI (`.github/workflows/validate.yml`) runs both.
+as the tooling matures. Rule 7 is enforced by both `tools/validate.mjs` and
+`tools/validate-ajv.mjs` whenever a `mapping.json` is present; its absence is not
+an error and has no bearing on the sibling `schema.json`'s conformance. The
+zero-dependency `tools/validate.mjs` additionally checks the structural subset of
+the meta-schema and rules 1 and 6 with no install step. CI
+(`.github/workflows/validate.yml`) runs both.
 
 ---
 
@@ -546,6 +554,72 @@ tracked as a proposal under [`spec/proposals/`](../proposals/). The
 - **PII marking** — a `sensitive` member so consumers can apply special handling.
 - **Extensions** — a namespaced `extensions` object for vendor/experimental data.
 - **Localization** — multiple language variants of human text within one document.
+
+---
+
+## 13. Companion artifact: `mapping.json` (optional)
+
+*Normative if present, per [GSP-0011], maintainer-accepted.* A **separate,
+OPTIONAL companion artifact**, sibling to `schema.json`, never a member inside
+it, maps a schema's field names to candidate locator signals on the live web
+page presenting the form — which `<input>`, `<select>`, or ARIA-labelled control
+a browser-driving agent should target for a named field.
+
+### 13.1 Shape and location
+
+- Normative shape: [`spec/v0.2/mapping.schema.json`](./mapping.schema.json)
+  (JSON Schema 2020-12). As with `schema.json`, where this prose and that
+  meta-schema disagree, the meta-schema governs.
+- Location: `registry/<id>/<version>/mapping.json`, or
+  `registry/<id>/<edition>/<version>/mapping.json` for a time-versioned form —
+  exactly the directory of the schema version it describes. `mapping.json` never
+  introduces its own versioning axis in the registry path; `mappingVersion`
+  (inside the document) versions the mapping artifact itself, independently of
+  the sibling schema's `version`, since locator data and schema content churn on
+  different clocks (GSP-0011 "Volatility mismatch").
+- `schema.id` / `schema.version` inside `mapping.json` MUST equal the sibling
+  `schema.json`'s `id` / `version`.
+
+### 13.2 Referential integrity
+
+See §10 rule 7: every `fields[].name` MUST resolve to a field defined in the
+sibling `schema.json`. Partial coverage is permitted — a field with no stable
+page presence may be omitted.
+
+### 13.3 Its own verification record
+
+`mapping.json` carries its own `verification` block, structurally similar to but
+independent of the schema's: a schema's `status: verified` is a claim about
+legal-content fidelity; a mapping's freshness claim is about selectors still
+resolving on the live page. These MUST NOT be conflated into one flag. See
+`practices/` for verification practices, e.g. `selector-probe-v1`, an automated
+headless-browser probe distinct from the human `manual-source-review-v1` used
+for schema content.
+
+### 13.4 Scope boundary — describe, never prescribe
+
+This is a hard boundary, not a style preference, per [GOVERNANCE.md](../../GOVERNANCE.md)
+("GovSchema does not fill out forms or submit data on anyone's behalf"):
+
+- `mapping.json` is **descriptive only**: it says *where a value for a named
+  field goes on the page*. It MUST NOT contain, and a conforming producer MUST
+  NOT add, a submission endpoint or action URL; a "submit"/"next"/navigation
+  locator or instruction of any kind; autofill or auto-submit instructions,
+  sequencing, or timing directives; or anything from which "how to complete and
+  submit this form end-to-end" could be assembled without a human or an
+  independent agent decision at every step.
+- The meta-schema enforces this structurally: no `action`, `submitUrl`, or
+  `next` members exist to define, and `additionalProperties: false` at every
+  level rejects any attempt to add them.
+
+### 13.5 Additive and optional — no effect on `schema.json` conformance
+
+The **absence** of `mapping.json` MUST NOT affect whether the sibling
+`schema.json` conforms to this specification. A **present** `mapping.json` that
+fails its own validation is an error in the mapping artifact, never a reason to
+invalidate the sibling schema.
+
+[GSP-0011]: ../proposals/0011-field-page-element-mapping.md
 
 ---
 

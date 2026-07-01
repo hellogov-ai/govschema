@@ -58,6 +58,28 @@ registry/us/irs/extension-to-file-4868/2025/1.0.0/schema.json
 
 [GSP-0005]: ../spec/proposals/0005-edition-axis-time-versioned-forms.md
 
+## Companion `mapping.json` (optional)
+
+*Spec v0.2+ ([GSP-0011]).* A schema's version directory MAY also contain a
+sibling `mapping.json` — a companion artifact mapping field names to candidate
+page-element locators for a browser-driving agent:
+
+```
+registry/<id>/<version>/mapping.json
+registry/<id>/<edition>/<version>/mapping.json   # time-versioned forms
+```
+
+- It is never a member inside `schema.json`, never introduces its own registry
+  path/versioning axis, and its absence has no effect on the sibling
+  `schema.json`'s conformance.
+- It is validated against [`spec/v0.2/mapping.schema.json`](../spec/v0.2/mapping.schema.json)
+  and the referential-integrity rule in SPEC.md §13.2 (every `mapping.json`
+  field name must resolve to a field defined in the sibling `schema.json`).
+- See SPEC.md §13 for the full normative shape and its descriptive-only scope
+  boundary.
+
+[GSP-0011]: ../spec/proposals/0011-field-page-element-mapping.md
+
 ## Multiple versions
 
 Each version is an immutable directory. Publishing a new version adds a sibling

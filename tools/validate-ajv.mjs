@@ -11,6 +11,10 @@
 // meta-schema selected by its `govschemaVersion` (see META_SCHEMAS below), so a
 // v0.1 document keeps validating against spec/v0.1 even after spec/v0.2 ships.
 //
+// It also full-validates any OPTIONAL sibling `mapping.json` companion artifact
+// (spec v0.2, GSP-0011) against spec/v0.2/mapping.schema.json. Absence of
+// mapping.json is never an error.
+//
 // This requires the dev dependencies declared in tools/package.json:
 //   cd tools && npm ci
 //
@@ -38,10 +42,26 @@ const META_SCHEMAS = {
   "0.2": join(ROOT, "spec", "v0.2", "govschema.schema.json"),
 };
 
+// mapping.json (GSP-0011) is a v0.2+ artifact — there is no v0.1 mapping
+// meta-schema. A mapping.json is validated against the mapping meta-schema for
+// the sibling schema.json's spec line.
+const MAPPING_META_SCHEMAS = {
+  "0.2": join(ROOT, "spec", "v0.2", "mapping.schema.json"),
+};
+
 // Map a govschemaVersion (e.g. "0.2.0") to its spec line key (e.g. "0.2").
 function specLine(version) {
   const m = /^(\d+)\.(\d+)\./.exec(version || "");
   return m ? `${m[1]}.${m[2]}` : null;
+}
+
+// mapping.json carries no govschemaVersion of its own (it is validated in
+// isolation from its sibling schema.json's spec line by design — GSP-0011).
+// Its `$schema` URI names the mapping meta-schema directly, e.g.
+// https://govschema.org/spec/v0.2/mapping.schema.json -> "0.2".
+function mappingSpecLine(schemaUrl) {
+  const m = /\/spec\/v(\d+\.\d+)\/mapping\.schema\.json$/.exec(schemaUrl || "");
+  return m ? m[1] : null;
 }
 
 function findSchemas(dir) {
@@ -54,16 +74,19 @@ function findSchemas(dir) {
   return out;
 }
 
-function main() {
-  const args = process.argv.slice(2);
-  const files = args.length ? args : findSchemas(REGISTRY);
+function findMappings(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    if (statSync(p).isDirectory()) out.push(...findMappings(p));
+    else if (entry === "mapping.json") out.push(p);
+  }
+  return out;
+}
 
-  const ajv = new Ajv2020({ allErrors: true, strict: false });
-  addFormats(ajv);
-
-  // Compile every published meta-schema up front; dispatch per document below.
+function compileMetaSchemas(ajv, metaSchemaPaths) {
   const validators = {};
-  for (const [line, path] of Object.entries(META_SCHEMAS)) {
+  for (const [line, path] of Object.entries(metaSchemaPaths)) {
     let metaSchema;
     try {
       metaSchema = JSON.parse(readFileSync(path, "utf8"));
@@ -78,8 +101,26 @@ function main() {
       process.exit(2);
     }
   }
+  return validators;
+}
 
-  if (files.length === 0) {
+function main() {
+  const args = process.argv.slice(2);
+  const files = args.length
+    ? args.filter((f) => f.endsWith("schema.json"))
+    : findSchemas(REGISTRY);
+  const mappingFiles = args.length
+    ? args.filter((f) => f.endsWith("mapping.json"))
+    : findMappings(REGISTRY);
+
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  addFormats(ajv);
+
+  // Compile every published meta-schema up front; dispatch per document below.
+  const validators = compileMetaSchemas(ajv, META_SCHEMAS);
+  const mappingValidators = compileMetaSchemas(ajv, MAPPING_META_SCHEMAS);
+
+  if (files.length === 0 && mappingFiles.length === 0) {
     console.log("No schemas found under registry/. Nothing to validate.");
     return;
   }
@@ -121,8 +162,49 @@ function main() {
     }
   }
 
-  console.log(`\n${files.length - failed}/${files.length} document(s) validated against the meta-schema (ajv 2020-12).`);
-  process.exit(failed ? 1 : 0);
+  let mappingFailed = 0;
+  for (const file of mappingFiles) {
+    const label = relative(ROOT, file);
+    let doc;
+    try {
+      doc = JSON.parse(readFileSync(file, "utf8"));
+    } catch (e) {
+      console.error(`FAIL ${label}\n  - invalid JSON: ${e.message}`);
+      mappingFailed++;
+      continue;
+    }
+
+    const line = mappingSpecLine(doc.$schema);
+    const validate = line && mappingValidators[line];
+    if (!validate) {
+      console.error(`FAIL ${label}`);
+      console.error(
+        `  - (root) unknown/unsupported $schema for mapping.json: ${doc.$schema}` +
+          ` (known spec lines: ${Object.keys(mappingValidators).join(", ")})`
+      );
+      mappingFailed++;
+      continue;
+    }
+
+    if (validate(doc)) {
+      console.log(`ok   ${label} [mapping v${line}]`);
+    } else {
+      console.error(`FAIL ${label} [mapping v${line}]`);
+      for (const err of validate.errors) {
+        const where = err.instancePath || "(root)";
+        console.error(`  - ${where} ${err.message}` + (err.params && Object.keys(err.params).length ? ` ${JSON.stringify(err.params)}` : ""));
+      }
+      mappingFailed++;
+    }
+  }
+
+  console.log(
+    `\n${files.length - failed}/${files.length} document(s) validated against the meta-schema (ajv 2020-12).` +
+      (mappingFiles.length
+        ? ` ${mappingFiles.length - mappingFailed}/${mappingFiles.length} mapping.json companion(s) validated.`
+        : "")
+  );
+  process.exit(failed || mappingFailed ? 1 : 0);
 }
 
 main();
