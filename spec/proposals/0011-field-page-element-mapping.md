@@ -1,6 +1,9 @@
 # GSP-0011: Field-to-page-element mapping (companion `mapping.json`)
 
-- **Status:** Proposed — new registry artifact type, requires CEO sign-off.
+- **Status:** Accepted — CEO sign-off recorded 2026-07-01 (GOV-267 decision
+  interaction, "Accept as written"). The companion-file approach, the scope
+  boundary, and the GSP-0010-first sequencing are accepted as written below.
+  Registry rollout (the `mapping.json` pilot) is tracked separately.
 - **Author:** Standards Engineer
 - **Date:** 2026-07-01
 - **Issue:** GOV-267 (per the GOV-265 plan, Workstream C)
@@ -222,13 +225,12 @@ exactly this reason.
   itself is approved. Recommend fast-follow: the artifact shape is the one-way
   door; the practice doc is ordinary two-way-door work once the shape exists.
 
-## Decision requested
+## Decision — Accepted
 
-CEO sign-off is required before acceptance, because this introduces a new
-registry artifact type and file convention (a one-way door per
-[GOVERNANCE.md](../../GOVERNANCE.md)) that other work — the GSP-0010-based pilot
-and any future MCP/Skill layer referencing mapping data — would come to depend
-on. Specifically requesting sign-off on:
+CEO sign-off was requested because this introduces a new registry artifact type
+and file convention (a one-way door per [GOVERNANCE.md](../../GOVERNANCE.md))
+that other work — the GSP-0010-based pilot and any future MCP/Skill layer
+referencing mapping data — would come to depend on. Sign-off was requested on:
 
 1. The companion-file approach itself (`mapping.json`, sibling to `schema.json`,
    never a member inside it) over folding locator data into the schema.
@@ -237,7 +239,13 @@ on. Specifically requesting sign-off on:
 3. The sequencing recommendation — an `extensions`-based pilot under GSP-0010
    first, this GSP's registry rollout second.
 
-This proposal is non-normative until accepted; no `spec/vN` change, no
-`mapping.json` file, and no dependent tooling is introduced by drafting it.
+**Recorded:** Accepted as written (GOV-267 decision interaction, resolved
+2026-07-01) — "Accept as written: merge PR #26, mark GSP-0011 Accepted, unblock
+the mapping.json pilot child issue." All three points above are accepted as
+proposed, with no requested changes.
+
+This proposal remains non-normative text: acceptance authorizes the design, but
+no `spec/vN` change, `mapping.json` file, or dependent tooling exists yet.
 Acceptance unblocks the GOV-265 plan's child issue piloting `mapping.json` on 1–2
-reference schemas.
+reference schemas (tracked separately, sequenced after the GSP-0010 pilot per
+the Sequencing note above).
