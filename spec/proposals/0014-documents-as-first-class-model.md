@@ -1,7 +1,8 @@
 # GSP-0014: Documents as a first-class model (`documents[]` array)
 
-- **Status:** Proposed — targets `spec/v0.3`. Pending CEO accept-into-v0.3
-  sign-off (requested on [GOV-315](/GOV/issues/GOV-315)).
+- **Status:** Accepted — for `spec/v0.3`. CEO sign-off recorded 2026-07-01
+  ([GOV-315](/GOV/issues/GOV-315) `ask_user_questions` decision, "Accept as
+  written").
 - **Author:** Standards Engineer
 - **Date:** 2026-07-01
 - **Issue:** GOV-315, drafted per RFC 0003 §5 (GOV-302)
@@ -242,9 +243,9 @@ requiredness), exactly as GSP-0013 committed to.
   no analogous document-to-document cycle is possible today; noting this
   explicitly rather than silently assuming it.
 
-## Decision requested
+## Decision — Accepted
 
-CEO accept-into-`spec/v0.3` sign-off is requested on:
+CEO accept-into-`spec/v0.3` sign-off was requested on:
 
 1. The new top-level `documents[]` array as designed (§1): the four-way
    `category` split, `requiredWhen` reusing GSP-0013's `Condition` type
@@ -257,6 +258,11 @@ CEO accept-into-`spec/v0.3` sign-off is requested on:
 3. The separate-array design choice over richer `type: file` fields —
    already founder-confirmed on the GOV-302 RFC interaction, restated here for
    the record since this is the GSP that carries it.
+
+**Recorded:** Accepted as written ([GOV-315](/GOV/issues/GOV-315) decision
+interaction, resolved 2026-07-01) — "Accept as written — fold `documents[]` +
+`fieldRole` into `spec/v0.3`." All three points above are accepted as
+proposed, with no requested changes.
 
 This proposal remains non-normative text: acceptance authorizes the design
 for a future `spec/v0.3` fold-in; no meta-schema or SPEC.md change ships with
