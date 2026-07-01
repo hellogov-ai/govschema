@@ -60,7 +60,7 @@ npm run validate:all      # both
 [`@govschema/client`](./govschema-client) — a non-normative reference client
 for listing, searching, fetching, and validating registry documents from
 code. Reuses the same ajv-based meta-schema validation as `validate-ajv.mjs`
-above. This is the shared core behind `mcp-server/` and `govschema-skill/` —
+above. This is the shared core behind `mcp-server/` and `govschema-skill/`:
 both are thin adapters over this one library, so lookup/validate behavior
 can't drift between distribution surfaces. See
 [`govschema-client/README.md`](./govschema-client/README.md).
@@ -73,7 +73,7 @@ Context Protocol](https://modelcontextprotocol.io) server exposing the
 verification status). Non-normative reference tooling, parallel in spirit to
 `validate.mjs`: MCP is an optional convenience layer, and plain HTTPS fetch +
 JSON Schema validation remains fully sufficient without it. It never gains a
-"submit" tool of any kind — see
+"submit" tool of any kind. See
 [`mcp-server/README.md`](./mcp-server/README.md) for the boundary this
 enforces.
 
