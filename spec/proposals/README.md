@@ -24,6 +24,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0010 | [Namespaced `extensions`](./0010-namespaced-extensions.md) | Proposed (v0.2 candidate) |
 | 0011 | [Field-to-page-element mapping (companion `mapping.json`)](./0011-field-page-element-mapping.md) | Accepted — new registry artifact type, CEO sign-off recorded 2026-07-01 |
 | 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Proposed (v0.3 package) — CEO accept-into-v0.3 sign-off requested (GOV-312) |
+| 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Proposed (v0.3 candidate) — ⚠ one-way-door on acceptance, CEO sign-off pending |
 
 GSP-0006–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).
