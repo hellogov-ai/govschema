@@ -1,0 +1,201 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "xx/example/agent-ready-demo",
+  "version": "1.0.0",
+  "title": "Illustrative agent-ready-schema example (spec/v0.3)",
+  "description": "Hand-authored, non-normative example exercising every construct folded into spec/v0.3 by GOV-373 (GSP-0006 classification, GSP-0007 file validation, GSP-0012 maturity, GSP-0013 conditional logic, GSP-0014 documents/fieldRole). Jurisdiction `xx`/`XX` is the ISO 3166-1 user-assigned placeholder code; this is not a real government process and MUST NOT be treated as one.",
+  "status": "verified",
+  "jurisdiction": { "country": "XX", "level": "national" },
+  "authority": { "name": "GovSchema Standards Illustration Authority" },
+  "process": { "type": "application" },
+  "source": {
+    "url": "https://example.invalid/govschema/agent-ready-demo",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "SPEC-V0.3-EXAMPLE"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Fabricated example for spec/v0.3 conformance testing; there is no live source to verify against."
+  },
+  "fields": [
+    {
+      "name": "hasDependents",
+      "label": "Do you have any dependents?",
+      "type": "boolean",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "dependentCount",
+      "label": "Number of dependents",
+      "type": "integer",
+      "visibleWhen": { "field": "hasDependents", "equals": true },
+      "requiredWhen": { "field": "hasDependents", "equals": true }
+    },
+    {
+      "name": "socialSecurityNumber",
+      "label": "Social Security Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "validation": { "pattern": "^\\d{3}-\\d{2}-\\d{4}$" }
+    },
+    {
+      "name": "startDate",
+      "label": "Employment start date",
+      "type": "date",
+      "required": true
+    },
+    {
+      "name": "endDate",
+      "label": "Employment end date",
+      "type": "date"
+    },
+    {
+      "name": "highestExpectedEmployees",
+      "label": "Highest number of employees expected in the next 12 months",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "expectedAgriculturalEmployees",
+      "label": "Expected agricultural employees",
+      "type": "integer"
+    },
+    {
+      "name": "expectedHouseholdEmployees",
+      "label": "Expected household employees",
+      "type": "integer"
+    },
+    {
+      "name": "file944AnnuallyElection",
+      "label": "Elect to file Form 944 annually instead of quarterly",
+      "type": "boolean"
+    },
+    {
+      "name": "quarterlyFilingConfirmed",
+      "label": "Confirm quarterly filing instead",
+      "type": "boolean"
+    },
+    {
+      "name": "nameChanged",
+      "label": "Has your legal name changed since your last filing?",
+      "type": "boolean",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "supportingDocument",
+      "label": "Supporting document upload",
+      "type": "file",
+      "sourceRef": "Section 4, supporting documents",
+      "validation": {
+        "maxBytes": 5242880,
+        "mediaTypes": ["application/pdf", "image/jpeg"]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "priorIdentityDocument",
+      "label": "Prior identity document",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["passport", "national-id"],
+      "freshness": { "issuedWithin": "P6M" },
+      "issuingAuthority": "Department of State",
+      "handling": "mail-original-return-requested",
+      "sourceRef": "Section 2, identity verification"
+    },
+    {
+      "id": "nameChangeEvidence",
+      "label": "Legal name-change document",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "nameChanged", "equals": true },
+      "acceptedTypes": ["marriage-certificate", "court-order"],
+      "constraints": { "maxBytes": 5242880, "mediaTypes": ["application/pdf"] },
+      "ocr": { "extractable": true, "populatesFields": ["startDate"] }
+    },
+    {
+      "id": "applicationFee",
+      "label": "Application fee",
+      "category": "payment",
+      "required": true,
+      "amount": { "currency": "USD", "value": 130 },
+      "methods": ["check", "money-order"]
+    },
+    {
+      "id": "applicantSignature",
+      "label": "Applicant attestation",
+      "category": "attestation",
+      "required": true,
+      "statement": "I certify under penalties of perjury that this application is true, correct, and complete."
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "employmentCountsRequireHighestCount",
+      "when": { "field": "highestExpectedEmployees", "equals": 0 },
+      "requireAbsent": ["expectedAgriculturalEmployees", "expectedHouseholdEmployees"]
+    },
+    {
+      "id": "endNotBeforeStart",
+      "compare": { "field": "endDate", "operator": "greaterThanOrEqual", "compareTo": "startDate" }
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "eitherFileTypeElection",
+      "fields": ["file944AnnuallyElection", "quarterlyFilingConfirmed"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_gate",
+      "title": "Eligibility questions",
+      "fields": ["hasDependents"],
+      "transitions": [
+        { "to": "dependent_details", "when": { "field": "hasDependents", "equals": true } },
+        { "to": null, "exitReason": "no-dependents-skip-section", "when": { "field": "hasDependents", "equals": false } }
+      ]
+    },
+    {
+      "id": "dependent_details",
+      "title": "Dependent details",
+      "fields": ["dependentCount"],
+      "next": "identity_and_payment"
+    },
+    {
+      "id": "identity_and_payment",
+      "title": "Identity and payment",
+      "fields": [
+        "socialSecurityNumber",
+        "startDate",
+        "endDate",
+        "highestExpectedEmployees",
+        "expectedAgriculturalEmployees",
+        "expectedHouseholdEmployees",
+        "file944AnnuallyElection",
+        "quarterlyFilingConfirmed",
+        "nameChanged",
+        "supportingDocument"
+      ]
+    }
+  ],
+  "maturity": {
+    "level": "agent-ready-schema",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": true,
+      "agentReadySchema": true,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-01"
+  }
+}

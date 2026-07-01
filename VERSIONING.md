@@ -77,6 +77,15 @@ one-way-door governance decision reserved for the CEO/maintainers (see
 > sibling `spec/v0.2` directory because v0.x keeps one directory per minor while
 > the standard is being founded.
 
+> **v0.3 (additive MINOR).** v0.3 folds in five already CEO-accepted proposals —
+> GSP-0006 (`classification`), GSP-0007 (file `maxBytes`/`mediaTypes`), GSP-0012
+> (`maturity`), GSP-0013 (the shared `Condition` grammar, `visibleWhen`/
+> `requiredWhen`, `crossFieldValidation`, `exclusivityGroups`,
+> `steps[].transitions`/`exitReason`), and GSP-0014 (`documents[]`,
+> `fieldRole`) — all OPTIONAL, additive members; every conforming v0.2 document
+> is also a conforming v0.3 document. Ships as a sibling `spec/v0.3` directory,
+> same pattern as v0.2.
+
 ## 3. Immutability
 
 Once published, a version directory is never edited or deleted. Corrections ship

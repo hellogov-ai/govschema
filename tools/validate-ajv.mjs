@@ -40,6 +40,7 @@ const REGISTRY = join(ROOT, "registry");
 const META_SCHEMAS = {
   "0.1": join(ROOT, "spec", "v0.1", "govschema.schema.json"),
   "0.2": join(ROOT, "spec", "v0.2", "govschema.schema.json"),
+  "0.3": join(ROOT, "spec", "v0.3", "govschema.schema.json"),
 };
 
 // mapping.json (GSP-0011) is a v0.2+ artifact — there is no v0.1 mapping
