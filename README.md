@@ -57,6 +57,15 @@ See the reference schemas:
 - [`registry/us/ca/dmv/vehicle-registration-renewal/1.0.0`](./registry/us/ca/dmv/vehicle-registration-renewal/1.0.0/schema.json)
 - [`registry/gb/hmpo/passport-renewal-adult/1.0.0`](./registry/gb/hmpo/passport-renewal-adult/1.0.0/schema.json)
 
+## How agents consume this
+
+See [`docs/agent-consumption.md`](./docs/agent-consumption.md) for every
+supported consumption path side by side: raw HTTPS fetch + JSON Schema
+validation (the baseline, always sufficient on its own), the
+[`llms.txt`](./llms.txt) discovery entry point, the reference MCP server, and
+the installable Skill. The latter three are optional convenience layers over
+the first — none of them gate the standard.
+
 ## Registry layout & versioning (the short version)
 
 A schema's location is derived from its identity:
