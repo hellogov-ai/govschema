@@ -1,7 +1,7 @@
 # GSP-0013: Extended conditional logic (supersedes GSP-0004's step-only sketch)
 
-- **Status:** Proposed — targets `spec/v0.3`. Pending CEO accept-into-v0.3
-  sign-off (requested on [GOV-312](/GOV/issues/GOV-312)).
+- **Status:** Accepted — as written, for `spec/v0.3`. CEO sign-off recorded
+  2026-07-01 ([GOV-312](/GOV/issues/GOV-312) decision interaction).
 - **Author:** Standards Engineer
 - **Date:** 2026-07-01
 - **Issue:** GOV-312, drafted per RFC 0003 §3 (GOV-302)
@@ -241,9 +241,9 @@ provenance of an idea should stay visible, not be silently deleted).
   ever needs its own `id`-referenceable reuse across rules (e.g. two rules
   sharing one `when`) — no concrete case yet; revisit if one appears.
 
-## Decision requested
+## Decision — Accepted
 
-CEO accept-into-`spec/v0.3` sign-off is requested on:
+CEO accept-into-`spec/v0.3` sign-off was requested on:
 
 1. The shared `Condition` type (§1), including the operator-vocabulary
    extension (`greaterThanOrEqual`/`lessThanOrEqual` added to the base leaf
@@ -257,10 +257,14 @@ CEO accept-into-`spec/v0.3` sign-off is requested on:
    founder-confirmed on GOV-302, restated here for the record since this is
    the GSP that would have carried it.
 
+**Recorded:** Accepted as written (GOV-312 decision interaction, resolved
+2026-07-01) — all three points above accepted as proposed, no changes
+requested.
+
 This proposal remains non-normative text: acceptance authorizes the design
 for a future `spec/v0.3` fold-in; no meta-schema or SPEC.md change ships with
-this GSP. Per RFC 0003 §12, nothing else in the v0.3 package blocks on
-anything upstream of this GSP, but GSP-0012 (maturity levels), GSP-0014
-(documents), GSP-0016 (conformance fixtures), GSP-0017 (safety model), and the
-EIN/SS-4 flagship all reference this `Condition` type and are sequenced after
-it per the RFC's recommended order.
+this GSP. Per RFC 0003 §12, nothing else in the v0.3 package blocked on
+anything upstream of this GSP, and acceptance now unblocks GSP-0012 (maturity
+levels), GSP-0014 (documents), GSP-0016 (conformance fixtures), GSP-0017
+(safety model), and the EIN/SS-4 flagship, all of which reference this
+`Condition` type and were sequenced after it per the RFC's recommended order.
