@@ -118,6 +118,8 @@ conditional-field notes called out in field descriptions):
   "dateOfBirth": "2001-11-02",
   "parent1GivenNames": "Li Ming",
   "parent1FamilyNameAtBirth": "Chen",
+  "parent2GivenNames": "Wei",
+  "parent2FamilyNameAtBirth": "Zhang",
   "placeOfBirthCity": "Toronto",
   "placeOfBirthProvinceOrState": "Ontario",
   "placeOfBirthCountry": "Canada",
@@ -141,8 +143,8 @@ first SIN as a Canadian-born citizen now residing abroad (a plausible scenario:
 a Canadian citizen living in the U.S. who still needs a SIN for Canadian tax or
 benefits purposes), signing for himself with no representative. The scenario
 exercises the `hadPreviousSin: no` path (no `previousSinNumber` needed) and omits
-the optional gender, multiple-birth, second-parent, evening-phone, in-care-of,
-and representative fields. A one-off Node script (`node:fs` + a hand-rolled
+the optional gender, multiple-birth, evening-phone, in-care-of, and
+representative fields. A one-off Node script (`node:fs` + a hand-rolled
 per-field validator, not committed to the repo) confirmed every populated field
 satisfies its `type` and `validation` constraint and that no required field was
 left unset:
@@ -162,17 +164,47 @@ $ cd tools && node validate-ajv.mjs ../registry/ca/esdc/social-insurance-number-
 ok   registry/ca/esdc/social-insurance-number-application/1.0.0/schema.json [v0.2]
 ```
 
+## Independent re-review (2026-07-01, GOV-338/GOV-340 fix-up)
+
+A second reviewer performed a structural cross-check of the live Form GC-NAS2120
+PDF — extracting both rendered text and the underlying AcroForm field/widget
+data (`pdfjs-dist`) — and raised two field-fidelity findings against v1.0.0 as
+originally authored. Both were independently reproduced (PDF re-fetched
+directly from `catalogue.servicecanada.gc.ca`, HTTP 200; AcroForm annotations
+and page text extracted with `pdfjs-dist`) and are resolved as follows:
+
+- **`gender` enum was missing the "X" option.** The AcroForm's
+  `rb_ApplicantSex` field has three distinct radio-button widgets —
+  `buttonValue` `1`/`2`/`3` at rects `x≈398.8/452.8/502.3`, all at
+  `y≈584–592` — each with an adjacent label at the same y-coordinate:
+  `Male@(410.2,586.0)`, `Female@(464.2,586.0)`, `X@(513.7,586.0)`. This is the
+  federal "X" sex designation Canada has offered on ID/documents since 2019,
+  not a footnote or rendering artifact. **Fixed:** `gender.validation.enum` is
+  now `["male", "female", "x"]`.
+- **`parent2GivenNames` / `parent2FamilyNameAtBirth` were modeled as optional;
+  should be required.** Page 5 (Step 2 — Complete the Application Form) of the
+  Information Guide reads verbatim: "You must fully complete items 1 to 13,
+  except gender information (in item 3), which is optional. The parent listed
+  in item 4 must not be repeated in item 5." Item 5 (the second parent) is one
+  of items 1–13 and is not the named gender exception, so it is mandatory like
+  every other non-exempted item. **Fixed:** both fields are now
+  `required: true`, matching `parent1GivenNames` / `parent1FamilyNameAtBirth`'s
+  `minLength: 1` constraint.
+
+Both fixes are reflected in `schema.json`; this closes both blockers raised in
+the [PR #49 re-review](https://github.com/hellogov-ai/govschema/pull/49#issuecomment-4858942972).
+
+**Not fixed here (non-blocking per the re-review):** `primaryPhoneNumber` /
+`eveningPhoneNumber` (item 11) remain optional. Item 11 falls under the same
+"items 1–13 must be fully complete" clause, but the reviewer flagged this only
+as a consistency question, not a blocker — the guide does not distinguish a
+required vs. supplementary phone number the way it does for gender, and a
+single item can reasonably have an internally-optional sub-field (e.g. an
+evening number as a backup contact channel). Left as-is pending a source that
+resolves it either way; a future reviewer may reopen this as its own finding.
+
 ## What is NOT yet independently verified
 
-- **`gender`'s optionality and value set.** The Information Guide states gender
-  is optional and the form shows two boxes (Male/Female); this document models
-  it as an optional two-value enum, a reasonable reading but not independently
-  cross-checked against a possible third/blank option on the live online form.
-- **The `parent2*` fields' actual requiredness.** The guide's "the parent listed
-  in item 4 must not be repeated in item 5" phrasing implies two parents are
-  expected wherever known, but does not state item 5 is mandatory when only one
-  parent is known (e.g. an unknown or deceased second parent); modeled as
-  optional pending confirmation.
 - **Constraint patterns** (SIN 9-digit format, phone E.164, postal code) are
   reasonable encodings, not citations of a published ESDC validation rule.
 - **The online application's exact screen-by-screen flow** was not directly
