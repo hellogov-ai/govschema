@@ -137,3 +137,11 @@ replacement for it and never a gate in front of it. If an agent can't or
 won't use `llms.txt`, MCP, or a Skill, it loses nothing: a plain HTTPS fetch
 and a standard JSON Schema validator are, and will remain, fully sufficient
 to consume every GovSchema document.
+
+A second rule applies just as uniformly across all four layers: the agent
+conformance and safety boundary in
+[`spec/v0.3/SPEC.md` §14](../spec/v0.3/SPEC.md#14-agent-conformance-and-safety-boundary)
+([GSP-0017](../spec/proposals/0017-agent-conformance-safety-boundary.md)),
+restated in plain language in
+[`docs/agent-safety-model.md`](./agent-safety-model.md). No layer above is a
+lighter-weight exception to it.

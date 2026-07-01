@@ -28,7 +28,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Folded into `spec/v0.3` (GOV-373) — CEO sign-off recorded 2026-07-01 (GOV-315) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 | 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
-| 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-318) |
+| 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Folded into `spec/v0.3` (GOV-399) — CEO sign-off recorded 2026-07-01 (GOV-318) |
 | 0018 | [Field-level eligibility value semantics (`eligibleValues`)](./0018-field-eligibility-value-semantics.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-01 (GOV-393) |
 
 GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
@@ -37,8 +37,11 @@ GSP-0012, GSP-0013, GSP-0014): `spec/v0.3/govschema.schema.json` and
 `spec/v0.3/SPEC.md` now exist as an additive MINOR over `spec/v0.2`, and
 `tools/validate-ajv.mjs` validates documents targeting the `0.3` line. This is
 the prerequisite the EIN/SS-4 flagship (GOV-319) needed before any of its
-deliverables could be authored. GSP-0015/0016/0017 remain out of scope for this
-fold-in (see their own paragraphs below).
+deliverables could be authored. GSP-0015/0016/0017 remained out of scope for
+that fold-in (see their own paragraphs below). GOV-399 subsequently folded
+GSP-0017 into `spec/v0.3/SPEC.md` §14 as its own normative section, since it
+adds no meta-schema member and so needed no `govschema.schema.json` change.
+GSP-0015/0016 remain out of scope, tracked separately.
 
 GSP-0008–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).

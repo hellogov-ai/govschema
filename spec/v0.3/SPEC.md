@@ -8,8 +8,8 @@
 
 > **What changed from v0.2.** v0.3 is an additive, backward-compatible MINOR over
 > v0.2: every conforming v0.2 document is also a conforming v0.3 document. It folds
-> in six already-accepted proposals (RFC 0003, [GOV-302](https://govschema.org), plus
-> GSP-0018 folded in separately):
+> in seven already-accepted proposals (RFC 0003, [GOV-302](https://govschema.org),
+> plus GSP-0018 folded in separately):
 >
 > - [GSP-0006](../proposals/0006-sensitivity-classification.md) — an OPTIONAL,
 >   advisory, open-vocabulary field `classification` (§6.1, §6.5).
@@ -26,6 +26,10 @@
 >   `maturity` badge (§12).
 > - [GSP-0018](../proposals/0018-field-eligibility-value-semantics.md) — OPTIONAL
 >   field `eligibleValues` (§6.8), meaningful only alongside `fieldRole: eligibility`.
+> - [GSP-0017](../proposals/0017-agent-conformance-safety-boundary.md) — the
+>   agent conformance and safety boundary (§14): a six-point MUST/MUST NOT list
+>   binding conforming **consumer** behavior, not document shape, plus the
+>   companion [`docs/agent-safety-model.md`](../../docs/agent-safety-model.md).
 >
 > Each of these was independently accepted into `spec/v0.3` by maintainer (CEO)
 > sign-off before this fold-in shipped (per
@@ -116,7 +120,9 @@ A document is a **conforming GovSchema 0.3 document** if and only if:
 
 A **conforming consumer** is software that, given a conforming document, behaves as
 required by this specification (notably §6 on field types, §7 on flow, §8 on
-conditional logic, and §9 on documents).
+conditional logic, §9 on documents, and §14 on the agent conformance and safety
+boundary — the one section in this list that binds consumer *behavior* rather
+than how a document's shape is interpreted).
 
 A **conforming producer** is software or a process that emits only conforming
 documents.
@@ -145,7 +151,7 @@ today and which are validated incrementally as the tooling matures.
    assume legal or bureaucratic literacy.
 5. **Strict and small.** A v0.3 document is *closed*: the meta-schema sets
    `additionalProperties: false` at every level, so unknown members are rejected
-   rather than ignored. Richer constructs are tracked as proposals (§15) and added
+   rather than ignored. Richer constructs are tracked as proposals (§16) and added
    in later spec versions, not smuggled in as unrecognized members.
 6. **Jurisdiction-neutral.** No structure privileges any one country. Encodings use
    international standards (ISO 3166) so the same format describes a US, UK, or any
@@ -371,7 +377,7 @@ document (§13 rule 3).
 > v0.3 fields are still **flat**: there is no nested-object or array element model
 > and no labelled-option member. Composite inputs (e.g. an address) are expressed
 > as several flat fields with a shared `name` prefix. Richer field models remain
-> tracked for a later spec version (§15).
+> tracked for a later spec version (§16).
 
 ### 6.2 Types
 
@@ -403,7 +409,7 @@ follows, rather than each keyword inventing its own mechanism.
 
 No other keywords are permitted on a non-`file` field (`validation` is closed for
 these types). A richer constraint vocabulary (`format`, `exclusiveMinimum`,
-`multipleOf`, `minItems`) remains deferred to a later spec version (§15).
+`multipleOf`, `minItems`) remains deferred to a later spec version (§16).
 
 #### 6.4.1 Enumerated values
 
@@ -777,7 +783,7 @@ category-mismatched member (e.g. `amount` on an `attestation` entry) is invalid
 
 `ocr.populatesFields` is **advisory only**: a consumer MAY use OCR to prefill the
 named fields; the schema makes no claim about OCR accuracy and does not
-substitute for a conforming consumer's own user-confirmation obligations.
+substitute for a conforming consumer's own user-confirmation obligations (§14).
 
 ---
 
@@ -887,7 +893,7 @@ other.*
 | **Structural Reference** (`structuralReference`) | `fields[]` present, each entry carrying `type`; exactly one `source` cited (§10). Already required of every conforming document; this rung gives consumers an explicit floor to point at. |
 | **Verified Schema** (`verifiedSchema`) | `status: verified` and `verification.lastVerifiedAt` current per the named practice's cadence (§11.1). |
 | **Agent-Ready Schema** (`agentReadySchema`) | Verified Schema, **plus**: every real branch in the source process is expressed as `steps[].transitions` (§7.2), not left in step `description` prose; every real document/eligibility/payment/attestation requirement is expressed in `documents[]` (§9) or `fieldRole: eligibility` (§6.8); every terminal/exit state the source defines is reachable via an explicit `to: null` transition (§7.2), none silently absent. |
-| **Execution-Tested Schema** (`executionTestedSchema`) | Agent-Ready Schema, **plus**: a sibling `mapping.json` ([GSP-0011], §14) exists whose own `verification` is current under `selector-probe-v1`; a conformance fixture exists and a non-submitting harness reaches its terminal "review, do not submit" state without error. (The fixture format is [GSP-0016]'s concern, not yet accepted; this tier's second criterion has a named slot but no implementable check until it lands — a tooling-sequencing gap, not a blocker to this tier's schema-shape existing.) |
+| **Execution-Tested Schema** (`executionTestedSchema`) | Agent-Ready Schema, **plus**: a sibling `mapping.json` ([GSP-0011], §17) exists whose own `verification` is current under `selector-probe-v1`; a conformance fixture exists and a non-submitting harness reaches its terminal "review, do not submit" state without error. (The fixture format is [GSP-0016]'s concern, not yet accepted; this tier's second criterion has a named slot but no implementable check until it lands — a tooling-sequencing gap, not a blocker to this tier's schema-shape existing.) |
 
 ### 12.3 Cumulative ladder, no gaps
 
@@ -945,8 +951,8 @@ A conforming document MUST additionally satisfy:
    `<edition>` path segment MUST equal `edition.label`. When `edition` is absent, no
    `<edition>` directory may be present. (§5.2, §5.7)
 7. **Mapping referential integrity** — when a `mapping.json` companion is present
-   alongside a `schema.json` (§14), every `fields[].name` in `mapping.json` MUST
-   resolve to a field `name` defined in the sibling `schema.json`'s `fields`. (§14,
+   alongside a `schema.json` (§17), every `fields[].name` in `mapping.json` MUST
+   resolve to a field `name` defined in the sibling `schema.json`'s `fields`. (§17,
    [GSP-0011])
 8. **Field-level condition acyclicity** — treat every field's
    `visibleWhen`/`requiredWhen` as a directed edge to each field its condition
@@ -971,7 +977,84 @@ with no install step. CI (`.github/workflows/validate.yml`) runs both.
 
 ---
 
-## 14. Media type and file conventions
+## 14. Agent conformance and safety boundary
+
+*New in v0.3 ([GSP-0017]). Applies to every GovSchema document and to every
+conforming consumer (§2) — GovSchema's first conformance rule binding consumer
+**behavior**, not document shape. Generalizes §17.4's `mapping.json`-only scope
+boundary to every document and every consumption layer in
+[`docs/agent-consumption.md`](../../docs/agent-consumption.md).*
+
+### 14.1 The six-point MUST / MUST NOT list
+
+A **conforming consumer** — any agent, script, or service built on any
+GovSchema document, through any layer in `docs/agent-consumption.md` (a raw
+fetch, `llms.txt`, the reference MCP server, the installable Skill, or a
+client built from scratch) — MUST satisfy all of the following:
+
+1. **No submission authorization.** A GovSchema document MUST NOT be treated
+   as authorization to submit anything to a government system, on the
+   applicant's behalf or otherwise. GovSchema describes a process; it does
+   not authorize acting on it.
+2. **Confirm before submit.** A conforming agent MUST obtain explicit,
+   informed user confirmation before any final submission action, regardless
+   of how complete or internally validated the collected data is. Passing
+   every `validation` rule (§6) is a claim about data shape, not a claim that
+   the user has reviewed and authorized what is about to be sent.
+3. **Stricter handling for sensitive and identity data.** A conforming agent
+   MUST apply stricter handling — at minimum, explicit confirmation before
+   use and no third-party transmission without consent — to any field
+   carrying a `classification` value other than the public default
+   ([GSP-0006], §6.5) or any `documents[]` entry whose `category` is
+   `identity-document` ([GSP-0014], §9). This is a floor: a consumer MAY
+   apply additional safeguards (e.g. encryption at rest, redacted logging);
+   it MUST NOT apply less.
+4. **Surface currency before relying on draft data.** A conforming agent MUST
+   surface a document's `status` (§11.1) and `verification` record (§11.2) —
+   or its `maturity` (§12), where present — to the user, or otherwise account
+   for it in its own decision-making, before relying on that document to
+   collect or validate data. It MUST NOT silently treat a `draft` or
+   `deprecated` document, or one whose `verification.nextReviewBy` has
+   passed, as current without surfacing that fact.
+5. **No endorsement claim.** A conforming agent MUST NOT represent a
+   GovSchema document, or any output derived from it, as government-issued,
+   government-endorsed, or legally authoritative.
+6. **Applies uniformly, no wrapper exemption.** Rules 1–5 above apply
+   identically across every consumption layer in `docs/agent-consumption.md`.
+   None is exempt for being "just a convenience wrapper" over the same data.
+
+### 14.2 Relationship to §17.4 (`mapping.json` scope boundary)
+
+§17.4's `mapping.json`-specific scope boundary ("describe, never prescribe")
+is this section's direct precedent and narrower special case, enforced
+structurally: no `action`, `submitUrl`, or `next` members exist in that
+artifact's meta-schema to define. §14 states the same posture as a
+document-independent conformance rule, generalized to every GovSchema
+document and every consumption layer, not just `mapping.json`.
+
+### 14.3 Enforcement
+
+Rule 6 (§14.1) has one structural, machine-checkable expression today: a
+conformance fixture format with no `submit` action in its vocabulary at all
+([GSP-0016], once accepted) cannot describe a violation of rule 1 even by
+mistake — the same technique §17.4 already uses for `mapping.json`. Rules 2–5
+bind a consumer's runtime behavior, which GovSchema — a document format and a
+set of static files — has no execution environment in which to mechanically
+observe. They are stated as normative MUSTs on the same reasoning as §13's
+non-machine-checkable rules: a stated boundary with an honest enforcement gap
+is still a real conformance property, reviewable and citable in an incident
+report, even before tooling exists to check it automatically.
+
+### 14.4 Companion documentation
+
+[`docs/agent-safety-model.md`](../../docs/agent-safety-model.md) restates
+this section's six points in plain language, for the audience building
+against GovSchema without reading this specification directly. It is
+non-normative; where it and this section disagree, this section governs.
+
+---
+
+## 15. Media type and file conventions
 
 - File name: **`schema.json`** within the registry version directory
   (`registry/<id>/<version>/schema.json`, or
@@ -981,14 +1064,15 @@ with no install step. CI (`.github/workflows/validate.yml`) runs both.
 
 ---
 
-## 15. Open questions and deferred constructs (non-normative)
+## 16. Open questions and deferred constructs (non-normative)
 
 These were considered during founding and deferred to keep the core small. Each is
 tracked as a proposal under [`spec/proposals/`](../proposals/). **v0.2** folded in
 the edition/tax-year axis ([GSP-0005]). **v0.3** (this document) folds in
 classification ([GSP-0006]), file constraints ([GSP-0007]), conditional logic
-([GSP-0013]), documents/`fieldRole` ([GSP-0014]), and maturity ([GSP-0012]). The
-rest remain deferred:
+([GSP-0013]), documents/`fieldRole` ([GSP-0014]), maturity ([GSP-0012]),
+eligibility values ([GSP-0018]), and the agent conformance and safety boundary
+([GSP-0017], §14). The rest remain deferred:
 
 - **Labelled enum options** — `{value, label}` pairs ([GSP-0003]).
 - **URN-style external identifier** — colon GSID for external citation ([GSP-0002]).
@@ -1001,28 +1085,28 @@ rest remain deferred:
 - **Extensions** — a namespaced `extensions` object for vendor/experimental data
   ([GSP-0010]).
 - **Localization** — multiple language variants of human text within one document.
-- **Agent conformance and safety boundary** — [GSP-0017], in progress; not folded
-  into this cut.
+- **Verification as an operational trust layer** — [GSP-0015], accepted for
+  v0.3, not yet folded into this cut.
 - **Conformance fixtures** — [GSP-0016], not yet accepted; the slot its artifact
   fills is named in §12.2's Execution-Tested tier but not yet defined.
 
 ---
 
-## 16. Companion artifact: `mapping.json` (optional)
+## 17. Companion artifact: `mapping.json` (optional)
 
 *Normative if present, per [GSP-0011], maintainer-accepted. Unchanged from v0.2:
-this companion artifact's shape is not affected by any of the five GSPs this
+this companion artifact's shape is not affected by any of the seven GSPs this
 document folds in.* A **separate, OPTIONAL companion artifact**, sibling to
 `schema.json`, never a member inside it, maps a schema's field names to candidate
 locator signals on the live web page presenting the form — which `<input>`,
 `<select>`, or ARIA-labelled control a browser-driving agent should target for a
 named field.
 
-### 16.1 Shape and location
+### 17.1 Shape and location
 
 - Normative shape: [`spec/v0.2/mapping.schema.json`](../v0.2/mapping.schema.json)
   (JSON Schema 2020-12) — reused unchanged; v0.3 does not introduce its own
-  mapping meta-schema, since none of the five folded-in GSPs touch this artifact.
+  mapping meta-schema, since none of the seven folded-in GSPs touch this artifact.
   As with `schema.json`, where this prose and that meta-schema disagree, the
   meta-schema governs.
 - Location: `registry/<id>/<version>/mapping.json`, or
@@ -1031,19 +1115,19 @@ named field.
 - `schema.id` / `schema.version` inside `mapping.json` MUST equal the sibling
   `schema.json`'s `id` / `version`.
 
-### 16.2 Referential integrity
+### 17.2 Referential integrity
 
 See §13 rule 7: every `fields[].name` MUST resolve to a field defined in the
 sibling `schema.json`. Partial coverage is permitted.
 
-### 16.3 Its own verification record
+### 17.3 Its own verification record
 
 `mapping.json` carries its own `verification` block, structurally similar to but
 independent of the schema's: a schema's `status: verified` is a claim about
 legal-content fidelity; a mapping's freshness claim is about selectors still
 resolving on the live page. These MUST NOT be conflated into one flag.
 
-### 16.4 Scope boundary — describe, never prescribe
+### 17.4 Scope boundary — describe, never prescribe
 
 This is a hard boundary, not a style preference, per [GOVERNANCE.md](../../GOVERNANCE.md):
 
@@ -1057,7 +1141,7 @@ This is a hard boundary, not a style preference, per [GOVERNANCE.md](../../GOVER
   members exist to define, and `additionalProperties: false` at every level
   rejects any attempt to add them.
 
-### 16.5 Additive and optional — no effect on `schema.json` conformance
+### 17.5 Additive and optional — no effect on `schema.json` conformance
 
 The **absence** of `mapping.json` MUST NOT affect whether the sibling
 `schema.json` conforms to this specification. A **present** `mapping.json` that
