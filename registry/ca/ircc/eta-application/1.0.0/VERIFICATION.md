@@ -100,8 +100,10 @@ completing the form for themselves):
   titles/prefixes/honorifics, and the Roman-script-only constraint are all
   recorded in `lastName`'s description (and referenced from `firstName`'s),
   transcribed verbatim in substance from Part 2(B).
-- **Full field set (Parts 2(B) through 2(I)).** Passport details, UCI/previous
-  document number, marital status (7 options), employment (14 occupation
+- **Full field set (Parts 2(B) through 2(I)).** Passport details (including
+  `gender`, per the guide's "Provide your date of birth, gender, country or
+  territory and the city where you were born" instruction), UCI/previous
+  document number, marital status (7 options), employment (15 occupation
   categories), contact and residential address (including the P.O.-box
   prohibition and the abbreviation prohibition on street names), preferred
   communication language, travel information, the four background questions
@@ -127,6 +129,7 @@ type, and the conditional-field notes called out in field descriptions):
   "lastName": "Torres",
   "firstName": "Maria Alejandra",
   "dateOfBirth": "1990-03-14",
+  "gender": "Female",
   "countryOfBirth": "United States",
   "cityOfBirth": "San Diego",
   "passportIssueDate": "2019-05-10",
@@ -195,6 +198,11 @@ ok   registry/ca/ircc/eta-application/1.0.0/schema.json [v0.2]
   a list "dependent on the chosen occupation," but does not enumerate that list
   itself, so `jobTitle` is modeled as free text rather than an enum — a
   reasonable flattening, not a verified option set.
+- **`gender`'s exact option list.** The guide names this field (Part 2(B)) but,
+  unlike marital status or occupation, does not enumerate its value options, so
+  it is modeled as free text rather than an enum — a reasonable flattening, not
+  a verified option set. Added in a review-gate fix-up commit (GOV-331) after
+  independent re-review caught the omission.
 - **Constraint patterns** (passport issuing-country 3-letter code, email
   minimum length) are reasonable encodings, not citations of a published IRCC
   validation rule.
