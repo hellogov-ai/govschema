@@ -24,6 +24,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0010 | [Namespaced `extensions`](./0010-namespaced-extensions.md) | Proposed (v0.2 candidate) |
 | 0011 | [Field-to-page-element mapping (companion `mapping.json`)](./0011-field-page-element-mapping.md) | Accepted — new registry artifact type, CEO sign-off recorded 2026-07-01 |
 | 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Accepted — for v0.3, CEO sign-off recorded 2026-07-01 (GOV-312) |
+| 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Proposed — v0.3 candidate, CEO sign-off pending (GOV-315) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 
 GSP-0008–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
@@ -60,6 +61,17 @@ GSP-0014 (documents) needs its `maxBytes`/`mediaTypes` shape for
 `documents[].constraints`. No redesign — individual accept-into-v0.3 sign-off
 was recorded 2026-07-01 (GOV-314). It remains usable standalone on plain
 `type: file` fields, independent of `documents[]`.
+
+GSP-0014 was drafted per RFC 0003 (GOV-302 §5), the founder-approved design
+RFC for the `spec/v0.3` agent-execution-readiness package, following the
+founder's own "separate-array" answer on the documents-model shape question.
+It defines a new top-level `documents[]` array (identity-document /
+supporting-evidence / payment / attestation) reusing GSP-0013's `Condition`
+type for `requiredWhen` and GSP-0007's `maxBytes`/`mediaTypes` shape for
+`constraints`, plus a lighter `fieldRole: data | eligibility` member on
+`fields[]`. Drafted after GSP-0013, GSP-0006, and GSP-0007 landed, per RFC
+0003 §12's recommended sequencing; accept-into-v0.3 sign-off is pending on
+[GOV-315](/GOV/issues/GOV-315).
 
 ## Considered and rejected
 
