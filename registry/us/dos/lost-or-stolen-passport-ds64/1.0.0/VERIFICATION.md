@@ -178,6 +178,50 @@ ok   registry/us/dos/lost-or-stolen-passport-ds64/1.0.0/schema.json [v0.2]
   reach past the login gate); this document is sourced from the paper/PDF Form
   DS-64, which the source page states is the same underlying report.
 
+## Correction — missing second "police report" field (GOV-321)
+
+Independent review at GOV-309 (PR #40 review comment) found that the live Form
+DS-64 PDF has **two distinct AcroForm checkbox fields**, both labeled "Did you
+file a police report? (If yes, and the report is available, please submit a
+copy.)":
+
+1. `"lable please submit a copy"` (`Yes_2`/`No_2`) — under the loss/theft-date
+   question. Captured in this schema as `policeReportFiled`.
+2. `"Did you file a police report If yes and the report is available please
+   submit a copy"` (`Yes_4`/`No_4`) — positioned under the "Have you had any
+   other valid U.S. passport book/card lost or stolen? ... Approximate
+   date(s)?" question. Confirmed via `pdfjs-dist` `getAnnotations()` to be a
+   separate field (distinct field name and rect, ~65pt below the first
+   `hasOtherLostOrStolenPassports`/`otherLostPassportCount`/
+   `otherLostPassportApproximateDates` group, not a duplicate widget of field
+   1), and corroborated by a rendered Playwright screenshot of page 2 showing
+   two separate "Did you file a police report?" rows each with its own Yes/No
+   checkboxes.
+
+This second field was missing from the original transcription. It has been
+added as `otherLostPassportPoliceReportFiled` (boolean, optional, required when
+`hasOtherLostOrStolenPassports` is true — the same conditional pattern as its
+sibling fields `otherLostPassportCount`/`otherLostPassportApproximateDates`),
+appended to the `loss_details` step's field list. No other fields were found
+missing in this pass. Both registry validators were re-run after the addition
+and pass (see below).
+
+```
+$ node tools/validate.mjs registry/us/dos/lost-or-stolen-passport-ds64/1.0.0/schema.json
+ok   registry/us/dos/lost-or-stolen-passport-ds64/1.0.0/schema.json
+
+$ cd tools && node validate-ajv.mjs ../registry/us/dos/lost-or-stolen-passport-ds64/1.0.0/schema.json
+ok   registry/us/dos/lost-or-stolen-passport-ds64/1.0.0/schema.json [v0.2]
+```
+
+Since this v1.0.0 document has not yet merged to `main` (still under review on
+open PR #40), it has not been "published" in the VERSIONING.md §3 sense —
+immutability protects a version directory once merged, not a document still
+being reviewed on its originating PR. This correction is therefore made in
+place, rather than shipped as a new version, the same as any other pre-merge
+review fix-up. `status` remains `draft` pending the remainder of the
+independent field-by-field review.
+
 ## Path to a `verified` claim (next step)
 
 To advance this document to `status: verified`, a reviewer applies
