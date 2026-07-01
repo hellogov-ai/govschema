@@ -77,13 +77,16 @@ one-way-door governance decision reserved for the CEO/maintainers (see
 > sibling `spec/v0.2` directory because v0.x keeps one directory per minor while
 > the standard is being founded.
 
-> **v0.3 (additive MINOR).** v0.3 folds in five already CEO-accepted proposals —
+> **v0.3 (additive MINOR).** v0.3 folds in already CEO-accepted proposals —
 > GSP-0006 (`classification`), GSP-0007 (file `maxBytes`/`mediaTypes`), GSP-0012
 > (`maturity`), GSP-0013 (the shared `Condition` grammar, `visibleWhen`/
 > `requiredWhen`, `crossFieldValidation`, `exclusivityGroups`,
-> `steps[].transitions`/`exitReason`), and GSP-0014 (`documents[]`,
-> `fieldRole`) — all OPTIONAL, additive members; every conforming v0.2 document
-> is also a conforming v0.3 document. Ships as a sibling `spec/v0.3` directory,
+> `steps[].transitions`/`exitReason`), GSP-0014 (`documents[]`,
+> `fieldRole`), and GSP-0018 (`eligibleValues`) — all OPTIONAL, additive
+> members — and GSP-0017 (SPEC §14, the agent conformance and safety
+> boundary), which adds no document member at all: it binds conforming
+> *consumer* behavior, not document shape. Every conforming v0.2 document is
+> also a conforming v0.3 document. Ships as a sibling `spec/v0.3` directory,
 > same pattern as v0.2.
 
 ## 3. Immutability

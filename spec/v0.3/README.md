@@ -4,7 +4,7 @@
 > versions while the standard is being founded. The first stable line is `v1`.
 
 > **v0.3 over v0.2.** Additive, backward-compatible. Every conforming v0.2 document
-> is also a conforming v0.3 document. Folds in six already CEO-accepted proposals:
+> is also a conforming v0.3 document. Folds in seven already CEO-accepted proposals:
 >
 > - [GSP-0006](../proposals/0006-sensitivity-classification.md) — field `classification`.
 > - [GSP-0007](../proposals/0007-file-field-constraints.md) — `validation.maxBytes`/`mediaTypes` on `file` fields.
@@ -12,6 +12,7 @@
 > - [GSP-0013](../proposals/0013-extended-conditional-logic.md) — the shared `Condition` grammar: field `visibleWhen`/`requiredWhen`, `crossFieldValidation`, `exclusivityGroups`, `steps[].transitions`/`exitReason`.
 > - [GSP-0014](../proposals/0014-documents-as-first-class-model.md) — the `documents[]` array and field `fieldRole`.
 > - [GSP-0018](../proposals/0018-field-eligibility-value-semantics.md) — field `eligibleValues`.
+> - [GSP-0017](../proposals/0017-agent-conformance-safety-boundary.md) — the agent conformance and safety boundary (SPEC §14): a six-point MUST/MUST NOT list binding conforming consumer behavior, not document shape.
 >
 > See [SPEC.md](./SPEC.md) for the full normative text.
 
@@ -55,6 +56,11 @@ A JSON document is a **conforming GovSchema document** if and only if it
 validates against `govschema.schema.json` for the `govschemaVersion` it
 declares. Tooling in [`/tools`](../../tools) validates documents against this
 meta-schema.
+
+A **conforming consumer** additionally satisfies SPEC §14's agent conformance
+and safety boundary (GSP-0017) — six MUST/MUST NOT rules on consumer
+*behavior*, not document shape, restated in plain language in
+[`docs/agent-safety-model.md`](../../docs/agent-safety-model.md).
 
 The keywords MUST, SHOULD, and MAY are used per [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
