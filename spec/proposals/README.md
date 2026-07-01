@@ -15,7 +15,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0001 | [Document-model reconciliation](./0001-document-model-reconciliation.md) | Accepted |
 | 0002 | [URN-style external identifier (colon GSID)](./0002-colon-gsid-external-identifier.md) | Proposed (deferred) |
 | 0003 | [Labelled enum options](./0003-labelled-enum-options.md) | Proposed (v0.2) |
-| 0004 | [Conditional flow](./0004-conditional-flow.md) | Proposed (v0.2) |
+| 0004 | [Conditional flow](./0004-conditional-flow.md) | Superseded by GSP-0013 |
 | 0005 | [Edition / tax-year axis for time-versioned forms](./0005-edition-axis-time-versioned-forms.md) | Accepted — Option C, for v0.2 |
 | 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Proposed (v0.2 candidate) |
 | 0007 | [File field constraints (`maxBytes`, `mediaTypes`)](./0007-file-field-constraints.md) | Proposed (v0.2 candidate) |
@@ -23,6 +23,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0009 | [Composite & repeating values — structured `object` + `array`](./0009-composite-repeating-values.md) | Proposed (v0.2 candidate) — ⚠ one-way-door, CEO flag |
 | 0010 | [Namespaced `extensions`](./0010-namespaced-extensions.md) | Proposed (v0.2 candidate) |
 | 0011 | [Field-to-page-element mapping (companion `mapping.json`)](./0011-field-page-element-mapping.md) | Accepted — new registry artifact type, CEO sign-off recorded 2026-07-01 |
+| 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Proposed (v0.3 package) — CEO accept-into-v0.3 sign-off requested (GOV-312) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Proposed (v0.3 candidate) — ⚠ one-way-door on acceptance, CEO sign-off pending |
 
 GSP-0006–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
@@ -36,6 +37,14 @@ registry artifact type and file convention — gated on CEO sign-off per
 [GOVERNANCE.md](../../GOVERNANCE.md); sign-off was recorded 2026-07-01 (GOV-267).
 Registry rollout (the `mapping.json` pilot on 1–2 reference schemas) is tracked
 separately and sequenced after a GSP-0010 `extensions`-based pilot.
+
+GSP-0013 was drafted per RFC 0003 (GOV-302), the founder-approved design RFC
+for a `spec/v0.3` agent-execution-readiness package. It supersedes GSP-0004,
+extending its step-transition condition grammar to field visibility/
+requiredness, cross-field validation, and (reserved for GSP-0014) document
+requiredness. It is first in the RFC's recommended sequencing (§12) — GSP-0012,
+GSP-0014, GSP-0016, GSP-0017, and the EIN/SS-4 flagship all reference its
+`Condition` type.
 
 ## Considered and rejected
 

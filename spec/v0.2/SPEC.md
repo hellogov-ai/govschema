@@ -35,6 +35,12 @@
 
 ### 1.1 Purpose
 
+GovSchema is the trusted, versioned, machine-readable contract that lets AI
+agents understand, validate, and safely prepare government forms and
+workflows — without guessing from webpages, HTML, or PDFs. Open-source and
+independent: it describes and verifies government processes; it does not
+submit them.
+
 A *GovSchema document* is a versioned, machine-readable definition of a single
 government form or process. It captures:
 
