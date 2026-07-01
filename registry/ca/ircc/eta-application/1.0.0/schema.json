@@ -1,0 +1,506 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "ca/ircc/eta-application",
+  "version": "1.0.0",
+  "title": "Canada Electronic Travel Authorization (eTA)",
+  "description": "Apply for an Electronic Travel Authorization (eTA), Canada's air-travel counterpart to a visa waiver, required for most visa-exempt foreign nationals flying to Canada (not required for U.S. citizens, or for entry by land or sea). CAD $7 fee, approval typically within minutes though some applications take several days, valid up to 5 years or until passport expiry, whichever is first. This document models an applicant applying for themselves online at the IRCC eTA application form. Out of scope: Part 1 of the source guide (a parent/guardian or paid/unpaid representative applying on behalf of someone else), the lawful-permanent-resident-of-the-U.S. exemption questions, and the additional eligibility questions shown only to Israeli, Taiwanese, or Romanian passport holders. It does not submit the application; the live IRCC source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration, Refugees and Citizenship Canada",
+    "abbreviation": "IRCC",
+    "url": "https://www.canada.ca/en/immigration-refugees-citizenship.html"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta/apply.html",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Electronic Travel Authorization (eTA) Application Help Guide (Ci4-136/2015E-PDF)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema transcribed field-by-field from the official IRCC 'Electronic Travel Authorization (eTA) Application Help Guide' PDF, a static document hosted directly on canada.ca (fetched with a plain curl request, HTTP 200, no access block; the live eTA application form itself at eta-canada-part1.canada.ca was not scraped directly, consistent with the sibling us/cbp/esta-application document's approach to another JavaScript-rendered application). Not a time-versioned/edition form: an eTA application is a one-time filing per authorization, not filed 'for' a recurring period, so it is authored at the plain (non-edition) registry path per the GSP-0005 §2 coexistence test. Status remains 'draft' pending full independent field-by-field source review. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "travelDocumentType",
+      "label": "What travel document do you plan to use to travel to Canada?",
+      "type": "enum",
+      "required": true,
+      "description": "A refugee travel document or an alien passport/travel document issued to non-citizens are not eligible for an eTA (the guide states the applicant needs a visa or other travel document instead); this enum therefore lists only the eligible document types.",
+      "sourceRef": "eTA Application Help Guide Part 2, travel document selection",
+      "validation": {
+        "enum": [
+          "passport_ordinary_regular",
+          "passport_diplomatic",
+          "passport_official",
+          "passport_service",
+          "emergency_or_temporary_travel_document",
+          "us_permit_to_reenter_i327",
+          "us_refugee_travel_document_i571"
+        ]
+      }
+    },
+    {
+      "name": "passportIssuingCountry",
+      "label": "Which country/territory issued your passport?",
+      "type": "string",
+      "required": true,
+      "description": "The three-letter country code matching the passport's \"Code\", \"Issuing country\", or \"Authority\" field.",
+      "sourceRef": "eTA Application Help Guide Part 2, passport details",
+      "validation": { "pattern": "^[A-Z]{3}$" }
+    },
+    {
+      "name": "nationality",
+      "label": "What is the nationality noted on your passport?",
+      "type": "string",
+      "required": true,
+      "description": "A national of a visa-required country is not eligible to apply for an eTA.",
+      "sourceRef": "eTA Application Help Guide Part 2, passport details",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Enter the number at the top of the passport's biographic (photo) page, not any number on the first page or at the bottom of the biographic page. Most passport numbers are 8-11 characters; no hyphens, spaces, or other special characters. Be careful distinguishing the letter O from the number 0, and the letter I from the number 1 — an incorrect passport number can prevent boarding and require reapplying.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), passport details",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name (family name)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Enter exactly as it appears on the passport, per the guide's detailed name-transcription rules: keep apostrophes and hyphens; use the passport's machine-readable zone to determine name order; for filial or spousal relationship markers (e.g. \"bin\", \"bint\", \"ibn\", \"ben\", \"ould\", \"épouse de\"/\"ep.\"), omit the relationship word and the relative's name from both name fields; omit titles, prefixes, suffixes, and academic/honorific qualifiers unless they appear in the machine-readable zone; only Roman-script characters (including French accents) are accepted.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), name fields",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name (given name)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. See lastName's description for the passport-transcription rules that also apply here.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), name fields",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD, as it appears on the passport. If the exact date is unknown, give as much information as possible.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), passport details"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country/territory of birth",
+      "type": "string",
+      "required": true,
+      "description": "As shown in the passport's place-of-birth field.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), passport details",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "cityOfBirth",
+      "label": "City/town/village of birth",
+      "type": "string",
+      "required": true,
+      "description": "As shown in the passport's place-of-birth field; if none is shown there, enter the applicant's actual city/town/village of birth.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), passport details",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport issue date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD, from the passport's biographic (photo) page.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), passport details"
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Passport expiry date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD, from the passport's biographic (photo) page. The eTA is valid up to 5 years, but no later than this date.",
+      "sourceRef": "eTA Application Help Guide Part 2 (B), passport details"
+    },
+    {
+      "name": "uniqueClientIdentifierOrPreviousDocumentNumber",
+      "label": "Unique Client Identifier (UCI) or previous Canadian visa/permit number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. If the applicant previously submitted a Canadian application (e.g. a study permit, work permit, or visitor visa) they will have a UCI, found on IRCC correspondence or the issued immigration document. If unknown, enter \"NA\" or the immigration document number instead.",
+      "sourceRef": "eTA Application Help Guide Part 2 (C), personal details",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "married requires a marriage recognized under both the country of performance's law and Canadian law. common_law requires having lived together continuously in a marital-type relationship for at least one year.",
+      "sourceRef": "eTA Application Help Guide Part 2 (C), personal details",
+      "validation": {
+        "enum": [
+          "married", "legally_separated", "divorced", "annulled_marriage",
+          "widowed", "common_law", "never_married_single"
+        ]
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation category",
+      "type": "enum",
+      "required": true,
+      "description": "Select the closest match if nothing is identical.",
+      "sourceRef": "eTA Application Help Guide Part 2 (D), employment information",
+      "validation": {
+        "enum": [
+          "art_culture_recreation_and_sport",
+          "finance_and_administration",
+          "education_law_and_social_community_and_government_services",
+          "health",
+          "homemaker",
+          "management",
+          "manufacturing_and_utilities",
+          "military_armed_forces",
+          "natural_and_applied_sciences_and_related",
+          "natural_resources_agriculture_and_related_production",
+          "retired",
+          "sales_and_service",
+          "student",
+          "trades_transport_and_equipment_operators_and_related",
+          "unemployed"
+        ]
+      }
+    },
+    {
+      "name": "jobTitle",
+      "label": "Job title",
+      "type": "string",
+      "required": false,
+      "description": "Select the option that best describes the applicant's job, from a list dependent on the chosen occupation category (not itself enumerated in the source guide, so modeled here as free text).",
+      "sourceRef": "eTA Application Help Guide Part 2 (D), employment information",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "employerOrSchoolName",
+      "label": "Name of company, employer, or school",
+      "type": "string",
+      "required": false,
+      "description": "The employer's name, or the school's name if the applicant is a student.",
+      "sourceRef": "eTA Application Help Guide Part 2 (D), employment information",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "employerOrSchoolCountry",
+      "label": "Employer/school country or territory",
+      "type": "string",
+      "required": false,
+      "description": "Where the employer or, for a student, the school is located.",
+      "sourceRef": "eTA Application Help Guide Part 2 (D), employment information",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "employerOrSchoolCity",
+      "label": "Employer/school city or town",
+      "type": "string",
+      "required": false,
+      "description": "City/town where the employer is located, or, for a student, where the school is located.",
+      "sourceRef": "eTA Application Help Guide Part 2 (D), employment information",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "employedOrEnrolledSinceYear",
+      "label": "Since what year (working or studying for this employer/school)",
+      "type": "integer",
+      "required": false,
+      "description": "The year the applicant started working for the employer or studying at the school.",
+      "sourceRef": "eTA Application Help Guide Part 2 (D), employment information",
+      "validation": { "minimum": 1900 }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Used to communicate with the applicant about the application. A parent applying for a minor may enter their own email address.",
+      "sourceRef": "eTA Application Help Guide Part 2 (E), contact information",
+      "validation": { "minLength": 3, "maxLength": 160 }
+    },
+    {
+      "name": "residentialAddressUnit",
+      "label": "Apartment/unit number",
+      "type": "string",
+      "required": false,
+      "description": "If applicable.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "residentialAddressStreetNumber",
+      "label": "Street/civic number or house name",
+      "type": "string",
+      "required": true,
+      "description": "Do not enter apartment/unit/suite numbers here; use residentialAddressUnit instead.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "residentialAddressStreetName",
+      "label": "Street address/name",
+      "type": "string",
+      "required": true,
+      "description": "Include the standard identifier spelled out in full (e.g. \"Street\", \"Road\", \"Avenue\", \"Boulevard\") — abbreviations such as \"Ave.\" are not accepted.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "residentialAddressLine2",
+      "label": "Street address/name line 2",
+      "type": "string",
+      "required": false,
+      "description": "If necessary.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "residentialAddressCity",
+      "label": "City/town",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's permanent home address; do not enter a temporary residence or a P.O. box — the application will be refused.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "residentialAddressCountry",
+      "label": "Country/territory",
+      "type": "string",
+      "required": true,
+      "description": "Country or territory of the applicant's permanent home address.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "residentialAddressProvinceState",
+      "label": "Province/state",
+      "type": "string",
+      "required": false,
+      "description": "If applicable.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "residentialAddressPostalCode",
+      "label": "Postal/ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "Postal or ZIP code of the applicant's permanent home address.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "residentialAddressDistrict",
+      "label": "District/region",
+      "type": "string",
+      "required": false,
+      "description": "If applicable.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "preferredCommunicationLanguage",
+      "label": "Preferred language of communication",
+      "type": "enum",
+      "required": true,
+      "description": "Per the Official Languages Act, the Government of Canada provides information and services in both English and French. The application form itself is only in English or French, though field descriptions are offered in more languages.",
+      "sourceRef": "eTA Application Help Guide Part 2 (F), residential address",
+      "validation": { "enum": ["english", "french"] }
+    },
+    {
+      "name": "knowsTravelDate",
+      "label": "Do you know when you will travel to Canada?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, also give plannedTravelDate and, if the flight is confirmed, plannedDepartureTime.",
+      "sourceRef": "eTA Application Help Guide Part 2 (G), travel information"
+    },
+    {
+      "name": "plannedTravelDate",
+      "label": "Planned date of travel to Canada",
+      "type": "date",
+      "required": false,
+      "description": "Required when knowsTravelDate is true. YYYY-MM-DD.",
+      "sourceRef": "eTA Application Help Guide Part 2 (G), travel information"
+    },
+    {
+      "name": "plannedDepartureTime",
+      "label": "Planned flight departure time",
+      "type": "string",
+      "required": false,
+      "description": "Only if the applicant has confirmed flight details.",
+      "sourceRef": "eTA Application Help Guide Part 2 (G), travel information",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "hasBeenRefusedVisaOrDeniedEntry",
+      "label": "Have you ever been refused a visa or permit, denied entry to, or ordered to leave Canada or any other country/territory?",
+      "type": "boolean",
+      "required": true,
+      "description": "Background question 1. If true, also give refusalOrDenialDetails.",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 1"
+    },
+    {
+      "name": "refusalOrDenialDetails",
+      "label": "Details of each visa/permit refusal, entry denial, or removal order",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasBeenRefusedVisaOrDeniedEntry is true. For each incident: the country that refused/denied/ordered removal, and the reasons given.",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 1",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "hasCriminalHistory",
+      "label": "Have you ever committed, been arrested for, been charged with, or convicted of any criminal offence in any country/territory?",
+      "type": "boolean",
+      "required": true,
+      "description": "Background question 2. If true, also give criminalHistoryDetails.",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 2"
+    },
+    {
+      "name": "criminalHistoryDetails",
+      "label": "Details of each arrest, charge, or conviction",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasCriminalHistory is true. For each incident: where (city, country), when (month/year), the nature of the offence, and the sentence.",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 2",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "hasTuberculosisContactOrDiagnosis",
+      "label": "In the past two years, were you diagnosed with tuberculosis or have you been in close contact with a person with tuberculosis?",
+      "type": "boolean",
+      "required": true,
+      "description": "Background question 3. If true, also give isTuberculosisContactAHealthcareWorker.",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 3"
+    },
+    {
+      "name": "isTuberculosisContactAHealthcareWorker",
+      "label": "Is your contact with tuberculosis the result of being a health care worker?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required when hasTuberculosisContactOrDiagnosis is true (background question 3a). If true, also give hasEverBeenDiagnosedWithTuberculosis.",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 3(a)"
+    },
+    {
+      "name": "hasEverBeenDiagnosedWithTuberculosis",
+      "label": "Have you ever been diagnosed with tuberculosis?",
+      "type": "boolean",
+      "required": false,
+      "description": "Applicable when isTuberculosisContactAHealthcareWorker is true (background question 3b).",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 3(b)"
+    },
+    {
+      "name": "medicalCondition",
+      "label": "Do you have one of these conditions?",
+      "type": "enum",
+      "required": true,
+      "description": "Background question 4. Select none_of_the_above if none apply.",
+      "sourceRef": "eTA Application Help Guide Part 2 (H), background question 4",
+      "validation": {
+        "enum": [
+          "untreated_syphilis",
+          "untreated_drug_or_alcohol_addiction",
+          "untreated_mental_health_condition_with_psychosis",
+          "none_of_the_above"
+        ]
+      }
+    },
+    {
+      "name": "signatureFullName",
+      "label": "Signature of applicant (typed full name)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The applicant's electronic signature, given by typing their full name (or, if a representative or parent/guardian is applying on behalf of someone else, that person's name). The CAD $7 fee is paid immediately after this step.",
+      "sourceRef": "eTA Application Help Guide Part 2 (I), consent and declaration",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "travel_document",
+      "title": "Travel document and passport",
+      "fields": [
+        "travelDocumentType", "passportIssuingCountry", "nationality", "passportNumber",
+        "lastName", "firstName", "dateOfBirth", "countryOfBirth", "cityOfBirth",
+        "passportIssueDate", "passportExpiryDate"
+      ],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal details",
+      "fields": ["uniqueClientIdentifierOrPreviousDocumentNumber", "maritalStatus"],
+      "next": "employment"
+    },
+    {
+      "id": "employment",
+      "title": "Employment information",
+      "fields": [
+        "occupation", "jobTitle", "employerOrSchoolName", "employerOrSchoolCountry",
+        "employerOrSchoolCity", "employedOrEnrolledSinceYear"
+      ],
+      "next": "contact_and_address"
+    },
+    {
+      "id": "contact_and_address",
+      "title": "Contact information and residential address",
+      "fields": [
+        "email",
+        "residentialAddressUnit", "residentialAddressStreetNumber", "residentialAddressStreetName",
+        "residentialAddressLine2", "residentialAddressCity", "residentialAddressCountry",
+        "residentialAddressProvinceState", "residentialAddressPostalCode", "residentialAddressDistrict",
+        "preferredCommunicationLanguage"
+      ],
+      "next": "travel_information"
+    },
+    {
+      "id": "travel_information",
+      "title": "Travel information",
+      "fields": ["knowsTravelDate", "plannedTravelDate", "plannedDepartureTime"],
+      "next": "background_questions"
+    },
+    {
+      "id": "background_questions",
+      "title": "Background questions",
+      "fields": [
+        "hasBeenRefusedVisaOrDeniedEntry", "refusalOrDenialDetails",
+        "hasCriminalHistory", "criminalHistoryDetails",
+        "hasTuberculosisContactOrDiagnosis", "isTuberculosisContactAHealthcareWorker", "hasEverBeenDiagnosedWithTuberculosis",
+        "medicalCondition"
+      ],
+      "next": "consent"
+    },
+    {
+      "id": "consent",
+      "title": "Consent and declaration",
+      "fields": ["signatureFullName"]
+    }
+  ]
+}
