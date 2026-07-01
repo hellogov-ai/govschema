@@ -11,13 +11,13 @@
 
 A v0.1 document is **closed**: the meta-schema sets `additionalProperties: false`
 at every level (§3 principle 5), so any member the spec does not define is
-*rejected*. That strictness is deliberate and valuable — it catches typos and
+*rejected*. That strictness is deliberate and valuable: it catches typos and
 keeps the format small. But it leaves **no sanctioned place** for a producer or
 tool to attach experimental or vendor-specific data: an internal tracking id, a
 provenance hint a particular pipeline needs, a field annotation a consumer wants
 to trial before proposing it as a real member.
 
-With no sanctioned bag, that pressure does not disappear — it produces **ad-hoc
+With no sanctioned bag, that pressure does not disappear: it produces **ad-hoc
 forks** of the format (a private superset with extra keys), which fragments the
 standard and defeats interoperability. Every mature schema language meets this
 need with a reserved extension mechanism: JSON Schema's `x-`, OpenAPI's
@@ -60,7 +60,7 @@ optionally per-field — whose **keys are namespaced**:
   per namespace, no ambiguity).
 - The **value** under a namespace key is opaque to GovSchema (any JSON value).
 - A consumer **MUST** ignore any namespace it does not recognise, and **MUST
-  NOT** let an extension change the interpretation of any standard member —
+  NOT** let an extension change the interpretation of any standard member.
   `extensions` is strictly *additional, non-authoritative* data. A document
   stripped of all `extensions` MUST remain a conforming document with unchanged
   meaning (lens: *spec precision over cleverness*).
@@ -70,7 +70,7 @@ optionally per-field — whose **keys are namespaced**:
 This is the design point the disposition requires be pinned down exactly:
 
 - The strict `additionalProperties: false` at the document level and field level
-  **stays.** Unknown *siblings* of the spec's members remain rejected — `foo` at
+  **stays.** Unknown *siblings* of the spec's members remain rejected: `foo` at
   the top level is still an error. The only change is that `extensions` becomes a
   **known, explicitly-permitted member**, so strictness is *not* relaxed
   generally; exactly one well-named door is opened.

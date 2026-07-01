@@ -51,14 +51,14 @@ addFormats(ajv);
 const valid = ajv.validate(metaSchema, doc);
 ```
 
-Pin a specific `(id, version)` for reproducibility — published version
+Pin a specific `(id, version)` for reproducibility. Published version
 directories are immutable, so the same pin always resolves to the same
 bytes (see [`VERSIONING.md`](../VERSIONING.md)). To discover what's
 available, list or clone [`registry/`](../registry) directly, or read the
 [discovery catalog](../discovery/catalog.json) for what's coming next.
 
 This path has no dependency on any tooling in this repository. It will
-remain fully sufficient forever — layers 2–4 exist only to make it more
+remain fully sufficient forever: layers 2–4 exist only to make it more
 convenient to reach.
 
 ## 2. `llms.txt`: the discovery entry point

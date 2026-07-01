@@ -25,7 +25,7 @@ formation).
 
 Coverage started with **US and GB** (GOV-36) and has since grown to include
 **IE, CA, NZ, AU, DE, and SG** as each jurisdiction's turn came up. DE (GOV-170)
-was the first non-Anglophone, civil-law jurisdiction — the prior six were all
+was the first non-Anglophone, civil-law jurisdiction. The prior six were all
 Anglophone/common-law, a gap in the "global from day one" charter that had gone
 unaddressed for six authoring cycles. SG (GOV-213) is the first jurisdiction
 outside the Anglophone/Western-European cluster entirely — Southeast Asia's
@@ -38,7 +38,7 @@ at the same top level when their turn comes.
 
 A catalog entry describes a process so an agent can collect and validate the
 right inputs. GovSchema never submits a form, never stores anyone's answers, and
-never implies government endorsement. Discovery does not change that — it only
+never implies government endorsement. Discovery does not change that: it only
 decides which descriptions to write.
 
 ## How an entry was chosen

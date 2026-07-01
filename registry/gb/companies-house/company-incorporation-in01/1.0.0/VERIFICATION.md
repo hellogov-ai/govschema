@@ -186,7 +186,7 @@ and records the outcome here plus sets `status: verified` with a current
 
 Per the practice's **Cadence**, `nextReviewBy` is set to **2027-01-01** (6
 months). Re-check the source on or before that date and on any `source.url`
-change — Companies House identity-verification requirements were still in
+change. Companies House identity-verification requirements were still in
 their 12-month transition period as of this authoring date (started 18
 November 2025), so the mandatory/conditional framing of PSC identity
 verification is likely to firm up before the next review.

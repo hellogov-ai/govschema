@@ -33,8 +33,8 @@ for the other.
    in its list resolves to exactly one element; a field with zero resolving
    locators, or a locator resolving to more than one element (ambiguous), is
    flagged.
-3. **Record the result per field**, not just for the document as a whole —
-   which locator resolved (or that none did) is what tells a maintainer whether
+3. **Record the result per field**, not just for the document as a whole.
+   Which locator resolved (or that none did) is what tells a maintainer whether
    to reorder the list, add a new signal, or fix the mapping entirely.
 4. **Update the mapping's own record.** Set `verification.lastVerifiedAt` to
    today and `nextReviewBy` per the cadence below. This practice never touches
@@ -58,7 +58,7 @@ falling back to a purely descriptive read of `schema.json` (no page-element
 targeting) until a fresh probe runs.
 
 This practice is a natural candidate for a scheduled/CI job rather than a
-one-off human action, since it checks DOM presence, not legal meaning — but
+one-off human action, since it checks DOM presence, not legal meaning, but
 running it on a schedule is an operational choice for whoever hosts the probe,
 not a requirement of the practice itself.
 

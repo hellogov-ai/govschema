@@ -289,7 +289,7 @@ OPTIONAL. `edition` is the **temporal axis** for *time-versioned forms* — form
 that publish a fresh edition each tax or award year, keyed to that year, with
 fields and rules that differ from the prior year's edition (e.g. the US 1040,
 Form 4868, FAFSA; the UK SA100). It is **orthogonal to `version`** (§5.3): a new
-tax year is a new *edition*, never a `version` bump, and editions **coexist** — in
+tax year is a new *edition*, never a `version` bump, and editions **coexist**: in
 early 2026 an agent may file a 2025 return and a late 2024 return, and neither
 deprecates the other. `version` remains the SemVer contract *within one edition*.
 
@@ -373,7 +373,7 @@ byte/media-type limits) is deferred to a later spec version (§12).
 
 When `type` is `enum`, `validation.enum` is a non-empty array of the allowed values.
 v0.2 lists **values only**; a human-facing label per value is not part of the v0.2
-field model — describe the choices in the field's `description` where needed.
+field model. Describe the choices in the field's `description` where needed.
 (Labelled options remain a tracked future additive,
 [GSP-0003](../proposals/0003-labelled-enum-options.md); not folded into this cut.)
 
@@ -583,7 +583,7 @@ a browser-driving agent should target for a named field.
 ### 13.2 Referential integrity
 
 See §10 rule 7: every `fields[].name` MUST resolve to a field defined in the
-sibling `schema.json`. Partial coverage is permitted — a field with no stable
+sibling `schema.json`. Partial coverage is permitted: a field with no stable
 page presence may be omitted.
 
 ### 13.3 Its own verification record

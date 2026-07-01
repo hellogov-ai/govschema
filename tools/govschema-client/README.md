@@ -2,7 +2,7 @@
 
 Non-normative reference client for the [GovSchema](https://govschema.org)
 registry. It is a thin, versioned wrapper around the same lookup and
-validation logic already used by `tools/validate-ajv.mjs` in CI — nothing
+validation logic already used by `tools/validate-ajv.mjs` in CI: nothing
 here is authoritative in its own right.
 
 **This package is optional.** Every GovSchema document is fully usable with
@@ -11,7 +11,7 @@ nothing more than a plain HTTPS `GET` and a standard JSON Schema draft
 `@govschema/client` exists only to save agent developers from re-implementing
 that fetch/validate/search logic themselves. It is the shared core behind
 [`tools/mcp-server`](../mcp-server) (and, later, the Skill package from
-GOV-271) — both are thin adapters over this one library, so lookup/validate
+GOV-271): both are thin adapters over this one library, so lookup/validate
 behavior doesn't drift between distribution surfaces.
 
 ## Install

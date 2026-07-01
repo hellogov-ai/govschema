@@ -15,7 +15,7 @@ claim honestly.
 ## Access constraint
 
 The live application (`esta.cbp.dhs.gov`) renders as a JavaScript application
-shell to automated retrieval — no field text is present in the fetched HTML.
+shell to automated retrieval. No field text is present in the fetched HTML.
 `cbp.gov/travel/international-visitors/esta` and every `help.cbp.gov` article
 tried returned either HTTP 403 or the same JS-shell/CDN loading page. This
 document was therefore authored primarily from two **official DHS/CBP Privacy
@@ -177,7 +177,7 @@ required field was populated, every `date` value matched `YYYY-MM-DD`, every
 `emergencyContactPhone` against the E.164 pattern, `citizenshipCountry`/
 `countryOfBirth` against the two-uppercase-letter pattern). This is a
 structural self-check of the schema against its own rules using fictitious
-data — it does not submit anything to CBP and is not a substitute for
+data. It does not submit anything to CBP and is not a substitute for
 `manual-source-review-v1`'s live-source field comparison, which remains
 outstanding (see above).
 

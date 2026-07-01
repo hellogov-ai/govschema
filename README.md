@@ -3,7 +3,7 @@
 **Open standards for how AI agents interact with government services.**
 
 GovSchema publishes versioned, machine-readable **schemas** for government forms
-and processes — DMV systems, passports, visas, company formation, and beyond —
+and processes (DMV systems, passports, visas, company formation, and beyond),
 together with **verification practices** that confirm each schema matches its
 live government source. It is the standard layer that agent developers build on
 top of.
@@ -14,15 +14,15 @@ domains: a neutral body that defines and maintains the standard.
 
 > **What this is for two audiences.**
 > For **agent developers**: a stable, validated, semantically-versioned schema
-> you can fetch, pin, and program against — with provenance and a verification
+> you can fetch, pin, and program against, with provenance and a verification
 > record attached, so you know how current it is.
 > For **the people those agents act on behalf of**: a public, auditable record
 > of what a government process actually asks for, maintained by a neutral,
-> open-source project — not a black box.
+> open-source project, not a black box.
 
 > **What this is not.** GovSchema is **not** a government entity and is **not**
 > endorsed by or affiliated with any government. It does **not** fill out or
-> submit forms — it is the standard, not the agent. It stores **no** personal
+> submit forms. It is the standard, not the agent. It stores **no** personal
 > data: schemas describe forms, they don't contain anyone's answers.
 
 This is an early, founding-stage project. We are founding a standard, and the
@@ -48,7 +48,7 @@ A GovSchema document is one JSON object describing one government process: its
 jurisdiction and authority, the exact live source it was derived from, the
 fields an agent must collect (typed, validated, and traced to the source form),
 an optional process flow, and a verification record. It validates against the
-meta-schema for the spec line it targets — the current line is
+meta-schema for the spec line it targets. The current line is
 [`spec/v0.2/govschema.schema.json`](./spec/v0.2/govschema.schema.json) (which adds
 an `edition` axis for time-versioned forms; v0.1 documents remain conforming and
 validate against [`spec/v0.1`](./spec/v0.1/govschema.schema.json)).
@@ -64,7 +64,7 @@ supported consumption path side by side: raw HTTPS fetch + JSON Schema
 validation (the baseline, always sufficient on its own), the
 [`llms.txt`](./llms.txt) discovery entry point, the reference MCP server, and
 the installable Skill. The latter three are optional convenience layers over
-the first — none of them gate the standard.
+the first. None of them gate the standard.
 
 ## Registry layout & versioning (the short version)
 
@@ -78,7 +78,7 @@ registry/<country>/<…>/<process>/<version>/schema.json
 The `id` and `version` inside the document must match the path; tooling enforces
 it. Each schema carries its **own** semantic version: MAJOR = breaking for a
 consuming agent, MINOR = backward-compatible addition, PATCH = no contract
-change (e.g. a re-verification). Published version directories are **immutable** —
+change (e.g. a re-verification). Published version directories are **immutable**:
 corrections ship as a new version, so a pinned `(id, version)` always resolves
 to the same bytes. Full rules: [registry/README.md](./registry/README.md) and
 [VERSIONING.md](./VERSIONING.md).
@@ -97,7 +97,7 @@ the same check on every push and pull request.
 
 GovSchema is global and multi-jurisdictional by design. Early coverage focuses
 on a small number of jurisdictions (the schemas above are format references),
-but no jurisdiction is privileged — every country sits at the same top level of
+but no jurisdiction is privileged. Every country sits at the same top level of
 the registry.
 
 ## Contributing

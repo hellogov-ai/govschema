@@ -13,7 +13,7 @@ This document defines the **GovSchema document format**: a standardized,
 machine-readable definition of a government form or process that an autonomous
 agent can consume programmatically. It is paired with the machine-readable
 meta-schema [`govschema.schema.json`](./govschema.schema.json) (JSON Schema
-draft 2020-12), which is the normative artifact — where prose and meta-schema
+draft 2020-12), which is the normative artifact. Where prose and meta-schema
 disagree, the meta-schema governs.
 
 GovSchema is published by the GovSchema foundation, an independent open-source

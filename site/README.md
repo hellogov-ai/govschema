@@ -1,7 +1,7 @@
 # GovSchema site
 
 The GovSchema landing/marketing site. A **data-driven static generator** with
-zero runtime dependencies — pages are produced from structured content, so new
+zero runtime dependencies: pages are produced from structured content, so new
 marketing pages mean adding data, not writing HTML. This is the lever for
 automating the build of landing/marketing material.
 
@@ -13,7 +13,7 @@ site/
 ├─ build.mjs           # renders each page from typed sections -> dist/
 ├─ serve.mjs           # local preview server
 ├─ assets/             # styles.css, favicon.svg (copied verbatim to dist/)
-└─ dist/               # build output (generated; deployed to GitHub Pages)
+└─ dist/               # build output (generated; deployed to Vercel)
 ```
 
 `content/site.json` holds a `site` object (name, nav, footer) and a list of
@@ -40,7 +40,7 @@ npm run serve      # preview dist/ at http://localhost:4321
 npm run dev        # build then serve
 ```
 
-Requires Node ≥ 18. No `npm install` needed — there are no dependencies.
+Requires Node ≥ 18. No `npm install` needed: there are no dependencies.
 
 ## Deploy
 

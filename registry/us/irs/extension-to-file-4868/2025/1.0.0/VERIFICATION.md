@@ -56,7 +56,7 @@ bumping `version` or folding the year into `id`:
   path segment (`2025`) equals `edition.label` (spec §10 rule 6).
 - `id` (`us/irs/extension-to-file-4868`) is **year-agnostic**: it names the process
   across all tax-year editions. A 2026 edition will be authored at
-  `.../extension-to-file-4868/2026/1.0.0/` and **coexists** with this one — neither
+  `.../extension-to-file-4868/2026/1.0.0/` and **coexists** with this one. Neither
   deprecates the other, since in early 2026 an agent may still file a late 2024
   return alongside the 2025 return.
 - `version` (`1.0.0`) remains the SemVer content contract **within** the 2025

@@ -30,7 +30,7 @@ therefore remains `draft`, not `verified`.
     pay" sub-page (Direct Debit setup and payment-frequency rules)
   - <https://www.gov.uk/vehicle-exempt-from-vehicle-tax> (exemption categories)
 - **Official form id:** none. Vehicle tax has no downloadable paper form
-  equivalent to the D1/ITR-E precedents used for other reference schemas —
+  equivalent to the D1/ITR-E precedents used for other reference schemas.
   DVLA's own guidance states the D1/D2/D4 application packs are Post-Office-only
   and are for driving licences, not vehicle tax. The online service itself sits
   behind an authenticated flow at `vehicletax.service.gov.uk` with no published
@@ -83,7 +83,7 @@ confidence accordingly.
   over 40 years old); the field description states this qualitatively rather
   than a fixed year, since the cutoff moves each year.
 - **Fees/rates are intentionally not encoded**, consistent with other reference
-  schemas (e.g. `us/ca/dmv/drivers-license-renewal`) — DVLA vehicle tax rates
+  schemas (e.g. `us/ca/dmv/drivers-license-renewal`). DVLA vehicle tax rates
   change annually and are out of scope for a field-collection schema.
 - Conditional requiredness (Direct Debit bank/address/DOB fields; Northern
   Ireland insurance evidence; `exemptionCategory` only when

@@ -8,7 +8,7 @@ layer for MCP-aware agents.
 
 > **MCP is optional.** Every GovSchema document is fully usable with nothing
 > more than a plain HTTPS `GET` and a standard JSON Schema draft 2020-12
-> validator — see the root [README](../../README.md). This server just wraps
+> validator. See the root [README](../../README.md). This server just wraps
 > that same fetch-and-validate path behind MCP tool calls, via the shared
 > [`@govschema/client`](../govschema-client) core. Skipping MCP entirely
 > loses you nothing.

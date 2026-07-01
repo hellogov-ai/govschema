@@ -20,7 +20,7 @@ GovSchema describes government processes; it does not submit them
 ([AGENTS.md](../../AGENTS.md), [GOVERNANCE.md](../../GOVERNANCE.md)). Every
 script here only reads the registry or validates a document already in
 hand. Never use this Skill to fill in, submit, or POST data to a government
-website or API — that capability does not exist here and must never be
+website or API: that capability does not exist here and must never be
 added without explicit sign-off.
 
 ## Setup
@@ -32,7 +32,7 @@ npm install
 ```
 
 (Installs `@govschema/client`. Skip this if `node_modules` is already
-present — e.g. this Skill was installed as part of a checkout that already
+present: e.g. this Skill was installed as part of a checkout that already
 ran `npm install`.)
 
 ## Scripts

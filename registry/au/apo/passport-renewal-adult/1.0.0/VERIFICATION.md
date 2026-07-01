@@ -80,7 +80,7 @@ mail-specific credit-card authorisation) are **deliberately not included** here.
   `passportNotLostStolenOrCancelled`, `currentPassportStatus`. Notably, APO's
   published criteria state **no maximum time since expiry** for renewal
   eligibility, unlike the 24-month online-renewal windows found in the NZ and CA
-  reference schemas — this is a genuine cross-jurisdiction difference, not an
+  reference schemas. This is a genuine cross-jurisdiction difference, not an
   omission.
 - **No referee or guarantor required to renew** (verbatim: "You don't need a
   referee or guarantor to renew your passport"), distinguishing renewal from a
@@ -104,7 +104,7 @@ mail-specific credit-card authorisation) are **deliberately not included** here.
 - **Fee/payment channel** (verbatim, `Fees` snapshot, dated 1 January 2025): "At
   Australia Post - EFTPOS, MasterCard, Visa, AMEX or cash." Encoded as
   `paymentMethod`'s enum. The specific dollar fee amounts on that snapshot are
-  **not** encoded as schema data (per convention) and are known to be stale — a
+  **not** encoded as schema data (per convention) and are known to be stale. A
   July 2026 secondary source quotes a higher current adult 10-year fee; the
   `passportValidityRequested` and `processingSpeed` field descriptions point
   consumers to the live source rather than encoding a number.

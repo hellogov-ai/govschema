@@ -42,5 +42,5 @@ past its `nextReviewBy` should be treated by consumers as `draft`.
 
 This practice depends on human diligence and the source being publicly
 reachable at review time. It does not detect a source change that occurs between
-reviews — that is what `nextReviewBy` bounds. Automated and source-subscription
+reviews; that is what `nextReviewBy` bounds. Automated and source-subscription
 practices are planned as future, separately-versioned practices.

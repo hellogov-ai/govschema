@@ -10,7 +10,7 @@ can't drift between the two.
 
 > **This Skill is optional.** Every GovSchema document is fully usable with
 > nothing more than a plain HTTPS `GET` and a standard JSON Schema draft
-> 2020-12 validator — see the root [README](../../README.md). This package
+> 2020-12 validator. See the root [README](../../README.md). This package
 > just wraps that same fetch-and-validate path behind Skill scripts. Skipping
 > it entirely loses nothing.
 
