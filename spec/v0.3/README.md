@@ -4,13 +4,14 @@
 > versions while the standard is being founded. The first stable line is `v1`.
 
 > **v0.3 over v0.2.** Additive, backward-compatible. Every conforming v0.2 document
-> is also a conforming v0.3 document. Folds in five already CEO-accepted proposals:
+> is also a conforming v0.3 document. Folds in six already CEO-accepted proposals:
 >
 > - [GSP-0006](../proposals/0006-sensitivity-classification.md) — field `classification`.
 > - [GSP-0007](../proposals/0007-file-field-constraints.md) — `validation.maxBytes`/`mediaTypes` on `file` fields.
 > - [GSP-0012](../proposals/0012-schema-maturity-levels.md) — the `maturity` badge.
 > - [GSP-0013](../proposals/0013-extended-conditional-logic.md) — the shared `Condition` grammar: field `visibleWhen`/`requiredWhen`, `crossFieldValidation`, `exclusivityGroups`, `steps[].transitions`/`exitReason`.
 > - [GSP-0014](../proposals/0014-documents-as-first-class-model.md) — the `documents[]` array and field `fieldRole`.
+> - [GSP-0018](../proposals/0018-field-eligibility-value-semantics.md) — field `eligibleValues`.
 >
 > See [SPEC.md](./SPEC.md) for the full normative text.
 
@@ -117,6 +118,7 @@ MAJOR / MINOR / PATCH change to a schema are normative and live in
 | `steps[].transitions` / `exitReason` | `steps[]` | [GSP-0013] |
 | `documents[]` | top-level | [GSP-0014] |
 | `fieldRole` | `fields[]` | [GSP-0014] |
+| `eligibleValues` | `fields[]` where `fieldRole: eligibility` | [GSP-0018] |
 | `maturity` | top-level | [GSP-0012] |
 
 A hand-authored example exercising every construct above is at
@@ -128,3 +130,4 @@ It is illustrative only (fictional `xx`/`XX` jurisdiction), not a registry entry
 [GSP-0012]: ../proposals/0012-schema-maturity-levels.md
 [GSP-0013]: ../proposals/0013-extended-conditional-logic.md
 [GSP-0014]: ../proposals/0014-documents-as-first-class-model.md
+[GSP-0018]: ../proposals/0018-field-eligibility-value-semantics.md

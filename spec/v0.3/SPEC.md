@@ -8,7 +8,8 @@
 
 > **What changed from v0.2.** v0.3 is an additive, backward-compatible MINOR over
 > v0.2: every conforming v0.2 document is also a conforming v0.3 document. It folds
-> in five already-accepted proposals (RFC 0003, [GOV-302](https://govschema.org)):
+> in six already-accepted proposals (RFC 0003, [GOV-302](https://govschema.org), plus
+> GSP-0018 folded in separately):
 >
 > - [GSP-0006](../proposals/0006-sensitivity-classification.md) — an OPTIONAL,
 >   advisory, open-vocabulary field `classification` (§6.1, §6.5).
@@ -23,6 +24,8 @@
 >   top-level `documents[]` array (§9) and field `fieldRole` (§6.8).
 > - [GSP-0012](../proposals/0012-schema-maturity-levels.md) — the top-level
 >   `maturity` badge (§12).
+> - [GSP-0018](../proposals/0018-field-eligibility-value-semantics.md) — OPTIONAL
+>   field `eligibleValues` (§6.8), meaningful only alongside `fieldRole: eligibility`.
 >
 > Each of these was independently accepted into `spec/v0.3` by maintainer (CEO)
 > sign-off before this fold-in shipped (per
@@ -358,6 +361,7 @@ it is the default presentation order when a document has no `steps`.
 | `validation`    | no       | Validation rules; keyword set depends on `type` (§6.3).      |
 | `classification`| no       | Advisory sensitivity/data-classification hint (§6.5).        |
 | `fieldRole`     | no       | `data` (default) or `eligibility` (§6.8).                    |
+| `eligibleValues`| no       | Values that keep an applicant eligible via this pathway; only alongside `fieldRole: eligibility` (§6.8). |
 | `visibleWhen`   | no       | Condition gating this field's visibility (§6.7).             |
 | `requiredWhen`  | no       | Condition gating this field's requiredness (§6.7).           |
 
@@ -519,6 +523,43 @@ question — it changes **no** validation behavior. Composes unchanged with
 `visibleWhen`/`requiredWhen` (§6.7): an eligibility-role field is very often also
 the field a later `Condition` references, but `fieldRole` itself carries no
 conditional semantics.
+
+### 6.9 Eligibility values (`eligibleValues`)
+
+*New in v0.3 ([GSP-0018]).*
+
+```json
+{
+  "name": "passportLostOrStolen",
+  "label": "Has your most recent passport ever been reported lost or stolen?",
+  "type": "boolean",
+  "required": true,
+  "fieldRole": "eligibility",
+  "eligibleValues": [false]
+}
+```
+
+OPTIONAL non-empty array. Meaningful **only** alongside `fieldRole: eligibility`
+(§6.8) — a field carrying `eligibleValues` MUST also carry `fieldRole` set to
+`"eligibility"`. Names the subset of this field's otherwise-valid values that
+keep an applicant eligible via this pathway.
+
+`eligibleValues` makes **no validation claim**: a value absent from
+`eligibleValues` MUST still be accepted as well-formed input whenever it
+satisfies `type`/`validation` (§6.3). An applicant whose passport genuinely was
+lost or stolen MUST be able to truthfully answer `true` to the example above —
+that answer is valid data, not a schema violation; it only means the applicant
+cannot continue via *this* pathway with that answer. A consumer SHOULD surface
+a value outside `eligibleValues` as an eligibility/routing outcome ("you may
+need to apply in person"), never as a data-validation error. Do **not** use
+`validation.enum` to express this: `validation` governs well-formed input, and
+constraining it to the eligible value(s) would make a truthful, disqualifying
+answer look invalid.
+
+For documents that also model `steps[].transitions` (§7.2, [GSP-0013]), the
+same fact can be expressed at the flow level via a `when`/`to: null` exit
+transition; `eligibleValues` is a lighter, flow-independent complement, not a
+replacement, and a schema MAY carry both.
 
 ---
 
@@ -1058,3 +1099,4 @@ invalidate the sibling schema.
 [GSP-0014]: ../proposals/0014-documents-as-first-class-model.md
 [GSP-0016]: ../proposals/0016-conformance-fixtures.md
 [GSP-0017]: ../proposals/0017-agent-conformance-safety-boundary.md
+[GSP-0018]: ../proposals/0018-field-eligibility-value-semantics.md

@@ -1,13 +1,17 @@
 # GSP-0018: Field-level eligibility value semantics (`eligibleValues`)
 
-- **Status:** Proposed (v0.3 candidate)
+- **Status:** Accepted — folded into `spec/v0.3`. CEO sign-off recorded
+  2026-07-01 via [GOV-393](/GOV/issues/GOV-393) (accepted as written,
+  including the `fieldRole: eligibility` co-presence constraint
+  recommendation). Standards Reviewer soundness pass:
+  [GOV-388](/GOV/issues/GOV-388), no blocking concerns.
 - **Author:** Standards Engineer
 - **Date:** 2026-07-01
 - **Issue:** GOV-386, surfaced by GOV-374 (the schema-driven agent interview
   demo, govschema-landing PR #99)
-- **Affects:** `spec/v0.3/govschema.schema.json` (field model, §6.8 `fieldRole`
-  neighbourhood); no change to `validation`, `classification`, or the
-  `Condition` grammar
+- **Affects:** `spec/v0.3/govschema.schema.json` (field model, §6.8/§6.9
+  `fieldRole` neighbourhood); no change to `validation`, `classification`, or
+  the `Condition` grammar
 
 ## Problem
 
@@ -182,17 +186,38 @@ date of birth) — not a standards-evolution question, and does not need CEO
 sign-off. Filing that backfill as ordinary two-way-door registry maintenance
 work is a fitting follow-up, separate from this GSP.
 
-## Decision
+## Decision — Accepted
 
-Requesting Standards Reviewer soundness review (per GOV-386, before this
-reaches CEO sign-off) on:
+The Standards Reviewer soundness pass ([GOV-388](/GOV/issues/GOV-388)) raised
+no blocking concerns: the `eligibleValues` shape/semantics, the
+`validation.enum`-rejection reasoning, and the "`classification` already
+suffices for masking" conclusion were all confirmed sound. It did flag two
+stale registry-adoption counts in the doc (corrected above, count only,
+no design change): `classification` adoption is 0/40, not 2/38, and
+`fieldRole`/`steps[].transitions` now has one real registry user
+(`us/irs/employer-identification-number-ss4`, [GOV-319](/GOV/issues/GOV-319),
+landed after this proposal was first drafted).
 
-1. The `eligibleValues` member as sketched (Part 1) — shape, semantics, and
-   the recommendation to enforce `fieldRole: eligibility` co-presence in the
-   meta-schema.
-2. The recommendation that Part 2 (masking hint) needs no new member —
-   `classification` (GSP-0006) already covers it, and the real fix is a
-   registry-authoring backfill, tracked separately.
+The CEO accepted GSP-0018 as written on 2026-07-01, via
+[GOV-393](/GOV/issues/GOV-393):
+
+1. **`eligibleValues`** accepted as sketched (Part 1), including the
+   meta-schema constraint recommendation (`eligibleValues` present ⇒
+   `fieldRole` MUST be `"eligibility"`, mirroring the existing `requiredWhen`
+   ⇒ `required: false` precedent at §6.7). The rejection of reusing
+   `validation.enum` is explicitly affirmed as correct and load-bearing.
+2. **No new member for the masking/sensitivity ask** (Part 2) — agreed
+   `classification` (GSP-0006) already covers it. The CEO directed that the
+   0/40 registry-adoption gap be tracked as a separate, ordinary two-way-door
+   registry-authoring issue rather than folded into this GSP.
+
+`eligibleValues` is folded into `spec/v0.3/govschema.schema.json` (§6.8
+field-model properties + the `allOf` co-presence constraint) and
+`spec/v0.3/SPEC.md` (new §6.9) in this same change, following the GOV-373
+fold-in pattern. All 40 registry documents and the updated
+`spec/v0.3/examples/agent-ready-demo.schema.json` continue to validate
+against the meta-schema (`tools/validate.mjs` and `tools/validate-ajv.mjs`),
+confirming no regression.
 
 Not blocking GOV-374, which ships with its landing-site-local overlay
 regardless of this proposal's outcome.

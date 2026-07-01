@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://govschema.org/spec/v0.3/govschema.schema.json",
   "title": "GovSchema Document",
-  "description": "Meta-schema for a GovSchema document: a versioned, machine-readable definition of a government form or process. v0.3 is an additive MINOR over v0.2: every conforming v0.2 document is also a conforming v0.3 document. It folds in five already-accepted proposals: GSP-0006 (field `classification`), GSP-0007 (file `validation.maxBytes`/`mediaTypes`), GSP-0012 (`maturity`), GSP-0013 (the shared `Condition` grammar, field `visibleWhen`/`requiredWhen`, `crossFieldValidation`, `exclusivityGroups`, `steps[].transitions`/`exitReason`), and GSP-0014 (`documents[]`, field `fieldRole`). This is a standards artifact published by the GovSchema foundation; it does not imply endorsement by any government.",
+  "description": "Meta-schema for a GovSchema document: a versioned, machine-readable definition of a government form or process. v0.3 is an additive MINOR over v0.2: every conforming v0.2 document is also a conforming v0.3 document. It folds in six already-accepted proposals: GSP-0006 (field `classification`), GSP-0007 (file `validation.maxBytes`/`mediaTypes`), GSP-0012 (`maturity`), GSP-0013 (the shared `Condition` grammar, field `visibleWhen`/`requiredWhen`, `crossFieldValidation`, `exclusivityGroups`, `steps[].transitions`/`exitReason`), GSP-0014 (`documents[]`, field `fieldRole`), and GSP-0018 (field `eligibleValues`). This is a standards artifact published by the GovSchema foundation; it does not imply endorsement by any government.",
   "type": "object",
   "required": [
     "$schema",
@@ -231,6 +231,12 @@
           "default": "data",
           "description": "OPTIONAL presentation/grouping hint distinguishing an ordinary data-collection field from an eligibility/gating question. Purely presentational: changes no validation behavior. Absent means 'data', preserving pre-v0.3 behavior. GSP-0014 §2."
         },
+        "eligibleValues": {
+          "type": "array",
+          "minItems": 1,
+          "items": {},
+          "description": "OPTIONAL, meaningful only when `fieldRole` is `eligibility`. The subset of this field's otherwise-valid values that keep an applicant eligible via this pathway. Makes no validation claim: a value absent from `eligibleValues` MUST still be accepted as well-formed input if it satisfies `type`/`validation` — it only means this pathway does not continue with that answer. A consumer SHOULD surface this as an eligibility/routing outcome, never as a data-validation error. GSP-0018."
+        },
         "visibleWhen": {
           "$ref": "#/$defs/condition",
           "description": "OPTIONAL condition gating this field's visibility. Absent means always visible (unchanged pre-v0.3 behavior). GSP-0013 §2."
@@ -252,6 +258,13 @@
         {
           "if": { "required": ["requiredWhen"] },
           "then": { "properties": { "required": { "const": false } } }
+        },
+        {
+          "if": { "required": ["eligibleValues"] },
+          "then": {
+            "required": ["fieldRole"],
+            "properties": { "fieldRole": { "const": "eligibility" } }
+          }
         }
       ]
     },
