@@ -60,7 +60,7 @@ Semantics:
 ## Why an open-vocabulary string, not `sensitive: boolean`
 
 A bare `sensitive: true` boolean (the form the candidate originally took) cannot
-express *degree* or *kind* — SSN, a home address, and a bank balance all collapse
+express *degree* or *kind*: SSN, a home address, and a bank balance all collapse
 to one bit. Growing it later (e.g. distinguishing `sensitive-pii` from
 `financial`) would mean **either** adding a second member **or** changing the type
 of `sensitive`, both of which are awkward and the latter breaking. An

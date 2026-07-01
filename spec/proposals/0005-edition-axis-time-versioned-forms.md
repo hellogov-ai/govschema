@@ -61,7 +61,7 @@ collapses into the single `version` slot:
 
 The defect is that editions are not successive versions of each other. Modelling
 "new tax year" as a `version` bump abuses SemVer: the 2025 edition does not
-"break consumers of" the 2024 edition — they are different forms a consumer
+"break consumers of" the 2024 edition. They are different forms a consumer
 selects between by **year**, not by compatibility.
 
 **Consequence that rules out metadata-only.** If `id` stays year-agnostic and
@@ -69,7 +69,7 @@ the year lives only in a metadata member, two editions collide on the registry
 path: `registry/<id>/<version>/schema.json` gives both 2024-ed `1.0.0` and
 2025-ed `1.0.0` the same directory. The only escape is to partition the SemVer
 range by year (2024 → `1.x`, 2025 → `2.x`), which is exactly the SemVer abuse
-above. **Therefore metadata alone cannot let editions coexist** — the year must
+above. **Therefore metadata alone cannot let editions coexist.** The year must
 also be load-bearing in *addressing*. The real choice is where addressing puts
 it: in `id` (Option A) or in a dedicated edition axis (Option C). Metadata
 (Option B) is a necessary *label* on top of whichever is chosen, not a complete
@@ -86,7 +86,7 @@ answer by itself.
   segment in the `id` pattern; each edition is immutably addressable; simple.
 - **Con:** **fragments process lineage.** §5.2 promises `id` "names the process
   across all of its versions"; under A there is no first-class entity for "the
-  1040 across years" — a consumer reconstructs it by string-stripping a trailing
+  1040 across years." A consumer reconstructs it by string-stripping a trailing
   numeric segment, which is ambiguous (is `2025` an edition or a sub-process?).
   Discovery of "the current FAFSA" becomes "enumerate `id` prefixes, parse, take
   the max." The year is silently overloaded into the identifier namespace.
