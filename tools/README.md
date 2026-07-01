@@ -60,8 +60,9 @@ npm run validate:all      # both
 [`@govschema/client`](./govschema-client) — a non-normative reference client
 for listing, searching, fetching, and validating registry documents from
 code. Reuses the same ajv-based meta-schema validation as `validate-ajv.mjs`
-above. This is the shared core behind `mcp-server/` (and, later, the Skill
-package from GOV-271) — both are thin adapters over this one library. See
+above. This is the shared core behind `mcp-server/` and `govschema-skill/` —
+both are thin adapters over this one library, so lookup/validate behavior
+can't drift between distribution surfaces. See
 [`govschema-client/README.md`](./govschema-client/README.md).
 
 ## `mcp-server/`
@@ -75,3 +76,15 @@ JSON Schema validation remains fully sufficient without it. It never gains a
 "submit" tool of any kind — see
 [`mcp-server/README.md`](./mcp-server/README.md) for the boundary this
 enforces.
+
+## `govschema-skill/`
+
+[`@govschema/skill`](./govschema-skill) — an installable Skill (`SKILL.md` +
+CLI scripts) for Claude-family agents, exposing the same `govschema-client`
+core as list/search/get/validate/verification-status scripts. A distinct
+distribution surface from `mcp-server/`, but identical underlying calls — it
+wraps the same core rather than reimplementing the lookup/validate logic.
+Same boundary as `mcp-server/`: read-only, describe-only, no
+form-filling or submission capability. See
+[`govschema-skill/README.md`](./govschema-skill/README.md) and
+[`govschema-skill/SKILL.md`](./govschema-skill/SKILL.md).

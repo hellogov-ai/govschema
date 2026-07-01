@@ -111,15 +111,24 @@ tool reference and boundary test.
 
 ## 4. Installable Skill
 
-A packaged Skill for Claude-family agents is planned as the fourth
-consumption path, wrapping the exact same
-[`@govschema/client`](../tools/govschema-client) core as the MCP server so
-lookup/search/validate behavior can't drift between the two distribution
-surfaces. It carries the identical boundary: read-only, describe-only, no
-form-filling or submission capability of any kind. This section will be
-filled in with install instructions once the Skill package ships; until
-then, agents on Claude-family runtimes can use either [layer 1](#1-raw-fetch--json-schema-validation-the-baseline)
-or the [MCP server](#3-reference-mcp-server) directly.
+[`tools/govschema-skill`](../tools/govschema-skill) (`@govschema/skill`) is
+an installable [Skill](https://docs.claude.com/en/docs/agents-and-tools/agent-skills)
+for Claude-family agents, packaging the exact same
+[`@govschema/client`](../tools/govschema-client) core as the MCP server
+behind five CLI scripts — `list-schemas`, `search-schemas`, `get-schema`,
+`validate-document`, `get-verification-status`. Distinct distribution
+surface from MCP, identical underlying calls: lookup/search/validate
+behavior can't drift between the two, since neither reimplements the logic.
+
+```sh
+cp -r tools/govschema-skill /path/to/.claude/skills/govschema
+cd /path/to/.claude/skills/govschema && npm install
+```
+
+It carries the identical boundary: read-only, describe-only, no
+form-filling or submission capability of any kind — see
+[`tools/govschema-skill/SKILL.md`](../tools/govschema-skill/SKILL.md) for
+the full script reference and boundary test.
 
 ## The one rule that applies to all four
 
