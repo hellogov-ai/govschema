@@ -1,0 +1,647 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "us/ca/dmv/vehicle-title-transfer",
+  "version": "1.0.0",
+  "title": "California Vehicle Title Transfer and Replacement (Form REG 227)",
+  "description": "Transfer a vehicle's Certificate of Title from a seller to a new owner, and/or obtain a replacement title, using the data model of DMV Form REG 227 (Application for Replacement or Transfer of Title). REG 227 is used whenever the original paper title is unavailable to complete the transfer by endorsing its back (lost, stolen, illegible/mutilated, or never received from the prior owner or from DMV). It covers two paths selected by transactionType: a pure replacement-title request (the current owner only), or a transfer of title with replacement (the seller releases ownership and the new owner registers). This document models the individual-to-individual case: the registered/new owner sections (0, 1, 2, 3, 4, 6, 7). Out of scope: the notarized legal-owner (lienholder) lien-release path (form Section 5, which cannot be used for non-ELT participants with vehicles 2 model years old or newer), the dealer's-release path (Section 8), vessels and vessel-specific fields (hull identification number, CF number, vessel-mooring location), and the Statement of Facts (REG 256) required for a qualified-relative transfer's use-tax exemption. It does not submit the application; the live California DMV source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-CA"
+  },
+  "authority": {
+    "name": "California Department of Motor Vehicles",
+    "abbreviation": "CA DMV",
+    "url": "https://www.dmv.ca.gov/"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.dmv.ca.gov/portal/uploads/2021/11/REG-227-R9-2021-AS-WWW.pdf",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Form REG 227 (Rev. 9/2021)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema transcribed field-by-field from the live Form REG 227 (Rev. 9/2021) PDF at dmv.ca.gov (fetched directly; no CDN block encountered, unlike the bpd.cdn.sos.ca.gov forms used for the sibling LLC-1/ARTS-GS documents). Cross-checked against the DMV Vehicle Industry Registration Procedures Manual chapter on Form REG 227 (dmv.ca.gov/portal/handbook) for the sections/paths this form serves. Not a time-versioned/edition form: a title transfer is a one-time event per transaction, not filed 'for' a recurring period, so it is authored at the plain (non-edition) registry path per the GSP-0005 §2 coexistence test. Status remains 'draft' pending full independent field-by-field source review. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "transactionType",
+      "label": "Type of transaction",
+      "type": "enum",
+      "required": true,
+      "description": "replacement_only = Replacement Title (complete sections/fields for the current owner only). transfer_with_replacement = Transfer of Title with Replacement (the seller releases ownership and the new owner registers; complete transfer within 10 days of taking possession of the vehicle). Determines which of the newOwner*/releasingOwner* fields below are required.",
+      "sourceRef": "Form REG 227 header checkboxes",
+      "validation": { "enum": ["replacement_only", "transfer_with_replacement"] }
+    },
+    {
+      "name": "licensePlateNumber",
+      "label": "Vehicle license plate number",
+      "type": "string",
+      "required": true,
+      "description": "The vessel CF number field on the same line is out of scope; this document covers vehicles only.",
+      "sourceRef": "Form REG 227 vehicle identification line",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "vehicleIdentificationNumber",
+      "label": "Vehicle identification number (VIN)",
+      "type": "string",
+      "required": true,
+      "description": "The hull identification number field on the same line (for vessels) is out of scope.",
+      "sourceRef": "Form REG 227 vehicle identification line",
+      "validation": { "minLength": 1, "maxLength": 17 }
+    },
+    {
+      "name": "vehicleYearAndMake",
+      "label": "Year/make of vehicle",
+      "type": "string",
+      "required": true,
+      "description": "Free text as printed on the form's single combined blank, e.g. \"2019 Honda\". The vessel-builder alternative on the same line is out of scope.",
+      "sourceRef": "Form REG 227 vehicle identification line",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "registeredOwnerName",
+      "label": "Registered owner's true full name, business name, or lessor",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Print name as it appears on the Title/Registration: last, first, middle, suffix (or a business name/lessor).",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "registeredOwnerLicenseNumber",
+      "label": "Registered owner's driver license/ID card number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "registeredOwnerLicenseState",
+      "label": "Registered owner's driver license/ID card — issuing state",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "coOwnerName",
+      "label": "Co-owner's true full name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Only if the vehicle has a co-owner of record.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "coOwnerLicenseNumber",
+      "label": "Co-owner's driver license/ID card number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when coOwnerName is given.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "coOwnerLicenseState",
+      "label": "Co-owner's driver license/ID card — issuing state",
+      "type": "string",
+      "required": false,
+      "description": "Required when coOwnerName is given. Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "ownerPhysicalAddressLine1",
+      "label": "Owner's physical residence or business address",
+      "type": "string",
+      "required": true,
+      "description": "Include street, avenue, etc., and apartment/space/suite number.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "ownerPhysicalAddressCity",
+      "label": "Owner's physical address — city",
+      "type": "string",
+      "required": true,
+      "description": "The city of the owner's physical residence or business address.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "ownerPhysicalAddressState",
+      "label": "Owner's physical address — state",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "ownerPhysicalAddressZipCode",
+      "label": "Owner's physical address — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "5-digit or ZIP+4 U.S. format, e.g. 95814 or 95814-1234.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "ownerCountyOfResidence",
+      "label": "County of residence or county where the vehicle is principally garaged",
+      "type": "string",
+      "required": true,
+      "description": "A single California county name.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "ownerMailingAddressLine1",
+      "label": "Owner's mailing address, if different from the physical address",
+      "type": "string",
+      "required": false,
+      "description": "Optional; used for mailing purposes only.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "ownerMailingAddressCity",
+      "label": "Owner's mailing address — city",
+      "type": "string",
+      "required": false,
+      "description": "Required when ownerMailingAddressLine1 is given.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "ownerMailingAddressState",
+      "label": "Owner's mailing address — state",
+      "type": "string",
+      "required": false,
+      "description": "Required when ownerMailingAddressLine1 is given. Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "ownerMailingAddressZipCode",
+      "label": "Owner's mailing address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required when ownerMailingAddressLine1 is given.",
+      "sourceRef": "Form REG 227 Section 1",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "existingLienholderName",
+      "label": "Name of bank, finance company, or individual having a lien on this vehicle",
+      "type": "string",
+      "required": false,
+      "description": "Leave unset if there is no existing lien. Do not enter the name(s) of the registered owner(s) here.",
+      "sourceRef": "Form REG 227 Section 2",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "existingLienholderAddressLine1",
+      "label": "Existing lienholder's business or residence address",
+      "type": "string",
+      "required": false,
+      "description": "Required when existingLienholderName is given.",
+      "sourceRef": "Form REG 227 Section 2",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "existingLienholderAddressCity",
+      "label": "Existing lienholder's address — city",
+      "type": "string",
+      "required": false,
+      "description": "Required when existingLienholderName is given.",
+      "sourceRef": "Form REG 227 Section 2",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "existingLienholderAddressState",
+      "label": "Existing lienholder's address — state",
+      "type": "string",
+      "required": false,
+      "description": "Required when existingLienholderName is given. Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 2",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "existingLienholderAddressZipCode",
+      "label": "Existing lienholder's address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required when existingLienholderName is given.",
+      "sourceRef": "Form REG 227 Section 2",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "missingTitleReason",
+      "label": "The Certificate of Title issued for this vehicle is",
+      "type": "enum",
+      "required": true,
+      "description": "Check one box. illegible_mutilated requires attaching the old title. not_received_from_dmv allows 30 days from the issue date before applying. WARNING: issuance of a replacement title cancels the original title. If the address on file differs from DMV's records, the application must be filed in person with proof of ownership and identification, and a CHP vehicle verification is required if the title was replaced within the last 90 days.",
+      "sourceRef": "Form REG 227 Section 3",
+      "validation": {
+        "enum": ["lost", "stolen", "illegible_mutilated", "not_received_from_prior_owner", "not_received_from_dmv"]
+      }
+    },
+    {
+      "name": "ownerCertificationName",
+      "label": "Printed name of owner (missing-title certification)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The owner certifies, under penalty of perjury under California law, that the missing-title statement is true and correct, and agrees to indemnify the Director of Motor Vehicles for any loss from issuing the replacement title.",
+      "sourceRef": "Form REG 227 Section 3",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "ownerCertificationDate",
+      "label": "Date of owner's missing-title certification",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Form REG 227 Section 3"
+    },
+    {
+      "name": "ownerCertificationPhone",
+      "label": "Owner's daytime telephone number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +19165551234.",
+      "sourceRef": "Form REG 227 Section 3",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "releasingOwnerName",
+      "label": "Printed name of releasing owner (release of ownership)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when transactionType is transfer_with_replacement. The registered owner releases interest in the vehicle. If co-owners are joined by \"AND\" on DMV records, each co-owner must separately sign/release (out of scope for this flat single-signer field; see GSP-0009). A company/business signer's printed name must include the business name and an authorized representative's countersignature, e.g. \"ABC CO., by JOHN SMITH\".",
+      "sourceRef": "Form REG 227 Section 4",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "releasingOwnerDate",
+      "label": "Date of releasing owner's signature",
+      "type": "date",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement. YYYY-MM-DD.",
+      "sourceRef": "Form REG 227 Section 4"
+    },
+    {
+      "name": "releasingOwnerPhone",
+      "label": "Releasing owner's daytime telephone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when transactionType is transfer_with_replacement. In international E.164 format.",
+      "sourceRef": "Form REG 227 Section 4",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "acquisitionDate",
+      "label": "Date purchased or acquired",
+      "type": "date",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement. YYYY-MM-DD.",
+      "sourceRef": "Form REG 227 Section 6"
+    },
+    {
+      "name": "acquisitionType",
+      "label": "How the vehicle was acquired",
+      "type": "enum",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement. If purchase, give purchasePrice. If gift or trade, give marketValue instead. If acquired from a qualifying relative (parent/child, grandparent/grandchild, spouse, domestic partner, or minor sibling related by blood or adoption), a separate Statement of Facts (REG 256) for the use-tax exemption must also be submitted — out of scope for this document.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "enum": ["purchase", "gift", "trade"] }
+    },
+    {
+      "name": "purchasePrice",
+      "label": "Purchase price",
+      "type": "number",
+      "required": false,
+      "description": "Required when acquisitionType is purchase. U.S. dollars.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "marketValue",
+      "label": "Market value",
+      "type": "number",
+      "required": false,
+      "description": "Required when acquisitionType is gift or trade. U.S. dollars.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "newOwnerName",
+      "label": "New owner's true full name, business name, or lessor",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when transactionType is transfer_with_replacement. Print true full name as shown on driver license/ID card: last, first, middle, suffix (or a business name/lessor).",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "newOwnerLicenseNumber",
+      "label": "New owner's driver license/ID card number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when transactionType is transfer_with_replacement.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "newOwnerLicenseState",
+      "label": "New owner's driver license/ID card — issuing state",
+      "type": "string",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement. Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "newCoOwnerName",
+      "label": "New co-owner's or lessee's true full name (first slot)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The form provides two co-owner/lessee name lines in Section 6 in addition to the primary new owner; only if the new registration will have a co-owner or lessee. If given, also give newCoOwnershipType. For a second co-owner/lessee, see secondNewCoOwnerName.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "newCoOwnershipType",
+      "label": "Co-owner joinder — AND or OR (first slot)",
+      "type": "enum",
+      "required": false,
+      "description": "Required when newCoOwnerName is given. Co-owners joined by \"and\" each require their own signature to later sell, gift, or transfer the vehicle; co-owners joined by \"or\" require only one owner's signature.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "enum": ["and", "or"] }
+    },
+    {
+      "name": "secondNewCoOwnerName",
+      "label": "New co-owner's or lessee's true full name (second slot)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The form's second co-owner/lessee name line in Section 6. Only if the new registration will have a second co-owner or lessee beyond the one recorded in newCoOwnerName. If given, also give secondNewCoOwnershipType.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "secondNewCoOwnershipType",
+      "label": "Co-owner joinder — AND or OR (second slot)",
+      "type": "enum",
+      "required": false,
+      "description": "Required when secondNewCoOwnerName is given. Co-owners joined by \"and\" each require their own signature to later sell, gift, or transfer the vehicle; co-owners joined by \"or\" require only one owner's signature.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "enum": ["and", "or"] }
+    },
+    {
+      "name": "newOwnerPhysicalAddressLine1",
+      "label": "New owner's physical residence or business address",
+      "type": "string",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "newOwnerPhysicalAddressCity",
+      "label": "New owner's physical address — city",
+      "type": "string",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "newOwnerPhysicalAddressState",
+      "label": "New owner's physical address — state",
+      "type": "string",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement. Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "newOwnerPhysicalAddressZipCode",
+      "label": "New owner's physical address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "newOwnerCountyOfResidence",
+      "label": "New owner's county of residence or county where the vehicle is principally garaged",
+      "type": "string",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "newOwnerMailingAddressLine1",
+      "label": "New owner's mailing address, if different from the physical address",
+      "type": "string",
+      "required": false,
+      "description": "Optional; used for mailing purposes only.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "newOwnerMailingAddressCity",
+      "label": "New owner's mailing address — city",
+      "type": "string",
+      "required": false,
+      "description": "Required when newOwnerMailingAddressLine1 is given.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "newOwnerMailingAddressState",
+      "label": "New owner's mailing address — state",
+      "type": "string",
+      "required": false,
+      "description": "Required when newOwnerMailingAddressLine1 is given. Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "newOwnerMailingAddressZipCode",
+      "label": "New owner's mailing address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required when newOwnerMailingAddressLine1 is given.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "newLesseeAddress",
+      "label": "Lessee address, if different from the address above",
+      "type": "string",
+      "required": false,
+      "description": "Only applicable when the new registration is a lease (a lessee is named in newOwnerName, newCoOwnerName, or secondNewCoOwnerName). Free text; distinct from newOwnerPhysicalAddressLine1 and newOwnerMailingAddressLine1.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "newOwnerCertificationDate",
+      "label": "Date of new owner's signature",
+      "type": "date",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement. The new owner certifies, under penalty of perjury under California law, that the mailing address is valid and existing, and consents to service of process at that address per Vehicle Code section 1808.21.",
+      "sourceRef": "Form REG 227 Section 6"
+    },
+    {
+      "name": "newOwnerPhone",
+      "label": "New owner's daytime telephone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when transactionType is transfer_with_replacement. In international E.164 format.",
+      "sourceRef": "Form REG 227 Section 6",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "newLienholderName",
+      "label": "New legal owner (lienholder) — true full name of bank, finance company, or individual",
+      "type": "string",
+      "required": false,
+      "description": "Required when transactionType is transfer_with_replacement; the form instructs writing \"None\" if there is no new lienholder. Do not re-enter the name of the new registered owner(s) here.",
+      "sourceRef": "Form REG 227 Section 7",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "newLienholderElectronicLienId",
+      "label": "New legal owner's Electronic Lienholder ID number (ELT #)",
+      "type": "string",
+      "required": false,
+      "description": "Required, and must be entered exactly as shown on the Electronic Lien and Title (ELT) listing, when the entity named in newLienholderName is an ELT participant.",
+      "sourceRef": "Form REG 227 Section 7",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "newLienholderAddressLine1",
+      "label": "New lienholder's physical residence or business address",
+      "type": "string",
+      "required": false,
+      "description": "Required when newLienholderName is given and is not \"None\".",
+      "sourceRef": "Form REG 227 Section 7",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "newLienholderAddressCity",
+      "label": "New lienholder's address — city",
+      "type": "string",
+      "required": false,
+      "description": "Required when newLienholderName is given and is not \"None\".",
+      "sourceRef": "Form REG 227 Section 7",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "newLienholderAddressState",
+      "label": "New lienholder's address — state",
+      "type": "string",
+      "required": false,
+      "description": "Required when newLienholderName is given and is not \"None\". Two-letter USPS state abbreviation.",
+      "sourceRef": "Form REG 227 Section 7",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "newLienholderAddressZipCode",
+      "label": "New lienholder's address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required when newLienholderName is given and is not \"None\".",
+      "sourceRef": "Form REG 227 Section 7",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "transaction_type",
+      "title": "Type of transaction",
+      "fields": ["transactionType"],
+      "next": "vehicle_identification"
+    },
+    {
+      "id": "vehicle_identification",
+      "title": "Vehicle identification",
+      "fields": ["licensePlateNumber", "vehicleIdentificationNumber", "vehicleYearAndMake"],
+      "next": "registered_owner"
+    },
+    {
+      "id": "registered_owner",
+      "title": "Registered owner(s) of record",
+      "fields": [
+        "registeredOwnerName", "registeredOwnerLicenseNumber", "registeredOwnerLicenseState",
+        "coOwnerName", "coOwnerLicenseNumber", "coOwnerLicenseState",
+        "ownerPhysicalAddressLine1", "ownerPhysicalAddressCity", "ownerPhysicalAddressState", "ownerPhysicalAddressZipCode",
+        "ownerCountyOfResidence",
+        "ownerMailingAddressLine1", "ownerMailingAddressCity", "ownerMailingAddressState", "ownerMailingAddressZipCode"
+      ],
+      "next": "existing_lien"
+    },
+    {
+      "id": "existing_lien",
+      "title": "Existing legal owner of record (lienholder)",
+      "fields": [
+        "existingLienholderName", "existingLienholderAddressLine1", "existingLienholderAddressCity",
+        "existingLienholderAddressState", "existingLienholderAddressZipCode"
+      ],
+      "next": "missing_title"
+    },
+    {
+      "id": "missing_title",
+      "title": "Missing title statement",
+      "fields": ["missingTitleReason", "ownerCertificationName", "ownerCertificationDate", "ownerCertificationPhone"],
+      "next": "release_of_ownership"
+    },
+    {
+      "id": "release_of_ownership",
+      "title": "Registered owner's release of ownership (transfer only)",
+      "fields": ["releasingOwnerName", "releasingOwnerDate", "releasingOwnerPhone"],
+      "next": "new_owner"
+    },
+    {
+      "id": "new_owner",
+      "title": "New registered owner (transfer only)",
+      "fields": [
+        "acquisitionDate", "acquisitionType", "purchasePrice", "marketValue",
+        "newOwnerName", "newOwnerLicenseNumber", "newOwnerLicenseState",
+        "newCoOwnerName", "newCoOwnershipType",
+        "secondNewCoOwnerName", "secondNewCoOwnershipType",
+        "newOwnerPhysicalAddressLine1", "newOwnerPhysicalAddressCity", "newOwnerPhysicalAddressState", "newOwnerPhysicalAddressZipCode",
+        "newOwnerCountyOfResidence",
+        "newOwnerMailingAddressLine1", "newOwnerMailingAddressCity", "newOwnerMailingAddressState", "newOwnerMailingAddressZipCode",
+        "newLesseeAddress",
+        "newOwnerCertificationDate", "newOwnerPhone"
+      ],
+      "next": "new_lien"
+    },
+    {
+      "id": "new_lien",
+      "title": "New legal owner (lienholder) (transfer only)",
+      "fields": [
+        "newLienholderName", "newLienholderElectronicLienId", "newLienholderAddressLine1", "newLienholderAddressCity",
+        "newLienholderAddressState", "newLienholderAddressZipCode"
+      ]
+    }
+  ]
+}
