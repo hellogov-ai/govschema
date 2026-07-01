@@ -1,0 +1,845 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/revenue/self-assessment-tax-return-form11s",
+  "version": "1.0.0",
+  "title": "Ireland Self-Assessment Income Tax Return (Form 11S, 2025 tax year)",
+  "description": "File an Irish self-assessed individual's Income Tax Return and Self-Assessment using Revenue's Form 11S, the shorter return Revenue issues in place of the full Form 11 to a chargeable person with straightforward tax affairs (based on their past circumstances). It captures personal/civil-status details, self-employed trading income, PAYE/BIK/pension income, foreign pension income, other Irish income, exempt income (Rent-a-Room, childcare), charges and deductions, personal tax credits, and the Chapter 4 Part 41A self-assessment calculation. Out of scope: Irish rental income (Panel C) and Capital Gains (Panel L), both of which the source form models as repeating per-property/per-asset schedules that the current flat field model (GSP-0009) cannot express; an individual with either should use the full Form 11 in any case per the helpsheet. This document models the 2025 edition (year ended 31 December 2025); Revenue reissues a fresh Form 11S each tax year, but no edition scheme in the current closed `edition.scheme` vocabulary (spec v0.3 SS5.7: us-tax-year / gb-tax-year / award-year) fits Ireland's calendar-year tax year, so this document is published at the plain (non-edition) registry path pending a spec proposal — see VERIFICATION.md and spec/proposals/0019-generalize-edition-scheme-calendar-tax-year.md. It does not submit the return; the live Revenue source is always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Office of the Revenue Commissioners",
+    "abbreviation": "Revenue",
+    "url": "https://www.revenue.ie/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.revenue.ie/en/self-assessment-and-self-employment/documents/form-11s.pdf",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Form 11S (2025 Tax Return and Self-Assessment for the year 2025) plus its companion '2025 Tax Return - Helpsheet - Form 11S'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the official Revenue 'Form 11S' (2025) PDF and its companion helpsheet PDF, both fetched directly from revenue.ie (no access block) and extracted from their PDF content streams. Every field is traced to a lettered panel (A, B, D, E, F, G, H, I, J, P) and, where the source numbers it, a line number (e.g. Line 108, Line 515(a)). Panels C (Irish Rental Income) and L (Capital Gains) are out of scope: both are per-property/per-asset repeating schedules the v0.3 flat field model cannot express (GSP-0009), consistent with the precedent set by gb/companies-house/company-incorporation-in01 (additional directors/subscribers) and us/ca/dmv/vehicle-title-transfer (notarized lien-release path) excluding their own repeating/branching sections. The exact lettering of some personal-detail sub-boxes in Panel A (e.g. which of (a)-(j) maps to which named field) was not fully legible from the extracted PDF text streams (OCR-adjacent artifacts from the kerning-array text extraction), so those fields are named descriptively from the helpsheet's prose rather than quoting an exact box letter; see 'What is NOT independently confirmed' below. Status remains 'draft' pending a second reviewer's pass against the live ROS Form 11 online screens (the helpsheet states 'The ROS Form 11 contains the panels appropriate to an individual who would use a Form 11S')."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-01"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "civilStatus",
+      "label": "Civil status",
+      "type": "enum",
+      "required": true,
+      "description": "Your civil status as at the date of this return.",
+      "sourceRef": "Form 11S Panel A — State your civil status",
+      "validation": {
+        "enum": ["single", "married", "civil_partnership", "separated", "divorced", "widowed", "surviving_civil_partner", "former_civil_partner"]
+      }
+    },
+    {
+      "name": "personalCircumstancesChangedIn2025",
+      "label": "Did your personal civil status change during 2025?",
+      "type": "boolean",
+      "required": false,
+      "description": "Gate for civilStatusChangeDate and previousCivilStatus, per the helpsheet: 'complete only where your personal civil status changed during 2025'.",
+      "sourceRef": "Form 11S Helpsheet, Panel A note 4"
+    },
+    {
+      "name": "civilStatusChangeDate",
+      "label": "Date personal circumstances changed",
+      "type": "date",
+      "required": false,
+      "description": "Required only if personalCircumstancesChangedIn2025 is true.",
+      "sourceRef": "Form 11S Panel A — If your personal circumstances changed in 2025 enter date of change",
+      "requiredWhen": { "field": "personalCircumstancesChangedIn2025", "equals": true }
+    },
+    {
+      "name": "previousCivilStatus",
+      "label": "Previous civil status",
+      "type": "string",
+      "required": false,
+      "description": "Your civil status before the change (e.g. single, married). Required only if personalCircumstancesChangedIn2025 is true.",
+      "sourceRef": "Form 11S Panel A — State previous civil status (i.e. single, married, etc.)",
+      "validation": { "maxLength": 60 },
+      "requiredWhen": { "field": "personalCircumstancesChangedIn2025", "equals": true }
+    },
+    {
+      "name": "basisOfAssessment",
+      "label": "Basis of assessment",
+      "type": "enum",
+      "required": true,
+      "description": "Applies to married couples/civil partners. joint_assessment = assessed together; separate_assessment = each assessed separately but tax computed as if jointly assessed; single_treatment = each treated as a single person.",
+      "sourceRef": "Form 11S Panel A — Joint assessment / Separate assessment / Single treatment",
+      "validation": { "enum": ["joint_assessment", "separate_assessment", "single_treatment"] }
+    },
+    {
+      "name": "dateOfMarriageOrCivilPartnership",
+      "label": "Date of marriage or civil partnership",
+      "type": "date",
+      "required": false,
+      "description": "Required only if civilStatus is married or civil_partnership. The helpsheet asks for this specifically 'if you were married or in a civil partnership before 1 January 2025'.",
+      "sourceRef": "Form 11S Panel A, Helpsheet note 5 — Date of Marriage or Civil Partnership",
+      "requiredWhen": {
+        "any": [
+          { "field": "civilStatus", "equals": "married" },
+          { "field": "civilStatus", "equals": "civil_partnership" }
+        ]
+      }
+    },
+    {
+      "name": "numberOfDependentChildren",
+      "label": "Number of dependent children",
+      "type": "integer",
+      "required": false,
+      "description": "State the number of Dependent Children.",
+      "sourceRef": "Form 11S Panel A — State the number of Dependent Children",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "selfPermanentlyIncapacitated",
+      "label": "Are you permanently incapacitated?",
+      "type": "boolean",
+      "required": false,
+      "description": "Incapacitated by reason of mental or physical infirmity from maintaining yourself, per Helpsheet note 10.",
+      "sourceRef": "Form 11S Panel A — Permanently Incapacitated (Self)"
+    },
+    {
+      "name": "spousePermanentlyIncapacitated",
+      "label": "Is your spouse or civil partner permanently incapacitated?",
+      "type": "boolean",
+      "required": false,
+      "description": "Incapacitated by reason of mental or physical infirmity from maintaining themself, per Helpsheet note 10.",
+      "sourceRef": "Form 11S Panel A — Permanently Incapacitated (Spouse or Civil Partner)"
+    },
+    {
+      "name": "taxpayerSurname",
+      "label": "Your surname",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form 11S Panel A — Surname",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "taxpayerFirstName",
+      "label": "Your first name(s)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form 11S Panel A — First name(s)",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "ppsn",
+      "label": "Personal Public Service Number (PPSN)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your PPSN, e.g. 1234567FA.",
+      "sourceRef": "Form 11S front page — Personal Public Service Number (PPSN)",
+      "validation": { "pattern": "^[0-9]{7}[A-Za-z]{1,2}$" }
+    },
+    {
+      "name": "taxpayerDateOfBirth",
+      "label": "Your date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form 11S Panel A — Your Date of Birth",
+      "validation": {}
+    },
+    {
+      "name": "taxpayerGender",
+      "label": "Gender",
+      "type": "enum",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. As offered on the form, which lists two options; not independently confirmed whether a third option exists on the live ROS service (see VERIFICATION.md).",
+      "sourceRef": "Form 11S Panel A — Gender: Male / Female",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "spouseOrCivilPartnerSurname",
+      "label": "Spouse's or civil partner's surname",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when basisOfAssessment is joint_assessment.",
+      "sourceRef": "Form 11S Panel A — Spouse's or Civil Partner's Details",
+      "validation": { "maxLength": 80 },
+      "requiredWhen": { "field": "basisOfAssessment", "equals": "joint_assessment" }
+    },
+    {
+      "name": "spouseOrCivilPartnerFirstName",
+      "label": "Spouse's or civil partner's first name(s)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when basisOfAssessment is joint_assessment.",
+      "sourceRef": "Form 11S Panel A — Spouse's or Civil Partner's Details",
+      "validation": { "maxLength": 80 },
+      "requiredWhen": { "field": "basisOfAssessment", "equals": "joint_assessment" }
+    },
+    {
+      "name": "spouseOrCivilPartnerPpsn",
+      "label": "Spouse's or civil partner's PPSN",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when basisOfAssessment is joint_assessment.",
+      "sourceRef": "Form 11S Panel A — Spouse's or Civil Partner's Details",
+      "validation": { "pattern": "^[0-9]{7}[A-Za-z]{1,2}$" },
+      "requiredWhen": { "field": "basisOfAssessment", "equals": "joint_assessment" }
+    },
+    {
+      "name": "spouseOrCivilPartnerDateOfBirth",
+      "label": "Spouse's or civil partner's date of birth",
+      "type": "date",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when basisOfAssessment is joint_assessment.",
+      "sourceRef": "Form 11S Panel A — Spouse's or Civil Partner's Details",
+      "requiredWhen": { "field": "basisOfAssessment", "equals": "joint_assessment" }
+    },
+    {
+      "name": "dateOfDeathOfSpouseOrCivilPartner",
+      "label": "Date of death of spouse or civil partner",
+      "type": "date",
+      "required": false,
+      "description": "State only if your spouse or civil partner died during 2025.",
+      "sourceRef": "Form 11S Panel A — state date of death of your spouse or civil partner"
+    },
+    {
+      "name": "hasSelfEmployedIncome",
+      "label": "Did you or your spouse/civil partner have self-employed trading income in 2025?",
+      "type": "boolean",
+      "required": false,
+      "description": "Gate for Panel B (Self-Employed Income). Not itself a numbered form line; modelled to express the panel's conditional applicability.",
+      "sourceRef": "Form 11S Panel B — SELF-EMPLOYED INCOME"
+    },
+    {
+      "name": "selfEmployedTradeOwner",
+      "label": "Whose trade is this?",
+      "type": "enum",
+      "required": false,
+      "description": "Required only when hasSelfEmployedIncome is true.",
+      "sourceRef": "Form 11S Panel B — State whether trade refers to self or spouse or civil partner",
+      "validation": { "enum": ["self", "spouse_or_civil_partner"] },
+      "requiredWhen": { "field": "hasSelfEmployedIncome", "equals": true }
+    },
+    {
+      "name": "descriptionOfTrade",
+      "label": "Description of trade",
+      "type": "string",
+      "required": false,
+      "description": "You must clearly describe the trade, business, or profession. Required only when hasSelfEmployedIncome is true.",
+      "sourceRef": "Form 11S Panel B — Description of Trade (Primary Trade)",
+      "validation": { "maxLength": 200 },
+      "requiredWhen": { "field": "hasSelfEmployedIncome", "equals": true }
+    },
+    {
+      "name": "assessableNetProfit",
+      "label": "Assessable net profit",
+      "type": "number",
+      "required": false,
+      "description": "The net profit (adjusted for any non-allowable add backs) for your accounting period ending in 2025. In EUR. Required only when hasSelfEmployedIncome is true.",
+      "sourceRef": "Form 11S Panel B, Line 108",
+      "requiredWhen": { "field": "hasSelfEmployedIncome", "equals": true }
+    },
+    {
+      "name": "withholdingTaxCredit",
+      "label": "Withholding tax credit (excluding Relevant Contracts Tax)",
+      "type": "number",
+      "required": false,
+      "description": "Credit for withholding tax deducted during the accounting period (the basis period for 2025), if the accounting period does not end on 31 December. Do not include Relevant Contracts Tax. In EUR.",
+      "sourceRef": "Form 11S Panel B, Line 121"
+    },
+    {
+      "name": "incomeAveragingElection",
+      "label": "Income averaging election",
+      "type": "enum",
+      "required": false,
+      "description": "Farmers' income-averaging election for this period: elect_in = elect for income averaging; elect_out_temporarily = temporarily elect out of averaging for a year it would otherwise apply; withdraw = withdraw from income averaging altogether; none = not applicable.",
+      "sourceRef": "Form 11S Panel B — income averaging boxes (g)/(h)/(k)(i)",
+      "validation": { "enum": ["none", "elect_in", "elect_out_temporarily", "withdraw"] }
+    },
+    {
+      "name": "shareFarmingTrade",
+      "label": "Does this trade relate wholly or in part to Share Farming?",
+      "type": "boolean",
+      "required": false,
+      "description": "Insert X if this trade relates wholly or in part to Share Farming.",
+      "sourceRef": "Form 11S Panel B — Share Farming box"
+    },
+    {
+      "name": "hasPayeIncome",
+      "label": "Did you or your spouse/civil partner have PAYE employment, benefit-in-kind, or pension income in 2025?",
+      "type": "boolean",
+      "required": false,
+      "description": "Gate for Panels D and E (PAYE / BIK / Pensions). Not itself a numbered form line.",
+      "sourceRef": "Form 11S Panels D/E — PAYE / BIK / PENSIONS"
+    },
+    {
+      "name": "payeIncomeRecipient",
+      "label": "Whose PAYE income is this?",
+      "type": "enum",
+      "required": false,
+      "description": "Required only when hasPayeIncome is true.",
+      "sourceRef": "Form 11S Panel D — Insert X in the box to indicate to whom the income refers",
+      "validation": { "enum": ["self", "spouse_or_civil_partner"] },
+      "requiredWhen": { "field": "hasPayeIncome", "equals": true }
+    },
+    {
+      "name": "payeIncomeSourceType",
+      "label": "Source of PAYE income",
+      "type": "enum",
+      "required": false,
+      "description": "You must select one of the listed source-of-income categories. The source form lists this as a lettered checkbox group ((a) Employment, (i) Pension - Employment pension, and others); not every letter's label was legible from the extracted text (see VERIFICATION.md), so this enum records only the categories independently confirmed. Required only when hasPayeIncome is true.",
+      "sourceRef": "Form 11S Panel D, Line 223 — Source of income",
+      "validation": { "enum": ["employment", "occupational_pension", "social_welfare_pension", "other"] },
+      "requiredWhen": { "field": "hasPayeIncome", "equals": true }
+    },
+    {
+      "name": "grossPayFromEmployment",
+      "label": "Gross pay from employment",
+      "type": "number",
+      "required": false,
+      "description": "Pay in respect of employment, e.g. gross pay less any superannuation contributions allowable for income tax purposes. In EUR. Required only when payeIncomeSourceType is employment.",
+      "sourceRef": "Form 11S Panel D, Line 222",
+      "requiredWhen": { "field": "payeIncomeSourceType", "equals": "employment" }
+    },
+    {
+      "name": "allowableEmploymentExpenses",
+      "label": "Allowable expenses incurred in employment",
+      "type": "number",
+      "required": false,
+      "description": "Expenses claimed here must have been wholly, exclusively, and necessarily incurred in the performance of your employment duties (e.g. running costs where you use your own car for work). Cannot exceed PAYE income. Not including expenses already claimed through Real Time. In EUR.",
+      "sourceRef": "Form 11S Panel D, Line 240(b)"
+    },
+    {
+      "name": "employerRefundOfPriorEmploymentTax",
+      "label": "Did your employer refund tax deducted from an earlier employment?",
+      "type": "boolean",
+      "required": false,
+      "description": "Insert X if true. A refund of PAYE made by Revenue itself (rather than by an employer) is recorded separately in payeTaxRefundedDuringYear.",
+      "sourceRef": "Form 11S Panel D, Line 224(c)"
+    },
+    {
+      "name": "payeTaxRefundedDuringYear",
+      "label": "PAYE tax refunded during the year",
+      "type": "number",
+      "required": false,
+      "description": "Any repayment of PAYE tax made to you between 1 January 2025 and 31 December 2025 by the Revenue Commissioners that relates to the 2025 year of assessment. In EUR.",
+      "sourceRef": "Form 11S Panel E, Line 233"
+    },
+    {
+      "name": "payeTaxUnderpaidPriorYears",
+      "label": "PAYE tax underpaid for earlier years",
+      "type": "number",
+      "required": false,
+      "description": "Any amount of tax underpaid for earlier year(s) that has resulted in your 2025 tax credits being reduced (see your Tax Credit Certificate). In EUR.",
+      "sourceRef": "Form 11S Panel E, Line 234"
+    },
+    {
+      "name": "socialWelfarePensionAmount",
+      "label": "Taxable social welfare pensions and payments",
+      "type": "number",
+      "required": false,
+      "description": "Total of all other taxable social welfare payments, including Carer's Allowance paid by the Department of Social Protection and Social Welfare pensions (basic amount plus any adult-dependant increase). In EUR.",
+      "sourceRef": "Form 11S Panel E, Line 245"
+    },
+    {
+      "name": "hasForeignIncomeOtherThanPensions",
+      "label": "Did you have foreign income other than a foreign pension?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "If true, the helpsheet directs you to file online via ROS or complete the full Form 11 instead of Form 11S — Form 11S only models foreign pension income.",
+      "sourceRef": "Form 11S Panel F — If you have Foreign Income sources other than foreign pensions you should file online via ROS or complete a Form 11"
+    },
+    {
+      "name": "foreignPensionAmount",
+      "label": "Amount of foreign pensions",
+      "type": "number",
+      "required": false,
+      "description": "The gross amount of foreign pensions received. In EUR.",
+      "sourceRef": "Form 11S Panel F — Foreign Pensions"
+    },
+    {
+      "name": "foreignPensionReliefClaimed",
+      "label": "Amount of relief claimed on foreign pension",
+      "type": "number",
+      "required": false,
+      "description": "Amount of relief claimed (e.g. under a double taxation agreement) on the foreign pension. In EUR.",
+      "sourceRef": "Form 11S Panel F — Amount of relief claimed"
+    },
+    {
+      "name": "foreignPensionCountry",
+      "label": "Country where foreign pension is paid from",
+      "type": "string",
+      "required": false,
+      "description": "Required only when foreignPensionAmount is greater than zero.",
+      "sourceRef": "Form 11S Panel F — Country where foreign pension is paid from",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "irishDepositInterestDirt",
+      "label": "Irish deposit interest where DIRT deducted",
+      "type": "number",
+      "required": false,
+      "description": "Includes Irish Government Stocks, Exchequer Bills, and other loans and investments arising in the State. In EUR.",
+      "sourceRef": "Form 11S Panel G, Line 402"
+    },
+    {
+      "name": "irishOtherIncomeGross",
+      "label": "Gross amount of other Irish income not shown elsewhere",
+      "type": "number",
+      "required": false,
+      "description": "Gross amount of Irish income where tax was not deducted at source and is not shown elsewhere on the return. In EUR.",
+      "sourceRef": "Form 11S Panel G — Gross amount of income from sources not shown elsewhere"
+    },
+    {
+      "name": "irishOtherIncomeTaxDeducted",
+      "label": "Tax deducted from other Irish income",
+      "type": "number",
+      "required": false,
+      "description": "Amount of tax deducted from the amount at irishOtherIncomeGross. In EUR.",
+      "sourceRef": "Form 11S Panel G — Amount of tax deducted"
+    },
+    {
+      "name": "rentARoomGrossIncome",
+      "label": "Rent-a-Room relief gross income",
+      "type": "number",
+      "required": false,
+      "description": "Gross Rental Income received in 2025 for room(s) in a 'Qualifying Residence' under the Rent-a-Room Relief scheme, where below the annual exempt limit. Income from occasional-visitor guest accommodation is not exempt. In EUR.",
+      "sourceRef": "Form 11S Panel H, Line 415(a)"
+    },
+    {
+      "name": "childcareServicesGrossIncome",
+      "label": "Exempt childcare services gross income",
+      "type": "number",
+      "required": false,
+      "description": "Gross income (before expenses) for 2025 from the provision of Childcare Services, where below the annual exempt limit. In EUR.",
+      "sourceRef": "Form 11S Panel H, Line 416"
+    },
+    {
+      "name": "childcareExemptionElected",
+      "label": "Electing exemption for childcare services income",
+      "type": "boolean",
+      "required": false,
+      "description": "Completing this line is an election for exemption for 2025 and must be made on or before 31 October 2026. Required only when childcareServicesGrossIncome is greater than zero.",
+      "sourceRef": "Form 11S Panel H, Line 416",
+      "requiredWhen": { "field": "childcareServicesGrossIncome", "greaterThan": 0 }
+    },
+    {
+      "name": "maintenancePaymentsNotDeducted",
+      "label": "Maintenance payments (not deducted)",
+      "type": "number",
+      "required": false,
+      "description": "Payments made by a separated or divorced person for the benefit of a spouse or civil partner under a legally enforceable arrangement (e.g. a Deed of Separation or Rule of Court), excluding any amount in respect of children, where tax was not deducted. In EUR.",
+      "sourceRef": "Form 11S Panel I, Line 502"
+    },
+    {
+      "name": "homeCarerTaxCreditClaimed",
+      "label": "Claiming Home Carer Tax Credit",
+      "type": "boolean",
+      "required": false,
+      "description": "The maximum credit for 2025 is reduced by one half of the home carer's own income above a threshold; no credit is due once that income exceeds the upper limit.",
+      "sourceRef": "Form 11S Panel J, Line 515(a)"
+    },
+    {
+      "name": "homeCarerIncome",
+      "label": "Home carer's own income",
+      "type": "number",
+      "required": false,
+      "description": "The home carer's own income for the year, used to taper the Home Carer Tax Credit. Required only when homeCarerTaxCreditClaimed is true. In EUR.",
+      "sourceRef": "Form 11S Panel J, Line 515(a)",
+      "requiredWhen": { "field": "homeCarerTaxCreditClaimed", "equals": true }
+    },
+    {
+      "name": "employeeTaxCreditClaimed",
+      "label": "Claiming Employee Tax Credit",
+      "type": "boolean",
+      "required": false,
+      "description": "Available to employees and non-proprietary directors taxed under PAYE, and to individuals receiving an Irish or other-EU-Member-State social welfare/security pension, or Irish residents working abroad under a PAYE-type system. Insert an X even if your employer already applies the credit through payroll.",
+      "sourceRef": "Form 11S Panel J, Line 516"
+    },
+    {
+      "name": "earnedIncomeTaxCreditClaimed",
+      "label": "Claiming Earned Income Tax Credit",
+      "type": "boolean",
+      "required": false,
+      "description": "For self-employed individuals and proprietary directors ineligible for the Employee Tax Credit.",
+      "sourceRef": "Form 11S Panel J, Line 517"
+    },
+    {
+      "name": "blindPersonsTaxCreditClaimed",
+      "label": "Claiming Blind Person's Tax Credit",
+      "type": "boolean",
+      "required": false,
+      "description": "You or your spouse/civil partner were blind at any time during 2025.",
+      "sourceRef": "Form 11S Panel J, Line 518"
+    },
+    {
+      "name": "assistanceDogTaxCreditClaimed",
+      "label": "Claiming Guide Dog / Assistance Dog credit",
+      "type": "boolean",
+      "required": false,
+      "description": "For an individual who requires a trained guide dog or assistance dog. A supporting statement from the supplying organisation is required with the first claim.",
+      "sourceRef": "Form 11S Panel J, Line 519"
+    },
+    {
+      "name": "dependentRelativeTaxCreditClaimed",
+      "label": "Claiming Dependent Relative Tax Credit",
+      "type": "boolean",
+      "required": false,
+      "description": "For maintaining a dependent relative. No relief is due once the relative's income exceeds the annual limit, or if another person claims this credit in full.",
+      "sourceRef": "Form 11S Panel J, Line 520"
+    },
+    {
+      "name": "tuitionFeesPaid",
+      "label": "Qualifying tuition fees paid",
+      "type": "number",
+      "required": false,
+      "description": "Qualifying tuition fees paid in the 2025 academic year (the year of study commencing on or after 1 August 2025) to Approved Colleges for Approved Courses or Approved Training Courses. Excludes registration, administration, and exam fees. In EUR.",
+      "sourceRef": "Form 11S Panel J, Line 526"
+    },
+    {
+      "name": "rentTaxCreditClaimed",
+      "label": "Claiming Rent Tax Credit",
+      "type": "boolean",
+      "required": false,
+      "description": "For rent paid for private rented accommodation.",
+      "sourceRef": "Form 11S Panel J, Line 534"
+    },
+    {
+      "name": "rentPaidAmount",
+      "label": "Amount of rent paid",
+      "type": "number",
+      "required": false,
+      "description": "Total rent paid for the tenancy the Rent Tax Credit is being claimed for. Required only when rentTaxCreditClaimed is true. In EUR.",
+      "sourceRef": "Form 11S Panel J, Line 534",
+      "requiredWhen": { "field": "rentTaxCreditClaimed", "equals": true }
+    },
+    {
+      "name": "totalIncomeForPeriod",
+      "label": "Total income for this period",
+      "type": "number",
+      "required": false,
+      "description": "Total income for 2025 before deductions or allowances. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(a)"
+    },
+    {
+      "name": "incomeTaxChargeable",
+      "label": "Income Tax chargeable",
+      "type": "number",
+      "required": false,
+      "description": "Income Tax chargeable after taking account of any deductions, reliefs, and allowances. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(b)(i)"
+    },
+    {
+      "name": "uscChargeableSelf",
+      "label": "USC chargeable — self",
+      "type": "number",
+      "required": false,
+      "description": "Universal Social Charge chargeable for you. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(b)(ii)"
+    },
+    {
+      "name": "uscChargeableSpouse",
+      "label": "USC chargeable — spouse or civil partner",
+      "type": "number",
+      "required": false,
+      "description": "Universal Social Charge chargeable for your spouse or civil partner, recorded separately from your own. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(b)(iii)"
+    },
+    {
+      "name": "prsiChargeableSelf",
+      "label": "PRSI chargeable — self",
+      "type": "number",
+      "required": false,
+      "description": "Pay Related Social Insurance chargeable for you. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(b)(iv)"
+    },
+    {
+      "name": "prsiChargeableSpouse",
+      "label": "PRSI chargeable — spouse or civil partner",
+      "type": "number",
+      "required": false,
+      "description": "Pay Related Social Insurance chargeable for your spouse or civil partner, recorded separately from your own. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(b)(v)"
+    },
+    {
+      "name": "totalTaxChargeable",
+      "label": "Total tax chargeable",
+      "type": "number",
+      "required": false,
+      "description": "The sum of Income Tax, USC, and PRSI chargeable. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(b)(vi)"
+    },
+    {
+      "name": "taxPayableBeforeAdjustment",
+      "label": "Tax payable before refund/offset adjustment",
+      "type": "number",
+      "required": false,
+      "description": "Tax payable for the period, computed by reducing tax chargeable by any tax credits due, before taking account of any refund or offset of tax withheld at source already made by Revenue. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(c)(i)"
+    },
+    {
+      "name": "refundOfTaxWithheldAtSource",
+      "label": "Refund of tax withheld at source",
+      "type": "number",
+      "required": false,
+      "description": "Any refund of tax withheld at source already made by Revenue (e.g. an interim refund of Professional Services Withholding Tax). In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(c)(iii)"
+    },
+    {
+      "name": "taxPayableAdjusted",
+      "label": "Tax payable, adjusted",
+      "type": "number",
+      "required": false,
+      "description": "Tax payable, adjusted for any refund or offset of tax withheld at source already made by Revenue. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(d)/(e)"
+    },
+    {
+      "name": "lateFilingSurchargeApplies",
+      "label": "Late-filing surcharge applies",
+      "type": "boolean",
+      "required": false,
+      "description": "If filing after 31 October 2026, a late-filing surcharge (5% of tax liability if submitted within two months, otherwise 10%) applies and must be included in the self-assessment.",
+      "sourceRef": "Form 11S Panel P, Line 936(f)"
+    },
+    {
+      "name": "localPropertyTaxSurchargeApplies",
+      "label": "Local Property Tax surcharge applies",
+      "type": "boolean",
+      "required": false,
+      "description": "Failure to meet Local Property Tax filing/payment obligations results in a surcharge (an increase to the self-assessment of 10%, capped once LPT is brought up to date).",
+      "sourceRef": "Form 11S Panel P, Line 936(g); Helpsheet 'Local Property Tax Return'"
+    },
+    {
+      "name": "preliminaryTaxPaid",
+      "label": "Preliminary tax paid",
+      "type": "number",
+      "required": false,
+      "description": "The amount of preliminary tax paid for 2025. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(h)(i)"
+    },
+    {
+      "name": "balanceOfTaxPayable",
+      "label": "Balance of tax payable",
+      "type": "number",
+      "required": false,
+      "description": "Balance of tax payable for this period, if any. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(i)(i)"
+    },
+    {
+      "name": "balanceOfTaxOverpaid",
+      "label": "Balance of tax overpaid",
+      "type": "number",
+      "required": false,
+      "description": "Balance of tax overpaid for this period, if any. In EUR.",
+      "sourceRef": "Form 11S Panel P, Line 936(i)(ii)"
+    },
+    {
+      "name": "expressionOfDoubt",
+      "label": "Expression of doubt",
+      "type": "string",
+      "required": false,
+      "description": "A facility under Section 959P TCA 1997 to indicate a genuine doubt about the application of the law, or the tax treatment, of a specific matter in the return. Not for general comments; identify the amount of tax in doubt.",
+      "sourceRef": "Form 11S Panel P — Expression of Doubt provided by S. 959P",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "repaymentIban",
+      "label": "IBAN for repayment",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Bank account IBAN, used only to make a repayment of tax due to you; no withdrawal is made from this account by Revenue unless you separately authorise a Single Debit Authority.",
+      "sourceRef": "Form 11S — Bank Details (IBAN)",
+      "validation": { "maxLength": 34 }
+    },
+    {
+      "name": "repaymentBic",
+      "label": "BIC for repayment",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The Bank Identifier Code paired with repaymentIban.",
+      "sourceRef": "Form 11S — Bank Details (BIC)",
+      "validation": { "maxLength": 11 }
+    },
+    {
+      "name": "declarationSigned",
+      "label": "Declaration signed",
+      "type": "boolean",
+      "required": true,
+      "description": "You must sign the declaration on page 1 of the form to confirm the return is correct and complete; the exact declaration wording was not independently confirmed from the extracted PDF text (see VERIFICATION.md), so this field records the act of signing rather than quoting an exact statement.",
+      "sourceRef": "Form 11S — YOU MUST SIGN THIS DECLARATION"
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "description": "The date you signed the declaration.",
+      "sourceRef": "Form 11S — Date (declaration)"
+    },
+    {
+      "name": "capacityOfSignatory",
+      "label": "Capacity of signatory",
+      "type": "string",
+      "required": false,
+      "description": "If you are signing on behalf of someone else (e.g. as an executor or under Enduring Power of Attorney), state the capacity in which you are signing.",
+      "sourceRef": "Form 11S — Capacity of Signatory",
+      "validation": { "maxLength": 80 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_details",
+      "title": "Personal details (Panel A)",
+      "fields": [
+        "civilStatus",
+        "personalCircumstancesChangedIn2025",
+        "civilStatusChangeDate",
+        "previousCivilStatus",
+        "basisOfAssessment",
+        "dateOfMarriageOrCivilPartnership",
+        "numberOfDependentChildren",
+        "selfPermanentlyIncapacitated",
+        "spousePermanentlyIncapacitated",
+        "taxpayerSurname",
+        "taxpayerFirstName",
+        "ppsn",
+        "taxpayerDateOfBirth",
+        "taxpayerGender",
+        "spouseOrCivilPartnerSurname",
+        "spouseOrCivilPartnerFirstName",
+        "spouseOrCivilPartnerPpsn",
+        "spouseOrCivilPartnerDateOfBirth",
+        "dateOfDeathOfSpouseOrCivilPartner"
+      ],
+      "next": "self_employment"
+    },
+    {
+      "id": "self_employment",
+      "title": "Self-employed income (Panel B)",
+      "fields": [
+        "hasSelfEmployedIncome",
+        "selfEmployedTradeOwner",
+        "descriptionOfTrade",
+        "assessableNetProfit",
+        "withholdingTaxCredit",
+        "incomeAveragingElection",
+        "shareFarmingTrade"
+      ],
+      "next": "employment_and_pensions"
+    },
+    {
+      "id": "employment_and_pensions",
+      "title": "PAYE / benefit-in-kind / pensions (Panels D and E)",
+      "fields": [
+        "hasPayeIncome",
+        "payeIncomeRecipient",
+        "payeIncomeSourceType",
+        "grossPayFromEmployment",
+        "allowableEmploymentExpenses",
+        "employerRefundOfPriorEmploymentTax",
+        "payeTaxRefundedDuringYear",
+        "payeTaxUnderpaidPriorYears",
+        "socialWelfarePensionAmount"
+      ],
+      "next": "foreign_income"
+    },
+    {
+      "id": "foreign_income",
+      "title": "Foreign income (Panel F)",
+      "fields": [
+        "hasForeignIncomeOtherThanPensions",
+        "foreignPensionAmount",
+        "foreignPensionReliefClaimed",
+        "foreignPensionCountry"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-suitable-for-form-11s-has-other-foreign-income",
+          "when": { "field": "hasForeignIncomeOtherThanPensions", "equals": true }
+        },
+        { "to": "irish_other_and_exempt_income" }
+      ]
+    },
+    {
+      "id": "irish_other_and_exempt_income",
+      "title": "Irish other income and exempt income (Panels G and H)",
+      "fields": [
+        "irishDepositInterestDirt",
+        "irishOtherIncomeGross",
+        "irishOtherIncomeTaxDeducted",
+        "rentARoomGrossIncome",
+        "childcareServicesGrossIncome",
+        "childcareExemptionElected"
+      ],
+      "next": "charges_and_credits"
+    },
+    {
+      "id": "charges_and_credits",
+      "title": "Charges, deductions, and personal tax credits (Panels I and J)",
+      "fields": [
+        "maintenancePaymentsNotDeducted",
+        "homeCarerTaxCreditClaimed",
+        "homeCarerIncome",
+        "employeeTaxCreditClaimed",
+        "earnedIncomeTaxCreditClaimed",
+        "blindPersonsTaxCreditClaimed",
+        "assistanceDogTaxCreditClaimed",
+        "dependentRelativeTaxCreditClaimed",
+        "tuitionFeesPaid",
+        "rentTaxCreditClaimed",
+        "rentPaidAmount"
+      ],
+      "next": "self_assessment"
+    },
+    {
+      "id": "self_assessment",
+      "title": "Self-assessment and declaration (Panel P)",
+      "fields": [
+        "totalIncomeForPeriod",
+        "incomeTaxChargeable",
+        "uscChargeableSelf",
+        "uscChargeableSpouse",
+        "prsiChargeableSelf",
+        "prsiChargeableSpouse",
+        "totalTaxChargeable",
+        "taxPayableBeforeAdjustment",
+        "refundOfTaxWithheldAtSource",
+        "taxPayableAdjusted",
+        "lateFilingSurchargeApplies",
+        "localPropertyTaxSurchargeApplies",
+        "preliminaryTaxPaid",
+        "balanceOfTaxPayable",
+        "balanceOfTaxOverpaid",
+        "expressionOfDoubt",
+        "repaymentIban",
+        "repaymentBic",
+        "declarationSigned",
+        "signatureDate",
+        "capacityOfSignatory"
+      ]
+    }
+  ]
+}
