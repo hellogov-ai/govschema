@@ -29,7 +29,7 @@
     "lastVerifiedAt": "2026-07-01",
     "verifiedBy": "GovSchema Engineering",
     "nextReviewBy": "2027-01-01",
-    "notes": "Source-derived reference schema authored from the official passports.gov.au new-passport, adult-passport, identity-documents-you-need, guarantors-referees-and-witnesses, citizenship, passport-photos, and fees pages. passports.gov.au and dfat.gov.au block direct automated retrieval at the TLS layer and a web.archive.org fetch was also unavailable to this review's tooling, so the field model was corroborated across multiple independent secondary sources (Australian consular-post checklists and passport-agent guides quoting the official pages) rather than read directly off passports.gov.au, a stricter access constraint than the sibling au/apo/passport-renewal-adult (which reached Wayback Machine snapshots directly). The Category A/B/C identity-document (PID) system is simplified here to the pathway-level distinction the sources consistently describe (a commencement-of-identity document plus a Category B document, versus the no-Category-A/B fallback requiring 3+ Category C documents and one photo-and-signature document); the exact enumerated list of Category B/C document types was not independently confirmed and is intentionally not encoded. Status remains 'draft'. Shares the applicant/contact/photo/product field pattern with the published au/apo/passport-renewal-adult. Fees are intentionally not encoded as authoritative data."
+    "notes": "Source-derived reference schema authored from the official passports.gov.au new-passport, adult-passport, identity-documents-you-need, guarantors-referees-and-witnesses, citizenship, passport-photos, and fees pages. passports.gov.au and dfat.gov.au block direct automated retrieval at the TLS layer; this review reached the identity-documents-you-need and guarantors-referees-and-witnesses pages directly via web.archive.org Wayback Machine snapshots (2025-12-06 and 2025-12-30 respectively), and used those plus the same secondary-source corroboration (Australian consular-post checklists and passport-agent guides) as the original authoring pass for the remaining pages. Two gaps found on Wayback re-review and corrected in this version: (1) the Category A/B/C identity-document (PID) system has three pathways, not two — Category A + Category B; no Category A but 2 Category B documents plus one other official photo document; or the no-Category-A/B fallback of 3+ Category C documents plus one photo-and-signature document — the middle pathway was missing from `identityDocumentPathway` and is now added along with `hasPhotoDocument`; (2) the source lists referee date of birth as required application data alongside full name, phone, and passport/electoral basis, and `refereeDateOfBirth` is now added. The exact enumerated list of Category B/C document types is still not independently confirmed and remains intentionally not encoded. Status remains 'draft'. Shares the applicant/contact/photo/product field pattern with the published au/apo/passport-renewal-adult. Fees are intentionally not encoded as authoritative data."
   },
   "license": "CC-BY-4.0",
   "fields": [
@@ -55,9 +55,17 @@
       "label": "Identity documents (PID) pathway",
       "type": "enum",
       "required": true,
-      "description": "category_a_and_b = you have your commencement-of-identity (Category A) document above plus at least one different Category B identity document created after your identity was established; category_c_fallback = you cannot provide a Category A or Category B document, so you must instead provide at least 3 Category C documents showing your name and current address, plus one official document bearing your photo and signature.",
+      "description": "category_a_and_b = you have your commencement-of-identity (Category A) document above plus at least one different Category B identity document created after your identity was established; category_b_and_photo = you cannot provide a Category A document, so instead you provide 2 different Category B documents plus one other official document bearing your current photo; category_c_fallback = you cannot provide a Category A or Category B document, so you must instead provide at least 3 Category C documents showing your name and current address, plus one official document bearing your photo and signature.",
       "sourceRef": "Identity documents you need — Category A/B/C requirements",
-      "validation": { "enum": ["category_a_and_b", "category_c_fallback"] }
+      "validation": { "enum": ["category_a_and_b", "category_b_and_photo", "category_c_fallback"] }
+    },
+    {
+      "name": "hasPhotoDocument",
+      "label": "Do you have another official document bearing your current photo?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required (must be true) when identityDocumentPathway is category_b_and_photo. This document only needs to show your photo — unlike hasPhotoAndSignatureDocument (required for category_c_fallback), it does not also need to show your signature.",
+      "sourceRef": "Identity documents you need — no-Category-A pathway (2 Category B documents plus one other official photo document)"
     },
     {
       "name": "categoryCDocumentCount",
@@ -202,6 +210,14 @@
       "validation": { "minLength": 1, "maxLength": 200 }
     },
     {
+      "name": "refereeDateOfBirth",
+      "label": "Referee's date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD. The application must include the referee's date of birth alongside their full name, phone number, and passport/electoral basis.",
+      "sourceRef": "Guarantors, referees and witnesses — provide details of your guarantor or referee (full name, date of birth, daytime phone number, passport/electoral basis)"
+    },
+    {
       "name": "refereeKnownForOverTwelveMonths",
       "label": "Has your referee known you for more than 12 months (or since birth, if you are under 1 year old)?",
       "type": "boolean",
@@ -297,6 +313,7 @@
         "bornInAustralia",
         "citizenshipEvidenceType",
         "identityDocumentPathway",
+        "hasPhotoDocument",
         "categoryCDocumentCount",
         "hasPhotoAndSignatureDocument"
       ],
@@ -334,6 +351,7 @@
       "title": "Your referee",
       "fields": [
         "refereeFullName",
+        "refereeDateOfBirth",
         "refereeKnownForOverTwelveMonths",
         "refereeIsAdultAustralianCitizen",
         "refereeIdentityBasis",

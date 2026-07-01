@@ -21,12 +21,14 @@ recorded against the live passports.gov.au application flow. It therefore remain
 
 `passports.gov.au` and `dfat.gov.au` block direct automated retrieval at the TLS
 layer, the same constraint recorded against the sibling
-`au/apo/passport-renewal-adult`. That sibling document reached the official pages
-through Wayback Machine snapshots; **this review's tooling could not reach
-web.archive.org either**, a stricter constraint. The field model here is instead
-corroborated across multiple independent secondary sources — Australian consular
-post checklists (e.g. Geneva, Mumbai, UK, USA embassy/consulate pages) and
-passport-agent guides — that quote or closely paraphrase the official
+`au/apo/passport-renewal-adult`. The initial authoring pass also could not reach
+`web.archive.org`; a subsequent review pass (2026-07-01, prompted by PR #77
+review feedback) **did** reach it and pulled the `identity-documents-you-need`
+and `guarantors-referees-and-witnesses` pages directly from Wayback Machine
+snapshots (see Sources examined). The remaining supporting pages are still
+corroborated across multiple independent secondary sources — Australian
+consular post checklists (e.g. Geneva, Mumbai, UK, USA embassy/consulate pages)
+and passport-agent guides — that quote or closely paraphrase the official
 passports.gov.au pages, cross-checked against each other for consistency, and
 against the sibling renewal schema's already-confirmed applicant/contact/photo/
 product field pattern (same authority, same online portal, same Australia Post
@@ -41,24 +43,43 @@ lodgement process).
 - **Primary source URL:** <https://www.passports.gov.au/new-passport>
 - **Official form ref:** PC8 (paper Adult passport application form ref, per
   consular-post checklists; the online application has no separate form number)
+- **Directly reached via Wayback Machine** (2026-07-01 review pass):
+  - `help/identity-documents-you-need` — <https://web.archive.org/web/20251206085146/https://www.passports.gov.au/help/identity-documents-you-need>
+  - `help/guarantors-referees-and-witnesses` — <https://web.archive.org/web/20251230070648/https://www.passports.gov.au/help/guarantors-referees-and-witnesses>
 - **Supporting official-page topics** (reached via secondary sources quoting
   them, per the access constraint above): `adult-passport` (application steps),
-  `identity-documents-you-need` (Category A/B/C PID system), `citizenship`
-  (citizenship evidence), `guarantors-referees-and-witnesses` (referee/guarantor
-  eligibility), `passport-photos`, `fees` (validity/processing-speed/payment
-  options — the fee page is shared with the renewal schema)
-- **Retrieved / reviewed:** 2026-07-01
-- **Reviewer:** GovSchema Engineering (initial authoring source-review)
+  `citizenship` (citizenship evidence), `passport-photos`, `fees`
+  (validity/processing-speed/payment options — the fee page is shared with the
+  renewal schema)
+- **Retrieved / reviewed:** 2026-07-01 (initial authoring), 2026-07-01 (PR #77
+  review-feedback correction pass)
+- **Reviewer:** GovSchema Engineering (initial authoring source-review);
+  GovSchema Standards Engineer (correction pass, per Review Engineer findings
+  on PR #77)
 
 ## What was confirmed against the source
 
 | Source element | Field(s) |
 |---|---|
 | **Citizenship evidence**: full birth certificate (born in Australia, generally before 20 August 1986) vs. citizenship certificate (born overseas, or born in Australia without automatic citizenship by birth) | `bornInAustralia`, `citizenshipEvidenceType` |
-| **Identity documents (PID)**: a Category A + Category B pathway, or — with no Category A/B document — a fallback of 3+ Category C documents plus one photo-and-signature document | `identityDocumentPathway`, `categoryCDocumentCount`, `hasPhotoAndSignatureDocument` |
-| **Referee** (online application) eligibility: known >12 months, adult Australian citizen, and either a current passport (2+ years' validity) or 12+ months on the electoral roll at their current address | `refereeFullName`, `refereeKnownForOverTwelveMonths`, `refereeIsAdultAustralianCitizen`, `refereeIdentityBasis`, `refereePassportNumber`, `refereeElectoralAddress`, `refereeContactPhone` |
+| **Identity documents (PID)**: three pathways — Category A + Category B; no Category A but 2 Category B documents plus one other official photo document; or the no-Category-A/B fallback of 3+ Category C documents plus one photo-and-signature document. Confirmed directly against the archived `identity-documents-you-need` page (see Sources examined). | `identityDocumentPathway`, `hasPhotoDocument`, `categoryCDocumentCount`, `hasPhotoAndSignatureDocument` |
+| **Referee** (online application) eligibility: known >12 months, adult Australian citizen, and either a current passport (2+ years' validity) or 12+ months on the electoral roll at their current address; application must include full name, date of birth, daytime phone, and passport/electoral basis. Confirmed directly against the archived `guarantors-referees-and-witnesses` page (see Sources examined). | `refereeFullName`, `refereeDateOfBirth`, `refereeKnownForOverTwelveMonths`, `refereeIsAdultAustralianCitizen`, `refereeIdentityBasis`, `refereePassportNumber`, `refereeElectoralAddress`, `refereeContactPhone` |
 | **Application steps**: gather documents/photos → find a referee/guarantor → complete the form → lodge at Australia Post with original documents and pay → wait (6+ weeks standard) | overall `steps` ordering |
 | Shared **applicant/contact/photo/product** field pattern (name, DOB, place of birth, sex, residential address, email, phone, passport photos, validity/processing-speed/payment) | corresponding fields, ported from the published `au/apo/passport-renewal-adult` |
+
+## Corrections made on the 2026-07-01 review-feedback pass
+
+PR #77's review (GOV-398) found the initial authoring pass, corroborated only
+through secondary sources, had two gaps versus the primary source (now reached
+directly via Wayback):
+
+1. **Missing identity-document pathway.** The Category A/B/C system has three
+   pathways, not two; the no-Category-A / 2×-Category-B / plus-photo-document
+   pathway was missing from `identityDocumentPathway`'s enum. Added that enum
+   value (`category_b_and_photo`) and a new `hasPhotoDocument` field.
+2. **Missing required field.** The source explicitly requires referee/guarantor
+   date of birth alongside the three referee fields that were already modeled.
+   Added `refereeDateOfBirth`.
 
 ## What is NOT yet independently verified
 
