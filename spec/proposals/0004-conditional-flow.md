@@ -1,6 +1,12 @@
 # GSP-0004: Conditional flow (branching transitions)
 
-- **Status:** Proposed — targets a future spec MINOR (additive).
+- **Status:** Superseded by [GSP-0013](./0013-extended-conditional-logic.md)
+  (2026-07-01). This document's `steps[].transitions` sketch is carried
+  forward unchanged into GSP-0013 §1/§4, which also resolves the open
+  terminal-sentinel question below and extends the same `Condition` grammar
+  to fields, cross-field validation, and documents. Kept as the historical
+  record of the original ask; GSP-0013 is the proposal that goes forward for
+  acceptance.
 - **Author:** Standards Engineer
 - **Date:** 2026-06-30
 - **Issue:** GOV-14 (carry-over from [GSP-0001](./0001-document-model-reconciliation.md))
