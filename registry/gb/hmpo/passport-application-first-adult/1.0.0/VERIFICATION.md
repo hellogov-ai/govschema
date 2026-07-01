@@ -27,8 +27,9 @@ portal. It therefore remains `draft`, not `verified`.
   - <https://www.gov.uk/apply-first-adult-passport/apply-online> (online
     application steps, what you need, identity confirmation, payment)
   - <https://www.gov.uk/apply-first-adult-passport/what-documents-you-need-to-apply>
-    (birth-certificate, parental/grandparental nationality evidence, naturalisation
-    and registration evidence, name-change evidence)
+    (birth-in-the-UK and born-outside-the-UK evidence branches, parental
+    nationality/immigration-status evidence, naturalisation and registration
+    evidence)
   - <https://www.gov.uk/countersigning-passport-applications> (who can confirm
     identity, eligibility and exclusion rules, passport-holding requirement)
 - **Official form id:** none for the online channel. HMPO's online first-adult
@@ -55,12 +56,13 @@ recorded so consumers weigh its confidence accordingly.
 
 | Source element | Field(s) |
 |---|---|
-| Birth certificate required for everyone; parental nationality evidence required only if born on/after 1 Jan 1983 | `nationalityEvidenceRoute`, `birthOrAdoptionCertificate` |
-| Parent's UK birth/adoption certificate, naturalisation/registration certificate, or British passport (valid at birth, or passport number only) as nationality evidence | `parentNationalityEvidenceParent`, `parentNationalityEvidenceType` |
+| Born in the UK before 1 Jan 1983: birth/adoption certificate alone | `nationalityEvidenceRoute = uk_born_before_1983`, `birthOrAdoptionCertificate` |
+| Born in the UK on/after 1 Jan 1983: birth certificate **and either** a parent's own UK nationality evidence **or** evidence of a parent's UK immigration status at the time of birth | `nationalityEvidenceRoute = uk_born_on_or_after_1983`, `parentEvidenceType`, `parentNationalityEvidenceParent`, `parentNationalityEvidenceType`, `parentImmigrationStatusEvidence` |
 | "If you send documents relating to your father, you must also send your parents' marriage certificate" | `parentsMarriageCertificate` |
-| "If your parents were born after 1982 or outside the UK, your grandparents' details will also be required" | `grandparentEvidenceRequired`, `grandparentNationalityEvidence` |
-| Naturalisation/registration certificate must already be held; passport used to enter the UK or foreign passport applicant is included on | `naturalisationOrRegistrationCertificate`, `passportUsedToEnterUK` |
-| Evidence of name changes since birth (marriage/civil partnership certificate, deed poll, statutory declaration) | `nameChangeEvidence` |
+| Born outside the UK, hold a naturalisation/registration certificate: certificate plus the passport used to enter the UK (or foreign passport applicant is included on); no birth certificate required | `nationalityEvidenceRoute = outside_uk_naturalised_or_registered`, `naturalisationOrRegistrationCertificate`, `passportUsedToEnterUK` |
+| Born outside the UK, British overseas territories citizen, before 1 Jan 1983: birth certificate, current passport, and passport used to enter the UK | `nationalityEvidenceRoute = outside_uk_bot_citizen_born_before_1983`, `currentPassport` |
+| Born outside the UK before 1 Jan 1983 with father born in the UK: full birth certificate showing parents' details, father's birth certificate, parents' marriage certificate, passport used to enter the UK | `nationalityEvidenceRoute = outside_uk_father_born_uk_before_1983`, `fathersBirthCertificate` |
+| Born outside the UK on/after 1 Jan 1983: full birth certificate showing parents' details, passport used to enter the UK, evidence of one parent's British nationality | `nationalityEvidenceRoute = outside_uk_born_on_or_after_1983` (reuses `parentNationalityEvidenceType`) |
 | Applicant name, date of birth, contact/address details collected on the online form | `lastName`, `firstNames`, `dateOfBirth`, `email`, `addressLine1`, `addressTown`, `postcode` |
 | Digital photo uploaded as part of the online application | `photoFile` |
 | Identity confirmer must have known the applicant 2+ years, be able to identify them, and cannot be a relative, partner, or cohabitant; must hold a current British or Irish passport (UK-resident case) and provides their passport number during their own online confirmation step | `identityConfirmerFullName`, `identityConfirmerPassportType`, `identityConfirmerPassportNumber` |
@@ -87,9 +89,34 @@ recorded so consumers weigh its confidence accordingly.
   coexist (there is no annual re-filing cycle), so this is a plain `v1.0.0`
   document, not an edition-axis schema.
 - Conditional requiredness that v0.2's flat/linear model cannot express (the
-  nationality-evidence branch, the father/marriage-certificate condition, the
-  grandparent-evidence condition) is documented in field descriptions, per the
-  limitation tracked in GSP-0004.
+  six-way nationality-evidence branch and the father/marriage-certificate
+  condition within it) is documented in field descriptions, per the limitation
+  tracked in GSP-0004.
+- **Countersigning source is framed for the paper-form channel.** The
+  "Countersigning passport applications and photos" page is written in
+  paper-form/countersignatory terms ("get your paper form and one of your 2
+  print photos signed"), while this document applies its eligibility facts
+  (2-year acquaintance, relative/partner/cohabitant exclusion, British/Irish
+  passport if UK-resident) to the online identity-confirmer step
+  (`identityConfirmerFullName`, `identityConfirmerPassportType`). Those
+  eligibility facts matched verbatim on source-review, and the online service's
+  own "confirming identity online" sub-page independently confirms the same
+  confirmer completes an online step and enters
+  `identityConfirmerPassportNumber` — but the source page's framing differs
+  from the online flow it is applied to, which is noted here rather than
+  assumed identical.
+- **Grandparent evidence and name-change evidence were removed after
+  re-derivation.** An earlier draft of this document included
+  `grandparentEvidenceRequired`/`grandparentNationalityEvidence` and
+  `nameChangeEvidence`, citing `sourceRef`s on "What documents you need to
+  apply." Re-reading that page's full `articleBody` directly (not a summary)
+  found no mention of grandparents, name changes, deed polls, or statutory
+  declarations anywhere on it — the page's only escape hatch for
+  circumstances it doesn't cover is a reference to a guidance booklet that is
+  not one of this document's four cited sources. Those fields were removed
+  rather than published with an inaccurate `sourceRef`; if a future review
+  finds them genuinely required (e.g. from the guidance booklet), they should
+  be re-added citing that source, as a new minor version.
 
 ## What is NOT yet independently verified
 

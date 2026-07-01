@@ -4,7 +4,7 @@
   "id": "gb/hmpo/passport-application-first-adult",
   "version": "1.0.0",
   "title": "United Kingdom First Adult Passport Application",
-  "description": "Apply for a first British passport as an adult (aged 16 or over, or turning 16 within 3 weeks) who has never held a UK passport, or whose last one was issued before 1 January 1994, through HM Passport Office's online service. Unlike a renewal, a first-time application requires documentary evidence of British nationality plus a person to confirm the applicant's identity. This document describes the nationality-evidence branch (by birth year and route), applicant details, name-change evidence, the online identity-confirmation step, and the photo/payment choice. It does not submit the application; the live gov.uk source is always authoritative (see VERIFICATION.md).",
+  "description": "Apply for a first British passport as an adult (aged 16 or over, or turning 16 within 3 weeks) who has never held a UK passport, or whose last one was issued before 1 January 1994, through HM Passport Office's online service. Unlike a renewal, a first-time application requires documentary evidence of British nationality plus a person to confirm the applicant's identity. This document describes the nationality-evidence branch (by birth country, birth year, and route), applicant details, the online identity-confirmation step, and the photo/payment choice. It does not submit the application; the live gov.uk source is always authoritative (see VERIFICATION.md).",
   "status": "draft",
   "jurisdiction": {
     "country": "GB",
@@ -37,25 +37,50 @@
       "label": "How do you hold British nationality?",
       "type": "enum",
       "required": true,
-      "description": "born_before_1983 = born in the UK before 1 January 1983 (birth/adoption certificate alone is sufficient); born_on_or_after_1983 = born in the UK on or after 1 January 1983 (birth certificate plus evidence of a parent's British nationality is required); naturalised_or_registered = British nationality obtained by naturalisation or registration (a certificate must already be held before applying). Determines which further evidence fields are required.",
-      "sourceRef": "What documents you need to apply — birth certificate requirements",
-      "validation": { "enum": ["born_before_1983", "born_on_or_after_1983", "naturalised_or_registered"] }
+      "description": "uk_born_before_1983 = born in the UK before 1 January 1983 (birth/adoption certificate alone is sufficient); uk_born_on_or_after_1983 = born in the UK on or after 1 January 1983 (birth certificate plus a parent's nationality or immigration-status evidence is required); outside_uk_naturalised_or_registered = born outside the UK and already hold a certificate of naturalisation or registration; outside_uk_bot_citizen_born_before_1983 = born outside the UK, a British overseas territories citizen, before 1 January 1983; outside_uk_father_born_uk_before_1983 = born outside the UK before 1 January 1983 with a father born in the UK; outside_uk_born_on_or_after_1983 = born outside the UK on or after 1 January 1983 with a parent's British nationality evidence. Determines which further evidence fields are required.",
+      "sourceRef": "What documents you need to apply — born in the UK / born outside the UK",
+      "validation": { "enum": ["uk_born_before_1983", "uk_born_on_or_after_1983", "outside_uk_naturalised_or_registered", "outside_uk_bot_citizen_born_before_1983", "outside_uk_father_born_uk_before_1983", "outside_uk_born_on_or_after_1983"] }
     },
     {
       "name": "birthOrAdoptionCertificate",
       "label": "Full original birth or adoption certificate",
       "type": "file",
       "required": true,
-      "description": "The long-form (full) birth or adoption certificate, required for every applicant regardless of nationalityEvidenceRoute. Original documents only; photocopies are not accepted.",
-      "sourceRef": "What documents you need to apply — birth certificate requirements"
+      "description": "Required for every nationalityEvidenceRoute except outside_uk_naturalised_or_registered (that route needs no birth certificate). For uk_born_on_or_after_1983 and the two outside_uk born-on/before-1983 routes that name a parent, the certificate must show the parents' details. Original documents only; photocopies are not accepted.",
+      "sourceRef": "What documents you need to apply — born in the UK before 1 January 1983 / on or after 1 January 1983"
+    },
+    {
+      "name": "currentPassport",
+      "label": "Your current passport",
+      "type": "file",
+      "required": false,
+      "description": "Required only when nationalityEvidenceRoute is outside_uk_bot_citizen_born_before_1983, in addition to birthOrAdoptionCertificate and passportUsedToEnterUK.",
+      "sourceRef": "What documents you need to apply — citizen of a British overseas territory and born before 1 January 1983"
+    },
+    {
+      "name": "fathersBirthCertificate",
+      "label": "Your father's birth certificate",
+      "type": "file",
+      "required": false,
+      "description": "Required only when nationalityEvidenceRoute is outside_uk_father_born_uk_before_1983, alongside birthOrAdoptionCertificate, parentsMarriageCertificate, and passportUsedToEnterUK.",
+      "sourceRef": "What documents you need to apply — born before 1 January 1983 and your father was born in the UK"
+    },
+    {
+      "name": "parentEvidenceType",
+      "label": "Which evidence are you sending about a parent?",
+      "type": "enum",
+      "required": false,
+      "description": "Required only when nationalityEvidenceRoute is uk_born_on_or_after_1983. The source states you need your birth/adoption certificate 'and either' nationality_evidence (a parent's own UK nationality documents) or immigration_status_evidence (evidence of a parent's UK immigration status at the time of your birth).",
+      "sourceRef": "What documents you need to apply — born in the UK on or after 1 January 1983",
+      "validation": { "enum": ["nationality_evidence", "immigration_status_evidence"] }
     },
     {
       "name": "parentNationalityEvidenceParent",
       "label": "Whose British nationality evidence are you sending?",
       "type": "enum",
       "required": false,
-      "description": "Required only when nationalityEvidenceRoute is born_on_or_after_1983. If you send documents relating to your father, you must also provide parentsMarriageCertificate.",
-      "sourceRef": "What documents you need to apply — parental nationality evidence",
+      "description": "Required when parentEvidenceType is nationality_evidence (route uk_born_on_or_after_1983). If you send documents relating to your father, you must also provide parentsMarriageCertificate.",
+      "sourceRef": "What documents you need to apply — born in the UK on or after 1 January 1983",
       "validation": { "enum": ["mother", "father"] }
     },
     {
@@ -63,57 +88,41 @@
       "label": "Parent's evidence of British nationality",
       "type": "enum",
       "required": false,
-      "description": "Required only when nationalityEvidenceRoute is born_on_or_after_1983. uk_birth_or_adoption_certificate = the named parent's own full UK birth or adoption certificate; naturalisation_or_registration_certificate = the named parent's certificate of naturalisation or registration; british_passport_valid_at_applicants_birth = the named parent's British passport that was valid when the applicant was born; british_passport_number_only = only the parent's British passport number, where the passport itself is no longer available.",
-      "sourceRef": "What documents you need to apply — parental nationality evidence",
+      "description": "Required when parentEvidenceType is nationality_evidence (route uk_born_on_or_after_1983), and also when nationalityEvidenceRoute is outside_uk_born_on_or_after_1983 (that route's own, textually narrower 'evidence of one parent's British nationality' requirement). uk_birth_or_adoption_certificate = the named parent's own full UK birth or adoption certificate; naturalisation_or_registration_certificate = the named parent's certificate of naturalisation or registration; british_passport_valid_at_applicants_birth = the named parent's British passport that was valid when the applicant was born; british_passport_number_only = only the parent's British passport number, where the passport itself is no longer available.",
+      "sourceRef": "What documents you need to apply — born in the UK on or after 1 January 1983 / born outside the UK on or after 1 January 1983",
       "validation": { "enum": ["uk_birth_or_adoption_certificate", "naturalisation_or_registration_certificate", "british_passport_valid_at_applicants_birth", "british_passport_number_only"] }
+    },
+    {
+      "name": "parentImmigrationStatusEvidence",
+      "label": "Evidence of a parent's UK immigration status at the time of your birth",
+      "type": "file",
+      "required": false,
+      "description": "Required when parentEvidenceType is immigration_status_evidence (route uk_born_on_or_after_1983): for example, a foreign passport belonging to one of your parents that was valid when you were born.",
+      "sourceRef": "What documents you need to apply — born in the UK on or after 1 January 1983"
     },
     {
       "name": "parentsMarriageCertificate",
       "label": "Parents' marriage certificate",
       "type": "file",
       "required": false,
-      "description": "Required when parentNationalityEvidenceParent is father: evidence of your parents' marriage showing the link between you and your father's nationality evidence.",
-      "sourceRef": "What documents you need to apply — evidence relating to your father"
-    },
-    {
-      "name": "grandparentEvidenceRequired",
-      "label": "Were your parents born after 1982, or born outside the UK?",
-      "type": "boolean",
-      "required": false,
-      "description": "Required only when nationalityEvidenceRoute is born_on_or_after_1983. If true, your grandparent's British nationality evidence (grandparentNationalityEvidence) is also required, extending the same evidence chain one generation further back.",
-      "sourceRef": "What documents you need to apply — grandparents' details"
-    },
-    {
-      "name": "grandparentNationalityEvidence",
-      "label": "Grandparent's evidence of British nationality",
-      "type": "file",
-      "required": false,
-      "description": "Required when grandparentEvidenceRequired is true: the relevant grandparent's UK birth/adoption certificate, naturalisation/registration certificate, or British passport evidence, matching the same evidence chain used for the parent.",
-      "sourceRef": "What documents you need to apply — grandparents' details"
+      "description": "Required when parentNationalityEvidenceParent is father (route uk_born_on_or_after_1983), and always required when nationalityEvidenceRoute is outside_uk_father_born_uk_before_1983.",
+      "sourceRef": "What documents you need to apply — born in the UK on or after 1 January 1983 / born before 1 January 1983 and your father was born in the UK"
     },
     {
       "name": "naturalisationOrRegistrationCertificate",
       "label": "Certificate of naturalisation or registration",
       "type": "file",
       "required": false,
-      "description": "Required when nationalityEvidenceRoute is naturalised_or_registered. The certificate must already have been issued before applying; a first-time application cannot be made while naturalisation or registration is still pending.",
-      "sourceRef": "What documents you need to apply — naturalisation and registration"
+      "description": "Required when nationalityEvidenceRoute is outside_uk_naturalised_or_registered. The certificate must already have been issued before applying; a first-time application cannot be made while naturalisation or registration is still pending.",
+      "sourceRef": "What documents you need to apply — you have a certificate of naturalisation or registration"
     },
     {
       "name": "passportUsedToEnterUK",
       "label": "Passport used to enter the UK, or foreign passport you're included on",
       "type": "file",
       "required": false,
-      "description": "Required when nationalityEvidenceRoute is naturalised_or_registered: the passport (own or, if included as a child on a parent's passport, that parent's foreign passport) used to travel to the UK.",
-      "sourceRef": "What documents you need to apply — naturalisation and registration"
-    },
-    {
-      "name": "nameChangeEvidence",
-      "label": "Evidence of name change since birth",
-      "type": "file",
-      "required": false,
-      "description": "Required only if the name you are applying under differs from the name on birthOrAdoptionCertificate: a marriage or civil partnership certificate, deed poll, or statutory declaration.",
-      "sourceRef": "What documents you need to apply — name changes"
+      "description": "Required for every outside_uk_* nationalityEvidenceRoute (outside_uk_naturalised_or_registered, outside_uk_bot_citizen_born_before_1983, outside_uk_father_born_uk_before_1983, outside_uk_born_on_or_after_1983): the passport (own or, if included as a child on a parent's passport, that parent's foreign passport) used to travel to the UK.",
+      "sourceRef": "What documents you need to apply — born outside the UK"
     },
     {
       "name": "lastName",
@@ -238,14 +247,15 @@
       "fields": [
         "nationalityEvidenceRoute",
         "birthOrAdoptionCertificate",
+        "currentPassport",
+        "fathersBirthCertificate",
+        "parentEvidenceType",
         "parentNationalityEvidenceParent",
         "parentNationalityEvidenceType",
+        "parentImmigrationStatusEvidence",
         "parentsMarriageCertificate",
-        "grandparentEvidenceRequired",
-        "grandparentNationalityEvidence",
         "naturalisationOrRegistrationCertificate",
-        "passportUsedToEnterUK",
-        "nameChangeEvidence"
+        "passportUsedToEnterUK"
       ],
       "next": "applicant_details"
     },
