@@ -1,12 +1,10 @@
 # GSP-0007: File field constraints (`maxBytes`, `mediaTypes`)
 
-- **Status:** Pulled forward for `spec/v0.3` per RFC 0003 (GOV-302, founder-approved
-  as written 2026-07-01). RFC 0003 §11 folds this proposal's `maxBytes`/
-  `mediaTypes` shape into GSP-0014's `documents[].constraints`; the shape itself
-  is unchanged and no redesign is required. It also remains usable standalone
-  on plain `type: file` fields, independent of `documents[]`. Individual
-  accept-into-v0.3 sign-off requested via GOV-314, per the one-way-door process
-  in [GOVERNANCE.md](../../GOVERNANCE.md).
+- **Status:** Accepted for `spec/v0.3` — CEO sign-off recorded 2026-07-01
+  (GOV-314 decision interaction, "Accept as written"). Pulled forward per RFC 0003
+  (GOV-302, founder-approved as written); its `maxBytes`/`mediaTypes` shape is
+  folded into GSP-0014's `documents[].constraints`, and remains usable standalone
+  on plain `type: file` fields, independent of `documents[]`.
 - **Author:** Standards Engineer
 - **Date:** 2026-06-30
 - **Issue:** GOV-62 (per the GOV-61 spec-evolution disposition, item 4); pulled
@@ -77,21 +75,25 @@ shape is itself a small design point called out below.
 - **Scope creep.** `minBytes`, page-count, or dimension limits are conceivable but
   rare; keep v0.2 to `maxBytes` + `mediaTypes` and add others only on real demand.
 
-## Decision requested
+## Decision — Accepted
 
 Originally scoped as "a future, scheduled work item" for `spec/v0.2`. RFC 0003
-(GOV-302) recommends pulling it forward into the `spec/v0.3` package instead —
+(GOV-302) recommended pulling it forward into the `spec/v0.3` package instead —
 still as purely additive validation keywords for `type: file`, plus reuse of the
 same `maxBytes`/`mediaTypes` shape inside GSP-0014's `documents[].constraints`
-(RFC 0003 §5, §11). No change to the sketch above; this is a scheduling
+(RFC 0003 §5, §11). No change to the sketch above; this was a scheduling
 decision, not a redesign.
 
-The founder already approved RFC 0003 as written at the package level. Because
-accepting a GSP into a `spec/vN` line is itself a one-way-door decision per
-[GOVERNANCE.md](../../GOVERNANCE.md), this GSP still requests its own explicit
-accept-into-v0.3 sign-off (tracked on GOV-314) before its Status above is marked
-Accepted and it is folded into the `spec/v0.3` meta-schema and GSP-0014.
+The founder had already approved RFC 0003 as written at the package level.
+Because accepting a GSP into a `spec/vN` line is itself a one-way-door decision
+per [GOVERNANCE.md](../../GOVERNANCE.md), this GSP requested its own explicit
+accept-into-v0.3 sign-off, separate from the RFC-level approval.
+
+**Recorded:** Accepted as written (GOV-314 decision interaction, resolved
+2026-07-01) — "Accept as written: merge PR #41, mark GSP-0007 Accepted for
+v0.3." The pulled-forward scheduling and the GSP-0014 fold-in are accepted as
+proposed, with no requested changes.
 
 The two open questions above (conditional-validation mechanism, media-type
-wildcards) remain live design points to resolve during implementation, not
-blockers to this accept-into-v0.3 decision.
+wildcards) remain live design points to resolve during implementation of
+`spec/v0.3`, not blockers to this acceptance.
