@@ -28,6 +28,8 @@ conformance/
     expected/
       missing-fields-partial-applicant.json
     browser-flow.json
+    application-packet.json
+    application-packet.txt
 ```
 
 Time-versioned forms (the edition axis, GSP-0005) use
@@ -51,13 +53,25 @@ edition-aware registry path.
   GovSchema describes and verifies government processes; it does not submit
   them (`GOVERNANCE.md`), and that boundary holds inside its own test
   fixtures too.
+- **`application-packet.json`** (+ a human-readable `application-packet.txt`
+  rendering of the same data) — the concrete, demoable expression of RFC
+  0003 §6 point 2's confirmation-before-submission rule (SPEC §14 once
+  [GSP-0017](../spec/proposals/0017-agent-conformance-safety-boundary.md)
+  folds in): every collected value cited back to its `sourceRef`,
+  the eligibility-gate outcome and why, the attestation statement verbatim,
+  and a `"DRAFT — NOT SUBMITTED"` banner. No meta-schema exists for this
+  fixture type yet (unlike `browser-flow.json`); its shape is documented here
+  and in the fixture itself rather than machine-enforced, pending a
+  `conformance/application-packet.schema.json` if a second schema ever needs
+  one.
 
 ## What's here today
 
-Only the top-level scaffold: this README and `browser-flow.schema.json`. No
-`<id>/<version>/` fixture set exists yet — the first one is sequenced against
-the `us/irs/employer-identification-number-ss4` flagship once it reaches the
-Agent-Ready maturity tier (GSP-0012), per RFC 0003 §8.
+This README, `browser-flow.schema.json`, and one fixture set:
+`us/irs/employer-identification-number-ss4/2.1.0/` (`browser-flow.json` +
+`application-packet.json`/`.txt`), authored against the flagship per RFC 0003
+§8. No `payloads/`/`profiles/`/`expected/` fixtures exist yet for that or any
+other schema.
 
 ## Out of scope
 
