@@ -194,7 +194,7 @@ content discrepancy, corrected here:
 - **Constraint patterns** (SSN/EIN format, ZIP code, E.164 phone) are reasonable
   encodings, not citations of a published IRS validation rule.
 - **The online EIN assistant's actual screen-by-screen interview** (question
-  order, exact wording, branching logic) was not directly observed — unlike the
+  order, exact wording, branching logic) was not directly observed. Unlike the
   GB DVLA photocard-renewal schema's pre-login screen crawl, IRS.gov's EIN
   assistant requires an active session to reach past the eligibility gate, so this
   document is sourced from the paper Form SS-4 and its instructions, which the IRS
