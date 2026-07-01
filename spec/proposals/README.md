@@ -22,11 +22,17 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0008 | [`datetime` scalar type](./0008-datetime-scalar.md) | Proposed (v0.2 candidate) |
 | 0009 | [Composite & repeating values — structured `object` + `array`](./0009-composite-repeating-values.md) | Proposed (v0.2 candidate) — ⚠ one-way-door, CEO flag |
 | 0010 | [Namespaced `extensions`](./0010-namespaced-extensions.md) | Proposed (v0.2 candidate) |
+| 0011 | [Field-to-page-element mapping (companion `mapping.json`)](./0011-field-page-element-mapping.md) | Proposed — new registry artifact type, CEO sign-off required |
 
 GSP-0006–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).
 They are **Proposed** (non-normative); per-GSP acceptance into `spec/v0.2` is
 gated on CEO sign-off.
+
+GSP-0011 was drafted from the GOV-265 plan (Workstream C, field↔page-element
+mapping for browser-driving agents). It is a **one-way-door** proposal — a new
+registry artifact type and file convention — and is gated on CEO sign-off per
+[GOVERNANCE.md](../../GOVERNANCE.md).
 
 ## Considered and rejected
 
