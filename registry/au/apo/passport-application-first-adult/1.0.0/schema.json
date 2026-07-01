@@ -1,0 +1,375 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "au/apo/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "Australia First Adult Passport Application",
+  "description": "Apply for a first Australian passport as an adult, from within Australia, through the Australian Passport Office's online or paper application, lodged in person with original documents at a participating Australia Post outlet. Unlike au/apo/passport-renewal-adult, a first application has no prior passport to rely on, so this document models the citizenship-evidence, identity-document (PID), and referee/guarantor inputs renewal does not require, plus the same applicant, contact, photo, and product/payment inputs. It does not submit the application; the live passports.gov.au sources are always authoritative (see VERIFICATION.md). Applying from outside Australia is a separate process, out of scope here.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Australian Passport Office, Department of Foreign Affairs and Trade",
+    "abbreviation": "APO",
+    "url": "https://www.passports.gov.au/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-AU"
+  },
+  "source": {
+    "url": "https://www.passports.gov.au/new-passport",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "PC8"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the official passports.gov.au new-passport, adult-passport, identity-documents-you-need, guarantors-referees-and-witnesses, citizenship, passport-photos, and fees pages. passports.gov.au and dfat.gov.au block direct automated retrieval at the TLS layer; this review reached the identity-documents-you-need and guarantors-referees-and-witnesses pages directly via web.archive.org Wayback Machine snapshots (2025-12-06 and 2025-12-30 respectively), and used those plus the same secondary-source corroboration (Australian consular-post checklists and passport-agent guides) as the original authoring pass for the remaining pages. Two gaps found on Wayback re-review and corrected in this version: (1) the Category A/B/C identity-document (PID) system has three pathways, not two — Category A + Category B; no Category A but 2 Category B documents plus one other official photo document; or the no-Category-A/B fallback of 3+ Category C documents plus one photo-and-signature document — the middle pathway was missing from `identityDocumentPathway` and is now added along with `hasPhotoDocument`; (2) the source lists referee date of birth as required application data alongside full name, phone, and passport/electoral basis, and `refereeDateOfBirth` is now added. The exact enumerated list of Category B/C document types is still not independently confirmed and remains intentionally not encoded. Status remains 'draft'. Shares the applicant/contact/photo/product field pattern with the published au/apo/passport-renewal-adult. Fees are intentionally not encoded as authoritative data."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "bornInAustralia",
+      "label": "Were you born in Australia?",
+      "type": "boolean",
+      "required": true,
+      "description": "Determines which citizenship-evidence document you provide (see citizenshipEvidenceType).",
+      "sourceRef": "Australian citizenship — citizenship evidence for a passport application"
+    },
+    {
+      "name": "citizenshipEvidenceType",
+      "label": "What citizenship evidence will you provide?",
+      "type": "enum",
+      "required": true,
+      "description": "full_australian_birth_certificate = a full (not extract/commemorative) Australian birth certificate issued by a state/territory Registry of Births, Deaths and Marriages, generally sufficient if bornInAustralia is true and you were born before 20 August 1986; australian_citizenship_certificate = required if you were born overseas, or born in Australia on or after 20 August 1986 without automatic citizenship by birth. Confirm the current rule for your exact circumstances on the live source, since Australian citizenship-by-birth eligibility depends on a parent's citizenship/residency status at the time of your birth.",
+      "sourceRef": "Australian citizenship — citizenship evidence for a passport application",
+      "validation": { "enum": ["full_australian_birth_certificate", "australian_citizenship_certificate"] }
+    },
+    {
+      "name": "identityDocumentPathway",
+      "label": "Identity documents (PID) pathway",
+      "type": "enum",
+      "required": true,
+      "description": "category_a_and_b = you have your commencement-of-identity (Category A) document above plus at least one different Category B identity document created after your identity was established; category_b_and_photo = you cannot provide a Category A document, so instead you provide 2 different Category B documents plus one other official document bearing your current photo; category_c_fallback = you cannot provide a Category A or Category B document, so you must instead provide at least 3 Category C documents showing your name and current address, plus one official document bearing your photo and signature.",
+      "sourceRef": "Identity documents you need — Category A/B/C requirements",
+      "validation": { "enum": ["category_a_and_b", "category_b_and_photo", "category_c_fallback"] }
+    },
+    {
+      "name": "hasPhotoDocument",
+      "label": "Do you have another official document bearing your current photo?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required (must be true) when identityDocumentPathway is category_b_and_photo. This document only needs to show your photo — unlike hasPhotoAndSignatureDocument (required for category_c_fallback), it does not also need to show your signature.",
+      "sourceRef": "Identity documents you need — no-Category-A pathway (2 Category B documents plus one other official photo document)"
+    },
+    {
+      "name": "categoryCDocumentCount",
+      "label": "Number of Category C documents provided",
+      "type": "integer",
+      "required": false,
+      "description": "Required, minimum 3, when identityDocumentPathway is category_c_fallback.",
+      "sourceRef": "Identity documents you need — Category C fallback (at least 3 documents)",
+      "validation": { "minimum": 3 }
+    },
+    {
+      "name": "hasPhotoAndSignatureDocument",
+      "label": "Do you have an official document bearing your photo and signature (e.g. workplace ID, student card)?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required (must be true) when identityDocumentPathway is category_c_fallback.",
+      "sourceRef": "Identity documents you need — Category C fallback (photo-and-signature document)"
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must match your citizenship-evidence document.",
+      "sourceRef": "Application form — applicant details: surname",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given names",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must match your citizenship-evidence document.",
+      "sourceRef": "Application form — applicant details: given names",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD.",
+      "sourceRef": "Application form — applicant details: date of birth"
+    },
+    {
+      "name": "placeOfBirthCity",
+      "label": "Place of birth — city or town",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Application form — applicant details: place of birth",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Place of birth — country",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Application form — applicant details: place of birth",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "description": "Recorded in the 'Sex' field of an Australian passport. M = male, F = female, X = indeterminate/intersex/unspecified.",
+      "sourceRef": "passports.gov.au — Change of name or gender: sex and gender diverse passport applicants",
+      "validation": { "enum": ["M", "F", "X"] }
+    },
+    {
+      "name": "residentialAddressLine1",
+      "label": "Residential address — line 1",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. This document covers applying from within Australia; a different process applies overseas, out of scope here.",
+      "sourceRef": "Application form — contact details: residential address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "residentialAddressLine2",
+      "label": "Residential address — line 2",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Application form — contact details: residential address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "residentialSuburb",
+      "label": "Residential address — suburb",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Application form — contact details: residential address",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "residentialState",
+      "label": "Residential address — state or territory",
+      "type": "enum",
+      "required": true,
+      "description": "Australian state or territory of residence.",
+      "sourceRef": "Application form — contact details: residential address",
+      "validation": { "enum": ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"] }
+    },
+    {
+      "name": "residentialPostcode",
+      "label": "Residential address — postcode",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Application form — contact details: residential address",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Used for the AusPassport online account and for delivery notifications.",
+      "sourceRef": "Application form — contact details: email",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "phone",
+      "label": "Contact phone number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +61412345678.",
+      "sourceRef": "Application form — contact details: phone number",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "refereeFullName",
+      "label": "Referee's full name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. For an online application you need a referee (a paper application instead needs a guarantor who signs the form and a photo, out of scope for this online-application document). A referee does not sign anything but must be willing to confirm your identity if contacted.",
+      "sourceRef": "Guarantors, referees and witnesses — referee (online applications)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "refereeDateOfBirth",
+      "label": "Referee's date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD. The application must include the referee's date of birth alongside their full name, phone number, and passport/electoral basis.",
+      "sourceRef": "Guarantors, referees and witnesses — provide details of your guarantor or referee (full name, date of birth, daytime phone number, passport/electoral basis)"
+    },
+    {
+      "name": "refereeKnownForOverTwelveMonths",
+      "label": "Has your referee known you for more than 12 months (or since birth, if you are under 1 year old)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Must be true; this is a referee eligibility requirement.",
+      "sourceRef": "Guarantors, referees and witnesses — referee eligibility"
+    },
+    {
+      "name": "refereeIsAdultAustralianCitizen",
+      "label": "Is your referee an adult Australian citizen?",
+      "type": "boolean",
+      "required": true,
+      "description": "Must be true; this is a referee eligibility requirement.",
+      "sourceRef": "Guarantors, referees and witnesses — referee eligibility"
+    },
+    {
+      "name": "refereeIdentityBasis",
+      "label": "How is your referee's own identity established?",
+      "type": "enum",
+      "required": true,
+      "description": "current_passport = your referee holds a current Australian passport with at least 2 years' validity; electoral_roll = your referee has been listed on the Australian electoral roll at their current address for at least 12 months.",
+      "sourceRef": "Guarantors, referees and witnesses — referee eligibility",
+      "validation": { "enum": ["current_passport", "electoral_roll"] }
+    },
+    {
+      "name": "refereePassportNumber",
+      "label": "Referee's Australian passport number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when refereeIdentityBasis is current_passport.",
+      "sourceRef": "Guarantors, referees and witnesses — referee eligibility",
+      "validation": { "pattern": "^[A-Za-z0-9]{7,9}$" }
+    },
+    {
+      "name": "refereeElectoralAddress",
+      "label": "Referee's electoral roll address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when refereeIdentityBasis is electoral_roll: the address at which your referee has been enrolled for at least 12 months.",
+      "sourceRef": "Guarantors, referees and witnesses — referee eligibility",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "refereeContactPhone",
+      "label": "Referee's contact phone number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Used by APO to contact your referee if needed. In international E.164 format, e.g. +61412345678.",
+      "sourceRef": "Guarantors, referees and witnesses — referee (online applications)",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "photo",
+      "label": "Passport photos",
+      "type": "file",
+      "required": true,
+      "description": "2 identical printed colour passport photos meeting APO's photo guidelines: 35-40mm wide, 45-50mm high, face (chin to crown) 32-36mm, less than 6 months old, plain white or light background, neutral expression, no glasses (absent a medical exemption). This field models the printed photos that accompany the lodged form, not a digital upload.",
+      "sourceRef": "Passport photos — photo size, quality, and requirements"
+    },
+    {
+      "name": "passportValidityRequested",
+      "label": "Passport validity requested",
+      "type": "enum",
+      "required": true,
+      "description": "ten_year = standard 10-year validity passport, available to all eligible applicants; five_year = optional 5-year validity passport at a reduced fee, available only to applicants aged 75 or over. Confirm current fees on the live source.",
+      "sourceRef": "Passport fees — 10-year validity passport (persons aged 16 and over); 5-year validity passport (optional for persons 75 and over)",
+      "validation": { "enum": ["ten_year", "five_year"] }
+    },
+    {
+      "name": "processingSpeed",
+      "label": "Processing speed",
+      "type": "enum",
+      "required": true,
+      "description": "standard = routine processing, at least 6 weeks from lodgement; priority = Priority service, processed within 2 business days of receipt, for an additional fee; fast_track = Fast Track service, processed within 5 business days of receipt, for an additional fee. Priority and Fast Track require a complete application and exclude postage/delivery time. Confirm current fees on the live source.",
+      "sourceRef": "Applying for the first time — Step 5: wait for your passport; Passport fees",
+      "validation": { "enum": ["standard", "priority", "fast_track"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "Paid when you lodge your application at Australia Post. eftpos = EFTPOS; mastercard = MasterCard; visa = Visa; amex = American Express; cash = cash. Confirm the current fee on the live source.",
+      "sourceRef": "Passport fees — How do I pay the passport fee? At Australia Post - EFTPOS, MasterCard, Visa, AMEX or cash",
+      "validation": { "enum": ["eftpos", "mastercard", "visa", "amex", "cash"] }
+    }
+  ],
+  "steps": [
+    {
+      "id": "citizenship_and_identity",
+      "title": "Citizenship evidence and identity documents",
+      "fields": [
+        "bornInAustralia",
+        "citizenshipEvidenceType",
+        "identityDocumentPathway",
+        "hasPhotoDocument",
+        "categoryCDocumentCount",
+        "hasPhotoAndSignatureDocument"
+      ],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Your details",
+      "fields": [
+        "surname",
+        "givenNames",
+        "dateOfBirth",
+        "placeOfBirthCity",
+        "placeOfBirthCountry",
+        "sex"
+      ],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact and address",
+      "fields": [
+        "residentialAddressLine1",
+        "residentialAddressLine2",
+        "residentialSuburb",
+        "residentialState",
+        "residentialPostcode",
+        "email",
+        "phone"
+      ],
+      "next": "referee"
+    },
+    {
+      "id": "referee",
+      "title": "Your referee",
+      "fields": [
+        "refereeFullName",
+        "refereeDateOfBirth",
+        "refereeKnownForOverTwelveMonths",
+        "refereeIsAdultAustralianCitizen",
+        "refereeIdentityBasis",
+        "refereePassportNumber",
+        "refereeElectoralAddress",
+        "refereeContactPhone"
+      ],
+      "next": "photo_and_product"
+    },
+    {
+      "id": "photo_and_product",
+      "title": "Photo, passport validity, processing speed, and payment",
+      "fields": [
+        "photo",
+        "passportValidityRequested",
+        "processingSpeed",
+        "paymentMethod"
+      ]
+    }
+  ]
+}
