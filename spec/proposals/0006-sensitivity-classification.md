@@ -1,10 +1,15 @@
 # GSP-0006: Sensitivity / data classification
 
-- **Status:** Proposed — targets a future spec MINOR (additive). Advisory only.
+- **Status:** Proposed — pulled forward into the `spec/v0.3` package per RFC 0003
+  (GOV-302, §11); pending individual CEO accept-into-v0.3 sign-off ([GOV-313](/GOV/issues/GOV-313)).
+  Sketch unchanged from the original v0.2-candidate draft. Advisory only.
 - **Author:** Standards Engineer
-- **Date:** 2026-06-30
-- **Issue:** GOV-62 (per the GOV-61 spec-evolution disposition, item 3)
-- **Affects:** `spec/vN/govschema.schema.json` (field model), consumers
+- **Date:** 2026-06-30 (pulled forward 2026-07-01)
+- **Issue:** GOV-62 (per the GOV-61 spec-evolution disposition, item 3); pulled
+  forward by GOV-302 / [GOV-313](/GOV/issues/GOV-313)
+- **Affects:** `spec/vN/govschema.schema.json` (field model), consumers; needed
+  by GSP-0014 (`documents[].category: identity-document`) and GSP-0017
+  (safety model's stricter-handling rule)
 
 ## Problem
 
@@ -83,8 +88,12 @@ schema-shape change (lens: *backward compatibility & semver*, *composability*).
 
 ## Decision requested
 
-A future, scheduled work item; no decision required now. Filed so the
-consumer need for structured sensitivity handling is tracked, with the explicit
-constraint that any accepted form remains **advisory and makes no legal claim.**
-Acceptance into `spec/v0.2` is gated on CEO sign-off per
-[GOVERNANCE.md](../../GOVERNANCE.md).
+RFC 0003 (§11) recommends accepting this proposal alongside the `spec/v0.3`
+agent-execution-readiness package, since GSP-0014 (`documents[].category:
+identity-document`) and GSP-0017 (the safety model's stricter-handling rule)
+both key on `classification`. No redesign from the sketch above; this is an
+accept/hold/reject decision on the existing shape. The explicit constraint
+that any accepted form remains **advisory and makes no legal claim** stands
+regardless of outcome. Acceptance into `spec/v0.3` is gated on individual CEO
+sign-off per [GOVERNANCE.md](../../GOVERNANCE.md), sought via
+[GOV-313](/GOV/issues/GOV-313).
