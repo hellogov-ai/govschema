@@ -29,6 +29,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 | 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
 | 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-318) |
+| 0018 | [Field-level eligibility value semantics (`eligibleValues`)](./0018-field-eligibility-value-semantics.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-01 (GOV-393) |
 
 GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
 above whose acceptance record explicitly deferred that step (GSP-0006, GSP-0007,
@@ -124,6 +125,31 @@ named it the item "most worth an explicit yes," since it is the first
 GovSchema conformance rule binding consumer *behavior*, not document shape.
 Individual accept-into-v0.3 sign-off, including explicit acknowledgment of
 that consumer-behavior scope expansion, was recorded 2026-07-01 (GOV-318).
+
+GSP-0018 was filed against GOV-386, a gap surfaced while building the GOV-374
+schema-driven agent interview demo on the landing site: a document can flag a
+field as an eligibility gate (`fieldRole: eligibility`, GSP-0014) but has no
+way to say which value keeps an applicant eligible, so consumers must
+hardcode that judgment per field name. It adds a new OPTIONAL
+`eligibleValues` member (Part 1), meaningful only alongside
+`fieldRole: eligibility`, explicitly recommending **against** the issue's own
+starting suggestion of reusing `validation.enum` for eligibility, since that
+conflates "well-formed input" with "eligible outcome" (a truthful
+disqualifying answer must still validate). Evaluating GOV-386's second ask
+(a masking/sensitivity hint), it concludes no new member is needed there —
+that gap is already covered by the accepted GSP-0006 `classification`
+member; the real follow-up is a registry-authoring backfill (0/40 schemas
+set `classification` today), filed separately per the CEO's direction, not
+folded into this GSP (Part 2). Standards Reviewer soundness pass
+([GOV-388](/GOV/issues/GOV-388)) raised no blocking concerns (it did catch
+two stale registry-count claims, corrected before merge). CEO
+accept-into-`spec/v0.3` sign-off recorded 2026-07-01
+([GOV-393](/GOV/issues/GOV-393)); `eligibleValues` is folded into
+`spec/v0.3/govschema.schema.json` §6.8 field-model properties (plus the
+`fieldRole: eligibility` co-presence `allOf` constraint) and
+`spec/v0.3/SPEC.md` §6.9 in this same change — unlike the batch-5 GOV-373
+fold-in, GSP-0018's acceptance and fold-in land together since it is a
+single, small, additive member.
 
 ## Considered and rejected
 
