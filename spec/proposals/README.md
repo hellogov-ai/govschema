@@ -17,7 +17,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0003 | [Labelled enum options](./0003-labelled-enum-options.md) | Proposed (v0.2) |
 | 0004 | [Conditional flow](./0004-conditional-flow.md) | Superseded by GSP-0013 |
 | 0005 | [Edition / tax-year axis for time-versioned forms](./0005-edition-axis-time-versioned-forms.md) | Accepted — Option C, for v0.2 |
-| 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Proposed (v0.2 candidate) |
+| 0006 | [Sensitivity / data classification](./0006-sensitivity-classification.md) | Accepted — for v0.3, CEO sign-off recorded 2026-07-01 (GOV-313) |
 | 0007 | [File field constraints (`maxBytes`, `mediaTypes`)](./0007-file-field-constraints.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-314) |
 | 0008 | [`datetime` scalar type](./0008-datetime-scalar.md) | Proposed (v0.2 candidate) |
 | 0009 | [Composite & repeating values — structured `object` + `array`](./0009-composite-repeating-values.md) | Proposed (v0.2 candidate) — ⚠ one-way-door, CEO flag |
@@ -26,10 +26,12 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Accepted — for v0.3, CEO sign-off recorded 2026-07-01 (GOV-312) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 
-GSP-0006–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
+GSP-0008–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).
 They are **Proposed** (non-normative); per-GSP acceptance into `spec/v0.2` is
-gated on CEO sign-off.
+gated on CEO sign-off. (GSP-0006 and GSP-0007, drafted from the same batch,
+were pulled forward into `spec/v0.3` and accepted — see their own paragraphs
+below.)
 
 GSP-0011 was drafted from the GOV-265 plan (Workstream C, field↔page-element
 mapping for browser-driving agents). It was a **one-way-door** proposal — a new
@@ -45,6 +47,12 @@ requiredness, cross-field validation, and (reserved for GSP-0014) document
 requiredness. It is first in the RFC's recommended sequencing (§12) — GSP-0012,
 GSP-0014, GSP-0016, GSP-0017, and the EIN/SS-4 flagship all reference its
 `Condition` type.
+
+GSP-0006 was originally a `spec/v0.2` candidate (GOV-62); RFC 0003 (GOV-302)
+recommended pulling it forward into the `spec/v0.3` package instead, since
+GSP-0014 (`documents[].category: identity-document`) and GSP-0017 (safety
+model's stricter-handling rule) both key on `classification`. No redesign —
+individual accept-into-v0.3 sign-off was recorded 2026-07-01 (GOV-313).
 
 GSP-0007 was originally a `spec/v0.2` candidate (GOV-62); RFC 0003 (GOV-302)
 recommended pulling it forward into the `spec/v0.3` package instead, since

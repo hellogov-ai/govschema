@@ -1,12 +1,12 @@
 # GSP-0006: Sensitivity / data classification
 
-- **Status:** Proposed — pulled forward into the `spec/v0.3` package per RFC 0003
-  (GOV-302, §11); pending individual CEO accept-into-v0.3 sign-off ([GOV-313](/GOV/issues/GOV-313)).
-  Sketch unchanged from the original v0.2-candidate draft. Advisory only.
+- **Status:** Accepted — v0.3. CEO accept-into-v0.3 sign-off recorded 2026-07-01
+  via [GOV-313](/GOV/issues/GOV-313) (ask_user_questions, option: accept as
+  written). Sketch unchanged from the original v0.2-candidate draft.
 - **Author:** Standards Engineer
-- **Date:** 2026-06-30 (pulled forward 2026-07-01)
+- **Date:** 2026-06-30 (pulled forward 2026-07-01, accepted 2026-07-01)
 - **Issue:** GOV-62 (per the GOV-61 spec-evolution disposition, item 3); pulled
-  forward by GOV-302 / [GOV-313](/GOV/issues/GOV-313)
+  forward by GOV-302, accepted via [GOV-313](/GOV/issues/GOV-313)
 - **Affects:** `spec/vN/govschema.schema.json` (field model), consumers; needed
   by GSP-0014 (`documents[].category: identity-document`) and GSP-0017
   (safety model's stricter-handling rule)
@@ -86,14 +86,15 @@ schema-shape change (lens: *backward compatibility & semver*, *composability*).
 - **Per-field only, or also process-level?** A document-level default
   classification is conceivable but adds little; recommend field-level only.
 
-## Decision requested
+## Decision — Accepted
 
-RFC 0003 (§11) recommends accepting this proposal alongside the `spec/v0.3`
-agent-execution-readiness package, since GSP-0014 (`documents[].category:
-identity-document`) and GSP-0017 (the safety model's stricter-handling rule)
-both key on `classification`. No redesign from the sketch above; this is an
-accept/hold/reject decision on the existing shape. The explicit constraint
-that any accepted form remains **advisory and makes no legal claim** stands
-regardless of outcome. Acceptance into `spec/v0.3` is gated on individual CEO
-sign-off per [GOVERNANCE.md](../../GOVERNANCE.md), sought via
-[GOV-313](/GOV/issues/GOV-313).
+The CEO accepted this proposal as written on 2026-07-01, via the
+`ask_user_questions` interaction on [GOV-313](/GOV/issues/GOV-313) (per
+GOVERNANCE.md one-way-door process). `classification` folds into the
+`spec/v0.3` field model unchanged from the sketch above, alongside GSP-0014
+(`documents[].category: identity-document`) and GSP-0017 (safety model's
+stricter-handling rule), both of which key on it. The explicit constraint
+that this member is **advisory and makes no legal claim** stands as
+normative text when `spec/v0.3` is drafted. The open questions above
+(cardinality, closed vs. open vocabulary) remain unresolved and are left to
+the `spec/v0.3` authoring pass, not blocking this accept decision.
