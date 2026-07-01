@@ -101,5 +101,5 @@ version keeps getting the bytes it pinned.
 
 GovSchema is global and multi-jurisdictional. Early coverage concentrates on a
 few jurisdictions (the reference schemas under `us/` and `gb/` are format
-examples), but the layout imposes no privileged jurisdiction — every country
+examples), but the layout imposes no privileged jurisdiction. Every country
 sits at the same top level.

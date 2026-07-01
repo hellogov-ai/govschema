@@ -95,7 +95,7 @@ Some government forms ship a **fresh edition every tax or award year** — the U
 - A **new tax/award year is a new edition, NOT a version bump.** The 2025 1040 and
   the 2024 1040 are *siblings*, not successive versions: they are different forms a
   consumer selects between by **year**, not by compatibility. Modelling a new year
-  as a `version` MAJOR/MINOR would abuse SemVer — the 2025 edition does not "break
+  as a `version` MAJOR/MINOR would abuse SemVer: the 2025 edition does not "break
   consumers of" the 2024 edition.
 - **Editions coexist.** In early 2026 an agent may file a 2025 return and a late
   2024 return; neither edition deprecates the other. Each edition lives at its own
