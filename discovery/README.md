@@ -24,7 +24,7 @@ individual routinely files them (sole-trader tax, single-member company
 formation).
 
 Coverage started with **US and GB** (GOV-36) and has since grown to include
-**IE, CA, and NZ** as each jurisdiction's turn came up. The format and the
+**IE, CA, NZ, and AU** as each jurisdiction's turn came up. The format and the
 catalog structure are jurisdiction-neutral; other countries sit at the same top
 level when their turn comes.
 
@@ -89,6 +89,17 @@ authoring doesn't rediscover them:
 - **Renewal/application pairs share field clusters.** Passport renewal vs.
   first application, license renewal vs. first provisional — strong candidates
   for shared field definitions once the spec supports reuse.
+- **Renewal eligibility windows differ across otherwise-similar processes.**
+  NZ and CA cap online passport renewal at 24 months past expiry; Australia's
+  published renewal eligibility carries no such cap (`au/apo/passport-renewal-adult`).
+  Don't assume one jurisdiction's eligibility shape for another without checking
+  the live source.
+- **Voter enrolment federalism varies independently of general administrative
+  fragmentation.** US driver licensing, voter registration, and company
+  formation are all state-administered; Australia's driver licensing and
+  company registration are similarly state/territory-administered, but its
+  electoral roll is a single national AEC register (`au/aec/voter-enrolment`),
+  closer to GB's national register than to the US pattern.
 
 ## From catalog to registry
 
