@@ -23,7 +23,8 @@ business-internal or government-internal processes are excluded except where an
 individual routinely files them (sole-trader tax, single-member company
 formation).
 
-Coverage in this first pass is **US and GB**, per GOV-36. The format and the
+Coverage started with **US and GB** (GOV-36) and has since grown to include
+**IE, CA, and NZ** as each jurisdiction's turn came up. The format and the
 catalog structure are jurisdiction-neutral; other countries sit at the same top
 level when their turn comes.
 
