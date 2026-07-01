@@ -80,6 +80,12 @@ following simplifications for open-ended or repeating structures:
   relevant field descriptions where load-bearing, but the deep citizenship-law
   cross-references (e.g. Citizenship Act §3(2)) are process facts, not form
   fields.
+- **Out of scope — the page-2 and page-3 "Signature of applicant / Date"
+  boxes** (end of section 5, end of section 9), in addition to the page-1
+  declaration signature modeled as `applicantSignatureDate`. These restate the
+  same signing date across all three required-signed pages rather than
+  representing distinct information, so only the one declaration date/place is
+  modeled.
 
 ## What was confirmed against the source
 
@@ -146,6 +152,7 @@ type, and the conditional-field notes called out in field descriptions):
   "guarantorAddressProvinceOrState": "ON",
   "guarantorAddressPostalCode": "M5S 1A1",
   "guarantorYearsKnown": 24,
+  "guarantorOtherPhoneNumber": "+14165550143",
   "guarantorSignatureDate": "2026-08-01",
   "guarantorSignedAtCity": "Toronto",
   "guarantorSignedAtProvinceOrState": "ON",
@@ -162,13 +169,29 @@ type, and the conditional-field notes called out in field descriptions):
   "reference1RelationshipToApplicant": "Family friend",
   "reference1YearsKnown": 10,
   "reference1PhoneNumber": "+14165550188",
+  "reference1Email": "sarah.thompson@example.com",
+  "reference1AddressLine1": "44 Elm Street",
+  "reference1AddressCity": "Toronto",
+  "reference1AddressProvinceOrState": "ON",
+  "reference1AddressCountry": "Canada",
+  "reference1AddressPostalCode": "M4W 1N2",
   "reference2FullName": "James Okafor",
   "reference2RelationshipToApplicant": "Colleague",
   "reference2YearsKnown": 5,
   "reference2PhoneNumber": "+14165550177",
+  "reference2Email": "james.okafor@example.com",
+  "reference2AddressLine1": "12 King Street West",
+  "reference2AddressCity": "Toronto",
+  "reference2AddressProvinceOrState": "ON",
+  "reference2AddressCountry": "Canada",
+  "reference2AddressPostalCode": "M5H 1A1",
   "emergencyContactFullName": "Li Ming Chen",
   "emergencyContactRelationshipToApplicant": "Parent",
-  "emergencyContactPhoneNumber": "+14165550142"
+  "emergencyContactPhoneNumber": "+14165550142",
+  "emergencyContactAddressLine1": "900 Bay Street",
+  "emergencyContactAddressCity": "Toronto",
+  "emergencyContactAddressProvinceOrState": "ON",
+  "emergencyContactAddressPostalCode": "M5S 1A1"
 }
 ```
 
@@ -200,6 +223,31 @@ ok   registry/ca/ircc/passport-application-first-adult/1.0.0/schema.json
 $ cd tools && node validate-ajv.mjs ../registry/ca/ircc/passport-application-first-adult/1.0.0/schema.json
 ok   registry/ca/ircc/passport-application-first-adult/1.0.0/schema.json [v0.2]
 ```
+
+## Fix-up: review-gate findings (2026-07-01)
+
+The `GOV-347` review gate (independent re-derivation of the field set from the
+live PDF, per Procedure step 2) found real gaps in the initial field set that
+were not covered by any documented scope decision — these were plain misses,
+not intentional exclusions. Added in this fix-up commit:
+
+- **Section 2 (guarantor):** `guarantorOtherPhoneNumber`, `guarantorAddressApt`
+  — both already modeled for the applicant in section 1, missed for the
+  guarantor.
+- **Section 8 (references, ×2):** `reference{1,2}OtherPhoneNumber`,
+  `reference{1,2}Email`, and the full address block
+  (`reference{1,2}AddressLine1/Apt/City/ProvinceOrState/Country/PostalCode`).
+  References include a distinct country/territory field on the form (unlike
+  the applicant/guarantor, who are assumed domestic), so `AddressCountry` is
+  modeled as required for references specifically.
+- **Section 9 (emergency contact):** `emergencyContactOtherPhoneNumber` and
+  the full current-home-address block
+  (`emergencyContactAddressLine1/Apt/City/ProvinceOrState/PostalCode`). This
+  section's address block has no country/territory field on the form (unlike
+  section 8), so none is modeled here.
+
+The "page-2/page-3 signature box" judgment call the reviewer flagged as
+non-blocking is now recorded explicitly under "Scope decisions" above.
 
 ## What is NOT yet independently verified
 
