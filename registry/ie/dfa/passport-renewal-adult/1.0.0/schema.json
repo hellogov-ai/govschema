@@ -1,0 +1,182 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "ie/dfa/passport-renewal-adult",
+  "version": "1.0.0",
+  "title": "Ireland Adult Passport Renewal (Passport Online)",
+  "description": "Renew an adult Irish passport (book or card) through the Department of Foreign Affairs' Passport Online service, the country's sole channel for this process. This document describes the renewal-eligibility gate, applicant and most-recent-passport details, photo and conditional document requirements, and the product/payment choice. It does not submit the application; the live ireland.ie source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Foreign Affairs, Passport Service",
+    "abbreviation": "DFA",
+    "url": "https://www.ireland.ie/en/dfa/passports/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.ireland.ie/en/dfa/passports/how-to-apply-for-a-passport/renew-adult-passport/",
+    "retrievedAt": "2026-07-01"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from DFA/citizensinformation.ie guidance describing the Passport Online adult renewal flow. Since 1 December 2025 the paper APS1/APS2 forms are no longer accepted, so (as with gb/dvla/vehicle-tax) there is no downloadable form to transcribe field-by-field; this document is built from the surrounding guidance prose and third-party summaries of the online screens, not an independently captured screen-by-screen review of passportonline.ie. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "currentPassportExpiredMoreThan5YearsAgo",
+      "label": "Did your most recent Irish passport expire more than 5 years ago?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, you are not eligible to renew through Passport Online and must apply as a first-time adult applicant instead (out of scope for this document; a witnessed application is required).",
+      "sourceRef": "How to renew an Irish passport as an adult — eligibility to renew vs. first-time application"
+    },
+    {
+      "name": "renewalBasis",
+      "label": "When does your current passport expire?",
+      "type": "enum",
+      "required": true,
+      "description": "expiring_within_12_months = expires within the next 12 months, or already expired less than 5 years ago — no need to send in your current passport; expiring_more_than_12_months_ahead = expiry is more than 12 months away — your current passport must be submitted with the application (see mostRecentPassportToBeSubmitted). Only meaningful when currentPassportExpiredMoreThan5YearsAgo is false.",
+      "sourceRef": "Renew or replace your adult passport — when you can renew",
+      "validation": { "enum": ["expiring_within_12_months", "expired_less_than_5_years_ago", "expiring_more_than_12_months_ahead"] }
+    },
+    {
+      "name": "mostRecentPassportToBeSubmitted",
+      "label": "Will you submit your current passport with this application?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required, and must be true, when renewalBasis is expiring_more_than_12_months_ahead: the current passport must be posted in with the application in that case. Not required for the other renewalBasis values.",
+      "sourceRef": "Renew or replace your adult passport — submitting your current passport"
+    },
+    {
+      "name": "lastName",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must match the name on the current passport unless nameChangeDocument is provided.",
+      "sourceRef": "Passport Online — applicant details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Passport Online — applicant details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD.",
+      "sourceRef": "Passport Online — applicant details"
+    },
+    {
+      "name": "ppsNumber",
+      "label": "Personal Public Service (PPS) number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Leave blank if you do not have an Irish PPS number.",
+      "sourceRef": "What is your PPSN on the passport application form — Department of Foreign Affairs",
+      "validation": { "maxLength": 9 }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Used for the application-status confirmation alerts sent throughout processing.",
+      "sourceRef": "Passport Online — contact details",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "mostRecentPassportNumber",
+      "label": "Current passport number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The number printed on the passport being renewed. Exact format not yet independently confirmed against the live form; see VERIFICATION.md.",
+      "sourceRef": "Passport Online — current passport details",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "lostStolenOrDamaged",
+      "label": "Was your current passport lost, stolen, or damaged?",
+      "type": "enum",
+      "required": true,
+      "description": "not_applicable = the passport is in your possession and undamaged; lost, stolen, or damaged = indicate this in the application; no additional witnessing is required for an online application, but supporting information may be requested.",
+      "sourceRef": "Renew or replace your adult passport — lost, stolen or damaged passports",
+      "validation": { "enum": ["not_applicable", "lost", "stolen", "damaged"] }
+    },
+    {
+      "name": "nameChangeDocument",
+      "label": "Name-change document (only if your current name differs from the passport)",
+      "type": "file",
+      "required": false,
+      "description": "Evidence of a name change (e.g. marriage or civil partnership certificate, deed poll), required only if the name on the current passport is not the applicant's current name. Provide as PDF, JPEG, or PNG.",
+      "sourceRef": "Documents for adult passport applications — name change"
+    },
+    {
+      "name": "photo",
+      "label": "Digital photo",
+      "type": "file",
+      "required": true,
+      "description": "Digital colour photo, at least 715 pixels wide and 951 pixels high, JPG/JPEG format, taken within the last 6 months, head to mid-torso, neutral expression, even lighting, from an approved Digital Photo Provider or equivalent.",
+      "sourceRef": "Passport Online — photo requirements"
+    },
+    {
+      "name": "productRequested",
+      "label": "What are you renewing?",
+      "type": "enum",
+      "required": true,
+      "description": "passport_book = standard 10-year passport book; passport_card = passport card (EU/EEA travel only).",
+      "sourceRef": "Passport Online — passport book or card",
+      "validation": { "enum": ["passport_book", "passport_card"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "debit_or_credit_card is the only payment method Passport Online accepts. Current fees are published on the live source and are deliberately not encoded here.",
+      "sourceRef": "Passport Online — payment",
+      "validation": { "enum": ["debit_or_credit_card"] }
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Check you can renew through Passport Online",
+      "fields": ["currentPassportExpiredMoreThan5YearsAgo", "renewalBasis", "mostRecentPassportToBeSubmitted"],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Your details",
+      "fields": ["lastName", "firstNames", "dateOfBirth", "ppsNumber", "email"],
+      "next": "most_recent_passport"
+    },
+    {
+      "id": "most_recent_passport",
+      "title": "Your current passport",
+      "fields": ["mostRecentPassportNumber", "lostStolenOrDamaged", "nameChangeDocument"],
+      "next": "supporting_items"
+    },
+    {
+      "id": "supporting_items",
+      "title": "Photo, product, and payment",
+      "fields": ["photo", "productRequested", "paymentMethod"]
+    }
+  ]
+}
