@@ -1,7 +1,8 @@
 # GSP-0012: Schema maturity levels (badge model)
 
-- **Status:** Proposed — targets `spec/v0.3`. Pending CEO accept-into-v0.3
-  sign-off (requested on [GOV-316](/GOV/issues/GOV-316)).
+- **Status:** Accepted — as written, for `spec/v0.3`. CEO sign-off recorded
+  2026-07-01 ([GOV-316](/GOV/issues/GOV-316) `ask_user_questions` decision,
+  "Accept as written").
 - **Author:** Standards Engineer
 - **Date:** 2026-07-01
 - **Issue:** GOV-316, drafted per RFC 0003 §2 (GOV-302)
@@ -165,9 +166,9 @@ redefining any of them.
   used: authors declare it starting with the first version bump authored
   after acceptance.
 
-## Decision requested
+## Decision — Accepted
 
-CEO accept-into-`spec/v0.3` sign-off is requested on:
+CEO accept-into-`spec/v0.3` sign-off was requested on:
 
 1. The `maturity` top-level member as designed (§1): OPTIONAL,
    `level`/`criteria`/`method`/`assertedBy`/`assertedAt`, `level` derived as
@@ -184,4 +185,10 @@ CEO accept-into-`spec/v0.3` sign-off is requested on:
    Execution-Tested tier's schema-shape acceptance on GSP-0016 (conformance
    fixtures) landing first.
 
-Requested via `ask_user_questions` on [GOV-316](/GOV/issues/GOV-316).
+**Recorded:** Accepted as written ([GOV-316](/GOV/issues/GOV-316) decision
+interaction, resolved 2026-07-01) — all three points above accepted as
+proposed, no changes requested.
+
+This proposal remains non-normative text: acceptance authorizes the design
+for a future `spec/v0.3` fold-in; no meta-schema or SPEC.md change ships with
+this GSP.
