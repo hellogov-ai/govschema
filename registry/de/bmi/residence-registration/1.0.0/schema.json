@@ -1,0 +1,379 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "de/bmi/residence-registration",
+  "version": "1.0.0",
+  "title": "Germany Residence Registration (Anmeldung)",
+  "description": "Register a person's sole or main residence (alleinige Wohnung / Hauptwohnung) with the local registration authority (Meldebehörde) after moving into a dwelling in Germany, as required by the Bundesmeldegesetz (BMG) within 14 days of moving in. Two channels exist nationwide: the federal Elektronische Wohnsitzanmeldung (EWA) online service (BundID account plus eID), and in-person registration at the local Bürgeramt/Einwohnermeldeamt. This document is scoped to a single adult registrant moving into a sole or main residence; it does not cover secondary-residence-only (Nebenwohnung) registration, joint family registration of multiple household members in one submission, deregistration (Abmeldung), or minors registering without a guardian. It does not submit the registration; the live sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Meldebehörde (local residents' registration office, e.g. Bürgeramt/Einwohnermeldeamt), under the Bundesmeldegesetz (Federal Registration Act) and the federal Elektronische Wohnsitzanmeldung service co-run by the Bundesministerium des Innern und für Heimat",
+    "abbreviation": "BMI",
+    "url": "https://www.bmi.bund.de"
+  },
+  "process": {
+    "type": "registration",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://service.berlin.de/dienstleistung/120686/",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Meldeschein (Anmeldung bei der Meldebehörde)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "First DE reference schema, opening a seventh jurisdiction (alongside US, GB, IE, CA, NZ, AU — the first non-Anglophone, non-common-law source). Derived from the official Berlin.de service page for 'Wohnsitz - Alleinige Wohnung oder Hauptwohnung anmelden' (dienstleistung 120686), which cites its legal basis directly (BMG §§17, 21, 23, 23a, 24, 27) and the federal wohnsitzanmeldung.gov.de page for the Elektronische Wohnsitzanmeldung (EWA) online channel. Field-level structure cross-checked against two independent secondary transcriptions of the national Meldeschein (allaboutberlin.com, settle-in-berlin.com) and against the City of Munich's official fillable Meldeschein PDF (AcroForm field names/tooltips extracted directly from its decompressed content streams). Berlin's Bürgeramt service is used as the concrete exemplar for the in-person channel, per the same convention as us/ca/dmv for US state DMVs; the underlying legal data model is set nationally by the BMG. Status draft pending full field-by-field source review; see VERIFICATION.md for hedges, notably on the gender/marital-status enum values and two unconfirmed identity-document type codes."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "residenceType",
+      "label": "The new dwelling is",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this dwelling is the registrant's only dwelling in Germany, or their main dwelling (if they keep more than one). A dwelling used most of the time is the Hauptwohnung; others are Nebenwohnungen. This document covers only the sole/main-residence service; registering a Nebenwohnung-only is a separate, out-of-scope service.",
+      "sourceRef": "\"Die neue Wohnung ist\" (new-dwelling section)",
+      "validation": { "enum": ["sole_residence", "main_residence"] }
+    },
+    {
+      "name": "moveInDate",
+      "label": "Move-in date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD. Registration is legally required within 14 days of this date (BMG §17 Abs. 2), though some Bürgerämter do not strictly enforce the deadline for a later appointment.",
+      "sourceRef": "\"Tag des Einzugs\""
+    },
+    {
+      "name": "newAddressPostalCode",
+      "label": "New address — postal code",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. German 5-digit postal code (Postleitzahl).",
+      "sourceRef": "\"Postleitzahl, Gemeinde, Ortsteil\" (new dwelling)",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "newAddressMunicipality",
+      "label": "New address — municipality (Gemeinde)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "\"Postleitzahl, Gemeinde, Ortsteil\" (new dwelling)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "newAddressDistrict",
+      "label": "New address — district (Ortsteil, optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Locality/borough within the municipality, where applicable (e.g. a Berlin Ortsteil such as Mitte).",
+      "sourceRef": "\"Postleitzahl, Gemeinde, Ortsteil\" (new dwelling)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "newAddressStreet",
+      "label": "New address — street",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "\"Straße, Hausnummer, Zusätze\" (new dwelling)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "newAddressHouseNumber",
+      "label": "New address — house number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "\"Straße, Hausnummer, Zusätze\" (new dwelling)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "newAddressAdditional",
+      "label": "New address — additions (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Floor, apartment number, or a \"c/o\"/\"bei\" line when the registrant's name is not on the mailbox/doorbell.",
+      "sourceRef": "\"Straße, Hausnummer, Zusätze\" (new dwelling)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "previousResidenceType",
+      "label": "The previous dwelling was",
+      "type": "enum",
+      "required": false,
+      "description": "Required when the registrant had a previous dwelling in Germany. Not applicable to a first-ever registration from abroad with no prior German address.",
+      "sourceRef": "\"Die (letzte) bisherige Wohnung war\"",
+      "validation": { "enum": ["sole_residence", "main_residence", "secondary_residence"] }
+    },
+    {
+      "name": "previousAddressPostalCode",
+      "label": "Previous address — postal code",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when the previous dwelling was in Germany.",
+      "sourceRef": "\"Postleitzahl, Gemeinde, Ortsteil\" (previous dwelling)",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "previousAddressMunicipality",
+      "label": "Previous address — municipality",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when the previous dwelling was in Germany.",
+      "sourceRef": "\"Postleitzahl, Gemeinde, Ortsteil\" (previous dwelling)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousAddressStreet",
+      "label": "Previous address — street and house number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when the previous dwelling was in Germany.",
+      "sourceRef": "\"Straße, Hausnummer, Zusätze\" (previous dwelling)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "previousAddressCountry",
+      "label": "Previous country of residence, if moving from abroad",
+      "type": "string",
+      "required": false,
+      "description": "Only given when moving to Germany from abroad, in place of a previous German address.",
+      "sourceRef": "\"Bei Zuzug aus dem Ausland, Staat\""
+    },
+    {
+      "name": "keepingPreviousResidence",
+      "label": "Are you keeping the previous dwelling?",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, one of the registrant's dwellings (previous or new) must be declared the Hauptwohnung and the other a Nebenwohnung; that declaration is made on the separate Beiblatt/Hauptwohnungserklärung supplement, out of scope of this document.",
+      "sourceRef": "\"Wird die bisherige Wohnung beibehalten?\""
+    },
+    {
+      "name": "additionalResidencesInGermany",
+      "label": "Do you have other dwellings in Germany?",
+      "type": "boolean",
+      "required": false,
+      "description": "Flags whether a multiple-residence declaration (Beiblatt/Hauptwohnungserklärung) is needed; that supplement is out of scope of this document.",
+      "sourceRef": "\"Weitere Wohnungen in Deutschland?\""
+    },
+    {
+      "name": "lastName",
+      "label": "Last name (incl. doctoral degree / passport name)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. As it appears on the registrant's identity document, including an academic doctoral degree (Doktorgrad) where held.",
+      "sourceRef": "\"Familienname, ggf. Doktorgrad, Passname\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Given names as recorded on the civil-status register; the everyday first name (Rufname) is conventionally underlined on the paper form.",
+      "sourceRef": "\"Vornamen (Rufname unterstreichen)\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "birthName",
+      "label": "Birth name (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. E.g. a maiden name, if the current last name differs from the name at birth.",
+      "sourceRef": "\"Geburtsname\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The exact set of selectable options printed on the current Meldeschein widget was not independently confirmed (the extracted form only exposed the field's internal name, not its option labels); modelled here as male/female/diverse/unspecified per German civil-status law (Personenstandsgesetz §22, in force since 2019), which the registration data model is understood to follow. See VERIFICATION.md.",
+      "sourceRef": "\"Geschlecht\"",
+      "validation": { "enum": ["male", "female", "diverse", "unspecified"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD.",
+      "sourceRef": "\"Geburtsdatum\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Municipality and district (Gemeinde, Landkreis) of birth.",
+      "sourceRef": "\"Geburtsort (Gemeinde, Landkreis)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth, if born abroad",
+      "type": "string",
+      "required": false,
+      "description": "Given in addition to placeOfBirth only when the registrant was born outside Germany.",
+      "sourceRef": "\"Geburtsort ... falls Ausland auch Staat angeben\""
+    },
+    {
+      "name": "religiousAffiliation",
+      "label": "Religious affiliation (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. A church or religious society entitled to levy church tax (Kirchensteuer) in Germany, e.g. Roman Catholic (rk) or Evangelical (ev); giving none means no church-tax liability is registered. Answering is voluntary but affects payroll tax withholding.",
+      "sourceRef": "\"Religionsgesellschaft\""
+    },
+    {
+      "name": "religiousOrArtisticName",
+      "label": "Religious or artistic name / pseudonym (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. E.g. a name taken as a member of a religious order, or an artist's/author's pseudonym used in official use.",
+      "sourceRef": "\"Ordens-, Künstlername\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality/nationalities",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Free text; more than one nationality may be given.",
+      "sourceRef": "\"Staatsangehörigkeit(en)\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The enum below reflects the marital-status categories generally used on German civil-status/registration forms; the exact option labels on the current Meldeschein widget were not independently confirmed field-by-field (see gender's caveat and VERIFICATION.md).",
+      "sourceRef": "\"Familienstand\"",
+      "validation": {
+        "enum": [
+          "single",
+          "married",
+          "registered_civil_partnership",
+          "civil_partnership_dissolved",
+          "widowed",
+          "divorced"
+        ]
+      }
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Identity document type",
+      "type": "enum",
+      "required": true,
+      "description": "personalausweis = Personalausweis (German national ID card); reisepass = Reisepass (passport); kinderreisepass = Kinderreisepass (children's passport); other = a national passport, replacement travel document, or residence-title document (for non-German nationals) or another document code seen on some municipalities' Meldeschein templates that was not independently confirmed.",
+      "sourceRef": "\"Art\" (document type: PA / RP / KRP / ...)",
+      "validation": { "enum": ["personalausweis", "reisepass", "kinderreisepass", "other"] }
+    },
+    {
+      "name": "identityDocumentIssuingAuthority",
+      "label": "Issuing authority",
+      "type": "string",
+      "required": true,
+      "description": "The authority (Ausstellungsbehörde) that issued the identity document.",
+      "sourceRef": "\"Ausstellungsbehörde\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "identityDocumentSerialNumber",
+      "label": "Document serial number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "\"Seriennummer\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "identityDocumentIssueDate",
+      "label": "Document issue date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "\"Datum der Ausstellung\""
+    },
+    {
+      "name": "identityDocumentExpiryDate",
+      "label": "Document expiry date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD. Must be valid (\"gültiger Personalausweis/Reisepass\").",
+      "sourceRef": "\"Gültig bis\""
+    },
+    {
+      "name": "channel",
+      "label": "Registration channel",
+      "type": "enum",
+      "required": true,
+      "description": "online_ewa = the federal Elektronische Wohnsitzanmeldung (EWA) service, restricted to registrants aged 18+ who are German or EU citizens, moving within Germany, and hold a BundID account plus an eID-enabled Personalausweis/eID card and PIN; in_person = an appointment at the Bürgeramt/Einwohnermeldeamt, open to any nationality from age 16 (a legal guardian registers a child under 16). The EWA online channel is rolling out city by city rather than nationwide on day one.",
+      "sourceRef": "\"Online-Anmeldung\" / \"Anmeldung vor Ort im Bürgeramt\"",
+      "validation": { "enum": ["online_ewa", "in_person"] }
+    },
+    {
+      "name": "landlordConfirmationProvided",
+      "label": "Landlord's move-in confirmation (Wohnungsgeberbestätigung) provided",
+      "type": "boolean",
+      "required": false,
+      "description": "Required when the registrant rents; the landlord/housing provider (Wohnungsgeber) must confirm the move-in in writing within two weeks, stating their name and address (and the owner's, if different), the move-in date, the dwelling's address, and the names of everyone registering. A tenancy agreement (Mietvertrag) does not substitute for this confirmation. Not applicable to an owner-occupier.",
+      "sourceRef": "\"Wohnungsgeberbestätigung (Einzugsbestätigung des Wohnungsgebers/Vermietenden)\""
+    },
+    {
+      "name": "representativeAuthorization",
+      "label": "Registering via a representative (Vollmacht) provided",
+      "type": "boolean",
+      "required": false,
+      "description": "Required (in_person channel only) when someone other than the registrant submits the form on their behalf: a written power of attorney plus the form, signed by the registrant themself, must be brought. Not available for the online channel except within a family unit already registered at the same address.",
+      "sourceRef": "\"Bei Vertretung: schriftliche Vollmacht\""
+    },
+    {
+      "name": "minorGuardianConsentProvided",
+      "label": "Guardian's written consent provided (for a minor's move, where applicable)",
+      "type": "boolean",
+      "required": false,
+      "description": "Required when parents with joint custody live together but only one registers a minor child's move (a written statement of consent from the absent parent), or when separated parents with joint custody move a minor child's main residence between them (the \"Einverständniserklärung der Sorgeberechtigten\" form). Not applicable to an adult registrant.",
+      "sourceRef": "\"Einverständniserklärung der Sorgeberechtigten\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "new_dwelling",
+      "title": "New dwelling",
+      "fields": ["residenceType", "moveInDate", "newAddressPostalCode", "newAddressMunicipality", "newAddressDistrict", "newAddressStreet", "newAddressHouseNumber", "newAddressAdditional"],
+      "next": "previous_dwelling"
+    },
+    {
+      "id": "previous_dwelling",
+      "title": "Previous dwelling",
+      "fields": ["previousResidenceType", "previousAddressPostalCode", "previousAddressMunicipality", "previousAddressStreet", "previousAddressCountry", "keepingPreviousResidence", "additionalResidencesInGermany"],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal details",
+      "fields": ["lastName", "firstNames", "birthName", "gender", "dateOfBirth", "placeOfBirth", "countryOfBirth", "religiousAffiliation", "religiousOrArtisticName", "nationality", "maritalStatus"],
+      "next": "identity_document"
+    },
+    {
+      "id": "identity_document",
+      "title": "Identity document",
+      "fields": ["identityDocumentType", "identityDocumentIssuingAuthority", "identityDocumentSerialNumber", "identityDocumentIssueDate", "identityDocumentExpiryDate"],
+      "next": "channel_and_documents"
+    },
+    {
+      "id": "channel_and_documents",
+      "title": "Channel and supporting documents",
+      "fields": ["channel", "landlordConfirmationProvided", "representativeAuthorization", "minorGuardianConsentProvided"]
+    }
+  ]
+}

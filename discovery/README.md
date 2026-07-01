@@ -24,9 +24,12 @@ individual routinely files them (sole-trader tax, single-member company
 formation).
 
 Coverage started with **US and GB** (GOV-36) and has since grown to include
-**IE, CA, NZ, and AU** as each jurisdiction's turn came up. The format and the
-catalog structure are jurisdiction-neutral; other countries sit at the same top
-level when their turn comes.
+**IE, CA, NZ, AU, and DE** as each jurisdiction's turn came up. DE (GOV-170) is
+the first non-Anglophone, civil-law jurisdiction — the prior six were all
+Anglophone/common-law, a gap in the "global from day one" charter that had gone
+unaddressed for six authoring cycles. The format and the catalog structure are
+jurisdiction-neutral; other countries sit at the same top level when their turn
+comes.
 
 ## The boundary still holds
 
@@ -100,6 +103,15 @@ authoring doesn't rediscover them:
   company registration are similarly state/territory-administered, but its
   electoral roll is a single national AEC register (`au/aec/voter-enrolment`),
   closer to GB's national register than to the US pattern.
+- **A federally-uniform data model can still be locally executed.** Germany's
+  residence registration (`de/bmi/residence-registration`) is legally
+  standardized nationwide by the Bundesmeldegesetz, but executed by each
+  municipality's own Bürgeramt/Einwohnermeldeamt (plus a federal online
+  channel, the Elektronische Wohnsitzanmeldung). This is modelled as
+  `jurisdiction.level: national` with one municipality's service used as the
+  documented exemplar — the same convention already used for `us/ca/dmv/*`
+  entries — rather than as `subnational`, since the data fields themselves
+  don't vary by municipality the way US driver-licensing rules do by state.
 
 ## From catalog to registry
 
