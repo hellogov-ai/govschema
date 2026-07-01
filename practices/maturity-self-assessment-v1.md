@@ -16,8 +16,9 @@ truthful given what it actually models.
 ## Procedure
 
 1. **Structural Reference.** Confirm `fields[]` is present, every entry
-   carries `type` and a `validation` object, and exactly one `source` is
-   cited. If true, set `criteria.structuralReference: true`.
+   carries `type`, and exactly one `source` is cited. (`validation` itself
+   stays optional per SPEC §6.1; this check does not require it.) If true,
+   set `criteria.structuralReference: true`.
 2. **Verified Schema.** Confirm `status: verified` and
    `verification.lastVerifiedAt` is current per the named verification
    practice's cadence. If true, set `criteria.verifiedSchema: true`.
