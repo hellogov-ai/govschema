@@ -192,7 +192,7 @@ function renderNav(site) {
   <nav class="topnav">
     <div class="wrap topnav-inner">
       <a class="brand" href="./">
-        <span class="brand-mark" aria-hidden="true">{ }</span>
+        <img class="brand-mark" src="assets/favicon.svg" alt="" width="24" height="24" />
         <span class="brand-name">${esc(site.name)}</span>
       </a>
       <div class="topnav-links">${links}</div>
