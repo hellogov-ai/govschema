@@ -1,0 +1,246 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/dvla/driving-licence-first-provisional",
+  "version": "1.0.0",
+  "title": "United Kingdom First Provisional Driving Licence",
+  "description": "Apply for a first (never previously held) GB provisional driving licence through the Driver and Vehicle Licensing Agency (DVLA), either online or by post using form D1. This is the entry point to the DMV vertical's 'Drivers License' first-time leg named in GOV-282, sibling to the already-published gb/dvla/driving-licence-renewal-photocard (which explicitly excludes a first-ever provisional licence as out of scope). Scoped to a Great Britain (England, Scotland, Wales) applicant only; Northern Ireland has a separate service. It does not submit the application; the live gov.uk and DVLA sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/apply-first-provisional-driving-licence",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Form D1 (by-post channel); no form number for the online channel"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the official gov.uk 'Apply for your first provisional driving licence' page and the companion 'Proving your identity' (id-for-driving-licence) page. The online first-provisional service sits behind GOV.UK One Login with no reachable pre-login screens at authoring time (unlike the sibling renewal schema, which could read its own before-you-start screens), so field-level detail beyond the two guidance pages above is not independently confirmed. D1 form section structure (personal details, eyesight, licence categories wanted, previous licence details, medical declaration Part A/Part B) was corroborated only against third-party PDF-form-filler summaries, not an official DVLA-published field list, and is therefore intentionally NOT modelled field-by-field here; see VERIFICATION.md for exactly what is and is not in scope. Status remains 'draft'."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-01"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD. An applicant must be at least 15 years and 9 months old to apply (the licence itself cannot be used to drive most vehicle categories until 16 or 17, per DVLA age rules for each category).",
+      "sourceRef": "Apply for your first provisional driving licence — eligibility",
+      "validation": {}
+    },
+    {
+      "name": "residencyMeetsRequirement",
+      "label": "Have you been given permission to live in Great Britain for at least 185 days?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Eligibility gate, not itself a form line item on every channel. If false, the applicant is not eligible for a GB provisional licence through this service.",
+      "sourceRef": "Apply for your first provisional driving licence — eligibility"
+    },
+    {
+      "name": "eyesightMeetsStandard",
+      "label": "Can you read a vehicle number plate from 20 metres away (wearing glasses or contact lenses if you need them)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Self-declared eyesight standard stated as an eligibility requirement on the gov.uk overview; the practical eyesight check itself happens at the driving test, not at licence-application time, but the declaration gates this application.",
+      "sourceRef": "Apply for your first provisional driving licence — eligibility"
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Apply for your first provisional driving licence — applicant details (by analogy with the sibling gb/dvla/driving-licence-renewal-photocard applicant-detail fields; not independently re-confirmed against a first-application-specific field list)",
+      "validation": { "enum": ["mr", "mrs", "miss", "ms", "mx", "dr", "other"] }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Apply for your first provisional driving licence — applicant details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. All forenames, as they appear on the identity document used in identityVerificationMethod.",
+      "sourceRef": "Apply for your first provisional driving licence — applicant details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicationChannel",
+      "label": "How do you want to apply?",
+      "type": "enum",
+      "required": true,
+      "description": "online = apply-for-driving-licence.service.gov.uk, cost £34, licence typically arrives within one week; by_post = complete form D1 (available at most Post Offices) and post it to DVLA, cost £43. This document does not encode fee amounts as authoritative data (they change periodically); the figures in this description are qualitative context only, consistent with the sibling gb/dvla/driving-licence-renewal-photocard.",
+      "sourceRef": "Apply for your first provisional driving licence — application channels",
+      "validation": { "enum": ["online", "by_post"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "debit_or_credit_card applies when applicationChannel is online (MasterCard, Visa, Electron, or Delta debit/credit card only); cheque_or_postal_order applies when applicationChannel is by_post (made payable to DVLA per the D1 form instructions). Always required — every channel has exactly one accepted payment form.",
+      "sourceRef": "Apply for your first provisional driving licence — application channels",
+      "validation": { "enum": ["debit_or_credit_card", "cheque_or_postal_order"] }
+    },
+    {
+      "name": "identityVerificationMethod",
+      "label": "How will you prove your identity?",
+      "type": "enum",
+      "required": true,
+      "description": "uk_passport = give the 9-digit UK passport number; ukvi_share_code = a digital share code from the UKVI immigration-status service; other_document_with_countersignatory = a different accepted document (e.g. a current non-EU/EEA foreign passport with a UK visa, a current Irish passport, a travel document, or a UK birth/adoption/naturalisation certificate with supporting evidence), which generally requires a countersignatory unless identity was already verified through HM Passport Office or a share code. Applies to both the online sign-in identity check and the by-post D1 identity evidence.",
+      "sourceRef": "Proving your identity for a driving licence (id-for-driving-licence)",
+      "validation": {
+        "enum": ["uk_passport", "ukvi_share_code", "other_document_with_countersignatory"]
+      }
+    },
+    {
+      "name": "ukPassportNumber",
+      "label": "UK passport number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when identityVerificationMethod is uk_passport. The 9-digit number printed on a current UK passport.",
+      "sourceRef": "Proving your identity for a driving licence — UK passport",
+      "validation": { "pattern": "^[0-9]{9}$" },
+      "requiredWhen": { "field": "identityVerificationMethod", "equals": "uk_passport" }
+    },
+    {
+      "name": "ukviShareCode",
+      "label": "UKVI share code",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when identityVerificationMethod is ukvi_share_code.",
+      "sourceRef": "Proving your identity for a driving licence — UKVI share code",
+      "validation": { "pattern": "^[A-Za-z0-9]{9}$" },
+      "requiredWhen": { "field": "identityVerificationMethod", "equals": "ukvi_share_code" }
+    },
+    {
+      "name": "countersignatoryName",
+      "label": "Countersignatory's name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when identityVerificationMethod is other_document_with_countersignatory. The countersignatory must hold a valid GB photocard driving licence, be a UK resident, know the applicant personally, and not be a relative or someone living at the same address (e.g. a current or retired local business person, shopkeeper, librarian, or other listed professional).",
+      "sourceRef": "Proving your identity for a driving licence — countersignatory rules",
+      "validation": { "minLength": 1, "maxLength": 160 },
+      "requiredWhen": { "field": "identityVerificationMethod", "equals": "other_document_with_countersignatory" }
+    },
+    {
+      "name": "countersignatoryLicenceNumber",
+      "label": "Countersignatory's GB driving licence number",
+      "type": "string",
+      "required": false,
+      "description": "Required only when identityVerificationMethod is other_document_with_countersignatory.",
+      "sourceRef": "Proving your identity for a driving licence — countersignatory rules",
+      "validation": { "maxLength": 20 },
+      "requiredWhen": { "field": "identityVerificationMethod", "equals": "other_document_with_countersignatory" }
+    },
+    {
+      "name": "medicalConditionDeclared",
+      "label": "Do you have a medical condition that could affect your ability to drive safely?",
+      "type": "boolean",
+      "required": true,
+      "description": "Corresponds to the D1 form's medical declaration section (Part A / Part B), which routes a 'yes' answer to one of DVLA's separate condition-specific medical questionnaires. This document models only the gating question; the questionnaires themselves, and the list of notifiable conditions, are out of scope pending independent review — see VERIFICATION.md.",
+      "sourceRef": "Form D1 medical declaration section (secondary source; not independently confirmed against an official DVLA field list)"
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when applicationChannel is online: DVLA sends a confirmation email once the application is submitted. Not confirmed as collected on the by_post channel.",
+      "sourceRef": "Apply for your first provisional driving licence — after you apply",
+      "validation": { "maxLength": 254 },
+      "requiredWhen": { "field": "applicationChannel", "equals": "online" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Eligibility",
+      "fields": ["dateOfBirth", "residencyMeetsRequirement", "eyesightMeetsStandard"],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible-does-not-meet-residency-requirement",
+          "when": { "field": "residencyMeetsRequirement", "equals": false }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-does-not-meet-eyesight-standard",
+          "when": { "field": "eyesightMeetsStandard", "equals": false }
+        },
+        { "to": "applicant_details" }
+      ]
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": ["title", "lastName", "firstNames"],
+      "next": "channel_and_payment"
+    },
+    {
+      "id": "channel_and_payment",
+      "title": "Application channel and payment",
+      "fields": ["applicationChannel", "paymentMethod"],
+      "next": "identity_verification"
+    },
+    {
+      "id": "identity_verification",
+      "title": "Prove your identity",
+      "fields": [
+        "identityVerificationMethod",
+        "ukPassportNumber",
+        "ukviShareCode",
+        "countersignatoryName",
+        "countersignatoryLicenceNumber"
+      ],
+      "next": "medical_declaration"
+    },
+    {
+      "id": "medical_declaration",
+      "title": "Medical declaration",
+      "fields": ["medicalConditionDeclared"],
+      "next": "confirmation"
+    },
+    {
+      "id": "confirmation",
+      "title": "Confirmation",
+      "fields": ["email"]
+    }
+  ]
+}
