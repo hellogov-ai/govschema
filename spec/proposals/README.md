@@ -30,6 +30,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
 | 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Folded into `spec/v0.3` (GOV-399) — CEO sign-off recorded 2026-07-01 (GOV-318) |
 | 0018 | [Field-level eligibility value semantics (`eligibleValues`)](./0018-field-eligibility-value-semantics.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-01 (GOV-393) |
+| 0019 | [Generalize `edition.scheme` beyond `us-tax-year`/`gb-tax-year`](./0019-generalize-edition-scheme-calendar-tax-year.md) | Proposed — not yet reviewed, ⚠ one-way-door, Founding Engineer/CEO flag |
 
 GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
 above whose acceptance record explicitly deferred that step (GSP-0006, GSP-0007,
@@ -153,6 +154,18 @@ accept-into-`spec/v0.3` sign-off recorded 2026-07-01
 `spec/v0.3/SPEC.md` §6.9 in this same change — unlike the batch-5 GOV-373
 fold-in, GSP-0018's acceptance and fold-in land together since it is a
 single, small, additive member.
+
+GSP-0019 was filed against GOV-430 (a GovSchema Standard Research cycle
+closing the Taxes-vertical gap for CA/AU/DE/NZ/SG/IE), surfaced while
+authoring `ie/revenue/self-assessment-tax-return-form11s`: `edition.scheme`
+is closed to `us-tax-year`/`gb-tax-year`/`award-year` (GSP-0005), and none
+fits Ireland's calendar-year tax return without either mislabeling the
+scheme or unilaterally extending a one-way-door enum. It proposes adding
+`ie-tax-year` (Option A, least disruptive) as a near-term unblock, flagging a
+shape-based generalization (`calendar-tax-year`/`split-tax-year`, Option B)
+as a longer-term cleanup once more jurisdictions' tax-filing schemas exist.
+Not yet reviewed; the affected schema ships this cycle at the plain,
+non-edition registry path rather than blocking on this proposal.
 
 ## Considered and rejected
 
