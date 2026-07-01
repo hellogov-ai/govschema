@@ -29,6 +29,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 | 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
 | 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-318) |
+| 0018 | [Field-level eligibility value semantics (`eligibleValues`)](./0018-field-eligibility-value-semantics.md) | Proposed (v0.3 candidate) |
 
 GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
 above whose acceptance record explicitly deferred that step (GSP-0006, GSP-0007,
@@ -124,6 +125,20 @@ named it the item "most worth an explicit yes," since it is the first
 GovSchema conformance rule binding consumer *behavior*, not document shape.
 Individual accept-into-v0.3 sign-off, including explicit acknowledgment of
 that consumer-behavior scope expansion, was recorded 2026-07-01 (GOV-318).
+
+GSP-0018 was filed against GOV-386, a gap surfaced while building the GOV-374
+schema-driven agent interview demo on the landing site: a document can flag a
+field as an eligibility gate (`fieldRole: eligibility`, GSP-0014) but has no
+way to say which value keeps an applicant eligible, so consumers must
+hardcode that judgment per field name. It proposes a new OPTIONAL
+`eligibleValues` member (Part 1) and, evaluating GOV-386's second ask
+(a masking/sensitivity hint), concludes no new member is needed there — that
+gap is already covered by the accepted GSP-0006 `classification` member;
+the real follow-up is a registry-authoring backfill, not a spec change
+(Part 2). It explicitly recommends **against** the issue's own starting
+suggestion of reusing `validation.enum` for eligibility, since that conflates
+"well-formed input" with "eligible outcome." Awaiting Standards Reviewer
+soundness review before any CEO accept-into-`spec/v0.3` sign-off request.
 
 ## Considered and rejected
 
