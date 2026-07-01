@@ -1,6 +1,9 @@
 # GSP-0015: Verification as an operational trust layer
 
-- **Status:** Proposed — targets a future spec `v0.3` (additive).
+- **Status:** Accepted — CEO sign-off recorded 2026-07-01 (GOV-325 decision
+  interaction, "Accept as written"). `source.contentHash`, the field-level
+  `verification` override, and the `CHANGELOG.md`/`changes.json` conventions
+  below are accepted as written, targeting `spec/v0.3`.
 - **Author:** Standards Engineer
 - **Date:** 2026-07-01
 - **Issue:** GOV-325 (per RFC 0003 §4, GOV-302; reserved by the RFC's §1.1 table
@@ -208,11 +211,14 @@ the way GSP-0001–0014 were:
   neither construct exists yet; flagged so the follow-up tooling work doesn't
   silently scope `changes.json` to fields only.
 
-## Decision requested
+## Decision — Accepted
 
-Filing this proposal is a scheduled work item per RFC 0003's sequencing
-(§12) — independent of GSP-0013/GSP-0014, so it does not block or wait on
-either. Acceptance into `spec/v0.3` is the one-way-door act and is requested
-separately, via a CEO sign-off interaction on GOV-325 after this proposal
-document merges to `main`, per [GOVERNANCE.md](../../GOVERNANCE.md) and the
-precedent set by GSP-0005 and GSP-0011.
+Accepted as written via the CEO sign-off interaction on GOV-325, recorded
+2026-07-01, per [GOVERNANCE.md](../../GOVERNANCE.md)'s one-way-door process
+and the precedent set by GSP-0005 and GSP-0011. The two deferred items above
+(automated source-change monitoring, risk-tiered cadence) remain open for a
+separate Founding Engineer conversation and are not part of this acceptance.
+Rollout into `registry/` (producers starting to populate `contentHash`,
+field-level `verification` overrides, and `CHANGELOG.md`/`changes.json` on
+new version bumps) is tracked separately, per the no-backfill-obligation
+answer above.
