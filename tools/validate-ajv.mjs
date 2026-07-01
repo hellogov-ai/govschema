@@ -55,6 +55,15 @@ function specLine(version) {
   return m ? `${m[1]}.${m[2]}` : null;
 }
 
+// mapping.json carries no govschemaVersion of its own (it is validated in
+// isolation from its sibling schema.json's spec line by design — GSP-0011).
+// Its `$schema` URI names the mapping meta-schema directly, e.g.
+// https://govschema.org/spec/v0.2/mapping.schema.json -> "0.2".
+function mappingSpecLine(schemaUrl) {
+  const m = /\/spec\/v(\d+\.\d+)\/mapping\.schema\.json$/.exec(schemaUrl || "");
+  return m ? m[1] : null;
+}
+
 function findSchemas(dir) {
   const out = [];
   for (const entry of readdirSync(dir)) {
@@ -117,10 +126,6 @@ function main() {
   }
 
   let failed = 0;
-  // dirname(schema.json) -> spec line, so a sibling mapping.json (GSP-0011,
-  // no govschemaVersion of its own) validates against the mapping meta-schema
-  // for the spec line the schema it describes actually targets.
-  const schemaDirLine = new Map();
   for (const file of files) {
     const label = relative(ROOT, file);
     let doc;
@@ -144,8 +149,6 @@ function main() {
       failed++;
       continue;
     }
-
-    schemaDirLine.set(dirname(file), line);
 
     if (validate(doc)) {
       console.log(`ok   ${label} [v${line}]`);
@@ -171,12 +174,12 @@ function main() {
       continue;
     }
 
-    const line = schemaDirLine.get(dirname(file));
+    const line = mappingSpecLine(doc.$schema);
     const validate = line && mappingValidators[line];
     if (!validate) {
       console.error(`FAIL ${label}`);
       console.error(
-        `  - (root) no supported mapping meta-schema for this mapping.json's sibling schema` +
+        `  - (root) unknown/unsupported $schema for mapping.json: ${doc.$schema}` +
           ` (known spec lines: ${Object.keys(mappingValidators).join(", ")})`
       );
       mappingFailed++;
