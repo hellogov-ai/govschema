@@ -6,7 +6,7 @@
 **Editor:** Founding Engineer, GovSchema
 **This document:** `spec/v0.1/SPEC.md`
 
-> GovSchema is an open, non-profit standard for describing government forms and
+> GovSchema is an open-source standard for describing government forms and
 > processes in a machine-readable way, so that software agents can interact with
 > government services reliably and verifiably. GovSchema is **independent** and is
 > **not** affiliated with or endorsed by any government. GovSchema describes

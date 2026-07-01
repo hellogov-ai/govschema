@@ -16,7 +16,7 @@ meta-schema [`govschema.schema.json`](./govschema.schema.json) (JSON Schema
 draft 2020-12), which is the normative artifact — where prose and meta-schema
 disagree, the meta-schema governs.
 
-GovSchema is published by the GovSchema foundation, an independent non-profit
+GovSchema is published by the GovSchema foundation, an independent open-source
 standards body. **A GovSchema document describes a public government process; it
 does not imply endorsement, affiliation, or certification by any government.**
 

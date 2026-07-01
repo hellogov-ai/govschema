@@ -8,7 +8,7 @@ together with **verification practices** that confirm each schema matches its
 live government source. It is the standard layer that agent developers build on
 top of.
 
-GovSchema is stewarded by an independent, non-profit foundation. We are to
+GovSchema is stewarded by an independent, open-source foundation. We are to
 agent–government interaction what ISO, the IETF, and the W3C are to their
 domains: a neutral body that defines and maintains the standard.
 
@@ -17,8 +17,8 @@ domains: a neutral body that defines and maintains the standard.
 > you can fetch, pin, and program against — with provenance and a verification
 > record attached, so you know how current it is.
 > For **the people those agents act on behalf of**: a public, auditable record
-> of what a government process actually asks for, maintained by a neutral
-> non-profit — not a black box.
+> of what a government process actually asks for, maintained by a neutral,
+> open-source project — not a black box.
 
 > **What this is not.** GovSchema is **not** a government entity and is **not**
 > endorsed by or affiliated with any government. It does **not** fill out or

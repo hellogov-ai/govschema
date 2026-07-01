@@ -228,7 +228,7 @@ function renderFooter(site) {
       </div>
       <div class="footer-base">
         <p>${inline(f.license || "")}</p>
-        <p>© ${esc(site.name)} — a non-profit standards foundation.</p>
+        <p>© ${esc(site.name)} — an open-source standards foundation.</p>
       </div>
     </div>
   </footer>`;
