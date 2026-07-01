@@ -18,6 +18,7 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const SRC = join(ROOT, "content", "site.json");
 const ASSETS = join(ROOT, "assets");
 const OUT = join(ROOT, "dist");
+const REPO_ROOT = join(ROOT, "..");
 
 /** Escape text destined for HTML text nodes / attributes. */
 const esc = (s = "") =>
@@ -233,6 +234,28 @@ function renderFooter(site) {
   </footer>`;
 }
 
+// ----------------------------------------------------------------------------
+// llms.txt / llms-full.txt (https://llmstxt.org) — generated from the same
+// site.json data as the HTML, and written to both site/dist/ (served at
+// https://govschema.org/llms.txt) and the repo root (renders on GitHub), so
+// the two copies can't drift out of hand-maintained sync.
+// ----------------------------------------------------------------------------
+
+function renderLlmsHeader(site) {
+  const disclaimer = (site.footer && site.footer.disclaimer) || "";
+  return [`# ${site.name}`, "", `> ${site.description}`, "", disclaimer].join("\n");
+}
+
+function renderLlmsTxt(site) {
+  const links = (site.llms && site.llms.links) || [];
+  const list = links.map((l) => `- [${l.label}](${l.href}): ${l.description}`).join("\n");
+  return [renderLlmsHeader(site), "", "## Standard", "", list, ""].join("\n");
+}
+
+function renderLlmsFullTxt(site, specText) {
+  return [renderLlmsHeader(site), "", "---", "", specText.trimEnd(), ""].join("\n");
+}
+
 function renderPage(page, site) {
   const body = (page.sections || [])
     .map((s) => {
@@ -293,6 +316,18 @@ function build() {
 
   // GitHub Pages: disable Jekyll processing of our static output.
   writeFileSync(join(OUT, ".nojekyll"), "", "utf8");
+
+  const specPath = join(REPO_ROOT, (site.llms && site.llms.specPath) || "spec/v0.2/SPEC.md");
+  const specText = readFileSync(specPath, "utf8");
+  const generated = {
+    "llms.txt": renderLlmsTxt(site),
+    "llms-full.txt": renderLlmsFullTxt(site, specText),
+  };
+  for (const [name, content] of Object.entries(generated)) {
+    writeFileSync(join(OUT, name), content, "utf8");
+    writeFileSync(join(REPO_ROOT, name), content, "utf8");
+    console.log(`  ✓ ${name} (dist/ + repo root)`);
+  }
 
   console.log(`Built ${count} page(s) -> dist/`);
 }
