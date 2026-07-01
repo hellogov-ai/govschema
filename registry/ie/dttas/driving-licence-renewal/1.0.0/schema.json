@@ -1,0 +1,175 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "ie/dttas/driving-licence-renewal",
+  "version": "1.0.0",
+  "title": "Ireland Driving Licence Renewal (NDLS)",
+  "description": "Renew an individual's Irish driving licence through the National Driver Licence Service (NDLS), the single nationwide authority for licence applications and renewals in Ireland (a single service replaces the county-by-county model used before 2013). This document models the two renewal channels — online at ndls.ie (using a Public Services Card and a verified MyGovID account) and in person at an NDLS centre by appointment — including the eligibility window, address/residency proof gates, the medical and eyesight report triggers, and the fee/payment rules. It does not model a first-time driving licence, adding or exchanging a category, a foreign-licence exchange, or a lost/stolen/damaged-licence replacement, each a distinct NDLS service; nor does it enumerate the individual licence categories being renewed (see Scope notes in VERIFICATION.md). It does not submit the renewal; the live ndls.ie/gov.ie sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Road Safety Authority, National Driver Licence Service",
+    "abbreviation": "NDLS",
+    "url": "https://www.ndls.ie/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.ndls.ie/licensed-driver/renew-my-driving-licence.html",
+    "retrievedAt": "2026-07-01"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from ndls.ie's 'Renew My Driving Licence', 'Do I Need to Submit a Medical Report?', and 'Licence Categories and Codes' pages (fetched via Wayback Machine snapshots after ndls.ie returned HTTP 403 to direct automated requests), cross-checked against citizensinformation.ie's 'How to renew your driving licence' guide for the eligibility window, fee table, and validity-duration bands (citizensinformation.ie also 403'd directly and was likewise retrieved via Wayback). Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationChannel",
+      "label": "How are you renewing?",
+      "type": "enum",
+      "required": true,
+      "description": "online = renew through ndls.ie using a Public Services Card (PSC) and a verified MyGovID account, with no paper forms, no appointment, and no need to visit an NDLS centre; in_person = book an appointment and attend one of the 34 NDLS centres nationwide, where photo and signature are captured digitally (no printed photo required).",
+      "sourceRef": "Renew My Driving Licence — To renew your driving licence online / To renew your driving licence in person at an NDLS centre",
+      "validation": { "enum": ["online", "in_person"] }
+    },
+    {
+      "name": "eligibleWithinRenewalWindow",
+      "label": "Is your licence expiring within 3 months, or did it expire less than 10 years ago?",
+      "type": "boolean",
+      "required": true,
+      "description": "A hard eligibility gate: renewal through this service is only possible if the current licence is expiring within 3 months or expired less than 10 years ago. If false (expired 10 years or more ago), the applicant must complete the Driver Theory Test and apply for a learner permit instead — a different, out-of-scope process.",
+      "sourceRef": "How to renew your driving licence — Rules"
+    },
+    {
+      "name": "currentAddressDiffersFromPSC",
+      "label": "Is your current address different from the one on your Public Services Card application?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, proof of address dated within the last six months must be provided (addressProofDocument). For in_person applicants renewing a lost, stolen, or damaged licence, this compares against the address recorded on that permit instead of the PSC application.",
+      "sourceRef": "Renew My Driving Licence — Proof of your address dated within the last six months if your current address differs from the one you provided when you applied for your PSC"
+    },
+    {
+      "name": "addressProofDocument",
+      "label": "Proof of address",
+      "type": "file",
+      "required": false,
+      "description": "Required when currentAddressDiffersFromPSC is true. Must be dated within the last six months.",
+      "sourceRef": "Renew My Driving Licence — Proof of your address dated within the last six months"
+    },
+    {
+      "name": "birthplaceAndNationalityOutsideEUEEASwitzerlandUKOrNI",
+      "label": "Is your place of birth and nationality outside the EU, EEA, Switzerland, the UK, or Northern Ireland?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, proof that the applicant is normally resident in Ireland must be provided (residencyProofDocument). ndls.ie states this test as place of birth AND nationality outside EU/EEA/Switzerland/UK/Northern Ireland; a secondary source (citizensinformation.ie) simplifies it to 'not an EU or EEA citizen' — the primary ndls.ie wording is followed here (see VERIFICATION.md).",
+      "sourceRef": "Renew My Driving Licence — Proof that you are normally resident in Ireland if your place of birth and nationality are outside the EU/EEA/Switzerland/UK/Northern Ireland"
+    },
+    {
+      "name": "residencyProofDocument",
+      "label": "Proof of normal residency in Ireland",
+      "type": "file",
+      "required": false,
+      "description": "Required when birthplaceAndNationalityOutsideEUEEASwitzerlandUKOrNI is true.",
+      "sourceRef": "Renew My Driving Licence — Proof that you are normally resident in Ireland"
+    },
+    {
+      "name": "includesGroup2Category",
+      "label": "Does your licence include a Group 2 category (bus or truck)?",
+      "type": "boolean",
+      "required": true,
+      "description": "true if any category on the licence being renewed is a Group 2 category — C, C1, CE, C1E, D, D1, or DE, D1E (buses, trucks, and articulated vehicles); false if all categories are Group 1 — AM, A1, A2, A, B, BE, or W (mopeds, motorcycles, cars, tractors, and work vehicles). Group 2 categories always require a medical report and cap the renewed licence's validity at 5 years, versus up to 10 years for Group 1. This document does not enumerate the specific categories held (see Scope notes in VERIFICATION.md).",
+      "sourceRef": "How to renew your driving licence — How long is a driving licence valid?; Do I Need to Submit a Medical Report? — C1, C, D1, D, C1E, CE, D1E or DE"
+    },
+    {
+      "name": "agedSeventyFiveOrOver",
+      "label": "Are you aged 75 or over (or does your current licence/permit expire the day before your 75th birthday)?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, a medical report is mandatory regardless of category, and the renewed licence is limited to a 3-year term, or a 1-year term if the certifying doctor specifically certifies fitness to drive for only one year.",
+      "sourceRef": "Do I Need to Submit a Medical Report? — You are aged 75 or over / A medical report form is required ... where the driving licence or learner permit they are renewing expires the day before their 75th birthday"
+    },
+    {
+      "name": "medicalReportRequired",
+      "label": "Do you need to submit a Driving Licence Medical Report Form?",
+      "type": "boolean",
+      "required": true,
+      "description": "true if any of the following apply: includesGroup2Category is true; agedSeventyFiveOrOver is true; the current licence/permit carries notation code 101 (renewal subject to a valid medical report); the applicant has a specific disability or condition affecting a Group 1 category; the applicant has ever suffered from alcoholism or epilepsy; the applicant regularly takes drugs or medication likely to make them an unsafe driver; or the applicant has one of the listed reportable medical conditions (e.g. insulin-treated diabetes, stroke/TIA, brain surgery, an implanted pacemaker or defibrillator, a chronic neurological condition, serious memory or psychiatric problems, Parkinson's disease, sleep apnoea, narcolepsy, a condition affecting peripheral vision or both eyes, total sight loss in one eye, serious hearing deficiency, or a condition restricting driving to an automatic or adapted vehicle).",
+      "sourceRef": "Do I Need to Submit a Medical Report? — Medical conditions which must be reported on all applications"
+    },
+    {
+      "name": "medicalReportForm",
+      "label": "Driving Licence Medical Report Form (D501)",
+      "type": "file",
+      "required": false,
+      "description": "Required when medicalReportRequired is true. Must be completed and signed (Part 1) by the applicant, and completed, certified, and dated (Part 2) by a registered medical practitioner in the applicant's presence, and submitted within one month of that date. The maximum term for higher (Group 2) categories on a full licence is 5 years.",
+      "sourceRef": "Do I Need to Submit a Medical Report? — Content of Medical Report"
+    },
+    {
+      "name": "eyesightReportRequired",
+      "label": "Do you need to submit a Driving Licence Eyesight Report Form?",
+      "type": "boolean",
+      "required": true,
+      "description": "true if the applicant no longer needs glasses or contact lenses to drive (for example, after laser eye surgery) since their eyesight was last recorded on a licence application; otherwise, any eyesight issue is normally reported on the Medical Report Form instead.",
+      "sourceRef": "How to renew your driving licence — Eyesight report form"
+    },
+    {
+      "name": "eyesightReportForm",
+      "label": "Driving Licence Eyesight Report Form (D502)",
+      "type": "file",
+      "required": false,
+      "description": "Required when eyesightReportRequired is true. Must be submitted within one month of completion.",
+      "sourceRef": "How to renew your driving licence — Eyesight report form"
+    },
+    {
+      "name": "ppsnProofPresented",
+      "label": "Proof of PPS Number presented",
+      "type": "boolean",
+      "required": false,
+      "description": "Required (and must be true) when applicationChannel is in_person: proof of the applicant's Personal Public Service (PPS) Number must be brought to the appointment. Not applicable online, where identity is established through the PSC and verified MyGovID account.",
+      "sourceRef": "Renew My Driving Licence — Proof of your personal public services number (PPSN)"
+    },
+    {
+      "name": "physicalLicenceAvailable",
+      "label": "Do you have your current or most recent driving licence?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required when applicationChannel is in_person. If false (lost, stolen, or damaged), valid photo ID must be brought instead (photoIdDocument). Not applicable online.",
+      "sourceRef": "Renew My Driving Licence — Your current or most recent driving licence. If your licence has been lost, stolen or damaged you must also bring valid photo ID with you"
+    },
+    {
+      "name": "photoIdDocument",
+      "label": "Valid photo ID",
+      "type": "file",
+      "required": false,
+      "description": "Required when applicationChannel is in_person and physicalLicenceAvailable is false.",
+      "sourceRef": "Renew My Driving Licence — you must also bring valid photo ID with you"
+    },
+    {
+      "name": "feeExemptionReason",
+      "label": "Fee exemption",
+      "type": "enum",
+      "required": false,
+      "description": "Set to age_70_or_over when the applicant is aged 70 or over, in which case no application fee is charged on either channel and paymentMethod does not apply. Applicants aged 70 or over receive a renewal reminder automatically by post.",
+      "sourceRef": "Renew My Driving Licence — Application fee of €65.00 ... If you are aged 70 years or over you are exempt from paying the fee",
+      "validation": { "enum": ["age_70_or_over"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "How are you paying?",
+      "type": "enum",
+      "required": false,
+      "description": "Required when feeExemptionReason is not set. credit_or_debit_card is accepted on both channels; google_pay, apple_pay, and payzone_voucher are accepted only when applicationChannel is in_person. The fee is €65 for a standard renewal, or €35 for a 3-year renewal (e.g. ages 72-74); a 1-year medical-grounds renewal at age 75+ carries no fee.",
+      "sourceRef": "Renew My Driving Licence — Application fee ... You can pay by credit or debit card / by credit or debit card, Google Pay or Apple Pay or Payzone voucher; How to renew your driving licence — What is the cost of renewing a driving licence?",
+      "validation": { "enum": ["credit_or_debit_card", "google_pay", "apple_pay", "payzone_voucher"] }
+    }
+  ]
+}
