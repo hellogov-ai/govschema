@@ -17,6 +17,24 @@ below, but the full field-by-field comparison the practice requires
 (`manual-source-review-v1` → Procedure step 2) has **not** yet been independently
 re-verified by a second reviewer. It therefore remains `draft`, not `verified`.
 
+### Fix-up: Part 6/7 address and mobile-phone fields (review-gate GOV-362)
+
+The initial authoring pass (this file's "What was confirmed against the
+source" section, prior wording) inaccurately claimed the interpreter and
+preparer sections were transcribed field-by-field in full. An independent
+review-gate re-derivation from the live PDF found that each role's full
+mailing-address block (Form I-90 items 3.a-3.h: street, apt/flr/ste, city,
+state, ZIP code, province, postal code, country) and mobile telephone number
+(item 5) had been omitted — the same address-block shape already correctly
+modeled for the applicant in Part 1, just not carried over to Parts 6/7. This
+fix-up commit adds the 18 missing fields (9 per role × 2 roles):
+`interpreterAddressLine1`/`Apt`/`City`/`State`/`ZipCode`/`Province`/
+`PostalCode`/`Country`/`MobilePhoneNumber` and the equivalent
+`preparerAddress*`/`preparerMobilePhoneNumber` fields, each re-verified against
+the extracted PDF text for Part 6 (page 5) and Part 7 (pages 5-6). The "What
+was confirmed against the source" section below has been corrected to reflect
+this.
+
 ## Why this candidate was advanced now
 
 `us/uscis/permanent-resident-card-replacement-i90` was a tier-1 discovery
@@ -96,9 +114,11 @@ the following simplifications:
   race, eye color, hair color — the eye/hair color enums cross-checked against
   the full 9-option lists on the form), disability/impairment accommodations,
   the applicant's statement/contact/certification/signature block, and the
-  optional interpreter and preparer sections (including the preparer's
-  attorney/accredited-representative branch and its Form G-28 cross-reference)
-  — all transcribed field-by-field from the decoded PDF text.
+  optional interpreter and preparer sections, **including each role's full
+  mailing-address block (items 3.a-3.h) and mobile telephone number (item 5)**
+  (plus the preparer's attorney/accredited-representative branch and its
+  Form G-28 cross-reference) — all transcribed field-by-field from the decoded
+  PDF text.
 - **Process identity.** Confirmed `Form I-90` is the correct, current
   (Edition 01/20/25) USCIS form for this process, and that it is distinct in
   scope from Form I-407 (referenced only as a yes/no question item) and Form
