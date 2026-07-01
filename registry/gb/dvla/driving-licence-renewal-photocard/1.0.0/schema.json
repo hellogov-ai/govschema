@@ -1,0 +1,154 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "gb/dvla/driving-licence-renewal-photocard",
+  "version": "1.0.0",
+  "title": "United Kingdom Photocard Driving Licence Renewal",
+  "description": "Renew a 10-year full or provisional photocard driving licence for a resident of Great Britain (a different service applies in Northern Ireland) through DVLA's 'Renew your driving licence' service, which offers three channels: an online service, a Post Office visit, or a postal 'D1 pack'. This document describes the channel choice, the online photo-reuse/upload step, and each channel's payment method, including the name-or-title-change rule that forces the postal channel. It does not submit the renewal; the live gov.uk source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/renew-driving-licence",
+    "retrievedAt": "2026-07-01"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the GOV.UK 'Renew your driving licence' and 'Change the photo on your driving licence' answer pages (fetched via the GOV.UK Content API, api/content/renew-driving-licence and api/content/renew-photo-driving-licence), plus a direct, unauthenticated crawl of the online service's own pre-login screens at apply-for-driving-licence.service.gov.uk (before-you-start, before-you-continue). Like gb/dvla/vehicle-tax and gb/hmpo/passport-application-first-adult, the authenticated online service has no published field-by-field specification beyond its first screens, so this document is transcribed from GOV.UK guidance prose plus the observable pre-login screens rather than a full screen-by-screen review. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "licenceType",
+      "label": "Which licence are you renewing?",
+      "type": "enum",
+      "required": true,
+      "description": "full = a full driving licence; provisional = a provisional driving licence. Both renew through the same DVLA service; a first-ever provisional (never previously held one, or last applied before 1 March 1973) is a separate application, not a renewal.",
+      "sourceRef": "Renew your driving licence — page title",
+      "validation": { "enum": ["full", "provisional"] }
+    },
+    {
+      "name": "nameOrTitleChangedSinceLicence",
+      "label": "Has your name or title changed since you got your current licence?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the applicant cannot renew online or at a Post Office and must use applicationChannel = post, including identity documents evidencing the change. This document does not model the specific identity-evidence requirements for a name/title change (see gov.uk/id-for-driving-licence); that is out of scope for this version.",
+      "sourceRef": "Renew your driving licence — Before you start / If your name or title has changed"
+    },
+    {
+      "name": "applicationChannel",
+      "label": "How are you renewing?",
+      "type": "enum",
+      "required": true,
+      "description": "online = DVLA's online service; post_office = take a reminder letter or photocard to a Post Office that deals with DVLA photocard renewal; post = send a completed 'D1 pack' of forms to DVLA by post. post_office and online are unavailable when nameOrTitleChangedSinceLicence is true.",
+      "sourceRef": "Renew your driving licence — Before you start / Apply at a Post Office / Apply by post",
+      "validation": { "enum": ["online", "post_office", "post"] }
+    },
+    {
+      "name": "photoSource",
+      "label": "Where should your new photo come from?",
+      "type": "enum",
+      "required": false,
+      "description": "Required when applicationChannel is online. reuse_valid_uk_passport_photo = DVLA may reuse the photo from the applicant's valid UK passport; upload_new_photo = the applicant uploads a new photo taken during the online session (the guidance recommends a mobile device with a camera).",
+      "sourceRef": "Change the photo on your driving licence — You'll be able to use your passport photo or upload a new one; apply-for-driving-licence.service.gov.uk before-you-continue screen",
+      "validation": { "enum": ["reuse_valid_uk_passport_photo", "upload_new_photo"] }
+    },
+    {
+      "name": "photoFile",
+      "label": "New photo",
+      "type": "file",
+      "required": false,
+      "description": "Required when photoSource is upload_new_photo. A digital photo uploaded during the online renewal session.",
+      "sourceRef": "apply-for-driving-licence.service.gov.uk before-you-continue screen"
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "Required when applicationChannel is online. DVLA sends a confirmation email once the online renewal is submitted.",
+      "sourceRef": "Renew your driving licence — Personal data"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "How are you paying?",
+      "type": "enum",
+      "required": false,
+      "description": "Required when applicationChannel is online and feeExemptionReason is not set (the online fee is £14). Accepted cards only; no fee is charged when feeExemptionReason is set.",
+      "sourceRef": "Renew your driving licence — How much it costs",
+      "validation": { "enum": ["mastercard", "visa", "electron", "delta_debit_or_credit"] }
+    },
+    {
+      "name": "hasReminderLetter",
+      "label": "Do you have your DVLA reminder letter?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required when applicationChannel is post_office. If false, the applicant's current photocard licence must be presented instead (currentPhotocardPresented).",
+      "sourceRef": "Renew your driving licence — Apply at a Post Office"
+    },
+    {
+      "name": "currentPhotocardPresented",
+      "label": "Current photocard licence presented",
+      "type": "boolean",
+      "required": false,
+      "description": "Required (and must be true) when applicationChannel is post_office and hasReminderLetter is false; optional supporting document when hasReminderLetter is true.",
+      "sourceRef": "Renew your driving licence — Apply at a Post Office"
+    },
+    {
+      "name": "printedPassportTypePhoto",
+      "label": "Recent printed passport-type photo",
+      "type": "file",
+      "required": false,
+      "description": "Required when applicationChannel is post. A recently printed passport-type photo; the back of the photo must not be signed.",
+      "sourceRef": "Renew your driving licence — Apply by post"
+    },
+    {
+      "name": "currentPhotocardIncluded",
+      "label": "Current photocard licence included",
+      "type": "boolean",
+      "required": false,
+      "description": "Optional when applicationChannel is post: include the current photocard licence with the D1 pack if the applicant still has it.",
+      "sourceRef": "Renew your driving licence — Apply by post"
+    },
+    {
+      "name": "paymentInstrument",
+      "label": "How are you paying by post?",
+      "type": "enum",
+      "required": false,
+      "description": "Required when applicationChannel is post and feeExemptionReason is not set (the postal fee is £17, payable to DVLA).",
+      "sourceRef": "Renew your driving licence — Apply by post",
+      "validation": { "enum": ["cheque", "postal_order"] }
+    },
+    {
+      "name": "feeExemptionReason",
+      "label": "Fee exemption",
+      "type": "enum",
+      "required": false,
+      "description": "When set, no fee is charged on any channel and paymentMethod/paymentInstrument do not apply. over_70 = the applicant is aged 70 or over; medical_short_period_licence = the applicant holds a medical short-period licence.",
+      "sourceRef": "Renew your driving licence — How much it costs / Apply at a Post Office / Apply by post",
+      "validation": { "enum": ["over_70", "medical_short_period_licence"] }
+    },
+    {
+      "name": "researchContactOptIn",
+      "label": "Contact me about research",
+      "type": "boolean",
+      "required": false,
+      "description": "Optional. Applies to the online channel: DVLA may email the applicant to ask them to take part in research; the applicant can opt out.",
+      "sourceRef": "Renew your driving licence — Personal data"
+    }
+  ]
+}
