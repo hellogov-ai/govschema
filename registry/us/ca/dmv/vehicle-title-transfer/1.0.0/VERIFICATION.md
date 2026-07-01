@@ -45,7 +45,12 @@ prior cycle. CDL and IDL remain open for a future cycle.
   `dmv.ca.gov`-hosted PDF returned `200` with no CDN block. Parsed with the
   `pdf-parse` npm package (`PDFParse.getText()`); all 8 sections across both
   pages were recovered as plain text and transcribed field-by-field from that
-  output.
+  output. **Fix-up re-review (GOV-301, this cycle):** the AcroForm's encrypted
+  field/annotation layer itself was additionally decoded with `pdfjs-dist`
+  (`page.getAnnotations()`), which enumerates every named form widget with its
+  page position — a stronger cross-check than the plain-text transcription
+  alone, since it surfaces fields whose labels don't line-wrap adjacent to their
+  input box in the flattened text. This caught two gaps (below).
 - **Vehicle Industry Registration Procedures Manual, Chapter 20 (Replacements
   and Substitutes), "Application for Duplicate or Transfer of Title (REG 227)"
   section:** <https://www.dmv.ca.gov/portal/handbook/vehicle-industry-registration-procedures-manual-2/duplicates-and-substitutes/application-for-duplicate-or-transfer-of-title-reg-227/>
@@ -119,6 +124,28 @@ scope in the schema `description` rather than silently omitting them:
   Statement-of-Facts cross-reference, the "write None if no new lienholder"
   instruction, and the Vehicle Code §1808.21 service-of-process consent are all
   recorded in the relevant field descriptions, transcribed from the form text.
+- **Section 6 has two co-owner/lessee slots, not one (fix-up, GOV-301).** The
+  AcroForm field layer shows a primary new-owner name/DL block plus **two**
+  separate "TRUE FULL NAME OF CO-OWNER OR LESSEE" name/DL/AND-OR-checkbox
+  groups (`6 Name First-1` with `And Box.0`/`And Box1.0`, and `6 Name Last-2`
+  with `And Box.1`/`And Box1.1`) — confirmed against the raw widget rects,
+  which place the two groups on adjacent lines directly under the primary new
+  owner. `schema.json` now models both: `newCoOwnerName`/`newCoOwnershipType`
+  (first slot) and `secondNewCoOwnerName`/`secondNewCoOwnershipType` (second
+  slot).
+- **Section 6 has a standalone lessee-address field (fix-up, GOV-301).** A
+  full-width text field labeled "LESSEE ADDRESS (IF DIFFERENT FROM ADDRESS
+  ABOVE)" (AcroForm field `Lessee address, if different from address above`)
+  sits between the new-owner mailing address block and the vessel/trailer
+  location line; it is distinct from both the physical and mailing addresses
+  already modeled. Added as `newLesseeAddress`.
+- **Section 7 has an ELT # field (fix-up, GOV-301).** The AcroForm shows a
+  three-widget "ELECTRONIC LIENHOLDER ID NO. ELT#" field
+  (`7 ELT #.0`/`7 ELT #.1.0`/`7 ELT #.1.1`) on the same line as the new
+  lienholder name, with the instruction "Attention ELT Legal Owners: ELT # must
+  be shown and the name and address must be entered exactly as shown on the ELT
+  listing." Added as `newLienholderElectronicLienId`, required (per the form
+  text) only when the named new lienholder is an ELT participant.
 
 ## Mock-data test run
 
@@ -183,8 +210,10 @@ required field was left unset:
 PASS — mock individual-to-individual vehicle title transfer (with replacement) satisfies the schema field-level constraints.
 ```
 
-Both registry validators were run against the schema document itself (not the
-mock data) and pass:
+Both registry validators were re-run against the schema document itself (not the
+mock data) after the GOV-301 fix-up (new `secondNewCoOwnerName`,
+`secondNewCoOwnershipType`, `newLesseeAddress`, `newLienholderElectronicLienId`
+fields) and still pass:
 
 ```
 $ node tools/validate.mjs registry/us/ca/dmv/vehicle-title-transfer/1.0.0/schema.json
@@ -193,6 +222,15 @@ ok   registry/us/ca/dmv/vehicle-title-transfer/1.0.0/schema.json
 $ cd tools && node validate-ajv.mjs ../registry/us/ca/dmv/vehicle-title-transfer/1.0.0/schema.json
 ok   registry/us/ca/dmv/vehicle-title-transfer/1.0.0/schema.json [v0.2]
 ```
+
+All four new fields are optional, so the mock-data scenario above (which does
+not populate them) remains valid as-is; they were checked structurally instead
+— `secondNewCoOwnerName`/`newLesseeAddress` against their `maxLength: 160`
+constraint, `secondNewCoOwnershipType` against its `and`/`or` enum, and
+`newLienholderElectronicLienId` against its `maxLength: 20` constraint — by
+confirming each accepts a representative value (e.g. a second co-owner
+`"Chen, Wei"` with `"and"`, and an ELT id `"1234567"`) and that `schema.json`
+still validates against the meta-schema with them present.
 
 ## What is NOT yet independently verified
 
