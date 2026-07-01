@@ -176,7 +176,7 @@ field names.
 - **Sole/main residence only** (Berlin dienstleistung 120686). Registering a
   *Nebenwohnung*-only, deregistering (Abmeldung, on moving abroad or having no
   further German residence), and the Beiblatt/Hauptwohnungserklärung
-  multiple-residence supplement are **out of scope** — each is a related but
+  multiple-residence supplement are **out of scope**. Each is a related but
   distinct service, flagged as future catalog candidates.
 - **Minors under 16** cannot self-register in person and are out of scope
   beyond the `minorGuardianConsentProvided` flag for an adult's own move with a
@@ -186,7 +186,7 @@ field names.
 
 To advance to `status: verified`, a reviewer applies `manual-source-review-v1`
 (Procedure step 2) field-by-field against the live online (EWA) and in-person
-Bürgeramt flows — the address/name/document field groups still rest primarily
+Bürgeramt flows. The address/name/document field groups still rest primarily
 on the two expat-guide transcriptions cross-checked against the Munich
 AcroForm field names, not a direct read of the live Berlin form's field list.
 The `gender`/`maritalStatus`/`identityDocumentType` enum codes are now

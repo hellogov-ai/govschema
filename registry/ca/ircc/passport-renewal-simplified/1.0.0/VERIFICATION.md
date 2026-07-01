@@ -40,7 +40,7 @@ government-adjacent mirror domain was found that serves the same content
 unblocked). The PDF was retrieved once as a raw binary via a web-content tool, but
 its `stream`/`endstream` payloads did not extract with the standard
 zlib-decompress + parenthesized-string technique used for prior forms (see
-[[gov-form-pdf-extraction]] in engineering memory) — the form appears to be an XFA
+[[gov-form-pdf-extraction]] in engineering memory). The form appears to be an XFA
 LiveCycle PDF whose glyph/text data is not exposed as plain `Tj`/`TJ` operands
 this way. This document is therefore built from **web search result summaries and
 independent third-party transcriptions** (e.g. `servicecanadapassport.ca`), not a
@@ -68,7 +68,7 @@ references, no proof of citizenship) were corroborated across
 implied a name-change document could be attached to a renewal. Two other sources
 (`servicecanadapassport.ca`'s field-by-field summary and the canada.ca web-search
 synthesis of the official eligibility page) state clearly that Simplified Renewal
-**cannot** be used at all if the name has changed — the applicant must instead file
+**cannot** be used at all if the name has changed. The applicant must instead file
 Form PPTC 153 (Adult General Passport Application). This document follows the
 majority/more-authoritative reading: `personalDetailsUnchanged` is a hard
 eligibility gate, and no `nameChangeDocument` field is modelled (unlike the US

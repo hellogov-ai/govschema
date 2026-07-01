@@ -51,7 +51,7 @@ portal. It therefore remains `draft`, not `verified`.
 ## Why GOV.UK guidance prose was used as the field-level source
 
 Like `gb/dvla/vehicle-tax`, the first-adult passport online service has no
-paper-form equivalent to extract field-by-field — it sits behind an authenticated
+paper-form equivalent to extract field-by-field. It sits behind an authenticated
 HMPO portal with no published field-by-field specification of its screens. The
 GOV.UK guidance pages (the landing page, "Apply online", and "What documents you
 need to apply") are the most authoritative public description of what the service
@@ -86,13 +86,13 @@ recorded so consumers weigh its confidence accordingly.
   enum covers only `british`/`irish`. Per
   `confirm-identity-online-for-passport-application`, the online
   identity-confirmation step requires the confirmer to live in the UK and hold
-  a current UK or Irish passport unconditionally — the online flow has no
+  a current UK or Irish passport unconditionally. The online flow has no
   overseas-confirmer branch at all. A broader British/Irish/EU/US/Commonwealth
   passport list exists only for the separate paper-form countersignatory
   route (`countersigning-passport-applications`), which is out of scope for
   this document.
 - **Fees are intentionally not encoded**, consistent with other reference schemas
-  (e.g. `gb/dvla/vehicle-tax`, `us/ca/dmv/drivers-license-renewal`) — HMPO fees
+  (e.g. `gb/dvla/vehicle-tax`, `us/ca/dmv/drivers-license-renewal`). HMPO fees
   change periodically (most recently under the Passport (Fees) Regulations 2022)
   and are out of scope for a field-collection schema.
 - **Not time-versioned.** Applying GSP-0005 §2's coexistence test: the process
@@ -110,7 +110,7 @@ recorded so consumers weigh its confidence accordingly.
   countersignatory process ("get your paper form and one of your 2 print
   photos signed"). The actual online flow this document models is a separate
   page, `confirm-identity-online-for-passport-application`, linked from
-  "Apply online" — it was not cited in the original draft. Re-deriving the
+  "Apply online". It was not cited in the original draft. Re-deriving the
   fields from that page's raw content directly (rather than assuming the
   paper page's rules carry over) found real differences: the online flow adds
   an **18+ age gate** and an additional exclusion (cannot work for UK Visas
@@ -118,7 +118,7 @@ recorded so consumers weigh its confidence accordingly.
   the paper page does not state; it requires the confirmer to work in, or be
   retired from, a recognised profession with **no** "person of good standing
   in their community" alternative (the paper page offers that alternative,
-  the online page does not); and it has no overseas-confirmer branch at all —
+  the online page does not); and it has no overseas-confirmer branch at all:
   "live in the UK" is unconditional on the online page, unlike the paper
   page's separate in-UK/outside-UK passport rules. Field descriptions and
   `sourceRef`s were corrected to cite the online page instead.
@@ -128,7 +128,7 @@ recorded so consumers weigh its confidence accordingly.
   `nameChangeEvidence`, citing `sourceRef`s on "What documents you need to
   apply." Re-reading that page's full `articleBody` directly (not a summary)
   found no mention of grandparents, name changes, deed polls, or statutory
-  declarations anywhere on it — the page's only escape hatch for
+  declarations anywhere on it. The page's only escape hatch for
   circumstances it doesn't cover is a reference to a guidance booklet that is
   not one of this document's four cited sources. Those fields were removed
   rather than published with an inaccurate `sourceRef`; if a future review
