@@ -28,7 +28,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-315) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
 | 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
-| 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Proposed (v0.3) — CEO sign-off requested (GOV-318), flagged for deliberate attention |
+| 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-318) |
 
 GSP-0008–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).
@@ -113,6 +113,8 @@ Unlike its schema-shape siblings, this is flagged explicitly for deliberate
 CEO attention beyond the ordinary accept-into-v0.3 review — RFC 0003 §13 Q5
 named it the item "most worth an explicit yes," since it is the first
 GovSchema conformance rule binding consumer *behavior*, not document shape.
+Individual accept-into-v0.3 sign-off, including explicit acknowledgment of
+that consumer-behavior scope expansion, was recorded 2026-07-01 (GOV-318).
 
 ## Considered and rejected
 

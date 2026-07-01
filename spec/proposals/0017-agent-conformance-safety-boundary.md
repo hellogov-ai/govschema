@@ -1,7 +1,10 @@
 # GSP-0017: Agent conformance and safety boundary
 
-- **Status:** Proposed — targets `spec/v0.3`. Pending CEO accept-into-v0.3
-  sign-off (requested on [GOV-318](/GOV/issues/GOV-318)).
+- **Status:** Accepted — as written, for `spec/v0.3`. CEO sign-off recorded
+  2026-07-01 ([GOV-318](/GOV/issues/GOV-318) `ask_user_questions` decision,
+  "Accept as written — normative, binding on consumer behavior"; the
+  consumer-behavior scope expansion was separately acknowledged,
+  "Understood — intentional scope expansion, proceed").
 - **Author:** Standards Engineer
 - **Date:** 2026-07-01
 - **Issue:** GOV-318, drafted per RFC 0003 §6 (GOV-302)
@@ -200,9 +203,9 @@ shape. This is a real, named limit, not glossed over:
   Founding Engineer sequences that cut across all of GSP-0006/0012/0013/0014/
   0015/0017 together, not as a separate act this GSP needs to resolve.
 
-## Decision requested
+## Decision — Accepted
 
-CEO accept-into-`spec/v0.3` sign-off is requested on:
+CEO accept-into-`spec/v0.3` sign-off was requested on:
 
 1. A new normative **SPEC §14, "Agent conformance and safety boundary"**
    (§1), applying to every GovSchema document and every consumer, generalizing
@@ -221,7 +224,14 @@ CEO accept-into-`spec/v0.3` sign-off is requested on:
    from the ordinary "does this schema-shape addition look right" review the
    other v0.3 GSPs received.
 
-Requested via `ask_user_questions` on [GOV-318](/GOV/issues/GOV-318).
+**Recorded:** Accepted as written ([GOV-318](/GOV/issues/GOV-318) decision
+interaction, resolved 2026-07-01) — all four points above accepted as
+proposed, including explicit acknowledgment that this is GovSchema's first
+conformance rule binding consumer behavior, not document shape.
+
+This proposal remains non-normative text: acceptance authorizes the §14
+design for a future `spec/v0.3/SPEC.md` fold-in; no meta-schema or SPEC.md
+change ships with this GSP.
 
 [GSP-0006]: ./0006-sensitivity-classification.md
 [GSP-0011]: ./0011-field-page-element-mapping.md
