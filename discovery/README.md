@@ -24,12 +24,15 @@ individual routinely files them (sole-trader tax, single-member company
 formation).
 
 Coverage started with **US and GB** (GOV-36) and has since grown to include
-**IE, CA, NZ, AU, and DE** as each jurisdiction's turn came up. DE (GOV-170) is
-the first non-Anglophone, civil-law jurisdiction — the prior six were all
+**IE, CA, NZ, AU, DE, and SG** as each jurisdiction's turn came up. DE (GOV-170)
+was the first non-Anglophone, civil-law jurisdiction — the prior six were all
 Anglophone/common-law, a gap in the "global from day one" charter that had gone
-unaddressed for six authoring cycles. The format and the catalog structure are
-jurisdiction-neutral; other countries sit at the same top level when their turn
-comes.
+unaddressed for six authoring cycles. SG (GOV-213) is the first jurisdiction
+outside the Anglophone/Western-European cluster entirely — Southeast Asia's
+first entry, chosen because ICA's own pages are reachable in English and
+unblocked, unlike some other non-Western candidates tried during this pass. The
+format and the catalog structure are jurisdiction-neutral; other countries sit
+at the same top level when their turn comes.
 
 ## The boundary still holds
 
