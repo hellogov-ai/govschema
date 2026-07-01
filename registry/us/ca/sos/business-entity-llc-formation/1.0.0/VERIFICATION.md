@@ -103,20 +103,27 @@ used (Rev. 11/2023). Two things follow:
   California**"; the 2023 form itself relabels the same item "Initial Street
   Address of **Principal Office**" and, unlike item 3b (which pre-prints "CA"
   under the agent's state field), item 2a's address block on the 2023 form has no
-  pre-printed state. This is a real discrepancy between the two source
-  revisions — it is **not resolved** here. `principalOfficeState` is modeled as a
-  free two-letter state field (not fixed to `CA`), and the field description
-  states the discrepancy explicitly rather than asserting either reading. This is
-  the single largest open verification question for this document (see "What is
-  NOT yet independently verified" below).
+  pre-printed state. **Resolved** (2026-07-01, review gate GOV-292): this is not a
+  discrepancy to reconcile but the documented effect of a 2022 legislative
+  amendment (eff. 2023-01-01) that substituted "principal" for "designated" in
+  Corp. Code §17702.01. Corp. Code §17701.02(w) defines "principal office" as the
+  LLC's principal office "whether or not the office is located in this state,"
+  and §17702.01(b)(3) requires the Articles of Organization to state that same
+  address with no CA restriction — which is exactly why the 2023 form dropped the
+  "in California" qualifier and the pre-printed state. California's requirement
+  that an LLC maintain an in-state office (Corp. Code §17701.13(a)(1)) is a
+  separate, ongoing **designated office** obligation disclosed on the Statement
+  of Information (Form LLC-12), not on the LLC-1. `principalOfficeState` is
+  correctly modeled as a free two-letter state field (not fixed to `CA`); the
+  field description now states this resolution and its citations directly.
 - The Corporations Code citations (§17701.08 name rules, §1505 corporate-agent
   registration) and the general mechanics of items 3–6 are statutory/procedural
   facts unlikely to have changed between 2019 and 2023 — the 2023 form's own item
   text (name-identifier rule, individual-vs-corporation agent branch, three-way
   management checkbox, unaltered purpose statement, signature block) matches the
   2019 instructions' description of those same items verbatim in substance. These
-  are treated as still-current; only the item-2a "in California" qualifier is
-  flagged as stale.
+  are treated as still-current; only the item-2a "in California" qualifier was
+  stale, and that is now resolved above.
 
 ## Mock-data test run
 
@@ -176,13 +183,6 @@ ok   registry/us/ca/sos/business-entity-llc-formation/1.0.0/schema.json [v0.2]
 
 ## What is NOT yet independently verified
 
-- **`principalOfficeState`'s California-only status.** As described above, the
-  2019 instructions require a California address for item 2a; the 2023 form's own
-  label and layout no longer clearly restate that restriction. A reviewer with
-  access to the current Instructions revision (or the live bizfileOnline.sos.ca.gov
-  interview) should confirm whether the principal office must still be in
-  California and, if so, whether `principalOfficeState` should be tightened to a
-  fixed `CA` enum (matching `agentState`) or a new constraint field added.
 - **The Mail Submission Cover Sheet** (page 1 of the same PDF) is explicitly
   optional, generic to any paper SOS filing, and stated not to become part of the
   filed document — it is deliberately out of scope for this schema, which models
@@ -201,12 +201,13 @@ ok   registry/us/ca/sos/business-entity-llc-formation/1.0.0/schema.json [v0.2]
 
 ## Path to a `verified` claim (next step)
 
-To advance this document to `status: verified`, a reviewer applies
-`manual-source-review-v1` (Procedure step 2 field-by-field comparison, step 3 flow
-comparison) against the live Form LLC-1 (Rev. 11/2023) PDF and a **current**
-Instructions revision (resolving the `principalOfficeState` discrepancy above),
-ideally with an observed run of the bizfileOnline.sos.ca.gov online filing
-interview, confirms the sources are still authoritative, resolves any discrepancy
+The `principalOfficeState` discrepancy noted above is resolved (2026-07-01,
+review gate GOV-292) and required no schema change. To advance this document to
+`status: verified`, a reviewer applies `manual-source-review-v1` (Procedure step
+2 field-by-field comparison, step 3 flow comparison) against the live Form LLC-1
+(Rev. 11/2023) PDF and a **current** Instructions revision, ideally with an
+observed run of the bizfileOnline.sos.ca.gov online filing interview, confirms
+the sources are still authoritative, resolves any newly discovered discrepancy
 by shipping a new schema **version** (immutability — VERSIONING §3, practice
 Procedure step 5), and records the outcome here plus sets `status: verified` with
 a current `verification.lastVerifiedAt` / `nextReviewBy`. This v1.0.0 record stays
