@@ -155,6 +155,25 @@ $ cd tools && node validate-ajv.mjs ../registry/us/irs/employer-identification-n
 ok   registry/us/irs/employer-identification-number-ss4/1.0.0/schema.json [v0.1]
 ```
 
+## Corrections from independent review
+
+The GOV-284 review gate's independent re-derivation of the field set from the
+live Form SS-4 PDF (per `manual-source-review-v1` Procedure step 2) found one
+content discrepancy, corrected here:
+
+- **`isLLC` (line 8a) requiredness.** The initial authoring marked `isLLC` as
+  `required: true`, describing it as required on "essentially every path." The
+  Form SS-4 "Do I Need an EIN?" routing table (page 2) contradicts this: it
+  excludes line 8a from the required-lines list for 3 of the 9 applicant
+  situations — plan administrator, estate administrator, and state/local
+  tax-reporting agency. `isLLC` is now `required: false` with a conditional note
+  in its `description`, matching the pattern already used for the dependent
+  `llcMemberCount`/`llcOrganizedInUS` (lines 8b/8c) fields. Every other checked
+  item — the 16/9/12-option enums (`entityType`/`reasonForApplying`/
+  `principalActivity`), the Form 944 election thresholds, and the line-1–18 +
+  Third Party Designee + signature-block field mapping — matched the decoded
+  PDF text and required no change.
+
 ## What is NOT yet independently verified
 
 - **The full "Do I Need an EIN?" line-subset table** (form page 2) documents nine
@@ -163,10 +182,15 @@ ok   registry/us/irs/employer-identification-number-ss4/1.0.0/schema.json [v0.1]
   document models every line as a single flat field set with `required: true` only
   on the items common to essentially every path (`entityLegalName`,
   `mailingAddressLine1/City`, `responsiblePartyName`, `responsiblePartyTaxId`,
-  `isLLC`, `entityType`, `reasonForApplying`, `previouslyAppliedForEIN`,
+  `entityType`, `reasonForApplying`, `previouslyAppliedForEIN`,
   `applicantNameAndTitle`, `applicantPhone`) and `required: false` with a
   conditional note on the rest. This is a reasonable flattening, not a verified
-  line-subset mapping for all nine situations.
+  line-subset mapping for all nine situations. `isLLC` (line 8a) is a case in
+  point and was corrected during independent source review (see
+  "Corrections from independent review" below): the table excludes line 8a for
+  three of the nine paths (plan administrator, estate administrator, state/local
+  tax-reporting agency), so it is `required: false` with a conditional note, not
+  `required: true`.
 - **Constraint patterns** (SSN/EIN format, ZIP code, E.164 phone) are reasonable
   encodings, not citations of a published IRS validation rule.
 - **The online EIN assistant's actual screen-by-screen interview** (question
