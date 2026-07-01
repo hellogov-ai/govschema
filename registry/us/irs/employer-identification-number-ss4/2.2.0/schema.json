@@ -1,0 +1,915 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/irs/employer-identification-number-ss4",
+  "version": "2.2.0",
+  "title": "United States Employer Identification Number Application (Form SS-4)",
+  "description": "Apply for an Employer Identification Number (EIN), the 9-digit federal tax identifier the IRS assigns to a business entity, using the data model of IRS Form SS-4 (Application for Employer Identification Number). Covers a single-member LLC, sole proprietorship, corporation, partnership, trust, estate, or nonprofit applying for its first EIN. The fastest channel is the IRS EIN online assistant (immediate issuance), available only to applicants whose principal business is in the U.S. or a U.S. territory and whose responsible party has an SSN or ITIN; applicants outside that scope must apply by fax, mail, or (international applicants only) telephone, using this same Form SS-4 field set. It does not submit the application; the live IRS source is always authoritative (see VERIFICATION.md).",
+  "status": "verified",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Internal Revenue Service",
+    "abbreviation": "IRS",
+    "url": "https://www.irs.gov/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.irs.gov/forms-pubs/about-form-ss-4",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Form SS-4 (Rev. December 2025)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer \u2014 independent second-reviewer pass)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Independent second-reviewer field-by-field comparison (manual-source-review-v1 Procedure steps 2-3) against a fresh extraction of the Form SS-4 (Rev. 12-2025) PDF (all of lines 1-18, the 'Do I Need an EIN?' table, and the Third Party Designee and signature blocks), cross-checked against the 'About Form SS-4' page, the EIN online-application eligibility page, and the Form SS-4 instructions' 'How To Apply' section. One discrepancy found and corrected (principalAddressLine1's label); no other field, type, required flag, validation rule, or sourceRef needed a change. status advances to 'verified'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "agent-ready-schema",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": true,
+      "agentReadySchema": true,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-01"
+  },
+  "license": "CC-BY-4.0",
+  "crossFieldValidation": [
+    {
+      "id": "employmentCountsRequireHighestCount",
+      "when": {
+        "field": "highestExpectedEmployees",
+        "equals": 0
+      },
+      "requireAbsent": [
+        "expectedAgriculturalEmployees",
+        "expectedHouseholdEmployees",
+        "expectedOtherEmployees"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantSignature",
+      "label": "Signature under penalties of perjury",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Under penalties of perjury, I declare that I have examined this application, and to the best of my knowledge and belief, it is true, correct, and complete.",
+      "sourceRef": "Form SS-4 signature block"
+    }
+  ],
+  "fields": [
+    {
+      "name": "principalBusinessInUS",
+      "label": "Is your principal place of business in the U.S. or U.S. territories?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online EIN assistant eligibility gate (not itself a Form SS-4 line item). The online assistant is limited to applicants whose principal place of business is in the U.S. or U.S. territories; if false, apply by fax, mail, or (international applicants only) telephone instead, using this same field set.",
+      "sourceRef": "IRS EIN online assistant, \"Who can use this tool\" eligibility list"
+    },
+    {
+      "name": "responsiblePartyHasSSNITIN",
+      "label": "Does the responsible party have a Social Security Number (SSN) or Individual Taxpayer Identification Number (ITIN)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online EIN assistant eligibility gate (not itself a Form SS-4 line item). The online assistant is limited to responsible parties identified by SSN or ITIN, not an EIN; if false, apply by fax or mail instead. See responsiblePartyTaxId for the actual identifier.",
+      "sourceRef": "IRS EIN online assistant, \"Who can use this tool\" eligibility list"
+    },
+    {
+      "name": "entityLegalName",
+      "label": "Legal name of entity (or individual) for whom the EIN is being requested",
+      "type": "string",
+      "required": true,
+      "description": "Personal/business identifier; handle as sensitive data. The legal name of the business, trust, estate, or individual applying \u2014 e.g. as it appears on the entity's formation document, or an individual's legal name for a sole proprietorship.",
+      "sourceRef": "Form SS-4 line 1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "tradeName",
+      "label": "Trade name of business (if different from name on line 1)",
+      "type": "string",
+      "required": false,
+      "description": "The 'doing business as' (DBA) name, if different from the legal name.",
+      "sourceRef": "Form SS-4 line 2",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "careOfName",
+      "label": "Executor, administrator, trustee, \"care of\" name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required when the applicant entity is an estate or trust and correspondence should be directed to a named executor, administrator, or trustee.",
+      "sourceRef": "Form SS-4 line 3",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "mailingAddressLine1",
+      "label": "Mailing address (room, apt., suite no. and street, or P.O. box)",
+      "type": "string",
+      "required": true,
+      "description": "Where the IRS will send the EIN confirmation notice (CP 575) and correspondence. A P.O. box is allowed here, unlike the principal (street) address.",
+      "sourceRef": "Form SS-4 line 4a",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Mailing address \u2014 city",
+      "type": "string",
+      "required": true,
+      "description": "If foreign, the instructions give a different city/province/postal-code format; see mailingAddressCountry.",
+      "sourceRef": "Form SS-4 line 4b",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Mailing address \u2014 state",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter USPS state or territory abbreviation, e.g. CA, NY, TX. Not applicable to a foreign address; see mailingAddressCountry instead.",
+      "sourceRef": "Form SS-4 line 4b",
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      }
+    },
+    {
+      "name": "mailingAddressPostalCode",
+      "label": "Mailing address \u2014 ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "5-digit or ZIP+4 U.S. format, e.g. 90210 or 90210-1234. For a foreign address, give the foreign postal code here instead, per the instructions.",
+      "sourceRef": "Form SS-4 line 4b",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "mailingAddressCountry",
+      "label": "Mailing address \u2014 country (if foreign)",
+      "type": "string",
+      "required": false,
+      "description": "Required only when the mailing address is outside the United States; see the Form SS-4 instructions for the foreign address format.",
+      "sourceRef": "Form SS-4 line 4b",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "principalAddressLine1",
+      "label": "Street address (if different) (don't enter a P.O. box)",
+      "type": "string",
+      "required": false,
+      "description": "The entity's actual physical/principal business location. Cannot be a P.O. box, unlike the mailing address.",
+      "sourceRef": "Form SS-4 line 5a",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "principalAddressCity",
+      "label": "Principal address \u2014 city",
+      "type": "string",
+      "required": false,
+      "description": "Required only when principalAddressLine1 is given.",
+      "sourceRef": "Form SS-4 line 5b",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "principalAddressState",
+      "label": "Principal address \u2014 state",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter USPS state or territory abbreviation. Required only when principalAddressLine1 is a U.S. address.",
+      "sourceRef": "Form SS-4 line 5b",
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      }
+    },
+    {
+      "name": "principalAddressPostalCode",
+      "label": "Principal address \u2014 ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required only when principalAddressLine1 is given.",
+      "sourceRef": "Form SS-4 line 5b",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "principalBusinessCountyAndState",
+      "label": "County and state where principal business is located",
+      "type": "string",
+      "required": false,
+      "description": "Free-text county name and state, e.g. \"Orange County, CA\". Not applicable to every reason for applying (e.g. not needed for a banking-purpose-only application); see reasonForApplying.",
+      "sourceRef": "Form SS-4 line 6",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "responsiblePartyName",
+      "label": "Name of responsible party",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The person who ultimately owns or controls the entity, or who exercises ultimate effective control. Per the Form SS-4 instructions, the responsible party must be an individual (a natural person), not an entity, except where the applicant itself is a government entity. Required on every EIN application regardless of reason for applying.",
+      "sourceRef": "Form SS-4 line 7a",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "responsiblePartyTaxId",
+      "label": "Responsible party's SSN, ITIN, or EIN",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. 9 digits, no separators. The IRS online EIN assistant additionally requires this to be an SSN or ITIN (not an EIN) and requires the responsible party themselves to be the applicant or their authorized representative.",
+      "sourceRef": "Form SS-4 line 7b",
+      "validation": {
+        "pattern": "^[0-9]{9}$"
+      }
+    },
+    {
+      "name": "isLLC",
+      "label": "Is this application for a limited liability company (LLC) (or a foreign equivalent)?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required for most applicants, but not on every path: the Form SS-4 \"Do I Need an EIN?\" table (page 2) excludes line 8a from the lines to complete for a plan administrator, an estate administrator, or a state/local tax-reporting agency. If true, also give llcMemberCount and llcOrganizedInUS, and see the instructions for the correct entityType box.",
+      "sourceRef": "Form SS-4 line 8a"
+    },
+    {
+      "name": "llcMemberCount",
+      "label": "Number of LLC members",
+      "type": "integer",
+      "required": false,
+      "description": "Required only when isLLC is true.",
+      "sourceRef": "Form SS-4 line 8b",
+      "validation": {
+        "minimum": 1
+      },
+      "requiredWhen": {
+        "field": "isLLC",
+        "equals": true
+      }
+    },
+    {
+      "name": "llcOrganizedInUS",
+      "label": "Was the LLC organized in the United States?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required only when isLLC is true.",
+      "sourceRef": "Form SS-4 line 8c",
+      "requiredWhen": {
+        "field": "isLLC",
+        "equals": true
+      }
+    },
+    {
+      "name": "entityType",
+      "label": "Type of entity",
+      "type": "enum",
+      "required": true,
+      "description": "Check only one box. If isLLC is true, see the instructions for which box applies to the LLC (an LLC is not itself a box; it is classified as one of these types for tax purposes).",
+      "sourceRef": "Form SS-4 line 9a",
+      "validation": {
+        "enum": [
+          "sole_proprietor",
+          "estate",
+          "partnership",
+          "plan_administrator",
+          "corporation",
+          "trust",
+          "personal_service_corporation",
+          "military_national_guard",
+          "state_local_government",
+          "church_or_church_controlled_organization",
+          "farmers_cooperative",
+          "federal_government",
+          "other_nonprofit_organization",
+          "remic",
+          "indian_tribal_governments_enterprises",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "entityTypeOtherSpecify",
+      "label": "If entity type is \"other nonprofit organization\" or \"other\", specify",
+      "type": "string",
+      "required": false,
+      "description": "Required only when entityType is other_nonprofit_organization or other.",
+      "sourceRef": "Form SS-4 line 9a",
+      "validation": {
+        "maxLength": 160
+      },
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "entityType",
+            "equals": "other_nonprofit_organization"
+          },
+          {
+            "field": "entityType",
+            "equals": "other"
+          }
+        ]
+      }
+    },
+    {
+      "name": "entityTypeCorporationFormNumber",
+      "label": "If entity type is corporation, enter the form number to be filed",
+      "type": "string",
+      "required": false,
+      "description": "Required only when entityType is corporation, e.g. 1120 or 1120-S.",
+      "sourceRef": "Form SS-4 line 9a",
+      "validation": {
+        "maxLength": 20
+      },
+      "requiredWhen": {
+        "field": "entityType",
+        "equals": "corporation"
+      }
+    },
+    {
+      "name": "entityTypeTrustGrantorTin",
+      "label": "If entity type is trust, TIN of grantor",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when entityType is trust.",
+      "sourceRef": "Form SS-4 line 9a",
+      "validation": {
+        "pattern": "^[0-9]{9}$"
+      },
+      "requiredWhen": {
+        "field": "entityType",
+        "equals": "trust"
+      }
+    },
+    {
+      "name": "entityTypeEstateDecedentSSN",
+      "label": "If entity type is estate, SSN of decedent",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when entityType is estate.",
+      "sourceRef": "Form SS-4 line 9a",
+      "validation": {
+        "pattern": "^[0-9]{9}$"
+      },
+      "requiredWhen": {
+        "field": "entityType",
+        "equals": "estate"
+      }
+    },
+    {
+      "name": "entityTypePlanAdministratorTin",
+      "label": "If entity type is plan administrator, TIN",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when entityType is plan_administrator.",
+      "sourceRef": "Form SS-4 line 9a",
+      "validation": {
+        "pattern": "^[0-9]{9}$"
+      },
+      "requiredWhen": {
+        "field": "entityType",
+        "equals": "plan_administrator"
+      }
+    },
+    {
+      "name": "groupExemptionNumber",
+      "label": "Group Exemption Number (GEN), if any",
+      "type": "string",
+      "required": false,
+      "description": "Applies only to certain nonprofit/church-affiliated group-ruling entities.",
+      "sourceRef": "Form SS-4 line 9a",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "incorporationState",
+      "label": "If a corporation, state where incorporated",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter USPS state abbreviation. Required only when entityType is corporation and the corporation was incorporated in the U.S.; use incorporationForeignCountry instead for a foreign incorporation.",
+      "sourceRef": "Form SS-4 line 9b",
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      },
+      "visibleWhen": {
+        "field": "entityType",
+        "equals": "corporation"
+      }
+    },
+    {
+      "name": "incorporationForeignCountry",
+      "label": "If a corporation, foreign country where incorporated",
+      "type": "string",
+      "required": false,
+      "description": "Required only when entityType is corporation and the corporation was incorporated outside the U.S.",
+      "sourceRef": "Form SS-4 line 9b",
+      "validation": {
+        "maxLength": 100
+      },
+      "visibleWhen": {
+        "field": "entityType",
+        "equals": "corporation"
+      }
+    },
+    {
+      "name": "reasonForApplying",
+      "label": "Reason for applying",
+      "type": "enum",
+      "required": true,
+      "description": "Check only one box.",
+      "sourceRef": "Form SS-4 line 10",
+      "validation": {
+        "enum": [
+          "started_new_business",
+          "changed_type_of_organization",
+          "purchased_going_business",
+          "hired_employees",
+          "created_a_trust",
+          "compliance_with_irs_withholding_regulations",
+          "created_a_pension_plan",
+          "banking_purpose",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "reasonForApplyingSpecify",
+      "label": "Reason for applying \u2014 specify",
+      "type": "string",
+      "required": false,
+      "description": "Required when reasonForApplying is started_new_business (type of business), changed_type_of_organization (new type), created_a_trust (type of trust), created_a_pension_plan (type of plan), banking_purpose (purpose), or other.",
+      "sourceRef": "Form SS-4 line 10",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "reasonForApplying",
+            "equals": "started_new_business"
+          },
+          {
+            "field": "reasonForApplying",
+            "equals": "changed_type_of_organization"
+          },
+          {
+            "field": "reasonForApplying",
+            "equals": "created_a_trust"
+          },
+          {
+            "field": "reasonForApplying",
+            "equals": "created_a_pension_plan"
+          },
+          {
+            "field": "reasonForApplying",
+            "equals": "banking_purpose"
+          },
+          {
+            "field": "reasonForApplying",
+            "equals": "other"
+          }
+        ]
+      }
+    },
+    {
+      "name": "businessStartDate",
+      "label": "Date business started or acquired",
+      "type": "date",
+      "required": false,
+      "description": "YYYY-MM-DD. Not required on every reason-for-applying path (e.g. not needed for a banking-purpose-only application); see the Form SS-4 instructions for line 11.",
+      "sourceRef": "Form SS-4 line 11"
+    },
+    {
+      "name": "accountingYearClosingMonth",
+      "label": "Closing month of accounting year",
+      "type": "enum",
+      "required": false,
+      "description": "The last month of the entity's accounting year (December for a calendar-year filer). Not required on every reason-for-applying path.",
+      "sourceRef": "Form SS-4 line 12",
+      "validation": {
+        "enum": [
+          "january",
+          "february",
+          "march",
+          "april",
+          "may",
+          "june",
+          "july",
+          "august",
+          "september",
+          "october",
+          "november",
+          "december"
+        ]
+      }
+    },
+    {
+      "name": "highestExpectedEmployees",
+      "label": "Highest number of employees expected in the next 12 months (enter 0 if none)",
+      "type": "integer",
+      "required": false,
+      "description": "If 0, expectedAgriculturalEmployees, expectedHouseholdEmployees, and expectedOtherEmployees, along with line 14/15, may be left unanswered.",
+      "sourceRef": "Form SS-4 line 13",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "expectedAgriculturalEmployees",
+      "label": "Expected agricultural employees",
+      "type": "integer",
+      "required": false,
+      "description": "Only completed when highestExpectedEmployees is greater than 0.",
+      "sourceRef": "Form SS-4 line 13",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "highestExpectedEmployees",
+        "greaterThan": 0
+      }
+    },
+    {
+      "name": "expectedHouseholdEmployees",
+      "label": "Expected household employees",
+      "type": "integer",
+      "required": false,
+      "description": "Only completed when highestExpectedEmployees is greater than 0.",
+      "sourceRef": "Form SS-4 line 13",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "highestExpectedEmployees",
+        "greaterThan": 0
+      }
+    },
+    {
+      "name": "expectedOtherEmployees",
+      "label": "Expected other employees",
+      "type": "integer",
+      "required": false,
+      "description": "Only completed when highestExpectedEmployees is greater than 0.",
+      "sourceRef": "Form SS-4 line 13",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "highestExpectedEmployees",
+        "greaterThan": 0
+      }
+    },
+    {
+      "name": "file944AnnuallyElection",
+      "label": "Elect to file Form 944 annually instead of Form 941 quarterly",
+      "type": "boolean",
+      "required": false,
+      "description": "Available only if expected employment tax liability is $1,000 or less in a full calendar year (generally, $5,000 or less in total wages, or $6,536 or less in a U.S. territory). If not checked, the entity must file Form 941 quarterly.",
+      "sourceRef": "Form SS-4 line 14"
+    },
+    {
+      "name": "firstWagesPaidDate",
+      "label": "First date wages or annuities were paid",
+      "type": "date",
+      "required": false,
+      "description": "YYYY-MM-DD. If the applicant is a withholding agent, this is instead the date income will first be paid to a nonresident alien. Only applicable when employees are expected (highestExpectedEmployees greater than 0) or the entity is a withholding agent.",
+      "sourceRef": "Form SS-4 line 15"
+    },
+    {
+      "name": "principalActivity",
+      "label": "Principal activity of the business",
+      "type": "enum",
+      "required": false,
+      "description": "Check one box that best describes the principal activity. Not required on every reason-for-applying path.",
+      "sourceRef": "Form SS-4 line 16",
+      "validation": {
+        "enum": [
+          "health_care_social_assistance",
+          "wholesale_agent_broker",
+          "construction",
+          "rental_leasing",
+          "transportation_warehousing",
+          "accommodation_food_service",
+          "wholesale_other",
+          "retail",
+          "real_estate",
+          "manufacturing",
+          "finance_insurance",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "principalActivityOtherSpecify",
+      "label": "If principal activity is \"other\", specify",
+      "type": "string",
+      "required": false,
+      "description": "Required only when principalActivity is other.",
+      "sourceRef": "Form SS-4 line 16",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "principalLineOfBusiness",
+      "label": "Principal line of merchandise sold, construction work done, products produced, or services provided",
+      "type": "string",
+      "required": false,
+      "description": "Free text, e.g. \"Residential electrical contracting\".",
+      "sourceRef": "Form SS-4 line 17",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "previouslyAppliedForEIN",
+      "label": "Has the applicant entity shown on line 1 ever applied for and received an EIN?",
+      "type": "boolean",
+      "required": true,
+      "description": "A new EIN is generally not issued to the same legal entity twice; see the instructions if unsure whether the entity already has one.",
+      "sourceRef": "Form SS-4 line 18"
+    },
+    {
+      "name": "previousEIN",
+      "label": "Previous EIN",
+      "type": "string",
+      "required": false,
+      "description": "Required only when previouslyAppliedForEIN is true. Format NN-NNNNNNN.",
+      "sourceRef": "Form SS-4 line 18",
+      "validation": {
+        "pattern": "^[0-9]{2}-[0-9]{7}$"
+      },
+      "requiredWhen": {
+        "field": "previouslyAppliedForEIN",
+        "equals": true
+      }
+    },
+    {
+      "name": "thirdPartyDesigneeName",
+      "label": "Third party designee's name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Complete this section only to authorize a named individual to receive the entity's EIN and answer questions about this application; the designee's authority terminates once the EIN is assigned and released.",
+      "sourceRef": "Form SS-4 Third Party Designee section",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "thirdPartyDesigneePhone",
+      "label": "Third party designee's telephone number",
+      "type": "string",
+      "required": false,
+      "description": "Required only when thirdPartyDesigneeName is given. In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "Form SS-4 Third Party Designee section",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "thirdPartyDesigneeAddressAndZip",
+      "label": "Third party designee's address and ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required only when thirdPartyDesigneeName is given.",
+      "sourceRef": "Form SS-4 Third Party Designee section",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "thirdPartyDesigneeFax",
+      "label": "Third party designee's fax number",
+      "type": "string",
+      "required": false,
+      "description": "In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "Form SS-4 Third Party Designee section",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "applicantNameAndTitle",
+      "label": "Name and title of applicant (type or print clearly)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The name and title (e.g. \"Sole Proprietor\", \"Managing Member\", \"Trustee\") of the person signing the application. See the applicantSignature attestation entry in documents[] for the perjury statement they are certifying to.",
+      "sourceRef": "Form SS-4 signature block",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "applicantPhone",
+      "label": "Applicant's telephone number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +12025551234. The IRS online EIN assistant may use this number to contact the applicant about the application.",
+      "sourceRef": "Form SS-4 signature block",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "applicantFax",
+      "label": "Applicant's fax number",
+      "type": "string",
+      "required": false,
+      "description": "In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "Form SS-4 signature block",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_check",
+      "title": "Online-application eligibility check",
+      "fields": [
+        "principalBusinessInUS",
+        "responsiblePartyHasSSNITIN"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "principal-business-outside-us-apply-by-fax-mail-or-phone",
+          "when": {
+            "field": "principalBusinessInUS",
+            "equals": false
+          }
+        },
+        {
+          "to": null,
+          "exitReason": "responsible-party-lacks-ssn-itin-apply-by-fax-or-mail",
+          "when": {
+            "field": "responsiblePartyHasSSNITIN",
+            "equals": false
+          }
+        },
+        {
+          "to": "entity_identification"
+        }
+      ]
+    },
+    {
+      "id": "entity_identification",
+      "title": "Entity name",
+      "fields": [
+        "entityLegalName",
+        "tradeName",
+        "careOfName"
+      ],
+      "next": "addresses"
+    },
+    {
+      "id": "addresses",
+      "title": "Mailing and principal addresses",
+      "fields": [
+        "mailingAddressLine1",
+        "mailingAddressCity",
+        "mailingAddressState",
+        "mailingAddressPostalCode",
+        "mailingAddressCountry",
+        "principalAddressLine1",
+        "principalAddressCity",
+        "principalAddressState",
+        "principalAddressPostalCode",
+        "principalBusinessCountyAndState"
+      ],
+      "next": "responsible_party"
+    },
+    {
+      "id": "responsible_party",
+      "title": "Responsible party",
+      "fields": [
+        "responsiblePartyName",
+        "responsiblePartyTaxId"
+      ],
+      "next": "llc_details"
+    },
+    {
+      "id": "llc_details",
+      "title": "Limited liability company details",
+      "fields": [
+        "isLLC",
+        "llcMemberCount",
+        "llcOrganizedInUS"
+      ],
+      "next": "entity_type"
+    },
+    {
+      "id": "entity_type",
+      "title": "Type of entity",
+      "fields": [
+        "entityType",
+        "entityTypeOtherSpecify",
+        "entityTypeCorporationFormNumber",
+        "entityTypeTrustGrantorTin",
+        "entityTypeEstateDecedentSSN",
+        "entityTypePlanAdministratorTin",
+        "groupExemptionNumber",
+        "incorporationState",
+        "incorporationForeignCountry"
+      ],
+      "next": "reason_for_applying"
+    },
+    {
+      "id": "reason_for_applying",
+      "title": "Reason for applying",
+      "fields": [
+        "reasonForApplying",
+        "reasonForApplyingSpecify"
+      ],
+      "next": "business_details"
+    },
+    {
+      "id": "business_details",
+      "title": "Business start date, accounting year, and employees",
+      "fields": [
+        "businessStartDate",
+        "accountingYearClosingMonth",
+        "highestExpectedEmployees",
+        "expectedAgriculturalEmployees",
+        "expectedHouseholdEmployees",
+        "expectedOtherEmployees",
+        "file944AnnuallyElection",
+        "firstWagesPaidDate"
+      ],
+      "next": "principal_activity"
+    },
+    {
+      "id": "principal_activity",
+      "title": "Principal business activity",
+      "fields": [
+        "principalActivity",
+        "principalActivityOtherSpecify",
+        "principalLineOfBusiness"
+      ],
+      "next": "prior_ein"
+    },
+    {
+      "id": "prior_ein",
+      "title": "Previous EIN",
+      "fields": [
+        "previouslyAppliedForEIN",
+        "previousEIN"
+      ],
+      "next": "third_party_designee"
+    },
+    {
+      "id": "third_party_designee",
+      "title": "Third party designee (optional)",
+      "fields": [
+        "thirdPartyDesigneeName",
+        "thirdPartyDesigneePhone",
+        "thirdPartyDesigneeAddressAndZip",
+        "thirdPartyDesigneeFax"
+      ],
+      "next": "signature"
+    },
+    {
+      "id": "signature",
+      "title": "Signature",
+      "fields": [
+        "applicantNameAndTitle",
+        "applicantPhone",
+        "applicantFax"
+      ]
+    }
+  ]
+}
