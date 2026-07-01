@@ -27,6 +27,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0013 | [Extended conditional logic (supersedes GSP-0004)](./0013-extended-conditional-logic.md) | Accepted — for v0.3, CEO sign-off recorded 2026-07-01 (GOV-312) |
 | 0014 | [Documents as a first-class model (`documents[]` array)](./0014-documents-as-first-class-model.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-315) |
 | 0015 | [Verification as an operational trust layer](./0015-verification-operational-trust-layer.md) | Accepted for v0.3 — CEO sign-off recorded 2026-07-01 (GOV-325) |
+| 0016 | [Conformance fixtures (non-submitting)](./0016-conformance-fixtures.md) | Accepted — two-way-door, decided via normal PR review (GOV-317) |
 
 GSP-0008–0010 were drafted from the spec-evolution candidates surfaced by GOV-52
 docs conformance and dispositioned by the Founding Engineer (GOV-61 → GOV-62).
@@ -83,6 +84,16 @@ read directly off GSP-0013's `steps[].transitions`/`to: null` and GSP-0014's
 `documents[]`/`fieldRole`. Drafted after both landed, per RFC 0003 §12's
 recommended sequencing (point 4); CEO accept-into-v0.3 sign-off requested on
 GOV-316.
+
+GSP-0016 was drafted per RFC 0003 (GOV-302 §7). Unlike its siblings above, it
+is **two-way-door**: a new top-level `conformance/` directory and a
+`browser-flow.schema.json` fixture-format scaffold, with no `spec/vN`
+meta-schema change and no change to what "verified" means, so it is decided
+by normal pull-request review (the Review gate) rather than CEO sign-off, per
+[GOVERNANCE.md](../../GOVERNANCE.md). It depends on GSP-0013 (conditional-
+violation payload fixtures) and GSP-0014 (document-requiredness fixtures),
+both already accepted; GSP-0011 (`mapping.json`) needed no new blocker since
+it was already accepted. Filed and landed together under GOV-317.
 
 ## Considered and rejected
 

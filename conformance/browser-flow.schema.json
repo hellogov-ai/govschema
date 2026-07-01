@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://govschema.org/conformance/browser-flow.schema.json",
+  "title": "GovSchema Conformance Browser Flow",
+  "description": "Meta-schema for browser-flow.json: an ordered, non-submitting walk of a live government form, referencing a sibling schema.json and (optionally) its mapping.json locators (GSP-0011). Part of the conformance/<id>/<version>/ fixture set (GSP-0016). The action vocabulary is deliberately closed to navigate/fill/read/stop-before-submit: there is no submit, next, or continue-past-review value, so a producer cannot author a submission step even by mistake — the non-submission boundary is structural, not merely documented. A conforming browser-flow.json MUST contain at least one stop-before-submit step (enforced below); the stronger rule that it MUST be the flow's terminal step, with no step following it, is normative but not expressible in JSON Schema alone and is checked by tooling, exactly as GSP-0011 handles mapping.json's field-name referential integrity. This is a standards artifact published by the GovSchema foundation; it does not imply endorsement by any government.",
+  "type": "object",
+  "required": ["$schema", "schema", "source", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "URI of this browser-flow meta-schema."
+    },
+    "schema": {
+      "type": "object",
+      "description": "Back-reference to the sibling GovSchema document this flow walks. Redundant with the directory path by design, same rationale as mapping.json's own schema back-reference (GSP-0011).",
+      "required": ["id", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(/[a-z0-9-]+){2,}$",
+          "description": "MUST equal the sibling schema.json's `id`."
+        },
+        "edition": {
+          "type": "string",
+          "description": "For time-versioned forms (GSP-0005). MUST equal the sibling schema.json's `edition`, when present."
+        },
+        "version": {
+          "$ref": "#/$defs/semver",
+          "description": "MUST equal the sibling schema.json's `version`."
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "The live web page a browser-driving agent loads to walk this flow.",
+      "required": ["url"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/flowStep" },
+      "contains": {
+        "type": "object",
+        "properties": { "action": { "const": "stop-before-submit" } },
+        "required": ["action"]
+      },
+      "minContains": 1,
+      "description": "Ordered list of steps. MUST contain at least one stop-before-submit step (checked here). MUST end with one, and no step may follow it — normative, checked by tooling, not expressible as a JSON Schema array-position constraint on a variable-length list."
+    }
+  },
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-.]+)?(?:\\+[0-9A-Za-z-.]+)?$"
+    },
+    "flowStep": {
+      "type": "object",
+      "required": ["action"],
+      "additionalProperties": false,
+      "properties": {
+        "stepId": {
+          "type": "string",
+          "description": "MUST resolve to a step id in the sibling schema.json's steps, when the schema defines steps. OPTIONAL on stop-before-submit."
+        },
+        "action": {
+          "type": "string",
+          "enum": ["navigate", "fill", "read", "stop-before-submit"],
+          "description": "Closed vocabulary. There is deliberately no submit/next/continue value — a producer cannot author a submission action even by mistake (the same structural-boundary technique GSP-0011 uses for mapping.json's scope boundary, reused here)."
+        },
+        "field": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9_]*$",
+          "description": "For fill/read actions against a scalar fields[] entry. MUST resolve to a field name in the sibling schema.json. Mutually exclusive with documentId."
+        },
+        "documentId": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9_]*$",
+          "description": "For fill/read actions against a documents[] entry (GSP-0014). MUST resolve to a documents[].id in the sibling schema.json. Mutually exclusive with field."
+        },
+        "value": {
+          "description": "The literal value a fill action enters, for a valid-complete run. OPTIONAL — a read-only step, or a fixture that only checks navigation, may omit it."
+        }
+      },
+      "allOf": [
+        {
+          "not": { "required": ["field", "documentId"] },
+          "description": "field and documentId are mutually exclusive."
+        },
+        {
+          "if": {
+            "properties": { "action": { "const": "navigate" } },
+            "required": ["action"]
+          },
+          "then": {
+            "required": ["stepId"],
+            "not": { "anyOf": [{ "required": ["field"] }, { "required": ["documentId"] }] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "action": { "const": "stop-before-submit" } },
+            "required": ["action"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["stepId"] },
+                { "required": ["field"] },
+                { "required": ["documentId"] },
+                { "required": ["value"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "action": { "enum": ["fill", "read"] } },
+            "required": ["action"]
+          },
+          "then": {
+            "anyOf": [{ "required": ["field"] }, { "required": ["documentId"] }]
+          }
+        }
+      ]
+    }
+  }
+}

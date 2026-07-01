@@ -1,10 +1,5 @@
 <p align="center">
-  <img src="assets/brand/logo-lockup.png" alt="GovSchema — open standards for agent–government interaction" width="480">
-</p>
-
-<p align="center">
-  <em>The trusted, versioned, machine-readable contract that lets AI agents understand,<br>
-  validate, and safely prepare government forms — without guessing from webpages.</em>
+  <img src="assets/hero.png" alt="GovSchema — open standards for agent–government interaction. The trusted, versioned, machine-readable contract that lets AI agents understand, validate, and safely prepare government forms — without guessing from webpages." width="100%">
 </p>
 
 # GovSchema
@@ -49,6 +44,7 @@ specification line is explicitly pre-stable (`v0.x`).
 | [`registry/`](./registry) | All published schemas, one immutable directory per version.    |
 | [`discovery/`](./discovery) | The discovery catalog — a prioritized backlog of processes to schematize next. |
 | [`practices/`](./practices) | Verification practices — documented methods for confirming a schema matches its source. |
+| [`conformance/`](./conformance) | Non-submitting conformance fixtures — sample payloads and browser-flow walks that prove out agent behavior against a schema version. |
 | [`tools/`](./tools) | Tooling to validate schemas (zero-dependency, CI-ready), plus an optional reference client and MCP server for agent consumption. |
 | [`site/`](./site) | The landing/marketing site — a data-driven static generator (zero-dependency). |
 | [`VERSIONING.md`](./VERSIONING.md) | How the spec and each schema are versioned.            |
