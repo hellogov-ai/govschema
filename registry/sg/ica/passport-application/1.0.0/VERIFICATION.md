@@ -121,7 +121,7 @@ exclusion).
   `us/ed/federal-student-aid-fafsa`'s FA-DDX (where specific tax fields are an
   authoritative pull the applicant never enters or overrides, and are
   therefore excluded from `fields` entirely), a Singpass/MyInfo prefill is
-  editable convenience auto-fill of data the applicant still submits — so this
+  editable convenience auto-fill of data the applicant still submits, so this
   version keeps the full particulars set as fields rather than guessing which
   subset to exclude. Confirming the exact prefill behaviour against the live
   authenticated screens is the leading candidate gap for the next review pass.
