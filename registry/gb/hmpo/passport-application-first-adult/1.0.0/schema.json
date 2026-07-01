@@ -1,0 +1,270 @@
+{
+  "$schema": "https://govschema.org/spec/v0.2/govschema.schema.json",
+  "govschemaVersion": "0.2.0",
+  "id": "gb/hmpo/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "United Kingdom First Adult Passport Application",
+  "description": "Apply for a first British passport as an adult (aged 16 or over, or turning 16 within 3 weeks) who has never held a UK passport, or whose last one was issued before 1 January 1994, through HM Passport Office's online service. Unlike a renewal, a first-time application requires documentary evidence of British nationality plus a person to confirm the applicant's identity. This document describes the nationality-evidence branch (by birth year and route), applicant details, name-change evidence, the online identity-confirmation step, and the photo/payment choice. It does not submit the application; the live gov.uk source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "His Majesty's Passport Office",
+    "abbreviation": "HMPO",
+    "url": "https://www.gov.uk/government/organisations/hm-passport-office"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/apply-first-adult-passport",
+    "retrievedAt": "2026-07-01"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the GOV.UK 'Getting your first adult passport' guide and its 'Apply online' and 'What documents you need to apply' sub-pages, plus the 'Countersigning passport applications and photos' guidance for the identity-confirmation step. Like gb/dvla/vehicle-tax, the online service itself (an authenticated HMPO portal) has no published field-by-field specification, so this document is transcribed from the surrounding GOV.UK guidance prose rather than an independently captured screen-by-screen review. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "nationalityEvidenceRoute",
+      "label": "How do you hold British nationality?",
+      "type": "enum",
+      "required": true,
+      "description": "born_before_1983 = born in the UK before 1 January 1983 (birth/adoption certificate alone is sufficient); born_on_or_after_1983 = born in the UK on or after 1 January 1983 (birth certificate plus evidence of a parent's British nationality is required); naturalised_or_registered = British nationality obtained by naturalisation or registration (a certificate must already be held before applying). Determines which further evidence fields are required.",
+      "sourceRef": "What documents you need to apply — birth certificate requirements",
+      "validation": { "enum": ["born_before_1983", "born_on_or_after_1983", "naturalised_or_registered"] }
+    },
+    {
+      "name": "birthOrAdoptionCertificate",
+      "label": "Full original birth or adoption certificate",
+      "type": "file",
+      "required": true,
+      "description": "The long-form (full) birth or adoption certificate, required for every applicant regardless of nationalityEvidenceRoute. Original documents only; photocopies are not accepted.",
+      "sourceRef": "What documents you need to apply — birth certificate requirements"
+    },
+    {
+      "name": "parentNationalityEvidenceParent",
+      "label": "Whose British nationality evidence are you sending?",
+      "type": "enum",
+      "required": false,
+      "description": "Required only when nationalityEvidenceRoute is born_on_or_after_1983. If you send documents relating to your father, you must also provide parentsMarriageCertificate.",
+      "sourceRef": "What documents you need to apply — parental nationality evidence",
+      "validation": { "enum": ["mother", "father"] }
+    },
+    {
+      "name": "parentNationalityEvidenceType",
+      "label": "Parent's evidence of British nationality",
+      "type": "enum",
+      "required": false,
+      "description": "Required only when nationalityEvidenceRoute is born_on_or_after_1983. uk_birth_or_adoption_certificate = the named parent's own full UK birth or adoption certificate; naturalisation_or_registration_certificate = the named parent's certificate of naturalisation or registration; british_passport_valid_at_applicants_birth = the named parent's British passport that was valid when the applicant was born; british_passport_number_only = only the parent's British passport number, where the passport itself is no longer available.",
+      "sourceRef": "What documents you need to apply — parental nationality evidence",
+      "validation": { "enum": ["uk_birth_or_adoption_certificate", "naturalisation_or_registration_certificate", "british_passport_valid_at_applicants_birth", "british_passport_number_only"] }
+    },
+    {
+      "name": "parentsMarriageCertificate",
+      "label": "Parents' marriage certificate",
+      "type": "file",
+      "required": false,
+      "description": "Required when parentNationalityEvidenceParent is father: evidence of your parents' marriage showing the link between you and your father's nationality evidence.",
+      "sourceRef": "What documents you need to apply — evidence relating to your father"
+    },
+    {
+      "name": "grandparentEvidenceRequired",
+      "label": "Were your parents born after 1982, or born outside the UK?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required only when nationalityEvidenceRoute is born_on_or_after_1983. If true, your grandparent's British nationality evidence (grandparentNationalityEvidence) is also required, extending the same evidence chain one generation further back.",
+      "sourceRef": "What documents you need to apply — grandparents' details"
+    },
+    {
+      "name": "grandparentNationalityEvidence",
+      "label": "Grandparent's evidence of British nationality",
+      "type": "file",
+      "required": false,
+      "description": "Required when grandparentEvidenceRequired is true: the relevant grandparent's UK birth/adoption certificate, naturalisation/registration certificate, or British passport evidence, matching the same evidence chain used for the parent.",
+      "sourceRef": "What documents you need to apply — grandparents' details"
+    },
+    {
+      "name": "naturalisationOrRegistrationCertificate",
+      "label": "Certificate of naturalisation or registration",
+      "type": "file",
+      "required": false,
+      "description": "Required when nationalityEvidenceRoute is naturalised_or_registered. The certificate must already have been issued before applying; a first-time application cannot be made while naturalisation or registration is still pending.",
+      "sourceRef": "What documents you need to apply — naturalisation and registration"
+    },
+    {
+      "name": "passportUsedToEnterUK",
+      "label": "Passport used to enter the UK, or foreign passport you're included on",
+      "type": "file",
+      "required": false,
+      "description": "Required when nationalityEvidenceRoute is naturalised_or_registered: the passport (own or, if included as a child on a parent's passport, that parent's foreign passport) used to travel to the UK.",
+      "sourceRef": "What documents you need to apply — naturalisation and registration"
+    },
+    {
+      "name": "nameChangeEvidence",
+      "label": "Evidence of name change since birth",
+      "type": "file",
+      "required": false,
+      "description": "Required only if the name you are applying under differs from the name on birthOrAdoptionCertificate: a marriage or civil partnership certificate, deed poll, or statutory declaration.",
+      "sourceRef": "What documents you need to apply — name changes"
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Apply online — your details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First and middle names",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Apply online — your details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD.",
+      "sourceRef": "Apply online — your details"
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Used for application status updates and to send the identity confirmer their instructions.",
+      "sourceRef": "Apply online — contact details",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Address — street address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Apply online — your details",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "addressTown",
+      "label": "Address — town or city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Apply online — your details",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "postcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. UK postcode, e.g. SW1A 1AA.",
+      "sourceRef": "Apply online — your details",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "photoFile",
+      "label": "Digital photo",
+      "type": "file",
+      "required": true,
+      "description": "A digital photo meeting the published passport photo rules, uploaded as part of the online application.",
+      "sourceRef": "Apply online — what you need"
+    },
+    {
+      "name": "identityConfirmerFullName",
+      "label": "Identity confirmer — full name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The person who will confirm the applicant's identity online after the application is submitted and paid for. Must have known the applicant personally for at least 2 years and be able to identify them from their photo; cannot be a relative by birth or marriage, a partner, or someone who lives at the same address as the applicant.",
+      "sourceRef": "Countersigning passport applications and photos — who can confirm identity",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "identityConfirmerPassportType",
+      "label": "Identity confirmer's passport",
+      "type": "enum",
+      "required": true,
+      "description": "british = a current British passport; irish = a current Irish passport. One of these is required when the identity confirmer lives in the UK, which is assumed for a first UK adult passport application. A broader set of nationalities is accepted only when the confirmer is resident overseas (out of scope for this document; see VERIFICATION.md).",
+      "sourceRef": "Countersigning passport applications and photos — passport requirement",
+      "validation": { "enum": ["british", "irish"] }
+    },
+    {
+      "name": "identityConfirmerPassportNumber",
+      "label": "Identity confirmer's passport number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Entered by the identity confirmer during their own online confirmation step, not by the applicant.",
+      "sourceRef": "Countersigning passport applications and photos — confirming identity online",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "productRequested",
+      "label": "What are you applying for?",
+      "type": "enum",
+      "required": true,
+      "description": "standard_passport = the standard 34-page passport; large_passport = the 50-page 'frequent traveller' passport, available at an additional fee under the Passport (Fees) Regulations 2022.",
+      "sourceRef": "Apply online — passport options",
+      "validation": { "enum": ["standard_passport", "large_passport"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "debit_or_credit_card is the only payment method the online service accepts. Current fees are published on the live source and are deliberately not encoded here.",
+      "sourceRef": "Apply online — payment",
+      "validation": { "enum": ["debit_or_credit_card"] }
+    }
+  ],
+  "steps": [
+    {
+      "id": "nationality_evidence",
+      "title": "Evidence of British nationality",
+      "fields": [
+        "nationalityEvidenceRoute",
+        "birthOrAdoptionCertificate",
+        "parentNationalityEvidenceParent",
+        "parentNationalityEvidenceType",
+        "parentsMarriageCertificate",
+        "grandparentEvidenceRequired",
+        "grandparentNationalityEvidence",
+        "naturalisationOrRegistrationCertificate",
+        "passportUsedToEnterUK",
+        "nameChangeEvidence"
+      ],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Your details",
+      "fields": ["lastName", "firstNames", "dateOfBirth", "email", "addressLine1", "addressTown", "postcode"],
+      "next": "identity_confirmation"
+    },
+    {
+      "id": "identity_confirmation",
+      "title": "Someone to confirm your identity",
+      "fields": ["identityConfirmerFullName", "identityConfirmerPassportType", "identityConfirmerPassportNumber"],
+      "next": "photo_and_payment"
+    },
+    {
+      "id": "photo_and_payment",
+      "title": "Photo, product, and payment",
+      "fields": ["photoFile", "productRequested", "paymentMethod"]
+    }
+  ]
+}
