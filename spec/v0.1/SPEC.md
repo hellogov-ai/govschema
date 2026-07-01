@@ -303,7 +303,7 @@ byte/media-type limits) is deferred to a later spec version (§12).
 
 When `type` is `enum`, `validation.enum` is a non-empty array of the allowed values.
 v0.1 lists **values only**; a human-facing label per value is not part of the v0.1
-field model — describe the choices in the field's `description` where needed.
+field model. Describe the choices in the field's `description` where needed.
 (Labelled options are a tracked v0.2 proposal,
 [GSP-0003](../proposals/0003-labelled-enum-options.md).)
 
