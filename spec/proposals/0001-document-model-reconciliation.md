@@ -38,7 +38,7 @@ This must be resolved before any schema is published externally, because the
 points of disagreement (identifier format, member names, file naming) are
 **one-way doors**: consumers will hard-code them. This proposal inventories the
 divergence, lays out the two ways to resolve it, and recommends one. It does not
-make the decision — that is reserved for the Founding Engineer.
+make the decision; that is reserved for the Founding Engineer.
 
 ## 2. The two models
 
@@ -106,7 +106,7 @@ Keep Model A. Reconcile the two outliers down to it:
 *Pros:* smallest stable core; matches the already-shipped reference schemas, CI,
 and the three docs that already describe Model A; lowest churn; nothing is lost
 permanently (richer features become scheduled v0.2 work). *Cons:* DS-82 loses
-fidelity in v0.1 — conditional branching and nested address become flat fields +
+fidelity in v0.1: conditional branching and nested address become flat fields +
 prose; expressiveness real forms need waits for v0.2.
 
 ### Option B — adopt the rich model as canonical v0.1
@@ -142,7 +142,7 @@ Reasoning, by engineering lens:
 - **Backward compatibility / founding a standard.** A v0.1 standard should ship
   the smallest core it can commit to. Conditional flow, nested fields, and a
   richer constraint vocabulary are valuable but are exactly the surface most
-  likely to change — SPEC.md §12 already lists several as "open questions for
+  likely to change. SPEC.md §12 already lists several as "open questions for
   v0.2." Shipping them as proposals, not as v0.1 normative text, keeps the first
   stable line small.
 - **Source-of-truth fidelity (the carry-over).** The one place Option A loses

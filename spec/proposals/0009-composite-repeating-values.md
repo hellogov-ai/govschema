@@ -119,8 +119,8 @@ load-bearing and cannot be walked back without a MAJOR break. It also reopens tw
 settled invariants — §10 rule 3 (name uniqueness) and rule 4 (flow reference
 integrity) — and couples to the still-unaccepted conditional-flow model
 (GSP-0004). This is the **single biggest model change** of the GOV-61 set; per the
-Founding Engineer's disposition it **must not be folded into v0.2 casually** —
-the CEO is asked to weigh the meta-schema shape (recursion + addressing) and the
+Founding Engineer's disposition it **must not be folded into v0.2 casually**.
+The CEO is asked to weigh the meta-schema shape (recursion + addressing) and the
 flatten-vs-nest posture specifically before acceptance.
 
 ## Open questions

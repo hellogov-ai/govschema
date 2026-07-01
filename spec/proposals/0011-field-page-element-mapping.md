@@ -55,7 +55,7 @@ registry/<id>/<edition>/<version>/mapping.json   # time-versioned forms (§5.7, 
 ```
 
 The `<id>`, `<edition>`, and `<version>` segments are exactly the ones already
-governing the sibling `schema.json` under the same directory — `mapping.json`
+governing the sibling `schema.json` under the same directory. `mapping.json`
 never introduces its own versioning axis; it always describes the schema
 version it sits beside.
 
@@ -123,7 +123,7 @@ version it sits beside.
   same way — as a normative, non-JSON-Schema-expressible rule, checked by
   tooling rather than the meta-schema alone.
 - `mapping.json` MAY omit fields that have no stable page presence (e.g. a field
-  only ever set via conditional client-side logic with no visible control) — the
+  only ever set via conditional client-side logic with no visible control). The
   reverse direction (every `mapping.json` field name exists in `schema.json`) is
   the integrity rule; the converse (every schema field has a mapping entry) is
   not required, since coverage may be partial.
@@ -186,7 +186,7 @@ plausible **proving step** before committing to this GSP's companion-file shape:
 a per-field `extensions.org.govschema.locator` hint could pilot the locator
 concept on one or two reference schemas today, entirely inside the existing
 `extensions` proving ground, with no new file convention and no registry-shape
-change. That pilot would be reversible in a way a new artifact type is not —
+change. That pilot would be reversible in a way a new artifact type is not:
 `extensions` data can be dropped without consequence, per GSP-0010's own
 design.
 
