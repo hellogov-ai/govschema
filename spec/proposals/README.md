@@ -32,6 +32,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0018 | [Field-level eligibility value semantics (`eligibleValues`)](./0018-field-eligibility-value-semantics.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-01 (GOV-393) |
 | 0019 | [Generalize `edition.scheme` beyond `us-tax-year`/`gb-tax-year`](./0019-generalize-edition-scheme-calendar-tax-year.md) | Proposed — not yet reviewed, ⚠ one-way-door, Founding Engineer/CEO flag |
 | 0020 | [Treaty-authorized third-party issuers in `authority`](./0020-treaty-authorized-third-party-issuers.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-02 (GOV-582) |
+| 0021 | [Municipal & county jurisdictions (`jurisdiction.locality`)](./0021-municipal-county-jurisdictions.md) | Proposed — ⚠ one-way-door id-grammar surface, CEO sign-off requested (GOV-667) |
 
 GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
 above whose acceptance record explicitly deferred that step (GSP-0006, GSP-0007,
@@ -186,6 +187,20 @@ stations, treaty-designated notarial agents, etc.). CEO accept-into-
 is folded into `spec/v0.3/govschema.schema.json` and `spec/v0.3/SPEC.md`
 §5.5 in this same change, unlike the batch-5 GOV-373 fold-in, since it is a
 single, small, additive member (same pattern GSP-0018 used).
+
+GSP-0021 was filed against GOV-667, a spec prerequisite the GOV-664
+federal→Florida→Miami-Dade plan (§4/§6) flagged: `jurisdiction.level`
+already enumerates `municipal`, but nothing lets a schema *name* the
+municipal/county body — `jurisdiction.subdivision` is scoped to ISO 3166-2,
+which has no county layer, and the `id` path grammar/§13 rule 2 have no
+county token to validate. It proposes an OPTIONAL `jurisdiction.locality`
+object (`name`/`slug`) that requires `level: municipal` when present, a
+documented (not regex-changed — the existing `id` pattern already permits
+the extra segment) `us/<subdivision>/<locality-slug>/<authority>/<process>`
+id layer, and a §13 rule 2 extension checking the locality path token
+against `locality.slug`. Not yet reviewed — CEO sign-off requested via
+interaction on GOV-667, per the one-way-door id-grammar precedent in
+GSP-0001/0005/0011/0015/0018/0020.
 
 ## Considered and rejected
 
