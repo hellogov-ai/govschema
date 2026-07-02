@@ -1,0 +1,819 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/ca/sos/voter-registration",
+  "version": "1.0.0",
+  "title": "California Voter Registration",
+  "description": "Register to vote, update an existing voter registration record, or pre-register (ages 16-17) in California, administered by the California Secretary of State through the state's online voter registration system (covr.sos.ca.gov, publicly linked from registertovote.ca.gov). Unlike au/aec/voter-enrolment, which models a single national electoral roll, voter registration in the United States is state-administered — this document models California's own state-run process specifically, not a national US process. Models the wizard's classification/eligibility step, personal information (name, date and place of birth, identity-proofing via a California driver license/ID number or the last four digits of a Social Security number, ethnicity, and language preference), home and mailing address (including a no-street-address branch for applicants without a conventional street address), a previous-registration/name-change recall section, political party preference, election-materials mailing preferences, poll-worker volunteering, accessibility, and third-party-assistance disclosure, ending with a penalty-of-perjury affirmation. Does not model the confirmation/electronic-signature step that follows the application review page, and does not submit an application; the live covr.sos.ca.gov source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-CA"
+  },
+  "authority": {
+    "name": "California Secretary of State",
+    "abbreviation": "SOS",
+    "url": "https://www.sos.ca.gov/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://registertovote.ca.gov/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "California Online Voter Registration wizard (live application at covr.sos.ca.gov, linked from registertovote.ca.gov's 'Register to Vote Now'); Steps 1-4 of 5 (Classification, Personal Information, Additional Information/Consent, Review) walked live via direct HTTP form submission with mock data, stopping before the final Submit action on the Review page."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-02",
+    "notes": "Source-derived reference schema authored by directly operating the live covr.sos.ca.gov wizard: fetched Step 1 (Classification) live, then walked Steps 2 (Personal Information — a single large page combining Qualifications, Personal Information, Home and Mailing Address, and Political Party Preference field groups), 3 (Additional Information/Consent), and 4 (Review, a read-only summary of the submitted data), each by POSTing well-formed form data (with the page's own anti-forgery token) directly to the wizard's /en/OnlineVoterRegistration/PostForm endpoint and reading the server's own re-rendered HTML — not a static-PDF fallback, and not a headless browser, but the same practical effect: exercising the real, live, server-validated wizard end-to-end. Stopped at the Review page without pressing the final 'Submit' action, so no real application was filed. Status remains 'draft'. See VERIFICATION.md for the full walkthrough record, the field-by-field source mapping, and an honestly-flagged server-validation quirk found along the way."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "classification",
+      "label": "Classification",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Which of seven eligibility categories the applicant registers under. This schema models the domestic in-state civilian path (us_citizen_ca_resident) in full; the six UOCAVA/military/overseas categories share this same classification field and wizard, but were not walked in this verification pass and may surface additional fields (e.g. an overseas mailing address, unit/rank) not modeled here — see VERIFICATION.md 'Out of scope'.",
+      "sourceRef": "Step 1 'Classification' — 'I am one of the following', field ClassificationType",
+      "validation": {
+        "enum": [
+          "us_citizen_ca_resident",
+          "active_duty_military_or_merchant_marine_outside_county",
+          "eligible_spouse_or_dependent_of_active_duty_outside_county",
+          "activated_national_guard_outside_county",
+          "us_citizen_temporarily_residing_outside_us",
+          "us_citizen_indefinitely_residing_outside_us",
+          "us_citizen_never_resided_in_us"
+        ]
+      }
+    },
+    {
+      "name": "isUSCitizen",
+      "label": "I am a U.S. citizen and resident of California.",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Eligibility attestation checkbox; must be checked to proceed.",
+      "sourceRef": "Step 2 'Qualifications', field IsUSCitizen"
+    },
+    {
+      "name": "registrationChoice",
+      "label": "Registration/pre-registration",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Whether the applicant is registering as an adult or pre-registering as a 16- or 17-year-old (California allows pre-registration from age 16, with automatic activation to a registered voter at 18). The wizard's own date-of-birth validator enforces a minimum age of 16 regardless of this choice.",
+      "sourceRef": "Step 2 'Qualifications', field RegistrationChoice — 'I am 18 or older.' / 'I am 16 or 17 and want to pre-register.'",
+      "validation": {
+        "enum": ["adult_18_or_older", "pre_register_16_or_17"]
+      }
+    },
+    {
+      "name": "prefix",
+      "label": "Prefix",
+      "type": "enum",
+      "required": false,
+      "description": "Optional name prefix.",
+      "sourceRef": "Step 2 'Personal Information' — 'Legal Name', field Prefix",
+      "validation": {
+        "enum": ["mr", "mrs", "miss", "ms"]
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Applicant's legal first name.",
+      "sourceRef": "Step 2 'Personal Information' — 'Legal Name', field FirstName",
+      "validation": { "minLength": 1, "maxLength": 32, "pattern": "^[A-Za-z0-9'#,/.@ -]*$" }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Applicant's legal middle name.",
+      "sourceRef": "Step 2 'Personal Information' — 'Legal Name', field MiddleName",
+      "validation": { "maxLength": 32, "pattern": "^[A-Za-z0-9'#,/.@ -]*$" }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Applicant's legal last name.",
+      "sourceRef": "Step 2 'Personal Information' — 'Legal Name', field LastName",
+      "validation": { "minLength": 1, "maxLength": 32, "pattern": "^[A-Za-z0-9'#,/.@ -]*$" }
+    },
+    {
+      "name": "suffix",
+      "label": "Suffix",
+      "type": "enum",
+      "required": false,
+      "description": "Optional name suffix.",
+      "sourceRef": "Step 2 'Personal Information' — 'Legal Name', field Suffix",
+      "validation": {
+        "enum": ["jr", "sr", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"]
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "Optional contact email address. The wizard's own client-side script compares this against confirmEmailAddress for a match, but this is not enforced by the server model unconditionally; a consumer SHOULD still ensure the two match when both are supplied.",
+      "sourceRef": "Step 2 'Personal Information', field EmailAddress",
+      "validation": { "maxLength": 100, "pattern": "^[_a-zA-Z0-9-]+([.+][_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9]{2,24})$" }
+    },
+    {
+      "name": "confirmEmailAddress",
+      "label": "Confirm email",
+      "type": "string",
+      "required": false,
+      "description": "Repeat of emailAddress for confirmation; see emailAddress's description.",
+      "sourceRef": "Step 2 'Personal Information', field ConfirmEmail",
+      "validation": { "maxLength": 100, "pattern": "^[_a-zA-Z0-9-]+([.+][_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9]{2,24})$" }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone number",
+      "type": "string",
+      "required": false,
+      "description": "Optional daytime phone number, digits only. The form notes phone numbers are posted at polling places on election day.",
+      "sourceRef": "Step 2 'Personal Information', field PhoneNumber",
+      "validation": { "maxLength": 10, "pattern": "^[0-9]{1,10}$" }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Full date of birth. The source form renders this as three separate month/day/year dropdowns/box (fields MonthOfBirth, DayOfBirth, YearOfBirth), collapsed here to one field per this registry's comb-field convention. The wizard's own validator enforces a minimum age of 16 as of the submission date (observed acceptable birth-year range: 1901-2010 against a 2026-07-02 access date).",
+      "sourceRef": "Step 2 'Personal Information', fields MonthOfBirth, DayOfBirth, YearOfBirth"
+    },
+    {
+      "name": "placeOfBirthType",
+      "label": "Place of Birth",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the applicant's place of birth is a U.S. state/territory or a foreign country/region. Presented on the form with a conditional-required visual indicator, but no server-side required validation was observed when this field and its dependents (statePlaceOfBirth, countryPlaceOfBirth) were left entirely blank.",
+      "sourceRef": "Step 2 'Personal Information' — 'Place of Birth', field PlaceOfBirthType",
+      "validation": {
+        "enum": ["us_state_or_territory", "foreign_country"]
+      }
+    },
+    {
+      "name": "statePlaceOfBirth",
+      "label": "Place of birth — U.S. state/territory",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "placeOfBirthType", "equals": "us_state_or_territory" },
+      "description": "U.S. state or territory of birth. The source presents a fixed 59-item dropdown (50 states, D.C., and 8 territories); modelled as free text per this registry's convention for large geographic dropdowns (e.g. us/dos/immigrant-visa-ds260's state/country fields) rather than embedding the full option list as an enum.",
+      "sourceRef": "Step 2 'Personal Information', field StatePlaceOfBirthId",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "countryPlaceOfBirth",
+      "label": "Place of birth — foreign country/region",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "placeOfBirthType", "equals": "foreign_country" },
+      "description": "Foreign country or region of birth. The source presents a fixed ~200-item country dropdown; modelled as free text per this registry's large-geographic-dropdown convention.",
+      "sourceRef": "Step 2 'Personal Information', field CountryPlaceOfBirthId",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "californiaId",
+      "label": "California driver license or California identification card number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "hasNoCaliforniaId", "notEquals": true },
+      "description": "One letter followed by seven numeric digits. Required unless hasNoCaliforniaId is checked. New voters who supply neither this nor a Social Security number may have to show identification or proof of residency the first time they vote.",
+      "sourceRef": "Step 2 'Personal Information' — 'Identification', field CaliforniaID",
+      "validation": { "pattern": "^[a-zA-Z]\\d{7}$" }
+    },
+    {
+      "name": "hasNoCaliforniaId",
+      "label": "I do not have a California driver license or California identification card.",
+      "type": "boolean",
+      "required": false,
+      "description": "Gates californiaId's requiredness. Checking this and hasNoSsn together is accepted by the wizard (the source site states such applicants 'may still apply but must take additional steps to complete your voter registration').",
+      "sourceRef": "Step 2 'Personal Information' — 'Identification', field HasNoCaliforniaID"
+    },
+    {
+      "name": "ssnLast4",
+      "label": "Social security number (last 4 numbers)",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "hasNoSsn", "notEquals": true },
+      "description": "Last four digits only. Required unless hasNoSsn is checked.",
+      "sourceRef": "Step 2 'Personal Information' — 'Identification', field SSN4",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "hasNoSsn",
+      "label": "I do not have a social security number.",
+      "type": "boolean",
+      "required": false,
+      "description": "Gates ssnLast4's requiredness. See californiaId/hasNoCaliforniaId's description for the combined no-ID, no-SSN case.",
+      "sourceRef": "Step 2 'Personal Information' — 'Identification', field HasNoSSN"
+    },
+    {
+      "name": "ethnicity",
+      "label": "My ethnicity/race is",
+      "type": "enum",
+      "required": false,
+      "description": "Optional self-reported ethnicity/race, collected for federal Voting Rights Act compliance reporting (not printed on this page, but standard practice for this data element).",
+      "sourceRef": "Step 2 'Personal Information', field EthnicityId",
+      "validation": {
+        "enum": [
+          "american_indian_or_alaskan_native",
+          "asian_or_pacific_islander",
+          "black_not_of_hispanic_origin",
+          "hispanic",
+          "multi_racial",
+          "white_not_of_hispanic_origin",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "languagePreference",
+      "label": "My language preference for receiving election materials is",
+      "type": "enum",
+      "required": false,
+      "description": "Preferred language for election materials.",
+      "sourceRef": "Step 2 'Personal Information', field LanguagePreferenceId",
+      "validation": {
+        "enum": ["english", "chinese", "japanese", "korean", "spanish", "tagalog", "vietnamese", "hindi", "khmer", "thai", "other"]
+      }
+    },
+    {
+      "name": "otherLanguage",
+      "label": "Other Language",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "languagePreference", "equals": "other" },
+      "visibleWhen": { "field": "languagePreference", "equals": "other" },
+      "description": "Free-text language name, collected when languagePreference is 'other'. Modelled here per the field's evident intent; the live server was observed to reject a submission that left this field blank even when languagePreference was 'english', which this schema treats as a form implementation quirk rather than the field's real requiredness rule — see VERIFICATION.md.",
+      "sourceRef": "Step 2 'Personal Information', field OtherLanguage",
+      "validation": { "maxLength": 50, "pattern": "^[A-Za-z]*( ?)[A-Za-z]*$" }
+    },
+    {
+      "name": "homeAddressChoice",
+      "label": "Home Address",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant has a conventional street address or must instead describe their residence (e.g. an unhoused applicant using cross-streets).",
+      "sourceRef": "Step 2 'Home and Mailing Address', field HomeAddressChoice — 'I have a street address.' / 'I do not have a street address.'",
+      "validation": {
+        "enum": ["has_street_address", "no_street_address"]
+      }
+    },
+    {
+      "name": "homeStreetAddress",
+      "label": "Street address",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "homeAddressChoice", "equals": "has_street_address" },
+      "visibleWhen": { "field": "homeAddressChoice", "equals": "has_street_address" },
+      "description": "Residential street address; not a P.O. Box or business address. Must clearly identify the residence, per the form.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field Home.StreetAddress",
+      "validation": { "maxLength": 64, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "homeApartmentOrUnitNumber",
+      "label": "Apartment or unit number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "homeAddressChoice", "equals": "has_street_address" },
+      "description": "Optional apartment or unit number for the home street address.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field Home.ApartmentLotNumber",
+      "validation": { "maxLength": 12, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "homeCity",
+      "label": "City",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "homeAddressChoice", "equals": "has_street_address" },
+      "visibleWhen": { "field": "homeAddressChoice", "equals": "has_street_address" },
+      "description": "City of the home street address. The home address state is fixed to California by the source form and is not itself a collected field.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field Home.City",
+      "validation": { "maxLength": 40, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "homeZip",
+      "label": "Zip",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "homeAddressChoice", "equals": "has_street_address" },
+      "visibleWhen": { "field": "homeAddressChoice", "equals": "has_street_address" },
+      "description": "5-digit ZIP code of the home street address; the source form range-validates it between 90001 and 96162 (California's ZIP code range).",
+      "sourceRef": "Step 2 'Home and Mailing Address', field Home.Zip",
+      "validation": { "pattern": "^9[0-6][0-9]{3}$" }
+    },
+    {
+      "name": "homeNoStreetAddressDescription",
+      "label": "Describe where you live including cross streets, Route, N, S, E, W",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "homeAddressChoice", "equals": "no_street_address" },
+      "visibleWhen": { "field": "homeAddressChoice", "equals": "no_street_address" },
+      "description": "Free-text description of the applicant's residence location, used instead of a conventional street address.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field Home.NoStreetAddress",
+      "validation": { "maxLength": 64, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "homeNoStreetAddressCity",
+      "label": "City",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "homeAddressChoice", "equals": "no_street_address" },
+      "visibleWhen": { "field": "homeAddressChoice", "equals": "no_street_address" },
+      "description": "City corresponding to the no-street-address description.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field Home.NoAddressCity",
+      "validation": { "maxLength": 40, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "homeCounty",
+      "label": "County",
+      "type": "string",
+      "required": true,
+      "description": "County of residence. The source presents a fixed 58-item dropdown (California's own counties); modelled as free text per this registry's large-geographic-dropdown convention rather than embedding the full option list as an enum.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field Home.CountyId",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "isMailingAddressDifferent",
+      "label": "My mailing address is different from my home address.",
+      "type": "boolean",
+      "required": false,
+      "description": "Gates the mailing-address fields; leave unchecked if mail should go to the home address.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field IsMailingAddressDifferent"
+    },
+    {
+      "name": "mailingStreetAddress",
+      "label": "Street address or P.O. Box",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "visibleWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "description": "Mailing street address or P.O. Box, if different from the home address. Unlike the home address, a P.O. Box is accepted here.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Mailing Address', field Mailing.StreetAddress",
+      "validation": { "maxLength": 64, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "mailingApartmentOrUnitNumber",
+      "label": "Apartment or unit number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "description": "Optional apartment or unit number for the mailing address.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Mailing Address', field Mailing.ApartmentLotNumber",
+      "validation": { "maxLength": 12, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "mailingCity",
+      "label": "City",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "visibleWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "description": "City of the mailing address.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Mailing Address', field Mailing.City",
+      "validation": { "maxLength": 40, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "mailingState",
+      "label": "State",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "visibleWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "description": "State of the mailing address (not fixed to California, unlike the home address). The source presents the same fixed 59-item state/territory dropdown as statePlaceOfBirth; modelled as free text for the same reason.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Mailing Address', field Mailing.StateId",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "mailingZip",
+      "label": "Zip",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "visibleWhen": { "field": "isMailingAddressDifferent", "equals": true },
+      "description": "ZIP code of the mailing address; unlike homeZip, not range-restricted to California.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Mailing Address', field Mailing.Zip",
+      "validation": { "maxLength": 10, "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "isPreviouslyRegistered",
+      "label": "I was previously registered or pre-registered to vote.",
+      "type": "boolean",
+      "required": false,
+      "description": "Gates the previous-registration recall fields below, used to help election officials locate an existing record (e.g. after a name or address change). None of the previous-registration fields are themselves server-enforced as required even when this is checked — they help officials find a prior record but are not a hard prerequisite.",
+      "sourceRef": "Step 2 'Home and Mailing Address', field IsPreviouslyRegistered"
+    },
+    {
+      "name": "previousFirstName",
+      "label": "First name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "First name the applicant was previously registered under, if known.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.FirstName",
+      "validation": { "maxLength": 32, "pattern": "^[A-Za-z0-9'#,/.@ -]*$" }
+    },
+    {
+      "name": "previousMiddleName",
+      "label": "Middle name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "Middle name the applicant was previously registered under, if known.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.MiddleName",
+      "validation": { "maxLength": 32, "pattern": "^[A-Za-z0-9'#,/.@ -]*$" }
+    },
+    {
+      "name": "previousLastName",
+      "label": "Last name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "Last name the applicant was previously registered under, if known.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.LastName",
+      "validation": { "maxLength": 32, "pattern": "^[A-Za-z0-9'#,/.@ -]*$" }
+    },
+    {
+      "name": "previousStreetAddress",
+      "label": "Street address",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "Street address the applicant was previously registered at, if known.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.StreetAddress",
+      "validation": { "maxLength": 28, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "previousApartmentOrUnitNumber",
+      "label": "Apartment or unit number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "Apartment or unit number of the previous address, if known.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.ApartmentLotNumber",
+      "validation": { "maxLength": 12, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "previousCity",
+      "label": "City",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "City of the previous address, if known.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.City",
+      "validation": { "maxLength": 40, "pattern": "^[A-Za-z0-9#,-/. ]*$" }
+    },
+    {
+      "name": "previousState",
+      "label": "State",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "State of the previous address, if known. Presents the same fixed 59-item dropdown as statePlaceOfBirth/mailingState; modelled as free text for the same reason.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.StateId",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousZip",
+      "label": "Zip",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "ZIP code of the previous address, if known.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.Zip",
+      "validation": { "maxLength": 10, "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "previousPoliticalParty",
+      "label": "Previous political party preference (if any)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "isPreviouslyRegistered", "equals": true },
+      "description": "Free-text previous political party preference, if known — distinct from the current politicalParty field below, which uses a fixed, closed list.",
+      "sourceRef": "Step 2 'Home and Mailing Address' — 'Previous Registration', field Previous.PoliticalParty",
+      "validation": { "maxLength": 32, "pattern": "^[0-9a-zA-Z'#,\\-/_ .@ ]+$" }
+    },
+    {
+      "name": "politicalPartyPreferenceChoice",
+      "label": "Do you want to choose a political party preference?",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant registers with a party preference or as No Party/None. Choosing No Party/None may restrict which parties' candidates the voter can select in a primary election for U.S. President, or for a party's central committee.",
+      "sourceRef": "Step 2 'Political Party Preference', field PoliticalPreferenceType",
+      "validation": {
+        "enum": ["has_preference", "no_party_or_none"]
+      }
+    },
+    {
+      "name": "politicalParty",
+      "label": "Yes, my political party preference is",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "politicalPartyPreferenceChoice", "equals": "has_preference" },
+      "visibleWhen": { "field": "politicalPartyPreferenceChoice", "equals": "has_preference" },
+      "description": "Selected political party, when politicalPartyPreferenceChoice is has_preference.",
+      "sourceRef": "Step 2 'Political Party Preference', field PoliticalPartyId",
+      "validation": {
+        "enum": ["american_independent_party", "democratic_party", "green_party", "libertarian_party", "peace_and_freedom_party", "republican_party", "other_party"]
+      }
+    },
+    {
+      "name": "otherPoliticalParty",
+      "label": "Other (specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "politicalParty", "equals": "other_party" },
+      "visibleWhen": { "field": "politicalParty", "equals": "other_party" },
+      "description": "Free-text party name, when politicalParty is other_party.",
+      "sourceRef": "Step 2 'Political Party Preference', field OtherPoliticalParty",
+      "validation": { "maxLength": 50, "pattern": "^[0-9a-zA-Z'#,\\-/_ .@ ]+$" }
+    },
+    {
+      "name": "wantsStateVoterGuideByMail",
+      "label": "I want to get my state voter information guide by mail before each statewide election",
+      "type": "boolean",
+      "required": true,
+      "description": "If everyone in the applicant's household opts out, no state voter information guide is mailed to that address; the guide remains available online, and any other household member's opt-in still results in a mailed copy for the address.",
+      "sourceRef": "Step 3 'State Voter Information Guide', field IsVIG"
+    },
+    {
+      "name": "wantsCountyVoterGuideByMail",
+      "label": "I want to get my county voter information guide by mail before each election.",
+      "type": "boolean",
+      "required": true,
+      "description": "Opting out results in electronic notification instead, where the applicant's county supports it; otherwise the county voter information guide is mailed regardless.",
+      "sourceRef": "Step 3 'County Voter Information Guide', field IsSampleBallot"
+    },
+    {
+      "name": "electronicNotificationEmail",
+      "label": "Electronic notification email address",
+      "type": "string",
+      "required": false,
+      "description": "Optional email address for electronic notification when a county voter information guide is available online instead of by mail.",
+      "sourceRef": "Step 3 'Electronic Notification by email', field NotificationEmailAddress",
+      "validation": { "maxLength": 100, "pattern": "^[_a-zA-Z0-9-]+([.+][_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9]{2,24})$" }
+    },
+    {
+      "name": "confirmElectronicNotificationEmail",
+      "label": "Confirm electronic notification email",
+      "type": "string",
+      "required": false,
+      "description": "Repeat of electronicNotificationEmail for confirmation.",
+      "sourceRef": "Step 3 'Electronic Notification by email', field NotificationConfirmEmail",
+      "validation": { "maxLength": 100, "pattern": "^[_a-zA-Z0-9-]+([.+][_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9]{2,24})$" }
+    },
+    {
+      "name": "wantsToBePollWorker",
+      "label": "I want to be a poll worker and assist voters on election day.",
+      "type": "boolean",
+      "required": false,
+      "description": "Gates spokenLanguages and canProvidePollingPlace.",
+      "sourceRef": "Step 3 'Volunteer on Election Day', field CanBePollWorker"
+    },
+    {
+      "name": "spokenLanguages",
+      "label": "The languages I speak are",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "wantsToBePollWorker", "equals": true },
+      "description": "Select-all-that-apply. Modelled as a comma-separated list of: english, chinese, japanese, korean, spanish, tagalog, vietnamese, hindi, khmer, thai, other — the same multi-select-as-string treatment as us/uscis/travel-document-i131's race field, pending the GSP-0009 repeating/multi-select gap.",
+      "sourceRef": "Step 3 'Volunteer on Election Day', field SpokenLanguageIds",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "otherSpokenLanguage",
+      "label": "Other spoken language",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "wantsToBePollWorker", "equals": true },
+      "description": "Free-text language name, meaningful only when spokenLanguages includes 'other' — a sub-condition on a comma-joined field the shared Condition grammar cannot express directly, so it is documented here in prose rather than encoded (the same class of gap as au/aec/voter-enrolment's citizenshipCertificateNumber exemption).",
+      "sourceRef": "Step 3 'Volunteer on Election Day', field OtherSpokenLanguages",
+      "validation": { "maxLength": 25 }
+    },
+    {
+      "name": "canProvidePollingPlace",
+      "label": "I can provide a polling place on election day.",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "wantsToBePollWorker", "equals": true },
+      "description": "Offer of a physical location to serve as a polling place.",
+      "sourceRef": "Step 3 'Volunteer on Election Day', field CanProvidePollingPlace"
+    },
+    {
+      "name": "wantsAccessibleMaterialFormat",
+      "label": "I want voting materials in an accessible format",
+      "type": "boolean",
+      "required": false,
+      "description": "Request for voting materials in an accessible format.",
+      "sourceRef": "Step 3 'Accessibility', field IsAccessibleMaterialRequired"
+    },
+    {
+      "name": "receivedThirdPartyHelp",
+      "label": "Did someone help you fill out this form?",
+      "type": "boolean",
+      "required": false,
+      "description": "Gates the third-party helper fields. The form's own instructions state the helper 'must fill out the questions below' if yes, but no server-side required validation was observed on the helper fields themselves.",
+      "sourceRef": "Step 3 'Help Filling Out This Form', field ReceivedThirdPartyHelp.ReceivedThirdPartyHelp"
+    },
+    {
+      "name": "thirdPartyHelperName",
+      "label": "Name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "receivedThirdPartyHelp", "equals": true },
+      "description": "Name of the person who helped complete the form. Personal information of a third party; handle as sensitive data.",
+      "sourceRef": "Step 3 'Help Filling Out This Form', field ReceivedThirdPartyHelp.ThirdPartyPersonName",
+      "validation": { "maxLength": 96 }
+    },
+    {
+      "name": "thirdPartyHelperAddress",
+      "label": "Address",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "receivedThirdPartyHelp", "equals": true },
+      "description": "Address of the person who helped complete the form. Personal information of a third party; handle as sensitive data.",
+      "sourceRef": "Step 3 'Help Filling Out This Form', field ReceivedThirdPartyHelp.ThirdPartyAddress",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "thirdPartyHelperPhone",
+      "label": "Phone Number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "receivedThirdPartyHelp", "equals": true },
+      "description": "Phone number of the person who helped complete the form.",
+      "sourceRef": "Step 3 'Help Filling Out This Form', field ReceivedThirdPartyHelp.ThirdPartyPhone",
+      "validation": { "maxLength": 14 }
+    },
+    {
+      "name": "thirdPartyHelperOrganization",
+      "label": "Organization name and telephone number (if any)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "receivedThirdPartyHelp", "equals": true },
+      "description": "Organization the helper is affiliated with, if any, and its telephone number.",
+      "sourceRef": "Step 3 'Help Filling Out This Form', field ReceivedThirdPartyHelp.ThirdPartyOrganizationInfo",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "affirmation",
+      "label": "I declare under penalty of perjury under the laws of the State of California that: I am a U.S. citizen and a resident of California and at least 18 years old; I am not currently serving a state or federal prison term for the conviction of a felony; I am not currently found mentally incompetent to vote by a court; I understand that it is a crime to intentionally provide incorrect information on this form; the information on this form is true and correct.",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Final penalty-of-perjury affirmation and eligibility declaration; must be checked to submit. Applicants pre-registering at 16-17 are not yet held to the 'at least 18 years old' clause in practice, though the form presents one combined affirmation checkbox for both registrant and pre-registrant paths.",
+      "sourceRef": "Step 3 'Affirmation', field Affirmation"
+    }
+  ],
+  "steps": [
+    {
+      "id": "classification",
+      "title": "Classification",
+      "fields": ["classification"],
+      "next": "qualifications"
+    },
+    {
+      "id": "qualifications",
+      "title": "Qualifications",
+      "fields": ["isUSCitizen", "registrationChoice"],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal information",
+      "fields": [
+        "prefix",
+        "firstName",
+        "middleName",
+        "lastName",
+        "suffix",
+        "emailAddress",
+        "confirmEmailAddress",
+        "phoneNumber",
+        "dateOfBirth",
+        "placeOfBirthType",
+        "statePlaceOfBirth",
+        "countryPlaceOfBirth"
+      ],
+      "next": "identity_and_demographics"
+    },
+    {
+      "id": "identity_and_demographics",
+      "title": "Identification and demographics",
+      "fields": ["californiaId", "hasNoCaliforniaId", "ssnLast4", "hasNoSsn", "ethnicity", "languagePreference", "otherLanguage"],
+      "next": "home_and_mailing_address"
+    },
+    {
+      "id": "home_and_mailing_address",
+      "title": "Home and mailing address",
+      "fields": [
+        "homeAddressChoice",
+        "homeStreetAddress",
+        "homeApartmentOrUnitNumber",
+        "homeCity",
+        "homeZip",
+        "homeNoStreetAddressDescription",
+        "homeNoStreetAddressCity",
+        "homeCounty",
+        "isMailingAddressDifferent",
+        "mailingStreetAddress",
+        "mailingApartmentOrUnitNumber",
+        "mailingCity",
+        "mailingState",
+        "mailingZip"
+      ],
+      "next": "prior_registration"
+    },
+    {
+      "id": "prior_registration",
+      "title": "Previous registration",
+      "fields": [
+        "isPreviouslyRegistered",
+        "previousFirstName",
+        "previousMiddleName",
+        "previousLastName",
+        "previousStreetAddress",
+        "previousApartmentOrUnitNumber",
+        "previousCity",
+        "previousState",
+        "previousZip",
+        "previousPoliticalParty"
+      ],
+      "next": "political_party_preference"
+    },
+    {
+      "id": "political_party_preference",
+      "title": "Political party preference",
+      "fields": ["politicalPartyPreferenceChoice", "politicalParty", "otherPoliticalParty"],
+      "next": "election_materials"
+    },
+    {
+      "id": "election_materials",
+      "title": "Election materials",
+      "fields": ["wantsStateVoterGuideByMail", "wantsCountyVoterGuideByMail", "electronicNotificationEmail", "confirmElectronicNotificationEmail"],
+      "next": "volunteer_and_accessibility"
+    },
+    {
+      "id": "volunteer_and_accessibility",
+      "title": "Volunteer on election day and accessibility",
+      "fields": ["wantsToBePollWorker", "spokenLanguages", "otherSpokenLanguage", "canProvidePollingPlace", "wantsAccessibleMaterialFormat"],
+      "next": "third_party_assistance"
+    },
+    {
+      "id": "third_party_assistance",
+      "title": "Help filling out this form",
+      "fields": ["receivedThirdPartyHelp", "thirdPartyHelperName", "thirdPartyHelperAddress", "thirdPartyHelperPhone", "thirdPartyHelperOrganization"],
+      "next": "affirmation"
+    },
+    {
+      "id": "affirmation",
+      "title": "Affirmation",
+      "fields": ["affirmation"]
+    }
+  ]
+}
