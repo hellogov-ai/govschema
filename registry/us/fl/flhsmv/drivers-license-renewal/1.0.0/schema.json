@@ -1,0 +1,257 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/flhsmv/drivers-license-renewal",
+  "version": "1.0.0",
+  "title": "Florida Driver License Renewal",
+  "description": "Renew a standard (non-commercial) Florida driver license through the Florida Department of Highway Safety and Motor Vehicles (FLHSMV), either online at MyDMV Portal or in person at a driver license service center, on behalf of a customer whose current credential is due for its statutory eight-year renewal. It pairs with us/ca/dmv/drivers-license-renewal and us/ny/dmv/drivers-license-renewal, gb/dvla/driving-licence-renewal-photocard, ie/dttas/driving-licence-renewal, ca/on/mto/drivers-licence-renewal, nz/nzta/drivers-licence-renewal, and au/nsw/service-nsw/driver-licence-renewal to show the same process across eight jurisdictions. It models only the standard driver-license renewal path: it does not model an ID card renewal (a distinct FLHSMV process with its own 12-month renewal window), a first-time Florida driver license or ID card application, the separate 'update the address on your driver license or ID card' MyDMV Portal service (FLHSMV lists it as a distinct service from 'renew a driver license', not a bundled renewal field), or a lost/stolen credential replacement. It also does not model the authenticated MyDMV Portal / GoRenew.com online-renewal transaction screen-by-screen, which sits behind a client-rendered login gate with no fields observable pre-authentication (confirmed by rendering the portal's login page with a headless browser — see VERIFICATION.md); the online-vs-in-office branching and its trigger conditions are instead sourced from FLHSMV's own published guidance, which is authoritative regardless of the portal's specific screen flow. It does not submit the renewal; the live flhsmv.gov source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-FL"
+  },
+  "authority": {
+    "name": "Florida Department of Highway Safety and Motor Vehicles",
+    "abbreviation": "FLHSMV",
+    "url": "https://www.flhsmv.gov"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.flhsmv.gov/driver-licenses-id-cards/renew-or-replace-your-florida-driver-license-or-id-card/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "FLHSMV 'Renew or Replace Your Florida Driver License or ID Card' guidance page. FLHSMV publishes no downloadable renewal application form for this transaction (unlike NY's MV-44); the online transaction itself runs inside the login-gated MyDMV Portal / GoRenew.com."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live flhsmv.gov 'Renew or Replace Your Florida Driver License or ID Card' guidance page (fetched 2026-07-02, raw HTML) and corroborated against FLHSMV's 2024-07-19 news release on the driver-license-number randomization change, which independently repeats the identical in-office trigger list verbatim. The MyDMV Portal login page (mydmvportal.flhsmv.gov/Home/en/Account/Landing) was rendered with a headless Chromium browser (Playwright) to confirm it exposes no renewal-transaction form fields pre-authentication — only a language selector and links to unauthenticated services (Driver License Check, Motor Vehicle Information Check, Express Motor Vehicle Renewal for registrations/permits). Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "credentialTypeRenewing",
+      "label": "Which credential are you renewing?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "FLHSMV renews both driver licenses and ID cards through the same MyDMV Portal and office process, but on different renewal windows (driver license up to 18 months before expiration; ID card up to 12 months before). Only 'driver_license' is in scope for this schema; an ID card renewal ends the flow.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Florida driver license holders may renew their credential up to 18 months in advance of the expiration date and ID card holders may renew 12 months in advance of the expiration date.'",
+      "validation": { "enum": ["driver_license", "id_card"] }
+    },
+    {
+      "name": "isFirstTimeFloridaCredential",
+      "label": "Is this your first Florida driver license or ID card, rather than a renewal?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "FLHSMV's own in-office trigger list includes 'a customer is getting a Florida driver license or ID card for the first time' alongside its other in-office-only triggers, but a first-time credential is a distinct issuance process, not a renewal of an existing one, so it is out of scope for this renewal schema regardless of channel. If true, the flow ends.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers must go into an office: ... If a customer is getting a Florida driver license or ID card for the first time.'"
+    },
+    {
+      "name": "floridaCredentialNumber",
+      "label": "Florida driver license number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The identifier on the applicant's current Florida driver license, used to identify the record being renewed. Not a literal field name quoted on the guidance page (FLHSMV publishes no renewal form to extract a field list from); modelled as a reasonable inference of what any renewal transaction must supply, the same discipline used for driverLicenseNumber in us/ca/dmv/drivers-license-renewal. Format (one letter followed by twelve digits) is independently corroborated by multiple secondary sources and by FLHSMV's own 2024-07-19 news release stating the credential-number format 'will remain the same' after its 2024 randomization change, but is not itself quoted verbatim on a first-party FLHSMV page reviewed in this session — see VERIFICATION.md.",
+      "sourceRef": "Current credential — driver license number (inferred; see description)",
+      "validation": { "pattern": "^[A-Z][0-9]{12}$" }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Your name as it appears on your current Florida driver license.",
+      "sourceRef": "Current credential — name (inferred; see floridaCredentialNumber description)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Current credential — name (inferred; see floridaCredentialNumber description)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Current credential — name (inferred; see floridaCredentialNumber description)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full ISO 8601 date, used together with last4SSN to verify the applicant's identity for the renewal.",
+      "sourceRef": "Current credential — date of birth (inferred; see floridaCredentialNumber description)"
+    },
+    {
+      "name": "last4SSN",
+      "label": "Last four digits of your Social Security number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "FLHSMV states it must verify the customer's Social Security number to process a renewal or replacement; if it is unable to verify, the customer must follow up with the Social Security Administration before the transaction can proceed.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'To renew or replace a credential online, the department must verify a customer's Social Security number. If the department is unable to verify, the customer must follow up with the Social Security Administration.'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "currentCredentialExpirationDate",
+      "label": "Current driver license expiration date",
+      "type": "date",
+      "required": true,
+      "description": "Full ISO 8601 date, printed on the current credential. Renewal is available up to 18 months before this date. This timing rule is recorded here but cannot be enforced as a schema-level constraint.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers must renew their Florida driver license or ID card every eight years. The expiration date is listed on the credential.' / 18-month renewal window"
+    },
+    {
+      "name": "usedOnlineConvenienceRenewalLastCycle",
+      "label": "Did you use the online convenience renewal service the last time you renewed?",
+      "type": "boolean",
+      "required": true,
+      "description": "FLHSMV offers online renewal only every other renewal period; a customer who renewed online last cycle must renew in an office this cycle. If true, renewalChannel must be in_office.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Florida offers an online convenience renewal service for customers every other renewal period.' / 'Customers must go into an office: If a customer used the online convenience service on their last renewal.'"
+    },
+    {
+      "name": "currentCredentialIsRealIdCompliant",
+      "label": "Is your current Florida driver license REAL ID compliant?",
+      "type": "boolean",
+      "required": true,
+      "description": "A non-REAL-ID-compliant credential cannot be renewed online; upgrading to REAL ID requires an office visit. If false, renewalChannel must be in_office.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers must go into an office: ... If a customer is not REAL ID compliant.'"
+    },
+    {
+      "name": "wantsPhotoUpdate",
+      "label": "Do you want to update your photo at this renewal?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, renewalChannel must be in_office.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers must go into an office: ... If a customer wishes to update their photo.'"
+    },
+    {
+      "name": "isChangingNameWithCourtOrderOrMarriageCertificate",
+      "label": "Are you changing your name on this credential using an original or certified court order or marriage certificate?",
+      "type": "boolean",
+      "required": true,
+      "description": "FLHSMV requires the name to first be updated with the Social Security Administration before it can be changed on the credential. If true, renewalChannel must be in_office and the supporting document must be presented (see documents[]).",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'If there is a name change, Florida driver license or ID card holders must update their name with the Social Security Administration prior to updating their name on the credential and they must present an original or certified court order of marriage certificate...' / 'Customers must go into an office: ... If the customer is changing their name using an original or certified court order or marriage certificate.'"
+    },
+    {
+      "name": "wantsToAddOrRemoveDesignationOrHasCourtOrderedUpdate",
+      "label": "Do you want to add or remove a designation on your credential, or do you have a court order requiring an update to it?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, renewalChannel must be in_office.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers must go into an office: ... If a customer wishes to add or remove a designation, or has a court order to update their credential.'"
+    },
+    {
+      "name": "holdsCommercialDriverLicense",
+      "label": "Do you hold a commercial driver license (CDL)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Unlike this registry's New York precedent (where a CDL applicant is routed to a distinct certification block on the same form), FLHSMV's own guidance lists CDL renewal as one more in-office-only trigger on an otherwise-ordinary renewal, not a separate process — see VERIFICATION.md. If true, renewalChannel must be in_office.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers must go into an office: ... If the customer holds a commercial driver license.'"
+    },
+    {
+      "name": "hasTemporaryCredential",
+      "label": "Does your current license have the word \"TEMPORARY\" printed on it?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, renewalChannel must be in_office.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers must go into an office: ... If the license has the word \"TEMPORARY\" printed on it.'"
+    },
+    {
+      "name": "renewalChannel",
+      "label": "How will you renew?",
+      "type": "enum",
+      "required": true,
+      "description": "online is available only when every in-office trigger above is false/not-compliant-as-required; otherwise the customer must choose in_office. Neither channel is completed by this schema — see the top-level description.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Renew Online' / 'Renew in Office' sections",
+      "validation": { "enum": ["online", "in_office"] }
+    },
+    {
+      "name": "wantsEmailConfirmation",
+      "label": "Would you like an emailed confirmation receipt of an online transaction?",
+      "type": "boolean",
+      "required": false,
+      "description": "Online-renewal-only: on the payment confirmation page the customer selects 'yes', enters an email address, and clicks 'Send Email Confirmation'.",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'Customers can receive an emailed confirmation receipt of the transaction. On the payment confirmation page customers must select \"yes\", enter an email address, and click \"Send Email Confirmation\" for the information to be emailed.'"
+    },
+    {
+      "name": "confirmationEmail",
+      "label": "Email address for confirmation receipt",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "wantsEmailConfirmation", "equals": true },
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — 'enter an email address ... for the information to be emailed'",
+      "validation": { "maxLength": 254 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "nameChangeDocument",
+      "label": "Original or certified court order or marriage certificate (name change)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "isChangingNameWithCourtOrderOrMarriageCertificate", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "flhsmv.gov 'Renew or Replace' — '...they must present an original or certified court order of marriage certificate when applying to change the name on their driver license or ID card.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "scope",
+      "title": "Credential and eligibility",
+      "fields": ["credentialTypeRenewing", "isFirstTimeFloridaCredential"],
+      "transitions": [
+        { "to": null, "exitReason": "not-eligible-not-a-driver-license", "when": { "field": "credentialTypeRenewing", "notEquals": "driver_license" } },
+        { "to": null, "exitReason": "not-eligible-first-time-issuance-not-a-renewal", "when": { "field": "isFirstTimeFloridaCredential", "equals": true } },
+        { "to": "identity" }
+      ]
+    },
+    {
+      "id": "identity",
+      "title": "Identity",
+      "fields": ["floridaCredentialNumber", "lastName", "firstName", "middleName", "dateOfBirth", "last4SSN", "currentCredentialExpirationDate"],
+      "next": "renewal_channel"
+    },
+    {
+      "id": "renewal_channel",
+      "title": "Renewal channel",
+      "fields": ["usedOnlineConvenienceRenewalLastCycle", "currentCredentialIsRealIdCompliant", "wantsPhotoUpdate", "isChangingNameWithCourtOrderOrMarriageCertificate", "wantsToAddOrRemoveDesignationOrHasCourtOrderedUpdate", "holdsCommercialDriverLicense", "hasTemporaryCredential", "renewalChannel"],
+      "next": "confirmation"
+    },
+    {
+      "id": "confirmation",
+      "title": "Confirmation",
+      "fields": ["wantsEmailConfirmation", "confirmationEmail"]
+    }
+  ]
+}
