@@ -1,0 +1,431 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/doh/birth-certificate-request",
+  "version": "1.0.0",
+  "title": "Florida Birth Certificate Request",
+  "description": "Request a certified copy of a Florida birth certificate — either a computer-generated certification or a photocopy-generated certificate of live birth — by mail or walk-in application to the Florida Department of Health's Bureau of Vital Statistics. It models the Bureau's own DH 726 'Application for Florida Birth Certificate' form: applicant identity and mailing address, the source's six numbered eligible-requestor categories (registrant, parent, legal guardian, legal representative, court-order designee, or a deceased registrant's spouse/child/grandchild/sibling), the attorney-of-record sub-flow, the birth-record search fields, and the certification-type/quantity/rush/payment ordering fields. It is the first `us/fl/*` schema published, and mirrors the `us/ca` state-level jurisdiction pattern (`level: subnational`, `subdivision: US-FL`). It does not model the Bureau's third-party-vendor 'Order Online with VitalChek' channel — VitalChek is an independent, separately contracted vendor, not the Department of Health's own system, and its own online application flow is out of scope for a schema of the Department's process. It does not model the exact-year-unknown/multi-year search mechanic beyond its flat per-year search fee, the Spanish-language DH 726S form, or in-office identity verification at the Bureau's Jacksonville walk-in counter. It does not submit the request; the live floridahealth.gov source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-FL"
+  },
+  "authority": {
+    "name": "Florida Department of Health, Bureau of Vital Statistics",
+    "abbreviation": "FL DOH",
+    "url": "https://www.floridahealth.gov/certificates/certificates/birth/index.html"
+  },
+  "process": {
+    "type": "request",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.floridahealth.gov/certificates/certificates/birth/index.html",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "DH 726, 01/2022, 'Application for Florida Birth Certificate' (Florida Administrative Code Rule 64V-1.0131)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live floridahealth.gov 'Birth Certificates' page and the Bureau of Vital Statistics' own DH 726 application PDF (both pages of the form, plus its printed 'Information and Instructions' reverse side), all fetched live, 2026-07-02, no block encountered. Status remains 'draft'. See VERIFICATION.md for the full list of pages consulted and honesty flags."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestorEligibilityCategory",
+      "label": "Which of these describes you, the applicant?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Florida law (Section 382.025) limits who may receive a birth certificate less than 125 years old. Selecting a category outside the five directly-eligible ones routes the applicant to the notarized DH 1958 affidavit path instead of ending the request.",
+      "sourceRef": "DH 726 reverse side, 'ELIGIBILITY (Section 382.025, Florida Statutes)' — numbered list 1-6",
+      "validation": {
+        "enum": [
+          "registrant",
+          "parent",
+          "legal_guardian",
+          "legal_representative",
+          "court_order_designee",
+          "deceased_registrant_relative",
+          "other_not_directly_eligible"
+        ]
+      }
+    },
+    {
+      "name": "deceasedRegistrantRelativeType",
+      "label": "Your relationship to the deceased registrant",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "requestorEligibilityCategory", "equals": "deceased_registrant_relative" },
+      "description": "Only a spouse, child, grandchild, or sibling of legal age (18) may receive a certificate marked 'Deceased' on this basis.",
+      "sourceRef": "DH 726 reverse side — 'a birth certificate marked \"Deceased\" may be issued to registrant's spouse, child, grandchild, sibling, if of legal age (18)'",
+      "validation": {
+        "enum": ["spouse", "child", "grandchild", "sibling"]
+      }
+    },
+    {
+      "name": "applicantFullName",
+      "label": "Applicant's name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The person requesting the record.",
+      "sourceRef": "DH 726 — 'Applicant's Name: ___ (Person requesting the record)'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "applicantMailingAddressLine1",
+      "label": "Mailing address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DH 726 — 'Mailing Address: ___'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "applicantMailingAddressLine2",
+      "label": "Apartment number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DH 726 — 'Apt.#: ___'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "applicantMailingAddressCity",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DH 726 — 'City: ___'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "applicantMailingAddressState",
+      "label": "State",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mailing address is not necessarily in Florida.",
+      "sourceRef": "DH 726 — 'State: ___'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "applicantMailingAddressPostalCode",
+      "label": "ZIP code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DH 726 — 'ZIP Code: ___'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "applicantPhone",
+      "label": "Phone (with area code)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DH 726 — 'Phone (with area code): ___'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "applicantEmail",
+      "label": "Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The form prints 'email' on the same line as phone with no marking distinguishing which, if either, is optional; modelled conservatively as optional since only phone is described elsewhere as the callback contact (see VERIFICATION.md honesty flag).",
+      "sourceRef": "DH 726 — 'email: ___'"
+    },
+    {
+      "name": "isAttorneyRequestor",
+      "label": "Are you requesting this record as an attorney representing a client?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "DH 726 — 'If applicant is an attorney, provide name of client you represent...'"
+    },
+    {
+      "name": "attorneyClientFullName",
+      "label": "Name of client you represent",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "isAttorneyRequestor", "equals": true },
+      "sourceRef": "DH 726 — 'provide name of client you represent: ___'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "attorneyClientRelationshipToRegistrant",
+      "label": "Client's relationship to registrant",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isAttorneyRequestor", "equals": true },
+      "sourceRef": "DH 726 — \"client's relationship to registrant: ___\"",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "attorneyBarLicenseNumber",
+      "label": "Bar / professional license number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isAttorneyRequestor", "equals": true },
+      "sourceRef": "DH 726 — 'your bar/professional license #: ___'",
+      "validation": { "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "registrantFullName",
+      "label": "Full name on birth record",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "DH 726 — 'Full Name on Birth Record: ___'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "registrantSex",
+      "label": "Sex",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The form prints a blank line with no enumerated options; modelled as free text rather than an invented enum (see VERIFICATION.md honesty flag).",
+      "sourceRef": "DH 726 — 'Sex: ___'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "registrantDateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "This schema models the exact-date search path. The source separately allows an unknown/approximate date searched across a range of years for an added $2-per-year fee (see additionalYearsSearchedQuantity and VERIFICATION.md — the year-range mechanic itself is not structurally modelled).",
+      "sourceRef": "DH 726 — 'Date of Birth: ___'"
+    },
+    {
+      "name": "registrantBirthCityOrCounty",
+      "label": "City/County of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DH 726 — 'City/County: ___'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "motherParentFullNameBeforeMarriage",
+      "label": "Mother's / parent's full name prior to first marriage",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DH 726 — \"Mother's / Parent's Full Name Prior to First Marriage: ___\"",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "fatherParentFullNameBeforeMarriage",
+      "label": "Father's / parent's full name prior to first marriage",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DH 726 — \"Father's / Parent's Full Name Prior to First Marriage: ___\"",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "certificationType",
+      "label": "Type of certificate",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "DH 726 — 'Computer-Generated Certification of Birth' / 'Photocopy-Generated Certificate of Live Birth'",
+      "validation": {
+        "enum": ["computer_generated", "photocopy_generated"]
+      }
+    },
+    {
+      "name": "numberOfCertificationsRequested",
+      "label": "Number of certifications requested",
+      "type": "integer",
+      "required": true,
+      "description": "Total copies of the selected certificationType; the first is billed at the base fee ($9 computer-generated / $14 photocopy-generated) and each additional copy at the lower additional-copy fee ($4 either type).",
+      "sourceRef": "DH 726 — 'Computer-Generated Certification of Birth ... X = ' / 'Additional Computer Certification of Birth ... X ='",
+      "validation": { "minimum": 1, "maximum": 25 }
+    },
+    {
+      "name": "additionalYearsSearchedQuantity",
+      "label": "Additional years to search (if exact birth year is unknown)",
+      "type": "integer",
+      "required": false,
+      "description": "Required when the exact birth year is unknown; billed at $2 per additional year searched, capped at a $50 total fee (25 years).",
+      "sourceRef": "DH 726 — 'Additional Years Searched: $2.00 per year (Required when exact year is unknown. Maximum fee is $50.00)'",
+      "validation": { "minimum": 0, "maximum": 25 }
+    },
+    {
+      "name": "rushServiceRequested",
+      "label": "Rush order",
+      "type": "boolean",
+      "required": true,
+      "description": "Rush orders receive priority processing for an additional $10 fee. Expedited shipping is not included and is arranged separately.",
+      "sourceRef": "DH 726 — 'Rush Order (Optional): Rush orders are given priority processing and requires an additional $10 fee.'"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "The Bureau does not accept cash or credit cards by mail; a credit-card payment is only available through the separate, out-of-scope VitalChek vendor channel.",
+      "sourceRef": "DH 726 reverse side — 'FEES: Check or Money Order Payable to: Vital Statistics. DO NOT SEND CASH.'",
+      "validation": {
+        "enum": ["check", "money_order"]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhotoIdDocument",
+      "label": "Applicant's valid photo identification",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "drivers_license",
+        "state_identification_card",
+        "passport",
+        "military_identification_card"
+      ],
+      "sourceRef": "DH 726 — 'APPLICANT'S VALID PHOTO IDENTIFICATION REQUIRED' / reverse side 'ACCEPTABLE FORMS OF IDENTIFICATION: Driver License, State Identification Card, Passport, Military Identification Card.'"
+    },
+    {
+      "id": "guardianshipPapersDocument",
+      "label": "Legal guardianship papers",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestorEligibilityCategory", "equals": "legal_guardian" },
+      "belongsTo": "applicant",
+      "sourceRef": "DH 726 reverse side — 'Legal Guardian (must provide guardianship papers)'"
+    },
+    {
+      "id": "legalRepresentativeDocumentationDocument",
+      "label": "Documentation of legal representative status",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestorEligibilityCategory", "equals": "legal_representative" },
+      "belongsTo": "applicant",
+      "sourceRef": "DH 726 reverse side — 'Legal representative of one of the above persons (must provide documentation)'"
+    },
+    {
+      "id": "courtOrderCopyDocument",
+      "label": "Certified copy of court order",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestorEligibilityCategory", "equals": "court_order_designee" },
+      "belongsTo": "applicant",
+      "sourceRef": "DH 726 reverse side — 'Other person(s) by court order (must provide certified copy of court order)'"
+    },
+    {
+      "id": "deathCertificateCopyDocument",
+      "label": "Photocopy of registrant's death certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestorEligibilityCategory", "equals": "deceased_registrant_relative" },
+      "belongsTo": "applicant",
+      "sourceRef": "DH 726 reverse side — 'Please notate \"Registrant Deceased\" on the application and include a photocopy of the death certificate.'"
+    },
+    {
+      "id": "dh1958AffidavitDocument",
+      "label": "Notarized DH 1958 Affidavit to Release a Birth Certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestorEligibilityCategory", "equals": "other_not_directly_eligible" },
+      "belongsTo": "applicant",
+      "sourceRef": "DH 726 reverse side — 'the application must be accompanied with a notarized Affidavit to Release a Birth Certificate form (DH 1958) signed by an eligible person ... and a copy of valid photo identification of both, the person authorizing release and the applicant.'"
+    },
+    {
+      "id": "eligiblePersonPhotoIdDocument",
+      "label": "Photo ID of the eligible person authorizing release",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestorEligibilityCategory", "equals": "other_not_directly_eligible" },
+      "belongsTo": "other",
+      "sourceRef": "DH 726 reverse side — 'a copy of valid photo identification of both, the person authorizing release and the applicant'"
+    },
+    {
+      "id": "feePayment",
+      "label": "Fee payment",
+      "category": "payment",
+      "required": true,
+      "methods": ["check", "money_order"],
+      "sourceRef": "DH 726 reverse side — 'FEES: Check or Money Order Payable to: Vital Statistics. DO NOT SEND CASH.' Total varies with certificationType, numberOfCertificationsRequested, additionalYearsSearchedQuantity, and rushServiceRequested; a flat $1.00 shipping and handling fee always applies."
+    },
+    {
+      "id": "falseStatementAttestation",
+      "label": "False-statement penalty acknowledgment and signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Any person who willfully and knowingly provides any false information on a certificate, record or report required by Chapter 382, Florida Statutes, or on an application or affidavit, or who obtains confidential information from any vital record under false or fraudulent purposes, commits a felony of the third degree, punishable as provided in Chapter 775, Florida Statutes.",
+      "sourceRef": "DH 726 — statute warning printed above the applicant fields, paired with 'Signature: ___'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Requestor eligibility",
+      "fields": ["requestorEligibilityCategory", "deceasedRegistrantRelativeType"],
+      "next": "applicant_information"
+    },
+    {
+      "id": "applicant_information",
+      "title": "Applicant information",
+      "fields": [
+        "applicantFullName",
+        "applicantMailingAddressLine1",
+        "applicantMailingAddressLine2",
+        "applicantMailingAddressCity",
+        "applicantMailingAddressState",
+        "applicantMailingAddressPostalCode",
+        "applicantPhone",
+        "applicantEmail",
+        "isAttorneyRequestor",
+        "attorneyClientFullName",
+        "attorneyClientRelationshipToRegistrant",
+        "attorneyBarLicenseNumber"
+      ],
+      "next": "birth_search_information"
+    },
+    {
+      "id": "birth_search_information",
+      "title": "Information for birth search",
+      "fields": [
+        "registrantFullName",
+        "registrantSex",
+        "registrantDateOfBirth",
+        "registrantBirthCityOrCounty",
+        "motherParentFullNameBeforeMarriage",
+        "fatherParentFullNameBeforeMarriage"
+      ],
+      "next": "ordering_information"
+    },
+    {
+      "id": "ordering_information",
+      "title": "Ordering information",
+      "fields": [
+        "certificationType",
+        "numberOfCertificationsRequested",
+        "additionalYearsSearchedQuantity",
+        "rushServiceRequested",
+        "paymentMethod"
+      ]
+    }
+  ]
+}
