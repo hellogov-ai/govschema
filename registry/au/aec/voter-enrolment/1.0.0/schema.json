@@ -1,0 +1,599 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "au/aec/voter-enrolment",
+  "version": "1.0.0",
+  "title": "Australia Voter Enrolment",
+  "description": "Enrolment on the Commonwealth electoral roll administered by the Australian Electoral Commission (AEC), which is jointly used for federal, state, and local government elections under Joint Roll Arrangements between the AEC and each state/territory electoral authority. Models a first-time enrolment: personal details, gender, current residential address, current postal address (if different), contact details, citizenship status, evidence of identity, and a final eligibility/truthfulness declaration. Also covers the two 'if notifying a change' branches present on the same form (a name change and a residential address change) that a first-time enrolment would leave blank, since the same form and, per the AEC, the same online workflow serve initial enrolment and detail updates together. Does not model: special-category enrolment (silent elector, overseas elector, itinerant elector, prisoner, or physically-unable-to-sign declarant), each of which uses its own separate AEC form; provisional/early enrolment for 16- and 17-year-olds beyond the citizenship/residency facts already captured here; or removal/objection processes.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Australian Electoral Commission",
+    "abbreviation": "AEC",
+    "url": "https://www.aec.gov.au/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-AU"
+  },
+  "source": {
+    "url": "https://www.aec.gov.au/enrol/files/er016w-nsw.pdf",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Form ER016w — 'Enrol to vote or update your details' (New South Wales edition, ER016w_NSW_230123), Australian Electoral Commission, Commonwealth Electoral Act 1918"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-02",
+    "notes": "Source-derived reference schema authored from the AEC's own downloadable, fillable enrolment form (form ER016w, NSW edition), decoded field-by-field from the PDF's own AcroForm field names and static label text (both extracted directly from the PDF's compressed content and object streams). The live online enrolment wizard (enrol.aec.gov.au) could not be reached from this environment (DNS resolution failure, the same class of network block previously hit at nzta.govt.nz — see registry/us prior verification records), so this schema is sourced from the paper/PDF form instead, which the AEC's own site states collects the same information ('You can complete this form online today'). Cross-checked the Victoria edition of the same form (er016w-vic.pdf) field-by-field against the NSW edition used as primary source: 78 of 79 AcroForm field names are identical between the two; the sole difference (an 'Occupation' field present in the NSW edition, absent from the Victoria edition) is excluded from this schema for that reason — see VERIFICATION.md. Status remains 'draft' pending either a live walkthrough of the online wizard or field-by-field confirmation against a third state/territory edition."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": true,
+      "description": "Mr / Mrs / Miss / Ms / Other, printed as five tick-box options on the form.",
+      "sourceRef": "Form ER016w §1 'Your current name': 'Mr / Mrs / Miss / Ms / Other'",
+      "validation": { "enum": ["mr", "mrs", "miss", "ms", "other"] }
+    },
+    {
+      "name": "titleOther",
+      "label": "Title (other)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "title", "equals": "other" },
+      "requiredWhen": { "field": "title", "equals": "other" },
+      "description": "Free-text title, entered when 'Other' is ticked. AcroForm field name TitleOther1.",
+      "sourceRef": "Form ER016w §1, field TitleOther1"
+    },
+    {
+      "name": "familyName",
+      "label": "Family name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Applicant's current family name (surname).",
+      "sourceRef": "Form ER016w §1 'Your current name' — 'Family name'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s)",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Applicant's current given name(s).",
+      "sourceRef": "Form ER016w §1 'Your current name' — 'Given name(s)'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nameChanged",
+      "label": "Are you notifying a change of name?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the previous-name fields. The form itself has no separate yes/no tick-box for this — it is inferred from whether the 'If notifying a change of name' box is filled in — but that box is only meaningful as a conditional branch, so this schema makes the branch explicit rather than treating the previous-name fields as unconditionally optional.",
+      "sourceRef": "Form ER016w §1 — 'If notifying a change of name: Previous given name(s) / Previous family name'"
+    },
+    {
+      "name": "previousFamilyName",
+      "label": "Previous family name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "nameChanged", "equals": true },
+      "requiredWhen": { "field": "nameChanged", "equals": true },
+      "description": "Family name the applicant was previously enrolled under, if notifying a change of name.",
+      "sourceRef": "Form ER016w §1, field 1PreviousFamilyName",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "previousGivenNames",
+      "label": "Previous given name(s)",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "nameChanged", "equals": true },
+      "requiredWhen": { "field": "nameChanged", "equals": true },
+      "description": "Given name(s) the applicant was previously enrolled under, if notifying a change of name.",
+      "sourceRef": "Form ER016w §1, field 1PreviousGivenNames",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Full date, DD/MM/YYYY on the source form; modelled as an ISO date. The form itself renders this as eight single-digit boxes (fields 2DOB_D, 2DOB_DD, 2DOB_M, 2DOB_MM, 2DOB_Y, 2DOB_YY, 2DOB_YYY, 2DOB_YYYY) which this schema collapses to one field, per this registry's convention for comb-style digit-box dates.",
+      "sourceRef": "Form ER016w §2 'Date of birth (dd/mm/yyyy)'"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "string",
+      "required": true,
+      "description": "The source form field (2Gender) is a plain one-character text box with no on-form code list printed, so no enum is asserted here rather than inventing one the source doesn't show — the same discipline used for nz/dia/realme-verified-identity's gender field. Publicly, the AEC's electoral roll records M, F, or X (indeterminate/intersex/unspecified), but that code list is not itself printed on this form and so is not asserted as validation here.",
+      "sourceRef": "Form ER016w §2, field 2Gender (single-character text field)",
+      "validation": { "maxLength": 1 }
+    },
+    {
+      "name": "currentResidentialAddressLine1",
+      "label": "Current residential address",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Street address of the applicant's residence. The form instructs: 'Clearly identify your residential address. A locality name or mail service number is not enough.'",
+      "sourceRef": "Form ER016w §3 'Current residential address'",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "currentResidentialAddressLocality",
+      "label": "Current residential address — suburb/locality",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Suburb or locality of the applicant's residential address.",
+      "sourceRef": "Form ER016w §3, field 3CurrentResidentialAddressLocality",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "currentResidentialAddressState",
+      "label": "Current residential address — state/territory",
+      "type": "string",
+      "required": true,
+      "description": "State or territory abbreviation of the applicant's residential address (e.g. NSW, VIC, QLD).",
+      "sourceRef": "Form ER016w §3, field 3CurrentResidentialAddressState",
+      "validation": { "minLength": 2, "maxLength": 3 }
+    },
+    {
+      "name": "currentResidentialAddressPostcode",
+      "label": "Current residential address — postcode",
+      "type": "string",
+      "required": true,
+      "description": "Four-digit Australian postcode of the applicant's residential address.",
+      "sourceRef": "Form ER016w §3, field 3CurrentResidentialAddressPostcode",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "addressChanged",
+      "label": "Are you notifying a change of residential address?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the previous-residential-address fields, mirroring nameChanged.",
+      "sourceRef": "Form ER016w §3 — 'If notifying a change of address: Previous residential address'"
+    },
+    {
+      "name": "previousResidentialAddressLine1",
+      "label": "Previous residential address",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "addressChanged", "equals": true },
+      "requiredWhen": { "field": "addressChanged", "equals": true },
+      "description": "Street address the applicant was previously enrolled at, if notifying a change of residential address.",
+      "sourceRef": "Form ER016w §3, field 3PreviousResidentialAddressLine1",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "previousResidentialAddressLine2",
+      "label": "Previous residential address — line 2",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "addressChanged", "equals": true },
+      "description": "Second address line for the previous residential address, if needed.",
+      "sourceRef": "Form ER016w §3, field 3PreviousResidentialAddressLine2",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "previousResidentialAddressState",
+      "label": "Previous residential address — state/territory",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "addressChanged", "equals": true },
+      "requiredWhen": { "field": "addressChanged", "equals": true },
+      "description": "State or territory abbreviation of the previous residential address.",
+      "sourceRef": "Form ER016w §3, field 3PreviousResidentialAddressState",
+      "validation": { "minLength": 2, "maxLength": 3 }
+    },
+    {
+      "name": "previousResidentialAddressPostcode",
+      "label": "Previous residential address — postcode",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "addressChanged", "equals": true },
+      "requiredWhen": { "field": "addressChanged", "equals": true },
+      "description": "Four-digit Australian postcode of the previous residential address.",
+      "sourceRef": "Form ER016w §3, field 3PreviousResidentialAddressPostcode",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "postalAddressDifferentFromResidential",
+      "label": "Is your postal address different from your residential address?",
+      "type": "boolean",
+      "required": true,
+      "description": "The form's postal-address section is captioned 'Leave blank if the same as your residential address', so this schema models the section as conditional on this explicit boolean rather than unconditionally-optional free fields.",
+      "sourceRef": "Form ER016w §4 'Current postal address — Leave blank if the same as your residential address'"
+    },
+    {
+      "name": "currentPostalAddressLine1",
+      "label": "Current postal address",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "requiredWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "description": "Mailing address, if different from the residential address.",
+      "sourceRef": "Form ER016w §4, field 3CurrentPostalAddressLine1",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "currentPostalAddressLocality",
+      "label": "Current postal address — suburb/locality",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "requiredWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "description": "Suburb or locality of the postal address.",
+      "sourceRef": "Form ER016w §4, field 3CurrentPostalAddressLocality",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "currentPostalAddressState",
+      "label": "Current postal address — state/territory",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "requiredWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "description": "State or territory abbreviation of the postal address.",
+      "sourceRef": "Form ER016w §4, field 3CurrentPostalAddressState",
+      "validation": { "minLength": 2, "maxLength": 3 }
+    },
+    {
+      "name": "currentPostalAddressPostcode",
+      "label": "Current postal address — postcode",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "requiredWhen": { "field": "postalAddressDifferentFromResidential", "equals": true },
+      "description": "Four-digit Australian postcode of the postal address.",
+      "sourceRef": "Form ER016w §4, field 3CurrentPostalAddressPostcode",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "Optional contact email address; the form prints no requirement that it be supplied.",
+      "sourceRef": "Form ER016w §4, field 4EmailAddress",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "daytimePhoneAreaCode",
+      "label": "Daytime phone — area code",
+      "type": "string",
+      "required": false,
+      "description": "Australian area code for the daytime phone number.",
+      "sourceRef": "Form ER016w §4, field 4DaytimePhoneAreaCode",
+      "validation": { "pattern": "^[0-9]{1,3}$" }
+    },
+    {
+      "name": "daytimePhoneNumber",
+      "label": "Daytime phone number",
+      "type": "string",
+      "required": false,
+      "description": "Optional daytime contact phone number.",
+      "sourceRef": "Form ER016w §4, field 4DaytimePhoneNumber",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "mobilePhoneNumber",
+      "label": "Mobile phone number",
+      "type": "string",
+      "required": false,
+      "description": "Optional mobile contact phone number.",
+      "sourceRef": "Form ER016w §4, field 4MobilePhoneNumber",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "citizenshipStatus",
+      "label": "Citizenship status",
+      "type": "enum",
+      "required": true,
+      "description": "To enrol, an applicant must be an Australian citizen, or a British subject who was on the Commonwealth electoral roll on 25 January 1984. australian_citizen_by_birth and became_australian_citizen are the form's two Australian-citizen tick-box options; british_subject_enrolled_1984 is the third, separately printed option.",
+      "sourceRef": "Form ER016w §5 'Citizenship status' — 'To enrol you must be an Australian citizen, or a British subject who was on the Commonwealth electoral roll on 25 January 1984': 'Australian citizen by birth' / 'I have become an Australian citizen' / 'British subject who was enrolled on 25 January 1984'",
+      "validation": { "enum": ["australian_citizen_by_birth", "became_australian_citizen", "british_subject_enrolled_1984"] }
+    },
+    {
+      "name": "nameOnCitizenshipCertificate",
+      "label": "Name on citizenship certificate",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "citizenshipStatus", "equals": "became_australian_citizen" },
+      "requiredWhen": { "field": "citizenshipStatus", "equals": "became_australian_citizen" },
+      "description": "Full name exactly as it appears on the applicant's Australian citizenship certificate, collected when the applicant became a citizen (as opposed to citizen by birth).",
+      "sourceRef": "Form ER016w §5, field 5NameOnCitizenshipCertificate",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "citizenshipCertificateNumber",
+      "label": "Citizenship certificate number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "citizenshipStatus", "equals": "became_australian_citizen" },
+      "requiredWhen": { "field": "citizenshipStatus", "equals": "became_australian_citizen" },
+      "description": "Number of the applicant's Australian citizenship certificate. The form notes that supplying this number also satisfies the separate 'evidence of identity' requirement in §6 ('If you provided a citizenship certificate number at Question 5, you do not need to provide further evidence of your identity') — a business rule this schema documents here rather than encoding as a condition on evidenceOfIdentity, since evidenceOfIdentity remains required for every other citizenshipStatus branch.",
+      "sourceRef": "Form ER016w §5, field 5CitizenshipCertificateNumber; §6 footnote",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "townOfBirth",
+      "label": "Town of birth",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "citizenshipStatus", "equals": "australian_citizen_by_birth" },
+      "requiredWhen": { "field": "citizenshipStatus", "equals": "australian_citizen_by_birth" },
+      "description": "Town of birth, collected for an applicant who is an Australian citizen by birth.",
+      "sourceRef": "Form ER016w §5, field 5TownOfBirth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "birthState",
+      "label": "State or territory of birth",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "citizenshipStatus", "equals": "australian_citizen_by_birth" },
+      "requiredWhen": { "field": "citizenshipStatus", "equals": "australian_citizen_by_birth" },
+      "description": "State or territory of birth, collected for an applicant who is an Australian citizen by birth.",
+      "sourceRef": "Form ER016w §5, field 5BirthState",
+      "validation": { "minLength": 2, "maxLength": 3 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "citizenshipStatus", "equals": "australian_citizen_by_birth" },
+      "requiredWhen": { "field": "citizenshipStatus", "equals": "australian_citizen_by_birth" },
+      "description": "Country of birth, collected for an applicant who is an Australian citizen by birth (e.g. an external territory or a country recognised as part of Australia at time of birth).",
+      "sourceRef": "Form ER016w §5, field 5CountryofBirth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "britishSubjectName",
+      "label": "Name on 25 January 1984",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "citizenshipStatus", "equals": "british_subject_enrolled_1984" },
+      "requiredWhen": { "field": "citizenshipStatus", "equals": "british_subject_enrolled_1984" },
+      "description": "Name the applicant was enrolled under on 25 January 1984, collected for a British subject relying on that historical enrolment.",
+      "sourceRef": "Form ER016w §5, field 5BritishSubjectName",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "britishSubjectCountryOfBirth",
+      "label": "Country of birth (British subject)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "citizenshipStatus", "equals": "british_subject_enrolled_1984" },
+      "requiredWhen": { "field": "citizenshipStatus", "equals": "british_subject_enrolled_1984" },
+      "description": "Country of birth, collected for a British subject relying on enrolment as at 25 January 1984.",
+      "sourceRef": "Form ER016w §5, field 5BritishSubjectCountryofBirth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "evidenceOfIdentity",
+      "label": "Evidence of your identity",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Complete ONE option only; the evidence of identity must be a document issued by an Australian government, or confirmation from a person already on the Commonwealth electoral roll. Exempt if citizenshipCertificateNumber was already supplied — see that field's description.",
+      "sourceRef": "Form ER016w §6 'Evidence of your identity — Complete ONE option only. Your evidence of identity must be a document issued by an Australian Government': 'Australian driver's licence' / 'Australian passport' / 'Medicare card' / 'A person who is on the Commonwealth electoral roll will confirm my identity'",
+      "validation": { "enum": ["drivers_licence", "passport", "medicare_card", "person_confirms_identity"] }
+    },
+    {
+      "name": "driversLicenceState",
+      "label": "Driver's licence — state/territory",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "drivers_licence" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "drivers_licence" },
+      "description": "State or territory that issued the Australian driver's licence relied on.",
+      "sourceRef": "Form ER016w §6, field 6AustralianDriversLicenceState",
+      "validation": { "minLength": 2, "maxLength": 3 }
+    },
+    {
+      "name": "driversLicenceNumber",
+      "label": "Driver's licence number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "drivers_licence" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "drivers_licence" },
+      "description": "Number of the Australian driver's licence relied on.",
+      "sourceRef": "Form ER016w §6, field 6AustralianDriversLicenceNumber",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Australian passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "passport" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "passport" },
+      "description": "Number of the Australian passport relied on.",
+      "sourceRef": "Form ER016w §6, field 6AustralianPassportNumber",
+      "validation": { "pattern": "^[A-Za-z0-9]{6,9}$" }
+    },
+    {
+      "name": "medicareCardName",
+      "label": "Medicare card — name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "description": "Name exactly as it appears on the Medicare card relied on.",
+      "sourceRef": "Form ER016w §6 'Medicare card' — 'Name (exactly as it appears on card)', field 6MedicareName",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "medicareCardNumber",
+      "label": "Medicare card number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "description": "The 10-digit Medicare card number, printed on the form as ten individual single-digit boxes (fields 6MedicareNumber1..10) and collapsed here to one field per this registry's comb-field convention.",
+      "sourceRef": "Form ER016w §6 'Medicare card' — 'Number', fields 6MedicareNumber1..6MedicareNumber10",
+      "validation": { "pattern": "^[0-9]{10}$" }
+    },
+    {
+      "name": "medicareCardIrn",
+      "label": "Medicare card — Individual Reference Number (IRN)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "description": "The Individual Reference Number printed on the Medicare card, identifying which cardholder among the family/group the applicant is.",
+      "sourceRef": "Form ER016w §6 'Medicare card' — 'Individual Reference Number (IRN)', field 6MedicareIRN",
+      "validation": { "pattern": "^[0-9]$" }
+    },
+    {
+      "name": "medicareCardValidTo",
+      "label": "Medicare card — valid to (MM/YYYY)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "medicare_card" },
+      "description": "Expiry month/year printed on the Medicare card, rendered on the form as six single-digit boxes (fields 6MedicareValidM, 6MedicareValidMM, 6MedicareValidY, 6MedicareValidYY, 6MedicareValidYYY, 6MedicareValidYYYY) and collapsed here to one field.",
+      "sourceRef": "Form ER016w §6 'Medicare card' — 'Valid to (mm/yyyy)'",
+      "validation": { "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$" }
+    },
+    {
+      "name": "personConfirmingNameAndAddress",
+      "label": "Person confirming your identity — name and address",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "person_confirms_identity" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "person_confirms_identity" },
+      "description": "Personal information of a third party; handle as sensitive data. Name and address (block letters) of a person already on the Commonwealth electoral roll who declares 'I am on the Commonwealth electoral roll, and I confirm the identity of the applicant.'",
+      "sourceRef": "Form ER016w §6 'A person who is on the Commonwealth electoral roll will confirm my identity — Declaration by person confirming your identity' — 'Person's name and address (BLOCK LETTERS)', fields 6PersonsNameAndAddressLine1/Line2",
+      "validation": { "minLength": 1, "maxLength": 400 }
+    },
+    {
+      "name": "personConfirmingDateOfBirth",
+      "label": "Person confirming your identity — date of birth",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "evidenceOfIdentity", "equals": "person_confirms_identity" },
+      "requiredWhen": { "field": "evidenceOfIdentity", "equals": "person_confirms_identity" },
+      "description": "Personal information of a third party; handle as sensitive data. Rendered on the form as eight single-digit boxes (fields 6DateOfBirthD, 6DateOfBirthDD, 6DateOfBirthM, 6DateOfBirthMM, 6DateOfBirthY, 6DateOfBirthYY, 6DateOfBirthYYY, 6DateOfBirthYYYY), collapsed here to one field. These fields are distinct from the applicant's own dateOfBirth boxes in §2 and sit directly beside the confirming person's own name/address box in §6, so this schema's best reading is that they collect the confirming person's date of birth (plausibly to help the AEC match that person against the roll) rather than a restatement of the applicant's; the static PDF text extraction used to source this document could not fully disambiguate on-page layout from underlying content-stream order, so this is flagged as an interpretive call rather than a certain reading — see VERIFICATION.md.",
+      "sourceRef": "Form ER016w §6, fields 6DateOfBirthD..6DateOfBirthYYYY"
+    },
+    {
+      "name": "declarationAndConsent",
+      "label": "Declaration",
+      "type": "boolean",
+      "required": true,
+      "description": "By signing (or, per the form's note, making a mark witnessed under Question 6 if unable to sign), the applicant declares: they are eligible to enrol at their current residential address and claim enrolment for federal, state, and local government elections; the information given is true and complete; they understand giving false or misleading information is a serious offence; and they consent to their information being shared with the document issuer or official record holder to verify it. The form presents this as one combined declaration attached to a single signature, not separate tick-boxes, so it is modelled as one field.",
+      "sourceRef": "Form ER016w 'Your declaration' — 'I am eligible to enrol at my current residential address as listed at Question 3 and claim enrolment for federal, state and local government elections in NSW / The information I have given on this form is true and complete / I understand that giving false or misleading information is a serious offence, and / I consent to my information being shared with the document issuer or official record holder in order to verify the information provided.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "your_name",
+      "title": "Your current name",
+      "fields": ["title", "titleOther", "familyName", "givenNames", "nameChanged", "previousFamilyName", "previousGivenNames"],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Date of birth and gender",
+      "fields": ["dateOfBirth", "gender"],
+      "next": "residential_address"
+    },
+    {
+      "id": "residential_address",
+      "title": "Current residential address",
+      "fields": [
+        "currentResidentialAddressLine1",
+        "currentResidentialAddressLocality",
+        "currentResidentialAddressState",
+        "currentResidentialAddressPostcode",
+        "addressChanged",
+        "previousResidentialAddressLine1",
+        "previousResidentialAddressLine2",
+        "previousResidentialAddressState",
+        "previousResidentialAddressPostcode"
+      ],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Postal address and contact details",
+      "fields": [
+        "postalAddressDifferentFromResidential",
+        "currentPostalAddressLine1",
+        "currentPostalAddressLocality",
+        "currentPostalAddressState",
+        "currentPostalAddressPostcode",
+        "emailAddress",
+        "daytimePhoneAreaCode",
+        "daytimePhoneNumber",
+        "mobilePhoneNumber"
+      ],
+      "next": "citizenship_status"
+    },
+    {
+      "id": "citizenship_status",
+      "title": "Citizenship status",
+      "fields": [
+        "citizenshipStatus",
+        "nameOnCitizenshipCertificate",
+        "citizenshipCertificateNumber",
+        "townOfBirth",
+        "birthState",
+        "countryOfBirth",
+        "britishSubjectName",
+        "britishSubjectCountryOfBirth"
+      ],
+      "next": "evidence_of_identity"
+    },
+    {
+      "id": "evidence_of_identity",
+      "title": "Evidence of your identity",
+      "fields": [
+        "evidenceOfIdentity",
+        "driversLicenceState",
+        "driversLicenceNumber",
+        "passportNumber",
+        "medicareCardName",
+        "medicareCardNumber",
+        "medicareCardIrn",
+        "medicareCardValidTo",
+        "personConfirmingNameAndAddress",
+        "personConfirmingDateOfBirth"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Your declaration",
+      "fields": ["declarationAndConsent"]
+    }
+  ]
+}
