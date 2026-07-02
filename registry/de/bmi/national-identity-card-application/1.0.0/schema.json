@@ -1,0 +1,281 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/bmi/national-identity-card-application",
+  "version": "1.0.0",
+  "title": "Germany National Identity Card Application/Renewal (Personalausweis)",
+  "description": "Apply for a first German national identity card or renew/replace an existing one (the Personalausweis) in person at a local citizen office (Bürgeramt), under the Personalausweisgesetz (PAuswG). German nationals aged 16 or older who do not hold a valid passport are legally required to hold this card; there is no online submission channel — the applicant (and, for a minor, their legal guardian) must attend in person, presenting an identity document that is checked against the population register (Melderegister) already holding the applicant's core personal data from residence registration (see de/bmi/residence-registration). This document models the citizenship eligibility gate, Berlin residency basis, the applicant's prior-document/naturalisation status (which determines what supporting evidence is required), the minor/guardian path including the separated-guardian consent nuance, the first-application religious-headwear declaration, and the service options every applicant chooses (photo channel, delivery method). It does not model: the separate provisional identity card (vorläufiger Personalausweis) service, used only when an applicant urgently needs a document before the standard card can be produced; the separate service for German citizens not registered in Berlin, the homeless, tourists, or Germans resident abroad; the exemption-from-the-obligation-to-hold-an-ID-card service; the Reisepass (passport) or Kinderreisepass processes; the online authentication (eID) PIN-activation step, which happens after the card is issued and is out of scope for an application schema; or fee amounts, which change over time and are deliberately not encoded here as authoritative data, consistent with every other schema in this registry. It does not submit the application; the live sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bürgeramt (local citizen office), under the Personalausweisgesetz (PAuswG); card production by the Bundesdruckerei",
+    "abbreviation": "BMI",
+    "url": "https://www.bmi.bund.de"
+  },
+  "process": {
+    "type": "application",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://service.berlin.de/dienstleistung/120703/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Personalausweis beantragen (no form number — in-person application recorded directly into the Bürgeramt's system, not a downloadable form)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from Berlin's official 'Personalausweis beantragen' service page (dienstleistung 120703), fetched directly (HTTP 200), which describes eligibility, required documents, the full fee schedule, processing time, and the in-person-only submission channel. Cross-checked against three independent BMI-operated personalausweisportal.de pages (Application, Data on the ID Card, Fees and Validity — all retrieved via Wayback Machine captures since the live site 400s to direct fetch) and the English-language Wikipedia 'German identity card' article, which independently corroborates: the mandatory second fingerprint since August 2021, the exact printed-field layout (front/back), the €37/€22.80 base fee tier structure (the BMI page's Sept 2024 capture shows lower figures than Berlin's live €46.00/€27.60 — a genuine fee increase between captures, not a discrepancy, flagged in VERIFICATION.md), and the 1 May 2025 digital-photo-only rule. Same cross-jurisdiction-exemplar convention used for de/bmi/residence-registration and de/bmi/passport-application (Berlin as a concrete exemplar of a nationally-set legal framework). Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isGermanCitizen",
+      "label": "Are you a German citizen?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "The Personalausweis may only be issued to a German national (PAuswG §1 Abs. 1). A non-national resident uses a residence permit/visa document instead, not modelled in this registry. If false, the flow ends and this service does not apply.",
+      "sourceRef": "Voraussetzungen — \"Deutsche Staatsangehörigkeit\""
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As held in the Melderegister (population register) and confirmed against the identity document presented at the appointment, not freely declared by the applicant — see VERIFICATION.md.",
+      "sourceRef": "Erforderliche Unterlagen — identification confirms the applicant's registered personal data",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As held in the Melderegister and confirmed against the identity document presented at the appointment — see VERIFICATION.md.",
+      "sourceRef": "Erforderliche Unterlagen — identification confirms the applicant's registered personal data",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "YYYY-MM-DD. Determines the card's validity period (6 years if the applicant is under 24 at issuance, 10 years if 24 or older) and whether the applicant is old enough to be subject to the Ausweispflicht (mandatory possession from age 16) — both derived outcomes, not separately collected fields.",
+      "sourceRef": "Gültigkeit des Personalausweises — \"6 Jahre: wenn Sie jünger als 24 Jahre sind\" / \"10 Jahre: wenn Sie 24 Jahre oder älter sind\""
+    },
+    {
+      "name": "residenceBasis",
+      "label": "Is this Berlin dwelling your primary or secondary residence?",
+      "type": "enum",
+      "required": true,
+      "description": "primary_residence = the applicant's sole or main dwelling (Hauptwohnung) is registered in Berlin, the standard case. secondary_residence_with_reason = the applicant applies at a secondary-residence (Nebenwohnung) Bürgeramt with an important reason (wichtiger Grund); this is accepted but incurs a higher fee because the main-residence municipality must consent. An applicant not registered in Berlin at all (including the homeless, tourists, and Germans resident abroad) uses a distinct, out-of-scope service (see description).",
+      "sourceRef": "Voraussetzungen — \"Wohnsitz in Berlin (Ausnahmen möglich)\"; \"Ein Zweit-Wohnsitz (Nebenwohnsitz) in Berlin reicht aus, wenn ein wichtiger Grund vorliegt\"",
+      "validation": { "enum": ["primary_residence", "secondary_residence_with_reason"] }
+    },
+    {
+      "name": "neverHeldGermanIdOrPassport",
+      "label": "Have you never held a German Personalausweis or Reisepass before?",
+      "type": "boolean",
+      "required": true,
+      "description": "True for a genuine first-time applicant (e.g. a child's first document, or an adult who has never held German identity documents). If true, a birth, marriage, or civil-partnership certificate is required in addition to the standard identity check, and the religious-headwear declaration (if applicable) must be made now (see the birthOrMarriageCertificate and religiousHeadwearDeclaration entries in documents).",
+      "sourceRef": "Erforderliche Unterlagen — \"Bringen Sie bitte eine Geburtsurkunde... mit, falls Sie noch nie ein Dokument wie beispielsweise einen Personalausweis oder einen Reisepass hatten\""
+    },
+    {
+      "name": "personalDataDiffersFromRegistration",
+      "label": "Does your current personal data (e.g. name) differ from what is on the population register?",
+      "type": "boolean",
+      "required": true,
+      "description": "True after a name change (e.g. marriage) not yet reflected in the Melderegister. If true, a birth, marriage, or civil-partnership certificate is required in addition to the standard identity check (see the birthOrMarriageCertificate entry in documents).",
+      "sourceRef": "Erforderliche Unterlagen — \"falls Ihre Angaben zu Ihrer Person von den Daten abweichen, die im Melderegister gespeichert sind. Das kann zum Beispiel nach einer Heirat oder nach einer Namensänderung sein\""
+    },
+    {
+      "name": "recentlyNaturalised",
+      "label": "Were you naturalised and are applying for German documents for the first time?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the naturalisation certificate and the applicant's previous (foreign) passport or ID card, or an identity certificate from the Landesamt für Einwanderung (LEA), must also be presented (see the naturalisationCertificate and previousForeignIdDocument entries in documents).",
+      "sourceRef": "Erforderliche Unterlagen — \"Wenn Sie eingebürgert wurden und erstmals deutsche Dokumente beantragen wollen\""
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Is the applicant under 18?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, a legal guardian's involvement is required. For an applicant under 16, the legal guardian(s) must submit the application themselves (the child must also attend). At any age under 18, if the applicant's legal guardians share custody but live apart, the guardian who is not present must give written consent unless the applying guardian has sole custody or both guardians attend together (see the guardianConsentAndIdDocument entry in documents, gated on separatedGuardianConsentRequired).",
+      "sourceRef": "Voraussetzungen — \"Persönliche Vorsprache ist in jedem Fall erforderlich... Bei Minderjährigen vor Vollendung des 16. Lebensjahres: Der Antrag ist von der gesetzlichen Vertretung/ von den gesetzlichen Vertretern zu stellen\""
+    },
+    {
+      "name": "separatedGuardianConsentRequired",
+      "label": "Do the applicant's legal guardians share custody but live apart, with only one attending today?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "visibleWhen": { "field": "applicantIsMinor", "equals": true },
+      "description": "True triggers the requirement for the absent guardian's written consent declaration plus their identity document (for signature comparison). Not required if the attending guardian has sole custody, or if both guardians attend the appointment together. If the guardians share custody and do not live together (not just temporarily apart), only the guardian with whom the minor's main or sole residence is registered may submit the application at all.",
+      "sourceRef": "Erforderliche Unterlagen — \"Soweit beide Elternteile sorgeberechtigt sind, nicht voneinander getrennt leben und ein Elternteil bei der Antragstellung nicht anwesend ist, muss eine schriftliche Einverständniserklärung des nicht anwesenden Elternteils vorgelegt werden... Leben Eltern, denen die elterliche Sorge gemeinsam zusteht, nicht nur vorübergehend getrennt, darf nur der Elternteil, bei dem das minderjährige Kind mit Hauptwohnsitz oder alleiniger Wohnung gemeldet ist, den Personalausweis beantragen.\""
+    },
+    {
+      "name": "belongsToHeadwearRequiringReligiousCommunity",
+      "label": "Do you belong to a religious community whose rules require you not to appear in public without headwear?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "neverHeldGermanIdOrPassport", "equals": true },
+      "visibleWhen": { "field": "neverHeldGermanIdOrPassport", "equals": true },
+      "description": "If true, this must be credibly declared at the time of a first-ever application so the biometric photo may show religious headwear per PAuswG photo standards (see the religiousHeadwearDeclaration entry in documents). Only asked of first-time applicants; a renewal does not re-ask this.",
+      "sourceRef": "Erforderliche Unterlagen — \"Gehören Sie als antragstellende Person einer Religionsgemeinschaft an, die nach ihren Regeln gehalten ist, in der Öffentlichkeit nicht ohne Kopfbedeckung zu erscheinen, müssen Sie dies bei der erstmaligen Beantragung glaubhaft machen\""
+    },
+    {
+      "name": "photoCreationChannel",
+      "label": "How will your biometric photo be provided?",
+      "type": "enum",
+      "required": true,
+      "description": "in_office = created at the Bürgeramt's own digital service station, at an additional fee. pre_taken_certified_studio = created in advance at a certified photo studio and transmitted electronically to the office. Since 1 May 2025, printed photos are no longer accepted; the photo must be submitted digitally through one of these two channels.",
+      "sourceRef": "Erforderliche Unterlagen — \"1 aktuelles, digitales biometrisches Passfoto (Neue Regelung ab 01.05.2025)... dürfen nur noch direkt in den Behörden... oder in zertifizierten Fotostudios digital erstellt... übermittelt werden\"; Gebühren — \"6,00 Euro zusätzlich: für die Erstellung des Passfotos vor Ort\"",
+      "validation": { "enum": ["in_office", "pre_taken_certified_studio"] }
+    },
+    {
+      "name": "deliveryMethod",
+      "label": "How would you like to receive your identity card?",
+      "type": "enum",
+      "required": true,
+      "description": "pickup_at_citizen_office = collect the finished card, plus the Sperrkennwort (blocking password) for the eID online-authentication function, at the Bürgeramt once the Bundesdruckerei has produced it (no extra fee). direct_postal_delivery = have it delivered by Deutsche Post directly and only to the applicant in person at their main residence (pilot phase), at an additional fee; the applicant's previous ID card is invalidated at application time, so a valid passport must be shown to accept delivery.",
+      "sourceRef": "Verfahrensablauf — \"Bei Antragsstellung kann ein Direktversand gewählt werden (Pilotphase)... Sie müssen sich mit einem gültigen Ausweisdokument (Reisepass) ausweisen, da Ihr bisheriges Dokument... bei Antragsstellung entwertet wird\"; Gebühren — \"15,00 Euro zusätzlich: für den Direktversand\"",
+      "validation": { "enum": ["pickup_at_citizen_office", "direct_postal_delivery"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocumentForVerification",
+      "label": "Old or currently valid identity document",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["personalausweis", "reisepass"],
+      "issuingAuthority": "German Bürgeramt (Personalausweis) or Passbehörde (Reisepass)",
+      "sourceRef": "Erforderliche Unterlagen — \"Ihr altes Dokument (falls vorhanden)\"; \"Ihr gültiges Dokument (falls vorhanden), zum Beispiel Ihr Personalausweis, Ihr alter Reisepass\""
+    },
+    {
+      "id": "birthOrMarriageCertificate",
+      "label": "Birth, marriage, or civil-partnership certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "neverHeldGermanIdOrPassport", "equals": true },
+          { "field": "personalDataDiffersFromRegistration", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Erforderliche Unterlagen — \"ggf. Personenstandsurkunde... Geburtsurkunde oder Eheurkunde oder Lebenspartnerschaftsurkunde\""
+    },
+    {
+      "id": "naturalisationCertificate",
+      "label": "Naturalisation certificate (Einbürgerungsurkunde)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "recentlyNaturalised", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Erforderliche Unterlagen — \"Wenn Sie eingebürgert wurden und erstmals deutsche Dokumente beantragen wollen... Einbürgerungsurkunde\""
+    },
+    {
+      "id": "previousForeignIdDocument",
+      "label": "Previous (foreign) passport, ID card, or LEA identity certificate",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "recentlyNaturalised", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Erforderliche Unterlagen — \"Reisepass oder ID-Card des Staates der bisherigen Nationalität oder eine Identitätsbescheinigung vom Landesamt für Einwanderung (LEA)\""
+    },
+    {
+      "id": "guardianConsentAndIdDocument",
+      "label": "Absent guardian's written consent and identity document",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "applicantIsMinor", "equals": true },
+          { "field": "separatedGuardianConsentRequired", "equals": true }
+        ]
+      },
+      "belongsTo": "responsible-party",
+      "sourceRef": "Erforderliche Unterlagen — \"muss eine schriftliche Einverständniserklärung des nicht anwesenden Elternteils vorgelegt werden. Dessen Ausweis/Reisepass ist zum Abgleich der Unterschrift auf der Einverständniserklärung ebenfalls mitzubringen\"; Formulare — \"Einverständniserklärung des nicht anwesenden Elternteils zum Antrag auf Ausstellung eines Personalausweises\""
+    },
+    {
+      "id": "religiousHeadwearDeclaration",
+      "label": "Religious-headwear credibility declaration",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "neverHeldGermanIdOrPassport", "equals": true },
+          { "field": "belongsToHeadwearRequiringReligiousCommunity", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Erforderliche Unterlagen — \"müssen Sie dies bei der erstmaligen Beantragung glaubhaft machen\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Citizenship eligibility",
+      "fields": ["isGermanCitizen"],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible-non-german-citizen",
+          "when": { "field": "isGermanCitizen", "equals": false }
+        },
+        { "to": "applicant_details" }
+      ]
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": ["lastName", "firstNames", "dateOfBirth", "residenceBasis"],
+      "next": "prior_status"
+    },
+    {
+      "id": "prior_status",
+      "title": "Prior documents and status",
+      "fields": [
+        "neverHeldGermanIdOrPassport",
+        "personalDataDiffersFromRegistration",
+        "recentlyNaturalised",
+        "belongsToHeadwearRequiringReligiousCommunity"
+      ],
+      "next": "minor_and_guardian"
+    },
+    {
+      "id": "minor_and_guardian",
+      "title": "Minor and guardian",
+      "fields": ["applicantIsMinor", "separatedGuardianConsentRequired"],
+      "next": "service_options"
+    },
+    {
+      "id": "service_options",
+      "title": "Service options",
+      "fields": ["photoCreationChannel", "deliveryMethod"]
+    }
+  ]
+}
