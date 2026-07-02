@@ -15,6 +15,10 @@
 - [ ] `source` cites a live government URL with a `retrievedAt` date.
 - [ ] `verification` names a real practice (see `practices/`) with a current `lastVerifiedAt`.
 - [ ] Version bump (if any) follows [VERSIONING.md](../VERSIONING.md).
+- [ ] If this PR adds/changes a `registry/` document or flips a
+      `discovery/catalog.json` entry to `published`: ran `npm run build-index`
+      in `tools/govschema-client/` and committed the resulting
+      `registry-index.json` diff.
 - [ ] No personal data included.
 - [ ] No claim of government endorsement, affiliation, or certification.
 - [ ] I did **not** edit a previously published version directory (corrections ship as a new version).
