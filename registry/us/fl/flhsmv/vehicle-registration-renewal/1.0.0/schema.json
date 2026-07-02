@@ -1,0 +1,186 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/flhsmv/vehicle-registration-renewal",
+  "version": "1.0.0",
+  "title": "Florida Vehicle Registration Renewal",
+  "description": "Renew an existing Florida motor vehicle registration online, on behalf of the Florida Department of Highway Safety and Motor Vehicles (FLHSMV), through the department's public MyDMV Portal Express Renewal service. It models the service's own unauthenticated identity/vehicle-verification screen — an individual customer identifies by date of birth, a business customer by renewal-notice PIN, and either must also supply at least one of a license plate number, VIN, parking permit number, vessel FL number, or documented vessel number — together with the renewal-term and email-confirmation choices FLHSMV's public registration-renewal guidance describes. It does not model the MyFlorida mobile app's variant flow, the in-person office renewal path, the automatic backend insurance-verification check (FLHSMV performs this electronically; the customer supplies no insurance field), or the screens reached only after the service matches a real customer record (the eligible vehicle/vessel list, computed fee, and payment collection) — those sit behind a genuine registration match and were not independently confirmed field-by-field. It does not submit a renewal; the live flhsmv.gov and mydmvportal.flhsmv.gov sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-FL"
+  },
+  "authority": {
+    "name": "Florida Department of Highway Safety and Motor Vehicles",
+    "abbreviation": "FLHSMV",
+    "url": "https://www.flhsmv.gov/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.flhsmv.gov/motor-vehicles-tags-titles/license-plates-registration/renew-replace-registration/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Motor Vehicle Express Renewal Verification (MyDMV Portal)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-02",
+    "notes": "The identity/vehicle-verification fields were confirmed directly against the live, unauthenticated mydmvportal.flhsmv.gov Express Renewal Verification form — fetched as raw server-rendered HTML (not a summarized fetch), so field names, labels, required-if wiring, and client-side validation regex patterns are read verbatim from the production DOM. The surrounding renewal-term, email-confirmation, and fee guidance was confirmed against flhsmv.gov's public 'Renew or Replace Your Registration' and 'Motor Vehicle Registrations' pages, also fetched live. Status remains 'draft': the screens reached only after a real record match (vehicle/vessel selection, computed fee, payment, insurance-verification outcome) could not be independently confirmed field-by-field without a genuine registration. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "customerType",
+      "label": "Are you an individual or a business?",
+      "type": "enum",
+      "required": true,
+      "description": "Selects which of the two verification paths below applies.",
+      "sourceRef": "Express Renewal Verification — 'Please select one of the following options. Are you an individual [or] a business'",
+      "validation": { "enum": ["individual", "business"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "customerType", "equals": "individual" },
+      "classification": "sensitive-pii",
+      "description": "Must match the date of birth on file for the individual's motor vehicle record. Entered as MM/DD/YYYY on the source form and validated there as not a future date; represented here in full-date form per SPEC §6.2.",
+      "sourceRef": "Express Renewal Verification — Individual — '1. Enter your date of birth exactly as it appears on your motor vehicle record.'"
+    },
+    {
+      "name": "renewalNoticePIN",
+      "label": "Renewal Notice PIN",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "customerType", "equals": "business" },
+      "classification": "sensitive-pii",
+      "description": "An 11-digit numeric PIN printed on the customer's renewal notice. Required for a business customer; for an individual customer it is instead one of the optional additional identifiers (see VERIFICATION.md).",
+      "sourceRef": "Express Renewal Verification — Business — '1. Enter your PIN exactly as it appears on your renewal notice.'",
+      "validation": { "pattern": "^[0-9]{1,11}$" }
+    },
+    {
+      "name": "licensePlateNumber",
+      "label": "License Plate Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "One of the additional identifiers of which at least one is required alongside dateOfBirth (individual) or renewalNoticePIN (business); see VERIFICATION.md.",
+      "sourceRef": "Express Renewal Verification — 'License Plate Number:'"
+    },
+    {
+      "name": "vehicleIdentificationNumber",
+      "label": "VIN",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Vehicle Identification Number. One of the additional identifiers of which at least one is required alongside dateOfBirth (individual) or renewalNoticePIN (business); see VERIFICATION.md. The source's own client-side pattern accepts any 1-21 character alphanumeric string, looser than the standard 17-character VIN format (recorded here verbatim, not tightened — see VERIFICATION.md).",
+      "sourceRef": "Express Renewal Verification — 'VIN:'",
+      "validation": { "pattern": "^[a-zA-Z0-9]{1,21}$" }
+    },
+    {
+      "name": "parkingPermitNumber",
+      "label": "Parking Permit Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "One of the additional identifiers of which at least one is required alongside dateOfBirth (individual) or renewalNoticePIN (business); see VERIFICATION.md.",
+      "sourceRef": "Express Renewal Verification — 'Parking Permit Number:'",
+      "validation": { "pattern": "^[a-zA-Z]\\d{6,7}$" }
+    },
+    {
+      "name": "vesselFLNumber",
+      "label": "Vessel FL Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "One of the additional identifiers of which at least one is required alongside dateOfBirth (individual) or renewalNoticePIN (business); see VERIFICATION.md.",
+      "sourceRef": "Express Renewal Verification — 'Vessel FL Number:'",
+      "validation": { "pattern": "^[Ff][Ll][a-zA-Z0-9]{1,8}$" }
+    },
+    {
+      "name": "documentedVesselNumber",
+      "label": "Documented Vessel Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "One of the additional identifiers of which at least one is required alongside dateOfBirth (individual) or renewalNoticePIN (business); see VERIFICATION.md.",
+      "sourceRef": "Express Renewal Verification — 'Documented Vessel Number:'"
+    },
+    {
+      "name": "renewalPeriodYears",
+      "label": "Renewal period",
+      "type": "integer",
+      "required": true,
+      "description": "Number of years to renew. Vehicle and vessel registrations may be renewed for one or two years at a time.",
+      "sourceRef": "Renew or Replace Your Registration — 'Customers may renew their vehicle or vessel for a period of one to two years...'",
+      "validation": { "minimum": 1, "maximum": 2 }
+    },
+    {
+      "name": "wantsEmailConfirmation",
+      "label": "Send an emailed confirmation receipt?",
+      "type": "boolean",
+      "required": false,
+      "description": "If yes, an emailed confirmation receipt is sent that can be used as proof of payment until the physical registration arrives in the mail.",
+      "sourceRef": "Motor Vehicle Registrations — 'On the payment confirmation page customers must select 'yes', enter an email address, and click 'Send Email Confirmation' for the information to be emailed.'"
+    },
+    {
+      "name": "confirmationEmail",
+      "label": "Email address for confirmation receipt",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsEmailConfirmation", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Motor Vehicle Registrations — 'enter an email address, and click 'Send Email Confirmation'...'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "registrationRenewalPayment",
+      "label": "Registration renewal fee (plus online processing fee)",
+      "category": "payment",
+      "required": true,
+      "methods": ["credit_card"],
+      "sourceRef": "Motor Vehicle Registrations — 'All online electronic payments are charged a $2.00 processing fee in addition to the total transaction.' Renewal fee amount varies by vehicle class, weight, and county and is not fixed here; see VERIFICATION.md."
+    }
+  ],
+  "steps": [
+    {
+      "id": "verify_identity",
+      "title": "Verify identity and vehicle",
+      "fields": [
+        "customerType",
+        "dateOfBirth",
+        "renewalNoticePIN",
+        "licensePlateNumber",
+        "vehicleIdentificationNumber",
+        "parkingPermitNumber",
+        "vesselFLNumber",
+        "documentedVesselNumber"
+      ],
+      "next": "renewal_selection"
+    },
+    {
+      "id": "renewal_selection",
+      "title": "Select renewal term and confirmation",
+      "fields": ["renewalPeriodYears", "wantsEmailConfirmation", "confirmationEmail"]
+    }
+  ]
+}
