@@ -1,0 +1,798 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/companies-house/company-incorporation-in01",
+  "version": "1.1.0",
+  "title": "United Kingdom Private Limited Company Incorporation (Form IN01)",
+  "description": "Register (incorporate) a private company limited by shares with Companies House using form IN01, made under Section 9 of the Companies Act 2006. Scoped to the single-director, single-subscriber, single-share-class case most relevant to an individual forming their own company (the GB counterpart to a US single-member LLC formation) — the common case where one person is the sole director, the sole initial shareholder/subscriber, and the sole person with significant control (PSC). Public companies, companies limited by guarantee, unlimited companies, corporate directors/secretaries, multiple share classes, multiple subscribers, multiple PSCs, and 'other registrable persons'/'relevant legal entities' are out of scope of this document; see VERIFICATION.md. It does not submit the registration; the live gov.uk/Companies House source is always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Companies House",
+    "abbreviation": "CH",
+    "url": "https://www.gov.uk/government/organisations/companies-house"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/limited-company-formation/register-your-company",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "IN01 (Application to register a company), version 12.0, February 2026"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the GOV.UK 'Register your company' guidance flow (limited-company-formation/*) and the current IN01 PDF (v12.0, Feb 2026), retrieved from assets.publishing.service.gov.uk and transcribed field-by-field from the PDF's decompressed content streams (each of sections A1-A10, D1-D6, F1-F3, H1-H2, I1-I7, L1, M1, N1, and P1 was read in full). This is the first GovSchema company-formation schema in any jurisdiction, closing a gap the discovery README had flagged since GOV-36 (four other company-formation candidates exist across US-CA, IE, and CA-ON but none had been authored). Scope was deliberately narrowed to the single-director/single-subscriber/single-PSC private-limited-by-shares case: v0.2 has no repeating-group or array field model (SPEC.md §6.1; composite/repeating values are tracked separately as GSP-0009), so the form's inherently repeatable sections (additional directors, additional subscribers, additional PSCs, multiple share classes/currencies) cannot be represented structurally and are out of scope rather than force-fit. Corporate directors/secretaries (Sections C, E), companies limited by guarantee (Section G), 'relevant legal entity' and 'other registrable person' PSCs (Sections J, K), and public/unlimited company types are likewise out of scope. Status remains 'draft'. See VERIFICATION.md for the full sourced-field mapping and open items."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "companyName",
+      "label": "Proposed company name in full",
+      "type": "string",
+      "required": true,
+      "description": "Must be checked for availability and against naming rules (duplicate/'same as' names, sensitive words, offensive names) before submission; must end in 'Limited' or 'Ltd' ('Cyfyngedig' or 'Cyf' for a Welsh company) unless the applicant separately qualifies for and applies for the guarantee/charity name-ending exemption, which this document does not model (private-limited-by-shares scope only).",
+      "sourceRef": "Section A1 — Company name",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "sicCode1",
+      "label": "Principal business activity — classification code 1",
+      "type": "string",
+      "required": false,
+      "description": "UK SIC (Standard Industrial Classification) 2007 code from Companies House's condensed list, e.g. 62012. Required unless businessActivityDescription is given instead.",
+      "sourceRef": "Section A5 — Principal business activity",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "sicCode2",
+      "label": "Classification code 2 (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Up to 4 SIC codes may be given in total.",
+      "sourceRef": "Section A5 — Principal business activity",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "sicCode3",
+      "label": "Classification code 3 (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Up to 4 SIC codes may be given in total.",
+      "sourceRef": "Section A5 — Principal business activity",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "sicCode4",
+      "label": "Classification code 4 (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Up to 4 SIC codes may be given in total.",
+      "sourceRef": "Section A5 — Principal business activity",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "businessActivityDescription",
+      "label": "Business activity description (if no code can be determined)",
+      "type": "string",
+      "required": false,
+      "description": "A brief free-text description of the company's business activity, used only when no SIC code applies.",
+      "sourceRef": "Section A5 — Principal business activity",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "registeredOfficeSituation",
+      "label": "Situation of registered office",
+      "type": "enum",
+      "required": true,
+      "description": "Exactly one nation. Determines which nation the registeredOffice* address must be located in: England-and-Wales/Wales companies need an England-or-Wales address; Scotland and Northern Ireland companies need an address in that nation respectively.",
+      "sourceRef": "Section A6 — Situation of registered office",
+      "validation": { "enum": ["england_and_wales", "wales", "scotland", "northern_ireland"] }
+    },
+    {
+      "name": "registeredOfficeAddressLine1",
+      "label": "Registered office address — building name/number and street",
+      "type": "string",
+      "required": true,
+      "description": "Every company must have a registered office, the address to which the Registrar sends correspondence; it appears on the public record. Must be an 'appropriate address' (post addressed there would be expected to come to a person acting for the company, and delivery can be confirmed) — a Royal Mail PO Box alone is no longer permitted. The source form splits this into 'Building name/number' and 'Street'; this document combines them into one line per registry convention (cf. gb/co/register-to-vote).",
+      "sourceRef": "Section A7 — Registered office address",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "registeredOfficeAddressLine2",
+      "label": "Registered office address — post town / county or region (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Combines the source form's separate 'Post town' and 'County/Region' lines.",
+      "sourceRef": "Section A7 — Registered office address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "registeredOfficePostcode",
+      "label": "Registered office — postcode",
+      "type": "string",
+      "required": true,
+      "description": "UK postcode, e.g. SW1A 1AA.",
+      "sourceRef": "Section A7 — Registered office address",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "registeredEmailAddress",
+      "label": "Registered email address",
+      "type": "string",
+      "required": true,
+      "description": "Must be an address emails from the Registrar would be expected to reach a person acting for the company. Only one address is given. Not shown on the public record.",
+      "sourceRef": "Section A10 — Registered email address",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "articlesOption",
+      "label": "Articles of association",
+      "type": "enum",
+      "required": true,
+      "description": "For a private company limited by shares (this document's scope): adopt the model articles for that company type unamended, adopt them with additional/amended provisions (a copy must be attached), or adopt entirely bespoke articles (a copy must be attached).",
+      "sourceRef": "Section A8/A9 — Articles of association",
+      "validation": { "enum": ["model_articles_unamended", "model_articles_amended", "bespoke_articles"] }
+    },
+    {
+      "name": "restrictedArticles",
+      "label": "Do the articles contain provision for entrenchment?",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick if the articles are 'restricted' (contain entrenchment provisions).",
+      "sourceRef": "Section A9 — Restricted company articles"
+    },
+    {
+      "name": "directorTitle",
+      "label": "Director's title (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section D1 — Director appointments",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "directorFirstNames",
+      "label": "Director's forename(s)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. This document scopes to a single individual director; a private company must appoint at least one director who is an individual. Corporate directors and additional individual directors are out of scope.",
+      "sourceRef": "Section D1 — Director appointments",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "directorSurname",
+      "label": "Director's surname",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section D1 — Director appointments",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "directorFormerNames",
+      "label": "Director's former name(s) (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Any previous names, including maiden or married names, used for business purposes in the last 20 years.",
+      "sourceRef": "Section D1 — Director appointments",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "directorNationality",
+      "label": "Director's nationality",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section D1 — Director appointments",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "directorCountryOfResidence",
+      "label": "Director's country/state of residence",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section D1 — Director appointments",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "directorDateOfBirth",
+      "label": "Director's date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD. A director must be 16 or over. Only the month and year appear on the public record; the full date is collected but withheld from public disclosure (Section D3 is not shown on the public record).",
+      "sourceRef": "Section D1 / D3 — Director's date of birth"
+    },
+    {
+      "name": "directorServiceAddressSameAsRegisteredOffice",
+      "label": "Is the director's service address the company's registered office?",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, directorServiceAddress* fields are not separately required.",
+      "sourceRef": "Section D2 — Director's service address"
+    },
+    {
+      "name": "directorServiceAddressLine1",
+      "label": "Director's service address — building name/number and street",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Appears on the public record; does not have to be the director's usual residential address. Required unless directorServiceAddressSameAsRegisteredOffice is true.",
+      "sourceRef": "Section D2 — Director's service address",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "directorServiceAddressLine2",
+      "label": "Director's service address — post town / county or region (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section D2 — Director's service address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "directorServiceAddressCountry",
+      "label": "Director's service address — country",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Unlike the registered office, a director's service address is not restricted to the UK.",
+      "sourceRef": "Section D2 — Director's service address",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "directorServiceAddressPostcode",
+      "label": "Director's service address — postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section D2 — Director's service address",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "directorResidentialAddressSameAsServiceAddress",
+      "label": "Is the director's usual residential address the same as their service address?",
+      "type": "boolean",
+      "required": false,
+      "description": "Cannot be true if the service address was stated as 'the company's registered office' — a full residential address is required in that case. This section is not shown on the public record.",
+      "sourceRef": "Section D4 — Director's usual residential address"
+    },
+    {
+      "name": "directorResidentialAddressLine1",
+      "label": "Director's usual residential address — building name/number and street",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record. Required unless directorResidentialAddressSameAsServiceAddress is true. Cannot be a PO Box, DX, or Scottish legal-post number.",
+      "sourceRef": "Section D4 — Director's usual residential address",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "directorResidentialAddressLine2",
+      "label": "Director's usual residential address — post town / county or region (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record.",
+      "sourceRef": "Section D4 — Director's usual residential address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "directorResidentialAddressCountry",
+      "label": "Director's usual residential address — country",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record.",
+      "sourceRef": "Section D4 — Director's usual residential address",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "directorResidentialAddressPostcode",
+      "label": "Director's usual residential address — postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record.",
+      "sourceRef": "Section D4 — Director's usual residential address",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "directorSection243ExemptionApplied",
+      "label": "Is the director applying for, or has been granted, a Section 243 exemption?",
+      "type": "boolean",
+      "required": false,
+      "description": "A section 243 exemption prevents the director's usual residential address being disclosed to credit reference agencies. If applying with this notice, the whole form must be posted (not filed online) to the Registrar of Companies, PO Box 4082, Cardiff CF14 3WE.",
+      "sourceRef": "Section D4 — Section 243 exemption"
+    },
+    {
+      "name": "directorIdentityVerified",
+      "label": "Has the director verified their identity under s1110A of the Companies Act 2006?",
+      "type": "boolean",
+      "required": true,
+      "description": "Statutory requirement: an individual director must have verified their identity (via GOV.UK One Login or an Authorised Corporate Service Provider) before or as part of appointment/incorporation.",
+      "sourceRef": "Section D5 — Director's identity verification details"
+    },
+    {
+      "name": "directorPersonalCode",
+      "label": "Director's Companies House personal code",
+      "type": "string",
+      "required": false,
+      "description": "An 11-character code issued to a person once they have verified their identity with Companies House. Personal to the individual, not to any company. Required to accompany a true directorIdentityVerified in most cases.",
+      "sourceRef": "Section D6 — Companies House personal code",
+      "validation": { "minLength": 11, "maxLength": 11 }
+    },
+    {
+      "name": "directorNameMatchesVerifiedName",
+      "label": "Does the name given for the director match their verified name?",
+      "type": "boolean",
+      "required": false,
+      "description": "Non-statutory information. If false, give directorNameMismatchReason.",
+      "sourceRef": "Section D6 — Director's identity verification details"
+    },
+    {
+      "name": "directorNameMismatchReason",
+      "label": "If the names don't match, why?",
+      "type": "enum",
+      "required": false,
+      "description": "Only relevant when directorNameMatchesVerifiedName is false.",
+      "sourceRef": "Section D6 — Director's identity verification details",
+      "validation": { "enum": ["legally_changed_name", "preferred_name", "translation_or_different_naming_convention", "prefer_not_to_say"] }
+    },
+    {
+      "name": "shareCurrency",
+      "label": "Currency of share capital",
+      "type": "string",
+      "required": true,
+      "description": "ISO 4217 currency code, e.g. GBP. This document scopes to a single currency and a single class of shares; the source form supports a separate table per currency and per class.",
+      "sourceRef": "Section F1 — Statement of capital",
+      "validation": { "pattern": "^[A-Z]{3}$" }
+    },
+    {
+      "name": "shareClassName",
+      "label": "Class of shares",
+      "type": "string",
+      "required": true,
+      "description": "E.g. 'Ordinary'.",
+      "sourceRef": "Section F1 — Statement of capital",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "numberOfSharesIssued",
+      "label": "Number of shares",
+      "type": "integer",
+      "required": true,
+      "description": "Total number of shares of this class issued on incorporation.",
+      "sourceRef": "Section F1 — Statement of capital",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "nominalValuePerShare",
+      "label": "Nominal value of each share",
+      "type": "number",
+      "required": true,
+      "description": "In shareCurrency.",
+      "sourceRef": "Section F1 — Statement of capital",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "aggregateNominalValue",
+      "label": "Aggregate nominal value",
+      "type": "number",
+      "required": true,
+      "description": "Number of shares issued multiplied by nominal value, in shareCurrency.",
+      "sourceRef": "Section F1 — Statement of capital",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "aggregateAmountUnpaid",
+      "label": "Aggregate amount unpaid, if any",
+      "type": "number",
+      "required": false,
+      "description": "Total unpaid on the shares, including any share premium, in shareCurrency. Defaults to 0 (fully paid) if not given.",
+      "sourceRef": "Section F1 — Statement of capital",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "prescribedParticularsOfShares",
+      "label": "Prescribed particulars of rights attached to the shares",
+      "type": "string",
+      "required": true,
+      "description": "Must describe: any voting rights (including rights arising only in certain circumstances); any rights to participate in a dividend distribution; any rights to participate in a capital distribution (including on winding up); and whether the shares are redeemable at the option of the company or the shareholder.",
+      "sourceRef": "Section F2 — Prescribed particulars of rights attached to shares",
+      "validation": { "maxLength": 1000 }
+    },
+    {
+      "name": "subscriberName",
+      "label": "Subscriber's name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The subscriber is the initial shareholder who subscribes their name to the memorandum of association. This document scopes to a single subscriber, matching the single-director/single-shareholder individual use case; the source form supports multiple subscribers.",
+      "sourceRef": "Section F3 — Initial shareholdings",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "subscriberAddressLine1",
+      "label": "Subscriber's address — building name/number and street",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Appears on the public record; does not have to be the subscriber's usual residential address.",
+      "sourceRef": "Section F3 — Initial shareholdings",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "subscriberAddressLine2",
+      "label": "Subscriber's address — post town / county or region (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section F3 — Initial shareholdings",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "subscriberAddressCountry",
+      "label": "Subscriber's address — country",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section F3 — Initial shareholdings",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "subscriberAddressPostcode",
+      "label": "Subscriber's address — postcode",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section F3 — Initial shareholdings",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "statementOfNoSignificantControl",
+      "label": "Statement of no significant control",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick only if the company knows or has reason to believe there will be no person with significant control (registrable person) or registrable relevant legal entity on incorporation. If true, the pscFirstNames/pscSurname/... fields are not applicable. Uncommon in the single-shareholder case this document scopes to.",
+      "sourceRef": "Section H2 — Statement of no PSC"
+    },
+    {
+      "name": "pscFirstNames",
+      "label": "PSC's forename(s)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless statementOfNoSignificantControl is true. This document scopes to a single individual PSC (often the same person as the director/subscriber); registrable relevant legal entities and 'other registrable persons' are out of scope.",
+      "sourceRef": "Section I1 — Individual's details",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "pscSurname",
+      "label": "PSC's surname",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless statementOfNoSignificantControl is true.",
+      "sourceRef": "Section I1 — Individual's details",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "pscFormerNames",
+      "label": "PSC's former name(s) (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section I1 — Individual's details",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "pscNationality",
+      "label": "PSC's nationality",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless statementOfNoSignificantControl is true.",
+      "sourceRef": "Section I1 — Individual's details",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "pscCountryOfResidence",
+      "label": "PSC's country/state of residence",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless statementOfNoSignificantControl is true.",
+      "sourceRef": "Section I1 — Individual's details",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "pscDateOfBirth",
+      "label": "PSC's date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD. Required unless statementOfNoSignificantControl is true. Full date is collected but not shown on the public record.",
+      "sourceRef": "Section I3 — Individual's date of birth"
+    },
+    {
+      "name": "pscServiceAddressSameAsRegisteredOffice",
+      "label": "Is the PSC's service address the company's registered office?",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, pscServiceAddress* fields are not separately required.",
+      "sourceRef": "Section I2 — Individual's service address"
+    },
+    {
+      "name": "pscServiceAddressLine1",
+      "label": "PSC's service address — building name/number and street",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Appears on the public record; does not have to be the PSC's usual residential address.",
+      "sourceRef": "Section I2 — Individual's service address",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "pscServiceAddressLine2",
+      "label": "PSC's service address — post town / county or region (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section I2 — Individual's service address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "pscServiceAddressCountry",
+      "label": "PSC's service address — country",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section I2 — Individual's service address",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "pscServiceAddressPostcode",
+      "label": "PSC's service address — postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section I2 — Individual's service address",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "pscResidentialAddressSameAsServiceAddress",
+      "label": "Is the PSC's usual residential address the same as their service address?",
+      "type": "boolean",
+      "required": false,
+      "description": "This section is not shown on the public record.",
+      "sourceRef": "Section I4 — Individual's usual residential address"
+    },
+    {
+      "name": "pscResidentialAddressLine1",
+      "label": "PSC's usual residential address — building name/number and street",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record. Required unless pscResidentialAddressSameAsServiceAddress is true. Cannot be a PO Box, DX, or Scottish legal-post number.",
+      "sourceRef": "Section I4 — Individual's usual residential address",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "pscResidentialAddressLine2",
+      "label": "PSC's usual residential address — post town / county or region (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record.",
+      "sourceRef": "Section I4 — Individual's usual residential address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "pscResidentialAddressCountry",
+      "label": "PSC's usual residential address — country",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record.",
+      "sourceRef": "Section I4 — Individual's usual residential address",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "pscResidentialAddressPostcode",
+      "label": "PSC's usual residential address — postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Not shown on the public record.",
+      "sourceRef": "Section I4 — Individual's usual residential address",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "pscSection790ZFExemptionApplied",
+      "label": "Is the PSC applying for, or has been granted, a Section 790ZF exemption?",
+      "type": "boolean",
+      "required": false,
+      "description": "A section 790ZF exemption prevents the PSC's usual residential address being disclosed to credit reference agencies. If applying with this notice, the whole form must be posted (not filed online) to the Registrar of Companies, PO Box 4082, Cardiff CF14 3WE.",
+      "sourceRef": "Section I4 — Section 790ZF exemption"
+    },
+    {
+      "name": "pscShareOwnershipBand",
+      "label": "PSC's ownership of shares",
+      "type": "enum",
+      "required": false,
+      "description": "The percentage of shares the PSC holds directly or indirectly, if this is a nature of their control. Tick only one band.",
+      "sourceRef": "Section I7 — Nature of control for an individual",
+      "validation": { "enum": ["over_25_up_to_50", "more_than_50_less_than_75", "75_or_more"] }
+    },
+    {
+      "name": "pscVotingRightsBand",
+      "label": "PSC's ownership of voting rights",
+      "type": "enum",
+      "required": false,
+      "description": "The percentage of voting rights the PSC holds directly or indirectly, if this is a nature of their control. Tick only one band.",
+      "sourceRef": "Section I7 — Nature of control for an individual",
+      "validation": { "enum": ["over_25_up_to_50", "more_than_50_less_than_75", "75_or_more"] }
+    },
+    {
+      "name": "pscRightToAppointRemoveDirectors",
+      "label": "Does the PSC hold the right to appoint or remove a majority of directors?",
+      "type": "boolean",
+      "required": false,
+      "description": "Directly or indirectly.",
+      "sourceRef": "Section I7 — Nature of control for an individual"
+    },
+    {
+      "name": "pscSignificantInfluenceOrControl",
+      "label": "Does the PSC have significant influence or control by other means?",
+      "type": "boolean",
+      "required": false,
+      "description": "Only tick if none of pscShareOwnershipBand, pscVotingRightsBand, or pscRightToAppointRemoveDirectors applies. At least one nature-of-control field must be set for a registered PSC.",
+      "sourceRef": "Section I7 — Nature of control for an individual"
+    },
+    {
+      "name": "pscIdentityVerified",
+      "label": "Has the PSC verified their identity under s1110A of the Companies Act 2006?",
+      "type": "boolean",
+      "required": false,
+      "description": "Statutory requirement introduced alongside director identity verification. Required unless statementOfNoSignificantControl is true.",
+      "sourceRef": "Section I5 — PSC's identity verification details"
+    },
+    {
+      "name": "pscPersonalCode",
+      "label": "PSC's Companies House personal code",
+      "type": "string",
+      "required": false,
+      "description": "An 11-character code issued once the PSC has verified their identity with Companies House. Only complete if the PSC has verified their identity and shared their personal code.",
+      "sourceRef": "Section I6 — PSC's identity verification details",
+      "validation": { "minLength": 11, "maxLength": 11 }
+    },
+    {
+      "name": "pscNameMatchesVerifiedName",
+      "label": "Does the name given for the PSC match their verified name?",
+      "type": "boolean",
+      "required": false,
+      "description": "Non-statutory information. If false, give pscNameMismatchReason.",
+      "sourceRef": "Section I6 — PSC's identity verification details"
+    },
+    {
+      "name": "pscNameMismatchReason",
+      "label": "If the names don't match, why?",
+      "type": "enum",
+      "required": false,
+      "description": "Only relevant when pscNameMatchesVerifiedName is false.",
+      "sourceRef": "Section I6 — PSC's identity verification details",
+      "validation": { "enum": ["legally_changed_name", "preferred_name", "translation_or_different_naming_convention", "prefer_not_to_say"] }
+    },
+    {
+      "name": "consentToActConfirmed",
+      "label": "Consent statement: each named director has consented to act",
+      "type": "boolean",
+      "required": true,
+      "description": "The subscribers confirm that the person named as director has consented to act in that capacity.",
+      "sourceRef": "Section L1 — Consent statement"
+    },
+    {
+      "name": "individualPscParticularsConfirmed",
+      "label": "Statement about individual PSC particulars",
+      "type": "boolean",
+      "required": false,
+      "description": "The subscribers confirm the individual PSC knows their particulars are being supplied as part of this application. Required only when an individual PSC has been named (i.e. statementOfNoSignificantControl is not true).",
+      "sourceRef": "Section M1 — Particulars of an individual PSC"
+    },
+    {
+      "name": "lawfulPurposeConfirmed",
+      "label": "Lawful purpose statement",
+      "type": "boolean",
+      "required": true,
+      "description": "The subscribers confirm they wish to form the company for lawful purposes.",
+      "sourceRef": "Section N1 — Lawful purpose"
+    },
+    {
+      "name": "deliveredByAgent",
+      "label": "Is the application delivered by an agent on behalf of all subscribers?",
+      "type": "boolean",
+      "required": false,
+      "description": "Routes to the agent's statement of compliance (Section P2, give agentName) if true, or the subscriber's own statement of compliance (Section P1, give subscriberPrintedName) if false.",
+      "sourceRef": "Part 9 — Statement of compliance"
+    },
+    {
+      "name": "agentName",
+      "label": "Agent's printed name",
+      "type": "string",
+      "required": false,
+      "description": "Required only when deliveredByAgent is true. A signature is not required, only a printed name; this will appear on the public record.",
+      "sourceRef": "Section P2 — Statement of compliance delivered by an agent",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "subscriberPrintedName",
+      "label": "Subscriber's printed name",
+      "type": "string",
+      "required": false,
+      "description": "Required only when deliveredByAgent is false. Every subscriber to the memorandum of association must authenticate the statement of compliance; this document's single-subscriber scope needs only one name. A signature is not required, only a printed name; this will appear on the public record.",
+      "sourceRef": "Section P1 — Statement of compliance delivered by the subscribers",
+      "validation": { "maxLength": 160 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "company_name",
+      "title": "Company name",
+      "fields": ["companyName"],
+      "next": "business_activity"
+    },
+    {
+      "id": "business_activity",
+      "title": "Company's activity or activities",
+      "fields": ["sicCode1", "sicCode2", "sicCode3", "sicCode4", "businessActivityDescription"],
+      "next": "registered_office"
+    },
+    {
+      "id": "registered_office",
+      "title": "Registered office and registered email address",
+      "fields": ["registeredOfficeSituation", "registeredOfficeAddressLine1", "registeredOfficeAddressLine2", "registeredOfficePostcode", "registeredEmailAddress"],
+      "next": "articles_of_association"
+    },
+    {
+      "id": "articles_of_association",
+      "title": "Articles of association",
+      "fields": ["articlesOption", "restrictedArticles"],
+      "next": "director"
+    },
+    {
+      "id": "director",
+      "title": "Director appointment",
+      "fields": [
+        "directorTitle", "directorFirstNames", "directorSurname", "directorFormerNames",
+        "directorNationality", "directorCountryOfResidence", "directorDateOfBirth",
+        "directorServiceAddressSameAsRegisteredOffice", "directorServiceAddressLine1", "directorServiceAddressLine2", "directorServiceAddressCountry", "directorServiceAddressPostcode",
+        "directorResidentialAddressSameAsServiceAddress", "directorResidentialAddressLine1", "directorResidentialAddressLine2", "directorResidentialAddressCountry", "directorResidentialAddressPostcode", "directorSection243ExemptionApplied",
+        "directorIdentityVerified", "directorPersonalCode", "directorNameMatchesVerifiedName", "directorNameMismatchReason"
+      ],
+      "next": "statement_of_capital"
+    },
+    {
+      "id": "statement_of_capital",
+      "title": "Statement of capital",
+      "fields": ["shareCurrency", "shareClassName", "numberOfSharesIssued", "nominalValuePerShare", "aggregateNominalValue", "aggregateAmountUnpaid", "prescribedParticularsOfShares"],
+      "next": "initial_shareholding"
+    },
+    {
+      "id": "initial_shareholding",
+      "title": "Initial shareholding (subscriber)",
+      "fields": ["subscriberName", "subscriberAddressLine1", "subscriberAddressLine2", "subscriberAddressCountry", "subscriberAddressPostcode"],
+      "next": "people_with_significant_control"
+    },
+    {
+      "id": "people_with_significant_control",
+      "title": "People with significant control (PSC)",
+      "fields": [
+        "statementOfNoSignificantControl",
+        "pscFirstNames", "pscSurname", "pscFormerNames", "pscNationality", "pscCountryOfResidence", "pscDateOfBirth",
+        "pscServiceAddressSameAsRegisteredOffice", "pscServiceAddressLine1", "pscServiceAddressLine2", "pscServiceAddressCountry", "pscServiceAddressPostcode",
+        "pscResidentialAddressSameAsServiceAddress", "pscResidentialAddressLine1", "pscResidentialAddressLine2", "pscResidentialAddressCountry", "pscResidentialAddressPostcode", "pscSection790ZFExemptionApplied",
+        "pscShareOwnershipBand", "pscVotingRightsBand", "pscRightToAppointRemoveDirectors", "pscSignificantInfluenceOrControl",
+        "pscIdentityVerified", "pscPersonalCode", "pscNameMatchesVerifiedName", "pscNameMismatchReason"
+      ],
+      "next": "consent_and_compliance"
+    },
+    {
+      "id": "consent_and_compliance",
+      "title": "Consent, lawful purpose, and statement of compliance",
+      "fields": ["consentToActConfirmed", "individualPscParticularsConfirmed", "lawfulPurposeConfirmed", "deliveredByAgent", "agentName", "subscriberPrintedName"]
+    }
+  ]
+}

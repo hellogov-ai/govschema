@@ -1,0 +1,1067 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/hmrc/self-assessment-tax-return-sa100",
+  "version": "1.1.0",
+  "title": "United Kingdom Self Assessment Tax Return (Form SA100, 2024-25 tax year)",
+  "description": "File a UK Self Assessment tax return for the 2024-25 tax year (6 April 2024 to 5 April 2025) using HMRC's main return, Form SA100. The SA100 is the core return: it captures personal details, the 'What makes up your tax return' questions that gate the supplementary pages (Employment SA102, Self-employment SA103, UK property SA105, Foreign SA106, Capital Gains SA108, Residence SA109, Additional information SA101, etc.), UK income (interest, dividends, pensions, State Pension and benefits, other income), tax reliefs (pension contributions, Gift Aid, Blind Person's Allowance), Student Loan and Postgraduate Loan repayments, the High Income Child Benefit Charge, Marriage Allowance transfer, tax-code collection choices, repayment details, and the declaration. This document models the SA100 main return only; the supplementary pages are separate forms gated by the page TR 2 questions and are not modelled here. This document describes the 2024-25 edition; HMRC publishes a fresh edition each tax year (see the edition member). It does not submit the return; the live HMRC source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "His Majesty's Revenue and Customs",
+    "abbreviation": "HMRC",
+    "url": "https://www.gov.uk/government/organisations/hm-revenue-customs"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-GB"
+  },
+  "edition": {
+    "scheme": "gb-tax-year",
+    "label": "2024-25"
+  },
+  "source": {
+    "url": "https://www.gov.uk/government/publications/self-assessment-tax-return-sa100",
+    "retrievedAt": "2026-06-30",
+    "documentRef": "Form SA100 (2025) — tax year 6 April 2024 to 5 April 2025"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-06-30",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2026-12-30",
+    "notes": "Source-derived reference schema authored from the official HMRC SA100 (2025) PDF for the 2024-25 tax year (form labelled 'SA100 2025', tax year 6 April 2024 to 5 April 2025; InDesign generation timestamp 2025-03-03). Every numbered box on the eight main-return pages (TR 1 to TR 8) was transcribed box-by-box from the PDF and mapped to a field, with the page and box number recorded in each field's sourceRef. The supplementary pages (SA101-SA109) are deliberately out of scope: page TR 2 gates them via Yes/No questions, which are modelled, but their internal fields are separate forms. The TR 2 'Yes/No' questions are modelled as booleans and their 'Number' sub-boxes as integers; the GBP money boxes are free numeric inputs (HMRC publishes no fixed maxima); date boxes are typed 'date'. This is the second GovSchema document to exercise the v0.2 edition axis (gb-tax-year / 2024-25), after us/irs/extension-to-file-4868/2025. Conditional requiredness (e.g. the 'Number' boxes required only when the matching Yes box is ticked; the repayment and Marriage Allowance sections completed only when relevant) is stated in field descriptions rather than encoded structurally, per the v0.1/v0.2 limitation tracked in GSP-0004. The exact field labels were captured from the PDF; the screen-by-screen labels of the online file-by-phone/online service were not separately verified. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "uniqueTaxpayerReference",
+      "label": "Unique Taxpayer Reference (UTR)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your 10-digit Unique Taxpayer Reference, pre-printed on the tax return that HMRC issues. It identifies the Self Assessment record this return belongs to.",
+      "sourceRef": "Page TR 1 — Reference (UTR)",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Your date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your date of birth (DD MM YYYY); HMRC uses it to get your tax right (e.g. age-related allowances).",
+      "sourceRef": "Page TR 1, box 1 — Your date of birth"
+    },
+    {
+      "name": "taxpayerName",
+      "label": "Your name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your name. On the paper form this is pre-printed; box 2 is used to enter the correct details if they have changed.",
+      "sourceRef": "Page TR 1, box 2 — Your name and address",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 140
+      }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Address line 1",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. First line of your address (number and street). Used to correct the pre-printed address if it has changed.",
+      "sourceRef": "Page TR 1, box 2 — Your name and address",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "addressLine2",
+      "label": "Address line 2 (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Second line of your address, if needed.",
+      "sourceRef": "Page TR 1, box 2 — Your name and address",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "addressTown",
+      "label": "Town or city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Town or city of your address.",
+      "sourceRef": "Page TR 1, box 2 — Your name and address",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "postcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. UK postcode of your address (e.g. SW1A 1AA). Leave blank for a non-UK address and give the country in the address lines.",
+      "sourceRef": "Page TR 1, box 2 — Your name and address",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Your phone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. A daytime phone number HMRC can use to contact you about this return.",
+      "sourceRef": "Page TR 1, box 3 — Your phone number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "nationalInsuranceNumber",
+      "label": "Your National Insurance number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your National Insurance number, e.g. QQ123456C. On the paper form this is pre-printed; box 4 is used only if the printed number is wrong or missing. Leave blank if the correct number is already shown.",
+      "sourceRef": "Page TR 1, box 4 — Your National Insurance number",
+      "validation": {
+        "pattern": "^[A-Za-z]{2}[0-9]{6}[A-Da-d]?$"
+      }
+    },
+    {
+      "name": "hadEmployment",
+      "label": "Employment",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you were an employee, director, office holder or agency worker in the year to 5 April 2025. If yes, complete a separate 'Employment' (SA102) page for each employment.",
+      "sourceRef": "Page TR 2, box 1 — Employment (Yes/No)"
+    },
+    {
+      "name": "numberOfEmploymentPages",
+      "label": "Number of 'Employment' pages",
+      "type": "integer",
+      "required": false,
+      "description": "How many separate 'Employment' (SA102) pages you are completing. Required only if you answered Yes to Employment.",
+      "sourceRef": "Page TR 2, box 1 — Employment (Number)",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "hadSelfEmployment",
+      "label": "Self-employment",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you worked for yourself in the year to 5 April 2025 and need the 'Self-employment' (SA103) pages. You may not need to if this income is up to GBP 1,000. Answer Yes if you were a 'Name' at Lloyd's.",
+      "sourceRef": "Page TR 2, box 2 — Self-employment (Yes/No)"
+    },
+    {
+      "name": "numberOfSelfEmploymentPages",
+      "label": "Number of businesses",
+      "type": "integer",
+      "required": false,
+      "description": "How many 'Self-employment' (SA103) pages (one per business) you are completing. Required only if you answered Yes to Self-employment.",
+      "sourceRef": "Page TR 2, box 2 — Self-employment (Number)",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "hadPartnership",
+      "label": "Partnership",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you were in a partnership. If yes, complete a separate 'Partnership' (SA104) page for each partnership you were a partner in.",
+      "sourceRef": "Page TR 2, box 3 — Partnership (Yes/No)"
+    },
+    {
+      "name": "numberOfPartnershipPages",
+      "label": "Number of partnerships",
+      "type": "integer",
+      "required": false,
+      "description": "How many partnerships you were a partner in. Required only if you answered Yes to Partnership.",
+      "sourceRef": "Page TR 2, box 3 — Partnership (Number)",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "hadUkProperty",
+      "label": "UK property",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you received income from UK property (rents and other income from land you own or lease out) and need the 'UK property' (SA105) pages. You may not need to if this income is up to GBP 1,000.",
+      "sourceRef": "Page TR 2, box 4 — UK property (Yes/No)"
+    },
+    {
+      "name": "hadForeignIncome",
+      "label": "Foreign",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you had foreign income or gains (or a capital payment/benefit from a person abroad) and need the 'Foreign' (SA106) pages. You may not need to if your only foreign income was from land and property abroad up to GBP 1,000.",
+      "sourceRef": "Page TR 2, box 5 — Foreign (Yes/No)"
+    },
+    {
+      "name": "hadTrustIncome",
+      "label": "Trusts etc",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you received, or are treated as having received, income from a trust, settlement or the residue of a deceased person's estate. This does not include capital distributions received under a will.",
+      "sourceRef": "Page TR 2, box 6 — Trusts etc (Yes/No)"
+    },
+    {
+      "name": "hadCapitalGains",
+      "label": "Capital Gains Tax summary",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you sold or disposed of assets (e.g. stocks, shares, land and property, a business) or had chargeable gains and need the 'Capital Gains Tax summary' (SA108) page. You must also provide separate computations.",
+      "sourceRef": "Page TR 2, box 7 — Capital Gains Tax summary (Yes/No)"
+    },
+    {
+      "name": "capitalGainsComputationsProvided",
+      "label": "Computation(s) provided",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you are providing the separate capital gains computations that must accompany the 'Capital Gains Tax summary' page.",
+      "sourceRef": "Page TR 2, box 7 — Computation(s) provided"
+    },
+    {
+      "name": "hadResidenceOrRemittance",
+      "label": "Residence, remittance basis etc",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if, for all or part of the year to 5 April 2025, you were non-resident, dual resident, claiming the remittance basis, or otherwise need the 'Residence, remittance basis etc' (SA109) pages.",
+      "sourceRef": "Page TR 2, box 8 — Residence, remittance basis etc (Yes/No)"
+    },
+    {
+      "name": "needAdditionalInformationPages",
+      "label": "Additional information",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you need the 'Additional information' (SA101) pages for less common income or reliefs (e.g. Married Couple's Allowance, life insurance gains, Seafarer's Earnings Deduction, disclosed tax avoidance schemes).",
+      "sourceRef": "Page TR 2, box 9 — Additional information (Yes/No)"
+    },
+    {
+      "name": "taxedUkInterest",
+      "label": "Taxed UK interest",
+      "type": "number",
+      "required": false,
+      "description": "The net amount of UK interest received after tax has been taken off, in GBP.",
+      "sourceRef": "Page TR 3, box 1 — Taxed UK interest"
+    },
+    {
+      "name": "untaxedUkInterest",
+      "label": "Untaxed UK interest",
+      "type": "number",
+      "required": false,
+      "description": "UK interest received that has not had tax taken off, in GBP.",
+      "sourceRef": "Page TR 3, box 2 — Untaxed UK interest"
+    },
+    {
+      "name": "untaxedForeignInterest",
+      "label": "Untaxed foreign interest (up to GBP 2,000)",
+      "type": "number",
+      "required": false,
+      "description": "Foreign interest not taxed at source, in GBP, only where the total is up to GBP 2,000 (otherwise use the 'Foreign' pages).",
+      "sourceRef": "Page TR 3, box 3 — Untaxed foreign interest"
+    },
+    {
+      "name": "dividendsFromUkCompanies",
+      "label": "Dividends from UK companies",
+      "type": "number",
+      "required": false,
+      "description": "The amount of dividends received from UK companies, in GBP.",
+      "sourceRef": "Page TR 3, box 4 — Dividends from UK companies"
+    },
+    {
+      "name": "otherDividends",
+      "label": "Other dividends",
+      "type": "number",
+      "required": false,
+      "description": "The amount of other dividends received, in GBP.",
+      "sourceRef": "Page TR 3, box 5 — Other dividends"
+    },
+    {
+      "name": "foreignDividends",
+      "label": "Foreign dividends (up to GBP 500)",
+      "type": "number",
+      "required": false,
+      "description": "Foreign dividends in sterling after foreign tax, in GBP, only where the total is up to GBP 500. Do not also include this on the 'Foreign' pages.",
+      "sourceRef": "Page TR 3, box 6 — Foreign dividends"
+    },
+    {
+      "name": "taxTakenOffForeignDividends",
+      "label": "Tax taken off foreign dividends",
+      "type": "number",
+      "required": false,
+      "description": "The sterling equivalent of tax taken off the foreign dividends in box 6, in GBP.",
+      "sourceRef": "Page TR 3, box 7 — Tax taken off foreign dividends"
+    },
+    {
+      "name": "statePension",
+      "label": "State Pension",
+      "type": "number",
+      "required": false,
+      "description": "The amount of State Pension you were entitled to receive in the year (not the weekly or 4-weekly amount), in GBP.",
+      "sourceRef": "Page TR 3, box 8 — State Pension"
+    },
+    {
+      "name": "statePensionLumpSum",
+      "label": "State Pension lump sum",
+      "type": "number",
+      "required": false,
+      "description": "The gross amount of any State Pension lump sum, in GBP.",
+      "sourceRef": "Page TR 3, box 9 — State Pension lump sum"
+    },
+    {
+      "name": "taxTakenOffStatePensionLumpSum",
+      "label": "Tax taken off State Pension lump sum",
+      "type": "number",
+      "required": false,
+      "description": "Tax taken off the State Pension lump sum in box 9, in GBP.",
+      "sourceRef": "Page TR 3, box 10 — Tax taken off box 9"
+    },
+    {
+      "name": "otherPensions",
+      "label": "Pensions (other than State Pension)",
+      "type": "number",
+      "required": false,
+      "description": "Pensions other than the State Pension, retirement annuities and taxable lump sums treated as pensions — the gross amount, in GBP. Tax taken off goes in box 12.",
+      "sourceRef": "Page TR 3, box 11 — Pensions, retirement annuities and taxable lump sums"
+    },
+    {
+      "name": "taxTakenOffOtherPensions",
+      "label": "Tax taken off pensions in box 11",
+      "type": "number",
+      "required": false,
+      "description": "Tax taken off the pensions in box 11, in GBP.",
+      "sourceRef": "Page TR 3, box 12 — Tax taken off box 11"
+    },
+    {
+      "name": "taxableIncapacityBenefitAndEsa",
+      "label": "Taxable Incapacity Benefit and contribution-based ESA",
+      "type": "number",
+      "required": false,
+      "description": "Taxable Incapacity Benefit and contribution-based Employment and Support Allowance, in GBP.",
+      "sourceRef": "Page TR 3, box 13 — Taxable Incapacity Benefit and contribution-based ESA"
+    },
+    {
+      "name": "taxTakenOffIncapacityBenefit",
+      "label": "Tax taken off Incapacity Benefit in box 13",
+      "type": "number",
+      "required": false,
+      "description": "Tax taken off the Incapacity Benefit in box 13, in GBP.",
+      "sourceRef": "Page TR 3, box 14 — Tax taken off Incapacity Benefit in box 13"
+    },
+    {
+      "name": "jobseekersAllowance",
+      "label": "Jobseeker's Allowance",
+      "type": "number",
+      "required": false,
+      "description": "Taxable Jobseeker's Allowance received, in GBP.",
+      "sourceRef": "Page TR 3, box 15 — Jobseeker's Allowance"
+    },
+    {
+      "name": "otherTaxableStateBenefits",
+      "label": "Total of any other taxable State Pensions and benefits",
+      "type": "number",
+      "required": false,
+      "description": "Total of any other taxable State Pensions and benefits, in GBP.",
+      "sourceRef": "Page TR 3, box 16 — Total of any other taxable State Pensions and benefits"
+    },
+    {
+      "name": "otherTaxableIncome",
+      "label": "Other taxable income",
+      "type": "number",
+      "required": false,
+      "description": "Other taxable income before expenses and tax taken off, in GBP. Do not use this for income that belongs on supplementary pages.",
+      "sourceRef": "Page TR 3, box 17 — Other taxable income"
+    },
+    {
+      "name": "allowableExpenses",
+      "label": "Total allowable expenses",
+      "type": "number",
+      "required": false,
+      "description": "Total allowable expenses against the income in box 17, in GBP.",
+      "sourceRef": "Page TR 3, box 18 — Total amount of allowable expenses"
+    },
+    {
+      "name": "taxTakenOffOtherIncome",
+      "label": "Any tax taken off box 17",
+      "type": "number",
+      "required": false,
+      "description": "Any tax already taken off the other taxable income in box 17, in GBP.",
+      "sourceRef": "Page TR 3, box 19 — Any tax taken off box 17"
+    },
+    {
+      "name": "benefitFromPreOwnedAssets",
+      "label": "Benefit from pre-owned assets",
+      "type": "number",
+      "required": false,
+      "description": "The chargeable benefit from pre-owned assets, in GBP.",
+      "sourceRef": "Page TR 3, box 20 — Benefit from pre-owned assets"
+    },
+    {
+      "name": "descriptionOfOtherIncome",
+      "label": "Description of income in boxes 17 and 20",
+      "type": "string",
+      "required": false,
+      "description": "A description of the income entered in boxes 17 and 20. If there is not enough space, give details in the 'Any other information' box (TR 7, box 19).",
+      "sourceRef": "Page TR 3, box 21 — Description of income in boxes 17 and 20",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "pensionReliefAtSource",
+      "label": "Payments to registered pension schemes (relief at source)",
+      "type": "number",
+      "required": false,
+      "description": "Payments to registered pension schemes where basic rate tax relief is claimed by your provider ('relief at source') — enter the payments plus basic rate tax, in GBP.",
+      "sourceRef": "Page TR 4, box 1 — Relief at source pension payments"
+    },
+    {
+      "name": "pensionReliefAtSourceOneOff",
+      "label": "Total of any 'one-off' payments in box 1",
+      "type": "number",
+      "required": false,
+      "description": "The part of box 1 that was one-off (not regular) payments, in GBP.",
+      "sourceRef": "Page TR 4, box 1.1 — One-off payments in box 1"
+    },
+    {
+      "name": "retirementAnnuityPayments",
+      "label": "Payments to a retirement annuity contract",
+      "type": "number",
+      "required": false,
+      "description": "Payments to a retirement annuity contract where basic rate tax relief will not be claimed by your provider, in GBP.",
+      "sourceRef": "Page TR 4, box 2 — Retirement annuity contract payments"
+    },
+    {
+      "name": "employerSchemePaymentsNotDeducted",
+      "label": "Payments to employer's scheme not deducted before tax",
+      "type": "number",
+      "required": false,
+      "description": "Payments to your employer's scheme that were not deducted from your pay before tax (unusual), in GBP.",
+      "sourceRef": "Page TR 4, box 3 — Employer scheme payments not deducted before tax"
+    },
+    {
+      "name": "overseasPensionPayments",
+      "label": "Payments to an overseas pension scheme",
+      "type": "number",
+      "required": false,
+      "description": "Payments to a non-UK-registered overseas pension scheme that are eligible for tax relief and were not deducted from your pay before tax, in GBP.",
+      "sourceRef": "Page TR 4, box 4 — Overseas pension scheme payments"
+    },
+    {
+      "name": "giftAidPayments",
+      "label": "Gift Aid payments made in the year to 5 April 2025",
+      "type": "number",
+      "required": false,
+      "description": "Total Gift Aid payments made in the year to 5 April 2025, in GBP.",
+      "sourceRef": "Page TR 4, box 5 — Gift Aid payments in the year to 5 April 2025"
+    },
+    {
+      "name": "giftAidOneOffPayments",
+      "label": "Total of any 'one-off' payments in box 5",
+      "type": "number",
+      "required": false,
+      "description": "The part of box 5 that was one-off Gift Aid payments, in GBP.",
+      "sourceRef": "Page TR 4, box 6 — One-off payments in box 5"
+    },
+    {
+      "name": "giftAidTreatedAsPriorYear",
+      "label": "Gift Aid carried back to the previous year",
+      "type": "number",
+      "required": false,
+      "description": "Gift Aid payments made in the year to 5 April 2025 but treated as if made in the year to 5 April 2024, in GBP.",
+      "sourceRef": "Page TR 4, box 7 — Gift Aid treated as made in 2023-24"
+    },
+    {
+      "name": "giftAidTreatedAsThisYear",
+      "label": "Gift Aid brought back into this year",
+      "type": "number",
+      "required": false,
+      "description": "Gift Aid payments made after 5 April 2025 but to be treated as if made in the year to 5 April 2025, in GBP.",
+      "sourceRef": "Page TR 4, box 8 — Gift Aid treated as made in 2024-25"
+    },
+    {
+      "name": "giftedSharesOrSecurities",
+      "label": "Value of qualifying shares or securities gifted to charity",
+      "type": "number",
+      "required": false,
+      "description": "Value of qualifying shares or securities gifted to charity, in GBP.",
+      "sourceRef": "Page TR 4, box 9 — Qualifying shares or securities gifted to charity"
+    },
+    {
+      "name": "giftedLandOrBuildings",
+      "label": "Value of qualifying land and buildings gifted to charity",
+      "type": "number",
+      "required": false,
+      "description": "Value of qualifying land and buildings gifted to charity, in GBP.",
+      "sourceRef": "Page TR 4, box 10 — Qualifying land and buildings gifted to charity"
+    },
+    {
+      "name": "registeredBlind",
+      "label": "Registered blind or severely sight impaired",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you are registered blind, or severely sight impaired, and your name is on a local authority or other register (Blind Person's Allowance).",
+      "sourceRef": "Page TR 4, box 13 — Registered blind"
+    },
+    {
+      "name": "blindRegisterAuthority",
+      "label": "Name of the local authority or other register",
+      "type": "string",
+      "required": false,
+      "description": "The name of the local authority or other register you are on for Blind Person's Allowance.",
+      "sourceRef": "Page TR 4, box 14 — Name of the local authority or other register",
+      "validation": {
+        "maxLength": 140
+      }
+    },
+    {
+      "name": "wantSpouseSurplusAllowance",
+      "label": "Want spouse's/civil partner's surplus allowance",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you want your spouse's, or civil partner's, surplus Blind Person's Allowance transferred to you.",
+      "sourceRef": "Page TR 4, box 15 — Receive spouse's surplus allowance"
+    },
+    {
+      "name": "giveSpouseSurplusAllowance",
+      "label": "Give your surplus allowance to spouse/civil partner",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if you want your spouse, or civil partner, to have your surplus Blind Person's Allowance.",
+      "sourceRef": "Page TR 4, box 16 — Give your surplus allowance to spouse"
+    },
+    {
+      "name": "studentLoanRepaymentDue",
+      "label": "Income Contingent Loan repayment was due",
+      "type": "boolean",
+      "required": false,
+      "description": "Yes if the Student Loans Company notified you that repayment of an Income Contingent Loan was due before 6 April 2025. HMRC uses your plan and/or loan type to calculate amounts due.",
+      "sourceRef": "Page TR 5, Student Loan box 1 — Repayment due before 6 April 2025"
+    },
+    {
+      "name": "studentLoanDeductedByEmployer",
+      "label": "Student Loan repayments deducted by employer",
+      "type": "number",
+      "required": false,
+      "description": "The amount of Student Loan repayments your employer deducted, in GBP.",
+      "sourceRef": "Page TR 5, Student Loan box 2 — Amount deducted by employer"
+    },
+    {
+      "name": "postgraduateLoanDeductedByEmployer",
+      "label": "Postgraduate Loan repayments deducted by employer",
+      "type": "number",
+      "required": false,
+      "description": "The amount of Postgraduate Loan repayments your employer deducted, in GBP.",
+      "sourceRef": "Page TR 5, Student Loan box 3 — Postgraduate Loan amount deducted by employer"
+    },
+    {
+      "name": "childBenefitReceived",
+      "label": "Total Child Benefit you and your partner got",
+      "type": "number",
+      "required": false,
+      "description": "The total amount of Child Benefit you and your partner received for the year to 5 April 2025, in GBP (High Income Child Benefit Charge).",
+      "sourceRef": "Page TR 5, High Income Child Benefit Charge box 1 — Total Child Benefit received"
+    },
+    {
+      "name": "numberOfChildrenForChildBenefit",
+      "label": "Number of children you and your partner got Child Benefit for",
+      "type": "integer",
+      "required": false,
+      "description": "The number of children you and your partner got Child Benefit for on 5 April 2025.",
+      "sourceRef": "Page TR 5, High Income Child Benefit Charge box 2 — Number of children",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "childBenefitStoppedDate",
+      "label": "Date you stopped getting all Child Benefit payments",
+      "type": "date",
+      "required": false,
+      "description": "The date you and your partner stopped getting all Child Benefit payments, if this was before 6 April 2025 (DD MM YYYY).",
+      "sourceRef": "Page TR 5, High Income Child Benefit Charge box 3 — Date Child Benefit stopped"
+    },
+    {
+      "name": "marriageAllowanceSpouseFirstName",
+      "label": "Your spouse's or civil partner's first name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. First name of the spouse or civil partner you want to transfer Marriage Allowance to. Complete this section only if you are making the transfer.",
+      "sourceRef": "Page TR 5, Marriage Allowance box 1 — Spouse's first name",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "marriageAllowanceSpouseLastName",
+      "label": "Your spouse's or civil partner's last name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Last name of the spouse or civil partner you want to transfer Marriage Allowance to.",
+      "sourceRef": "Page TR 5, Marriage Allowance box 2 — Spouse's last name",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "marriageAllowanceSpouseNino",
+      "label": "Your spouse's or civil partner's National Insurance number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. National Insurance number of the spouse or civil partner you want to transfer Marriage Allowance to (e.g. QQ123456C).",
+      "sourceRef": "Page TR 5, Marriage Allowance box 3 — Spouse's National Insurance number",
+      "validation": {
+        "pattern": "^[A-Za-z]{2}[0-9]{6}[A-Da-d]?$"
+      }
+    },
+    {
+      "name": "marriageAllowanceSpouseDateOfBirth",
+      "label": "Your spouse's or civil partner's date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Date of birth of the spouse or civil partner you want to transfer Marriage Allowance to (DD MM YYYY).",
+      "sourceRef": "Page TR 5, Marriage Allowance box 4 — Spouse's date of birth"
+    },
+    {
+      "name": "marriageAllowanceMarriageDate",
+      "label": "Date of marriage or civil partnership",
+      "type": "date",
+      "required": false,
+      "description": "The date of your marriage or civil partnership (DD MM YYYY).",
+      "sourceRef": "Page TR 5, Marriage Allowance box 5 — Date of marriage or civil partnership"
+    },
+    {
+      "name": "incomeTaxRefundedOrSetOff",
+      "label": "Income Tax refunded or set off",
+      "type": "number",
+      "required": false,
+      "description": "The amount of any 2024-25 Income Tax already refunded or set off by HMRC or Jobcentre Plus, in GBP.",
+      "sourceRef": "Page TR 6, Tax refunded or set off box 1 — Income Tax refunded or set off"
+    },
+    {
+      "name": "doNotCodeOutBalancingPayment",
+      "label": "Do not collect tax owed through 2026-27 tax code",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) if you do NOT want HMRC to collect tax you owe (less than GBP 3,000 for 2024-25, excluding Class 2 NICs) through your 2026-27 tax code. Applies when you file a paper return by 31 October or online by 30 December 2025.",
+      "sourceRef": "Page TR 6, If you have not paid enough tax box 2 — Do not code out 2024-25 balance"
+    },
+    {
+      "name": "doNotCodeOutOtherTax",
+      "label": "Do not collect other tax through 2025-26 tax code",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) if you do NOT want HMRC to collect tax you owe on savings, casual earnings and/or the High Income Child Benefit Charge for the 2025-26 tax year through your 2025-26 tax code.",
+      "sourceRef": "Page TR 6, If you have not paid enough tax box 3 — Do not code out other tax"
+    },
+    {
+      "name": "repaymentBankName",
+      "label": "Name of bank or building society",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Name of the bank or building society for any repayment due to you.",
+      "sourceRef": "Page TR 6, repayment box 4 — Name of bank or building society",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "repaymentAccountHolderName",
+      "label": "Name of account holder (or nominee)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Name of the account holder, or nominee, for any repayment.",
+      "sourceRef": "Page TR 6, repayment box 5 — Name of account holder (or nominee)",
+      "validation": {
+        "maxLength": 140
+      }
+    },
+    {
+      "name": "repaymentSortCode",
+      "label": "Branch sort code",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Six-digit branch sort code of the repayment account (e.g. 12-34-56).",
+      "sourceRef": "Page TR 6, repayment box 6 — Branch sort code",
+      "validation": {
+        "pattern": "^[0-9]{2}-?[0-9]{2}-?[0-9]{2}$"
+      }
+    },
+    {
+      "name": "repaymentAccountNumber",
+      "label": "Account number",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Eight-digit account number of the repayment account.",
+      "sourceRef": "Page TR 6, repayment box 7 — Account number",
+      "validation": {
+        "pattern": "^[0-9]{8}$"
+      }
+    },
+    {
+      "name": "repaymentBuildingSocietyReference",
+      "label": "Building society reference number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Building society reference (roll) number, if the repayment account is a building society account.",
+      "sourceRef": "Page TR 6, repayment box 8 — Building society reference number",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "noUkBankAccount",
+      "label": "No UK bank or building society account",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) if you or your nominee do not have a UK bank or building society account.",
+      "sourceRef": "Page TR 6, repayment box 9 — No UK bank or building society account"
+    },
+    {
+      "name": "repaymentToNominee",
+      "label": "A nominee's name is entered in box 5",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) if you have entered a nominee's name (rather than your own) in box 5.",
+      "sourceRef": "Page TR 6, repayment box 10 — Nominee named in box 5"
+    },
+    {
+      "name": "nomineeIsTaxAdviser",
+      "label": "Nominee is your tax adviser",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) if your nominee is your tax adviser.",
+      "sourceRef": "Page TR 6, repayment box 11 — Nominee is your tax adviser"
+    },
+    {
+      "name": "nomineeAddress",
+      "label": "Nominee's address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The nominee's address, if a repayment is to be sent to a nominee.",
+      "sourceRef": "Page TR 6, repayment box 12 — Nominee's address",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "nomineePostcode",
+      "label": "Nominee's postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The nominee's postcode.",
+      "sourceRef": "Page TR 6, repayment box 13 — Nominee's postcode",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "nomineeAuthorisationSigned",
+      "label": "Signed to authorise the nominee",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) to indicate you have signed the box authorising your nominee to receive any repayment. A photocopy of the signature is not accepted on the paper form.",
+      "sourceRef": "Page TR 6, repayment box 14 — Authorise nominee (signature)"
+    },
+    {
+      "name": "taxAdviserName",
+      "label": "Your tax adviser's name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The name of your tax adviser, if you have one (optional section).",
+      "sourceRef": "Page TR 7, box 15 — Your tax adviser's name",
+      "validation": {
+        "maxLength": 140
+      }
+    },
+    {
+      "name": "taxAdviserPhone",
+      "label": "Tax adviser's phone number",
+      "type": "string",
+      "required": false,
+      "description": "Your tax adviser's phone number.",
+      "sourceRef": "Page TR 7, box 16 — Tax adviser's phone number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "taxAdviserAddress",
+      "label": "Tax adviser's address (first line and postcode)",
+      "type": "string",
+      "required": false,
+      "description": "The first line of your tax adviser's address, including the postcode.",
+      "sourceRef": "Page TR 7, box 17 — Tax adviser's address",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "taxAdviserClientReference",
+      "label": "The reference your adviser uses for you",
+      "type": "string",
+      "required": false,
+      "description": "The reference your tax adviser uses for you.",
+      "sourceRef": "Page TR 7, box 18 — Adviser's reference for you",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "anyOtherInformation",
+      "label": "Any other information",
+      "type": "string",
+      "required": false,
+      "description": "Any other information relevant to your return (for example, why provisional figures were used — see TR 8 box 20).",
+      "sourceRef": "Page TR 7, box 19 — Any other information",
+      "validation": {
+        "maxLength": 5000
+      }
+    },
+    {
+      "name": "containsProvisionalFigures",
+      "label": "Return contains provisional figures",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) if this tax return contains provisional figures. If so, use the 'Any other information' box (TR 7, box 19) to say why and when you expect to provide final figures.",
+      "sourceRef": "Page TR 8, box 20 — Return contains provisional figures"
+    },
+    {
+      "name": "enclosingSupplementaryPages",
+      "label": "Enclosing separate supplementary pages",
+      "type": "boolean",
+      "required": false,
+      "description": "Put X (true) if you are enclosing separate supplementary pages with this return.",
+      "sourceRef": "Page TR 8, box 21 — Enclosing supplementary pages"
+    },
+    {
+      "name": "declarationSigned",
+      "label": "Declaration",
+      "type": "boolean",
+      "required": true,
+      "description": "I declare that the information given on this tax return and any supplementary pages is correct and complete to the best of my knowledge and belief, and I understand I may face financial penalties and prosecution for false information. Set true to affirm and sign the declaration.",
+      "sourceRef": "Page TR 8, box 22 — Declaration / signature"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "description": "The date you signed the declaration (DD MM YYYY).",
+      "sourceRef": "Page TR 8, box 22 — Date"
+    },
+    {
+      "name": "signedOnBehalfCapacity",
+      "label": "Capacity, if signing on behalf of someone else",
+      "type": "string",
+      "required": false,
+      "description": "If you have signed on behalf of someone else, the capacity in which you signed (for example, executor, receiver).",
+      "sourceRef": "Page TR 8, box 23 — Capacity if signing for someone else",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "personSignedForName",
+      "label": "Name of the person you've signed for",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The name of the person you have signed the return for.",
+      "sourceRef": "Page TR 8, box 24 — Name of the person signed for",
+      "validation": {
+        "maxLength": 140
+      }
+    },
+    {
+      "name": "signatoryName",
+      "label": "Your name (if you completed boxes 23 and 24)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Your own name, required if you completed boxes 23 and 24 (signing on behalf of someone else).",
+      "sourceRef": "Page TR 8, box 25 — Your name",
+      "validation": {
+        "maxLength": 140
+      }
+    },
+    {
+      "name": "signatoryAddress",
+      "label": "Your address (if signing for someone else)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Your own address, including postcode, if you signed on behalf of someone else.",
+      "sourceRef": "Page TR 8, box 26 — Your address",
+      "validation": {
+        "maxLength": 250
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_details",
+      "title": "Your personal details (page TR 1)",
+      "fields": [
+        "uniqueTaxpayerReference",
+        "dateOfBirth",
+        "taxpayerName",
+        "addressLine1",
+        "addressLine2",
+        "addressTown",
+        "postcode",
+        "phoneNumber",
+        "nationalInsuranceNumber"
+      ],
+      "next": "return_composition"
+    },
+    {
+      "id": "return_composition",
+      "title": "What makes up your tax return (page TR 2)",
+      "fields": [
+        "hadEmployment",
+        "numberOfEmploymentPages",
+        "hadSelfEmployment",
+        "numberOfSelfEmploymentPages",
+        "hadPartnership",
+        "numberOfPartnershipPages",
+        "hadUkProperty",
+        "hadForeignIncome",
+        "hadTrustIncome",
+        "hadCapitalGains",
+        "capitalGainsComputationsProvided",
+        "hadResidenceOrRemittance",
+        "needAdditionalInformationPages"
+      ],
+      "next": "income"
+    },
+    {
+      "id": "income",
+      "title": "Income (page TR 3)",
+      "fields": [
+        "taxedUkInterest",
+        "untaxedUkInterest",
+        "untaxedForeignInterest",
+        "dividendsFromUkCompanies",
+        "otherDividends",
+        "foreignDividends",
+        "taxTakenOffForeignDividends",
+        "statePension",
+        "statePensionLumpSum",
+        "taxTakenOffStatePensionLumpSum",
+        "otherPensions",
+        "taxTakenOffOtherPensions",
+        "taxableIncapacityBenefitAndEsa",
+        "taxTakenOffIncapacityBenefit",
+        "jobseekersAllowance",
+        "otherTaxableStateBenefits",
+        "otherTaxableIncome",
+        "allowableExpenses",
+        "taxTakenOffOtherIncome",
+        "benefitFromPreOwnedAssets",
+        "descriptionOfOtherIncome"
+      ],
+      "next": "tax_reliefs"
+    },
+    {
+      "id": "tax_reliefs",
+      "title": "Tax reliefs (page TR 4)",
+      "fields": [
+        "pensionReliefAtSource",
+        "pensionReliefAtSourceOneOff",
+        "retirementAnnuityPayments",
+        "employerSchemePaymentsNotDeducted",
+        "overseasPensionPayments",
+        "giftAidPayments",
+        "giftAidOneOffPayments",
+        "giftAidTreatedAsPriorYear",
+        "giftAidTreatedAsThisYear",
+        "giftedSharesOrSecurities",
+        "giftedLandOrBuildings",
+        "registeredBlind",
+        "blindRegisterAuthority",
+        "wantSpouseSurplusAllowance",
+        "giveSpouseSurplusAllowance"
+      ],
+      "next": "loans_child_benefit_marriage"
+    },
+    {
+      "id": "loans_child_benefit_marriage",
+      "title": "Student Loan, High Income Child Benefit Charge and Marriage Allowance (page TR 5)",
+      "fields": [
+        "studentLoanRepaymentDue",
+        "studentLoanDeductedByEmployer",
+        "postgraduateLoanDeductedByEmployer",
+        "childBenefitReceived",
+        "numberOfChildrenForChildBenefit",
+        "childBenefitStoppedDate",
+        "marriageAllowanceSpouseFirstName",
+        "marriageAllowanceSpouseLastName",
+        "marriageAllowanceSpouseNino",
+        "marriageAllowanceSpouseDateOfBirth",
+        "marriageAllowanceMarriageDate"
+      ],
+      "next": "tax_owed_and_repayment"
+    },
+    {
+      "id": "tax_owed_and_repayment",
+      "title": "Tax owed, collection through tax code and repayment details (page TR 6)",
+      "fields": [
+        "incomeTaxRefundedOrSetOff",
+        "doNotCodeOutBalancingPayment",
+        "doNotCodeOutOtherTax",
+        "repaymentBankName",
+        "repaymentAccountHolderName",
+        "repaymentSortCode",
+        "repaymentAccountNumber",
+        "repaymentBuildingSocietyReference",
+        "noUkBankAccount",
+        "repaymentToNominee",
+        "nomineeIsTaxAdviser",
+        "nomineeAddress",
+        "nomineePostcode",
+        "nomineeAuthorisationSigned"
+      ],
+      "next": "adviser_and_other_information"
+    },
+    {
+      "id": "adviser_and_other_information",
+      "title": "Your tax adviser and any other information (page TR 7)",
+      "fields": [
+        "taxAdviserName",
+        "taxAdviserPhone",
+        "taxAdviserAddress",
+        "taxAdviserClientReference",
+        "anyOtherInformation"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Finishing your tax return and declaration (page TR 8)",
+      "fields": [
+        "containsProvisionalFigures",
+        "enclosingSupplementaryPages",
+        "declarationSigned",
+        "declarationDate",
+        "signedOnBehalfCapacity",
+        "personSignedForName",
+        "signatoryName",
+        "signatoryAddress"
+      ]
+    }
+  ]
+}
