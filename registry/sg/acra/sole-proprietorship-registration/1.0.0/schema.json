@@ -1,0 +1,352 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/acra/sole-proprietorship-registration",
+  "version": "1.0.0",
+  "title": "Singapore Sole Proprietorship Registration (Bizfile)",
+  "description": "Register a new one-person sole proprietorship in Singapore via Bizfile (ACRA's digital service portal, formerly branded 'BizFile+' before its 9 December 2024 relaunch), on behalf of the Accounting and Corporate Regulatory Authority. This is the single-member-business analogue to gb/companies-house/company-incorporation-in01, ca/on/registration/business-incorporation, ie/cro/company-incorporation, and us/ca/sos/business-entity-llc-formation, and closes out the Business Formation vertical's last open jurisdiction candidate. Scoped to a Singapore Citizen or Singapore Permanent Resident registering themselves as the sole owner of their own sole proprietorship, authenticated with their own Singpass: the two linked Bizfile eServices this requires (first reserving a business name via 'Apply for New Business Entity Name', then 'Register a New Business Entity' with that reservation) are modelled as two steps of one flow, since both are required to complete the single agent task described here. Out of scope, and not modelled: partnerships (two or more owners; this document models the single-owner sole-proprietorship path only), foreign owners residing overseas (who must engage a corporate service provider rather than self-serve via Singpass) and foreign owners without Singpass access, the local-manager appointment such foreign owners must make, corporate (rather than individual) position holders, nominee/trustee ownership arrangements, and referral-authority name approval for professionally-regulated business names — all rarer or gated paths through Bizfile; see VERIFICATION.md. This document does not submit the registration; the live Bizfile (bizfile.gov.sg) and acra.gov.sg sources are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Accounting and Corporate Regulatory Authority",
+    "abbreviation": "ACRA",
+    "url": "https://www.acra.gov.sg"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://www.acra.gov.sg/register/business/registering-different-business-structures/sole-proprietorship-or-partnership/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "No form number — online self-service registration via Bizfile (bizfile.gov.sg), cross-checked against ACRA's 'Registering a New Business Entity: Sole Proprietorship/Partnership' Bizfile guide (PDF) and 'Who can set up a sole proprietorship or partnership in Singapore' how-to guide"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from ACRA's official acra.gov.sg how-to guides ('Registering a sole proprietorship or partnership', 'Who can set up a sole proprietorship or partnership in Singapore', 'Reserving a business name via Bizfile') and the official Bizfile guide PDF 'Registering a New Business Entity — Sole Proprietorship/Partnership' (retrieved via automated fetch tooling, not a raw pdfjs-dist text/field extraction — a weaker sourcing method than the pdfjs-dist AcroForm/XFA techniques used for PDF-form-based schemas in this registry; see VERIFICATION.md for the specific fields this affects and the path to independently re-confirm them). Status remains 'draft'. The live, Singpass-authenticated Bizfile registration screens themselves were not independently reachable pre-authentication, so this schema's screen-by-screen field list is not confirmed beyond what ACRA's own guidance pages and guide PDF state."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "ownerHasSingpassAccess",
+      "label": "Do you have your own Singpass to authenticate on Bizfile?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Locals and foreigners with their own Singpass can register a sole proprietorship directly on Bizfile. Foreigners without Singpass must instead engage a corporate service provider (CSP) — a law firm, accounting firm, or corporate secretarial firm — to submit the application on their behalf. If false, the flow ends and the applicant must use a CSP-mediated registration instead, which this document does not model.",
+      "sourceRef": "Who can set up a sole proprietorship or partnership in Singapore — 'Locals and foreigners with Singpass can register directly'; 'Foreigners without Singpass must engage a corporate service provider'"
+    },
+    {
+      "name": "ownerIsForeignResidentOverseas",
+      "label": "Is the owner a foreigner residing overseas (not ordinarily resident in Singapore)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A foreign owner residing overseas must appoint at least one locally resident authorised representative (a Singapore Citizen, Permanent Resident, or holder of an EntrePass/Employment Pass/ONE Pass who is ordinarily resident in Singapore) and, per ownerHasSingpassAccess, typically registers through a corporate service provider. If true, the flow ends; this document only models a Singapore Citizen or Permanent Resident registering themselves as sole owner, with no local-manager appointment.",
+      "sourceRef": "Requirements for local residency; Who can set up a sole proprietorship or partnership in Singapore — 'foreign owner(s) must engage a corporate service provider'"
+    },
+    {
+      "name": "proposedBusinessName",
+      "label": "Proposed business name",
+      "type": "string",
+      "required": true,
+      "description": "The business name to reserve via Bizfile's 'Apply for New Business Entity Name' eService, before registration itself. Entered without a legal suffix. May be rejected if identical or confusingly similar to an existing registered name, or referred to a referral authority for names needing justification (e.g. names implying a professional qualification or a national/international body); referral-authority review is out of scope here.",
+      "sourceRef": "Step 3.2: Reserving a business name via Bizfile; Applying for a new business entity name",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "primarySsicCode",
+      "label": "Primary business activity — SSIC code",
+      "type": "string",
+      "required": true,
+      "description": "The Singapore Standard Industrial Classification (SSIC) code, maintained by the Department of Statistics, that best matches the sole proprietorship's principal business activity. Selected by code or industry-name keyword search on Bizfile.",
+      "sourceRef": "Finding the right SSIC code for your business; Applying for a new business entity name — 'SSIC and industry name'",
+      "validation": { "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "secondarySsicCode",
+      "label": "Secondary business activity — SSIC code",
+      "type": "string",
+      "required": false,
+      "description": "An optional second SSIC code for a secondary business activity. Bizfile allows up to two SSIC codes per business name application.",
+      "sourceRef": "Applying for a new business entity name — 'Add secondary business activity'",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "businessActivityCustomDescription",
+      "label": "Custom description of business activity",
+      "type": "string",
+      "required": false,
+      "description": "An optional free-text description of the business activity, in addition to the selected SSIC code(s), for activities the standard SSIC industry name does not fully capture.",
+      "sourceRef": "Applying for a new business entity name — customised description of business activity",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "nameApplicationEmail",
+      "label": "Email address for name application updates",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Email address Bizfile uses to send updates on the business name application's outcome.",
+      "sourceRef": "Applying for a new business entity name — 'valid email address is required for application updates'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nameRegistrationEserviceNumber",
+      "label": "Name registration eService number",
+      "type": "string",
+      "required": true,
+      "description": "The reference number issued when the business name application above was approved. Entering it at the start of the 'Register a New Business Entity' eService retrieves and auto-fills the reserved name. A reserved name remains valid for 120 days from approval.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 2, Business Details — 'Name Registration eService Number'; Step 3.2: Reserving a business name via Bizfile — '120 days'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "proposedCommencementDate",
+      "label": "Proposed commencement date",
+      "type": "date",
+      "required": true,
+      "description": "The date the sole proprietorship will start operating.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 2, Business Details — 'Proposed Commencement Date'"
+    },
+    {
+      "name": "businessAddressLine",
+      "label": "Business operating address",
+      "type": "string",
+      "required": true,
+      "description": "The address where the business operates. A post office box alone is not acceptable. A home address (e.g. an HDB flat) may be used as a home office only with prior approval from HDB or URA, not modelled as a separate gate here.",
+      "sourceRef": "Registering a sole proprietorship or partnership — 'business address (cannot use a P.O. Box); home office requires prior HDB/URA approval'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "businessAddressUnitNumber",
+      "label": "Business operating address — unit number",
+      "type": "string",
+      "required": false,
+      "description": "Optional unit number of the business operating address, e.g. '#12-34'.",
+      "sourceRef": "Registering a sole proprietorship or partnership — business address",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "businessAddressPostalCode",
+      "label": "Business operating address — postal code",
+      "type": "string",
+      "required": true,
+      "description": "Singapore postal code of the business operating address (6 digits). The 6-digit format is Singapore's general postal code standard, not independently confirmed against Bizfile's own field validation; see VERIFICATION.md.",
+      "sourceRef": "Registering a sole proprietorship or partnership — business address",
+      "validation": { "pattern": "^[0-9]{6}$", "minLength": 6, "maxLength": 6 }
+    },
+    {
+      "name": "businessEmailAddress",
+      "label": "Business email address",
+      "type": "string",
+      "required": true,
+      "description": "A business email address, used for administrative correspondence about the registration.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 2, Business Details — 'Business Email Address'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerNricOrFin",
+      "label": "Owner — NRIC or FIN",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's National Registration Identity Card (NRIC) number (Singapore Citizens and Permanent Residents) or Foreign Identification Number (FIN). The exact character format was not independently confirmed against Bizfile's own field validation for this document; see VERIFICATION.md.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'NRIC or FIN'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "ownerFullName",
+      "label": "Owner — full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the sole proprietorship's owner, as it appears on their NRIC.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'Full Name'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerDateOfBirth",
+      "label": "Owner — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Date of birth of the sole proprietorship's owner.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'Date of Birth'"
+    },
+    {
+      "name": "ownerResidencyStatus",
+      "label": "Owner — residency status",
+      "type": "enum",
+      "required": true,
+      "description": "This document only models an owner who is a Singapore Citizen or Singapore Permanent Resident, consistent with the ownerHasSingpassAccess/ownerIsForeignResidentOverseas eligibility gates above; other residency statuses (e.g. EntrePass/Employment Pass holder acting as a local manager for a foreign owner) are out of scope.",
+      "sourceRef": "Requirements for local residency",
+      "validation": { "enum": ["singapore_citizen", "singapore_permanent_resident"] }
+    },
+    {
+      "name": "ownerResidentialAddressLine",
+      "label": "Owner — residential address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's residential address, where ACRA sends official correspondence about the registration.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'Residential Address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "ownerResidentialAddressUnitNumber",
+      "label": "Owner — residential address unit number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional unit number of the owner's residential address.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'Residential Address'",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "ownerResidentialAddressPostalCode",
+      "label": "Owner — residential address postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Singapore postal code of the owner's residential address (6 digits).",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'Residential Address'",
+      "validation": { "pattern": "^[0-9]{6}$", "minLength": 6, "maxLength": 6 }
+    },
+    {
+      "name": "ownerMobileNumber",
+      "label": "Owner — mobile number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's mobile telephone number.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'Mobile Number'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "ownerContactEmail",
+      "label": "Owner — contact email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's contact email address.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 3, Position Holders — 'Contact Email'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownersConsentConfirmed",
+      "label": "Owner consent confirmation",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirmation that the owner has endorsed their consent on Bizfile, a precondition to registration. See documents[].ownerConsentAttestation for the underlying requirement.",
+      "sourceRef": "Registering a sole proprietorship or partnership — 'All proposed business owners...must endorse their consent on Bizfile before the business can be registered'"
+    },
+    {
+      "name": "registrationPeriod",
+      "label": "Registration period",
+      "type": "enum",
+      "required": true,
+      "description": "one_year = register for 1 year (fee SGD 100); three_year = register for 3 years (fee SGD 160), available only when the applicant meets CPF Board eligibility criteria not independently detailed in the sources reviewed for this document.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 4, Registration Confirmation & Payment — 'Registration Period'",
+      "validation": { "enum": ["one_year", "three_year"] }
+    },
+    {
+      "name": "specialUenRequested",
+      "label": "Purchase a special (easier-to-remember) UEN?",
+      "type": "boolean",
+      "required": false,
+      "description": "Optional add-on: purchase an alternative, easier-to-remember Unique Entity Number (UEN) for an additional fee, instead of the standard system-assigned UEN.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 4, Registration Confirmation & Payment — 'Special UEN Purchase'"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "How the registration fee is paid.",
+      "sourceRef": "Bizfile Guide — Registering a New Business Entity: Sole Proprietorship/Partnership, Step 4, Registration Confirmation & Payment — 'Payment Method'",
+      "validation": { "enum": ["credit_card", "debit_card", "online_banking"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "ownerConsentAttestation",
+      "label": "Owner consent endorsement",
+      "category": "attestation",
+      "required": true,
+      "statement": "All proposed business owners, including partners or authorised representatives, must endorse their consent on Bizfile before the business can be registered.",
+      "sourceRef": "Registering a sole proprietorship or partnership"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Online registration eligibility",
+      "fields": ["ownerHasSingpassAccess", "ownerIsForeignResidentOverseas"],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "foreigner-without-singpass-requires-corporate-service-provider",
+          "when": { "field": "ownerHasSingpassAccess", "equals": false }
+        },
+        {
+          "to": null,
+          "exitReason": "foreign-owner-overseas-requires-local-manager",
+          "when": { "field": "ownerIsForeignResidentOverseas", "equals": true }
+        },
+        { "to": "business_name_reservation" }
+      ]
+    },
+    {
+      "id": "business_name_reservation",
+      "title": "Business name reservation",
+      "fields": [
+        "proposedBusinessName", "primarySsicCode", "secondarySsicCode",
+        "businessActivityCustomDescription", "nameApplicationEmail"
+      ],
+      "next": "business_details"
+    },
+    {
+      "id": "business_details",
+      "title": "Business details",
+      "fields": [
+        "nameRegistrationEserviceNumber", "proposedCommencementDate",
+        "businessAddressLine", "businessAddressUnitNumber", "businessAddressPostalCode",
+        "businessEmailAddress"
+      ],
+      "next": "owner"
+    },
+    {
+      "id": "owner",
+      "title": "Owner (position holder)",
+      "fields": [
+        "ownerNricOrFin", "ownerFullName", "ownerDateOfBirth", "ownerResidencyStatus",
+        "ownerResidentialAddressLine", "ownerResidentialAddressUnitNumber", "ownerResidentialAddressPostalCode",
+        "ownerMobileNumber", "ownerContactEmail"
+      ],
+      "next": "declaration_and_payment"
+    },
+    {
+      "id": "declaration_and_payment",
+      "title": "Declaration and payment",
+      "fields": ["ownersConsentConfirmed", "registrationPeriod", "specialUenRequested", "paymentMethod"]
+    }
+  ]
+}
