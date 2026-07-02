@@ -1,0 +1,258 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/bmi/passport-application",
+  "version": "1.0.0",
+  "title": "Germany Passport Application/Renewal (Reisepass)",
+  "description": "Apply for a first German passport or renew an existing one (the Reisepass) in person at a local citizen office (Bürgeramt/Passbehörde), under the Passgesetz (PassG). Unlike several other GovSchema-modelled passport processes, there is no online submission channel: the applicant (and, for a minor, their guardian) must attend in person, presenting an identity document that is checked against the population register (Melderegister) already holding the applicant's core personal data from residence registration (see de/bmi/residence-registration). This document models the citizenship eligibility gate, the applicant's prior-document/naturalisation status (which determines what supporting evidence is required), the minor/guardian path, and the service options every applicant chooses (page count, processing speed, biometric photo channel, and delivery method). It does not model: the separate provisional passport (vorläufiger Reisepass) service, used only when standard or express processing cannot meet a travel deadline; the separate service for German citizens not registered in Berlin, tourists, or Germans resident abroad; the Kinderreisepass (children's passport) or Personalausweis (national identity card) processes; or fee amounts, which change over time and are deliberately not encoded here as authoritative data, consistent with every other schema in this registry. It does not submit the application; the live sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Meldebehörde/Passbehörde (local passport office), under the Passgesetz (PassG)",
+    "abbreviation": "BMI",
+    "url": "https://www.bmi.bund.de"
+  },
+  "process": {
+    "type": "application",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://service.berlin.de/dienstleistung/121151/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Reisepass (no form number — in-person application recorded directly into the Passbehörde's system, not a downloadable form)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from Berlin's official 'Reisepass beantragen' service page (dienstleistung 121151), fetched directly (HTTP 200), which describes eligibility, required documents, the full fee schedule, processing times, and the in-person-only submission channel. Cross-checked against the federal amtlich-einfach.de 'Reisepass' guide (a citizen-service digitalisation showcase page, not Berlin-specific), which independently corroborates the 6-8 week standard / 3-4 business day express processing times, the May 2025 digital-only biometric photo rule, and the first-time-applicant/minor documentary requirements — giving reasonable confidence Berlin's process is representative of the nationally-set Passgesetz/Passverordnung data model, the same convention used for de/bmi/residence-registration (Berlin/Munich as concrete exemplars of a nationally-set legal framework). The bundesregierung.de 'Leichte Sprache' page originally cited as this catalog candidate's source (discovery/catalog.json) 404s as of this authoring date and was not used. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isGermanCitizen",
+      "label": "Are you a German citizen?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A Reisepass may only be issued to a German citizen (PassG §1 Abs. 1). A non-citizen resident uses a different document (a foreign national passport, or a residence-permit travel document), not modelled in this registry. If false, the flow ends and this service does not apply.",
+      "sourceRef": "Eligibility Requirements — 'German citizenship required'"
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As held in the Melderegister (population register) and confirmed against the identity document presented at the appointment, not freely declared by the applicant — see VERIFICATION.md.",
+      "sourceRef": "Required Documents — identification confirms the applicant's registered personal data",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As held in the Melderegister and confirmed against the identity document presented at the appointment — see VERIFICATION.md.",
+      "sourceRef": "Required Documents — identification confirms the applicant's registered personal data",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Required Documents — identification confirms the applicant's registered personal data"
+    },
+    {
+      "name": "residenceBasis",
+      "label": "Is this Berlin dwelling your primary or secondary residence?",
+      "type": "enum",
+      "required": true,
+      "description": "primary_residence = the applicant's sole or main dwelling (Hauptwohnung) is registered in Berlin, the standard case. secondary_residence_with_reason = the applicant applies at a secondary-residence (Nebenwohnung) Bürgeramt with a valid reason; this is accepted but incurs a higher (doubled) fee. An applicant not registered in Berlin at all uses a distinct, out-of-scope service (see description).",
+      "sourceRef": "Eligibility Requirements — 'Berlin residency required (primary residence); secondary residence acceptable with valid reason (higher fee applies)'",
+      "validation": { "enum": ["primary_residence", "secondary_residence_with_reason"] }
+    },
+    {
+      "name": "neverHeldGermanIdOrPassport",
+      "label": "Have you never held a German Personalausweis or Reisepass before?",
+      "type": "boolean",
+      "required": true,
+      "description": "True for a genuine first-time applicant (e.g. a newborn's first document, or an adult who has never held German identity documents). If true, a birth or marriage certificate is required in addition to the standard identity check (see the birthOrMarriageCertificate entry in documents).",
+      "sourceRef": "Required Documents — 'Birth certificate or marriage certificate (if never held such documents or personal data differs from registration)'"
+    },
+    {
+      "name": "personalDataDiffersFromRegistration",
+      "label": "Does your current personal data (e.g. name) differ from what is on the population register?",
+      "type": "boolean",
+      "required": true,
+      "description": "True after a name change (e.g. marriage) not yet reflected in the Melderegister. If true, a birth or marriage certificate is required in addition to the standard identity check (see the birthOrMarriageCertificate entry in documents).",
+      "sourceRef": "Required Documents — 'Birth certificate or marriage certificate (if never held such documents or personal data differs from registration)'"
+    },
+    {
+      "name": "recentlyNaturalised",
+      "label": "Did you recently acquire German citizenship through naturalisation?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the naturalisation certificate and the applicant's previous (foreign) passport or identity document must also be presented (see the naturalisationCertificate and previousForeignIdDocument entries in documents).",
+      "sourceRef": "Required Documents — 'Naturalization certificate and previous passport/identity document (for recently naturalized citizens)'"
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Is the applicant under 18?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, a legal guardian must also attend the appointment and provide consent and their own identification (see the guardianConsentDocument and guardianIdentityDocument entries in documents).",
+      "sourceRef": "Eligibility Requirements — 'For minors: legal guardians must apply; both child and guardian(s) must attend'"
+    },
+    {
+      "name": "passportPageCount",
+      "label": "Passport type",
+      "type": "enum",
+      "required": true,
+      "description": "standard_32_page = the standard passport. extended_48_page = the extended version for frequent travellers, at an additional fee.",
+      "sourceRef": "Service Description — 'Standard passports contain 32 pages; an extended version with 48 pages is available for frequent travelers'; Fee Structure — '48-page version: +€22.00'",
+      "validation": { "enum": ["standard_32_page", "extended_48_page"] }
+    },
+    {
+      "name": "processingSpeed",
+      "label": "Processing speed",
+      "type": "enum",
+      "required": true,
+      "description": "standard = up to 8 weeks. express = maximum 4 business days if submitted before 11:00, at an additional fee.",
+      "sourceRef": "Processing Times — 'Standard: up to 8 weeks'; 'Express: maximum 4 business days (application submitted before 11:00 AM)'; Fee Structure — 'Express processing: +€32.00'",
+      "validation": { "enum": ["standard", "express"] }
+    },
+    {
+      "name": "photoCreationChannel",
+      "label": "How will your biometric photo be provided?",
+      "type": "enum",
+      "required": true,
+      "description": "in_office = created at the citizen office's own digital service station, at an additional fee. pre_taken_certified_studio = created in advance at a certified photo studio and transmitted electronically to the office. Since 1 May 2025, printed photos are no longer accepted; the photo must be submitted digitally through one of these two channels.",
+      "sourceRef": "Required Documents — 'Current biometric passport photo (digital format, as of May 1, 2025)'; Fee Structure — 'In-office photo creation: +€6.00'",
+      "validation": { "enum": ["in_office", "pre_taken_certified_studio"] }
+    },
+    {
+      "name": "deliveryMethod",
+      "label": "How would you like to receive your passport?",
+      "type": "enum",
+      "required": true,
+      "description": "pickup_at_citizen_office = collect the finished passport at the Bürgeramt once the Bundesdruckerei has produced it (no extra fee). direct_postal_delivery = have it mailed directly, at an additional fee.",
+      "sourceRef": "Fee Structure — 'Direct postal delivery: +€15.00'",
+      "validation": { "enum": ["pickup_at_citizen_office", "direct_postal_delivery"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocumentForVerification",
+      "label": "Current identity document",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["personalausweis", "previous_or_expired_reisepass"],
+      "issuingAuthority": "German Meldebehörde/Passbehörde (Personalausweis) or Passbehörde (previous Reisepass)",
+      "sourceRef": "Required Documents — 'Valid identification (e.g., ID card, expired passport)'; 'previous documents (Reisepass) will be invalidated at the time of application'"
+    },
+    {
+      "id": "birthOrMarriageCertificate",
+      "label": "Birth or marriage certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "neverHeldGermanIdOrPassport", "equals": true },
+          { "field": "personalDataDiffersFromRegistration", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — 'Birth certificate or marriage certificate (if never held such documents or personal data differs from registration)'"
+    },
+    {
+      "id": "naturalisationCertificate",
+      "label": "Naturalisation certificate",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "recentlyNaturalised", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — 'Naturalization certificate and previous passport/identity document (for recently naturalized citizens)'"
+    },
+    {
+      "id": "previousForeignIdDocument",
+      "label": "Previous (foreign) passport or identity document",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "recentlyNaturalised", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — 'Naturalization certificate and previous passport/identity document (for recently naturalized citizens)'"
+    },
+    {
+      "id": "guardianConsentDocument",
+      "label": "Guardian's consent",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "belongsTo": "responsible-party",
+      "sourceRef": "Eligibility Requirements — 'For minors: legal guardians must apply'; cross-checked against amtlich-einfach.de — 'Parental consent is required, which can be provided in writing'"
+    },
+    {
+      "id": "guardianIdentityDocument",
+      "label": "Guardian's identity document",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "belongsTo": "responsible-party",
+      "sourceRef": "amtlich-einfach.de — 'the registry office needs the birth certificate or similar document and a parent with ID to confirm identity'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Citizenship eligibility",
+      "fields": ["isGermanCitizen"],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible-non-german-citizen",
+          "when": { "field": "isGermanCitizen", "equals": false }
+        },
+        { "to": "applicant_details" }
+      ]
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": ["lastName", "firstNames", "dateOfBirth", "residenceBasis"],
+      "next": "prior_status"
+    },
+    {
+      "id": "prior_status",
+      "title": "Prior documents and status",
+      "fields": ["neverHeldGermanIdOrPassport", "personalDataDiffersFromRegistration", "recentlyNaturalised", "applicantIsMinor"],
+      "next": "service_options"
+    },
+    {
+      "id": "service_options",
+      "title": "Service options",
+      "fields": ["passportPageCount", "processingSpeed", "photoCreationChannel", "deliveryMethod"]
+    }
+  ]
+}
