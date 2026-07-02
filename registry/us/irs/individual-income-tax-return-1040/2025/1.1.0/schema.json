@@ -1,0 +1,1042 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/irs/individual-income-tax-return-1040",
+  "version": "1.1.0",
+  "title": "U.S. Individual Income Tax Return (Form 1040, 2025 tax year)",
+  "description": "File a U.S. individual income tax return for the 2025 tax year using IRS Form 1040: report income, claim the standard or itemized deduction and credits, compute the tax, and determine a refund or balance due. This document describes the 2025 edition; the IRS publishes a fresh edition each tax year with revised dollar thresholds and line layout (see the edition member). The full return is large and modular: many lines aggregate amounts carried from separate schedules (Schedule 1, 2, 3, A, B, C, D, SE, EIC and others), and the dependents grid repeats per dependent. This schema models the Form 1040 page-1/page-2 spine — identification, filing status, the numbered income/tax/payment lines, and the refund/amount-owed and signature blocks — and folds aggregated sub-lines and per-schedule detail into the headline lines, noting where (see verification.notes and the field descriptions). It does not submit the return; the live IRS source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Internal Revenue Service",
+    "abbreviation": "IRS",
+    "url": "https://www.irs.gov/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-US"
+  },
+  "edition": {
+    "scheme": "us-tax-year",
+    "label": "2025"
+  },
+  "source": {
+    "url": "https://www.irs.gov/forms-pubs/about-form-1040",
+    "retrievedAt": "2026-06-30",
+    "documentRef": "Form 1040"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-06-30",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2026-12-30",
+    "notes": "Source-derived reference schema authored from the official IRS 'About Form 1040' page and the Form 1040 two-page structure (filing status and digital-asset header; identification and address; standard-deduction and dependents blocks; the numbered income lines 1z-15, tax-and-credits lines 16-24, payments lines 25-33, refund/amount-owed lines 34-38; third-party designee; and the signature block). This is the first full annual edition authored against spec v0.2's edition axis (us-tax-year / 2025), following the worked pattern in extension-to-file-4868/2025. Modeling decisions, made to fit the flat v0.2 field model honestly: (1) the dependents grid repeats per dependent (four rows on the form plus a continuation) but v0.2 has no repeating/nested field model (deferred, SPEC.md Section 12), so a single representative dependent row (dependent1*) is modeled and the repetition is described in those fields; (2) wage sub-lines 1a-1h are folded into the line 1z total; withholding sources 25a-25c are kept distinct because they are separate boxes the filer completes; (3) lines whose value is carried from a separate schedule (8, 10, 13, 17, 20, 23, 28, 29, 31) are modeled as numeric headline inputs with the originating schedule named in the description, not by importing those schedules' fields; (4) the paid-preparer block is out of scope for the filer and is omitted. Dollar amounts are free numeric inputs; the IRS does not publish fixed maxima for these lines, so no minimum/maximum is asserted. Line-level amounts reflect the published form structure but are not yet independently re-verified line-by-line against the final 2025 form release; status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "filingStatus",
+      "label": "Filing status",
+      "type": "enum",
+      "required": true,
+      "description": "Your filing status for 2025. One of: single; married_filing_jointly (MFJ); married_filing_separately (MFS); head_of_household (HOH); qualifying_surviving_spouse (QSS). For MFS, HOH, or QSS the form asks for an associated person's name in the adjacent box (see filingStatusPersonName).",
+      "sourceRef": "Filing Status (top of page 1)",
+      "validation": {
+        "enum": [
+          "single",
+          "married_filing_jointly",
+          "married_filing_separately",
+          "head_of_household",
+          "qualifying_surviving_spouse"
+        ]
+      }
+    },
+    {
+      "name": "filingStatusPersonName",
+      "label": "Name of spouse / qualifying person (for MFS, HOH, or QSS)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The name the form requests next to the selected filing-status box: for married_filing_separately, your spouse's name; for head_of_household or qualifying_surviving_spouse, the qualifying person's name (when that person is a child but not your dependent). Leave blank for single or married_filing_jointly.",
+      "sourceRef": "Filing Status — name box for MFS / HOH / QSS",
+      "validation": { "maxLength": 140 }
+    },
+    {
+      "name": "taxpayerFirstName",
+      "label": "Your first name and middle initial",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your first name and middle initial as shown on your Social Security card.",
+      "sourceRef": "Name line — your first name and middle initial",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "taxpayerLastName",
+      "label": "Your last name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your last name as shown on your Social Security card.",
+      "sourceRef": "Name line — your last name",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "taxpayerSsn",
+      "label": "Your social security number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your nine-digit U.S. Social Security number, e.g. 123-45-6789.",
+      "sourceRef": "Your social security number",
+      "validation": { "pattern": "^[0-9]{3}-?[0-9]{2}-?[0-9]{4}$" }
+    },
+    {
+      "name": "spouseFirstName",
+      "label": "Spouse's first name and middle initial",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. If a joint return, your spouse's first name and middle initial as shown on their Social Security card.",
+      "sourceRef": "Name line — spouse's first name and middle initial",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "spouseLastName",
+      "label": "Spouse's last name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. If a joint return, your spouse's last name.",
+      "sourceRef": "Name line — spouse's last name",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "spouseSsn",
+      "label": "Spouse's social security number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required on a joint return: your spouse's nine-digit U.S. Social Security number, e.g. 123-45-6789.",
+      "sourceRef": "Spouse's social security number",
+      "validation": { "pattern": "^[0-9]{3}-?[0-9]{2}-?[0-9]{4}$" }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Home address (number and street)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your home street address. If you have a P.O. box and no home delivery, enter the box number.",
+      "sourceRef": "Home address (number and street)",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "addressApt",
+      "label": "Apartment number (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Your apartment or unit number, if any.",
+      "sourceRef": "Home address — Apt. no.",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "addressCity",
+      "label": "City, town, or post office",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Your city, town, or post office.",
+      "sourceRef": "City, town, or post office",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "addressState",
+      "label": "State",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter USPS state or territory abbreviation (e.g. CA, NY, TX). Leave blank when entering a foreign address; complete the foreign-address fields instead.",
+      "sourceRef": "State",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "U.S. ZIP code in 5-digit or ZIP+4 format (e.g. 90210 or 90210-1234). Leave blank for a foreign address.",
+      "sourceRef": "ZIP code",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "foreignCountryName",
+      "label": "Foreign country name (optional)",
+      "type": "string",
+      "required": false,
+      "description": "If your address is outside the United States, the foreign country name. Leave blank for a U.S. address.",
+      "sourceRef": "Foreign country name",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "foreignProvince",
+      "label": "Foreign province/state/county (optional)",
+      "type": "string",
+      "required": false,
+      "description": "If a foreign address, the foreign province, state, or county. Leave blank for a U.S. address.",
+      "sourceRef": "Foreign province/state/county",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "foreignPostalCode",
+      "label": "Foreign postal code (optional)",
+      "type": "string",
+      "required": false,
+      "description": "If a foreign address, the foreign postal code. Leave blank for a U.S. address.",
+      "sourceRef": "Foreign postal code",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "presidentialCampaignYou",
+      "label": "Presidential Election Campaign — You",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) to direct $3 of your tax to the Presidential Election Campaign Fund. Checking does not change your tax or refund.",
+      "sourceRef": "Presidential Election Campaign — You",
+      "validation": {}
+    },
+    {
+      "name": "presidentialCampaignSpouse",
+      "label": "Presidential Election Campaign — Spouse",
+      "type": "boolean",
+      "required": false,
+      "description": "On a joint return, check (true) to direct $3 of your spouse's tax to the Presidential Election Campaign Fund. Checking does not change the tax or refund.",
+      "sourceRef": "Presidential Election Campaign — Spouse",
+      "validation": {}
+    },
+    {
+      "name": "digitalAssets",
+      "label": "Digital assets question",
+      "type": "boolean",
+      "required": true,
+      "description": "Answer for the digital-assets question: 'At any time during 2025, did you (a) receive (as a reward, award, or payment for property or services); or (b) sell, exchange, or otherwise dispose of a digital asset (or a financial interest in a digital asset)?' True = Yes, false = No. Every filer must answer; see the Form 1040 instructions for what counts as a digital asset.",
+      "sourceRef": "Digital Assets question (page 1)",
+      "validation": {}
+    },
+    {
+      "name": "youClaimedAsDependent",
+      "label": "Someone can claim you as a dependent",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if someone can claim you as a dependent on their return. Affects your standard deduction.",
+      "sourceRef": "Standard Deduction — Someone can claim you as a dependent",
+      "validation": {}
+    },
+    {
+      "name": "spouseClaimedAsDependent",
+      "label": "Someone can claim your spouse as a dependent",
+      "type": "boolean",
+      "required": false,
+      "description": "On a joint return, check (true) if someone can claim your spouse as a dependent.",
+      "sourceRef": "Standard Deduction — Someone can claim your spouse as a dependent",
+      "validation": {}
+    },
+    {
+      "name": "spouseItemizesOrDualStatus",
+      "label": "Spouse itemizes on a separate return or you were a dual-status alien",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if your spouse itemizes on a separate return or you were a dual-status alien. This box is found in the Standard Deduction block.",
+      "sourceRef": "Standard Deduction — Spouse itemizes on a separate return or you were a dual-status alien",
+      "validation": {}
+    },
+    {
+      "name": "taxpayerBornBefore1961",
+      "label": "You were born before January 2, 1961",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if you were born before January 2, 1961 (age 65 or older for the 2025 tax year). Increases your standard deduction.",
+      "sourceRef": "Age/Blindness — You were born before January 2, 1961",
+      "validation": {}
+    },
+    {
+      "name": "taxpayerBlind",
+      "label": "You are blind",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if you are blind. Increases your standard deduction.",
+      "sourceRef": "Age/Blindness — You are blind",
+      "validation": {}
+    },
+    {
+      "name": "spouseBornBefore1961",
+      "label": "Spouse was born before January 2, 1961",
+      "type": "boolean",
+      "required": false,
+      "description": "On a joint return, check (true) if your spouse was born before January 2, 1961.",
+      "sourceRef": "Age/Blindness — Spouse was born before January 2, 1961",
+      "validation": {}
+    },
+    {
+      "name": "spouseBlind",
+      "label": "Spouse is blind",
+      "type": "boolean",
+      "required": false,
+      "description": "On a joint return, check (true) if your spouse is blind.",
+      "sourceRef": "Age/Blindness — Spouse is blind",
+      "validation": {}
+    },
+    {
+      "name": "dependent1Name",
+      "label": "Dependent — name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The dependent's first and last name. NOTE: Form 1040 provides a four-row Dependents grid (with a continuation for more than four). v0.2 has no repeating/nested field model (SPEC.md Section 12), so this schema models a single representative dependent row (dependent1*); repeat these four members per additional dependent in a consuming implementation.",
+      "sourceRef": "Dependents — (1) First name, Last name",
+      "validation": { "maxLength": 140 }
+    },
+    {
+      "name": "dependent1Ssn",
+      "label": "Dependent — social security number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The dependent's nine-digit Social Security number, e.g. 123-45-6789. See dependent1Name for how the repeating dependents grid is represented.",
+      "sourceRef": "Dependents — (2) Social security number",
+      "validation": { "pattern": "^[0-9]{3}-?[0-9]{2}-?[0-9]{4}$" }
+    },
+    {
+      "name": "dependent1Relationship",
+      "label": "Dependent — relationship to you",
+      "type": "string",
+      "required": false,
+      "description": "The dependent's relationship to you (e.g. son, daughter, parent). See dependent1Name for how the repeating dependents grid is represented.",
+      "sourceRef": "Dependents — (3) Relationship to you",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "dependent1ChildTaxCredit",
+      "label": "Dependent — qualifies for Child Tax Credit",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if this dependent qualifies you for the Child Tax Credit. See dependent1Name for how the repeating dependents grid is represented.",
+      "sourceRef": "Dependents — (4) Child tax credit",
+      "validation": {}
+    },
+    {
+      "name": "dependent1CreditForOtherDependents",
+      "label": "Dependent — qualifies for Credit for Other Dependents",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if this dependent qualifies you for the Credit for Other Dependents. See dependent1Name for how the repeating dependents grid is represented.",
+      "sourceRef": "Dependents — (4) Credit for other dependents",
+      "validation": {}
+    },
+    {
+      "name": "totalWages",
+      "label": "Total wages (line 1z)",
+      "type": "number",
+      "required": false,
+      "description": "Total wages, salaries, and tips, in U.S. dollars. This is line 1z, the sum of lines 1a-1h (W-2 box 1 wages and the other wage components); those sub-lines are folded into this total in v0.2's flat model.",
+      "sourceRef": "Line 1z — Add lines 1a through 1h",
+      "validation": {}
+    },
+    {
+      "name": "taxExemptInterest",
+      "label": "Tax-exempt interest (line 2a)",
+      "type": "number",
+      "required": false,
+      "description": "Tax-exempt interest, in U.S. dollars (line 2a). Reported but not included in taxable income.",
+      "sourceRef": "Line 2a — Tax-exempt interest",
+      "validation": {}
+    },
+    {
+      "name": "taxableInterest",
+      "label": "Taxable interest (line 2b)",
+      "type": "number",
+      "required": false,
+      "description": "Taxable interest, in U.S. dollars (line 2b). Attach Schedule B if required.",
+      "sourceRef": "Line 2b — Taxable interest",
+      "validation": {}
+    },
+    {
+      "name": "qualifiedDividends",
+      "label": "Qualified dividends (line 3a)",
+      "type": "number",
+      "required": false,
+      "description": "Qualified dividends, in U.S. dollars (line 3a). A subset of ordinary dividends taxed at capital-gains rates.",
+      "sourceRef": "Line 3a — Qualified dividends",
+      "validation": {}
+    },
+    {
+      "name": "ordinaryDividends",
+      "label": "Ordinary dividends (line 3b)",
+      "type": "number",
+      "required": false,
+      "description": "Ordinary dividends, in U.S. dollars (line 3b). Attach Schedule B if required.",
+      "sourceRef": "Line 3b — Ordinary dividends",
+      "validation": {}
+    },
+    {
+      "name": "iraDistributions",
+      "label": "IRA distributions (line 4a)",
+      "type": "number",
+      "required": false,
+      "description": "Total IRA distributions, in U.S. dollars (line 4a).",
+      "sourceRef": "Line 4a — IRA distributions",
+      "validation": {}
+    },
+    {
+      "name": "iraTaxableAmount",
+      "label": "IRA distributions — taxable amount (line 4b)",
+      "type": "number",
+      "required": false,
+      "description": "Taxable amount of IRA distributions, in U.S. dollars (line 4b).",
+      "sourceRef": "Line 4b — IRA distributions, taxable amount",
+      "validation": {}
+    },
+    {
+      "name": "pensionsAndAnnuities",
+      "label": "Pensions and annuities (line 5a)",
+      "type": "number",
+      "required": false,
+      "description": "Total pensions and annuities, in U.S. dollars (line 5a).",
+      "sourceRef": "Line 5a — Pensions and annuities",
+      "validation": {}
+    },
+    {
+      "name": "pensionsAndAnnuitiesTaxableAmount",
+      "label": "Pensions and annuities — taxable amount (line 5b)",
+      "type": "number",
+      "required": false,
+      "description": "Taxable amount of pensions and annuities, in U.S. dollars (line 5b).",
+      "sourceRef": "Line 5b — Pensions and annuities, taxable amount",
+      "validation": {}
+    },
+    {
+      "name": "socialSecurityBenefits",
+      "label": "Social security benefits (line 6a)",
+      "type": "number",
+      "required": false,
+      "description": "Total social security benefits, in U.S. dollars (line 6a).",
+      "sourceRef": "Line 6a — Social security benefits",
+      "validation": {}
+    },
+    {
+      "name": "socialSecurityTaxableAmount",
+      "label": "Social security benefits — taxable amount (line 6b)",
+      "type": "number",
+      "required": false,
+      "description": "Taxable amount of social security benefits, in U.S. dollars (line 6b).",
+      "sourceRef": "Line 6b — Social security benefits, taxable amount",
+      "validation": {}
+    },
+    {
+      "name": "lumpSumElection",
+      "label": "Lump-sum election method (line 6c)",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if you elect to use the lump-sum election method to figure the taxable part of your social security benefits (line 6c).",
+      "sourceRef": "Line 6c — Lump-sum election method checkbox",
+      "validation": {}
+    },
+    {
+      "name": "capitalGainOrLoss",
+      "label": "Capital gain or (loss) (line 7)",
+      "type": "number",
+      "required": false,
+      "description": "Capital gain or loss, in U.S. dollars (line 7); a loss is entered as a negative number. From Schedule D, or entered directly if Schedule D is not required (see capitalGainScheduleDNotRequired).",
+      "sourceRef": "Line 7 — Capital gain or (loss)",
+      "validation": {}
+    },
+    {
+      "name": "capitalGainScheduleDNotRequired",
+      "label": "Schedule D not required (line 7 checkbox)",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) if you are entering a capital gain on line 7 and Schedule D is not required, per the line 7 instructions.",
+      "sourceRef": "Line 7 — 'If not required, check here' checkbox",
+      "validation": {}
+    },
+    {
+      "name": "additionalIncome",
+      "label": "Additional income from Schedule 1 (line 8)",
+      "type": "number",
+      "required": false,
+      "description": "Additional income from Schedule 1, line 10, in U.S. dollars (line 8). Carries business income, capital gains not on line 7, unemployment, and other income totaled on Schedule 1; Schedule 1's own fields are not modeled here.",
+      "sourceRef": "Line 8 — Additional income from Schedule 1, line 10",
+      "validation": {}
+    },
+    {
+      "name": "totalIncome",
+      "label": "Total income (line 9)",
+      "type": "number",
+      "required": false,
+      "description": "Total income, in U.S. dollars (line 9): add lines 1z, 2b, 3b, 4b, 5b, 6b, 7, and 8.",
+      "sourceRef": "Line 9 — Total income",
+      "validation": {}
+    },
+    {
+      "name": "adjustmentsToIncome",
+      "label": "Adjustments to income from Schedule 1 (line 10)",
+      "type": "number",
+      "required": false,
+      "description": "Adjustments to income from Schedule 1, line 25, in U.S. dollars (line 10).",
+      "sourceRef": "Line 10 — Adjustments to income from Schedule 1, line 25",
+      "validation": {}
+    },
+    {
+      "name": "adjustedGrossIncome",
+      "label": "Adjusted gross income (line 11)",
+      "type": "number",
+      "required": false,
+      "description": "Adjusted gross income (AGI), in U.S. dollars (line 11): subtract line 10 from line 9.",
+      "sourceRef": "Line 11 — Adjusted gross income",
+      "validation": {}
+    },
+    {
+      "name": "deduction",
+      "label": "Standard deduction or itemized deductions (line 12)",
+      "type": "number",
+      "required": false,
+      "description": "Your standard deduction or total itemized deductions (from Schedule A), in U.S. dollars (line 12).",
+      "sourceRef": "Line 12 — Standard deduction or itemized deductions (from Schedule A)",
+      "validation": {}
+    },
+    {
+      "name": "qualifiedBusinessIncomeDeduction",
+      "label": "Qualified business income deduction (line 13)",
+      "type": "number",
+      "required": false,
+      "description": "Qualified business income deduction from Form 8995 or Form 8995-A, in U.S. dollars (line 13).",
+      "sourceRef": "Line 13 — Qualified business income deduction from Form 8995 or 8995-A",
+      "validation": {}
+    },
+    {
+      "name": "deductionsTotal",
+      "label": "Add lines 12 and 13 (line 14)",
+      "type": "number",
+      "required": false,
+      "description": "Sum of the deduction and the qualified business income deduction, in U.S. dollars (line 14): add lines 12 and 13.",
+      "sourceRef": "Line 14 — Add lines 12 and 13",
+      "validation": {}
+    },
+    {
+      "name": "taxableIncome",
+      "label": "Taxable income (line 15)",
+      "type": "number",
+      "required": false,
+      "description": "Taxable income, in U.S. dollars (line 15): subtract line 14 from line 11. If zero or less, enter 0.",
+      "sourceRef": "Line 15 — Taxable income",
+      "validation": {}
+    },
+    {
+      "name": "tax",
+      "label": "Tax (line 16)",
+      "type": "number",
+      "required": false,
+      "description": "Tax, in U.S. dollars (line 16), figured from the Tax Table, Tax Computation Worksheet, or other method. The line 16 form-attachment checkboxes (Form 8814, Form 4972, other) are not modeled; note any such election in the verification record of a consuming implementation.",
+      "sourceRef": "Line 16 — Tax",
+      "validation": {}
+    },
+    {
+      "name": "additionalTaxesSchedule2Part1",
+      "label": "Amount from Schedule 2, line 3 (line 17)",
+      "type": "number",
+      "required": false,
+      "description": "Amount from Schedule 2, line 3, in U.S. dollars (line 17): alternative minimum tax and excess advance premium tax credit repayment.",
+      "sourceRef": "Line 17 — Amount from Schedule 2, line 3",
+      "validation": {}
+    },
+    {
+      "name": "taxPlusSchedule2Part1",
+      "label": "Add lines 16 and 17 (line 18)",
+      "type": "number",
+      "required": false,
+      "description": "Sum of tax and Schedule 2 Part I, in U.S. dollars (line 18): add lines 16 and 17.",
+      "sourceRef": "Line 18 — Add lines 16 and 17",
+      "validation": {}
+    },
+    {
+      "name": "childTaxCredit",
+      "label": "Child tax credit / credit for other dependents (line 19)",
+      "type": "number",
+      "required": false,
+      "description": "Child tax credit or credit for other dependents from Schedule 8812, in U.S. dollars (line 19).",
+      "sourceRef": "Line 19 — Child tax credit or credit for other dependents from Schedule 8812",
+      "validation": {}
+    },
+    {
+      "name": "schedule3Part1Credits",
+      "label": "Amount from Schedule 3, line 8 (line 20)",
+      "type": "number",
+      "required": false,
+      "description": "Amount from Schedule 3, line 8, in U.S. dollars (line 20): nonrefundable credits.",
+      "sourceRef": "Line 20 — Amount from Schedule 3, line 8",
+      "validation": {}
+    },
+    {
+      "name": "totalCredits",
+      "label": "Add lines 19 and 20 (line 21)",
+      "type": "number",
+      "required": false,
+      "description": "Total of child tax credit and Schedule 3 nonrefundable credits, in U.S. dollars (line 21): add lines 19 and 20.",
+      "sourceRef": "Line 21 — Add lines 19 and 20",
+      "validation": {}
+    },
+    {
+      "name": "taxAfterCredits",
+      "label": "Subtract line 21 from line 18 (line 22)",
+      "type": "number",
+      "required": false,
+      "description": "Tax after nonrefundable credits, in U.S. dollars (line 22): subtract line 21 from line 18. If zero or less, enter 0.",
+      "sourceRef": "Line 22 — Subtract line 21 from line 18",
+      "validation": {}
+    },
+    {
+      "name": "otherTaxes",
+      "label": "Other taxes from Schedule 2, line 21 (line 23)",
+      "type": "number",
+      "required": false,
+      "description": "Other taxes, including self-employment tax, from Schedule 2, line 21, in U.S. dollars (line 23).",
+      "sourceRef": "Line 23 — Other taxes from Schedule 2, line 21",
+      "validation": {}
+    },
+    {
+      "name": "totalTax",
+      "label": "Total tax (line 24)",
+      "type": "number",
+      "required": false,
+      "description": "Total tax, in U.S. dollars (line 24): add lines 22 and 23. This is your total tax liability for 2025.",
+      "sourceRef": "Line 24 — Total tax",
+      "validation": {}
+    },
+    {
+      "name": "withholdingW2",
+      "label": "Federal income tax withheld from Form(s) W-2 (line 25a)",
+      "type": "number",
+      "required": false,
+      "description": "Federal income tax withheld from Form(s) W-2, in U.S. dollars (line 25a).",
+      "sourceRef": "Line 25a — Federal income tax withheld from Form(s) W-2",
+      "validation": {}
+    },
+    {
+      "name": "withholding1099",
+      "label": "Federal income tax withheld from Form(s) 1099 (line 25b)",
+      "type": "number",
+      "required": false,
+      "description": "Federal income tax withheld from Form(s) 1099, in U.S. dollars (line 25b).",
+      "sourceRef": "Line 25b — Federal income tax withheld from Form(s) 1099",
+      "validation": {}
+    },
+    {
+      "name": "withholdingOther",
+      "label": "Federal income tax withheld from other forms (line 25c)",
+      "type": "number",
+      "required": false,
+      "description": "Federal income tax withheld from other forms, in U.S. dollars (line 25c). See the instructions for which forms.",
+      "sourceRef": "Line 25c — Federal income tax withheld from other forms",
+      "validation": {}
+    },
+    {
+      "name": "withholdingTotal",
+      "label": "Total federal income tax withheld (line 25d)",
+      "type": "number",
+      "required": false,
+      "description": "Total federal income tax withheld, in U.S. dollars (line 25d): add lines 25a through 25c.",
+      "sourceRef": "Line 25d — Add lines 25a through 25c",
+      "validation": {}
+    },
+    {
+      "name": "estimatedTaxPayments",
+      "label": "2025 estimated tax payments (line 26)",
+      "type": "number",
+      "required": false,
+      "description": "2025 estimated tax payments and amount applied from your 2024 return, in U.S. dollars (line 26).",
+      "sourceRef": "Line 26 — 2025 estimated tax payments and amount applied from 2024 return",
+      "validation": {}
+    },
+    {
+      "name": "earnedIncomeCredit",
+      "label": "Earned income credit (EIC) (line 27)",
+      "type": "number",
+      "required": false,
+      "description": "Earned income credit (EIC), in U.S. dollars (line 27).",
+      "sourceRef": "Line 27 — Earned income credit (EIC)",
+      "validation": {}
+    },
+    {
+      "name": "additionalChildTaxCredit",
+      "label": "Additional child tax credit (line 28)",
+      "type": "number",
+      "required": false,
+      "description": "Additional child tax credit from Schedule 8812, in U.S. dollars (line 28).",
+      "sourceRef": "Line 28 — Additional child tax credit from Schedule 8812",
+      "validation": {}
+    },
+    {
+      "name": "americanOpportunityCredit",
+      "label": "American opportunity credit (line 29)",
+      "type": "number",
+      "required": false,
+      "description": "Refundable American opportunity credit from Form 8863, line 8, in U.S. dollars (line 29).",
+      "sourceRef": "Line 29 — American opportunity credit from Form 8863, line 8",
+      "validation": {}
+    },
+    {
+      "name": "schedule3Part2Credits",
+      "label": "Amount from Schedule 3, line 13 (line 31)",
+      "type": "number",
+      "required": false,
+      "description": "Amount from Schedule 3, line 13, in U.S. dollars (line 31): other payments and refundable credits. (Line 30 is reserved for future use on the 2025 form and is not modeled.)",
+      "sourceRef": "Line 31 — Amount from Schedule 3, line 13",
+      "validation": {}
+    },
+    {
+      "name": "totalOtherPaymentsAndRefundableCredits",
+      "label": "Total other payments and refundable credits (line 32)",
+      "type": "number",
+      "required": false,
+      "description": "Total other payments and refundable credits, in U.S. dollars (line 32): add lines 27, 28, 29, and 31.",
+      "sourceRef": "Line 32 — Add lines 27, 28, 29, and 31",
+      "validation": {}
+    },
+    {
+      "name": "totalPayments",
+      "label": "Total payments (line 33)",
+      "type": "number",
+      "required": false,
+      "description": "Total payments, in U.S. dollars (line 33): add lines 25d, 26, and 32.",
+      "sourceRef": "Line 33 — Total payments",
+      "validation": {}
+    },
+    {
+      "name": "overpayment",
+      "label": "Overpayment (line 34)",
+      "type": "number",
+      "required": false,
+      "description": "Overpayment, in U.S. dollars (line 34): if line 33 is more than line 24, subtract line 24 from line 33. This is the amount you overpaid.",
+      "sourceRef": "Line 34 — Overpayment",
+      "validation": {}
+    },
+    {
+      "name": "refundAmount",
+      "label": "Amount to be refunded to you (line 35a)",
+      "type": "number",
+      "required": false,
+      "description": "Amount of the overpayment you want refunded to you, in U.S. dollars (line 35a). Provide direct-deposit details (lines 35b-35d) to receive it electronically.",
+      "sourceRef": "Line 35a — Amount of line 34 you want refunded to you",
+      "validation": {}
+    },
+    {
+      "name": "refundRoutingNumber",
+      "label": "Routing number (line 35b)",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Nine-digit bank routing number for direct deposit of your refund (line 35b).",
+      "sourceRef": "Line 35b — Routing number",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "refundAccountType",
+      "label": "Account type (line 35c)",
+      "type": "enum",
+      "required": false,
+      "description": "Type of account for direct deposit (line 35c): checking or savings.",
+      "sourceRef": "Line 35c — Account type (Checking / Savings)",
+      "validation": { "enum": ["checking", "savings"] }
+    },
+    {
+      "name": "refundAccountNumber",
+      "label": "Account number (line 35d)",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Bank account number for direct deposit of your refund (line 35d).",
+      "sourceRef": "Line 35d — Account number",
+      "validation": { "pattern": "^[0-9A-Za-z-]{1,17}$" }
+    },
+    {
+      "name": "appliedToEstimatedTax",
+      "label": "Amount applied to your 2026 estimated tax (line 36)",
+      "type": "number",
+      "required": false,
+      "description": "Amount of the overpayment (line 34) you want applied to your 2026 estimated tax, in U.S. dollars (line 36).",
+      "sourceRef": "Line 36 — Amount of line 34 applied to your 2026 estimated tax",
+      "validation": {}
+    },
+    {
+      "name": "amountYouOwe",
+      "label": "Amount you owe (line 37)",
+      "type": "number",
+      "required": false,
+      "description": "Amount you owe, in U.S. dollars (line 37): subtract line 33 from line 24. This is the balance due to the IRS.",
+      "sourceRef": "Line 37 — Amount you owe",
+      "validation": {}
+    },
+    {
+      "name": "estimatedTaxPenalty",
+      "label": "Estimated tax penalty (line 38)",
+      "type": "number",
+      "required": false,
+      "description": "Estimated tax penalty, in U.S. dollars (line 38), from Form 2210 if applicable.",
+      "sourceRef": "Line 38 — Estimated tax penalty",
+      "validation": {}
+    },
+    {
+      "name": "thirdPartyDesignee",
+      "label": "Allow another person to discuss this return with the IRS",
+      "type": "boolean",
+      "required": false,
+      "description": "Check (true) — 'Yes' — to allow another person (a designee) to discuss this return with the IRS. False = No. If Yes, complete the designee fields.",
+      "sourceRef": "Third Party Designee — Do you want to allow another person to discuss this return with the IRS?",
+      "validation": {}
+    },
+    {
+      "name": "designeeName",
+      "label": "Designee's name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The third-party designee's name. Complete only if thirdPartyDesignee is true.",
+      "sourceRef": "Third Party Designee — Designee's name",
+      "validation": { "maxLength": 140 }
+    },
+    {
+      "name": "designeePhone",
+      "label": "Designee's phone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The third-party designee's phone number. Complete only if thirdPartyDesignee is true.",
+      "sourceRef": "Third Party Designee — Phone no.",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "designeePin",
+      "label": "Designee's personal identification number (PIN)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. The third-party designee's self-selected five-digit PIN. Complete only if thirdPartyDesignee is true.",
+      "sourceRef": "Third Party Designee — Personal identification number (PIN)",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "taxpayerOccupation",
+      "label": "Your occupation",
+      "type": "string",
+      "required": false,
+      "description": "Your occupation, entered in the signature block.",
+      "sourceRef": "Sign Here — Your occupation",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "taxpayerIdentityProtectionPin",
+      "label": "Your identity protection PIN (if issued)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Your six-digit IRS Identity Protection PIN, if the IRS issued one to you.",
+      "sourceRef": "Sign Here — Identity Protection PIN (you)",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "spouseOccupation",
+      "label": "Spouse's occupation",
+      "type": "string",
+      "required": false,
+      "description": "On a joint return, your spouse's occupation, entered in the signature block.",
+      "sourceRef": "Sign Here — Spouse's occupation",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "spouseIdentityProtectionPin",
+      "label": "Spouse's identity protection PIN (if issued)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Your spouse's six-digit IRS Identity Protection PIN, if the IRS issued one.",
+      "sourceRef": "Sign Here — Identity Protection PIN (spouse)",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date signed",
+      "type": "date",
+      "required": false,
+      "description": "The date you sign the return (YYYY-MM-DD). On a joint return both spouses must sign; the form records a single date next to each signature.",
+      "sourceRef": "Sign Here — Date",
+      "validation": {}
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Your daytime phone number, entered in the signature block.",
+      "sourceRef": "Sign Here — Phone no.",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Your email address, entered in the signature block.",
+      "sourceRef": "Sign Here — Email address",
+      "validation": { "maxLength": 120 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "filing_status",
+      "title": "Filing status",
+      "fields": ["filingStatus", "filingStatusPersonName"],
+      "next": "identification"
+    },
+    {
+      "id": "identification",
+      "title": "Your identification and address",
+      "fields": [
+        "taxpayerFirstName",
+        "taxpayerLastName",
+        "taxpayerSsn",
+        "spouseFirstName",
+        "spouseLastName",
+        "spouseSsn",
+        "addressLine1",
+        "addressApt",
+        "addressCity",
+        "addressState",
+        "addressPostalCode",
+        "foreignCountryName",
+        "foreignProvince",
+        "foreignPostalCode"
+      ],
+      "next": "elections_and_digital_assets"
+    },
+    {
+      "id": "elections_and_digital_assets",
+      "title": "Presidential campaign and digital assets",
+      "fields": [
+        "presidentialCampaignYou",
+        "presidentialCampaignSpouse",
+        "digitalAssets"
+      ],
+      "next": "standard_deduction_and_dependents"
+    },
+    {
+      "id": "standard_deduction_and_dependents",
+      "title": "Standard deduction and dependents",
+      "fields": [
+        "youClaimedAsDependent",
+        "spouseClaimedAsDependent",
+        "spouseItemizesOrDualStatus",
+        "taxpayerBornBefore1961",
+        "taxpayerBlind",
+        "spouseBornBefore1961",
+        "spouseBlind",
+        "dependent1Name",
+        "dependent1Ssn",
+        "dependent1Relationship",
+        "dependent1ChildTaxCredit",
+        "dependent1CreditForOtherDependents"
+      ],
+      "next": "income"
+    },
+    {
+      "id": "income",
+      "title": "Income",
+      "fields": [
+        "totalWages",
+        "taxExemptInterest",
+        "taxableInterest",
+        "qualifiedDividends",
+        "ordinaryDividends",
+        "iraDistributions",
+        "iraTaxableAmount",
+        "pensionsAndAnnuities",
+        "pensionsAndAnnuitiesTaxableAmount",
+        "socialSecurityBenefits",
+        "socialSecurityTaxableAmount",
+        "lumpSumElection",
+        "capitalGainOrLoss",
+        "capitalGainScheduleDNotRequired",
+        "additionalIncome",
+        "totalIncome",
+        "adjustmentsToIncome",
+        "adjustedGrossIncome",
+        "deduction",
+        "qualifiedBusinessIncomeDeduction",
+        "deductionsTotal",
+        "taxableIncome"
+      ],
+      "next": "tax_and_credits"
+    },
+    {
+      "id": "tax_and_credits",
+      "title": "Tax and credits",
+      "fields": [
+        "tax",
+        "additionalTaxesSchedule2Part1",
+        "taxPlusSchedule2Part1",
+        "childTaxCredit",
+        "schedule3Part1Credits",
+        "totalCredits",
+        "taxAfterCredits",
+        "otherTaxes",
+        "totalTax"
+      ],
+      "next": "payments"
+    },
+    {
+      "id": "payments",
+      "title": "Payments",
+      "fields": [
+        "withholdingW2",
+        "withholding1099",
+        "withholdingOther",
+        "withholdingTotal",
+        "estimatedTaxPayments",
+        "earnedIncomeCredit",
+        "additionalChildTaxCredit",
+        "americanOpportunityCredit",
+        "schedule3Part2Credits",
+        "totalOtherPaymentsAndRefundableCredits",
+        "totalPayments"
+      ],
+      "next": "refund_or_amount_owed"
+    },
+    {
+      "id": "refund_or_amount_owed",
+      "title": "Refund or amount you owe",
+      "fields": [
+        "overpayment",
+        "refundAmount",
+        "refundRoutingNumber",
+        "refundAccountType",
+        "refundAccountNumber",
+        "appliedToEstimatedTax",
+        "amountYouOwe",
+        "estimatedTaxPenalty"
+      ],
+      "next": "third_party_designee"
+    },
+    {
+      "id": "third_party_designee",
+      "title": "Third party designee",
+      "fields": [
+        "thirdPartyDesignee",
+        "designeeName",
+        "designeePhone",
+        "designeePin"
+      ],
+      "next": "sign"
+    },
+    {
+      "id": "sign",
+      "title": "Sign here",
+      "fields": [
+        "taxpayerOccupation",
+        "taxpayerIdentityProtectionPin",
+        "spouseOccupation",
+        "spouseIdentityProtectionPin",
+        "signatureDate",
+        "phoneNumber",
+        "emailAddress"
+      ]
+    }
+  ]
+}

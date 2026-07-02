@@ -1,0 +1,391 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/cbp/esta-application",
+  "version": "1.1.0",
+  "title": "United States Electronic System for Travel Authorization (ESTA)",
+  "description": "Pre-travel screening application for citizens and nationals of Visa Waiver Program (VWP) countries who intend to travel to the United States for tourism or business for up to 90 days without a visa. Submitted online via the ESTA website or the ESTA mobile app, by the traveler or a third-party representative on the traveler's behalf. An approved ESTA is generally valid for two years (or until the passport expires, or a VWP eligibility fact changes, whichever comes first) and covers multiple trips; it establishes VWP eligibility to travel but does not guarantee admission, which a CBP officer determines at the port of entry. This document does not submit the application; the live esta.cbp.dhs.gov source is always authoritative (see verification). Fees and processing times are described qualitatively, not encoded as validated fields, because CBP sets them by regulation and they change independently of the application's field structure.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "U.S. Customs and Border Protection",
+    "abbreviation": "CBP",
+    "url": "https://www.cbp.gov/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.cbp.gov/travel/international-visitors/esta",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "ESTA"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema opening the Visa vertical of the catalog. esta.cbp.dhs.gov, cbp.gov's ESTA FAQ page, and help.cbp.gov all render as a JavaScript shell or return HTTP 403 to automated retrieval, so the field model was authored primarily from two official DHS/CBP Privacy Impact Assessment PDFs (DHS/CBP/PIA-007(h), June 2023, and the PIA-007(j) update, July 2024), which describe the categories of information ESTA collects, plus the CBP/usa.gov FAQ pages for eligibility, fee, and validity facts. The exact verbatim wording of the nine Visa Waiver Program eligibility questions was cross-checked against several independent practitioner reproductions of the live form for consistency, not read directly off the live page; see VERIFICATION.md for the full source list, the access-constraint record, and what remains independently unverified. Status remains 'draft' pending a field-by-field pass against the live, authenticated application."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantRole",
+      "label": "Who is completing this application?",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the traveler is completing the application themselves or a third-party representative (e.g. travel agent, relative, friend) is completing it on the traveler's behalf. ESTA was designed to allow a representative to submit for someone without computer or internet access; the traveler remains responsible for the answers submitted either way.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — role selection at the start of the application",
+      "validation": { "enum": ["applicant", "representative"] }
+    },
+    {
+      "name": "representativeCompletedOnBehalf",
+      "label": "Third party completed this application on the traveler's behalf",
+      "type": "boolean",
+      "required": false,
+      "description": "Required acknowledgment checkbox when applicantRole is 'representative': the representative must check the box on the application indicating they completed it on the traveler's behalf.",
+      "sourceRef": "DHS/CBP/PIA-007(h) footnote 4"
+    },
+    {
+      "name": "lastName",
+      "label": "Last name (surname, as shown on passport)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Auto-populated from a scan/photo of the passport biographic data page or the passport's Machine-Readable Zone, editable if optical character recognition misreads it.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — biographic passport data page capture",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First and middle names (as shown on passport)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — biographic passport data page capture",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD.",
+      "sourceRef": "DHS/CBP/PIA-007(h) / PIA-007(j) — biographic information"
+    },
+    {
+      "name": "sexMarker",
+      "label": "Sex, as shown on passport",
+      "type": "enum",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Reflects the passport's own sex marker, captured from the passport scan/Machine-Readable Zone. The enumeration mirrors ICAO 9303 machine-readable-passport sex-marker values (M, F, or X); it was not independently re-confirmed against the live ESTA form's own field, since that form was not directly reachable (see VERIFICATION.md).",
+      "sourceRef": "DHS/CBP/PIA-007(h) — Machine-Readable Zone capture (name, sex, date of birth, ...)",
+      "validation": { "enum": ["M", "F", "X"] }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "description": "ISO 3166-1 alpha-2 country code.",
+      "sourceRef": "DHS/CBP/PIA-007(j) — 'name, country of birth and citizenship, date of birth, sex, ...'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "citizenshipCountry",
+      "label": "Country of citizenship",
+      "type": "string",
+      "required": true,
+      "description": "ISO 3166-1 alpha-2 country code. Must be a country currently designated as a Visa Waiver Program participant; the VWP country list is set by the Secretary of Homeland Security and changes over time (additions and removals), so it is intentionally not enumerated here as a fixed validation list — consult the current list at travel.state.gov or cbp.gov before relying on it.",
+      "sourceRef": "DHS/CBP/PIA-007(j); travel.state.gov Visa Waiver Program overview",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. As shown on the biographic data page / Machine-Readable Zone of an e-Passport (a passport with an embedded electronic chip) issued by a Visa Waiver Program country.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — Machine-Readable Zone capture",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "passportExpirationDate",
+      "label": "Passport expiration date",
+      "type": "date",
+      "required": true,
+      "description": "Full date, YYYY-MM-DD. An ESTA authorization is valid only through the passport's expiration date if that is sooner than the normal two-year validity.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — Machine-Readable Zone capture ('..., and passport expiration date')"
+    },
+    {
+      "name": "passportBiographicPageImage",
+      "label": "Photo of the passport biographic data page",
+      "type": "file",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. A photo or scan of the passport's biographic data page (the page bearing the applicant's photo, name, and Machine-Readable Zone), captured or uploaded during the application. The website flow previews the image and the biographic data it auto-populated so the applicant can correct any OCR misread before continuing.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — biographic passport data page capture"
+    },
+    {
+      "name": "applicantSelfiePhoto",
+      "label": "Photo of the applicant's face (selfie)",
+      "type": "file",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. A live photo of the applicant's face, compared 1:1 against the passport photograph by CBP's Traveler Verification Service to confirm the applicant is the passport holder. Required on both the ESTA website and the ESTA mobile app as of the 2024 enhancement described in PIA-007(j). When a representative submits on the applicant's behalf, the representative must still submit a photo of the applicant, not of themselves.",
+      "sourceRef": "DHS/CBP/PIA-007(j) — photograph submission requirement and Traveler Verification Service matching"
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Should be the traveler's own email address. If the traveler has no email address, an alternative third-party point-of-contact email address (e.g. a family member, friend, or business associate) must be provided instead.",
+      "sourceRef": "DHS/CBP/PIA-007(h) footnote 4; PIA-007(j) — contact information",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "phone",
+      "label": "Phone number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "DHS/CBP/PIA-007(j) — contact information (e.g., phone and email address)",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "employerInformation",
+      "label": "Current or previous employer (name and address)",
+      "type": "string",
+      "required": true,
+      "description": "Name and address of the applicant's current or, if not currently employed, most recent previous employer. DHS builds in flexibility for applicants who cannot readily supply every mandatory detail (e.g. answering 'unknown' where genuinely not known); the live form's exact sub-field breakdown (e.g. whether employer name, address, and phone are separate inputs) was not independently confirmed, since the application itself was not directly reachable — see VERIFICATION.md.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — 'information about current or previous employer'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "destinationAddressInUS",
+      "label": "Destination address in the United States",
+      "type": "string",
+      "required": true,
+      "description": "Address of the first place the applicant intends to stay in the United States.",
+      "sourceRef": "DHS/CBP/PIA-007(h) / PIA-007(j) — 'destination address ... in the United States'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "usPointOfContactName",
+      "label": "U.S. point of contact — name",
+      "type": "string",
+      "required": true,
+      "description": "Name of a point of contact in the United States. DHS allows an applicant with no U.S. point of contact to answer 'unknown' rather than leaving the mandatory field blank.",
+      "sourceRef": "DHS/CBP/PIA-007(h) / PIA-007(j) — 'point of contact in the United States'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "usPointOfContactAddressOrPhone",
+      "label": "U.S. point of contact — address or phone",
+      "type": "string",
+      "required": false,
+      "description": "Address and/or phone number for the U.S. point of contact named above, when available.",
+      "sourceRef": "DHS/CBP/PIA-007(h) / PIA-007(j) — 'point of contact in the United States'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency point of contact — name",
+      "type": "string",
+      "required": true,
+      "description": "Name of an emergency point of contact, distinct from the U.S. point of contact above.",
+      "sourceRef": "DHS/CBP/PIA-007(j) — 'emergency point of contact information'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency point of contact — phone",
+      "type": "string",
+      "required": true,
+      "description": "In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "DHS/CBP/PIA-007(j) — 'emergency point of contact information'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "socialMediaPlatform",
+      "label": "Social media platform (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary. An application is not blocked from submission by leaving this and socialMediaIdentifier blank, and CBP may still check publicly available social media regardless. The live form may accept more than one platform/handle pair; this flat field models one representative pair pending an accepted repeating-value mechanism (GSP-0009).",
+      "sourceRef": "DHS/CBP/PIA-007(h) — 'social media information (voluntary)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "socialMediaIdentifier",
+      "label": "Social media handle (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary. See socialMediaPlatform.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — 'social media information (voluntary)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "hasCommunicableDiseaseOrDisorder",
+      "label": "Do you have a communicable disease, or a physical or mental disorder, or are you a drug abuser or addict?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions. Covers specified communicable diseases (e.g. tuberculosis, cholera) and physical/mental disorders or substance abuse/addiction that may pose a public-health or safety concern.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions category: communicable diseases"
+    },
+    {
+      "name": "hasArrestOrConvictionSeriousCrime",
+      "label": "Have you ever been arrested or convicted for a crime that resulted in serious damage to property, or serious harm to another person or a government authority?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions category: arrests and convictions for certain crimes"
+    },
+    {
+      "name": "hasControlledSubstanceViolation",
+      "label": "Have you ever violated any law related to possessing, using, or distributing illegal drugs?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions"
+    },
+    {
+      "name": "hasTerrorismEspionageSabotageGenocideInvolvement",
+      "label": "Do you seek to engage in, or have you ever engaged in, terrorist activities, espionage, sabotage, or genocide?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions"
+    },
+    {
+      "name": "hasFraudOrMisrepresentationForUSEntry",
+      "label": "Have you ever committed fraud or misrepresented yourself, or helped someone else do so, to obtain (or try to obtain) a visa or entry into the United States?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions"
+    },
+    {
+      "name": "isSeekingOrHadUnauthorizedUSEmployment",
+      "label": "Are you seeking employment in the United States, or were you previously employed in the United States without prior permission from the U.S. government?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions. The Visa Waiver Program covers business and tourism only, not employment.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions"
+    },
+    {
+      "name": "hasPriorVisaDenialOrRefusedAdmission",
+      "label": "Have you ever been denied a U.S. visa you applied for with your current or previous passport, or been refused admission to the United States, or withdrawn your application for admission at a U.S. port of entry?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions category: history of visa revocation or deportation"
+    },
+    {
+      "name": "hasPriorOverstay",
+      "label": "Have you ever stayed in the United States longer than the period of admission granted to you by the U.S. government?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions. Any overstay, even by one day, is disclosable here.",
+      "sourceRef": "CBP VWP/ESTA FAQ — eligibility questions"
+    },
+    {
+      "name": "hasTravelToDesignatedCountriesSinceThreshold",
+      "label": "Have you traveled to, or been present in, Iran, Iraq, Libya, North Korea, Somalia, Sudan, Syria, or Yemen on or after March 1, 2011, or Cuba on or after January 12, 2021?",
+      "type": "boolean",
+      "required": true,
+      "description": "One of the nine Visa Waiver Program eligibility questions. A 'yes' generally makes the traveler ineligible for the Visa Waiver Program (a visa must be obtained through the normal consular process instead), subject to limited exceptions the live form's guidance may describe.",
+      "sourceRef": "travel.state.gov Visa Waiver Program overview; CBP VWP/ESTA FAQ"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "ESTA application fees are collected through the U.S. government's Pay.gov service.",
+      "sourceRef": "DHS/CBP/PIA-007(h) footnote 10 — Pay.gov payment methods",
+      "validation": { "enum": ["credit_card", "debit_card", "ach_debit"] }
+    },
+    {
+      "name": "applicationSubmittedToCBP",
+      "label": "Submit application to CBP",
+      "type": "boolean",
+      "required": true,
+      "description": "Final confirmation step: once payment is validated, the applicant or representative is prompted to submit the application to CBP for automated vetting against security and law enforcement databases.",
+      "sourceRef": "DHS/CBP/PIA-007(h) — submission and vetting"
+    }
+  ],
+  "steps": [
+    {
+      "id": "role",
+      "title": "Who is applying",
+      "fields": ["applicantRole", "representativeCompletedOnBehalf"],
+      "next": "biographic_and_passport"
+    },
+    {
+      "id": "biographic_and_passport",
+      "title": "Biographic and passport details",
+      "fields": [
+        "lastName",
+        "firstName",
+        "dateOfBirth",
+        "sexMarker",
+        "countryOfBirth",
+        "citizenshipCountry",
+        "passportNumber",
+        "passportExpirationDate",
+        "passportBiographicPageImage",
+        "applicantSelfiePhoto"
+      ],
+      "next": "contact_and_employment"
+    },
+    {
+      "id": "contact_and_employment",
+      "title": "Contact and employment",
+      "fields": ["email", "phone", "employerInformation"],
+      "next": "destination_and_contacts"
+    },
+    {
+      "id": "destination_and_contacts",
+      "title": "Destination, U.S. point of contact, and emergency contact",
+      "fields": [
+        "destinationAddressInUS",
+        "usPointOfContactName",
+        "usPointOfContactAddressOrPhone",
+        "emergencyContactName",
+        "emergencyContactPhone"
+      ],
+      "next": "social_media"
+    },
+    {
+      "id": "social_media",
+      "title": "Social media (optional)",
+      "fields": ["socialMediaPlatform", "socialMediaIdentifier"],
+      "next": "eligibility_questions"
+    },
+    {
+      "id": "eligibility_questions",
+      "title": "Visa Waiver Program eligibility questions",
+      "fields": [
+        "hasCommunicableDiseaseOrDisorder",
+        "hasArrestOrConvictionSeriousCrime",
+        "hasControlledSubstanceViolation",
+        "hasTerrorismEspionageSabotageGenocideInvolvement",
+        "hasFraudOrMisrepresentationForUSEntry",
+        "isSeekingOrHadUnauthorizedUSEmployment",
+        "hasPriorVisaDenialOrRefusedAdmission",
+        "hasPriorOverstay",
+        "hasTravelToDesignatedCountriesSinceThreshold"
+      ],
+      "next": "payment_and_submission"
+    },
+    {
+      "id": "payment_and_submission",
+      "title": "Payment and submission",
+      "fields": ["paymentMethod", "applicationSubmittedToCBP"]
+    }
+  ]
+}
