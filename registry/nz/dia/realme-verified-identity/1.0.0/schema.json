@@ -1,0 +1,349 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/dia/realme-verified-identity",
+  "version": "1.0.0",
+  "title": "New Zealand RealMe Verified Identity — Enrolment",
+  "description": "First-time enrolment for a RealMe verified identity, the New Zealand government-issued digital identity (an 'electronic identity credential' under the Electronic Identity Verification Act 2012) that lets a person prove who they are online to participating service providers — for example to open a bank account or apply for a replacement driver licence. It is issued by the Department of Internal Affairs (DIA) as part of the wider RealMe service and requires an existing RealMe login as a precondition. This models the online application: choosing an identity record to rely on, the document-specific details DIA collects for that record, the applicant photo/identity check, an identity referee if DIA determines one is required, and final consent. It does not model a plain RealMe login (no verified identity), the separate renewal process for an existing verified identity, or the automatic use of a verified identity once issued.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Internal Affairs, RealMe (Te Tari Taiwhenua)",
+    "abbreviation": "DIA",
+    "url": "https://www.realme.govt.nz/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-NZ"
+  },
+  "source": {
+    "url": "https://www.realme.govt.nz/en-nz/realme-verified-identity/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "RealMe verified identity — application guidance; Identity Verification Service Privacy Statement; Identity verification service terms of use; Tips for taking your photo online"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-02",
+    "notes": "Source-derived reference schema authored from four live realme.govt.nz pages, all fetched directly with curl at HTTP 200 with no block encountered: the 'RealMe verified identity' guidance page (the 4-step application overview: identity record, photo, referee, submit), the 'Identity Verification Service Privacy Statement' (which names, per identity-record choice, the exact personal-information fields DIA collects — the strongest available field-level source, since the live application form itself sits behind an authenticated RealMe login this environment cannot pass without genuine identity documents), the 'Identity verification service terms of use' (referee eligibility rules, under-14 guardian-consent process), and 'Tips for taking your photo online'. No live walkthrough of the application form itself was performed — see VERIFICATION.md for why, and for the honest sourcing-grain gap this leaves relative to a direct field-by-field form comparison. Status remains 'draft'."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantAgedFourteenOrOver",
+      "label": "Are you aged 14 or over?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Any individual may apply for a RealMe verified identity, but an applicant aged 13 or under needs a parent or legal guardian to approve the application (see parentOrGuardianConsentProvided). This field is the precise complement of that '13 or under' threshold named in the source.",
+      "sourceRef": "Identity verification service terms of use — 'Use of your verified identity': 'If you are aged 13 years or under, you need one of your parents or legal guardians to approve your application.'"
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Which identity record are you relying on?",
+      "type": "enum",
+      "required": true,
+      "description": "The single identity record the applicant chooses to supply for the application. nz_passport may be an expired New Zealand passport. Each choice gates a different set of document-specific fields collected below.",
+      "sourceRef": "RealMe verified identity — 'Tell us who you are': 'NZ passport (you can use an expired passport) / NZ birth certificate / NZ citizenship certificate / NZ immigration record'",
+      "validation": {
+        "enum": ["nz_passport", "nz_birth_certificate", "nz_citizenship_certificate", "nz_immigration_record"]
+      }
+    },
+    {
+      "name": "fullName",
+      "label": "Full name",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Applicant's full name, as recorded on the identity record chosen in identityDocumentType. The privacy statement describes this as a single 'full name' collected for every identity-record choice, not separate given/family-name boxes; modelled at that sourcing grain rather than split into components not named in the source.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Information we collect for your verified identity' (each identity-record bullet ends '...and full name' or lists 'full name' among the collected fields)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "New Zealand passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "identityDocumentType", "equals": "nz_passport" },
+      "requiredWhen": { "field": "identityDocumentType", "equals": "nz_passport" },
+      "description": "Number of the New Zealand passport relied on, which may be expired.",
+      "sourceRef": "Identity Verification Service Privacy Statement: 'If you are relying on your New Zealand passport, we will collect your passport number and full name.'",
+      "validation": { "pattern": "^[A-Za-z0-9]{6,9}$" }
+    },
+    {
+      "name": "citizenshipCertificateNumber",
+      "label": "New Zealand citizenship certificate number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "identityDocumentType", "equals": "nz_citizenship_certificate" },
+      "requiredWhen": { "field": "identityDocumentType", "equals": "nz_citizenship_certificate" },
+      "description": "Certificate number of the New Zealand citizenship record relied on.",
+      "sourceRef": "Identity Verification Service Privacy Statement: 'If you are relying on your New Zealand citizenship record, we will collect your citizenship certificate number and full name.'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "overseasPassportNumber",
+      "label": "Overseas passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+      "requiredWhen": { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+      "description": "Number of the applicant's overseas passport, collected when relying on an immigration record.",
+      "sourceRef": "Identity Verification Service Privacy Statement: 'If you are relying on your Immigration information, we will collect your overseas passport number, visa or permit number, full name, date of birth, place of birth and gender.'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "visaOrPermitNumber",
+      "label": "Visa or permit number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+      "requiredWhen": { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+      "description": "Number of the New Zealand visa or permit forming the immigration record relied on.",
+      "sourceRef": "Identity Verification Service Privacy Statement — Immigration information bullet (see overseasPassportNumber)",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": false,
+      "visibleWhen": {
+        "any": [
+          { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+          { "field": "identityDocumentType", "equals": "nz_birth_certificate" }
+        ]
+      },
+      "requiredWhen": {
+        "any": [
+          { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+          { "field": "identityDocumentType", "equals": "nz_birth_certificate" }
+        ]
+      },
+      "description": "Full date, YYYY-MM-DD. Collected only when relying on an immigration record or a New Zealand birth registration; the privacy statement does not name date of birth as separately collected for the passport or citizenship-certificate choices (presumably because those records are matched by document number instead).",
+      "sourceRef": "Identity Verification Service Privacy Statement — Immigration information and New Zealand birth registration bullets"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "any": [
+          { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+          { "field": "identityDocumentType", "equals": "nz_birth_certificate" }
+        ]
+      },
+      "requiredWhen": {
+        "any": [
+          { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+          { "field": "identityDocumentType", "equals": "nz_birth_certificate" }
+        ]
+      },
+      "description": "Collected only when relying on an immigration record or a New Zealand birth registration; see dateOfBirth.",
+      "sourceRef": "Identity Verification Service Privacy Statement — Immigration information and New Zealand birth registration bullets",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "any": [
+          { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+          { "field": "identityDocumentType", "equals": "nz_birth_certificate" }
+        ]
+      },
+      "requiredWhen": {
+        "any": [
+          { "field": "identityDocumentType", "equals": "nz_immigration_record" },
+          { "field": "identityDocumentType", "equals": "nz_birth_certificate" }
+        ]
+      },
+      "description": "As recorded on the immigration record or birth registration relied on. The source names 'gender' as a collected field but does not publish a closed code list for this specific service, so no enum is asserted here — unlike gender fields sourced from a form that prints its own code list (e.g. nz/dia/passport-renewal-adult's M/F/X).",
+      "sourceRef": "Identity Verification Service Privacy Statement — Immigration information and New Zealand birth registration bullets",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "parentMotherName",
+      "label": "Parent 1 / mother's name",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "identityDocumentType", "equals": "nz_birth_certificate" },
+      "requiredWhen": { "field": "identityDocumentType", "equals": "nz_birth_certificate" },
+      "description": "Collected only when relying on a New Zealand birth registration.",
+      "sourceRef": "Identity Verification Service Privacy Statement: 'If you are relying on your New Zealand birth registration, we will collect your full name, date of birth, place of birth, gender, parent 1/mother's name and your parent 2/father's name (if applicable).'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "parentFatherName",
+      "label": "Parent 2 / father's name",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "identityDocumentType", "equals": "nz_birth_certificate" },
+      "description": "Collected only when relying on a New Zealand birth registration, and only 'if applicable' per the source — unlike parentMotherName, this field is never made required by identityDocumentType alone, reflecting the source's own qualifier.",
+      "sourceRef": "Identity Verification Service Privacy Statement — New Zealand birth registration bullet (see parentMotherName)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "identityCheckMethod",
+      "label": "How will you complete your photo and identity check?",
+      "type": "enum",
+      "required": true,
+      "description": "online_device_photo = take your own photo online using your device's camera as part of the application; realme_partner_store = have your photo taken free of charge, and any required original documents shown, at a RealMe partner store instead.",
+      "sourceRef": "RealMe verified identity — 'Take a photo': 'You can complete the online identity check using your device, or have your photo taken at a RealMe partner store.'",
+      "validation": { "enum": ["online_device_photo", "realme_partner_store"] }
+    },
+    {
+      "name": "onlinePhoto",
+      "label": "Photo taken with your device",
+      "type": "file",
+      "required": false,
+      "visibleWhen": { "field": "identityCheckMethod", "equals": "online_device_photo" },
+      "requiredWhen": { "field": "identityCheckMethod", "equals": "online_device_photo" },
+      "description": "A photo taken in a well-lit area with no shadows on your face, in front of a plain background with no people or objects behind you, facing the camera with a neutral expression and mouth closed, not wearing a hat, tinted or thick-rimmed glasses, or anything else that covers your face (a head covering is allowed only for religious or medical reasons). Up to 5 attempts are allowed; after 5 unsuccessful attempts the applicant must wait 14 days and start a new application, or use a RealMe partner store instead.",
+      "sourceRef": "Tips for taking your photo online"
+    },
+    {
+      "name": "refereeFullName",
+      "label": "Identity referee — full name",
+      "type": "string",
+      "required": false,
+      "description": "Personal information of a third party; handle as sensitive data. Provide only if DIA determines the application requires an identity referee (the source describes this as DIA-initiated: 'We may need you to provide an identity referee'), not a choice the applicant makes upfront — a real difference from nz/dia/passport-renewal-adult, whose identity referee is unconditionally required. When required, the referee must be aged 16 or over, have known the applicant for more than 1 year, hold a current or expired New Zealand passport, agree to act as referee, not be part of the applicant's immediate or extended family (including cousins, in-laws, and ex-spouses), and not live at the applicant's address.",
+      "sourceRef": "RealMe verified identity — 'Provide an identity referee, if required'; Identity Verification Service Privacy Statement — 'Identity referee'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "refereeDateOfBirth",
+      "label": "Identity referee — date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal information of a third party; handle as sensitive data. Full date, YYYY-MM-DD. See refereeFullName for when this is collected.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Identity referee': 'You must provide your referee's New Zealand passport number, full name, date of birth, address, phone number, email address, and how long they have known you.'"
+    },
+    {
+      "name": "refereePassportNumber",
+      "label": "Identity referee — New Zealand passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal information of a third party; handle as sensitive data. The referee must hold a current or expired New Zealand passport. See refereeFullName for when this is collected.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Identity referee' (see refereeDateOfBirth)",
+      "validation": { "pattern": "^[A-Za-z0-9]{6,9}$" }
+    },
+    {
+      "name": "refereeAddress",
+      "label": "Identity referee — home address",
+      "type": "string",
+      "required": false,
+      "description": "Personal information of a third party; handle as sensitive data. See refereeFullName for when this is collected. The referee must not live at the same address as the applicant.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Identity referee' (see refereeDateOfBirth)",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "refereePhone",
+      "label": "Identity referee — phone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal information of a third party; handle as sensitive data. In international E.164 format, e.g. +6421234567. See refereeFullName for when this is collected.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Identity referee' (see refereeDateOfBirth)",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "refereeEmail",
+      "label": "Identity referee — email address",
+      "type": "string",
+      "required": false,
+      "description": "Personal information of a third party; handle as sensitive data. See refereeFullName for when this is collected.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Identity referee' (see refereeDateOfBirth)",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "refereeYearsKnown",
+      "label": "Identity referee — how long they have known you (years)",
+      "type": "integer",
+      "required": false,
+      "description": "The referee must have known the applicant for more than 1 year. See refereeFullName for when this is collected.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Identity referee' (duration collected); RealMe verified identity — referee requirement 'have known you for more than 1 year'",
+      "validation": { "minimum": 0, "maximum": 120 }
+    },
+    {
+      "name": "agreesToTermsOfUse",
+      "label": "I have read and agree to the Identity Verification Service terms of use and privacy statement",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirms the applicant has read and agrees to DIA's Identity verification service terms of use and Identity Verification Service Privacy Statement, and consents to the collection, use, and disclosure of their personal information under the Electronic Identity Verification Act 2012, as required to submit the application.",
+      "sourceRef": "Identity Verification Service Privacy Statement — 'Introduction': 'When you apply for a verified identity and agree to the terms of use, you will be asked to give consent for the collection, use, and disclosure of your personal information for the purposes explained in this statement.'"
+    },
+    {
+      "name": "parentOrGuardianConsentProvided",
+      "label": "Parent or legal guardian consent provided",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "applicantAgedFourteenOrOver", "equals": false },
+      "requiredWhen": { "field": "applicantAgedFourteenOrOver", "equals": false },
+      "description": "For an applicant aged 13 or under, a parent or legal guardian must give consent by completing the printed 'Declaration of consent form for a RealMe application' and providing it, along with any other requested documents, at a RealMe partner store visit.",
+      "sourceRef": "RealMe verified identity — 'Applicants aged 13 years and under': '...your parent or legal guardian must give consent. After you complete the online part of your application, print the consent form...'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Before you apply",
+      "fields": ["applicantAgedFourteenOrOver"],
+      "next": "identity_record"
+    },
+    {
+      "id": "identity_record",
+      "title": "Tell us who you are",
+      "fields": [
+        "identityDocumentType",
+        "fullName",
+        "passportNumber",
+        "citizenshipCertificateNumber",
+        "overseasPassportNumber",
+        "visaOrPermitNumber",
+        "dateOfBirth",
+        "placeOfBirth",
+        "gender",
+        "parentMotherName",
+        "parentFatherName"
+      ],
+      "next": "photo"
+    },
+    {
+      "id": "photo",
+      "title": "Take a photo",
+      "fields": ["identityCheckMethod", "onlinePhoto"],
+      "next": "identity_referee"
+    },
+    {
+      "id": "identity_referee",
+      "title": "Provide an identity referee, if required",
+      "fields": [
+        "refereeFullName",
+        "refereeDateOfBirth",
+        "refereePassportNumber",
+        "refereeAddress",
+        "refereePhone",
+        "refereeEmail",
+        "refereeYearsKnown"
+      ],
+      "next": "consent_and_submit"
+    },
+    {
+      "id": "consent_and_submit",
+      "title": "Submit your application",
+      "fields": ["agreesToTermsOfUse", "parentOrGuardianConsentProvided"]
+    }
+  ]
+}
