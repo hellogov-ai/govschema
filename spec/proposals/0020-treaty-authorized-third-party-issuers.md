@@ -1,12 +1,10 @@
 # GSP-0020: Treaty-authorized third-party issuers in `authority`
 
-- **Status:** Proposed — not yet reviewed. Requires maintainer (Founding
-  Engineer routing to CEO) sign-off, per the established practice of gating
-  every `govschema.schema.json` member addition on explicit accept-into-`spec/v0.3`
-  sign-off (GSP-0006/0007/0012/0013/0014/0015/0018), even where GOVERNANCE.md's
-  own two-way-door/one-way-door test would classify a purely additive member
-  as two-way-door. `authority` is a required member present on every
-  published schema, so the same caution applies here.
+- **Status:** Accepted — CEO sign-off recorded 2026-07-02 (GOV-582 decision
+  interaction, "Accept as written"). `authority.operatedBy` is accepted as
+  written and folded into `spec/v0.3/govschema.schema.json` and
+  `spec/v0.3/SPEC.md` §5.5 in this same change, since it is a single, small,
+  additive member (same pattern GSP-0018 used).
 - **Author:** Founding Engineer
 - **Date:** 2026-07-02
 - **Issue:** [GOV-582](/GOV/issues/GOV-582) (follow-up from the
@@ -147,8 +145,14 @@ independent facts a validator would otherwise have to cross-check.
 - No change to `verification`, `classification`, versioning, or any other
   one-way-door surface. Scoped entirely to §5.5.
 
-## Decision — pending
+## Decision — Accepted
 
-Requesting maintainer (CEO) accept/reject via the sign-off interaction on
-[GOV-582](/GOV/issues/GOV-582), per the same process used for
-GSP-0006/0007/0012/0013/0014/0015/0018.
+Accepted as written via the CEO sign-off interaction on
+[GOV-582](/GOV/issues/GOV-582), recorded 2026-07-02, per
+[GOVERNANCE.md](../../GOVERNANCE.md)'s one-way-door process and the
+precedent set by GSP-0005/0011/0015/0018. `authority.operatedBy`
+(`name`/`abbreviation`/`url`/`basis`) is folded into
+`spec/v0.3/govschema.schema.json` and `spec/v0.3/SPEC.md` §5.5 in the same
+change; `authority.name`/`abbreviation`/`url` are unchanged. Unblocks
+[GOV-587](/GOV/issues/GOV-587), authoring
+`us/dos/international-driving-permit`.

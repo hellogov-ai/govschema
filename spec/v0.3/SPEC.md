@@ -312,6 +312,39 @@ while `jurisdiction` uses uppercase ISO codes; e.g. `id` `us/ca/...` ↔ `countr
 - `name` — REQUIRED, the body's official name.
 - `abbreviation` — OPTIONAL, a short form.
 - `url` — OPTIONAL, the authority's official homepage.
+- `operatedBy` — OPTIONAL, per [GSP-0020](../proposals/0020-treaty-authorized-third-party-issuers.md).
+  Present only when a different, non-government body operationally runs the
+  process under a treaty or statutory authorization from the government body
+  named in `authority.name` (e.g. a US International Driving Permit,
+  authorized by the Department of State under the 1949 Geneva Convention on
+  Road Traffic but issued by the American Automobile Association):
+
+  ```json
+  "authority": {
+    "name": "U.S. Department of State",
+    "abbreviation": "DOS",
+    "url": "https://travel.state.gov",
+    "operatedBy": {
+      "name": "American Automobile Association",
+      "abbreviation": "AAA",
+      "url": "https://www.aaa.com",
+      "basis": "Designated issuer of International Driving Permits under the 1949 Geneva Convention on Road Traffic and U.S. Department of State authorization."
+    }
+  }
+  ```
+
+  `authority.name`/`abbreviation`/`url` keep their existing meaning
+  unchanged — the government body whose authorization creates and governs
+  the process — regardless of whether `operatedBy` is present.
+
+  - `name` — REQUIRED, the operating body's official name.
+  - `abbreviation` — OPTIONAL, a short form.
+  - `url` — OPTIONAL, the operator's official homepage.
+  - `basis` — REQUIRED, a short plain-language citation of the legal or
+    treaty instrument under which the operator is authorized. This is what
+    distinguishes a genuinely government-designated third-party operator
+    from an unaffiliated private company; `operatedBy` MUST NOT be used to
+    name an operator with no such authorization.
 
 ### 5.6 Process (`process`)
 
