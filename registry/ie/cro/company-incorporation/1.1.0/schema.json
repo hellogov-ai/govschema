@@ -1,0 +1,419 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/cro/company-incorporation",
+  "version": "1.1.0",
+  "title": "Ireland Private Company Limited by Shares Incorporation (Form A1)",
+  "description": "Incorporate a private company limited by shares (LTD) in Ireland by filing Form A1 and a constitution with the Companies Registration Office (CRO) on CORE, under Part 2 of the Companies Act 2014. Scoped to the single-director, single-secretary, single-subscriber case most relevant to an individual forming their own company (the IE counterpart to gb/companies-house/company-incorporation-in01 and us/ca/sos/business-entity-llc-formation): an LTD company is the only Irish company type that may have just one director, provided it appoints a separate secretary. Filed under the Ordinary Online A1 scheme (10 working days) with either the CRO's standard one-document LTD constitution or a bespoke constitution attached. Designated Activity Companies, public companies, companies limited by guarantee, unlimited companies, multiple directors/subscribers, multiple share classes, the Fé Phráinn A1 fast-track scheme (which requires separate CRO pre-approval of a promoter's constitution template), the optional company-name-reservation pre-step, and the separate post-incorporation Register of Beneficial Ownership (RBO) filing are all out of scope; see VERIFICATION.md. It does not submit the registration; the live cro.ie sources are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Companies Registration Office",
+    "abbreviation": "CRO",
+    "url": "https://www.cro.ie/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.cro.ie/registration/company/required-steps/",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "Form A1 — Form of incorporation of a new company"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from cro.ie's 'Required Steps', 'Company Incorporation' (Information Leaflet No. 1), 'Company Officers — Directors and Secretaries', 'Registered Office', 'Company Name', and 'Registration Methods' pages. cro.ie returns HTTP 403 to direct automated fetch from this environment; every page was instead retrieved via web.archive.org Wayback Machine snapshots (dated 2025-12-10 through 2026-03-09) and corroborated against an independent secondary source (cpdstore.ie's 'What is Required to be Filed to Incorporate a Company?', a CPD-accredited practitioner explainer citing the same CRO requirements, including the €50 online filing fee — fees are intentionally not encoded as authoritative data per the boundary other schemas in this registry follow). Closes the third company-formation jurisdiction gap named in discovery/catalog.json, alongside gb/companies-house/company-incorporation-in01 and us/ca/sos/business-entity-llc-formation. See VERIFICATION.md for the full field-by-field sourcing and open items — notably an unresolved question about whether PPSN is now a mandatory Form A1 field for directors/secretaries (the secondary source flagged it as 'soon to be required' as of 2023; the CRO's own current Company Officers page does not state a firm mandatory date), so directorPpsn/secretaryPpsn are modeled as optional pending live-form confirmation."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "companyName",
+      "label": "Proposed company name",
+      "type": "string",
+      "required": true,
+      "description": "Must end in 'Limited', 'Ltd', 'Teoranta', or 'Teo' (this document's LTD scope only). Must not be identical or similar to a name already on the Register of Companies, offensive, or suggestive of state sponsorship (Companies Act 2014 s.30). Not checked against the separate Register of Business Names or the Trade Mark Register — the CRO does not cross-check those; that is the applicant's responsibility. May optionally be pre-reserved for 28 days via a separate Reserved Company Name (RCN) application, which this document does not model.",
+      "sourceRef": "Company Name — CRO naming rules",
+      "validation": { "minLength": 3, "maxLength": 150 }
+    },
+    {
+      "name": "natureOfBusinessDescription",
+      "label": "General nature of the company's activity",
+      "type": "string",
+      "required": true,
+      "description": "Free-text description of the principal activity the company will carry on in the State. An LTD company has no stated objects in its constitution, but the general nature of the activity must still be given on Form A1.",
+      "sourceRef": "Company Incorporation (Leaflet 1) — NACE code classification",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "naceCode",
+      "label": "NACE code classification",
+      "type": "string",
+      "required": true,
+      "description": "The NACE (statistical classification of economic activities in the EU) code matching natureOfBusinessDescription, required by the CRO for statistical purposes on every Form A1 regardless of company type.",
+      "sourceRef": "Company Incorporation (Leaflet 1) — NACE code classification",
+      "validation": { "pattern": "^[0-9]{2}\\.?[0-9]{0,2}$" }
+    },
+    {
+      "name": "registeredOfficeAddressLine1",
+      "label": "Registered office address — line 1",
+      "type": "string",
+      "required": true,
+      "description": "Every company must have a registered office: the address to which CRO correspondence and all formal legal notices are sent, and where people have a right to inspect certain registers and documents in person. Must be a physical location in the State capable of receiving An Post deliveries — a PO box alone is not sufficient.",
+      "sourceRef": "Registered Office — physical location requirement",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "registeredOfficeAddressLine2",
+      "label": "Registered office address — line 2 / town / county (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Town, city, and county, e.g. 'Gloucester Place Lower, Dublin 1'.",
+      "sourceRef": "Registered Office — physical location requirement",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "registeredOfficeEircode",
+      "label": "Registered office Eircode (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Ireland's postal identifier, e.g. 'D01 F5P2'. Not every registered address has one on file; not confirmed as a mandatory Form A1 field, so modeled as optional pending live-form confirmation.",
+      "sourceRef": "Registered Office — address details",
+      "validation": { "maxLength": 8 }
+    },
+    {
+      "name": "companyEmailAddress",
+      "label": "Company email address",
+      "type": "string",
+      "required": true,
+      "description": "An email address for the company, required alongside the registered office on Form A1.",
+      "sourceRef": "Company Incorporation (Leaflet 1) — Form A1 required particulars",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "directorFullName",
+      "label": "Director's full name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. This document scopes to a single individual director — the minimum an LTD company may have, provided a separate secretary is also appointed (see secretaryIsBodyCorporate/secretaryFullName). Every other Irish company type requires a minimum of two directors and is out of scope here. The director must be over 18 and not an undischarged bankrupt (Companies Act 2014 ss.131–132).",
+      "sourceRef": "Company Officers — Directors and Secretaries",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "directorDateOfBirth",
+      "label": "Director's date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD. Director must be 18 or over (Companies Act 2014 s.131).",
+      "sourceRef": "Company Officers — age requirement"
+    },
+    {
+      "name": "directorPpsn",
+      "label": "Director's Personal Public Service Number (PPSN)",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. A secondary source (cpdstore.ie, 2023) describes PPSN disclosure for company officers as 'soon to be required' on Form A1; the CRO's current published Company Officers guidance does not itself state a firm mandatory date for this specific form (PPSN is separately mandatory for the Register of Beneficial Ownership, which is out of scope of this document). Modeled as optional pending confirmation against the live CORE form at authoring time — flagged in VERIFICATION.md for reviewer attention.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars (secondary source, unconfirmed against live CRO form)",
+      "validation": { "pattern": "^[0-9]{7}[A-Za-z]{1,2}$" }
+    },
+    {
+      "name": "directorNationality",
+      "label": "Director's nationality",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "directorOccupation",
+      "label": "Director's occupation",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "directorResidentialAddressLine1",
+      "label": "Director's residential address — line 1",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "directorResidentialAddressLine2",
+      "label": "Director's residential address — line 2 (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "directorResidentialAddressCountry",
+      "label": "Director's residential address — country",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Determines directorIsEeaResident.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "directorOtherDirectorships",
+      "label": "Other directorships held (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Name and registration number of other bodies corporate, incorporated in the State or elsewhere, of which the director is or has been a director. Excludes bodies the director has not directed in the past 5 years, and wholly-owned-subsidiary relationships within the same group. A person may not be a director of more than 25 companies at once (Companies Act 2014 s.142), subject to statutory exceptions.",
+      "sourceRef": "Company Officers — note on completing Form A1",
+      "validation": { "maxLength": 1000 }
+    },
+    {
+      "name": "directorIsEeaResident",
+      "label": "Is the director resident in a European Economic Area (EEA) member state?",
+      "type": "boolean",
+      "required": true,
+      "description": "At least one director of every Irish company must be resident in the EEA (the UK left the EEA-resident area on 31 December 2020). Since this document scopes to a single-director LTD company, if this is false the company must instead give a Section 137 bond (see section137BondArranged).",
+      "sourceRef": "Company Officers — European Economic Area residency requirement"
+    },
+    {
+      "name": "section137BondArranged",
+      "label": "Has a Section 137 bond been put in place?",
+      "type": "boolean",
+      "required": false,
+      "description": "Required (must be true) when directorIsEeaResident is false. A Section 137 bond (Companies Act 2014 s.137) substitutes for the EEA-resident-director requirement; it is a real insurance bond arranged separately from Form A1 and is not itself submitted with the incorporation, only declared.",
+      "sourceRef": "Company Officers — Section 137 Companies Act 2014"
+    },
+    {
+      "name": "secretaryIsBodyCorporate",
+      "label": "Is the company secretary a body corporate rather than an individual?",
+      "type": "boolean",
+      "required": true,
+      "description": "A body corporate may act as secretary to another company (but not to itself). Because this document scopes to a single-director LTD company, the secretary can never be the same person as the sole director — a single-director LTD company must have a separate secretary. If true, give secretaryCorporateName/secretaryCorporateRegistrationNumber instead of the individual secretary fields.",
+      "sourceRef": "Company Officers — the Secretary"
+    },
+    {
+      "name": "secretaryFullName",
+      "label": "Secretary's full name",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless secretaryIsBodyCorporate is true. Must be over 18 (Companies Act 2014 s.131) and a distinct person from directorFullName.",
+      "sourceRef": "Company Officers — Directors and Secretaries",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "secretaryDateOfBirth",
+      "label": "Secretary's date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD. Required unless secretaryIsBodyCorporate is true.",
+      "sourceRef": "Company Officers — age requirement"
+    },
+    {
+      "name": "secretaryNationality",
+      "label": "Secretary's nationality",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless secretaryIsBodyCorporate is true.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "secretaryResidentialAddressLine1",
+      "label": "Secretary's residential address — line 1",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless secretaryIsBodyCorporate is true.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "secretaryResidentialAddressCountry",
+      "label": "Secretary's residential address — country",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required unless secretaryIsBodyCorporate is true.",
+      "sourceRef": "cpdstore.ie — Form A1 required particulars",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "secretaryCorporateName",
+      "label": "Corporate secretary's registered name",
+      "type": "string",
+      "required": false,
+      "description": "Required only when secretaryIsBodyCorporate is true.",
+      "sourceRef": "Company Officers — the Secretary",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "secretaryCorporateRegistrationNumber",
+      "label": "Corporate secretary's company registration number",
+      "type": "string",
+      "required": false,
+      "description": "Required only when secretaryIsBodyCorporate is true.",
+      "sourceRef": "Company Officers — the Secretary",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "subscriberName",
+      "label": "Subscriber's name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The subscriber is the initial shareholder who subscribes their name to the constitution and takes at least one share. This document scopes to a single subscriber, matching the single-director individual-founder use case (often the same natural person as directorFullName, though this document models the fields independently since the underlying form does); Form A1 supports multiple subscribers, out of scope here.",
+      "sourceRef": "Checklist for Constitution — subscriber requirements",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "subscriberAddressLine1",
+      "label": "Subscriber's address — line 1",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Checklist for Constitution — subscriber requirements",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "subscriberAddressLine2",
+      "label": "Subscriber's address — line 2 (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Checklist for Constitution — subscriber requirements",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "subscriberAddressCountry",
+      "label": "Subscriber's address — country",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Checklist for Constitution — subscriber requirements",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "numberOfSharesSubscribed",
+      "label": "Number of shares subscribed for",
+      "type": "integer",
+      "required": true,
+      "description": "The subscriber must handwrite on the constitution the number of shares they will take — not less than one.",
+      "sourceRef": "Checklist for Constitution — subscriber requirements",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "nominalValuePerShare",
+      "label": "Nominal value of each share (optional)",
+      "type": "number",
+      "required": false,
+      "description": "In euro. Unlike other Irish company types, an LTD company's constitution is no longer required to state its total authorised share capital — it may instead simply state that the share capital, at registration, stands divided into shares of a fixed nominal amount. This field records that fixed amount when given.",
+      "sourceRef": "Checklist for Constitution — LTD nominal-capital allowance",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "constitutionType",
+      "label": "Constitution type",
+      "type": "enum",
+      "required": true,
+      "description": "standard_ltd_constitution = the CRO's standard downloadable one-document LTD constitution (Schedule 1, Companies Act 2014), completed and attached unamended; bespoke_constitution = a custom one-document constitution drafted by the applicant or their advisor, still required to comply with the Schedule 1 format and the Checklist for Constitution rules. An LTD company's constitution has no memorandum of association and states no objects, unlike every other Irish company type (out of scope of this document).",
+      "sourceRef": "Forming a company — constitution requirements",
+      "validation": { "enum": ["standard_ltd_constitution", "bespoke_constitution"] }
+    },
+    {
+      "name": "constitutionDocument",
+      "label": "Signed and witnessed constitution (file upload)",
+      "type": "file",
+      "required": true,
+      "description": "The constitution must be signed by the subscriber(s), with their address and description stated, and their signature witnessed and dated; the subscriber must also handwrite the number of shares taken next to their signature. Uploaded as a PDF alongside Form A1 on CORE (maximum 8 MB per the CORE filing guidance).",
+      "sourceRef": "Checklist for Constitution — subscriber signature and witnessing"
+    },
+    {
+      "name": "subscriberSignatureWitnessName",
+      "label": "Name of the witness to the subscriber's signature",
+      "type": "string",
+      "required": true,
+      "description": "The witness to the subscriber's signature on the constitution cannot be an officer or subscriber of the company being formed.",
+      "sourceRef": "cpdstore.ie — Form A1 submission requirements",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "lawfulActivityDeclarationConfirmed",
+      "label": "Declaration: the requirements of the Companies Act have been complied with",
+      "type": "boolean",
+      "required": true,
+      "description": "Form A1 incorporates a declaration that the requirements of the Companies Act 2014 have been complied with, and as to the activity the company is being formed to engage in.",
+      "sourceRef": "Forming a company — Form A1 declaration"
+    },
+    {
+      "name": "formA1WetSignatureConfirmed",
+      "label": "Confirmation: Form A1 carries original 'wet' signatures",
+      "type": "boolean",
+      "required": true,
+      "description": "Form A1 requires original ('wet') signatures from the director(s), secretary, and subscriber(s), clearly legible and not digitally signed; the CRO returns forms signed digitally.",
+      "sourceRef": "cpdstore.ie — Form A1 submission requirements"
+    }
+  ],
+  "steps": [
+    {
+      "id": "company_details",
+      "title": "Company name and business activity",
+      "fields": ["companyName", "natureOfBusinessDescription", "naceCode"],
+      "next": "registered_office"
+    },
+    {
+      "id": "registered_office",
+      "title": "Registered office and email address",
+      "fields": ["registeredOfficeAddressLine1", "registeredOfficeAddressLine2", "registeredOfficeEircode", "companyEmailAddress"],
+      "next": "director"
+    },
+    {
+      "id": "director",
+      "title": "Director appointment",
+      "fields": [
+        "directorFullName", "directorDateOfBirth", "directorPpsn", "directorNationality", "directorOccupation",
+        "directorResidentialAddressLine1", "directorResidentialAddressLine2", "directorResidentialAddressCountry",
+        "directorOtherDirectorships", "directorIsEeaResident", "section137BondArranged"
+      ],
+      "next": "secretary"
+    },
+    {
+      "id": "secretary",
+      "title": "Secretary appointment",
+      "fields": [
+        "secretaryIsBodyCorporate", "secretaryFullName", "secretaryDateOfBirth", "secretaryNationality",
+        "secretaryResidentialAddressLine1", "secretaryResidentialAddressCountry",
+        "secretaryCorporateName", "secretaryCorporateRegistrationNumber"
+      ],
+      "next": "subscriber_and_shares"
+    },
+    {
+      "id": "subscriber_and_shares",
+      "title": "Subscriber and shareholding",
+      "fields": [
+        "subscriberName", "subscriberAddressLine1", "subscriberAddressLine2", "subscriberAddressCountry",
+        "numberOfSharesSubscribed", "nominalValuePerShare"
+      ],
+      "next": "constitution"
+    },
+    {
+      "id": "constitution",
+      "title": "Constitution",
+      "fields": ["constitutionType", "constitutionDocument", "subscriberSignatureWitnessName"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and signatures",
+      "fields": ["lawfulActivityDeclarationConfirmed", "formA1WetSignatureConfirmed"]
+    }
+  ]
+}
