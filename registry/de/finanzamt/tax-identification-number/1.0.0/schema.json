@@ -1,0 +1,130 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/finanzamt/tax-identification-number",
+  "version": "1.0.0",
+  "title": "Germany Tax Identification Number (Steuer-Identifikationsnummer) — Re-Issuance Request",
+  "description": "A resident of Germany who has lost, forgotten, or never received their Steuer-Identifikationsnummer (IdNr) — the permanent, eleven-digit federal tax identifier automatically assigned via post after a Meldebehörde residence registration (Anmeldung) — requests that the Bundeszentralamt für Steuern (BZSt) mail it again to their current registered address (Meldeanschrift). This models BZSt's own online 'Erneute Mitteilung der IdNr' input form, not an application for a first-ever IdNr (which is never applicant-initiated) and not the separate written/notarized request procedure used when a parent requests a non-cohabiting minor child's IdNr for an ELSTER tax filing. The BZSt telephone line is legally barred from disclosing the IdNr, and BZSt states the number can only ever be communicated by post to the address on file — there is no email or phone delivery option, and no field in this schema requests one, or a delivery address other than the applicant's own Meldeanschrift.",
+  "status": "verified",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bundeszentralamt für Steuern (Federal Central Tax Office)",
+    "abbreviation": "BZSt",
+    "url": "https://www.bzst.de/"
+  },
+  "process": {
+    "type": "request",
+    "language": "de-DE"
+  },
+  "source": {
+    "url": "https://www.bzst.de/SiteGlobals/Kontaktformulare/DE/IdNr/Mitteilung_IdNr/mitteilung_IdNr_node.html",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "'Erneute Mitteilung der IdNr' input form (BZSt formularbot-fms form id 118906); general 'Die Identifikationsnummer' informational page at https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-02",
+    "notes": "Field-by-field comparison completed directly against the live 'Erneute Mitteilung der IdNr' form itself (not a description of it): the form is a JavaScript-rendered LUCOM WCI widget embedded in the BZSt page, driven with a real headless browser (Playwright) to walk both wizard pages field by field, including triggering the date field's live client-side validation error to confirm its exact required format. All 9 fields, their labels, types, requiredness, and the 2-step page order matched this schema with zero discrepancies; see VERIFICATION.md for the full walkthrough record and the one instruction (final submission) deliberately not carried out."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "lastName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's surname, exactly as registered with the Meldebehörde.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 1 von 2, field 'Name *' (input id Nachnameneingabe)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "Vorname",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's given name(s), exactly as registered with the Meldebehörde.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 1 von 2, field 'Vorname *' (input id Vornameneingabe)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Geburtsdatum",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "YYYY-MM-DD. The live form's own field label and its client-side validation both require the date to be entered in dd.MM.yyyy display format; submitting any other format produces the live error 'Ungültiges Datumsformat. Benutzen Sie das Format dd.MM.yyyy.' (confirmed by direct test).",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 1 von 2, field 'Geburtsdatum (Eingabeformat: tt.mm.jjjj) *' (input id Geburtsdatumseingabe)"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Geburtsort",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's place of birth.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 1 von 2, field 'Geburtsort *' (input id Geburtsorteingabe)",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "street",
+      "label": "Straße",
+      "type": "string",
+      "required": true,
+      "description": "Street of the applicant's current registered address (Meldeanschrift), the sole address the IdNr can be mailed to.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 2 von 2, field 'Straße *' (input id Strasseneingabe)",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "houseNumber",
+      "label": "Hausnummer",
+      "type": "string",
+      "required": true,
+      "description": "House/building number of the applicant's current registered address.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 2 von 2, field 'Hausnummer *' (input id Hausnummereingabe)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "postalCode",
+      "label": "PLZ",
+      "type": "string",
+      "required": true,
+      "description": "Five-digit German postal code (Postleitzahl) of the applicant's current registered address. The pattern asserts the standard 5-digit German PLZ format used consistently elsewhere in this registry (e.g. de/bmi/residence-registration); the live form itself accepted a non-numeric test value at the client-side without a visible inline error, so this constraint is a registry-wide format convention, not an independently observed live validation rule — see VERIFICATION.md.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 2 von 2, field 'PLZ *' (input id PLZ_Eingabe)",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "city",
+      "label": "Ort",
+      "type": "string",
+      "required": true,
+      "description": "City/municipality of the applicant's current registered address.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 2 von 2, field 'Ort *' (input id Orteingabe)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "privacyConsent",
+      "label": "Ich stimme den Datenschutzbestimmungen zu.",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirms the applicant has read and agrees to BZSt's data-protection terms for this request. The 'Absenden' (submit) control stays disabled until this checkbox is ticked, confirmed by direct test.",
+      "sourceRef": "Erneute Mitteilung der IdNr — Seite 2 von 2, checkbox 'Ich stimme den Datenschutzbestimmungen zu. *' (input id Einverstandeneingabe)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity_details",
+      "title": "Ihre Angaben (Seite 1 von 2) — identity details",
+      "fields": ["lastName", "firstName", "dateOfBirth", "placeOfBirth"],
+      "next": "address_and_consent"
+    },
+    {
+      "id": "address_and_consent",
+      "title": "Ihre Angaben (Seite 2 von 2) — mailing address and consent",
+      "fields": ["street", "houseNumber", "postalCode", "city", "privacyConsent"]
+    }
+  ]
+}
