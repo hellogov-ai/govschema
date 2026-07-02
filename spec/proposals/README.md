@@ -31,6 +31,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0017 | [Agent conformance and safety boundary](./0017-agent-conformance-safety-boundary.md) | Folded into `spec/v0.3` (GOV-399) — CEO sign-off recorded 2026-07-01 (GOV-318) |
 | 0018 | [Field-level eligibility value semantics (`eligibleValues`)](./0018-field-eligibility-value-semantics.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-01 (GOV-393) |
 | 0019 | [Generalize `edition.scheme` beyond `us-tax-year`/`gb-tax-year`](./0019-generalize-edition-scheme-calendar-tax-year.md) | Proposed — not yet reviewed, ⚠ one-way-door, Founding Engineer/CEO flag |
+| 0020 | [Treaty-authorized third-party issuers in `authority`](./0020-treaty-authorized-third-party-issuers.md) | Proposed — not yet reviewed, ⚠ Founding Engineer/CEO flag |
 
 GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
 above whose acceptance record explicitly deferred that step (GSP-0006, GSP-0007,
@@ -166,6 +167,21 @@ shape-based generalization (`calendar-tax-year`/`split-tax-year`, Option B)
 as a longer-term cleanup once more jurisdictions' tax-filing schemas exist.
 Not yet reviewed; the affected schema ships this cycle at the plain,
 non-edition registry path rather than blocking on this proposal.
+
+GSP-0020 was filed against GOV-582 (a follow-up from the GOV-381 DMV vertical
+discovery pass — every process in that vertical has a published schema
+except the International Driving Permit, blocked on this standards call
+rather than more research). `authority` (§5.5) models "the government body
+that owns the process," which does not fit the US International Driving
+Permit: it is issued exclusively by AAA/AATA, private organizations the
+Department of State has authorized under the 1949 Geneva Convention on Road
+Traffic, not by DOS itself. It proposes an OPTIONAL `authority.operatedBy`
+object (`name`/`abbreviation`/`url`/`basis`) that names the operating issuer
+and its authorization basis without changing `authority.name`'s existing
+meaning (the authorizing government body) — resolving the recurring
+"government-authorized, privately-operated" pattern the issue's discovery
+also flagged as likely broader than the IDP alone (accredited inspection
+stations, treaty-designated notarial agents, etc.). Not yet reviewed.
 
 ## Considered and rejected
 
