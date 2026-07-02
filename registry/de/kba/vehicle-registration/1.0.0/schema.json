@@ -1,0 +1,291 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/kba/vehicle-registration",
+  "version": "1.0.0",
+  "title": "Germany Vehicle Registration — i-Kfz Online New Registration and Re-registration",
+  "description": "Register a new vehicle (Anmeldung eines Neuwagens) or bring a previously deregistered vehicle back into service under the same owner (Wiederzulassung auf sich selbst) using i-Kfz, Germany's internet-based vehicle registration service (internetbasierte Fahrzeugzulassung), under the federal Straßenverkehrs-Zulassungs-Ordnung (StVZO) framework administered by the Kraftfahrt-Bundesamt (KBA) but implemented locally by each Bundesland's Zulassungsbehörde (registration authority) — there is no single national i-Kfz portal; the applicant reaches it through the website of their local authority, and not every authority has adopted it yet. This document models the eligibility gates (local i-Kfz availability, printer access), the two supported process shapes, the vehicle-document security-code data both require, and the payment/confirmation step. It does not model: Umschreibung (ownership or location transfer, with or without Halterwechsel), Abmeldung (deregistration), Tageszulassung (single-day registration), or the Großkundenschnittstelle used by high-volume commercial filers — see VERIFICATION.md. It does not submit the application; the local Zulassungsbehörde's own i-Kfz portal is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Kraftfahrt-Bundesamt (federal framework) / local Zulassungsstelle (registration office)",
+    "abbreviation": "KBA",
+    "url": "https://www.kba.de"
+  },
+  "process": {
+    "type": "registration",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://www.bmv.de/SharedDocs/DE/Artikel/StV/Strassenverkehr/internetbasierte-fahrzeugzulassung.html",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "BMV (Bundesministerium für Verkehr) — 'Internetbasierte Fahrzeugzulassung: So funktioniert i-Kfz' (no form number — data is entered directly into each local Zulassungsbehörde's i-Kfz web portal, not a downloadable form)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the federal Ministry of Transport's (BMV) official i-Kfz article, which gives a step-by-step ('Schritt für Schritt: So funktioniert's') breakdown of the 'Anmeldung eines Neuwagens' and 'Wiederzulassung eines Fahrzeugs auf sich selbst' flows, each with its own 'Was brauche ich dafür?' (what do I need) requirements list. Cross-checked against the Kraftfahrt-Bundesamt's own i-Kfz page (kba.de), which independently corroborates the identification methods, the HU/eVB/IBAN/security-code document set, and the eligibility preconditions ('Erfüllen Sie die Voraussetzungen?'), and additionally confirms that i-Kfz availability is per-Zulassungsbehörde (via the KBA's own i-Kfz Dashboard participation table) rather than a single national service. Both sources were fetched as raw HTML and tag-stripped for direct quotation, not summarized. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "authorityOffersIKfz",
+      "label": "Does your local Zulassungsbehörde (registration authority) offer i-Kfz online?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "i-Kfz is implemented locally by each Bundesland and Kommunalverwaltung, not through one central federal portal; the applicant must reach it via their own registration authority's website, and adoption is not universal. If false, this online service is not available and the process must be completed in person.",
+      "sourceRef": "Zuständigkeit und Verfügbarkeit von i-Kfz — 'Die Umsetzung der Online-Fahrzeugzulassung obliegt ... den Bundesländern und Kommunalverwaltungen. Diese stellen entsprechende i-Kfz-Portale zur Verfügung...'; KBA i-Kfz Dashboard — 'Nutzt Ihre Zulassungsbehörde i-Kfz'"
+    },
+    {
+      "name": "hasPrinterAccess",
+      "label": "Do you have access to a printer?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A printer is required to print the provisional registration decision (Zulassungsbescheid) and provisional proof of registration (vorläufiger Zulassungsnachweis) immediately after approval; without it, the vehicle cannot be put into service right away.",
+      "sourceRef": "Erfüllen Sie die Voraussetzungen? — 'Sie brauchen eine Möglichkeit zum Drucken.'; 'Drucker zum Ausdrucken des vorläufigen Zulassungsnachweises'"
+    },
+    {
+      "name": "identificationMethod",
+      "label": "Identification method",
+      "type": "enum",
+      "required": true,
+      "description": "personalausweis_eid = Personalausweis, eID-Karte, or elektronischer Aufenthaltstitel (eAT) with the online-ID (eID) function unlocked, a six-digit PIN, and the free 'AusweisApp' or a card reader; bundid_elster = BundID with an ELSTER certificate, or Personalausweis/eID/eAT authentication through BundID; unternehmenskonto_bund = the Unternehmenskonto BUND with an ELSTER certificate, for legal entities (juristische Personen).",
+      "sourceRef": "Zur Identifizierung: Natürliche Personen benötigen einen Personalausweis mit Online-Ausweisfunktion, eine eID-Karte oder einen elektronischen Aufenthaltstitel (eAT) jeweils mit freigeschalteter eID-Funktion inklusive sechsstelliger PIN und Smartphone mit kostenloser 'AusweisApp' oder via Kartenlesegerät. Alternativ kann die BundID mit ELSTER-Zertifikat ... verwendet werden. Juristische Personen benötigen das Unternehmenskonto BUND mit ELSTER-Zertifikat.",
+      "validation": {
+        "enum": [
+          "personalausweis_eid",
+          "bundid_elster",
+          "unternehmenskonto_bund"
+        ]
+      }
+    },
+    {
+      "name": "vehicleIdentificationNumber",
+      "label": "Vehicle Identification Number (Fahrzeug-Identifikationsnummer, FIN)",
+      "type": "string",
+      "required": false,
+      "description": "Entered alongside the license plate in the application form; the source describes it as needed only 'ggf.' (as applicable), so it is not modelled as universally required.",
+      "sourceRef": "Notwendige Daten in die Antragsmaske des Portals eingeben: 'Kfz-Kennzeichen und ggf. Fahrzeug-Identifikationsnummer (FIN)'",
+      "validation": {
+        "minLength": 17,
+        "maxLength": 17
+      }
+    },
+    {
+      "name": "registrationType",
+      "label": "What would you like to do?",
+      "type": "enum",
+      "required": true,
+      "description": "new_registration = Anmeldung eines Neuwagens (first-time registration of a new vehicle); re_registration = Wiederzulassung eines Fahrzeugs auf sich selbst (bring a vehicle you previously deregistered back into service, keeping the same owner). This schema does not cover Umschreibung (ownership/location transfer), Abmeldung (deregistration), or Tageszulassung (single-day registration) — see VERIFICATION.md.",
+      "sourceRef": "Was möchten Sie beantragen? — 'Neuzulassung: Sie können ein neues Auto auf sich zulassen.' / 'Wiederzulassung: Sie können Ihr altes Auto wieder zulassen.' (KBA); 'Diese Zulassungsvorgänge können Bürgerinnen und Bürger und juristische Personen online durchführen: Anmeldung, Abmeldung, Wiederzulassung, Umschreibung mit oder ohne Halterwechsel, Tageszulassung' (BMV)",
+      "validation": {
+        "enum": [
+          "new_registration",
+          "re_registration"
+        ]
+      }
+    },
+    {
+      "name": "licensePlatePreference",
+      "label": "License plate selection",
+      "type": "enum",
+      "required": true,
+      "description": "For a new registration: choose the next plate the registration authority has available, request a personalized Wunschkennzeichen, or use a plate already reserved in advance.",
+      "sourceRef": "Zum Kennzeichen: Nächstes freies Kennzeichen auswählen, Wunschkennzeichen oder reserviertes Kennzeichen angeben.",
+      "validation": {
+        "enum": [
+          "next_available",
+          "custom_wunschkennzeichen",
+          "reserved"
+        ]
+      }
+    },
+    {
+      "name": "zbIISecurityCode",
+      "label": "ZB II (Zulassungsbescheinigung Teil II) security code",
+      "type": "string",
+      "required": true,
+      "classification": "document-security-code",
+      "description": "The hidden security code on the vehicle's Teil II registration certificate (formerly Fahrzeugbrief), revealed by carefully peeling back the adhesive covering it. Entering it invalidates (entwertet) the physical document. Requires a ZB II issued after 1 January 2018, the date from which these codes have been printed; a damaged code invalidates the document and requires contacting the Zulassungsbehörde.",
+      "sourceRef": "Sicherheitscode der Zulassungsbescheinigung Teil II; 'Zulassungsdokument Teil II (ehemals Fahrzeugbrief) mit Sicherheitscode. Die letzte Anmeldung des Fahrzeugs darf nicht länger als 01.01.2018 zurückliegen, damit der notwendige Sicherheitscode auf der ZB II bereits vorhanden ist.'"
+    },
+    {
+      "name": "vehicleDeregisteredPreviously",
+      "label": "Was the vehicle deregistered (außer Betrieb gesetzt) before this application?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Wiederzulassung auf sich selbst requires the vehicle to have already been taken out of service; the applicant must have kept the invalidated ZB I issued at that deregistration, since its security code is required again here.",
+      "sourceRef": "So funktioniert die Wiederzulassung eines Fahrzeugs auf sich selbst — 'Bei Wiederzulassung muss das Fahrzeug zusätzlich vorher außer Betrieb gesetzt worden sein.'"
+    },
+    {
+      "name": "zbISecurityCode",
+      "label": "ZB I (Zulassungsbescheinigung Teil I) security code from deregistration",
+      "type": "string",
+      "required": true,
+      "classification": "document-security-code",
+      "description": "The security code on the Teil I certificate (formerly Fahrzeugschein) that was already revealed and invalidated when the vehicle was deregistered; it must be kept and re-entered for re-registration. Requires a ZB I issued after 1 January 2015, the date from which these codes have been printed.",
+      "sourceRef": "'Entwertetes Zulassungsdokument Teil I (ehemals Fahrzeugschein) mit freigelegtem Sicherheitscode, welches bei der Abmeldung des Wagens verwendet wurde. Die letzte Anmeldung des Fahrzeugs darf nicht länger als 01.01.2015 zurückliegen...'; 'Sicherheitscode der Zulassungsbescheinigung Teil I'"
+    },
+    {
+      "name": "mainInspectionValidUntil",
+      "label": "Main inspection (Hauptuntersuchung, HU) valid-until date",
+      "type": "date",
+      "required": true,
+      "description": "Date through which the vehicle's periodic roadworthiness inspection (HU) remains valid, checked automatically during re-registration.",
+      "sourceRef": "'gültige Hauptuntersuchung (HU) und ggf. Sicherheitsprüfung (SP)'; 'Datum einer gültigen Hauptuntersuchung (HU) ...'"
+    },
+    {
+      "name": "safetyInspectionValidUntil",
+      "label": "Safety inspection (Sicherheitsprüfung, SP) valid-until date, if applicable",
+      "type": "date",
+      "required": false,
+      "description": "Date through which the vehicle's periodic safety inspection (SP) remains valid. The source states this applies only 'je nach Fahrzeugtyp' (depending on vehicle type) without naming the specific classes, so it is modelled as optional rather than guessing which vehicle types it covers — see VERIFICATION.md.",
+      "sourceRef": "'je nach Fahrzeugtyp Datum einer gültigen Sicherheitsprüfung (SP)'"
+    },
+    {
+      "name": "evbNumber",
+      "label": "eVB number (electronic insurance confirmation)",
+      "type": "string",
+      "required": true,
+      "description": "The elektronische Versicherungsbestätigung number obtained from the vehicle's liability insurer, proving mandatory Kfz-Haftpflichtversicherung coverage.",
+      "sourceRef": "'gültige elektronische Versicherungsbestätigung (eVB-Nummer)'; 'eVB-Nummer der Versicherung zum Nachweis der Kfz-Haftpflichtversicherung'"
+    },
+    {
+      "name": "ibanForVehicleTax",
+      "label": "IBAN for vehicle tax SEPA direct debit",
+      "type": "string",
+      "required": true,
+      "classification": "financial",
+      "description": "Bank account of the registered keeper (Halter or Halterin), used for the SEPA-Lastschriftverfahren (direct-debit mandate) that collects Kfz-Steuer (vehicle tax).",
+      "sourceRef": "'Bankverbindung (IBAN)/SEPA-Mandat für den Einzug der Kfz-Steuer der Halterin oder des Halters'; 'Kontoverbindung der Halterin bzw. des Halters für das SEPA-Lastschriftverfahren (Kfz-Steuer)'",
+      "validation": {
+        "maxLength": 34
+      }
+    },
+    {
+      "name": "confirmApplicationAccurate",
+      "label": "I confirm the details entered are accurate and submit this application",
+      "type": "boolean",
+      "required": true,
+      "description": "Reflects the portal's own confirm-and-submit step. On submission, the application is checked automatically in real time, including outstanding Kfz-Steuer and fee arrears under the applicable Landesrecht, and — for a re-registration — valid HU/SP.",
+      "sourceRef": "'Eingaben und Antragstellung bestätigen.'; 'Im Rahmen des Verfahrens erfolgt eine automatische Prüfung auf Kfz-Steuerrückstände und Gebührenrückstände nach dem jeweiligen Landesrecht[, und das Vorliegen einer gültigen Hauptuntersuchung (HU) bzw. Sicherheitsprüfung (SP)].'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_and_service_selection",
+      "title": "Eligibility and what you would like to do",
+      "fields": [
+        "authorityOffersIKfz",
+        "hasPrinterAccess",
+        "identificationMethod",
+        "vehicleIdentificationNumber",
+        "registrationType"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "authority-not-participating",
+          "when": {
+            "field": "authorityOffersIKfz",
+            "equals": false
+          }
+        },
+        {
+          "to": null,
+          "exitReason": "no-printer-access",
+          "when": {
+            "field": "hasPrinterAccess",
+            "equals": false
+          }
+        },
+        {
+          "to": "new_registration_details",
+          "when": {
+            "field": "registrationType",
+            "equals": "new_registration"
+          }
+        },
+        {
+          "to": "re_registration_eligibility"
+        }
+      ]
+    },
+    {
+      "id": "new_registration_details",
+      "title": "New vehicle registration details",
+      "fields": [
+        "licensePlatePreference",
+        "zbIISecurityCode"
+      ],
+      "transitions": [
+        {
+          "to": "payment_and_confirmation"
+        }
+      ]
+    },
+    {
+      "id": "re_registration_eligibility",
+      "title": "Re-registration eligibility",
+      "fields": [
+        "vehicleDeregisteredPreviously"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "vehicle-not-previously-deregistered",
+          "when": {
+            "field": "vehicleDeregisteredPreviously",
+            "equals": false
+          }
+        },
+        {
+          "to": "re_registration_details"
+        }
+      ]
+    },
+    {
+      "id": "re_registration_details",
+      "title": "Re-registration vehicle and inspection details",
+      "fields": [
+        "zbISecurityCode",
+        "mainInspectionValidUntil",
+        "safetyInspectionValidUntil"
+      ],
+      "transitions": [
+        {
+          "to": "payment_and_confirmation"
+        }
+      ]
+    },
+    {
+      "id": "payment_and_confirmation",
+      "title": "Payment and confirmation",
+      "fields": [
+        "evbNumber",
+        "ibanForVehicleTax",
+        "confirmApplicationAccurate"
+      ]
+    }
+  ]
+}
