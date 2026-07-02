@@ -52,13 +52,13 @@ export function buildIndex() {
       license: doc.license,
     };
   });
-  return { schemaCount: schemas.length, schemas };
+  return { schemas };
 }
 
 function main() {
   const index = buildIndex();
   writeFileSync(OUT, JSON.stringify(index, null, 2) + "\n");
-  console.log(`Wrote ${index.schemaCount} entries to ${relative(ROOT, OUT)}`);
+  console.log(`Wrote ${index.schemas.length} entries to ${relative(ROOT, OUT)}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main();
