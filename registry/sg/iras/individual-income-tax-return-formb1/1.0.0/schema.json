@@ -1,0 +1,702 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/iras/individual-income-tax-return-formb1",
+  "version": "1.0.0",
+  "title": "Singapore Individual Income Tax Return (Form B1 equivalent, via myTax Portal, Year of Assessment 2026)",
+  "description": "Prepare and e-File an individual employee's Singapore income tax return through myTax Portal, the Inland Revenue Authority of Singapore's (IRAS) Singpass-authenticated online filing service, for Year of Assessment (YA) 2026 (income earned 1 January to 31 December 2025). Over 98% of individuals e-File; myTax Portal pre-fills most employment income, donations and NSman relief from third parties under the Auto-Inclusion Scheme (AIS), plus rental income and personal reliefs carried over from the individual's previous return. The individual reviews the pre-filled figures, declares any additional income not already shown, updates their personal relief claims, reviews a Consolidated Statement, and submits. This document models the field set of that myTax Portal flow, which mirrors the paper Form B1 (for employees; the paper Form B, for the self-employed, is out of scope). Scoped to a Singapore tax resident employee filing their own return; side income from self-employment, a trade, or a rental property may be declared as additional income, but the full Form B self-employed/partnership return, non-resident filing, and the separate employer-filed IR21 tax-clearance process for a departing non-Singapore-Citizen employee are out of scope. It does not submit the return; the live myTax Portal and the live iras.gov.sg source are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Inland Revenue Authority of Singapore",
+    "abbreviation": "IRAS",
+    "url": "https://www.iras.gov.sg/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/understanding-my-income-tax-filing/e-filing-your-income-tax-return",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "IRAS 'e-Filing your Income Tax Return' guidance page (the myTax Portal step-by-step flow, mirroring the paper Form B1), corroborated against IRAS's 'Basic guide for new individual taxpayers', 'Tax reliefs', 'What is taxable, what is not', and 'Tax reliefs, rebates and deductions' guidance pages"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored entirely from live iras.gov.sg prose guidance pages (all fetched directly as raw HTML in this sandbox with no block encountered, unlike canada.ca/nzta.govt.nz/ato.gov.au) rather than a downloadable form or PDF: IRAS does not publish a standalone fillable Form B1 for individual employees (confirmed by direct fetch of iras.gov.sg/quick-links/forms, which lists GST/property/corporate/other-tax categories but no individual-income-tax category) — the myTax Portal *is* the form for the >98% of filers who e-File, the same portal-only shape flagged for this candidate and au/ato/individual-tax-return-mytax and de/finanzamt/income-tax-return-elster. This is the second published GovSchema document (after au/ato/individual-tax-return-mytax) to model the 'review a pre-filled return' flow: every income and relief field is optional unless it is the access gate, an identity/residency fact, or the final declaration, since myTax Portal may already supply a correct value the filer never manually types. Because the source is prose guidance rather than a form with printed field labels, several fields are modelled at a coarser grain than a PDF-derived schema would allow: the e-filing page's Step 5 'Declare other sources of income' describes a generic '+ADD NEW' details screen without naming its individual boxes, so hasOtherTaxableIncome/otherTaxableIncomeAmount/otherTaxableIncomeDescription is a single catch-all field group (citing the 'What is taxable, what is not' page's category list in its description) rather than one field per income type — a materially weaker sourcing grain than the AU NAT 2541 PDF extraction, flagged honestly rather than presented as equivalent. The three NSman reliefs and CPF Relief for Employees are modelled as claim-only booleans with no amount field, because IRAS computes these statutory amounts itself from third-party-reported service/contribution records (the source never describes the filer typing a dollar figure for them) — the same discipline as the AU schema's T1/T2 ATO-computed offset codes. Two catalog-listed reliefs are deliberately excluded from this YA2026 edition and not modelled as fields at all: Foreign Domestic Worker Levy Relief (source: 'Lapsed with effect from YA 2025') and Course Fees Relief (source: 'Lapsed with effect from YA 2026') — both are gone for the Year of Assessment this document targets, not merely renamed or capped. No NRIC/FIN format regex is asserted (minLength/maxLength only) since no source here independently confirmed the character pattern, the same discipline sg/acra/sole-proprietorship-registration used for ownerNricOrFin. No attestation documents[] entry is included: no exact declaration-checkbox statement text was found in any of the four sourced pages (the e-filing page says only 'Check the declaration box and select Submit'), the same discipline gb/ukvi/standard-visitor-visa and de/bmi/passport-application used when a sign-off statement's exact wording wasn't sourced. Not placed on the edition axis: Singapore's Year of Assessment (income earned in one calendar year, assessed and filed the following year) fits none of the closed edition.scheme vocabulary (us-tax-year/gb-tax-year/award-year) — a fifth jurisdiction hitting the GSP-0019 gap already flagged for ie/revenue/self-assessment-tax-return-form11s, nz/ird/individual-tax-return-ir3, ca/cra/individual-income-tax-and-benefit-return-t1, and au/ato/individual-tax-return-mytax; see spec/proposals/0019-generalize-edition-scheme-calendar-tax-year.md. No live myTax Portal walkthrough was performed (it is Singpass-authenticated and not reachable pre-login in this environment, the same constraint as sg/ica/passport-application and sg/acra/sole-proprietorship-registration); VERIFICATION.md includes a worked mock-data walkthrough instead, and the conformance packet validates a complete example application against this schema's own required/requiredWhen constraints. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "hasSingpassOrSfa",
+      "label": "Do you have a Singpass or Singpass Foreign user Account (SFA)?",
+      "type": "boolean",
+      "required": true,
+      "description": "myTax Portal is accessed using Singpass (Singapore Citizens, Permanent Residents and eligible foreigners) or a Singpass Foreign user Account (SFA, for those not eligible for Singpass). One of the two is required to e-File.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 1: Get a Singpass or Singpass Foreign user Account (SFA)"
+    },
+    {
+      "name": "yearOfAssessment",
+      "label": "Year of Assessment (YA)",
+      "type": "integer",
+      "required": true,
+      "description": "The Year of Assessment being filed. Individuals are taxed on income earned in the preceding calendar year; for example, YA 2026 taxes income earned from 1 Jan 2025 to 31 Dec 2025.",
+      "sourceRef": "iras.gov.sg 'Basic guide for new individual taxpayers' — Step 2: Understand the Tax Season",
+      "validation": {
+        "minimum": 2000,
+        "maximum": 2100
+      }
+    },
+    {
+      "name": "taxpayerFilingCategory",
+      "label": "Your myTax Portal filing message",
+      "type": "enum",
+      "required": true,
+      "description": "The message myTax Portal displays once you log in with Singpass/SFA, which determines what action is required: required_to_file = you must file between 1 Mar and 18 Apr regardless of income or AIS participation; no_filing_service = you are under the No-Filing Service, not required to file, but must verify the pre-filled income/relief information is correct by 18 Apr (you may still choose to file an adjustment); direct_notice_of_assessment = no action needed unless IRAS tells you otherwise, your Notice of Assessment will be finalised from records on file; no_notification = no message displayed, meaning no further action is required unless your total income exceeded $22,000, your self-employment net profit exceeded $6,000, or you are a non-resident who derived Singapore income.",
+      "sourceRef": "iras.gov.sg 'Basic guide for new individual taxpayers' — Step 3: Determine Your Tax Filing Requirements",
+      "validation": {
+        "enum": [
+          "required_to_file",
+          "no_filing_service",
+          "direct_notice_of_assessment",
+          "no_notification"
+        ]
+      }
+    },
+    {
+      "name": "nricOrFinNumber",
+      "label": "NRIC or FIN",
+      "type": "string",
+      "required": true,
+      "description": "Your National Registration Identity Card (NRIC) number (Singapore Citizens/Permanent Residents) or Foreign Identification Number (FIN), used to authenticate via Singpass/SFA. The exact character format was not independently confirmed against myTax Portal's own field validation for this document; see VERIFICATION.md.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 1/3 (Singpass/SFA login)",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 20
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "fullName",
+      "label": "Full name",
+      "type": "string",
+      "required": true,
+      "description": "Your full name as registered with Singpass/SFA.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 1/3 (Singpass/SFA login)",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 150
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "isTaxResident",
+      "label": "Are you a Singapore tax resident for this Year of Assessment?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether you are a Singapore tax resident (including a non-Singapore Citizen present in Singapore for more than 183 days in the year), which determines your applicable tax rates and, per the 'Tax reliefs' page, whether you may claim any personal reliefs at all — only a tax resident can claim tax relief.",
+      "sourceRef": "iras.gov.sg 'Tax residency and tax rates' — Working out my tax residency; iras.gov.sg 'Tax reliefs' — eligibility note"
+    },
+    {
+      "name": "employerParticipatesInAis",
+      "label": "Is your employer participating in the Auto-Inclusion Scheme (AIS) for Employment Income?",
+      "type": "boolean",
+      "required": false,
+      "description": "If your employer participates in AIS, your employment income is transmitted directly to IRAS and pre-filled in your return. If not, you must have Form IR8A ready and enter your employment income yourself.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 2 (required documents); Step 4 (pre-filled income)"
+    },
+    {
+      "name": "employerWillTransmitIncomeDetailsNotYetShown",
+      "label": "My employer(s) will transmit my income details to IRAS; I do not need to report them myself",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick this if your AIS-participating employer's income details are not yet shown under 'Employment Income and Expenses' in your return, to confirm you do not need to manually report them.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 5, 'What if my employment income details are not shown above?'"
+    },
+    {
+      "name": "grossEmploymentIncome",
+      "label": "Employment income (salary, bonus, director's fee, commission, gains from stock options, pension, retirement/retrenchment benefits)",
+      "type": "number",
+      "required": false,
+      "description": "Total employment income for the year, per Form IR8A. Only needs manual entry if your employer does not participate in AIS.",
+      "sourceRef": "iras.gov.sg 'What is taxable, what is not' — Income from employment; 'e-Filing your Income Tax Return' — Step 2 (Form IR8A)"
+    },
+    {
+      "name": "wasPostedOverseasWholeYear",
+      "label": "Were you posted to work overseas for the whole of the preceding calendar year?",
+      "type": "boolean",
+      "required": false,
+      "description": "If you were posted to work overseas for the whole of the preceding calendar year, you are not required to declare your employment income details.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 5"
+    },
+    {
+      "name": "hasRentalIncome",
+      "label": "Did you receive rental income from property in Singapore?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'What is taxable, what is not' — Rent from property; 'e-Filing your Income Tax Return' — Step 5"
+    },
+    {
+      "name": "grossRentalIncome",
+      "label": "Gross rental income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'What is taxable, what is not' — Rent from property",
+      "requiredWhen": {
+        "field": "hasRentalIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "rentalExpensesClaimed",
+      "label": "Deductible rental expenses claimed",
+      "type": "number",
+      "required": false,
+      "description": "Expenses related to the rental income declared above (e.g. mortgage interest, property tax, repairs), claimed as a deduction.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs, rebates and deductions' — Deductions on rental expenses",
+      "requiredWhen": {
+        "field": "hasRentalIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasSelfEmploymentOrTradeIncome",
+      "label": "Did you have self-employed, partnership, trade, business, profession, vocation, gig-work or freelance income?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'What is taxable, what is not' — Income from trade, business, profession or vocation"
+    },
+    {
+      "name": "selfEmploymentNetProfit",
+      "label": "Net profit from self-employment/trade/business/gig work",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'What is taxable, what is not' — Income from trade, business, profession or vocation",
+      "requiredWhen": {
+        "field": "hasSelfEmploymentOrTradeIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "businessOrPartnershipTaxReferenceNumber",
+      "label": "Business registration number / partnership tax reference number",
+      "type": "string",
+      "required": false,
+      "description": "Required for self-employed persons and partners only.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 2 (required documents)",
+      "validation": {
+        "maxLength": 20
+      },
+      "requiredWhen": {
+        "field": "hasSelfEmploymentOrTradeIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasOverseasIncomeReceivedInSingapore",
+      "label": "Did you receive overseas income that must be reported (i.e. not covered by the general overseas-income exclusion)?",
+      "type": "boolean",
+      "required": false,
+      "description": "Generally, overseas income received in Singapore is not taxable, except in some circumstances (e.g. income received through a Singapore partnership, or derived from a trade/business/employment exercised through a Singapore permanent establishment).",
+      "sourceRef": "iras.gov.sg 'What is taxable, what is not' — Income from trade, business, profession or vocation, Income received from overseas"
+    },
+    {
+      "name": "overseasIncomeReceivedInSingaporeAmount",
+      "label": "Overseas income received in Singapore (reportable amount)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'What is taxable, what is not' — Income received from overseas",
+      "requiredWhen": {
+        "field": "hasOverseasIncomeReceivedInSingapore",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasOtherTaxableIncome",
+      "label": "Did you have any other taxable income not already declared above (e.g. taxable dividends, taxable interest, taxable gains from sale of property/shares/financial instruments, annuity, alimony/maintenance, estate/trust income, royalty, or SRS withdrawals)?",
+      "type": "boolean",
+      "required": false,
+      "description": "myTax Portal's 'Declare other sources of income' screen ('+ADD NEW') does not have its individual boxes documented in public IRAS guidance, so this is modelled as one catch-all group rather than one field per income type — see VERIFICATION.md. Note that betting/lottery winnings (e.g. Toto, 4D) are explicitly NOT taxable per the source and are out of scope for this field.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 5; 'What is taxable, what is not' — Income from property or investments and other sources"
+    },
+    {
+      "name": "otherTaxableIncomeAmount",
+      "label": "Other taxable income amount",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 5",
+      "requiredWhen": {
+        "field": "hasOtherTaxableIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherTaxableIncomeDescription",
+      "label": "Description of other taxable income",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of the income type (e.g. 'taxable dividends', 'royalty'), since the portal's own box labels for this screen are not independently documented.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 5",
+      "validation": {
+        "maxLength": 500
+      },
+      "requiredWhen": {
+        "field": "hasOtherTaxableIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "dependantsIncomeUnder8000",
+      "label": "My spouse/child/parent/caregiver did not have an annual income of more than $8,000 in the preceding calendar year",
+      "type": "boolean",
+      "required": false,
+      "description": "A single filing question that gates several dependant-based reliefs claimed below (Spouse, Qualifying Child, Working Mother's Child, Parent, Grandparent Caregiver). Select true only if the relevant dependant's annual income did not exceed $8,000.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 6, Filing Tip"
+    },
+    {
+      "name": "isClaimingSpouseRelief",
+      "label": "Claiming Spouse Relief?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Spouse/Spouse Relief (Disability)"
+    },
+    {
+      "name": "spouseReliefIsDisabilityVariant",
+      "label": "Claiming the disability variant (Spouse Relief (Disability))?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Spouse/Spouse Relief (Disability)",
+      "requiredWhen": {
+        "field": "isClaimingSpouseRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseReliefAmount",
+      "label": "Spouse Relief amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Spouse/Spouse Relief (Disability)",
+      "requiredWhen": {
+        "field": "isClaimingSpouseRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingQualifyingChildRelief",
+      "label": "Claiming Qualifying Child Relief?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Qualifying Child Relief/Child Relief (Disability)"
+    },
+    {
+      "name": "childReliefIsDisabilityVariant",
+      "label": "Claiming the disability variant (Child Relief (Disability))?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Qualifying Child Relief/Child Relief (Disability)",
+      "requiredWhen": {
+        "field": "isClaimingQualifyingChildRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "qualifyingChildReliefAmount",
+      "label": "Qualifying Child Relief amount claimed (this child)",
+      "type": "number",
+      "required": false,
+      "description": "Modelled per-child as a single amount; the portal's example shows this relief claimed once per child (e.g. $4,000 per child) — the current flat field model (GSP-0009) cannot express a repeating per-child structure, so a multi-child return is represented by one representative amount. See VERIFICATION.md.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Personal Income Tax Relief Cap worked example",
+      "requiredWhen": {
+        "field": "isClaimingQualifyingChildRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingWorkingMothersChildRelief",
+      "label": "Claiming Working Mother's Child Relief (WMCR)?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Working Mother's Child Relief"
+    },
+    {
+      "name": "workingMothersChildReliefAmount",
+      "label": "Working Mother's Child Relief amount claimed (this child)",
+      "type": "number",
+      "required": false,
+      "description": "WMCR is a percentage of the mother's earned income per child (the source's worked example shows 15%/20%/25% for the 1st/2nd/3rd child); modelled as a single computed amount per child, same repeating-structure limitation as qualifyingChildReliefAmount.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Personal Income Tax Relief Cap worked example",
+      "requiredWhen": {
+        "field": "isClaimingWorkingMothersChildRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingParentRelief",
+      "label": "Claiming Parent Relief?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Parent Relief/Parent Relief (Disability)"
+    },
+    {
+      "name": "parentReliefIsDisabilityVariant",
+      "label": "Claiming the disability variant (Parent Relief (Disability))?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Parent Relief/Parent Relief (Disability)",
+      "requiredWhen": {
+        "field": "isClaimingParentRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "parentReliefAmount",
+      "label": "Parent Relief amount claimed",
+      "type": "number",
+      "required": false,
+      "description": "May be shared/apportioned with siblings claiming Parent Relief on the same parent; if you decline your share, inform your siblings so they can claim it.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Parent Relief FAQs",
+      "requiredWhen": {
+        "field": "isClaimingParentRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingGrandparentCaregiverRelief",
+      "label": "Claiming Grandparent Caregiver Relief?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Grandparent Caregiver Relief"
+    },
+    {
+      "name": "grandparentCaregiverReliefAmount",
+      "label": "Grandparent Caregiver Relief amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Grandparent Caregiver Relief",
+      "requiredWhen": {
+        "field": "isClaimingGrandparentCaregiverRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingSiblingRelief",
+      "label": "Claiming Sibling Relief (Disability)?",
+      "type": "boolean",
+      "required": false,
+      "description": "This relief is inherently the disability variant — the source lists only 'Sibling Relief (Disability)', with no separate non-disability sibling relief.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Sibling Relief (Disability)"
+    },
+    {
+      "name": "siblingReliefAmount",
+      "label": "Sibling Relief (Disability) amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Sibling Relief (Disability)",
+      "requiredWhen": {
+        "field": "isClaimingSiblingRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingNSmanSelfRelief",
+      "label": "Claiming NSman (Self) Relief?",
+      "type": "boolean",
+      "required": false,
+      "description": "IRAS computes the statutory relief amount itself from NSman service/testing records reported to it; no dollar amount is entered by the filer, the same discipline used for AU myTax's T1/T2 ATO-computed offset codes.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — NSman (Self) Relief; 'e-Filing your Income Tax Return' — Step 4 (NSman Relief pre-filled)"
+    },
+    {
+      "name": "isClaimingNSmanWifeRelief",
+      "label": "Claiming NSman (Wife) Relief?",
+      "type": "boolean",
+      "required": false,
+      "description": "IRAS computes the statutory relief amount itself; no dollar amount is entered by the filer.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — NSman (Wife) Relief"
+    },
+    {
+      "name": "isClaimingNSmanParentRelief",
+      "label": "Claiming NSman (Parent) Relief?",
+      "type": "boolean",
+      "required": false,
+      "description": "IRAS computes the statutory relief amount itself; no dollar amount is entered by the filer.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — NSman (Parent) Relief"
+    },
+    {
+      "name": "isClaimingLifeInsuranceRelief",
+      "label": "Claiming Life Insurance Relief?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Life Insurance Relief"
+    },
+    {
+      "name": "lifeInsuranceReliefAmount",
+      "label": "Life Insurance Relief amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — Life Insurance Relief",
+      "requiredWhen": {
+        "field": "isClaimingLifeInsuranceRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingSrsRelief",
+      "label": "Claiming SRS Relief (Supplementary Retirement Scheme contributions)?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — SRS Relief"
+    },
+    {
+      "name": "srsReliefAmount",
+      "label": "SRS Relief amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — SRS Relief",
+      "requiredWhen": {
+        "field": "isClaimingSrsRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingCpfCashTopUpRelief",
+      "label": "Claiming CPF Cash Top-up Relief?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Cash Top-up Relief"
+    },
+    {
+      "name": "cpfCashTopUpReliefAmount",
+      "label": "CPF Cash Top-up Relief amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Cash Top-up Relief",
+      "requiredWhen": {
+        "field": "isClaimingCpfCashTopUpRelief",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingCpfReliefForEmployees",
+      "label": "Claiming CPF Relief for Employees?",
+      "type": "boolean",
+      "required": false,
+      "description": "IRAS computes this relief itself from mandatory CPF contributions reported by an AIS-participating employer; no dollar amount is entered by the filer.",
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Relief for Employees"
+    },
+    {
+      "name": "isClaimingCpfReliefForSelfEmployed",
+      "label": "Claiming CPF Relief for Self-Employed?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Relief for Self-Employed"
+    },
+    {
+      "name": "cpfReliefForSelfEmployedAmount",
+      "label": "CPF Relief for Self-Employed amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Relief for Self-Employed",
+      "requiredWhen": {
+        "field": "isClaimingCpfReliefForSelfEmployed",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingCpfReliefAsPlatformWorker",
+      "label": "Claiming CPF Relief as a Platform Worker?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Relief as a Platform Worker"
+    },
+    {
+      "name": "cpfReliefAsPlatformWorkerAmount",
+      "label": "CPF Relief as a Platform Worker amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Relief as a Platform Worker",
+      "requiredWhen": {
+        "field": "isClaimingCpfReliefAsPlatformWorker",
+        "equals": true
+      }
+    },
+    {
+      "name": "isClaimingCpfReliefMedisaveContributions",
+      "label": "Claiming CPF Relief (Compulsory and Voluntary Medisave Contributions)?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Relief (Compulsory and Voluntary Medisave Contributions)"
+    },
+    {
+      "name": "cpfReliefMedisaveContributionsAmount",
+      "label": "CPF Relief (Medisave Contributions) amount claimed",
+      "type": "number",
+      "required": false,
+      "sourceRef": "iras.gov.sg 'Tax reliefs' — CPF Relief (Compulsory and Voluntary Medisave Contributions)",
+      "requiredWhen": {
+        "field": "isClaimingCpfReliefMedisaveContributions",
+        "equals": true
+      }
+    },
+    {
+      "name": "reviewedConsolidatedStatement",
+      "label": "Reviewed the Consolidated Statement",
+      "type": "boolean",
+      "required": true,
+      "description": "A Consolidated Statement is displayed showing all income, deductions and reliefs, with any manually-updated fields marked '(Updated)'. Confirm you have reviewed it before submitting.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 7: View Consolidated Statement"
+    },
+    {
+      "name": "declarationConfirmed",
+      "label": "Declaration box checked",
+      "type": "boolean",
+      "required": true,
+      "description": "Check the declaration box before selecting Submit. No exact declaration statement text is published on this source page; see VERIFICATION.md.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 7: View Consolidated Statement"
+    },
+    {
+      "name": "submissionDate",
+      "label": "Date of e-Filing submission",
+      "type": "date",
+      "required": true,
+      "description": "Must be on or before 18 Apr of the filing year.",
+      "sourceRef": "iras.gov.sg 'e-Filing your Income Tax Return' — Step 7-8"
+    }
+  ],
+  "steps": [
+    {
+      "id": "portal_access",
+      "title": "Portal access",
+      "fields": [
+        "hasSingpassOrSfa"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "no-singpass-or-sfa",
+          "when": {
+            "field": "hasSingpassOrSfa",
+            "equals": false
+          }
+        },
+        {
+          "to": "filing_status"
+        }
+      ]
+    },
+    {
+      "id": "filing_status",
+      "title": "Filing status",
+      "fields": [
+        "yearOfAssessment",
+        "taxpayerFilingCategory"
+      ],
+      "next": "identity_and_residency"
+    },
+    {
+      "id": "identity_and_residency",
+      "title": "Identity and tax residency",
+      "fields": [
+        "nricOrFinNumber",
+        "fullName",
+        "isTaxResident"
+      ],
+      "next": "review_prefilled_employment_income"
+    },
+    {
+      "id": "review_prefilled_employment_income",
+      "title": "Review pre-filled employment income",
+      "fields": [
+        "employerParticipatesInAis",
+        "employerWillTransmitIncomeDetailsNotYetShown",
+        "grossEmploymentIncome",
+        "wasPostedOverseasWholeYear"
+      ],
+      "next": "declare_additional_income"
+    },
+    {
+      "id": "declare_additional_income",
+      "title": "Declare additional income",
+      "fields": [
+        "hasRentalIncome",
+        "grossRentalIncome",
+        "rentalExpensesClaimed",
+        "hasSelfEmploymentOrTradeIncome",
+        "selfEmploymentNetProfit",
+        "businessOrPartnershipTaxReferenceNumber",
+        "hasOverseasIncomeReceivedInSingapore",
+        "overseasIncomeReceivedInSingaporeAmount",
+        "hasOtherTaxableIncome",
+        "otherTaxableIncomeAmount",
+        "otherTaxableIncomeDescription"
+      ],
+      "next": "update_personal_reliefs"
+    },
+    {
+      "id": "update_personal_reliefs",
+      "title": "Update personal reliefs",
+      "fields": [
+        "dependantsIncomeUnder8000",
+        "isClaimingSpouseRelief",
+        "spouseReliefIsDisabilityVariant",
+        "spouseReliefAmount",
+        "isClaimingQualifyingChildRelief",
+        "childReliefIsDisabilityVariant",
+        "qualifyingChildReliefAmount",
+        "isClaimingWorkingMothersChildRelief",
+        "workingMothersChildReliefAmount",
+        "isClaimingParentRelief",
+        "parentReliefIsDisabilityVariant",
+        "parentReliefAmount",
+        "isClaimingGrandparentCaregiverRelief",
+        "grandparentCaregiverReliefAmount",
+        "isClaimingSiblingRelief",
+        "siblingReliefAmount",
+        "isClaimingNSmanSelfRelief",
+        "isClaimingNSmanWifeRelief",
+        "isClaimingNSmanParentRelief",
+        "isClaimingLifeInsuranceRelief",
+        "lifeInsuranceReliefAmount",
+        "isClaimingSrsRelief",
+        "srsReliefAmount",
+        "isClaimingCpfCashTopUpRelief",
+        "cpfCashTopUpReliefAmount",
+        "isClaimingCpfReliefForEmployees",
+        "isClaimingCpfReliefForSelfEmployed",
+        "cpfReliefForSelfEmployedAmount",
+        "isClaimingCpfReliefAsPlatformWorker",
+        "cpfReliefAsPlatformWorkerAmount",
+        "isClaimingCpfReliefMedisaveContributions",
+        "cpfReliefMedisaveContributionsAmount"
+      ],
+      "next": "consolidated_statement_and_declaration"
+    },
+    {
+      "id": "consolidated_statement_and_declaration",
+      "title": "Consolidated Statement and declaration",
+      "fields": [
+        "reviewedConsolidatedStatement",
+        "declarationConfirmed",
+        "submissionDate"
+      ]
+    }
+  ]
+}
