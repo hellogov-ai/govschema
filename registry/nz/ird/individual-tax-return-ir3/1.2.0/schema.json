@@ -1,0 +1,1698 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/ird/individual-tax-return-ir3",
+  "version": "1.2.0",
+  "title": "New Zealand Individual Tax Return (IR3, 2026 income year)",
+  "description": "File a New Zealand individual's income tax return using Inland Revenue's IR3 form, for taxpayers whose income is not fully covered by the auto-calculated \"my income tax assessment\" (e.g. self-employment, rental, overseas, partnership, LTC, or other non-standard income). Covers personal and bank details, income with tax deducted, schedular payments, interest, dividends, Māori authority distributions, estate/trust income, overseas income, partnership and look-through company (LTC) income, shareholder-employee salary, residential property income, other rents, self-employment, property sales, government subsidies, other income, expense claims, tax credit and income subtotals, net losses brought forward, taxable income, the Independent Earner Tax Credit, excess imputation credits, Portfolio Investment Entity (PIE) income, the tax calculation result, provisional tax, foreign-entity and part-year disclosures, and the notice-of-assessment declaration. Out of scope: transferring a refund to a different taxpayer's income tax account or student loan (Boxes 38C-38H), which the source form models as a repeating third-party name/IRD-number/amount structure the current flat field model (GSP-0009) cannot express; and the PIE and tax-calculation worksheets in the companion IR3G guide, whose own line-by-line arithmetic is not modelled — only the worksheets' final transferred totals are captured as fields. This document models the 2026 income year (1 April 2025 to 31 March 2026); Inland Revenue reissues a fresh IR3 each income year, but no edition scheme in the current closed `edition.scheme` vocabulary (spec v0.3 SS5.7: us-tax-year / gb-tax-year / award-year) fits New Zealand's April-to-March tax year, so this document is published at the plain (non-edition) registry path pending a spec proposal — see VERIFICATION.md and spec/proposals/0019-generalize-edition-scheme-calendar-tax-year.md. It does not submit the return; the live Inland Revenue myIR service and the live IR3 source are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Inland Revenue Te Tari Taake",
+    "abbreviation": "IRD",
+    "url": "https://www.ird.govt.nz/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-NZ"
+  },
+  "source": {
+    "url": "https://www.ird.govt.nz/-/media/project/ir/home/documents/forms-and-guides/ir1---ir99/ir3/ir3-2026.pdf",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "IR3 2026 (Individual tax return, 1 April 2025 to 31 March 2026) plus its companion 'IR3G 2026 Individual income tax return guide'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the official Inland Revenue 'IR3 2026' fillable PDF and its companion 'IR3G 2026' guide PDF, both fetched directly from ird.govt.nz (no access block) and extracted with pdfjs-dist (text content items grouped into lines by y-coordinate; AcroForm annotations enumerated separately for field-type context only). Every field is traced to the numbered Question and lettered Box the printed form itself uses (e.g. Question 22, Box 22H) rather than to the PDF's internal AcroForm field names: those internal names were found to run one number ahead of the printed question numbers from Question 23 onward (e.g. the AcroForm field named '28' sits at the same page position as printed Question 27's box), evidently retained from an earlier form revision that had one fewer numbered question. Using the printed, human-visible numbering (as a filer or agent would actually see it) avoids propagating that internal renumbering quirk into the schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "irdNumber",
+      "label": "IRD number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Your IRD (Inland Revenue Department) number. 8-digit numbers are entered starting from the second box of the printed form's 9-box grid; recorded here as plain digits.",
+      "sourceRef": "IR3 2026 front page, Box 1",
+      "validation": {
+        "pattern": "^[0-9]{8,9}$"
+      }
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": false,
+      "description": "Your title, if your correct name is not preprinted on the return.",
+      "sourceRef": "IR3 2026 front page, Box 2 (Mr/Mrs/Miss/Ms tick)",
+      "validation": {
+        "enum": [
+          "mr",
+          "mrs",
+          "miss",
+          "ms"
+        ]
+      }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "description": "Your first name(s), if your correct name is not preprinted on the return.",
+      "sourceRef": "IR3 2026 front page, Box 2",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "description": "Your surname, if your correct name is not preprinted on the return.",
+      "sourceRef": "IR3 2026 front page, Box 2",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalAddressLine",
+      "label": "Postal address (street address or PO Box)",
+      "type": "string",
+      "required": true,
+      "description": "Your correct postal address, if not preprinted on the return. Do not print a tax preparer's address here.",
+      "sourceRef": "IR3 2026 front page, Box 3",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "postalSuburbOrTownCity",
+      "label": "Postal suburb/town or city",
+      "type": "string",
+      "required": true,
+      "description": "Suburb, box lobby or RD, and town or city for your postal address.",
+      "sourceRef": "IR3 2026 front page, Box 3",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "residentialStreetAddress",
+      "label": "Residential street address",
+      "type": "string",
+      "required": false,
+      "description": "Your correct street address, if not preprinted on the return and different from your postal address.",
+      "sourceRef": "IR3 2026 front page, Box 4",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "residentialSuburbCityOrRegion",
+      "label": "Residential suburb, city, RD or region",
+      "type": "string",
+      "required": false,
+      "description": "Suburb, city, RD or region for your residential street address.",
+      "sourceRef": "IR3 2026 front page, Box 4",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Your date of birth, if not preprinted on the return.",
+      "sourceRef": "IR3 2026 front page, Box 5"
+    },
+    {
+      "name": "bicCode",
+      "label": "Business industry classification (BIC) code",
+      "type": "string",
+      "required": false,
+      "description": "Your business industry classification code, if not preprinted on the return or if it has changed. The guide directs filers to businessdescription.co.nz to look up the code; provide the code only, not a description.",
+      "sourceRef": "IR3 2026 front page, Box 6; IR3G 2026 guide, Question 6",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "phonePrefix",
+      "label": "Daytime phone area code",
+      "type": "string",
+      "required": false,
+      "description": "The area code/prefix of your correct daytime phone number, if not preprinted on the return.",
+      "sourceRef": "IR3 2026 front page, Box 7",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Daytime phone number",
+      "type": "string",
+      "required": false,
+      "description": "Your correct daytime phone number, if not preprinted on the return.",
+      "sourceRef": "IR3 2026 front page, Box 7",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "bankNumber",
+      "label": "Bank number",
+      "type": "string",
+      "required": false,
+      "description": "The 2-digit bank number of the New Zealand bank account you want a refund paid into.",
+      "sourceRef": "IR3 2026 front page, Box 8",
+      "validation": {
+        "pattern": "^[0-9]{2}$"
+      }
+    },
+    {
+      "name": "bankBranch",
+      "label": "Bank branch",
+      "type": "string",
+      "required": false,
+      "description": "The 4-digit branch number of the bank account.",
+      "sourceRef": "IR3 2026 front page, Box 8",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Bank account number",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "description": "The account number (up to 7 digits) of the bank account.",
+      "sourceRef": "IR3 2026 front page, Box 8",
+      "validation": {
+        "pattern": "^[0-9]{1,7}$"
+      }
+    },
+    {
+      "name": "bankAccountSuffix",
+      "label": "Bank account suffix",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "description": "The 2-3 digit suffix of the bank account.",
+      "sourceRef": "IR3 2026 front page, Box 8",
+      "validation": {
+        "pattern": "^[0-9]{2,3}$"
+      }
+    },
+    {
+      "name": "adjustingIncomeForStudentLoanOrWorkingForFamilies",
+      "label": "Adjusting your income for student loan or Working for Families",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick if you have adjustments to make to your income for student loan or Working for Families purposes that you have not already told Inland Revenue about; if so you must also complete and send in an Adjust your income - IR215 form.",
+      "sourceRef": "IR3 2026 front page, Box 9A"
+    },
+    {
+      "name": "hasIncomeWithTaxDeducted",
+      "label": "Did you receive income with tax deducted, as shown on your Summary of Income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 11. If yes, copy the amounts from your IRD-issued Summary of Income to Boxes 11A-11E.",
+      "sourceRef": "IR3 2026, Question 11",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalPayeDeducted",
+      "label": "Total PAYE deducted",
+      "type": "number",
+      "required": false,
+      "description": "Total PAYE deducted, from your Summary of Income. In NZD.",
+      "sourceRef": "IR3 2026, Box 11A",
+      "requiredWhen": {
+        "field": "hasIncomeWithTaxDeducted",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalGrossIncomeFromSummaryOfIncome",
+      "label": "Total gross income",
+      "type": "number",
+      "required": false,
+      "description": "Total gross income, from your Summary of Income. In NZD.",
+      "sourceRef": "IR3 2026, Box 11B",
+      "requiredWhen": {
+        "field": "hasIncomeWithTaxDeducted",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalIncomeNotLiableForAccEarnersLevy",
+      "label": "Total income not liable for ACC earners' levy",
+      "type": "number",
+      "required": false,
+      "description": "Total income not liable for ACC earners' levy (e.g. NZ Super, income-tested benefits, student allowances). In NZD.",
+      "sourceRef": "IR3 2026, Box 11C",
+      "requiredWhen": {
+        "field": "hasIncomeWithTaxDeducted",
+        "equals": true
+      }
+    },
+    {
+      "name": "accEarnersLevy",
+      "label": "ACC earners' levy",
+      "type": "number",
+      "required": false,
+      "description": "ACC earners' levy, from your Summary of Income. In NZD.",
+      "sourceRef": "IR3 2026, Box 11D",
+      "requiredWhen": {
+        "field": "hasIncomeWithTaxDeducted",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalTaxDeductedFromPayeIncome",
+      "label": "Total tax deducted",
+      "type": "number",
+      "required": false,
+      "description": "Total tax deducted on the income declared at Question 11. In NZD.",
+      "sourceRef": "IR3 2026, Box 11E",
+      "requiredWhen": {
+        "field": "hasIncomeWithTaxDeducted",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasSchedularPayments",
+      "label": "Did you receive income from schedular payments, as shown on your Summary of Income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 12.",
+      "sourceRef": "IR3 2026, Question 12",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "schedularPaymentsTaxDeducted",
+      "label": "Total tax deducted (schedular payments)",
+      "type": "number",
+      "required": false,
+      "description": "Total tax deducted from schedular payments, from your Summary of Income. In NZD.",
+      "sourceRef": "IR3 2026, Box 12A",
+      "requiredWhen": {
+        "field": "hasSchedularPayments",
+        "equals": true
+      }
+    },
+    {
+      "name": "schedularPaymentsGross",
+      "label": "Total gross payments (schedular payments)",
+      "type": "number",
+      "required": false,
+      "description": "Total gross schedular payments, from your Summary of Income. In NZD.",
+      "sourceRef": "IR3 2026, Box 12B",
+      "requiredWhen": {
+        "field": "hasSchedularPayments",
+        "equals": true
+      }
+    },
+    {
+      "name": "schedularPaymentsExpenses",
+      "label": "Expenses related to schedular payments",
+      "type": "number",
+      "required": false,
+      "description": "Expenses related to schedular payments. Do not include these expenses again at Box 29. In NZD.",
+      "sourceRef": "IR3 2026, Box 12C",
+      "requiredWhen": {
+        "field": "hasSchedularPayments",
+        "equals": true
+      }
+    },
+    {
+      "name": "schedularPaymentsNet",
+      "label": "Net schedular payments",
+      "type": "number",
+      "required": false,
+      "description": "Net schedular payments: subtract Box 12C from Box 12B. In NZD.",
+      "sourceRef": "IR3 2026, Box 12D",
+      "requiredWhen": {
+        "field": "hasSchedularPayments",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasNzInterest",
+      "label": "Did you have any New Zealand interest paid or credited to you?",
+      "type": "boolean",
+      "required": true,
+      "description": "Includes interest from partnerships, look-through companies and/or trusts. Keep your interest statements or certificates. Gate for Question 13.",
+      "sourceRef": "IR3 2026, Question 13",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalRwtOnInterest",
+      "label": "Total RWT",
+      "type": "number",
+      "required": false,
+      "description": "Total Resident Withholding Tax (RWT) deducted from your New Zealand interest. In NZD.",
+      "sourceRef": "IR3 2026, Box 13A",
+      "requiredWhen": {
+        "field": "hasNzInterest",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalGrossInterest",
+      "label": "Total gross interest",
+      "type": "number",
+      "required": false,
+      "description": "Total gross New Zealand interest. In NZD.",
+      "sourceRef": "IR3 2026, Box 13B",
+      "requiredWhen": {
+        "field": "hasNzInterest",
+        "equals": true
+      }
+    },
+    {
+      "name": "interestFromPartnershipLtcOrTrust",
+      "label": "Interest received from a partnership, LTC, trust or estate",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick if any of the interest declared was received from a partnership, look-through company, trust and/or estate.",
+      "sourceRef": "IR3 2026, Box 13C",
+      "requiredWhen": {
+        "field": "hasNzInterest",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasNzDividends",
+      "label": "Did you have any New Zealand dividends paid or credited to you, or receive shares instead of dividends?",
+      "type": "boolean",
+      "required": true,
+      "description": "Includes dividends from partnerships, look-through companies and/or trusts. Keep your dividend statements. Gate for Question 14.",
+      "sourceRef": "IR3 2026, Question 14",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalDividendImputationCredits",
+      "label": "Total dividend imputation credits",
+      "type": "number",
+      "required": false,
+      "description": "Total imputation credits attached to the dividends declared. In NZD.",
+      "sourceRef": "IR3 2026, Box 14",
+      "requiredWhen": {
+        "field": "hasNzDividends",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalDividendRwtCredits",
+      "label": "Total dividend RWT credits",
+      "type": "number",
+      "required": false,
+      "description": "Total Resident Withholding Tax credits attached to the dividends declared. In NZD.",
+      "sourceRef": "IR3 2026, Box 14A",
+      "requiredWhen": {
+        "field": "hasNzDividends",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalGrossDividends",
+      "label": "Total gross dividends",
+      "type": "number",
+      "required": false,
+      "description": "Total gross New Zealand dividends. In NZD.",
+      "sourceRef": "IR3 2026, Box 14B",
+      "requiredWhen": {
+        "field": "hasNzDividends",
+        "equals": true
+      }
+    },
+    {
+      "name": "dividendsFromPartnershipLtcOrTrust",
+      "label": "Dividends received from a partnership, LTC, trust or estate",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick if any of the dividends declared were received from a partnership, look-through company, trust and/or estate.",
+      "sourceRef": "IR3 2026, Box 14C",
+      "requiredWhen": {
+        "field": "hasNzDividends",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasMaoriAuthorityDistributions",
+      "label": "Did you receive any taxable Māori authority distributions?",
+      "type": "boolean",
+      "required": true,
+      "description": "Keep your distribution statements. Gate for Question 15.",
+      "sourceRef": "IR3 2026, Question 15",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalMaoriAuthorityCredits",
+      "label": "Total Māori authority credits",
+      "type": "number",
+      "required": false,
+      "description": "Total Māori authority tax credits attached to the distributions declared. In NZD.",
+      "sourceRef": "IR3 2026, Box 15A",
+      "requiredWhen": {
+        "field": "hasMaoriAuthorityDistributions",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalMaoriAuthorityDistributions",
+      "label": "Total Māori authority distributions",
+      "type": "number",
+      "required": false,
+      "description": "Total taxable Māori authority distributions. In NZD.",
+      "sourceRef": "IR3 2026, Box 15B",
+      "requiredWhen": {
+        "field": "hasMaoriAuthorityDistributions",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasEstateOrTrustIncome",
+      "label": "Did you receive any New Zealand estate or trust income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Excludes interest, dividends and distributions already shown at Questions 13, 14 or 15. Gate for Question 16.",
+      "sourceRef": "IR3 2026, Question 16",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalTaxPaidByTrustees",
+      "label": "Total tax paid by trustees",
+      "type": "number",
+      "required": false,
+      "description": "Total tax paid by the trustees on the estate or trust income declared. In NZD.",
+      "sourceRef": "IR3 2026, Box 16A",
+      "requiredWhen": {
+        "field": "hasEstateOrTrustIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalEstateOrTrustIncome",
+      "label": "Total estate or trust income (excluding Box 16C)",
+      "type": "number",
+      "required": false,
+      "description": "Total estate or trust income, excluding any amount at Box 16C. In NZD.",
+      "sourceRef": "IR3 2026, Box 16B",
+      "requiredWhen": {
+        "field": "hasEstateOrTrustIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalNonComplyingTrustDistributions",
+      "label": "Total taxable distributions from non-complying trusts",
+      "type": "number",
+      "required": false,
+      "description": "Total taxable distributions received from non-complying trusts. In NZD.",
+      "sourceRef": "IR3 2026, Box 16C",
+      "requiredWhen": {
+        "field": "hasEstateOrTrustIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasOverseasIncome",
+      "label": "Did you receive any overseas income?",
+      "type": "boolean",
+      "required": true,
+      "description": "If yes, complete an Overseas income summary - IR1261 form and attach it to this return. Gate for Question 17.",
+      "sourceRef": "IR3 2026, Question 17",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalOverseasTaxPaid",
+      "label": "Total overseas tax paid",
+      "type": "number",
+      "required": false,
+      "description": "Total tax paid overseas on the income declared. In NZD.",
+      "sourceRef": "IR3 2026, Box 17A",
+      "requiredWhen": {
+        "field": "hasOverseasIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalOverseasIncome",
+      "label": "Total overseas income",
+      "type": "number",
+      "required": false,
+      "description": "Total overseas income. In NZD.",
+      "sourceRef": "IR3 2026, Box 17B",
+      "requiredWhen": {
+        "field": "hasOverseasIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "overseasIncomeIncludesForeignSuperWithdrawal",
+      "label": "Overseas income includes a foreign superannuation withdrawal/transfer",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick if your total overseas income includes a withdrawal and/or transfer from a foreign superannuation scheme.",
+      "sourceRef": "IR3 2026, Box 17C",
+      "requiredWhen": {
+        "field": "hasOverseasIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasPartnershipIncome",
+      "label": "Did you receive any partnership income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Excludes any income/losses already shown at Questions 13, 14, 15, 17, 22, 24 or 26. Gate for Question 18.",
+      "sourceRef": "IR3 2026, Question 18",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalPartnershipTaxCredits",
+      "label": "Total partnership tax credits",
+      "type": "number",
+      "required": false,
+      "description": "Total tax credits attached to the partnership income declared. In NZD.",
+      "sourceRef": "IR3 2026, Box 18A",
+      "requiredWhen": {
+        "field": "hasPartnershipIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalActivePartnershipIncome",
+      "label": "Total active partnership income",
+      "type": "number",
+      "required": false,
+      "description": "Total active partnership income. In NZD.",
+      "sourceRef": "IR3 2026, Box 18B",
+      "requiredWhen": {
+        "field": "hasPartnershipIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasLtcIncome",
+      "label": "Did you receive any look-through company (LTC) income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Excludes any income/loss already shown at Questions 13, 14, 15, 17, 22, 24 and 26. Gate for Question 19.",
+      "sourceRef": "IR3 2026, Question 19",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalLtcTaxCredits",
+      "label": "Total LTC tax credits",
+      "type": "number",
+      "required": false,
+      "description": "Total tax credits attached to the LTC income declared. In NZD.",
+      "sourceRef": "IR3 2026, Box 19A",
+      "requiredWhen": {
+        "field": "hasLtcIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalActiveLtcIncome",
+      "label": "Total active LTC income",
+      "type": "number",
+      "required": false,
+      "description": "Total active LTC income; if this amount is a loss, record it as negative.",
+      "sourceRef": "IR3 2026, Box 19B",
+      "requiredWhen": {
+        "field": "hasLtcIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "ltcNonAllowableDeductionsThisYear",
+      "label": "Non-allowable deductions this year",
+      "type": "number",
+      "required": false,
+      "description": "Non-allowable LTC deductions for this year. In NZD.",
+      "sourceRef": "IR3 2026, Box 19C",
+      "requiredWhen": {
+        "field": "hasLtcIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "ltcPriorYearsNonAllowableDeductionsClaimed",
+      "label": "Prior years' non-allowable deductions claimed this year",
+      "type": "number",
+      "required": false,
+      "description": "Prior years' non-allowable LTC deductions claimed this year. In NZD.",
+      "sourceRef": "IR3 2026, Box 19D",
+      "requiredWhen": {
+        "field": "hasLtcIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "ltcAdjustedIncome",
+      "label": "Adjusted LTC income",
+      "type": "number",
+      "required": false,
+      "description": "Either add Boxes 19B and 19C, or subtract Box 19D from 19B, per the form's instructions. In NZD.",
+      "sourceRef": "IR3 2026, Box 19E",
+      "requiredWhen": {
+        "field": "hasLtcIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasShareholderEmployeeSalary",
+      "label": "Did you receive a shareholder-employee salary with no tax deducted?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 20.",
+      "sourceRef": "IR3 2026, Question 20",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalShareholderEmployeeSalary",
+      "label": "Total shareholder-employee salary",
+      "type": "number",
+      "required": false,
+      "description": "Total shareholder-employee salary received with no tax deducted. In NZD.",
+      "sourceRef": "IR3 2026, Box 20",
+      "requiredWhen": {
+        "field": "hasShareholderEmployeeSalary",
+        "equals": true
+      }
+    },
+    {
+      "name": "noShareholderSalaryButMayInFuture",
+      "label": "No shareholder-employee salary now, but may receive one in future",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick if you did not receive a shareholder-employee salary this year but may in the future.",
+      "sourceRef": "IR3 2026, Box 20A"
+    },
+    {
+      "name": "shareholderAimTaxCredit",
+      "label": "Shareholder AIM tax credit",
+      "type": "number",
+      "required": false,
+      "description": "Shareholder tax credit arising under the Accounting Income Method (AIM). In NZD.",
+      "sourceRef": "IR3 2026, Box 20B"
+    },
+    {
+      "name": "wffMajorShareholderWorkingWithoutPay",
+      "label": "Major shareholder working full-time without pay for a close company (WfF)",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick if, for Working for Families purposes, you are a major shareholder working full-time without pay for your close company, which earns gross income.",
+      "sourceRef": "IR3 2026, Box 20C"
+    },
+    {
+      "name": "taxCreditSubtotal",
+      "label": "Tax credit subtotal",
+      "type": "number",
+      "required": true,
+      "description": "Add Boxes 11E, 12A, 13A, 14A, 15A, 16A, 18A, 19A and 20B. Self-assessed subtotal, in NZD.",
+      "sourceRef": "IR3 2026, Box 21A"
+    },
+    {
+      "name": "incomeSubtotal",
+      "label": "Income subtotal",
+      "type": "number",
+      "required": true,
+      "description": "Add Boxes 11B, 12D, 13B, 14B, 15B, 16B, 16C, 17B, 18B, 19E and 20. Self-assessed subtotal, in NZD.",
+      "sourceRef": "IR3 2026, Box 21B"
+    },
+    {
+      "name": "hasResidentialPropertyIncomeOrExpenses",
+      "label": "Did you receive any income or incur any expenses from residential property?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 22.",
+      "sourceRef": "IR3 2026, Question 22",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "residentialIncomeCalculationMethod",
+      "label": "Residential income calculation method",
+      "type": "enum",
+      "required": false,
+      "description": "Which method you are using to calculate residential income: Portfolio, Individual, or Combination.",
+      "sourceRef": "IR3 2026, Question 22 method tick",
+      "validation": {
+        "enum": [
+          "portfolio",
+          "individual",
+          "combination"
+        ]
+      },
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "grossResidentialRentalIncome",
+      "label": "Gross residential rental income",
+      "type": "number",
+      "required": false,
+      "description": "Gross residential rental income. In NZD.",
+      "sourceRef": "IR3 2026, Box 22A",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "netBrightLineProfit",
+      "label": "Net bright-line profit (excluding losses)",
+      "type": "number",
+      "required": false,
+      "description": "Net bright-line profit, excluding losses. In NZD.",
+      "sourceRef": "IR3 2026, Box 22B",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherResidentialIncome",
+      "label": "Other residential income",
+      "type": "number",
+      "required": false,
+      "description": "Other residential income not shown at Boxes 22A/22B. In NZD.",
+      "sourceRef": "IR3 2026, Box 22C",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalCombinedResidentialIncome",
+      "label": "Total combined residential income",
+      "type": "number",
+      "required": false,
+      "description": "Add Boxes 22A, 22B and 22C. In NZD.",
+      "sourceRef": "IR3 2026, Box 22D",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "residentialRentalDeductions",
+      "label": "Residential rental deductions",
+      "type": "number",
+      "required": false,
+      "description": "Residential rental deductions for the year. In NZD.",
+      "sourceRef": "IR3 2026, Box 22E",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "excessResidentialRentalDeductionsBroughtForward",
+      "label": "Excess residential rental deductions brought forward",
+      "type": "number",
+      "required": false,
+      "description": "Excess residential rental deductions brought forward from a prior year. In NZD.",
+      "sourceRef": "IR3 2026, Box 22F",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "residentialRentalDeductionsClaimedThisYear",
+      "label": "Residential rental deductions claimed this year",
+      "type": "number",
+      "required": false,
+      "description": "Residential rental deductions claimed this year. In NZD.",
+      "sourceRef": "IR3 2026, Box 22G",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "netResidentialIncome",
+      "label": "Net residential income",
+      "type": "number",
+      "required": false,
+      "description": "Net residential income; if a loss, record it as negative.",
+      "sourceRef": "IR3 2026, Box 22H",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "excessResidentialRentalDeductionsCarriedForward",
+      "label": "Excess residential rental deductions carried forward",
+      "type": "number",
+      "required": false,
+      "description": "Excess residential rental deductions carried forward to next year. In NZD.",
+      "sourceRef": "IR3 2026, Box 22I",
+      "requiredWhen": {
+        "field": "hasResidentialPropertyIncomeOrExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasOtherRents",
+      "label": "Did you receive any other rents?",
+      "type": "boolean",
+      "required": true,
+      "description": "Do not include any income already shown at Question 22. Gate for Question 23.",
+      "sourceRef": "IR3 2026, Question 23",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "netRents",
+      "label": "Net rents",
+      "type": "number",
+      "required": false,
+      "description": "Net rents not already shown at Question 22. In NZD.",
+      "sourceRef": "IR3 2026, Box 23",
+      "requiredWhen": {
+        "field": "hasOtherRents",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasSelfEmploymentIncome",
+      "label": "Did you receive income from self-employment?",
+      "type": "boolean",
+      "required": true,
+      "description": "Do not include any income from your Summary of Income here. Gate for Question 24.",
+      "sourceRef": "IR3 2026, Question 24",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "selfEmployedNetIncome",
+      "label": "Self-employed net income",
+      "type": "number",
+      "required": false,
+      "description": "Self-employed net income. In NZD.",
+      "sourceRef": "IR3 2026, Box 24",
+      "requiredWhen": {
+        "field": "hasSelfEmploymentIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasTaxablePropertySale",
+      "label": "Did you receive any income from taxable property sales/disposals not already included elsewhere?",
+      "type": "boolean",
+      "required": true,
+      "description": "Excludes any bright-line loss. Gate for Question 25.",
+      "sourceRef": "IR3 2026, Question 25",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "profitOrLossFromPropertySale",
+      "label": "Profit/loss from sale of property",
+      "type": "number",
+      "required": false,
+      "description": "Profit or loss from the property sale; if a loss, record it as negative.",
+      "sourceRef": "IR3 2026, Box 25A",
+      "requiredWhen": {
+        "field": "hasTaxablePropertySale",
+        "equals": true
+      }
+    },
+    {
+      "name": "rlwtCredit",
+      "label": "Residential land withholding tax (RLWT) credit",
+      "type": "number",
+      "required": false,
+      "description": "RLWT credit relating to the sale. In NZD.",
+      "sourceRef": "IR3 2026, Box 25B",
+      "requiredWhen": {
+        "field": "hasTaxablePropertySale",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasGovernmentSubsidy",
+      "label": "Did you receive any government subsidy?",
+      "type": "boolean",
+      "required": true,
+      "description": "Do not include subsidy amounts already included in gross earnings or schedular payments elsewhere on the return. Gate for Question 26.",
+      "sourceRef": "IR3 2026, Question 26",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalGovernmentSubsidies",
+      "label": "Total government subsidies",
+      "type": "number",
+      "required": false,
+      "description": "Total government subsidies received. In NZD.",
+      "sourceRef": "IR3 2026, Box 26",
+      "requiredWhen": {
+        "field": "hasGovernmentSubsidy",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasOtherIncome",
+      "label": "Did you receive any other income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 27.",
+      "sourceRef": "IR3 2026, Question 27",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalOtherNetIncome",
+      "label": "Total other net income",
+      "type": "number",
+      "required": false,
+      "description": "Total other net income not shown elsewhere on the return. In NZD.",
+      "sourceRef": "IR3 2026, Box 27",
+      "requiredWhen": {
+        "field": "hasOtherIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherIncomePayerName",
+      "label": "Name of payer (other income)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the payer of the other income declared at Box 27.",
+      "sourceRef": "IR3 2026, Question 27",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "hasOtherIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherIncomeType",
+      "label": "Type of income (other income)",
+      "type": "string",
+      "required": false,
+      "description": "Type of the other income declared at Box 27.",
+      "sourceRef": "IR3 2026, Question 27",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "hasOtherIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalIncome",
+      "label": "Total income",
+      "type": "number",
+      "required": true,
+      "description": "Add Boxes 21B, 22H, 23, 24, 25B, 26 and 27. Self-assessed total, in NZD.",
+      "sourceRef": "IR3 2026, Box 28"
+    },
+    {
+      "name": "claimingOtherExpenses",
+      "label": "Are you claiming other expenses against your income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Do not show expenses here if you've already claimed them elsewhere on this return. Gate for Question 29.",
+      "sourceRef": "IR3 2026, Question 29",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalOtherExpensesClaimed",
+      "label": "Total other expenses claimed",
+      "type": "number",
+      "required": false,
+      "description": "Total other expenses claimed against income. In NZD.",
+      "sourceRef": "IR3 2026, Box 29",
+      "requiredWhen": {
+        "field": "claimingOtherExpenses",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxPreparerFirstNames",
+      "label": "Tax preparer's first name(s)",
+      "type": "string",
+      "required": false,
+      "description": "First name(s) of the person you paid to complete your return, if any.",
+      "sourceRef": "IR3 2026, Question 29 panel",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "taxPreparerSurname",
+      "label": "Tax preparer's surname",
+      "type": "string",
+      "required": false,
+      "description": "Surname of the person you paid to complete your return, if any.",
+      "sourceRef": "IR3 2026, Question 29 panel",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "incomeAfterExpenses",
+      "label": "Income after expenses",
+      "type": "number",
+      "required": true,
+      "description": "Subtract Box 29 from Box 28. Self-assessed, in NZD. Used to work out tax credits.",
+      "sourceRef": "IR3 2026, Box 30"
+    },
+    {
+      "name": "claimingNetLossesBroughtForward",
+      "label": "Are you claiming net losses brought forward?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 31.",
+      "sourceRef": "IR3 2026, Question 31",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "netLossAmountBroughtForward",
+      "label": "Net loss amount brought forward",
+      "type": "number",
+      "required": false,
+      "description": "Net loss amount brought forward from a prior year. In NZD.",
+      "sourceRef": "IR3 2026, Box 31A",
+      "requiredWhen": {
+        "field": "claimingNetLossesBroughtForward",
+        "equals": true
+      }
+    },
+    {
+      "name": "netLossAmountClaimedThisYear",
+      "label": "Net loss amount claimed this year",
+      "type": "number",
+      "required": false,
+      "description": "Net loss amount claimed this year. In NZD.",
+      "sourceRef": "IR3 2026, Box 31B",
+      "requiredWhen": {
+        "field": "claimingNetLossesBroughtForward",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxableIncome",
+      "label": "Taxable income",
+      "type": "number",
+      "required": true,
+      "description": "Subtract Box 31B from Box 30. Self-assessed, in NZD.",
+      "sourceRef": "IR3 2026, Box 32"
+    },
+    {
+      "name": "ietcEligible",
+      "label": "Eligible for the Independent Earner Tax Credit (IETC)",
+      "type": "boolean",
+      "required": false,
+      "description": "Applicable if your income at Box 30 is between $24,000 and $48,000; you must tick 'Yes' to have the IETC included in your assessment.",
+      "sourceRef": "IR3 2026, Box 33A",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "excludedOverseasIncomeStartDate",
+      "label": "Excluded overseas income period start date",
+      "type": "date",
+      "required": false,
+      "description": "Start date of the period you received excluded overseas income, if any, relevant to your IETC qualifying months.",
+      "sourceRef": "IR3 2026, Box 33B"
+    },
+    {
+      "name": "excludedOverseasIncomeEndDate",
+      "label": "Excluded overseas income period end date",
+      "type": "date",
+      "required": false,
+      "description": "End date of the period you received excluded overseas income, if any.",
+      "sourceRef": "IR3 2026, Box 33B"
+    },
+    {
+      "name": "ietcQualifyingMonths",
+      "label": "IETC qualifying months",
+      "type": "integer",
+      "required": false,
+      "description": "Number of qualifying months for the IETC.",
+      "sourceRef": "IR3 2026, Box 33C",
+      "validation": {
+        "minimum": 0,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "ietcTaxCreditAmount",
+      "label": "IETC tax credit amount",
+      "type": "number",
+      "required": false,
+      "description": "Your calculated Independent Earner Tax Credit. In NZD.",
+      "sourceRef": "IR3 2026, Box 33"
+    },
+    {
+      "name": "hasExcessImputationCreditsBroughtForward",
+      "label": "Do you have excess imputation credits brought forward?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 34.",
+      "sourceRef": "IR3 2026, Question 34",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "excessImputationCreditsBroughtForwardAmount",
+      "label": "Excess imputation credits brought forward",
+      "type": "number",
+      "required": false,
+      "description": "Total excess imputation credits brought forward from a prior year. In NZD.",
+      "sourceRef": "IR3 2026, Box 34",
+      "requiredWhen": {
+        "field": "hasExcessImputationCreditsBroughtForward",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasPieIncome",
+      "label": "Did you receive any Portfolio Investment Entity (PIE) income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 35.",
+      "sourceRef": "IR3 2026, Question 35",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "totalPieIncomeOrLoss",
+      "label": "Total PIE income/loss",
+      "type": "number",
+      "required": false,
+      "description": "Total Portfolio Investment Entity income or loss. In NZD.",
+      "sourceRef": "IR3 2026, Box 35A",
+      "requiredWhen": {
+        "field": "hasPieIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalPieDeductions",
+      "label": "Total PIE deductions",
+      "type": "number",
+      "required": false,
+      "description": "Total Portfolio Investment Entity deductions. In NZD.",
+      "sourceRef": "IR3 2026, Box 35B",
+      "requiredWhen": {
+        "field": "hasPieIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "pieCalculationOutcome",
+      "label": "PIE calculation outcome",
+      "type": "number",
+      "required": false,
+      "description": "Outcome of the PIE worksheet in the IR3 guide (Box 5 of that worksheet); the worksheet's own line-by-line calculation is out of scope of this document. In NZD.",
+      "sourceRef": "IR3 2026, Box 35C",
+      "requiredWhen": {
+        "field": "hasPieIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnTaxableIncome",
+      "label": "Tax on taxable income",
+      "type": "number",
+      "required": true,
+      "description": "Transferred from Box 2 of the tax calculation worksheet in the IR3 guide; the worksheet's own calculation is out of scope of this document. In NZD.",
+      "sourceRef": "IR3 2026, Box 36"
+    },
+    {
+      "name": "residualIncomeTax",
+      "label": "Residual income tax",
+      "type": "number",
+      "required": true,
+      "description": "Transferred from Box 14 of the tax calculation worksheet in the IR3 guide. In NZD.",
+      "sourceRef": "IR3 2026, Box 36A"
+    },
+    {
+      "name": "residualIncomeTaxType",
+      "label": "Residual income tax credit or debit",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the residual income tax amount is a credit or a debit.",
+      "sourceRef": "IR3 2026, Box 36A (Tick one: Credit/Debit)",
+      "validation": {
+        "enum": [
+          "credit",
+          "debit"
+        ]
+      }
+    },
+    {
+      "name": "taxCalculationResult",
+      "label": "Tax calculation result",
+      "type": "number",
+      "required": true,
+      "description": "Transferred from Box 16 of the tax calculation worksheet in the IR3 guide. In NZD.",
+      "sourceRef": "IR3 2026, Box 36B"
+    },
+    {
+      "name": "taxCalculationResultType",
+      "label": "Tax calculation result credit or debit",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the tax calculation result is a credit (refund) or a debit (tax to pay).",
+      "sourceRef": "IR3 2026, Box 36B (Tick one: Credit/Debit)",
+      "validation": {
+        "enum": [
+          "credit",
+          "debit"
+        ]
+      }
+    },
+    {
+      "name": "claimingEarlyPaymentDiscount",
+      "label": "Are you entitled to claim an early payment discount?",
+      "type": "boolean",
+      "required": false,
+      "description": "Applies to certain new provisional taxpayers; see the guide for eligibility.",
+      "sourceRef": "IR3 2026, Question 37"
+    },
+    {
+      "name": "refundAmount",
+      "label": "Refund amount",
+      "type": "number",
+      "required": false,
+      "description": "Copied from Box 36B when the tax calculation result is a credit, i.e. a refund is due. In NZD.",
+      "sourceRef": "IR3 2026, Box 38",
+      "requiredWhen": {
+        "field": "taxCalculationResultType",
+        "equals": "credit"
+      }
+    },
+    {
+      "name": "transferRefundToNextProvisionalTax",
+      "label": "Amount transferred to next year's provisional tax",
+      "type": "number",
+      "required": false,
+      "description": "Amount of the refund you want transferred to 2027 provisional tax.",
+      "sourceRef": "IR3 2026, Box 38A"
+    },
+    {
+      "name": "transferRefundToThisYearsStudentLoan",
+      "label": "Amount transferred to this year's student loan",
+      "type": "number",
+      "required": false,
+      "description": "Amount of the refund you want transferred to this year's student loan.",
+      "sourceRef": "IR3 2026, Box 38B"
+    },
+    {
+      "name": "remainingRefundAmount",
+      "label": "Remaining refund amount",
+      "type": "number",
+      "required": false,
+      "description": "Subtract Boxes 38A, 38B, 38E and 38H from Box 38: the balance of the refund paid to you directly. Transfers to a different taxpayer's income tax account or student loan (Boxes 38C-38H) are out of scope of this document (GSP-0009: repeating third-party-detail structure). In NZD.",
+      "sourceRef": "IR3 2026, Box 38I"
+    },
+    {
+      "name": "residualIncomeTaxExceeds5000Debit",
+      "label": "Is the amount in Box 36A a debit of more than $5,000?",
+      "type": "boolean",
+      "required": true,
+      "description": "If yes, you may have to pay 2027 provisional tax. Gate for Question 39.",
+      "sourceRef": "IR3 2026, Question 39",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "provisionalTaxOption",
+      "label": "2027 provisional tax option",
+      "type": "enum",
+      "required": false,
+      "description": "The provisional tax payment option used: S (standard option), E (estimation option), or R (ratio option, available only if GST-registered and approved to use it).",
+      "sourceRef": "IR3 2026, Box 39A; IR3G 2026 guide, provisional tax section",
+      "validation": {
+        "enum": [
+          "S",
+          "E",
+          "R"
+        ]
+      },
+      "requiredWhen": {
+        "field": "residualIncomeTaxExceeds5000Debit",
+        "equals": true
+      }
+    },
+    {
+      "name": "provisionalTax2027PaymentAmount",
+      "label": "2027 provisional tax payment",
+      "type": "number",
+      "required": false,
+      "description": "Your 2027 provisional tax payment. In NZD.",
+      "sourceRef": "IR3 2026, Box 39B",
+      "requiredWhen": {
+        "field": "residualIncomeTaxExceeds5000Debit",
+        "equals": true
+      }
+    },
+    {
+      "name": "heldForeignRightsRequiringDisclosure",
+      "label": "Held rights in a foreign company, unit trust, superannuation scheme or life insurance policy requiring disclosure",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether, at any time during the income year, you held rights in a foreign company, unit trust, superannuation scheme or life insurance policy for which disclosure is required.",
+      "sourceRef": "IR3 2026, Question 40"
+    },
+    {
+      "name": "isPartYearReturn",
+      "label": "Is this return for a part-year?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gate for Question 41.",
+      "sourceRef": "IR3 2026, Question 41",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "partYearReason",
+      "label": "Part-year situation",
+      "type": "enum",
+      "required": false,
+      "description": "Which part-year situation applies to you.",
+      "sourceRef": "IR3 2026, Box 41A",
+      "validation": {
+        "enum": [
+          "arrived_or_returned_to_nz_now_tax_resident",
+          "left_nz_permanently_more_than_325_days",
+          "student_loan_borrower_left_nz_184_days_or_more",
+          "declared_bankrupt",
+          "deceased_person",
+          "balance_date_changed_during_year"
+        ]
+      },
+      "requiredWhen": {
+        "field": "isPartYearReturn",
+        "equals": true
+      }
+    },
+    {
+      "name": "partYearStartDate",
+      "label": "Part-year return start date",
+      "type": "date",
+      "required": false,
+      "description": "Start date of the period this return is for.",
+      "sourceRef": "IR3 2026, Box 41B",
+      "requiredWhen": {
+        "field": "isPartYearReturn",
+        "equals": true
+      }
+    },
+    {
+      "name": "partYearEndDate",
+      "label": "Part-year return end date",
+      "type": "date",
+      "required": false,
+      "description": "End date of the period this return is for.",
+      "sourceRef": "IR3 2026, Box 41C",
+      "requiredWhen": {
+        "field": "isPartYearReturn",
+        "equals": true
+      }
+    },
+    {
+      "name": "declarationSigned",
+      "label": "Declaration signed",
+      "type": "boolean",
+      "required": true,
+      "description": "You must read the declaration and sign the return as being true and correct.",
+      "sourceRef": "IR3 2026, Question 42"
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "description": "The date you signed the declaration.",
+      "sourceRef": "IR3 2026, Question 42"
+    }
+  ],
+  "documents": [
+    {
+      "id": "adjustYourIncomeIr215",
+      "label": "Adjust your income - IR215 form",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "adjustingIncomeForStudentLoanOrWorkingForFamilies",
+        "equals": true
+      },
+      "issuingAuthority": "Inland Revenue",
+      "sourceRef": "IR3 2026 front page, Box 9A"
+    },
+    {
+      "id": "overseasIncomeSummaryIr1261",
+      "label": "Overseas income summary - IR1261 form",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasOverseasIncome",
+        "equals": true
+      },
+      "issuingAuthority": "Inland Revenue",
+      "sourceRef": "IR3 2026, Question 17"
+    },
+    {
+      "id": "declarationAttestation",
+      "label": "Notice of assessment and declaration",
+      "category": "attestation",
+      "required": true,
+      "statement": "The information in this return is true and correct and represents my assessment for the year ended 31 March 2026 as required under the Tax Administration Act 1994. It is also a correct statement of my earnings for the purposes of the Accident Compensation Act 2001.",
+      "sourceRef": "IR3 2026, Question 42"
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_and_contact_details",
+      "title": "Personal and contact details",
+      "fields": [
+        "irdNumber",
+        "title",
+        "firstNames",
+        "surname",
+        "postalAddressLine",
+        "postalSuburbOrTownCity",
+        "residentialStreetAddress",
+        "residentialSuburbCityOrRegion",
+        "dateOfBirth",
+        "bicCode",
+        "phonePrefix",
+        "phoneNumber",
+        "bankNumber",
+        "bankBranch",
+        "bankAccountNumber",
+        "bankAccountSuffix",
+        "adjustingIncomeForStudentLoanOrWorkingForFamilies"
+      ],
+      "next": "paye_and_schedular_payments"
+    },
+    {
+      "id": "paye_and_schedular_payments",
+      "title": "Income with tax deducted and schedular payments (Questions 11-12)",
+      "fields": [
+        "hasIncomeWithTaxDeducted",
+        "totalPayeDeducted",
+        "totalGrossIncomeFromSummaryOfIncome",
+        "totalIncomeNotLiableForAccEarnersLevy",
+        "accEarnersLevy",
+        "totalTaxDeductedFromPayeIncome",
+        "hasSchedularPayments",
+        "schedularPaymentsTaxDeducted",
+        "schedularPaymentsGross",
+        "schedularPaymentsExpenses",
+        "schedularPaymentsNet"
+      ],
+      "next": "interest_dividends_and_other_nz_income"
+    },
+    {
+      "id": "interest_dividends_and_other_nz_income",
+      "title": "Interest, dividends, Māori authority distributions, and estate/trust income (Questions 13-16)",
+      "fields": [
+        "hasNzInterest",
+        "totalRwtOnInterest",
+        "totalGrossInterest",
+        "interestFromPartnershipLtcOrTrust",
+        "hasNzDividends",
+        "totalDividendImputationCredits",
+        "totalDividendRwtCredits",
+        "totalGrossDividends",
+        "dividendsFromPartnershipLtcOrTrust",
+        "hasMaoriAuthorityDistributions",
+        "totalMaoriAuthorityCredits",
+        "totalMaoriAuthorityDistributions",
+        "hasEstateOrTrustIncome",
+        "totalTaxPaidByTrustees",
+        "totalEstateOrTrustIncome",
+        "totalNonComplyingTrustDistributions"
+      ],
+      "next": "overseas_partnership_ltc_and_shareholder_income"
+    },
+    {
+      "id": "overseas_partnership_ltc_and_shareholder_income",
+      "title": "Overseas, partnership, LTC and shareholder-employee income (Questions 17-20)",
+      "fields": [
+        "hasOverseasIncome",
+        "totalOverseasTaxPaid",
+        "totalOverseasIncome",
+        "overseasIncomeIncludesForeignSuperWithdrawal",
+        "hasPartnershipIncome",
+        "totalPartnershipTaxCredits",
+        "totalActivePartnershipIncome",
+        "hasLtcIncome",
+        "totalLtcTaxCredits",
+        "totalActiveLtcIncome",
+        "ltcNonAllowableDeductionsThisYear",
+        "ltcPriorYearsNonAllowableDeductionsClaimed",
+        "ltcAdjustedIncome",
+        "hasShareholderEmployeeSalary",
+        "totalShareholderEmployeeSalary",
+        "noShareholderSalaryButMayInFuture",
+        "shareholderAimTaxCredit",
+        "wffMajorShareholderWorkingWithoutPay"
+      ],
+      "next": "tax_credit_and_income_subtotal"
+    },
+    {
+      "id": "tax_credit_and_income_subtotal",
+      "title": "Tax credit and income subtotal (Question 21)",
+      "fields": [
+        "taxCreditSubtotal",
+        "incomeSubtotal"
+      ],
+      "next": "residential_property_income"
+    },
+    {
+      "id": "residential_property_income",
+      "title": "Residential property income and expenses (Question 22)",
+      "fields": [
+        "hasResidentialPropertyIncomeOrExpenses",
+        "residentialIncomeCalculationMethod",
+        "grossResidentialRentalIncome",
+        "netBrightLineProfit",
+        "otherResidentialIncome",
+        "totalCombinedResidentialIncome",
+        "residentialRentalDeductions",
+        "excessResidentialRentalDeductionsBroughtForward",
+        "residentialRentalDeductionsClaimedThisYear",
+        "netResidentialIncome",
+        "excessResidentialRentalDeductionsCarriedForward"
+      ],
+      "next": "other_income_and_total"
+    },
+    {
+      "id": "other_income_and_total",
+      "title": "Other rents, self-employment, property sales, subsidies, other income, expenses, and totals (Questions 23-30)",
+      "fields": [
+        "hasOtherRents",
+        "netRents",
+        "hasSelfEmploymentIncome",
+        "selfEmployedNetIncome",
+        "hasTaxablePropertySale",
+        "profitOrLossFromPropertySale",
+        "rlwtCredit",
+        "hasGovernmentSubsidy",
+        "totalGovernmentSubsidies",
+        "hasOtherIncome",
+        "totalOtherNetIncome",
+        "otherIncomePayerName",
+        "otherIncomeType",
+        "totalIncome",
+        "claimingOtherExpenses",
+        "totalOtherExpensesClaimed",
+        "taxPreparerFirstNames",
+        "taxPreparerSurname",
+        "incomeAfterExpenses"
+      ],
+      "next": "losses_taxable_income_and_credits"
+    },
+    {
+      "id": "losses_taxable_income_and_credits",
+      "title": "Losses brought forward, taxable income, IETC, imputation credits, and PIE income (Questions 31-35)",
+      "fields": [
+        "claimingNetLossesBroughtForward",
+        "netLossAmountBroughtForward",
+        "netLossAmountClaimedThisYear",
+        "taxableIncome",
+        "ietcEligible",
+        "excludedOverseasIncomeStartDate",
+        "excludedOverseasIncomeEndDate",
+        "ietcQualifyingMonths",
+        "ietcTaxCreditAmount",
+        "hasExcessImputationCreditsBroughtForward",
+        "excessImputationCreditsBroughtForwardAmount",
+        "hasPieIncome",
+        "totalPieIncomeOrLoss",
+        "totalPieDeductions",
+        "pieCalculationOutcome"
+      ],
+      "next": "tax_calculation_and_refunds"
+    },
+    {
+      "id": "tax_calculation_and_refunds",
+      "title": "Tax calculation, early payment discount, and refunds (Questions 36-38)",
+      "fields": [
+        "taxOnTaxableIncome",
+        "residualIncomeTax",
+        "residualIncomeTaxType",
+        "taxCalculationResult",
+        "taxCalculationResultType",
+        "claimingEarlyPaymentDiscount",
+        "refundAmount",
+        "transferRefundToNextProvisionalTax",
+        "transferRefundToThisYearsStudentLoan",
+        "remainingRefundAmount"
+      ],
+      "next": "provisional_tax_disclosures_and_declaration"
+    },
+    {
+      "id": "provisional_tax_disclosures_and_declaration",
+      "title": "2027 provisional tax, disclosures, part-year return, and declaration (Questions 39-42)",
+      "fields": [
+        "residualIncomeTaxExceeds5000Debit",
+        "provisionalTaxOption",
+        "provisionalTax2027PaymentAmount",
+        "heldForeignRightsRequiringDisclosure",
+        "isPartYearReturn",
+        "partYearReason",
+        "partYearStartDate",
+        "partYearEndDate",
+        "declarationSigned",
+        "signatureDate"
+      ]
+    }
+  ]
+}
