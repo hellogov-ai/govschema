@@ -1,0 +1,1608 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "au/ato/individual-tax-return-mytax",
+  "version": "1.1.0",
+  "title": "Australia Individual Tax Return (myTax, 2026 income year)",
+  "description": "Prepare and lodge an individual's Australian income tax return online using myTax, the Australian Taxation Office's myGov-linked online lodgment service, for the 2026 income year (1 July 2025 to 30 June 2026). myTax pre-fills most return data from employers, banks, government agencies, health funds and other third parties by late July each year; the individual reviews the pre-filled figures, amends or completes any that are missing or wrong, and lodges. This document models the field set of the ATO's paper equivalent, the 'Tax return for individuals' (NAT 2541), which myTax's online screens mirror: personal and contact details, electronic funds transfer details, income items 1-12 (salary and wages, allowances, employer lump sums, employment termination payments, government allowances and pensions, annuities and superannuation income streams, superannuation lump sums, attributed personal services income, interest, dividends, and employee share schemes), deductions D1-D10 and prior-year losses, tax offsets T1-T2, Medicare levy questions M1-M2 and private health insurance policy details, adjustments A1-A4, income tests IT1-IT8, spouse details for taxpayers with a spouse (married or de facto) during the year, and the taxpayer's declaration. Out of scope: the separate 'Tax return for individuals (supplementary section) 2026' (business income and expenses, capital gains, foreign income and assets, partnership and trust distributions, rental schedules, and other less-common income/deductions), gated by this document's requiresSupplementarySection field but not itself modelled here; multiple concurrent employers (the source form's five repeating salary/wage payer rows) and multiple concurrent private health insurance policies (the source form's four repeating policy rows), both of which are repeating third-party structures the current flat field model (GSP-0009) cannot express; and the transfer of a refund to a different taxpayer's income tax account or student loan. It does not submit the return or calculate tax payable; the live ATO myTax service and the live NAT 2541 source are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Australian Taxation Office",
+    "abbreviation": "ATO",
+    "url": "https://www.ato.gov.au/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-AU"
+  },
+  "source": {
+    "url": "https://www.ato.gov.au/individuals-and-families/your-tax-return/how-to-lodge-your-tax-return/lodge-your-tax-return-online-with-mytax",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "ATO 'Lodge your tax return online with myTax' guidance page, plus the official 'Tax return for individuals 2026' (NAT 2541-06.2026) paper form whose field set myTax's online screens mirror"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from two primary sources. (1) The ATO's 'Lodge your tax return online with myTax' page (fetched via a recent Wayback Machine capture, 2026-06-16, after the live ato.gov.au domain returned HTTP 403 to both a direct curl fetch and WebFetch in this sandbox — add ato.gov.au to the WAF/bot-protection-blocked domain list alongside nzta.govt.nz and canada.ca; the Wayback capture was fetched with curl --compressed since the response was gzip-encoded), which supplied the myGov-account-linkage eligibility gate, the pre-fill description (employers, banks, government agencies, health funds and third parties by late July; myDeductions uploads), the 31 October lodgment due date, and the 'Manage tax returns' access path. (2) The official 'Tax return for individuals 2026' (NAT 2541-06.2026) PDF, downloaded directly from iorder.com.au (the ATO's Publications Ordering Service), which supplied every numbered field: this is a static (non-fillable) PDF with no /AcroForm or /XFA marker (getFieldObjects() returns null), the same shape as NZTA's DL1 form, so fields were reconstructed from the pdfjs-dist text layer's x/y position data (items sorted by y descending then x ascending; each numbered item/question's boxes and letter codes read off from their printed position) rather than AcroForm field names. Every field is traced to the printed item/question number and, where the form itself prints one, the single-letter box code (e.g. item 7's 'J' for the taxed-element box) in sourceRef. Three sourcing caveats are recorded honestly rather than resolved by guessing (see the affected fields' own descriptions): the exact box(es) comprising superLumpSumTaxableComponentUntaxed at the item 8/item 9 boundary; whether 'Litigation costs', printed directly above D10, names a component of D10 or a separate amount; and whether the three boxes below A3 (income from investment/partnership/other sources, other income from employment and business, other deductions from business income) belong to A3 or a separate unlabelled block. This is the first published GovSchema document for the AU 'review a pre-filled return' flow shape shared by the AU myTax, DE ELSTER and SG myTax Portal/Form B1 tax-return candidates: the applicant does not fill a blank form but reviews, amends, and confirms figures the tax authority has already assembled from third-party reporting, which is why every field here is optional unless the source form itself marks it compulsory (e.g. M2, the declaration) — myTax may supply a value the applicant never manually types. Modelled at the plain (non-edition) registry path: the closed edition.scheme vocabulary (spec v0.3 SS5.7: us-tax-year / gb-tax-year / award-year) has no scheme for Australia's 1 July-30 June income year without mislabeling it as one of those other countries' tax years, the same GSP-0019 gap already flagged for ie/revenue/self-assessment-tax-return-form11s and nz/ird/individual-tax-return-ir3 (now confirmed in a fourth jurisdiction) — see spec/proposals/0019-generalize-edition-scheme-calendar-tax-year.md. No live myTax walkthrough was performed (myTax requires an authenticated, linked myGov account not available in this environment); VERIFICATION.md includes a worked mock-data walkthrough instead, and the conformance packet validates a complete example application against this schema's own required/requiredWhen constraints. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "documents": [
+    {
+      "id": "declarationAttestation",
+      "label": "Taxpayer's declaration",
+      "category": "attestation",
+      "required": true,
+      "statement": "I declare that: all the information I have given on this tax return, including any attachments, is true and correct; I have shown all my income, including net capital gains, for tax purposes for 2025-26; I have completed and attached the supplementary section, schedules and other attachments, as appropriate, that the instructions told me to provide; I have completed question M2 - Medicare levy surcharge; and I have the necessary receipts and/or other records, or expect to obtain the necessary written evidence within a reasonable time of lodging this tax return, to support my claims for deductions and tax offsets.",
+      "issuingAuthority": "Self-attested by the individual taxpayer",
+      "sourceRef": "NAT 2541-06.2026, page 10 — Taxpayer's declaration"
+    }
+  ],
+  "fields": [
+    {
+      "name": "hasMyGovAccountLinkedToAto",
+      "label": "myGov account with an active link to the ATO",
+      "type": "boolean",
+      "required": true,
+      "description": "You need a myGov account with an active link to the ATO to access online services and lodge with myTax. Sign in to myGov, select ATO from your linked services, then select 'Manage tax returns'.",
+      "sourceRef": "ato.gov.au 'Lodge your tax return online with myTax' — 'Access to myTax'"
+    },
+    {
+      "name": "taxFileNumber",
+      "label": "Your tax file number (TFN)",
+      "type": "string",
+      "required": true,
+      "description": "Your tax file number. Handle as sensitive personal data.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your tax file number (TFN)",
+      "validation": {
+        "pattern": "^[0-9]{8,9}$"
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "isAustralianResident",
+      "label": "Are you an Australian resident?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether you were an Australian resident for tax purposes.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Are you an Australian resident?"
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": false,
+      "description": "Your title, if shown.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Title",
+      "validation": {
+        "enum": [
+          "mr",
+          "mrs",
+          "miss",
+          "ms",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "familyName",
+      "label": "Family name",
+      "type": "string",
+      "required": true,
+      "description": "Your family name.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your name, Family name",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "firstGivenName",
+      "label": "First given name",
+      "type": "string",
+      "required": true,
+      "description": "Your first given name.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your name, First given name",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "otherGivenNames",
+      "label": "Other given names",
+      "type": "string",
+      "required": false,
+      "description": "Any other given names.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your name, Other given names",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "nameChangedSinceLastReturn",
+      "label": "Has any part of your name changed since completing your last tax return?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Has any part of your name changed since completing your last tax return?"
+    },
+    {
+      "name": "postalAddressLine",
+      "label": "Your postal address",
+      "type": "string",
+      "required": true,
+      "description": "Print the address where you want your mail sent.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your postal address",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "postalSuburbOrTown",
+      "label": "Suburb/town/locality (postal)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your postal address, Suburb/town/locality",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "postalState",
+      "label": "State/territory (postal)",
+      "type": "enum",
+      "required": true,
+      "description": "Australian state or territory of the postal address.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your postal address, State/territory",
+      "validation": {
+        "enum": [
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "ACT",
+          "NT"
+        ]
+      }
+    },
+    {
+      "name": "postalPostcode",
+      "label": "Postcode (postal)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your postal address, Postcode",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "postalCountryIfNotAustralia",
+      "label": "Country if not Australia (postal)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your postal address, Country if not Australia",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalAddressChangedSinceLastReturn",
+      "label": "Has this address changed since completing your last tax return?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Has this address changed since completing your last tax return?"
+    },
+    {
+      "name": "homeAddressDifferentFromPostal",
+      "label": "Is your home address different from your postal address?",
+      "type": "boolean",
+      "required": false,
+      "description": "If yes, print your home address below.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Is your home address different from your postal address?"
+    },
+    {
+      "name": "homeSuburbOrTown",
+      "label": "Suburb/town/locality (home)",
+      "type": "string",
+      "required": false,
+      "description": "Only the suburb/town/locality, state/territory, postcode and country labels are printed for the home address block on the source form; no separate street-line box was captured — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your home address, Suburb/town/locality",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "homeAddressDifferentFromPostal",
+        "equals": true
+      }
+    },
+    {
+      "name": "homeState",
+      "label": "State/territory (home)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your home address, State/territory",
+      "validation": {
+        "enum": [
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "ACT",
+          "NT"
+        ]
+      },
+      "requiredWhen": {
+        "field": "homeAddressDifferentFromPostal",
+        "equals": true
+      }
+    },
+    {
+      "name": "homePostcode",
+      "label": "Postcode (home)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your home address, Postcode",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "homeAddressDifferentFromPostal",
+        "equals": true
+      }
+    },
+    {
+      "name": "homeCountryIfNotAustralia",
+      "label": "Country if not Australia (home)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your home address, Country if not Australia",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "daytimePhoneNumber",
+      "label": "Your daytime phone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your contact details, Your daytime phone number",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "mobilePhoneNumber",
+      "label": "Your mobile phone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your contact details, Your mobile phone number",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "emailAddress",
+      "label": "Your email address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 1 — Your contact details, Your email address",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "willLodgeFutureReturn",
+      "label": "Will you need to lodge an Australian tax return in the future?",
+      "type": "enum",
+      "required": false,
+      "description": "'no_final_return' means this is your final tax return.",
+      "sourceRef": "NAT 2541-06.2026, page 2 — Will you need to lodge an Australian tax return in the future?",
+      "validation": {
+        "enum": [
+          "yes",
+          "dont_know",
+          "no_final_return"
+        ]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Your date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Required if you were under 18 years old on 30 June 2026 (see question A1) to avoid delays in processing.",
+      "sourceRef": "NAT 2541-06.2026, page 2 — Your date of birth"
+    },
+    {
+      "name": "bsbNumber",
+      "label": "BSB number",
+      "type": "string",
+      "required": true,
+      "description": "6-digit BSB number of the account for any refund.",
+      "sourceRef": "NAT 2541-06.2026, page 2 — Electronic funds transfer (EFT), BSB number",
+      "validation": {
+        "pattern": "^[0-9]{6}$"
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Account number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "NAT 2541-06.2026, page 2 — Electronic funds transfer (EFT), Account number",
+      "validation": {
+        "maxLength": 10
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "bankAccountName",
+      "label": "Account name",
+      "type": "string",
+      "required": true,
+      "description": "For example, JQ Citizen. Don't show the account type, such as cheque, savings, mortgage offset.",
+      "sourceRef": "NAT 2541-06.2026, page 2 — Electronic funds transfer (EFT), Account name",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "salaryOrWagesOccupation",
+      "label": "Your main salary and wage occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 1 Salary or wages",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "salaryOrWagesPayerAbn",
+      "label": "Payer's Australian business number (ABN)",
+      "type": "string",
+      "required": false,
+      "description": "Modelled as a single payer/employer line; the source form provides five repeating employer rows (TYPE codes) not expressible in GovSchema's flat, non-repeating field model — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 1 Salary or wages, Payer's ABN",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "salaryOrWagesTaxWithheld",
+      "label": "Salary or wages — tax withheld",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 1 Salary or wages, Tax withheld"
+    },
+    {
+      "name": "salaryOrWagesIncome",
+      "label": "Salary or wages — income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 1 Salary or wages, Income"
+    },
+    {
+      "name": "allowancesEarningsTipsDirectorsFees",
+      "label": "Allowances, earnings, tips, director's fees etc",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 2"
+    },
+    {
+      "name": "employerLumpSumPaymentAmountA",
+      "label": "Employer lump sum payments — Amount A",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 3 Employer lump sum payments, Amount A in lump sum payments box"
+    },
+    {
+      "name": "employerLumpSumPaymentAmountB",
+      "label": "Employer lump sum payments — 5% of Amount B",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 3 Employer lump sum payments, 5% of amount B in lump sum payments box"
+    },
+    {
+      "name": "etpPaymentDate",
+      "label": "Employment termination payment (ETP) — date of payment",
+      "type": "date",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 4 Employment termination payments (ETP), Date of payment"
+    },
+    {
+      "name": "etpPayerAbn",
+      "label": "Employment termination payment (ETP) — payer's ABN",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 4 Employment termination payments (ETP), Payer's ABN",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "etpTaxableComponent",
+      "label": "Employment termination payment (ETP) — taxable component",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 4 Employment termination payments (ETP), Taxable component"
+    },
+    {
+      "name": "etpCode",
+      "label": "Employment termination payment (ETP) — code",
+      "type": "string",
+      "required": false,
+      "description": "The ETP type code printed by the payer on your ETP payment summary.",
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 4 Employment termination payments (ETP), CODE",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "governmentAllowancesAndPayments",
+      "label": "Australian Government allowances and payments (e.g. Youth Allowance, JobSeeker, Austudy)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 5"
+    },
+    {
+      "name": "governmentPensionsAndAllowances",
+      "label": "Australian Government pensions and allowances",
+      "type": "number",
+      "required": false,
+      "description": "If you complete this item you must also complete the Seniors and pensioners tax offset (T1) question.",
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 6"
+    },
+    {
+      "name": "annuitySuperIncomeStreamTaxedElement",
+      "label": "Australian annuities and superannuation income streams — taxable component, taxed element",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 7, Taxable component, Taxed element"
+    },
+    {
+      "name": "annuitySuperIncomeStreamUntaxedElement",
+      "label": "Australian annuities and superannuation income streams — taxable component, untaxed element",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 7, Taxable component, Untaxed element"
+    },
+    {
+      "name": "annuitySuperIncomeStreamCappedDefinedBenefit",
+      "label": "Assessable amount from capped defined benefit income stream",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 7"
+    },
+    {
+      "name": "annuitySuperIncomeStreamLumpSumArrearsTaxed",
+      "label": "Lump sum in arrears — taxable component, taxed element",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 7"
+    },
+    {
+      "name": "annuitySuperIncomeStreamLumpSumArrearsUntaxed",
+      "label": "Lump sum in arrears — taxable component, untaxed element",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 2 — item 7"
+    },
+    {
+      "name": "superLumpSumPaymentDate",
+      "label": "Australian superannuation lump sum payments — date of payment",
+      "type": "date",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 8, Date of payment"
+    },
+    {
+      "name": "superLumpSumPayerAbn",
+      "label": "Australian superannuation lump sum payments — payer's ABN",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 8, Payer's ABN",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "superLumpSumTaxableComponentTaxed",
+      "label": "Australian superannuation lump sum payments — taxable component, taxed element",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 8, Taxable component, Taxed element"
+    },
+    {
+      "name": "superLumpSumTaxableComponentUntaxed",
+      "label": "Australian superannuation lump sum payments — taxable component, untaxed element",
+      "type": "number",
+      "required": false,
+      "description": "The source form places a third dollar box immediately above item 9 whose exact association with item 8 versus a running tax-withheld subtotal could not be confirmed with certainty from the extracted text layer alone — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 8, Taxable component, Untaxed element"
+    },
+    {
+      "name": "attributedPersonalServicesIncome",
+      "label": "Attributed personal services income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 9"
+    },
+    {
+      "name": "grossInterest",
+      "label": "Gross interest",
+      "type": "number",
+      "required": false,
+      "description": "If you're a foreign resident, make sure you print your country of residence on page 1.",
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 10"
+    },
+    {
+      "name": "interestTfnAmountsWithheld",
+      "label": "TFN amounts withheld from gross interest",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 10"
+    },
+    {
+      "name": "dividendsUnfrankedAmount",
+      "label": "Dividends — unfranked amount",
+      "type": "number",
+      "required": false,
+      "description": "If you're a foreign resident, make sure you print your country of residence on page 1.",
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 11"
+    },
+    {
+      "name": "dividendsFrankedAmount",
+      "label": "Dividends — franked amount",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 11"
+    },
+    {
+      "name": "dividendsFrankingCredit",
+      "label": "Dividends — franking credit",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 11"
+    },
+    {
+      "name": "dividendsTfnAmountsWithheld",
+      "label": "TFN amounts withheld from dividends",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 11"
+    },
+    {
+      "name": "employeeShareSchemeDiscountEligibleForReduction",
+      "label": "Employee share schemes — discount from taxed upfront schemes, eligible for reduction",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 12"
+    },
+    {
+      "name": "employeeShareSchemeDiscountNotEligibleForReduction",
+      "label": "Employee share schemes — discount from taxed upfront schemes, not eligible for reduction",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 12"
+    },
+    {
+      "name": "employeeShareSchemeDiscountFromDeferralSchemes",
+      "label": "Employee share schemes — discount from deferral schemes",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 12"
+    },
+    {
+      "name": "employeeShareSchemeTotalAssessableDiscount",
+      "label": "Employee share schemes — total assessable discount amount",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 12"
+    },
+    {
+      "name": "employeeShareSchemeTfnAmountsWithheld",
+      "label": "TFN amounts withheld from employee share scheme discounts",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 12"
+    },
+    {
+      "name": "employeeShareSchemeForeignSourceDiscounts",
+      "label": "Employee share schemes — foreign source discounts",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 3 — item 12"
+    },
+    {
+      "name": "totalSupplementIncomeOrLoss",
+      "label": "Total supplement income or loss",
+      "type": "number",
+      "required": false,
+      "description": "Transcribed here only if you completed the separate 'Tax return for individuals (supplementary section) 2026', which is out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 3 — Total supplement income or loss"
+    },
+    {
+      "name": "totalTaxWithheld",
+      "label": "Total tax withheld",
+      "type": "number",
+      "required": false,
+      "description": "Sum of every 'Tax withheld' box on items 1-8 above.",
+      "sourceRef": "NAT 2541-06.2026, page 3 — Total tax withheld"
+    },
+    {
+      "name": "totalIncomeOrLoss",
+      "label": "Total income or loss",
+      "type": "number",
+      "required": false,
+      "description": "Sum of the income amounts on items 1-12 (and the supplement, if any) less any loss amount.",
+      "sourceRef": "NAT 2541-06.2026, page 3 — Total income or loss"
+    },
+    {
+      "name": "workRelatedCarExpenses",
+      "label": "D1 Work-related car expenses",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D1"
+    },
+    {
+      "name": "workRelatedTravelExpenses",
+      "label": "D2 Work-related travel expenses",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D2"
+    },
+    {
+      "name": "workRelatedClothingLaundryDryCleaning",
+      "label": "D3 Work-related clothing, laundry and dry cleaning expenses",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D3"
+    },
+    {
+      "name": "workRelatedSelfEducation",
+      "label": "D4 Work-related self-education expenses",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D4"
+    },
+    {
+      "name": "otherWorkRelatedExpenses",
+      "label": "D5 Other work-related expenses",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D5"
+    },
+    {
+      "name": "lowValuePoolDeduction",
+      "label": "D6 Low value pool deduction",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D6"
+    },
+    {
+      "name": "interestDeductions",
+      "label": "D7 Interest deductions",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D7"
+    },
+    {
+      "name": "dividendDeductions",
+      "label": "D8 Dividend deductions",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D8"
+    },
+    {
+      "name": "giftsOrDonations",
+      "label": "D9 Gifts or donations",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D9"
+    },
+    {
+      "name": "costOfManagingTaxAffairs",
+      "label": "D10 Cost of managing tax affairs",
+      "type": "number",
+      "required": false,
+      "description": "A 'Litigation costs' label is printed directly above D10 on the source form; whether it names a component of this box or a separate unlabelled amount could not be confirmed with certainty — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 4 — D10"
+    },
+    {
+      "name": "otherExpensesManagingTaxAffairs",
+      "label": "Other expenses incurred in managing your tax affairs",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — D10"
+    },
+    {
+      "name": "totalSupplementDeductions",
+      "label": "Total supplement deductions",
+      "type": "number",
+      "required": false,
+      "description": "Transcribed here only if you completed the separate supplementary section, out of scope for this document.",
+      "sourceRef": "NAT 2541-06.2026, page 4 — Total supplement deductions"
+    },
+    {
+      "name": "totalDeductions",
+      "label": "Total deductions",
+      "type": "number",
+      "required": false,
+      "description": "Sum of D1 to D10 (and the supplement, if any).",
+      "sourceRef": "NAT 2541-06.2026, page 4 — Total deductions"
+    },
+    {
+      "name": "taxLossesOfEarlierIncomeYears",
+      "label": "L1 Tax losses of earlier income years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — L1"
+    },
+    {
+      "name": "primaryProductionLossesCarriedForward",
+      "label": "Primary production losses carried forward from earlier income years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — L1"
+    },
+    {
+      "name": "primaryProductionLossesClaimedThisYear",
+      "label": "Primary production losses claimed this income year",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — L1"
+    },
+    {
+      "name": "nonPrimaryProductionLossesCarriedForward",
+      "label": "Non-primary production losses carried forward from earlier income years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — L1"
+    },
+    {
+      "name": "nonPrimaryProductionLossesClaimedThisYear",
+      "label": "Non-primary production losses claimed this income year",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 4 — L1"
+    },
+    {
+      "name": "taxableIncomeOrLoss",
+      "label": "Taxable income or loss",
+      "type": "number",
+      "required": false,
+      "description": "Total income or loss less total deductions (and losses claimed).",
+      "sourceRef": "NAT 2541-06.2026, page 4 — Taxable income or loss"
+    },
+    {
+      "name": "seniorsPensionersTaxOffsetCode",
+      "label": "T1 Seniors and pensioners tax offset code",
+      "type": "string",
+      "required": false,
+      "description": "ATO-defined single-letter tax offset code; the ATO works out the offset amount itself.",
+      "sourceRef": "NAT 2541-06.2026, page 5 — T1",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "seniorsPensionersVeteranCode",
+      "label": "T1 Seniors and pensioners — veteran code",
+      "type": "string",
+      "required": false,
+      "description": "ATO-defined veteran code, only if it applies.",
+      "sourceRef": "NAT 2541-06.2026, page 5 — T1",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "superIncomeStreamTaxOffset",
+      "label": "T2 Australian superannuation income stream tax offset",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 5 — T2"
+    },
+    {
+      "name": "totalSupplementTaxOffsets",
+      "label": "Total supplement tax offsets",
+      "type": "number",
+      "required": false,
+      "description": "Transcribed here only if you completed the separate supplementary section, out of scope for this document.",
+      "sourceRef": "NAT 2541-06.2026, page 5 — Total supplement tax offsets"
+    },
+    {
+      "name": "totalTaxOffsets",
+      "label": "Total tax offsets",
+      "type": "number",
+      "required": false,
+      "description": "Sum of T2 and the supplement tax offsets, if any.",
+      "sourceRef": "NAT 2541-06.2026, page 5 — Total tax offsets"
+    },
+    {
+      "name": "medicareLevyReductionOrExemptionClaimed",
+      "label": "M1 Medicare levy reduction or exemption",
+      "type": "boolean",
+      "required": false,
+      "description": "Only certain taxpayers are entitled to a Medicare levy reduction or exemption.",
+      "sourceRef": "NAT 2541-06.2026, page 6 — M1"
+    },
+    {
+      "name": "numberOfDependentChildrenAndStudents",
+      "label": "Number of dependent children and students",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 6 — M1, Reduction based on family income",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "fullMedicareLevyExemptionDays",
+      "label": "Full 2.0% levy exemption — number of days",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 6 — M1, Exemption categories",
+      "validation": {
+        "minimum": 0,
+        "maximum": 366
+      }
+    },
+    {
+      "name": "halfMedicareLevyExemptionDays",
+      "label": "Half 2.0% levy exemption — number of days",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 6 — M1, Exemption categories",
+      "validation": {
+        "minimum": 0,
+        "maximum": 366
+      }
+    },
+    {
+      "name": "allYearPrivateHospitalCover",
+      "label": "Were you (and all dependants) covered by private patient hospital cover for the whole period 1 July 2025 to 30 June 2026?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 6 — M2"
+    },
+    {
+      "name": "allYearIncomeUnderSurchargeThreshold",
+      "label": "For the whole of 2025-26, were you a single person with income for surcharge purposes of $101,000 or less, or a member of a family with combined income of $202,000 or less (plus $1,500 per dependent child after the first), and were all dependants in a Medicare levy exemption category?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 6 — M2"
+    },
+    {
+      "name": "medicareLevySurchargeExemptDays",
+      "label": "Number of days you don't have to pay the Medicare levy surcharge",
+      "type": "integer",
+      "required": false,
+      "description": "0 if you must pay the surcharge for the whole period; 365 if you don't have to pay it for the whole period; otherwise the number of days for part of the period.",
+      "sourceRef": "NAT 2541-06.2026, page 6 — M2, box A",
+      "validation": {
+        "minimum": 0,
+        "maximum": 366
+      }
+    },
+    {
+      "name": "healthInsurerId",
+      "label": "Private health insurance — health insurer ID",
+      "type": "string",
+      "required": false,
+      "description": "Modelled as a single policy; the source form provides four repeating policy rows not expressible in GovSchema's flat, non-repeating field model — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — Private health insurance policy details",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "healthInsuranceMembershipNumber",
+      "label": "Private health insurance — membership number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 7 — Private health insurance policy details",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "healthInsurancePremiumsEligibleForRebate",
+      "label": "Private health insurance — your premiums eligible for Australian Government rebate",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 7 — Private health insurance policy details"
+    },
+    {
+      "name": "healthInsuranceGovernmentRebateReceived",
+      "label": "Private health insurance — your Australian Government rebate received",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 7 — Private health insurance policy details"
+    },
+    {
+      "name": "healthInsuranceBenefitCode",
+      "label": "Private health insurance — benefit code",
+      "type": "string",
+      "required": false,
+      "description": "ATO-defined benefit code printed on your private health insurance statement.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — Private health insurance policy details",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "healthInsuranceTaxClaimCode",
+      "label": "Private health insurance — tax claim code",
+      "type": "string",
+      "required": false,
+      "description": "ATO-defined tax claim code printed on your private health insurance statement.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — Private health insurance policy details",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "under18Income",
+      "label": "A1 Under 18 — income",
+      "type": "number",
+      "required": false,
+      "description": "Required if you were under 18 years old on 30 June 2026, or you may be taxed at a higher rate.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — A1"
+    },
+    {
+      "name": "partYearTaxFreeThresholdMonths",
+      "label": "A2 Part-year tax-free threshold — months eligible for threshold",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 7 — A2",
+      "validation": {
+        "minimum": 0,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "partYearTaxFreeThresholdDate",
+      "label": "A2 Part-year tax-free threshold — date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 7 — A2"
+    },
+    {
+      "name": "governmentSuperContributionsCode",
+      "label": "A3 Government super contributions — code",
+      "type": "string",
+      "required": false,
+      "description": "ATO-defined code.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — A3",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "incomeFromInvestmentPartnershipOtherSources",
+      "label": "Income from investment, partnership and other sources",
+      "type": "number",
+      "required": false,
+      "description": "Printed directly below A3 without its own A-numbered question label in the source extraction; its exact question association could not be confirmed with certainty — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — below A3"
+    },
+    {
+      "name": "otherIncomeFromEmploymentAndBusiness",
+      "label": "Other income from employment and business",
+      "type": "number",
+      "required": false,
+      "description": "See the sourcing caveat on incomeFromInvestmentPartnershipOtherSources above.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — below A3"
+    },
+    {
+      "name": "otherDeductionsFromBusinessIncome",
+      "label": "Other deductions from business income",
+      "type": "number",
+      "required": false,
+      "description": "See the sourcing caveat on incomeFromInvestmentPartnershipOtherSources above.",
+      "sourceRef": "NAT 2541-06.2026, page 7 — below A3"
+    },
+    {
+      "name": "workingHolidayMakerNetIncome",
+      "label": "A4 Working holiday maker net income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 7 — A4"
+    },
+    {
+      "name": "workingHolidayMakerHomeCountry",
+      "label": "A4 Working holiday maker — home country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 7 — A4",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "reportableFringeBenefitsExempt",
+      "label": "IT1 Total reportable fringe benefits amounts — employers exempt from FBT under section 57A",
+      "type": "number",
+      "required": false,
+      "description": "If the amount is zero, write 0.",
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT1"
+    },
+    {
+      "name": "reportableFringeBenefitsNotExempt",
+      "label": "IT1 Total reportable fringe benefits amounts — employers not exempt from FBT under section 57A",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT1"
+    },
+    {
+      "name": "reportableSuperContributions",
+      "label": "IT2 Reportable employer superannuation contributions",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT2"
+    },
+    {
+      "name": "taxFreeGovernmentPensions",
+      "label": "IT3 Tax-free government pensions",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT3"
+    },
+    {
+      "name": "targetForeignIncome",
+      "label": "IT4 Target foreign income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT4"
+    },
+    {
+      "name": "netFinancialInvestmentLoss",
+      "label": "IT5 Net financial investment loss",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT5"
+    },
+    {
+      "name": "netRentalPropertyLoss",
+      "label": "IT6 Net rental property loss",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT6"
+    },
+    {
+      "name": "childSupportPaid",
+      "label": "IT7 Child support you paid",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT7"
+    },
+    {
+      "name": "numberOfDependentChildrenIt8",
+      "label": "IT8 Number of dependent children",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — IT8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "spouseFamilyName",
+      "label": "Your spouse's family name",
+      "type": "string",
+      "required": false,
+      "description": "Complete this section only if you had a spouse (married or de facto) during 2025-26. If you had more than one spouse during the year, print the name of your spouse on 30 June 2026 or your last spouse.",
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "spouseFirstGivenName",
+      "label": "Your spouse's first given name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "spouseOtherGivenNames",
+      "label": "Your spouse's other given names",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Your spouse's date of birth",
+      "type": "date",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details",
+      "classification": "pii"
+    },
+    {
+      "name": "spouseGender",
+      "label": "Your spouse's gender",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details",
+      "validation": {
+        "enum": [
+          "male",
+          "female",
+          "indeterminate"
+        ]
+      }
+    },
+    {
+      "name": "hadSpouseForFullYear",
+      "label": "Did you have a spouse for the full year, 1 July 2025 to 30 June 2026?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details"
+    },
+    {
+      "name": "spouseFromDate",
+      "label": "Date you had a spouse from",
+      "type": "date",
+      "required": false,
+      "description": "Only if you didn't have a spouse for the full year.",
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details",
+      "requiredWhen": {
+        "field": "hadSpouseForFullYear",
+        "equals": false
+      }
+    },
+    {
+      "name": "spouseToDate",
+      "label": "Date you had a spouse to",
+      "type": "date",
+      "required": false,
+      "description": "Only if you didn't have a spouse for the full year.",
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details",
+      "requiredWhen": {
+        "field": "hadSpouseForFullYear",
+        "equals": false
+      }
+    },
+    {
+      "name": "spouseDiedDuringYear",
+      "label": "Did your spouse die during the year?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 8 — Spouse details"
+    },
+    {
+      "name": "spouseTaxableIncome",
+      "label": "Your spouse's 2025-26 taxable income",
+      "type": "number",
+      "required": false,
+      "description": "Excluding any assessable first home super saver released amount.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseTrustIncomeSection98",
+      "label": "Your spouse's share of trust income on which the trustee is assessed under section 98",
+      "type": "number",
+      "required": false,
+      "description": "Only the amount not already included in your spouse's taxable income.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseFamilyTrustDistributionTaxIncome",
+      "label": "Distributions to your spouse on which family trust distribution tax has been paid",
+      "type": "number",
+      "required": false,
+      "description": "Only the amount your spouse would otherwise have had to show as assessable income.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseReportableFringeBenefitsExempt",
+      "label": "Your spouse's total reportable fringe benefits amounts — employers exempt from FBT under section 57A",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseReportableFringeBenefitsNotExempt",
+      "label": "Your spouse's total reportable fringe benefits amounts — employers not exempt from FBT under section 57A",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseGovernmentPensionsAndAllowances",
+      "label": "Amount of Australian Government pensions and allowances your spouse received in 2025-26",
+      "type": "number",
+      "required": false,
+      "description": "Excludes exempt pension income.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseExemptPensionIncome",
+      "label": "Amount of exempt pension income your spouse received in 2025-26",
+      "type": "number",
+      "required": false,
+      "description": "Don't include any amount paid under the Military Rehabilitation and Compensation Act 2004.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseReportableSuperContributions",
+      "label": "Amount of your spouse's reportable superannuation contributions",
+      "type": "number",
+      "required": false,
+      "description": "Total of reportable employer superannuation contributions and deductible personal superannuation contributions.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseOtherSpecifiedExemptPayments",
+      "label": "Other specified exempt payments your spouse received",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseTargetForeignIncome",
+      "label": "Your spouse's target foreign income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseNetInvestmentLoss",
+      "label": "Your spouse's total net investment loss",
+      "type": "number",
+      "required": false,
+      "description": "Total of net financial investment loss and net rental property loss.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "spouseChildSupportPaid",
+      "label": "Child support your spouse paid",
+      "type": "number",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 9 — Spouse details, continued"
+    },
+    {
+      "name": "consentToRepaySpouseFamilyAssistanceDebt",
+      "label": "Do you consent to use part or all of your 2026 tax refund to repay your spouse's Family Assistance debt?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 9 — Family Assistance consent"
+    },
+    {
+      "name": "spouseCustomerReferenceNumber",
+      "label": "Your spouse's Centrelink Customer Reference Number (CRN)",
+      "type": "string",
+      "required": false,
+      "description": "Only if you consent to use your refund to repay your spouse's Family Assistance debt, and your spouse has given you authority to quote their CRN.",
+      "sourceRef": "NAT 2541-06.2026, page 9 — Family Assistance consent",
+      "validation": {
+        "maxLength": 12
+      },
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "consentToRepaySpouseFamilyAssistanceDebt",
+        "equals": true
+      }
+    },
+    {
+      "name": "familyAssistanceConsentSignatureDate",
+      "label": "Date you signed the Family Assistance consent",
+      "type": "date",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 9 — Family Assistance consent",
+      "requiredWhen": {
+        "field": "consentToRepaySpouseFamilyAssistanceDebt",
+        "equals": true
+      }
+    },
+    {
+      "name": "requiresSupplementarySection",
+      "label": "Are you required to complete any of the questions in the Tax return for individuals (supplementary section) 2026?",
+      "type": "boolean",
+      "required": false,
+      "description": "The supplementary section itself (additional business, capital gains, foreign income, rental, and partnership/trust schedules) is out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "NAT 2541-06.2026, page 10 — Taxpayer's declaration, question 1"
+    },
+    {
+      "name": "furtherInformationAttached",
+      "label": "Have the instructions asked you to attach further information relating to specific questions?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 2541-06.2026, page 10 — Taxpayer's declaration, question 2"
+    },
+    {
+      "name": "declarationSigned",
+      "label": "Declaration signed",
+      "type": "boolean",
+      "required": true,
+      "description": "You must read the declaration and sign the return as being true and correct before lodging.",
+      "sourceRef": "NAT 2541-06.2026, page 10 — Taxpayer's declaration"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "sourceRef": "NAT 2541-06.2026, page 10 — Taxpayer's declaration"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mygov_access",
+      "title": "Access to myTax",
+      "fields": [
+        "hasMyGovAccountLinkedToAto"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "no-mygov-account-linked",
+          "when": {
+            "field": "hasMyGovAccountLinkedToAto",
+            "equals": false
+          }
+        },
+        {
+          "to": "individual_information"
+        }
+      ]
+    },
+    {
+      "id": "individual_information",
+      "title": "Individual information (page 1-2)",
+      "fields": [
+        "taxFileNumber",
+        "isAustralianResident",
+        "title",
+        "familyName",
+        "firstGivenName",
+        "otherGivenNames",
+        "nameChangedSinceLastReturn",
+        "postalAddressLine",
+        "postalSuburbOrTown",
+        "postalState",
+        "postalPostcode",
+        "postalCountryIfNotAustralia",
+        "postalAddressChangedSinceLastReturn",
+        "homeAddressDifferentFromPostal",
+        "homeSuburbOrTown",
+        "homeState",
+        "homePostcode",
+        "homeCountryIfNotAustralia",
+        "daytimePhoneNumber",
+        "mobilePhoneNumber",
+        "emailAddress",
+        "willLodgeFutureReturn",
+        "dateOfBirth",
+        "bsbNumber",
+        "bankAccountNumber",
+        "bankAccountName"
+      ],
+      "next": "income"
+    },
+    {
+      "id": "income",
+      "title": "Income (items 1-12, page 2-3)",
+      "fields": [
+        "salaryOrWagesOccupation",
+        "salaryOrWagesPayerAbn",
+        "salaryOrWagesTaxWithheld",
+        "salaryOrWagesIncome",
+        "allowancesEarningsTipsDirectorsFees",
+        "employerLumpSumPaymentAmountA",
+        "employerLumpSumPaymentAmountB",
+        "etpPaymentDate",
+        "etpPayerAbn",
+        "etpTaxableComponent",
+        "etpCode",
+        "governmentAllowancesAndPayments",
+        "governmentPensionsAndAllowances",
+        "annuitySuperIncomeStreamTaxedElement",
+        "annuitySuperIncomeStreamUntaxedElement",
+        "annuitySuperIncomeStreamCappedDefinedBenefit",
+        "annuitySuperIncomeStreamLumpSumArrearsTaxed",
+        "annuitySuperIncomeStreamLumpSumArrearsUntaxed",
+        "superLumpSumPaymentDate",
+        "superLumpSumPayerAbn",
+        "superLumpSumTaxableComponentTaxed",
+        "superLumpSumTaxableComponentUntaxed",
+        "attributedPersonalServicesIncome",
+        "grossInterest",
+        "interestTfnAmountsWithheld",
+        "dividendsUnfrankedAmount",
+        "dividendsFrankedAmount",
+        "dividendsFrankingCredit",
+        "dividendsTfnAmountsWithheld",
+        "employeeShareSchemeDiscountEligibleForReduction",
+        "employeeShareSchemeDiscountNotEligibleForReduction",
+        "employeeShareSchemeDiscountFromDeferralSchemes",
+        "employeeShareSchemeTotalAssessableDiscount",
+        "employeeShareSchemeTfnAmountsWithheld",
+        "employeeShareSchemeForeignSourceDiscounts",
+        "totalSupplementIncomeOrLoss",
+        "totalTaxWithheld",
+        "totalIncomeOrLoss"
+      ],
+      "next": "deductions"
+    },
+    {
+      "id": "deductions",
+      "title": "Deductions and losses (D1-D10, L1, page 4)",
+      "fields": [
+        "workRelatedCarExpenses",
+        "workRelatedTravelExpenses",
+        "workRelatedClothingLaundryDryCleaning",
+        "workRelatedSelfEducation",
+        "otherWorkRelatedExpenses",
+        "lowValuePoolDeduction",
+        "interestDeductions",
+        "dividendDeductions",
+        "giftsOrDonations",
+        "costOfManagingTaxAffairs",
+        "otherExpensesManagingTaxAffairs",
+        "totalSupplementDeductions",
+        "totalDeductions",
+        "taxLossesOfEarlierIncomeYears",
+        "primaryProductionLossesCarriedForward",
+        "primaryProductionLossesClaimedThisYear",
+        "nonPrimaryProductionLossesCarriedForward",
+        "nonPrimaryProductionLossesClaimedThisYear",
+        "taxableIncomeOrLoss"
+      ],
+      "next": "tax_offsets"
+    },
+    {
+      "id": "tax_offsets",
+      "title": "Tax offsets (T1-T2, page 5)",
+      "fields": [
+        "seniorsPensionersTaxOffsetCode",
+        "seniorsPensionersVeteranCode",
+        "superIncomeStreamTaxOffset",
+        "totalSupplementTaxOffsets",
+        "totalTaxOffsets"
+      ],
+      "next": "medicare_levy"
+    },
+    {
+      "id": "medicare_levy",
+      "title": "Medicare levy related questions and private health insurance (M1-M2, page 6-7)",
+      "fields": [
+        "medicareLevyReductionOrExemptionClaimed",
+        "numberOfDependentChildrenAndStudents",
+        "fullMedicareLevyExemptionDays",
+        "halfMedicareLevyExemptionDays",
+        "allYearPrivateHospitalCover",
+        "allYearIncomeUnderSurchargeThreshold",
+        "medicareLevySurchargeExemptDays",
+        "healthInsurerId",
+        "healthInsuranceMembershipNumber",
+        "healthInsurancePremiumsEligibleForRebate",
+        "healthInsuranceGovernmentRebateReceived",
+        "healthInsuranceBenefitCode",
+        "healthInsuranceTaxClaimCode"
+      ],
+      "next": "adjustments"
+    },
+    {
+      "id": "adjustments",
+      "title": "Adjustments (A1-A4, page 7)",
+      "fields": [
+        "under18Income",
+        "partYearTaxFreeThresholdMonths",
+        "partYearTaxFreeThresholdDate",
+        "governmentSuperContributionsCode",
+        "incomeFromInvestmentPartnershipOtherSources",
+        "otherIncomeFromEmploymentAndBusiness",
+        "otherDeductionsFromBusinessIncome",
+        "workingHolidayMakerNetIncome",
+        "workingHolidayMakerHomeCountry"
+      ],
+      "next": "income_tests"
+    },
+    {
+      "id": "income_tests",
+      "title": "Income tests (IT1-IT8, page 8)",
+      "fields": [
+        "reportableFringeBenefitsExempt",
+        "reportableFringeBenefitsNotExempt",
+        "reportableSuperContributions",
+        "taxFreeGovernmentPensions",
+        "targetForeignIncome",
+        "netFinancialInvestmentLoss",
+        "netRentalPropertyLoss",
+        "childSupportPaid",
+        "numberOfDependentChildrenIt8"
+      ],
+      "next": "spouse_details"
+    },
+    {
+      "id": "spouse_details",
+      "title": "Spouse details - married or de facto (page 8-9)",
+      "fields": [
+        "spouseFamilyName",
+        "spouseFirstGivenName",
+        "spouseOtherGivenNames",
+        "spouseDateOfBirth",
+        "spouseGender",
+        "hadSpouseForFullYear",
+        "spouseFromDate",
+        "spouseToDate",
+        "spouseDiedDuringYear",
+        "spouseTaxableIncome",
+        "spouseTrustIncomeSection98",
+        "spouseFamilyTrustDistributionTaxIncome",
+        "spouseReportableFringeBenefitsExempt",
+        "spouseReportableFringeBenefitsNotExempt",
+        "spouseGovernmentPensionsAndAllowances",
+        "spouseExemptPensionIncome",
+        "spouseReportableSuperContributions",
+        "spouseOtherSpecifiedExemptPayments",
+        "spouseTargetForeignIncome",
+        "spouseNetInvestmentLoss",
+        "spouseChildSupportPaid",
+        "consentToRepaySpouseFamilyAssistanceDebt",
+        "spouseCustomerReferenceNumber",
+        "familyAssistanceConsentSignatureDate"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Taxpayer's declaration (page 10)",
+      "fields": [
+        "requiresSupplementarySection",
+        "furtherInformationAttached",
+        "declarationSigned",
+        "declarationDate"
+      ]
+    }
+  ]
+}

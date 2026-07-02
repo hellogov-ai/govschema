@@ -1,0 +1,316 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/co/register-to-vote",
+  "version": "1.1.0",
+  "title": "United Kingdom Register to Vote",
+  "description": "Register an individual to vote in UK public elections using the GOV.UK 'Register to vote' service, which covers Great Britain (England, Scotland, Wales). This document describes the applicant's identity, nationality and immigration-status gate, National Insurance number, current and (where the applicant moved within the last 12 months) previous address, the open/edited register opt-out, an optional postal/proxy voting interest flag, and the declaration. Northern Ireland uses a separate register maintained by the Electoral Office for Northern Ireland and is out of scope. It does not submit the registration; the live gov.uk source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Cabinet Office (Electoral Registration)",
+    "abbreviation": "CO",
+    "url": "https://www.gov.uk/government/organisations/cabinet-office"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/register-to-vote",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "ITR-E (Individual Electoral Registration, Standard form, England edition)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the GOV.UK 'Register to vote' landing page and the underlying ITR-E paper application form (which the online service's data model mirrors: name, previous name, date of birth, nationality, EU-settled-status gate, National Insurance number, address, previous address, open register, voting-method interest, and declaration). Every numbered section of the ITR-E form was transcribed and mapped to a field; the screen-by-screen labels of the live online gov.uk/register-to-vote flow were not independently captured, so sourceRef annotations cite the paper form's section numbers. The nationality field is deliberately free text, not an enum: the source form instructs applicants to 'state your nationality; if you have more than one, include them all' rather than offering a fixed list. The full EU member-state list gating the euSettledStatusContinuousSince2020 field was not completely recoverable from the retrieved source text; the field's description records the rule qualitatively instead of an authoritative country enum. Conditional requiredness (e.g. previous-address fields only when the applicant moved in the last 12 months; the EU gate only for relevant EU nationals) cannot be expressed structurally in v0.2 and is recorded in field descriptions, per the limitation tracked in GSP-0004. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section 1 — Your address",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section 1 — Your address",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "previousName",
+      "label": "Most recent previous name (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. For example, a name changed by marriage. You do not have to give this, but it helps the electoral registration officer identify you; if not given, you may need to provide additional documentary evidence.",
+      "sourceRef": "Section 7 — Previous name",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousNameChangeDate",
+      "label": "Date you changed your name (optional)",
+      "type": "date",
+      "required": false,
+      "description": "YYYY-MM-DD. Only relevant when previousName is given.",
+      "sourceRef": "Section 7 — Previous name"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD. Registration is open from age 16 (England, Northern Ireland) or age 14 (Scotland, Wales), though an applicant cannot vote until 18. If the exact date is unknown, use dateOfBirthUnknownRange instead and explain in cannotProvideDetailsReason.",
+      "sourceRef": "Section 5 — Date of birth"
+    },
+    {
+      "name": "dateOfBirthUnknownRange",
+      "label": "If you don't know your date of birth, which applies?",
+      "type": "enum",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Only used when dateOfBirth cannot be supplied exactly. under_18 = under 18; 18_to_75 = aged 18 to 75; 76_or_over = aged 76 or over.",
+      "sourceRef": "Section 5 — Date of birth (don't know your date of birth?)",
+      "validation": { "enum": ["under_18", "18_to_75", "76_or_over"] }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "State your nationality; if you have more than one, include them all (free text, e.g. \"British\" or \"British, Irish\"). Eligibility requires being a British or Irish citizen, an eligible Commonwealth citizen, or an eligible EU citizen (see euSettledStatusContinuousSince2020); the live source sets the exact eligible-nationality list. If unknown, leave blank and explain in cannotProvideDetailsReason.",
+      "sourceRef": "Section 3 — Nationality"
+    },
+    {
+      "name": "euSettledStatusContinuousSince2020",
+      "label": "Since 31 December 2020, have you continuously had permission to enter or stay in the UK, Channel Islands or Isle of Man, or not needed permission?",
+      "type": "boolean",
+      "required": false,
+      "description": "Only applicable to citizens of an EU member state other than Denmark, Luxembourg, Poland, Portugal, or Spain (those five, plus Commonwealth citizens, are eligible on a separate basis). Answer true if, on or before 31 December 2020 and without a break since, the applicant held settled or pre-settled status under the EU Settlement Scheme, or was resident but exempt from immigration control. Leave unset if not an EU national this section applies to.",
+      "sourceRef": "Section 4 — Your immigration status"
+    },
+    {
+      "name": "nationalInsuranceNumber",
+      "label": "National Insurance number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. e.g. QQ123456C. You can still register without one; if you don't have one, explain in cannotProvideDetailsReason.",
+      "sourceRef": "Section 6 — National Insurance number",
+      "validation": { "pattern": "^[A-Za-z]{2}[0-9]{6}[A-Da-d]?$" }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Address line 1",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The address at which you are registering to vote. The source form presents this as a single free-text address block; this document splits it into structured lines per registry convention (cf. gb/hmrc/self-assessment-tax-return-sa100).",
+      "sourceRef": "Section 1 — Your address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "addressLine2",
+      "label": "Address line 2 (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section 1 — Your address",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "addressTown",
+      "label": "Town or city",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Section 1 — Your address",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "postcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. UK postcode, e.g. SW1A 1AA.",
+      "sourceRef": "Section 1 — Your address",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "livesAtAnotherAddress",
+      "label": "Do you also live at another address?",
+      "type": "boolean",
+      "required": false,
+      "description": "For example, a student living at a term-time address as well as a home address. You do not have to give the other address now; the electoral registration officer may ask for it later.",
+      "sourceRef": "Section 1 — Do you also live at another address?"
+    },
+    {
+      "name": "movedInLastYear",
+      "label": "Have you lived at another address during the last 12 months?",
+      "type": "boolean",
+      "required": false,
+      "description": "If yes, give the previous address in previousAddress/previousAddressPostcode; your application may be delayed if it is not provided.",
+      "sourceRef": "Section 2 — Previous address"
+    },
+    {
+      "name": "previousAddress",
+      "label": "Previous address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when movedInLastYear is true.",
+      "sourceRef": "Section 2 — Previous address",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "previousAddressPostcode",
+      "label": "Previous address — postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when movedInLastYear is true and the previous address was in the UK.",
+      "sourceRef": "Section 2 — Previous address",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "previousAddressWasOverseasRegistered",
+      "label": "If the previous address was overseas, were you registered in the UK as an overseas voter?",
+      "type": "boolean",
+      "required": false,
+      "description": "Only applicable when movedInLastYear is true and the previous address was outside the UK.",
+      "sourceRef": "Section 2 — Previous address (overseas)"
+    },
+    {
+      "name": "email",
+      "label": "Email (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Used to contact you about your application.",
+      "sourceRef": "Section 1 — Email",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "phone",
+      "label": "Phone number (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +442071234567.",
+      "sourceRef": "Section 1 — Phone no.",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "openRegisterOptOut",
+      "label": "Exclude my name and address from the open (edited) register",
+      "type": "boolean",
+      "required": false,
+      "description": "The open register is an extract of the electoral register that can be bought by anyone and used for purposes such as direct marketing; it is not used for elections. Tick (true) to be excluded. Opting out does not affect the right to vote. Defaults to false (included) if not answered, matching the source form.",
+      "sourceRef": "Section 8 — The open register"
+    },
+    {
+      "name": "votingMethodInterest",
+      "label": "How do you want to vote?",
+      "type": "enum",
+      "required": false,
+      "description": "Leave unset to vote in person at a polling station. post or proxy only records interest in receiving more information; actually voting by post or proxy requires a separate absent-vote application, which this document does not model.",
+      "sourceRef": "Section 9 — Voting at the polling station",
+      "validation": { "enum": ["post", "proxy"] }
+    },
+    {
+      "name": "cannotProvideDetailsReason",
+      "label": "If you could not give your National Insurance number, date of birth, or nationality, give a reason",
+      "type": "string",
+      "required": false,
+      "description": "Required only when one or more of nationalInsuranceNumber, dateOfBirth, or nationality is omitted. The electoral registration officer may request other evidence before processing the application.",
+      "sourceRef": "Section 10",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "declarationAddressConfirmed",
+      "label": "I currently live at this address and, to the best of my knowledge, the information in this application is true",
+      "type": "boolean",
+      "required": true,
+      "description": "It is an offence to knowingly provide false information in this application.",
+      "sourceRef": "Section 11 — Declaration"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Today's date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD, the date the declaration is made.",
+      "sourceRef": "Section 11 — Declaration"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Your name and date of birth",
+      "fields": ["firstNames", "lastName", "previousName", "previousNameChangeDate", "dateOfBirth", "dateOfBirthUnknownRange"],
+      "next": "nationality_and_immigration"
+    },
+    {
+      "id": "nationality_and_immigration",
+      "title": "Nationality and immigration status",
+      "fields": ["nationality", "euSettledStatusContinuousSince2020"],
+      "next": "national_insurance"
+    },
+    {
+      "id": "national_insurance",
+      "title": "National Insurance number",
+      "fields": ["nationalInsuranceNumber"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Your address",
+      "fields": ["addressLine1", "addressLine2", "addressTown", "postcode", "livesAtAnotherAddress"],
+      "next": "previous_address"
+    },
+    {
+      "id": "previous_address",
+      "title": "Previous address (if you moved in the last 12 months)",
+      "fields": ["movedInLastYear", "previousAddress", "previousAddressPostcode", "previousAddressWasOverseasRegistered"],
+      "next": "contact"
+    },
+    {
+      "id": "contact",
+      "title": "Contact details",
+      "fields": ["email", "phone"],
+      "next": "open_register"
+    },
+    {
+      "id": "open_register",
+      "title": "The open register",
+      "fields": ["openRegisterOptOut"],
+      "next": "voting_method"
+    },
+    {
+      "id": "voting_method",
+      "title": "Voting at the polling station",
+      "fields": ["votingMethodInterest"],
+      "next": "unable_to_provide_details"
+    },
+    {
+      "id": "unable_to_provide_details",
+      "title": "If you could not provide some details",
+      "fields": ["cannotProvideDetailsReason"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["declarationAddressConfirmed", "declarationDate"]
+    }
+  ]
+}

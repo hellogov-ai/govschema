@@ -1,0 +1,232 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/ica/passport-application",
+  "version": "1.1.0",
+  "title": "Singapore Passport Application (Adult, MyICA e-Service)",
+  "description": "Apply for or renew a Singapore passport online through the Immigration & Checkpoints Authority's MyICA e-Service (accessed via Singpass), Singapore's sole self-service digital channel for this process. A single online flow covers a first-time application, a routine renewal, and a replacement for a passport that is lost, damaged, expiring/expired, or out of pages, distinguished only by the applicant's stated reason for applying. Scoped to applicants aged 16 and above; applicants below 16 require a parent/legal guardian's consent under a separate part of the process and are out of scope for this version. This document does not submit the application; the live ica.gov.sg source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration & Checkpoints Authority",
+    "abbreviation": "ICA",
+    "url": "https://www.ica.gov.sg/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://www.ica.gov.sg/documents/passport/apply",
+    "retrievedAt": "2026-07-01",
+    "documentRef": "IMM(E)11"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema. Particulars fields (name, identity document number, date/place of birth, sex) are cross-checked against IMM(E)11, the paper form used for the overseas-submission alternative, since the domestic MyICA e-Service screens are Singpass-authenticated and not independently reviewable. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationReason",
+      "label": "Why are you applying?",
+      "type": "enum",
+      "required": true,
+      "description": "first_time_application = you have never held a Singapore passport; current_passport_expiring_or_expired = your passport is expiring within nine months or has already expired; current_passport_pages_full = your passport is running out of pages; current_passport_lost = your passport is lost; current_passport_damaged = your passport is damaged; other = another reason (see otherReasonDetail). The four non-first-time reasons correspond to the checkbox list at IMM(E)11 Part II(d); first_time_application is one of the four eligibility bullets on the online apply page and is not itself a checkbox on IMM(E)11, which only applies to applicants replacing an existing passport.",
+      "sourceRef": "Apply for Passport — 'You may apply for a passport online if'; IMM(E)11 Part II(d)",
+      "validation": { "enum": ["first_time_application", "current_passport_expiring_or_expired", "current_passport_pages_full", "current_passport_lost", "current_passport_damaged", "other"] }
+    },
+    {
+      "name": "otherReasonDetail",
+      "label": "Other reason (please specify)",
+      "type": "string",
+      "required": false,
+      "description": "Required, and must be non-empty, when applicationReason is other.",
+      "sourceRef": "IMM(E)11 Part II(d) — 'Others: ___'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "fullName",
+      "label": "Full name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. As it appears on your NRIC, Birth Certificate, or Citizenship Certificate. The paper form asks for this in BLOCK LETTERS with the surname/family name underlined; the online e-Service does not require that formatting.",
+      "sourceRef": "IMM(E)11 Part I — 'Full Name in BLOCK LETTERS'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Identity document type",
+      "type": "enum",
+      "required": true,
+      "description": "Which document's number is given in identityDocumentNumber. nric = National Registration Identity Card, held by Singapore citizens residing in Singapore; birth_certificate = Birth Certificate, typically used by a citizen who has never held an NRIC (e.g. born or residing overseas); citizenship_certificate = Citizenship Certificate, for a citizen by registration or naturalisation who was not issued a Birth Certificate.",
+      "sourceRef": "IMM(E)11 Part I — 'NRIC/BC/CC No.'",
+      "validation": { "enum": ["nric", "birth_certificate", "citizenship_certificate"] }
+    },
+    {
+      "name": "identityDocumentNumber",
+      "label": "Identity document number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The number of the document selected in identityDocumentType.",
+      "sourceRef": "IMM(E)11 Part I — 'NRIC/BC/CC No.'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD.",
+      "sourceRef": "IMM(E)11 Part I — 'Date of Birth'"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "IMM(E)11 Part I — 'Place of Birth'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. IMM(E)11 offers only Male/Female checkboxes; no third option was found on the form or the apply-online guidance.",
+      "sourceRef": "IMM(E)11 Part I — 'Sex'",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "address",
+      "label": "Residential or mailing address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "IMM(E)11 Part I — 'Address'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile telephone number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "IMM(E)11 Part I — 'Telephone No.' (HP)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "homeTelephoneNumber",
+      "label": "Home telephone number",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Optional; the form's (H) blank is not marked as compulsory the way (HP) is.",
+      "sourceRef": "IMM(E)11 Part I — 'Telephone No.' (H)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Used to notify you of the application outcome.",
+      "sourceRef": "IMM(E)11 Part I — 'Email Address'; Apply for Passport — 'Processing Time'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "hasOtherCitizenship",
+      "label": "Have you obtained citizenship of another country or place?",
+      "type": "boolean",
+      "required": true,
+      "description": "Set true if, in addition to being a Singapore citizen, you hold another citizenship.",
+      "sourceRef": "IMM(E)11 Part II(c)"
+    },
+    {
+      "name": "otherCitizenshipCountry",
+      "label": "Other country or place of citizenship",
+      "type": "string",
+      "required": false,
+      "description": "Required when hasOtherCitizenship is true.",
+      "sourceRef": "IMM(E)11 Part II(c) — 'State country/place'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "photo",
+      "label": "Digital photo",
+      "type": "file",
+      "required": true,
+      "description": "Recent (within the last 3 months), unedited, colour photograph, 400x514 pixels for e-Service upload, in jpg, jpeg, heic, heif, or png format, no larger than 8MB. Must not be altered or enhanced, including modification of facial features.",
+      "sourceRef": "Apply for Passport — 'Documents Required'; Photo Guidelines — 'What is the recommended dimensions for online photo submission'"
+    },
+    {
+      "name": "declarationInformationTrue",
+      "label": "I declare that all information submitted in this application is true, accurate, and complete to the best of my knowledge and belief",
+      "type": "boolean",
+      "required": true,
+      "description": "Concealing relevant information or providing false, inaccurate, or misleading information may result in prosecution and withdrawal of any facilities, rights, or privileges granted under the application.",
+      "sourceRef": "IMM(E)11 Part II(a)"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of declaration",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD, the date the declaration is made.",
+      "sourceRef": "IMM(E)11 Part II — signature block"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "visa_or_mastercard = Visa or MasterCard credit/debit card; amex = American Express credit card; internet_banking_direct_debit = internet direct debit via DBS/POSB, OCBC, UOB, or Standard Chartered Bank internet banking accounts in Singapore; paynow = PayNow. Current fees are published on the live source and are deliberately not encoded here.",
+      "sourceRef": "Apply for Passport — 'Fees' — 'For online applications, payment can be made using either'",
+      "validation": { "enum": ["visa_or_mastercard", "amex", "internet_banking_direct_debit", "paynow"] }
+    }
+  ],
+  "steps": [
+    {
+      "id": "reason",
+      "title": "Why are you applying?",
+      "fields": ["applicationReason", "otherReasonDetail"],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Your particulars",
+      "fields": ["fullName", "identityDocumentType", "identityDocumentNumber", "dateOfBirth", "placeOfBirth", "sex"],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact details",
+      "fields": ["address", "mobileNumber", "homeTelephoneNumber", "email"],
+      "next": "citizenship"
+    },
+    {
+      "id": "citizenship",
+      "title": "Other citizenship",
+      "fields": ["hasOtherCitizenship", "otherCitizenshipCountry"],
+      "next": "photo_upload"
+    },
+    {
+      "id": "photo_upload",
+      "title": "Photo",
+      "fields": ["photo"],
+      "next": "declaration_and_payment"
+    },
+    {
+      "id": "declaration_and_payment",
+      "title": "Declaration and payment",
+      "fields": ["declarationInformationTrue", "declarationDate", "paymentMethod"]
+    }
+  ]
+}

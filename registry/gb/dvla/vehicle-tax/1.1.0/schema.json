@@ -1,0 +1,227 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/dvla/vehicle-tax",
+  "version": "1.1.0",
+  "title": "United Kingdom Vehicle Tax (Vehicle Excise Duty)",
+  "description": "Tax a vehicle (or set up the Direct Debit that keeps it taxed) through the DVLA 'Tax your vehicle' service, which covers the whole of the United Kingdom including Northern Ireland. This document describes the reference-document branch (V11 reminder, V5C log book, or new keeper slip), the MOT and exemption declarations, the Northern-Ireland-only insurance-evidence step, and the payment method/frequency choice, including the Direct Debit bank details it requires. It does not tax the vehicle; the live gov.uk source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/vehicle-tax",
+    "retrievedAt": "2026-07-01"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-01",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the GOV.UK 'Tax your vehicle' landing page and its linked sub-pages: 'Tax your vehicle without a vehicle tax reminder' (gov.uk/tax-vehicle-without-v11-reminder), 'Vehicle tax Direct Debit payments: Set up a Direct Debit' (gov.uk/vehicle-tax-direct-debit) and its 'Change how often you pay' sub-page, and 'Check if a vehicle is exempt from vehicle tax' (gov.uk/vehicle-exempt-from-vehicle-tax). Unlike the DS-82/ITR-E precedents, there is no downloadable paper form: DVLA does not publish a D1-equivalent for vehicle tax, and the online service itself sits behind vehicletax.service.gov.uk with no published field-by-field spec, so this document is transcribed from the surrounding GOV.UK guidance prose rather than a form or an independently captured screen flow. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "referenceDocumentType",
+      "label": "Which document has your reference number?",
+      "type": "enum",
+      "required": true,
+      "description": "v11_reminder = the DVLA renewal reminder letter, email, or text (form D796); v5c_log_book = the vehicle log book (V5C), which must be in the applicant's name; new_keeper_slip = the green 'new keeper' slip from a log book, used when the applicant has just bought the vehicle and has no V5C yet in their name; v62_application = an Application for a Registration Certificate (V62), used when neither of the above is available.",
+      "sourceRef": "Tax your vehicle — What you'll need",
+      "validation": { "enum": ["v11_reminder", "v5c_log_book", "new_keeper_slip", "v62_application"] }
+    },
+    {
+      "name": "referenceNumber",
+      "label": "Reference number",
+      "type": "string",
+      "required": true,
+      "description": "The reference number from the document named in referenceDocumentType: 16 digits from a V11 reminder, 11 digits from a V5C log book (the number in its green section), or 12 digits from a new keeper slip. Handle as a sensitive identifier.",
+      "sourceRef": "Tax your vehicle without a vehicle tax reminder — reference numbers",
+      "validation": { "pattern": "^[0-9]{9,16}$" }
+    },
+    {
+      "name": "vehicleRegistrationNumber",
+      "label": "Vehicle registration number",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's number plate, e.g. AB12 CDE.",
+      "sourceRef": "Tax your vehicle — vehicle details",
+      "validation": { "pattern": "^[A-Z0-9 ]{2,8}$" }
+    },
+    {
+      "name": "motEvidenceType",
+      "label": "MOT evidence",
+      "type": "enum",
+      "required": false,
+      "description": "DVLA may ask for evidence that the vehicle has a valid MOT starting when the tax starts. mot_certificate = a paper or digital MOT certificate; mot_history_screenshot = a screenshot of the vehicle's MOT history; not_required_exempt = the vehicle is MOT-exempt (e.g. some historic vehicles); not_required_new_vehicle = the vehicle is new and not yet due its first MOT. Leave unset if DVLA's online check finds current MOT data automatically (it can take up to 2 days for new MOT results to be updated).",
+      "sourceRef": "Tax your vehicle — evidence of a valid MOT",
+      "validation": { "enum": ["mot_certificate", "mot_history_screenshot", "not_required_exempt", "not_required_new_vehicle"] }
+    },
+    {
+      "name": "exemptFromVehicleTax",
+      "label": "Is the vehicle exempt from vehicle tax?",
+      "type": "boolean",
+      "required": true,
+      "description": "The vehicle must still be taxed (registered with DVLA) even if the rate charged is zero because it is exempt. If true, give the category in exemptionCategory.",
+      "sourceRef": "Check if a vehicle is exempt from vehicle tax — you must tax your vehicle even if you do not have to pay anything"
+    },
+    {
+      "name": "exemptionCategory",
+      "label": "Exemption category",
+      "type": "enum",
+      "required": false,
+      "description": "Required only when exemptFromVehicleTax is true. disabled_use = vehicle used by a disabled person (one vehicle per person); disability_organisation_transport = vehicle (other than an ambulance) used by an organisation providing transport for disabled people; historic_vehicle = built more than 40 years ago (a rolling date; the live source states the current cutoff); mobility_scooter_powered_wheelchair = maximum 8mph on the road and 4mph on footways; mowing_machine = designed and used only for cutting grass; steam_powered = any steam-powered vehicle; agricultural = tractors, agricultural engines, and limited-use vehicles between areas of land occupied by the same person. From 1 April 2025, electric vehicles are no longer exempt (except heavy goods vehicles over 3,500kg) and are not included in this enumeration.",
+      "sourceRef": "Check if a vehicle is exempt from vehicle tax — categories",
+      "validation": { "enum": ["disabled_use", "disability_organisation_transport", "historic_vehicle", "mobility_scooter_powered_wheelchair", "mowing_machine", "steam_powered", "agricultural"] }
+    },
+    {
+      "name": "isNorthernIrelandKeeper",
+      "label": "Is the vehicle kept in Northern Ireland?",
+      "type": "boolean",
+      "required": false,
+      "description": "Applying in person at a Post Office in Northern Ireland requires an original MOT test certificate and a paper copy of an insurance certificate or cover note, in addition to the standard reference document.",
+      "sourceRef": "Tax your vehicle — Northern Ireland"
+    },
+    {
+      "name": "insuranceEvidenceProvided",
+      "label": "Insurance certificate or cover note provided?",
+      "type": "boolean",
+      "required": false,
+      "description": "Applicable only when isNorthernIrelandKeeper is true and the application is made at a Post Office; a paper copy of an insurance certificate or cover note is required.",
+      "sourceRef": "Tax your vehicle — Northern Ireland (Post Office documents)"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "How do you want to pay?",
+      "type": "enum",
+      "required": true,
+      "description": "direct_debit = DVLA collects payments automatically at the frequency chosen in paymentFrequency; debit_or_credit_card = a single upfront payment. Direct Debit cannot be set up by phone.",
+      "sourceRef": "Tax your vehicle — How to pay",
+      "validation": { "enum": ["direct_debit", "debit_or_credit_card"] }
+    },
+    {
+      "name": "paymentFrequency",
+      "label": "How often do you want to pay?",
+      "type": "enum",
+      "required": true,
+      "description": "twelve_months and six_months are single upfront payments available with either payment method. monthly_direct_debit and six_monthly_direct_debit are only available with Direct Debit and carry a 5% surcharge over the annual rate; annual_direct_debit is a single yearly Direct Debit collection with no surcharge. To change frequency later, the existing Direct Debit must be cancelled and the vehicle taxed again.",
+      "sourceRef": "Vehicle tax Direct Debit payments — Set up a Direct Debit / Change how often you pay",
+      "validation": { "enum": ["twelve_months", "six_months", "monthly_direct_debit", "six_monthly_direct_debit", "annual_direct_debit"] }
+    },
+    {
+      "name": "applicantDateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD. Required only when setting up a Direct Debit (paymentMethod is direct_debit).",
+      "sourceRef": "Tax your vehicle — what you need for Direct Debit"
+    },
+    {
+      "name": "applicantAddressLine1",
+      "label": "Address — street address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when setting up a Direct Debit (paymentMethod is direct_debit).",
+      "sourceRef": "Tax your vehicle — what you need for Direct Debit",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "applicantAddressTown",
+      "label": "Address — town or city",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Tax your vehicle — what you need for Direct Debit",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "applicantPostcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. UK postcode, e.g. SW1A 1AA. Required only when setting up a Direct Debit.",
+      "sourceRef": "Tax your vehicle — what you need for Direct Debit",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "bankAccountHolderName",
+      "label": "Name on the bank or building society account",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Required only when paymentMethod is direct_debit.",
+      "sourceRef": "Vehicle tax Direct Debit payments — Set up a Direct Debit",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "bankSortCode",
+      "label": "Sort code",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. 6 digits, e.g. 123456. Required only when paymentMethod is direct_debit.",
+      "sourceRef": "Vehicle tax Direct Debit payments — Set up a Direct Debit",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Account number",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. 8 digits. Required only when paymentMethod is direct_debit.",
+      "sourceRef": "Vehicle tax Direct Debit payments — Set up a Direct Debit",
+      "validation": { "pattern": "^[0-9]{8}$" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "identify_vehicle",
+      "title": "Identify the vehicle and reference document",
+      "fields": ["referenceDocumentType", "referenceNumber", "vehicleRegistrationNumber"],
+      "next": "mot_and_exemption"
+    },
+    {
+      "id": "mot_and_exemption",
+      "title": "MOT and exemption",
+      "fields": ["motEvidenceType", "exemptFromVehicleTax", "exemptionCategory"],
+      "next": "northern_ireland"
+    },
+    {
+      "id": "northern_ireland",
+      "title": "Northern Ireland documents (if applicable)",
+      "fields": ["isNorthernIrelandKeeper", "insuranceEvidenceProvided"],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Payment method and frequency",
+      "fields": ["paymentMethod", "paymentFrequency"],
+      "next": "direct_debit_details"
+    },
+    {
+      "id": "direct_debit_details",
+      "title": "Direct Debit details (if paying by Direct Debit)",
+      "fields": [
+        "applicantDateOfBirth",
+        "applicantAddressLine1",
+        "applicantAddressTown",
+        "applicantPostcode",
+        "bankAccountHolderName",
+        "bankSortCode",
+        "bankAccountNumber"
+      ]
+    }
+  ]
+}
