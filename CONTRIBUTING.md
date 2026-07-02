@@ -30,7 +30,15 @@ Contributions fall into a few kinds; each has a short path.
    ```sh
    node tools/validate.mjs
    ```
-5. Open a pull request using the schema PR template.
+5. If this schema came from a `discovery/catalog.json` candidate, flip its
+   `status` to `published` and regenerate the client index — every registry
+   change and every catalog status flip must be reflected here:
+   ```sh
+   cd tools/govschema-client && npm run build-index
+   ```
+   Commit the resulting `registry-index.json` diff. CI fails the build if it's
+   stale (`.github/workflows/validate.yml`).
+6. Open a pull request using the schema PR template.
 
 ## Correcting / re-verifying a schema
 
@@ -57,3 +65,6 @@ decisions — see [GOVERNANCE.md](./GOVERNANCE.md).
 - [ ] `verification` names a real practice and a current `lastVerifiedAt`.
 - [ ] No personal data; no affiliation/endorsement claims.
 - [ ] Version bump (if any) follows VERSIONING.md.
+- [ ] `registry-index.json` regenerated (`npm run build-index` in
+      `tools/govschema-client/`) if a registry document changed or a catalog
+      entry flipped to `published`.

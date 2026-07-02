@@ -125,8 +125,12 @@ A candidate becomes a schema when someone:
    live source, per [`spec/v0.1`](../spec/v0.1) and
    [`registry/README.md`](../registry/README.md);
 3. attaches a verification record using a documented
-   [practice](../practices); and
-4. passes `node tools/validate.mjs`.
+   [practice](../practices);
+4. passes `node tools/validate.mjs`; and
+5. flips the candidate's `status` to `published` here in `catalog.json`, and
+   regenerates the client index (`npm run build-index` in
+   [`tools/govschema-client`](../tools/govschema-client)) in the same PR — CI
+   fails the build if it's stale.
 
 Authoring is tracked as separate issues, not in this directory. This catalog is
 the backlog those issues draw from.
