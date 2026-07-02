@@ -1,0 +1,189 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/dvla/vehicle-keeper-change-v5c",
+  "version": "1.0.0",
+  "title": "United Kingdom Private Sale or Transfer of a Vehicle (Change of Registered Keeper, V5C)",
+  "description": "A private seller (or someone gifting/transferring a vehicle to a family member, friend, or other person) notifies DVLA that they are no longer the vehicle's registered keeper, through the online 'Private sale of a vehicle (Keeper to keeper)' service. It models the vehicle look-up (registration number plus the V5C log book's document reference number), the two eligibility gates that route an applicant to a different DVLA channel instead, the sold-versus-gifted distinction, the new keeper's details, and the optional email confirmations for both parties. It does not model a sale or gift to a motor trader, garage, scrapyard, or insurer (a separate DVLA digital service, transfer-vehicle-to-trade.service.gov.uk), the buyer's own registration steps, the postal no-log-book fallback, or vehicle tax. It does not submit the notification; the live gov.uk source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/sold-bought-vehicle",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "V5C; online service at https://change-private-vehicle-sale.service.gov.uk/"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live gov.uk 'Tell DVLA you've sold, transferred or bought a vehicle' smart-answer wizard (all branches walked: motor trader yes/no, sold/transferred/scrapped/bought), and from the live, unauthenticated first screen of the DVLA online service it links to for a private seller, change-private-vehicle-sale.service.gov.uk (exact HTML form field names/ids captured; a mock vehicle registration number and V5C reference number were submitted and correctly rejected with 'Unable to find a vehicle record', since the service validates against real DVLA vehicle records and has no public test/sandbox mode). Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "soldToMotorTraderOrGarage",
+      "label": "Have you sold your vehicle to a motor trader or garage?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "The online service's own warning banner states this service must not be used for a motor-trade sale; that transaction uses a separate DVLA digital service instead. If true, the flow ends.",
+      "sourceRef": "Private sale of a vehicle (Keeper to keeper) — 'Do not use this service if you have sold your vehicle to a motor trader or garage. If you have sold your vehicle to a motor trader or garage then please select this link.'"
+    },
+    {
+      "name": "buyerRegisteringVehicleAbroad",
+      "label": "Is the new keeper registering the vehicle abroad (including the Channel Islands, Isle of Man, or Ireland)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "The guidance states this service cannot be used in that case; the seller must fill in the log book's 'permanent export' section instead. If true, the flow ends.",
+      "sourceRef": "Sold your vehicle to a private individual or business — 'You cannot use this service if the buyer is registering the vehicle abroad... You need to fill in the 'permanent export' section instead.'"
+    },
+    {
+      "name": "vehicleRegistrationNumber",
+      "label": "Vehicle registration number",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's number plate, e.g. AB12CDE. Used with v5cDocumentReferenceNumber to look up the vehicle against DVLA's own record before the rest of the notification can proceed.",
+      "sourceRef": "Private sale of a vehicle (Keeper to keeper) — 'Details of the vehicle being sold' — input name wizard_change_keeper_capture_vehicle_details[vehicle_registration_number], maxlength 8, uppercase alphanumeric only",
+      "validation": { "pattern": "^[A-Z0-9]{2,8}$" }
+    },
+    {
+      "name": "v5cDocumentReferenceNumber",
+      "label": "Latest V5C registration certificate (logbook) document reference number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The 11-digit reference number printed on the vehicle's most recently issued V5C log book, found under 'Registered keeper' on the document. Must come from the latest V5C issued for the vehicle — an older, superseded V5C's reference number will be rejected.",
+      "sourceRef": "Private sale of a vehicle (Keeper to keeper) — 'Latest V5C registration certificate (logbook) document reference number' — input name wizard_change_keeper_capture_vehicle_details[vehicle_v5_number], numeric only, maxlength 11",
+      "validation": { "pattern": "^[0-9]{11}$" }
+    },
+    {
+      "name": "transactionType",
+      "label": "What are you doing with the vehicle?",
+      "type": "enum",
+      "required": true,
+      "description": "sold_privately = sold to a person or business, for money. transferred_or_gifted = put into someone else's name (for example a family member or friend) without necessarily charging them; the source directs the seller to use the new keeper's name as the person 'sold' the vehicle to even when no money changed hands.",
+      "sourceRef": "Tell DVLA you've sold, transferred or bought a vehicle — 'Sold it' / 'Put it into someone else's name, including transferring it to a family member or friend' (both route to the same online service)",
+      "validation": { "enum": ["sold_privately", "transferred_or_gifted"] }
+    },
+    {
+      "name": "newKeeperFullName",
+      "label": "New keeper's full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name of the person or business the vehicle is being sold or transferred to. DVLA registers this person as the vehicle's new keeper and posts them a new V5C.",
+      "sourceRef": "Put your vehicle into someone else's name — 'Use the new keeper's name as the person you've 'sold' the vehicle to, even if you did not charge them any money for it.'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "newKeeperAddressLine1",
+      "label": "New keeper's address — street address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Not itself quoted screen-by-screen in the guidance prose (the online screens beyond vehicle look-up could not be reached without a real, matching vehicle record); included because DVLA states it posts 'a new log book within 5 to 7 working days' to the new keeper, which requires an address. See VERIFICATION.md honesty flag.",
+      "sourceRef": "Sold your vehicle to a private individual or business — 'The new keeper should get... a new log book within 5 to 7 working days' (address inferred from this outcome, not directly observed as a screen field)",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "newKeeperAddressTown",
+      "label": "New keeper's address — town or city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Sold your vehicle to a private individual or business — 'The new keeper should get... a new log book within 5 to 7 working days' (address inferred from this outcome, not directly observed as a screen field)",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "newKeeperPostcode",
+      "label": "New keeper's address — postcode",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "UK postcode, e.g. SW1A 1AA.",
+      "sourceRef": "Sold your vehicle to a private individual or business — 'The new keeper should get... a new log book within 5 to 7 working days' (address inferred from this outcome, not directly observed as a screen field)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "sellerEmailAddress",
+      "label": "Your email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional. If given, DVLA sends an email confirmation to the seller in addition to the confirmation letter.",
+      "sourceRef": "Sold your vehicle to a private individual or business — 'You'll be sent: an email confirmation (if you gave your email address)'"
+    },
+    {
+      "name": "newKeeperEmailAddress",
+      "label": "New keeper's email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional. If given, DVLA sends an email confirmation to the new keeper in addition to the new V5C.",
+      "sourceRef": "Sold your vehicle to a private individual or business — 'The new keeper should get: an email confirmation (if you gave their email address)'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Eligibility",
+      "fields": ["soldToMotorTraderOrGarage", "buyerRegisteringVehicleAbroad"],
+      "transitions": [
+        { "to": null, "exitReason": "use-transfer-to-trade-service-instead", "when": { "field": "soldToMotorTraderOrGarage", "equals": true } },
+        { "to": null, "exitReason": "buyer-registering-abroad-use-permanent-export-instead", "when": { "field": "buyerRegisteringVehicleAbroad", "equals": true } },
+        { "to": "vehicle_lookup" }
+      ]
+    },
+    {
+      "id": "vehicle_lookup",
+      "title": "Details of the vehicle being sold",
+      "fields": ["vehicleRegistrationNumber", "v5cDocumentReferenceNumber"],
+      "next": "transaction_and_new_keeper"
+    },
+    {
+      "id": "transaction_and_new_keeper",
+      "title": "Transaction type and new keeper details",
+      "fields": [
+        "transactionType",
+        "newKeeperFullName",
+        "newKeeperAddressLine1",
+        "newKeeperAddressTown",
+        "newKeeperPostcode"
+      ],
+      "next": "confirmation_emails"
+    },
+    {
+      "id": "confirmation_emails",
+      "title": "Email confirmations (optional)",
+      "fields": ["sellerEmailAddress", "newKeeperEmailAddress"]
+    }
+  ]
+}
