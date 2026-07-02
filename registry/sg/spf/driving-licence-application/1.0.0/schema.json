@@ -1,0 +1,408 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/spf/driving-licence-application",
+  "version": "1.0.0",
+  "title": "Singapore Driving Licence — Application, Replacement, and Renewal (SPF e-Services)",
+  "description": "Apply for a first Qualified Driving Licence after passing the required tests, replace a lost/damaged/defaced licence, or (for eligible foreigners) renew a Photocard Driving Licence, via the Singapore Police Force Traffic Police e-Services (login with Singpass), on behalf of the Singapore Police Force. This is the DMV analogue to us/ca/dmv/drivers-license-renewal, gb/dvla/driving-licence-renewal-photocard, ie/dttas/driving-licence-renewal, ca/on/mto/drivers-licence-renewal, nz/nzta/drivers-licence-renewal, and au/nsw/service-nsw/driver-licence-renewal, and closes out the DMV vertical's last-but-one open jurisdiction candidate. One document models all three application types (a reason-style routing field, the same pattern used by sg/ica/passport-application), since SPF's own source page presents them as three sections of one e-Services offering rather than three separate services. Scoped to: (1) new-licence applicants who have already passed the required theory/practical tests and training (this document does not model booking or sitting those tests, which happen at a driving centre); (2) Singapore Citizens, Permanent Residents, or foreigners holding a qualifying pass replacing a lost, damaged, or defaced licence; and (3) foreigners holding a valid work pass (work permit, employment pass, student pass, dependant pass, or another pass showing extended stay) renewing a Photocard Driving Licence, including the additional medical-certification gate for renewal applicants aged 65 or above. Out of scope, and not modelled: the driving-centre test-booking/training process itself; renewal of a Singapore Citizen's or Permanent Resident's own licence (the source page's 'Renewal' section is titled, and scoped, to foreigners only — see VERIFICATION.md for this open question); the in-person endorsement-sticker process for an existing licence holder adding a new class; the in-person Singapore Safety Driving Centre renewal path required for Class 4/4A/5 licences when the foreign renewal applicant is 65 or above; and applicants without Singpass access (no alternative channel is described by this source). This document does not submit any application, replacement, or renewal; the live police.gov.sg e-Services and SPF sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Traffic Police, Singapore Police Force",
+    "abbreviation": "SPF",
+    "url": "https://www.police.gov.sg"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://www.police.gov.sg/knowledge-hub/traffic/traffic-matters/application-replacement-and-renewal-of-singapore-driving-licence",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "No form number — online self-service via SPF Traffic Police e-Services (login with Singpass)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the official police.gov.sg 'Application, Replacement, and Renewal of Singapore Driving Licence' Knowledge Hub page (fetched live, raw HTML, 2026-07-02, converted to plain text for direct quotation — the same discipline used for au/nsw/service-nsw/driver-licence-renewal). Status remains 'draft'. The live, Singpass-authenticated e-Services screens themselves were not independently reachable pre-authentication, so the screen-by-screen field list is not confirmed beyond what this guidance page states. See VERIFICATION.md, including an open question about why the source's own 'Renewal' section is scoped to foreigners only."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationType",
+      "label": "What would you like to do?",
+      "type": "enum",
+      "required": true,
+      "description": "new_application = apply for a first Qualified Driving Licence after passing the required tests; replacement = replace a lost, damaged, or defaced licence; renewal_foreigner_photocard = renew a foreigner's Photocard Driving Licence.",
+      "sourceRef": "Content Overview — 'Applying for a Singapore Driving Licence'; 'Replacing a Singapore Driving Licence'; 'Renewal of Photocard Driving Licence for Foreigners'",
+      "validation": {
+        "enum": ["new_application", "replacement", "renewal_foreigner_photocard"]
+      }
+    },
+    {
+      "name": "hasSingpassAccess",
+      "label": "Do you have Singpass to log in to SPF e-Services?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Every applicant group and every application type on the source page applies via 'e-Services / Log in using SingPass'; no alternative non-Singpass channel is independently described on this page (unlike, for example, sg/acra/sole-proprietorship-registration's Bizfile source, which does describe a corporate-service-provider alternative for applicants without Singpass). Modelled conservatively as a gate rather than asserting an undocumented alternative path. If false, the flow ends here.",
+      "sourceRef": "How to Apply — 'Apply via: e-Services / Log in using SingPass' (repeated identically in the Replacement and Renewal tables)"
+    },
+    {
+      "name": "applicantGroup",
+      "label": "Which of these applies to you?",
+      "type": "enum",
+      "required": true,
+      "description": "singapore_citizen_or_pr = Singapore Citizen or Permanent Resident; foreign_work_pass_holder = foreigner holding a valid work pass issued by the Ministry of Manpower (MOM); foreign_student_or_ltvp_holder = foreigner holding a Student Pass or Long-Term Visit Pass issued by the Immigration & Checkpoints Authority (ICA).",
+      "sourceRef": "How to Apply — 'Singapore Citizens & Permanent Residents'; 'Foreigners holding Valid work passes issued by the Ministry of Manpower (MOM); or Student / Long-Term Visit passes issued by the Immigration & Checkpoints Authority (ICA)'",
+      "validation": {
+        "enum": ["singapore_citizen_or_pr", "foreign_work_pass_holder", "foreign_student_or_ltvp_holder"]
+      }
+    },
+    {
+      "name": "licenceClassApplied",
+      "label": "Licence class you are applying for",
+      "type": "enum",
+      "required": true,
+      "description": "The class of Singapore driving licence being applied for.",
+      "sourceRef": "Relevant Test before Applying — 'Class of Licence'; How to Renew for WP holders 65 years old & above — '2B, 2A, 2, 3, 3A' and '4, 4A, 5'",
+      "validation": {
+        "enum": ["2B", "2A", "2", "3", "3A", "4", "4A", "5"]
+      }
+    },
+    {
+      "name": "hasPassedBasicTheoryTest",
+      "label": "Have you passed the Basic Theory Test?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Required for all licence classes before applying for a new driving licence. If false, the flow ends; tests are booked and sat at a driving centre, not modelled here.",
+      "sourceRef": "Relevant Test before Applying — 'All: Basic Theory Test'"
+    },
+    {
+      "name": "hasPassedFinalTheoryTest",
+      "label": "Have you passed the Final Theory Test?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Required for all licence classes before applying for a new driving licence. If false, the flow ends; tests are booked and sat at a driving centre, not modelled here.",
+      "sourceRef": "Relevant Test before Applying — 'All: Final Theory Test'"
+    },
+    {
+      "name": "isApplyingForMotorcycleClass",
+      "label": "Is the licence class you are applying for a motorcycle class (2B, 2A, or 2)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Determines whether the Riding Theory Test requirement applies. The 2B/2A/2-are-motorcycle-classes mapping is common knowledge in Singapore's licensing scheme but is not itself spelled out verbatim on this source page (which only says the Riding Theory Test is 'for motorcycle learner motorists only') — asked directly rather than hard-coded against licenceClassApplied, so this document does not silently assert an unsourced class-to-vehicle-type mapping. See VERIFICATION.md.",
+      "sourceRef": "Relevant Test before Applying — 'Riding Theory Test (for motorcycle learner motorists only)'"
+    },
+    {
+      "name": "hasPassedRidingTheoryTest",
+      "label": "Have you passed the Riding Theory Test?",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "description": "Required only for motorcycle learner motorists. Required when isApplyingForMotorcycleClass is true. If false in that case, the flow ends; tests are booked and sat at a driving centre, not modelled here.",
+      "sourceRef": "Relevant Test before Applying — 'Riding Theory Test (for motorcycle learner motorists only)'",
+      "requiredWhen": { "field": "isApplyingForMotorcycleClass", "equals": true }
+    },
+    {
+      "name": "hasCompletedSimulatorTraining",
+      "label": "Have you completed Simulator Training?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Listed under 'All' licence classes in the source's test/training table. If false, the flow ends; training is completed at a driving centre, not modelled here.",
+      "sourceRef": "Relevant Test before Applying — 'All: ... Simulator Training'"
+    },
+    {
+      "name": "hasCompletedExpresswayFamiliarisationRide",
+      "label": "Have you completed the Expressway Familiarisation Ride?",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "description": "Required only for Class 2B. Required when licenceClassApplied is 2B. If false in that case, the flow ends; this training is completed at a driving centre, not modelled here.",
+      "sourceRef": "Relevant Test before Applying — 'For Class 2B only: Expressway Familiarisation Ride'",
+      "requiredWhen": { "field": "licenceClassApplied", "equals": "2B" }
+    },
+    {
+      "name": "hasPassedPracticalTest",
+      "label": "Have you passed the practical driving or riding test?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Required for all licence classes before applying for a new driving licence. If false, the flow ends; the test is booked and sat at a driving centre, not modelled here.",
+      "sourceRef": "Relevant Test before Applying — 'All: ... Practical driving or riding test'"
+    },
+    {
+      "name": "enrolledAsLearnerAfterOct2018",
+      "label": "Did you enrol as a learner motorist after 1 October 2018?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the photograph taken at enrolment will be printed on the new licence, with no further photo action needed. If false, the applicant must have a photograph taken at the driving centre before applying, which this document does not itself carry out.",
+      "sourceRef": "How to Apply — 'Note: If you enrolled as a learner motorist after 1 Oct 2018, your photograph taken then will be printed on your driving licence. If you enrolled before 1 Oct 2018, please have your photograph taken at the driving centre before applying for your driving licence.'"
+    },
+    {
+      "name": "replacementReason",
+      "label": "Why are you replacing your licence?",
+      "type": "enum",
+      "required": true,
+      "description": "The reason the current licence is being replaced.",
+      "sourceRef": "Replacing a Singapore Driving Licence — 'If your valid Singapore Driving Licence is lost, damaged, or defaced, you will need to have it replaced.'",
+      "validation": {
+        "enum": ["lost", "damaged", "defaced"]
+      }
+    },
+    {
+      "name": "existingLicenceNumber",
+      "label": "Current driving licence number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The licence number of the licence being replaced or renewed, used to identify the applicant's record via SPF e-Services (login with Singpass). Not directly named as a specific field by the source, which describes the application channel only as 'e-Services / Log in using SingPass' — included by analogy to every other online driver-licence replacement/renewal in this registry (see VERIFICATION.md), the same reasonable-inference discipline as au/nsw/service-nsw/driver-licence-renewal's nswDriverLicenceNumber.",
+      "sourceRef": "How to Replace — 'Apply via: e-Services / Log in using SingPass'; How to Renew — 'Renew via: e-Services / Log in using SingPass'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "foreignerPassType",
+      "label": "Which pass or document shows your extended stay in Singapore?",
+      "type": "enum",
+      "required": true,
+      "description": "The valid work pass, or other pass/document, held by the foreign renewal applicant.",
+      "sourceRef": "Renewal of Photocard Driving Licence for Foreigners — 'All foreigners holding valid work permits (WP) or passes'; Traffic Police will reject ... 'the work permit / employment pass / student pass / dependent pass and/or other documents showing your extended stay in Singapore'",
+      "validation": {
+        "enum": ["work_permit", "employment_pass", "student_pass", "dependant_pass", "other_extended_stay_document"]
+      }
+    },
+    {
+      "name": "licenceExpiryExceedsThreeYears",
+      "label": "Has your Singapore driving licence's expiry date exceeded more than 3 years?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Traffic Police will reject the renewal application if the licence's expiry date has exceeded more than 3 years. If true, the flow ends here.",
+      "sourceRef": "Renewal of Photocard Driving Licence for Foreigners — 'Traffic Police will reject the application for renewal of driving licence for foreigners if: The expiry date of your Singapore driving licence has exceeded more than 3 years'"
+    },
+    {
+      "name": "passValidityLessThanOneMonthFromApplicationDate",
+      "label": "Is the expiry date of your work permit/employment pass/student pass/dependant pass (or other document showing extended stay) less than one month from today?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Traffic Police will reject the renewal application if the pass or document's expiry date is less than one month from the date of application. If true, the flow ends here.",
+      "sourceRef": "Renewal of Photocard Driving Licence for Foreigners — 'the expiry date of the work permit / employment pass / student pass / dependent pass and/or other documents showing your extended stay in Singapore is less than one month from the date of application for the renewal of driving licence'"
+    },
+    {
+      "name": "applicantAge65OrAbove",
+      "label": "Are you 65 years old or above?",
+      "type": "boolean",
+      "required": true,
+      "description": "Determines whether the additional medical-certification gate and in-person heavy/bus-class renewal path apply.",
+      "sourceRef": "How to Renew for WP holders 65 years old & above — 'If you possess a valid Singapore Driving Licence and are 65 years old and above, you need to be certified fit to drive...'"
+    },
+    {
+      "name": "renewalIncludesHeavyOrBusClass",
+      "label": "Do the licence classes you are renewing include Class 4, 4A, or 5?",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "description": "Required when applicantAge65OrAbove is true. Applicants 65 or above renewing Class 4, 4A, or 5 must do so in person at the Singapore Safety Driving Centre (with an accepted medical examination report, a Proficiency Driving Test booking, the current licence, pass/document evidence, and a compliant photo) rather than via e-Services — an in-person path this document does not model. If true, the flow ends here.",
+      "sourceRef": "How to Renew for WP holders 65 years old & above — '2B, 2A, 2, 3, 3A: e-Services'; '4, 4A, 5: Singapore Safety Driving Centre'",
+      "requiredWhen": { "field": "applicantAge65OrAbove", "equals": true }
+    },
+    {
+      "name": "medicalExaminationReportAccepted",
+      "label": "Has your medical examination report been accepted?",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "description": "Required when applicantAge65OrAbove is true. Applicants 65 or above must be certified fit to drive by a Singapore-registered medical practitioner and have their medical examination report accepted before renewing online. If false in that case, the flow ends here.",
+      "sourceRef": "How to Renew for WP holders 65 years old & above — 'Completed medical examination reports must be submitted online to the Traffic Police... After doing so, you may renew of your driving licence.'",
+      "requiredWhen": { "field": "applicantAge65OrAbove", "equals": true }
+    },
+    {
+      "name": "renewalLicenceClasses",
+      "label": "Licence class(es) being renewed",
+      "type": "string",
+      "required": true,
+      "description": "One or more licence classes being renewed, as a comma-separated list drawn from: 2B, 2A, 2, 3, 3A, 4, 4A, 5. Modelled as a comma-separated string rather than a repeating field, the same convention used by us/uscis/permanent-resident-card-replacement-i90's race/ethnicity field, since GovSchema v0.3 fields are flat (no array type; see SPEC.md §6.3).",
+      "sourceRef": "How to Renew for WP holders 65 years old & above — '2B, 2A, 2, 3, 3A'; '4, 4A, 5'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "medicalExaminationReport",
+      "label": "Medical examination report",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "applicantAge65OrAbove", "equals": true },
+      "belongsTo": "applicant",
+      "acceptedTypes": ["jpeg", "pdf"],
+      "issuingAuthority": "Singapore-registered medical practitioner",
+      "sourceRef": "How to Renew for WP holders 65 years old & above — 'Completed medical examination reports must be submitted online to the Traffic Police in JPEG or PDF format.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "service_selection",
+      "title": "What would you like to do?",
+      "fields": ["applicationType", "hasSingpassAccess"],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "no-singpass-access",
+          "when": { "field": "hasSingpassAccess", "equals": false }
+        },
+        {
+          "to": "new_application_eligibility",
+          "when": { "field": "applicationType", "equals": "new_application" }
+        },
+        {
+          "to": "replacement_details",
+          "when": { "field": "applicationType", "equals": "replacement" }
+        },
+        {
+          "to": "renewal_eligibility"
+        }
+      ]
+    },
+    {
+      "id": "new_application_eligibility",
+      "title": "New licence — tests and training completed",
+      "fields": [
+        "licenceClassApplied",
+        "hasPassedBasicTheoryTest",
+        "hasPassedFinalTheoryTest",
+        "isApplyingForMotorcycleClass",
+        "hasPassedRidingTheoryTest",
+        "hasCompletedSimulatorTraining",
+        "hasCompletedExpresswayFamiliarisationRide",
+        "hasPassedPracticalTest"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "required-tests-not-yet-passed",
+          "when": {
+            "any": [
+              { "field": "hasPassedBasicTheoryTest", "equals": false },
+              { "field": "hasPassedFinalTheoryTest", "equals": false },
+              { "field": "hasCompletedSimulatorTraining", "equals": false },
+              { "field": "hasPassedPracticalTest", "equals": false }
+            ]
+          }
+        },
+        {
+          "to": null,
+          "exitReason": "riding-theory-test-not-passed",
+          "when": {
+            "all": [
+              { "field": "isApplyingForMotorcycleClass", "equals": true },
+              { "field": "hasPassedRidingTheoryTest", "equals": false }
+            ]
+          }
+        },
+        {
+          "to": null,
+          "exitReason": "expressway-familiarisation-ride-not-completed",
+          "when": {
+            "all": [
+              { "field": "licenceClassApplied", "equals": "2B" },
+              { "field": "hasCompletedExpresswayFamiliarisationRide", "equals": false }
+            ]
+          }
+        },
+        {
+          "to": "new_application_details"
+        }
+      ]
+    },
+    {
+      "id": "new_application_details",
+      "title": "Your application details",
+      "fields": ["applicantGroup", "enrolledAsLearnerAfterOct2018"]
+    },
+    {
+      "id": "replacement_details",
+      "title": "Replacement details",
+      "fields": ["applicantGroup", "replacementReason", "existingLicenceNumber"]
+    },
+    {
+      "id": "renewal_eligibility",
+      "title": "Renewal eligibility (foreigners)",
+      "fields": [
+        "foreignerPassType",
+        "existingLicenceNumber",
+        "licenceExpiryExceedsThreeYears",
+        "passValidityLessThanOneMonthFromApplicationDate",
+        "applicantAge65OrAbove",
+        "renewalIncludesHeavyOrBusClass",
+        "medicalExaminationReportAccepted"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "licence-expiry-exceeds-three-years",
+          "when": { "field": "licenceExpiryExceedsThreeYears", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "pass-validity-insufficient",
+          "when": { "field": "passValidityLessThanOneMonthFromApplicationDate", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "age65-heavy-or-bus-class-requires-in-person",
+          "when": {
+            "all": [
+              { "field": "applicantAge65OrAbove", "equals": true },
+              { "field": "renewalIncludesHeavyOrBusClass", "equals": true }
+            ]
+          }
+        },
+        {
+          "to": null,
+          "exitReason": "medical-report-not-yet-accepted",
+          "when": {
+            "all": [
+              { "field": "applicantAge65OrAbove", "equals": true },
+              { "field": "medicalExaminationReportAccepted", "equals": false }
+            ]
+          }
+        },
+        {
+          "to": "renewal_details"
+        }
+      ]
+    },
+    {
+      "id": "renewal_details",
+      "title": "Licence classes being renewed",
+      "fields": ["renewalLicenceClasses"]
+    }
+  ]
+}
