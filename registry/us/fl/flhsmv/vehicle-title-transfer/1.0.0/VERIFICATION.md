@@ -22,11 +22,13 @@ not a load-bearing description of the live process.
 
 ## Why this candidate was added
 
-[GOV-664](https://govschema.org)'s approved plan (§3, "Florida wave") calls for a
-first wave of `us/fl/*` schemas, worked in FL.1→FL.7 order; this document, FL.1
-(vehicle title transfer, Form HSMV 82040), is the first `us/fl/*` schema in the
-registry and establishes the `us/fl/flhsmv/...` registry path for the subdivision
-`US-FL`, mirroring the existing `us/ca/dmv/vehicle-title-transfer` sibling
+GOV-664's approved plan (§3, "Florida wave") lists FLHSMV driver license
+renewal, vehicle registration renewal, then vehicle title transfer (HSMV 82040) as
+FL.1, FL.2, and FL.3 respectively; this document is FL.3. FL.1
+(`us/fl/flhsmv/drivers-license-renewal`) and FL.2
+(`us/fl/flhsmv/vehicle-registration-renewal`, GOV-680, merged via PR #119) already
+established the `us/fl/flhsmv/...` registry path for the subdivision `US-FL`. This
+document mirrors the existing `us/ca/dmv/vehicle-title-transfer` sibling
 (GOV-282/GOV-301) as the closest same-vertical precedent for scope, field-naming,
 and out-of-scope conventions.
 
