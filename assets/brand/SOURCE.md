@@ -1,9 +1,11 @@
 # Brand asset provenance
 
-The GovSchema mark — navy square, white `{ }` brace — is the canonical brand
+The GovSchema mark — ink square, paper `{ }` brace — is the canonical brand
 mark established for [govschema.org](https://govschema.org) (GOV-281, refined
-geometry GOV-208). These files are a direct copy from `govschema-landing`, not
-a redraw, so the standard repo and the marketing site share one identity.
+geometry GOV-208, board-confirmed GOV-197, recolored onto Direction C
+ink/paper GOV-303 Phase 6, was navy/white). These files are a direct copy from
+`govschema-landing`, not a redraw, so the standard repo and the marketing site
+share one identity.
 
 | File               | Purpose                                                          |
 | ------------------ | ----------------------------------------------------------------- |
