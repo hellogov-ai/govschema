@@ -1,0 +1,429 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/doc/annual-report",
+  "version": "1.0.0",
+  "title": "Florida Annual Report (Sunbiz)",
+  "description": "Annual report filed with the Florida Department of State, Division of Corporations (Sunbiz) to maintain a business entity's active status for the year. It is required every year whether or not any information has changed, and it is not a financial statement. Covers profit corporations, nonprofit corporations, limited liability companies (LLCs), limited partnerships (LPs), and limited liability limited partnerships (LLLPs) — the filing fee and some rules differ by entity type. Models the e-filing wizard's data per the Division's own published filing instructions: the entity's document number, confirming/updating its principal office and mailing addresses, its registered agent and registered office, its FEIN, at least one principal (officer, director, manager, authorized member, or general partner), the optional Certificate of Status add-on, and the notification email address. It does not model changing the entity's name (not permitted on this filing; requires the applicable amendment form), adding or removing a general partner of an LP/LLLP (also an amendment, not this filing), the separate Reinstatement filing required after administrative dissolution, or the Amended Annual Report filed to correct an already-posted report.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-FL"
+  },
+  "authority": {
+    "name": "Florida Department of State, Division of Corporations",
+    "abbreviation": "DOC",
+    "url": "https://dos.fl.gov/sunbiz/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://dos.fl.gov/sunbiz/manage-business/efile/annual-report/instructions/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Annual Report Instructions; File Annual Report (deadlines, late fee, FAQs); Annual Report Fees table"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-02",
+    "notes": "Source-derived reference schema authored from three live dos.fl.gov pages, all fetched directly with curl at HTTP 200 with no block encountered: 'File Annual Report' (deadlines, the $400 late fee, non-filing consequences, payment options, the fee table), 'Annual Report Instructions' (the field-by-field instructions the Division publishes for its own e-filing wizard: document number, entity name, FEIN, principal/mailing address, registered agent name/address/signature including the Chief-Financial-Officer-as-agent carve-out for authorized insurers, principals, Certificate of Status, email address), and the Annual Report Fees table. The live e-filing wizard itself (services.sunbiz.org/Filings/AnnualReport/FilingStart) was checked directly but returned a scheduled-maintenance notice ('Sunbiz.org electronic filings are down for scheduled maintenance and will resume at 8am ET on Tuesday, July 7th'), so no field-by-field walkthrough of the live wizard's own input layout (exact checkbox/field structure, ordering, client-side masks) was possible this session — see VERIFICATION.md for the honest sourcing-grain gap this leaves relative to the direct-form-walkthrough discipline used for e.g. de/finanzamt/tax-identification-number. Status remains 'draft' pending that walkthrough."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "documentNumber",
+      "label": "Document Number",
+      "type": "string",
+      "required": true,
+      "description": "The 6- or 12-digit number assigned to the business entity when it was filed or registered with the Division of Corporations. Required to look up and file the entity's annual report online; if unknown, it can be found by searching Division of Corporations records by entity name.",
+      "sourceRef": "Annual Report Instructions — 'Document Number'",
+      "validation": { "pattern": "^([0-9]{6}|[0-9]{12})$" }
+    },
+    {
+      "name": "entityType",
+      "label": "Business entity type",
+      "type": "enum",
+      "required": true,
+      "description": "The type of business entity on file. Determines the filing fee (see the documents[] fee entries) and which principal/general-partner rules apply: LP and LLLP general partners cannot be added, removed, or renamed on this filing (only their address may be updated) — a Certificate of Amendment is required for that instead.",
+      "sourceRef": "Annual Report Fees table; Annual Report Instructions — 'Principals...' (general partner restriction)",
+      "validation": {
+        "enum": [
+          "profit_corporation",
+          "nonprofit_corporation",
+          "limited_liability_company",
+          "limited_partnership",
+          "limited_liability_limited_partnership"
+        ]
+      }
+    },
+    {
+      "name": "entityName",
+      "label": "Entity Name",
+      "type": "string",
+      "required": true,
+      "description": "The official/legal name of the business entity as it appears on Division of Corporations records. This filing does not allow changing the entity's name; a name change requires downloading and filing the applicable amendment form with payment, by mail.",
+      "sourceRef": "Annual Report Instructions — 'Entity Name'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "federalEmployerIdentificationNumber",
+      "label": "Federal Employer Identification Number (FEIN)",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "description": "The 9-digit number the IRS assigned to the business entity for federal tax identification purposes. Enter it if not already listed; do not enter a Social Security Number. If the record already shows 'Applied For', the actual FEIN must now be entered to proceed with this filing — contact the IRS at 1-800-829-4933 for assistance obtaining it.",
+      "sourceRef": "Annual Report Instructions — 'Federal Employer Identification Number (FEIN)'",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "principalOfficeAddressLine1",
+      "label": "Principal place of business address",
+      "type": "string",
+      "required": true,
+      "description": "Street address of the entity's principal office, distinct from the mailing address in mailingAddressLine1 (which may be a P.O. Box).",
+      "sourceRef": "Annual Report Instructions — 'Principal Place of Business Address'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "principalOfficeCity",
+      "label": "Principal office — city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Annual Report Instructions — 'Principal Place of Business Address'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "principalOfficeState",
+      "label": "Principal office — state",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter USPS state abbreviation. Not restricted to Florida: an entity's principal office may be located outside the state.",
+      "sourceRef": "Annual Report Instructions — 'Principal Place of Business Address'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "principalOfficeZipCode",
+      "label": "Principal office — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "5-digit or ZIP+4 U.S. format.",
+      "sourceRef": "Annual Report Instructions — 'Principal Place of Business Address'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "mailingAddressLine1",
+      "label": "Mailing address, if different from principal address",
+      "type": "string",
+      "required": false,
+      "description": "Optional; used for mailing purposes only. Unlike the principal office address, a P.O. Box is acceptable here.",
+      "sourceRef": "Annual Report Instructions — 'Mailing Address'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Mailing address — city",
+      "type": "string",
+      "required": false,
+      "description": "Required when mailingAddressLine1 is given.",
+      "sourceRef": "Annual Report Instructions — 'Mailing Address'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Mailing address — state",
+      "type": "string",
+      "required": false,
+      "description": "Required when mailingAddressLine1 is given. Two-letter USPS state abbreviation.",
+      "sourceRef": "Annual Report Instructions — 'Mailing Address'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "mailingAddressZipCode",
+      "label": "Mailing address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "Required when mailingAddressLine1 is given. 5-digit or ZIP+4 U.S. format.",
+      "sourceRef": "Annual Report Instructions — 'Mailing Address'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "registeredAgentName",
+      "label": "Registered agent name",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The individual or legal entity designated to accept service of process on behalf of the business entity. A business entity cannot serve as its own registered agent; an individual or principal associated with the business may serve as its registered agent.",
+      "sourceRef": "Annual Report Instructions — 'Registered Agent Name, Address, and Signature'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "registeredAgentAddressLine1",
+      "label": "Registered agent — street address",
+      "type": "string",
+      "required": true,
+      "description": "Must be a physical Florida street address; do not list a P.O. Box.",
+      "sourceRef": "Annual Report Instructions — 'Registered Agent Name, Address, and Signature'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "registeredAgentCity",
+      "label": "Registered agent — city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Annual Report Instructions — 'Registered Agent Name, Address, and Signature'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "registeredAgentState",
+      "label": "Registered agent — state",
+      "type": "enum",
+      "required": true,
+      "description": "Fixed to Florida: the registered agent must have a physical street address in this state.",
+      "sourceRef": "Annual Report Instructions — 'Registered Agent Name, Address, and Signature'",
+      "validation": { "enum": ["FL"] }
+    },
+    {
+      "name": "registeredAgentZipCode",
+      "label": "Registered agent — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "5-digit or ZIP+4 U.S. format.",
+      "sourceRef": "Annual Report Instructions — 'Registered Agent Name, Address, and Signature'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "registeredAgentIsNewOrChangedDesignation",
+      "label": "Are you designating a new or changed registered agent?",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "description": "Whether this filing designates a new registered agent or changes the one on file, as opposed to confirming the existing registered agent unchanged. Gates the signature requirement below.",
+      "sourceRef": "Annual Report Instructions — 'If designating a new registered agent, the new registered agent must sign the report'"
+    },
+    {
+      "name": "registeredAgentIsChiefFinancialOfficerInsurer",
+      "label": "Is the registered agent the Florida Chief Financial Officer (authorized insurer)?",
+      "type": "boolean",
+      "required": false,
+      "description": "Per s. 48.151, F.S., each authorized insurer in Florida must designate the Chief Financial Officer as its registered agent for service of process. When true: the registered agent information cannot be changed, and no signature is required in registeredAgentSignature (the source form itself asks the filer to type 'NOT REQUIRED' in that case).",
+      "sourceRef": "Annual Report Instructions — 'If the Chief Financial Officer is listed as the Registered Agent'"
+    },
+    {
+      "name": "registeredAgentSignature",
+      "label": "Registered agent signature",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "registeredAgentIsNewOrChangedDesignation", "equals": true },
+          { "not": { "field": "registeredAgentIsChiefFinancialOfficerInsurer", "equals": true } }
+        ]
+      },
+      "description": "Typing the registered agent's name in the signature block is sufficient (s. 15.16, F.S.: electronic signatures have the same legal effect as original signatures). Confirms the agent's familiarity with the Florida Statutes and acceptance of the obligations of the designation; if a business entity is designated as agent, a principal of that entity signs to accept. Typing someone's name without their permission constitutes forgery (s. 831.06, F.S.).",
+      "sourceRef": "Annual Report Instructions — 'Registered Agent Name, Address, and Signature'; 'How do you sign the online form?'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "principalTitle",
+      "label": "Principal title",
+      "type": "string",
+      "required": true,
+      "description": "Title of an officer, director, manager, authorized member/representative, or (for an LP/LLLP) general partner. The source form offers a title list but also accepts free text for a title not listed, so this is modelled as open text rather than a closed enum. At least one principal must be provided.",
+      "sourceRef": "Annual Report Instructions — 'Principals (Officers/Directors/Managers/Authorized Representatives/General Partners) Names and Addresses'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "principalName",
+      "label": "Principal name",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Name of the principal named in principalTitle. For a limited partnership or limited liability limited partnership, a general partner's name cannot be changed via this filing (only their address); adding or deleting a general partner requires a Certificate of Amendment instead.",
+      "sourceRef": "Annual Report Instructions — 'Principals (Officers/Directors/Managers/Authorized Representatives/General Partners) Names and Addresses'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "principalAddressLine1",
+      "label": "Principal — street address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Annual Report Instructions — 'Principals (Officers/Directors/Managers/Authorized Representatives/General Partners) Names and Addresses'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "principalCity",
+      "label": "Principal — city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Annual Report Instructions — 'Principals (Officers/Directors/Managers/Authorized Representatives/General Partners) Names and Addresses'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "principalState",
+      "label": "Principal — state",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter USPS state abbreviation. Not restricted to Florida.",
+      "sourceRef": "Annual Report Instructions — 'Principals (Officers/Directors/Managers/Authorized Representatives/General Partners) Names and Addresses'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "principalZipCode",
+      "label": "Principal — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "5-digit or ZIP+4 U.S. format.",
+      "sourceRef": "Annual Report Instructions — 'Principals (Officers/Directors/Managers/Authorized Representatives/General Partners) Names and Addresses'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "requestCertificateOfStatus",
+      "label": "Request a Certificate of Status?",
+      "type": "boolean",
+      "required": false,
+      "description": "Optional add-on when filing the annual report. Certifies the business entity is active and has paid all fees due through a certain date. Not required; if selected, incurs the fee in the documents[] certificateOfStatusFee* entries and is emailed as an attachment to the address given in emailAddress.",
+      "sourceRef": "Annual Report Instructions — 'Certificate of Status'"
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A valid email address. The filing confirmation, the Certificate of Status (if requested), and future email communications from the Division are sent here. Note (source-level fact, not a field): Florida law makes email addresses submitted here public records.",
+      "sourceRef": "Annual Report Instructions — 'Email Address'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identify_entity",
+      "title": "Identify the business entity",
+      "fields": ["documentNumber", "entityType", "entityName"],
+      "next": "tax_id"
+    },
+    {
+      "id": "tax_id",
+      "title": "Federal Employer Identification Number",
+      "fields": ["federalEmployerIdentificationNumber"],
+      "next": "addresses"
+    },
+    {
+      "id": "addresses",
+      "title": "Principal and mailing addresses",
+      "fields": [
+        "principalOfficeAddressLine1", "principalOfficeCity", "principalOfficeState", "principalOfficeZipCode",
+        "mailingAddressLine1", "mailingAddressCity", "mailingAddressState", "mailingAddressZipCode"
+      ],
+      "next": "registered_agent"
+    },
+    {
+      "id": "registered_agent",
+      "title": "Registered agent",
+      "fields": [
+        "registeredAgentName", "registeredAgentAddressLine1", "registeredAgentCity", "registeredAgentState", "registeredAgentZipCode",
+        "registeredAgentIsNewOrChangedDesignation", "registeredAgentIsChiefFinancialOfficerInsurer", "registeredAgentSignature"
+      ],
+      "next": "principals"
+    },
+    {
+      "id": "principals",
+      "title": "Principals",
+      "fields": ["principalTitle", "principalName", "principalAddressLine1", "principalCity", "principalState", "principalZipCode"],
+      "next": "certificate_and_contact"
+    },
+    {
+      "id": "certificate_and_contact",
+      "title": "Certificate of Status and contact email",
+      "fields": ["requestCertificateOfStatus", "emailAddress"]
+    }
+  ],
+  "documents": [
+    {
+      "id": "annualReportFeeProfitCorporation",
+      "label": "Annual report fee — Profit Corporation",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": { "field": "entityType", "equals": "profit_corporation" },
+      "amount": { "currency": "USD", "value": 150.00 },
+      "methods": ["credit_card", "debit_card", "prepaid_sunbiz_efile_account", "check", "money_order"],
+      "sourceRef": "Annual Report Fees table — 'Annual Report - Profit Corporation: $150.00'"
+    },
+    {
+      "id": "annualReportFeeNonprofitCorporation",
+      "label": "Annual report fee — Non-Profit Corporation",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": { "field": "entityType", "equals": "nonprofit_corporation" },
+      "amount": { "currency": "USD", "value": 61.25 },
+      "methods": ["credit_card", "debit_card", "prepaid_sunbiz_efile_account", "check", "money_order"],
+      "sourceRef": "Annual Report Fees table — 'Annual Report - Non-Profit Corporation: $61.25'"
+    },
+    {
+      "id": "annualReportFeeLimitedLiabilityCompany",
+      "label": "Annual report fee — Limited Liability Company",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": { "field": "entityType", "equals": "limited_liability_company" },
+      "amount": { "currency": "USD", "value": 138.75 },
+      "methods": ["credit_card", "debit_card", "prepaid_sunbiz_efile_account", "check", "money_order"],
+      "sourceRef": "Annual Report Fees table — 'Annual Report - Limited Liability Company: $138.75'"
+    },
+    {
+      "id": "annualReportFeeLimitedPartnership",
+      "label": "Annual report fee — Limited Partnership or Limited Liability Limited Partnership",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": {
+        "field": "entityType",
+        "in": ["limited_partnership", "limited_liability_limited_partnership"]
+      },
+      "amount": { "currency": "USD", "value": 500.00 },
+      "methods": ["credit_card", "debit_card", "prepaid_sunbiz_efile_account", "check", "money_order"],
+      "sourceRef": "Annual Report Fees table — 'Annual Report - Limited Partnership or Limited Liability Limited Partnership: $500.00'"
+    },
+    {
+      "id": "lateFeePenalty",
+      "label": "Late fee",
+      "category": "payment",
+      "required": false,
+      "amount": { "currency": "USD", "value": 400.00 },
+      "sourceRef": "File Annual Report — 'A $400 late fee will be imposed on all profit corporations, limited liability companies, limited partnerships and limited liability limited partnerships' filed after 11:59 PM EST, Friday May 1; nonprofit corporations are exempt",
+      "handling": "Assessed automatically by the Division based on the filing's submission date, not selected by the filer; no field in this schema models the submission timestamp needed to condition requiredWhen precisely, so this entry is left unconditioned (required: false) rather than asserting a rule this schema cannot evaluate. See VERIFICATION.md."
+    },
+    {
+      "id": "certificateOfStatusFeeCorporationOrLimitedPartnership",
+      "label": "Certificate of Status fee — Corporation or Limited Partnership/Limited Liability Limited Partnership",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "requestCertificateOfStatus", "equals": true },
+          {
+            "field": "entityType",
+            "in": ["profit_corporation", "nonprofit_corporation", "limited_partnership", "limited_liability_limited_partnership"]
+          }
+        ]
+      },
+      "amount": { "currency": "USD", "value": 8.75 },
+      "sourceRef": "Annual Report Instructions — 'Certificate of Status' fee table: 'Corporations and Limited Partnerships: $8.75'"
+    },
+    {
+      "id": "certificateOfStatusFeeLimitedLiabilityCompany",
+      "label": "Certificate of Status fee — Limited Liability Company",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "requestCertificateOfStatus", "equals": true },
+          { "field": "entityType", "equals": "limited_liability_company" }
+        ]
+      },
+      "amount": { "currency": "USD", "value": 5.00 },
+      "sourceRef": "Annual Report Instructions — 'Certificate of Status' fee table: 'Limited Liability Companies: $5.00'"
+    }
+  ]
+}
