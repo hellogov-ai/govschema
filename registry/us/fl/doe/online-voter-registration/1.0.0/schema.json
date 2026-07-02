@@ -1,0 +1,458 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/doe/online-voter-registration",
+  "version": "1.0.0",
+  "title": "Florida Online Voter Registration",
+  "description": "Register to vote (or update an existing registration record, or request a replacement voter information card) in Florida through the Florida Department of State, Division of Elections' online system at RegisterToVoteFlorida.gov. The wizard first collects an eligibility attestation and identity fields (Florida driver license/ID number and issue date, or the last four digits of a Social Security number, plus name and date of birth); if the Florida Department of Highway Safety and Motor Vehicles (FLHSMV) can verify that identity against its own records, the application is submitted electronically using the applicant's signature already on file with FLHSMV, otherwise the same collected data prefills a printable Florida Voter Registration Application (DS-DE 39) that must be signed and mailed or delivered to the applicant's county Supervisor of Elections. Both branches collect the same underlying field set modelled here (confirmed by exercising both paths live). Does not submit the application and does not perform the FLHSMV identity-verification check itself; the live registertovoteflorida.gov source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-FL"
+  },
+  "authority": {
+    "name": "Florida Department of State, Division of Elections",
+    "abbreviation": "FL DOE",
+    "url": "https://dos.fl.gov/elections/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.registertovoteflorida.gov/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Florida Online Voter Registration System (live wizard, all 3 steps exercised end-to-end with mock data, stopping short of final print/submit); resulting prefilled 'Florida Voter Registration Application Instructions and Form (DS-DE 39, R1S-2.040, F.A.C.)(eff. 04/24/2024)' cross-checked field-by-field against the wizard's own inputs."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored by driving the live registertovoteflorida.gov Angular single-page application with a headless, real (non-mocked) browser — a static HTML/curl fetch returns only an empty SPA shell, so this is one of the few registry documents authored by actually operating the client-rendered wizard end-to-end rather than reading prose (comparable in method to sg/ica's PDF-rasterize technique, but for a JS wizard). Walked Step 1 (Reason for Application, Eligibility, Personal Identification Information/FLHSMV identity fields), Step 2 (Political Party Preference, Legal Residential Address, Mailing Address, Former Address/Name, Personal Information, Assistance/Volunteer Services, Military/Overseas Status), and the resulting Review Page and prefilled DS-DE 39 print view, using placeholder/mock identity data throughout and stopping at the print/submit action without ever submitting a real application. Because the mock Florida DL number could not be verified by FLHSMV, the wizard routed to its 'Start Paper Application' branch; the electronic-submission branch (real FLHSMV-verified identity) was not independently exercised, but its Step 2/Step 3 field set is the same component tree observed in the paper branch (confirmed by inspecting the underlying Angular form controls, not just rendered text) and the source's own 'How to submit an online application' panel describes only a different final action (electronic submit vs. print-and-mail), not a different data model. Status remains 'draft'. See VERIFICATION.md for the full walkthrough record and honesty flags."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "reasonForApplication",
+      "label": "Reason for Application",
+      "type": "enum",
+      "required": true,
+      "description": "The wizard renders these as three independent checkboxes, but only one was ever observed selectable in a coherent application; modelled as a single choice.",
+      "sourceRef": "Step 1, 'Reason for Application' — 'New Registration' / 'Record Update/Change (e.g., Address, Party Affiliation, Name, Signature)' / 'Request to Replace Voter Information Card'",
+      "validation": { "enum": ["new_registration", "record_update_or_change", "request_replacement_voter_card"] }
+    },
+    {
+      "name": "usCitizen",
+      "label": "Are you a citizen of the United States of America?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Only U.S. citizens may register or vote in Florida. If false, the applicant is not eligible and the flow ends.",
+      "sourceRef": "Step 1, Eligibility — 'Are you a citizen of the United States of America?'"
+    },
+    {
+      "name": "notAFelonAttestation",
+      "label": "I affirm that I am not a convicted felon, or if I am, my right to vote has been restored.",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "classification": "sensitive-pii",
+      "description": "A required affirmation checkbox; the wizard did not allow progress past Step 1 while unchecked. Notice: it is a 3rd-degree felony to submit false information (max penalties $5,000 and/or 5 years).",
+      "sourceRef": "Step 1, Eligibility — 'I affirm that I am not a convicted felon, or if I am, my right to vote has been restored.' (For information on felon voting rights, visit Division of Elections' webpage - https://dos.fl.gov/felon)"
+    },
+    {
+      "name": "mentalIncapacityAttestation",
+      "label": "I affirm that I have not been adjudicated mentally incapacitated with respect to voting or, if I have, my right to vote has been restored.",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "classification": "sensitive-pii",
+      "description": "A required affirmation checkbox; the wizard did not allow progress past Step 1 while unchecked.",
+      "sourceRef": "Step 1, Eligibility — 'I affirm that I have not been adjudicated mentally incapacitated with respect to voting or, if I have, my right to vote has been restored.'"
+    },
+    {
+      "name": "isDLUnavailable",
+      "label": "I have never been issued a Florida DL or Florida ID card.",
+      "type": "boolean",
+      "required": false,
+      "description": "When checked, flDlNumber and dlIssueDate are not requested and the applicant must instead use the paper option and provide ssnLast4 (or check isSSNUnavailable if neither was ever issued).",
+      "sourceRef": "Step 1, Personal Identification Information — 'I have never been issued a Florida DL or Florida ID card.'"
+    },
+    {
+      "name": "isSSNUnavailable",
+      "label": "I have never been issued a social security number.",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Step 1, Personal Identification Information — 'I have never been issued a social security number.'"
+    },
+    {
+      "name": "flDlNumber",
+      "label": "Florida DL or Florida ID card number (DLN)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isDLUnavailable", "equals": false },
+      "classification": "sensitive-pii",
+      "description": "Use the most currently issued Florida driver license or Florida identification card number, issued by FLHSMV. Format confirmed live: one letter followed by 12 digits (the wizard's own 'Example — Florida Driver License and Identification Card' popup shows 'D123-456-83-789-0', displayed with separators but stored as 13 characters; the input silently truncated a 14th character typed during this review).",
+      "sourceRef": "Step 1, Personal Identification Information — 'Florida DL or Florida ID card number (DLN):'",
+      "validation": { "pattern": "^[A-Z][0-9]{12}$" }
+    },
+    {
+      "name": "dlIssueDate",
+      "label": "Card issued (ISS) date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "isDLUnavailable", "equals": false },
+      "classification": "pii",
+      "sourceRef": "Step 1, Personal Identification Information — 'Card issued (ISS) date:' MM/DD/YYYY"
+    },
+    {
+      "name": "ssnLast4",
+      "label": "The last four digits of your Social Security Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isSSNUnavailable", "equals": false },
+      "classification": "sensitive-pii",
+      "sourceRef": "Step 1, Personal Identification Information — 'The last four digits of your Social Security Number:'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Enter your name EXACTLY as it appears on your FL DL/ID card with the most recent issue date. If you only have one name, use this field.",
+      "sourceRef": "Step 1, Personal Identification Information — 'Last Name:'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Labelled '(If applicable)' — left blank by an applicant who has only one name (recorded in lastName).",
+      "sourceRef": "Step 1, Personal Identification Information — 'First Name: (If applicable)'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Step 1, Personal Identification Information — 'Middle Name: (If applicable)'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "nameSuffix",
+      "label": "Suffix",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Step 1, Personal Identification Information — 'Suffix: (If applicable)'",
+      "validation": { "enum": ["JR", "SR", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth (DOB)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Step 1, Personal Identification Information — 'Date of Birth (DOB):' MM/DD/YYYY"
+    },
+    {
+      "name": "partyAffiliation",
+      "label": "Party Affiliation",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The live wizard enforces a selection (shown with a red '*Required' hint if left blank) even though the DS-DE 39 paper form itself does not list this among its 'must be completed' rows (1-6, 15) and states an applicant who registers for the first time without choosing a party is registered No Party Affiliation (NPA) — this schema follows the online wizard's stricter, actually-enforced behaviour (see VERIFICATION.md). Values are the exact option codes read from the live <select>; full party names: DEM=Florida Democratic Party, REP=Republican Party of Florida, AMF=America First Party of Florida, ASP=American Solidarity Party of Florida, BPP=Boricua Party, CPP=Coalition With A Purpose Party, CSV=Conservative Party of Florida, CPF=Constitution Party of Florida, ECO=Ecology Party of Florida, FFP=Florida Forward Party, GRE=Green Party of Florida, IND=Independent Party of Florida, JEF=Jeffersonian Party of Florida, LPF=Libertarian Party of Florida, MGT=MGTOW Party, PSL=Party for Socialism and Liberation - Florida, WPF=We the People Florida, NPA=No Party Affiliation. Florida is a closed-primary state; a party change made after the registration deadline for an upcoming primary will not take effect until after that election.",
+      "sourceRef": "Step 2, Political Party Preference — 'Party Affiliation *' <select>",
+      "validation": {
+        "enum": ["DEM", "REP", "AMF", "ASP", "BPP", "CPP", "CSV", "CPF", "ECO", "FFP", "GRE", "IND", "JEF", "LPF", "MGT", "PSL", "WPF", "NPA"]
+      }
+    },
+    {
+      "name": "residentialAddress",
+      "label": "Legal Residential Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must not be a P.O. Box or business address, and must be in Florida. The live field is a single geocoded address-autocomplete search box (type-ahead over USPS-style candidates), not separate street/city/ZIP inputs; selecting a suggestion also silently derives residentialCounty and the city/ZIP shown on the Review Page — those are not independently editable fields in the wizard (see VERIFICATION.md).",
+      "sourceRef": "Step 2, Legal Residential Address — 'Address:' (autocomplete)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "residentialCounty",
+      "label": "County",
+      "type": "string",
+      "required": false,
+      "description": "Not independently entered: the wizard derives this automatically from the selected residentialAddress (confirmed live — selecting a Titusville, FL address populated 'Brevard' with no separate county input). Included because the printed DS-DE 39 form prints it as one of the six required rows.",
+      "sourceRef": "prefilled DS-DE 39 — Row 6, 'County'"
+    },
+    {
+      "name": "mailingAddressSameAsResidential",
+      "label": "Mailing address is the same as residential address.",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Step 2, Legal Residential Address — 'Mailing address is the same as residential address.' Yes/No"
+    },
+    {
+      "name": "mailingAddressCountryType",
+      "label": "Mailing address location",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "mailingAddressSameAsResidential", "equals": false },
+      "description": "The wizard shows a 'United States' / 'International' toggle before the mailing-address fields once mailingAddressSameAsResidential is No. Only the United States branch (mailingAddressState + mailingAddress) was exercised in this review; the International branch's exact field set was seen to exist but not independently field-verified (see VERIFICATION.md).",
+      "sourceRef": "Step 2, Mailing Address — 'United States' / 'International' toggle",
+      "validation": { "enum": ["united_states", "international"] }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Mailing address — State",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "mailingAddressSameAsResidential", "equals": false }, { "field": "mailingAddressCountryType", "equals": "united_states" }] },
+      "description": "Same US state/territory/military-postal-code option set observed for formerAddressState (not independently re-verified as identical; both render from what appears to be the same shared component — see VERIFICATION.md).",
+      "sourceRef": "Step 2, Mailing Address — 'State :' <select>",
+      "validation": {
+        "enum": ["AA", "AE", "AL", "AK", "AS", "AP", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FM", "FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MH", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK", "OR", "PW", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VI", "VA", "WA", "WV", "WI", "WY"]
+      }
+    },
+    {
+      "name": "mailingAddress",
+      "label": "Mailing address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "mailingAddressSameAsResidential", "equals": false },
+      "classification": "pii",
+      "sourceRef": "Step 2, Mailing Address — 'Address:' (autocomplete)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "formerAddressState",
+      "label": "Former Address Where You Were Last Registered to Vote — State",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Step 2, 'Former Address Where You Were Last Registered to Vote' — 'State:' <select>",
+      "validation": {
+        "enum": ["AA", "AE", "AL", "AK", "AS", "AP", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FM", "FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MH", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK", "OR", "PW", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VI", "VA", "WA", "WV", "WI", "WY"]
+      }
+    },
+    {
+      "name": "formerAddress",
+      "label": "Former Address Where You Were Last Registered to Vote",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Step 2, 'Former Address Where You Were Last Registered to Vote' — 'Address:'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "formerFirstName",
+      "label": "Former First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Step 2, 'Former Name Where You Were Last Registered to Vote' — 'Former First Name'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "formerMiddleName",
+      "label": "Former Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Step 2, 'Former Name Where You Were Last Registered to Vote' — 'Former Middle Name'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "formerLastName",
+      "label": "Former Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Step 2, 'Former Name Where You Were Last Registered to Vote' — 'Former Last Name'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Step 2, Personal Information — 'Gender' Male/Female",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "raceEthnicity",
+      "label": "Race/Ethnicity",
+      "type": "enum",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Step 2, Personal Information — 'Race/Ethnicity' <select>",
+      "validation": {
+        "enum": ["american_indian_or_alaskan_native", "asian_or_pacific_islander", "black_not_of_hispanic_origin", "hispanic", "white_not_of_hispanic_origin", "multi_racial", "other"]
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional per the DS-DE 39 printed form ('Phone no. (optional)').",
+      "sourceRef": "Step 2, Personal Information — 'Phone Number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "requestSampleBallotByEmail",
+      "label": "Email me a sample ballot at:",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Step 2, Personal Information — 'Email me a sample ballot at:' (checkbox)"
+    },
+    {
+      "name": "publicEmailAddress",
+      "label": "Email",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "requestSampleBallotByEmail", "equals": true },
+      "classification": "pii",
+      "description": "Under Florida law, e-mail addresses collected for this purpose are public records.",
+      "sourceRef": "Step 2, Personal Information — 'Email' (revealed when requestSampleBallotByEmail is checked)",
+      "validation": { "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }
+    },
+    {
+      "name": "emailConfirmation",
+      "label": "Confirm Email Address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "requestSampleBallotByEmail", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Step 2, Personal Information — 'Confirm Email Address' (revealed when requestSampleBallotByEmail is checked)",
+      "validation": { "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "State or Country of Birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Step 2, Personal Information — 'State or Country of Birth'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "votingAssistanceRequired",
+      "label": "I will need help voting.",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Step 2, Assistance/Volunteer Services — 'I will need help voting.' Yes/No"
+    },
+    {
+      "name": "pollWorkerVolunteer",
+      "label": "I would like to be a poll worker or election worker.",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Step 2, Assistance/Volunteer Services — 'I would like to be a poll worker or election worker.' Yes/No"
+    },
+    {
+      "name": "militaryOverseasStatus",
+      "label": "Military/Overseas Status",
+      "type": "enum",
+      "required": false,
+      "description": "Selecting any of the three affirmative options revealed no further fields in this review (e.g. no separate APO/FPO ballot-delivery address capture) — see VERIFICATION.md.",
+      "sourceRef": "Step 2, Military/Overseas Status — 'I am one of the following:'",
+      "validation": {
+        "enum": ["active_duty_uniformed_services_or_merchant_marine_member", "spouse_or_dependent_of_active_duty_member", "resides_outside_us_but_us_citizen", "none_of_the_above"]
+      }
+    },
+    {
+      "name": "oathAffirmed",
+      "label": "Oath",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "The submission-time attestation preceding the signature (electronic, using the signature already on file with FLHSMV, or a wet signature on the printed DS-DE 39). It is a 3rd degree felony under state and federal law to falsely swear or affirm or otherwise submit false information.",
+      "sourceRef": "prefilled DS-DE 39 — Row 15, 'Oath: I do solemnly swear (or affirm) that I will protect and defend the Constitution of the United States and the Constitution of the State of Florida, that I am qualified to register as an elector under the Constitution and laws of the State of Florida, and that all information provided in this application is true.'"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "emailConfirmationMatchesPublicEmailAddress",
+      "compare": { "field": "emailConfirmation", "operator": "equals", "compareTo": "publicEmailAddress" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "reason",
+      "title": "Reason for Application",
+      "fields": ["reasonForApplication"],
+      "next": "eligibility"
+    },
+    {
+      "id": "eligibility",
+      "title": "Eligibility",
+      "fields": ["usCitizen", "notAFelonAttestation", "mentalIncapacityAttestation"],
+      "transitions": [
+        { "to": null, "exitReason": "not-eligible-not-us-citizen", "when": { "field": "usCitizen", "equals": false } },
+        { "to": null, "exitReason": "not-eligible-felon-rights-not-restored", "when": { "field": "notAFelonAttestation", "equals": false } },
+        { "to": null, "exitReason": "not-eligible-mental-incapacity-rights-not-restored", "when": { "field": "mentalIncapacityAttestation", "equals": false } },
+        { "to": "identity" }
+      ]
+    },
+    {
+      "id": "identity",
+      "title": "Personal Identification Information",
+      "fields": ["isDLUnavailable", "isSSNUnavailable", "flDlNumber", "dlIssueDate", "ssnLast4", "lastName", "firstName", "middleName", "nameSuffix", "dateOfBirth"],
+      "next": "party_and_address"
+    },
+    {
+      "id": "party_and_address",
+      "title": "Political Party Preference and Legal Residential Address",
+      "fields": ["partyAffiliation", "residentialAddress", "residentialCounty", "mailingAddressSameAsResidential", "mailingAddressCountryType", "mailingAddressState", "mailingAddress"],
+      "next": "former_registration"
+    },
+    {
+      "id": "former_registration",
+      "title": "Former Address and Name Where You Were Last Registered to Vote",
+      "fields": ["formerAddressState", "formerAddress", "formerFirstName", "formerMiddleName", "formerLastName"],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": ["gender", "raceEthnicity", "phoneNumber", "requestSampleBallotByEmail", "publicEmailAddress", "emailConfirmation", "placeOfBirth"],
+      "next": "assistance_and_military"
+    },
+    {
+      "id": "assistance_and_military",
+      "title": "Assistance/Volunteer Services and Military/Overseas Status",
+      "fields": ["votingAssistanceRequired", "pollWorkerVolunteer", "militaryOverseasStatus"],
+      "next": "oath"
+    },
+    {
+      "id": "oath",
+      "title": "Review and Oath",
+      "fields": ["oathAffirmed"]
+    }
+  ]
+}
