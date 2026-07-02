@@ -1,0 +1,347 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "au/nsw/service-nsw/driver-licence-renewal",
+  "version": "1.0.0",
+  "title": "New South Wales Driver Licence Renewal",
+  "description": "Renew a full New South Wales driver licence (single class C, R, LR, MR, HR, HC, or MC, or a dual-class licence pairing R with one of those, both classes full) online through a MyServiceNSW Account, on behalf of Transport for NSW (delivered via Service NSW). This document models the standard online renewal path for a 1, 3, or 5-year full-licence term: the online-eligibility screening (age range, licence not expired more than 6 months, no learner class involved, no enforcement restrictions, no overdue medical assessment, signature/photo current within 10.5 years, no interlock or Q condition, meets eyesight requirements, no combined driver/boat licence, not requesting a 10-year term, no Passenger Transport T012 code, no address change in the last 14 days, not requesting a Photo Card at the same time, last renewal not done via photo-kit, and no older-driver assessment required), the licence class and current expiry being renewed, the renewal term, the driver licence number used to link the MyServiceNSW Account, and the licence fee or concession details. It pairs with us/ca/dmv/drivers-license-renewal, gb/dvla/driving-licence-renewal-photocard, ie/dttas/driving-licence-renewal, ca/on/mto/drivers-licence-renewal, and nz/nzta/drivers-licence-renewal to show the same process across six jurisdictions. It does not model: provisional (P1/P2) licence renewal or upgrade (P1-to-P2, P2-to-full), which have their own fixed terms and eligibility rules distinct from a full licence's 1/3/5-year choice; learner licence renewal; the 10-year term available only in person for drivers aged 21-44; the in-person-only paths themselves (combined driver/boat licence, Passenger Transport T012, recent address change, simultaneous Photo Card application, older-driver assessment); or renewal of a licence expired more than 6 months ago (which requires reapplication). It does not submit the renewal; the live service.nsw.gov.au and nsw.gov.au sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "subnational",
+    "subdivision": "AU-NSW"
+  },
+  "authority": {
+    "name": "Transport for NSW",
+    "abbreviation": "TfNSW",
+    "url": "https://www.nsw.gov.au/departments-and-agencies/transport-for-nsw"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-AU"
+  },
+  "source": {
+    "url": "https://www.service.nsw.gov.au/transaction/renew-or-upgrade-a-nsw-driver-licence",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "No form number — online self-service renewal via a MyServiceNSW Account (service.nsw.gov.au). The page links a 'Licence Renewal Application – PDF', but that PDF returns a 'No longer exists' page as of 2026-07-02 (see VERIFICATION.md) and is not the basis for this schema."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the official service.nsw.gov.au 'Renew or upgrade a NSW driver licence' transaction page (fetched live, raw HTML, 2026-07-02) — the eligibility criteria, the 'Reasons you may not be able to renew or upgrade online' list, licence classes and terms, eyesight requirements, and the online renewal steps — cross-checked against the nsw.gov.au 'How to renew your licence' guidance page (fetched via summarized tooling) for corroboration of the same eligibility rules and licence terms. The live, authenticated MyServiceNSW Account renewal service itself (where account details are actually entered) was not independently reachable pre-authentication, so its screen-by-screen field list is not confirmed beyond what the guidance pages themselves state. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "outsideEligibleAgeRange",
+      "label": "Are you under 17 years old, or (if your licence class is MC) 70 years of age or older?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal requires the applicant be aged 17 or over generally, or under 70 if the licence class is MC (multi-combination). If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Eligibility — \"you're aged 17 years or over (up to 70 if your licence class is MC)\""
+    },
+    {
+      "name": "licenceExpiredMoreThanSixMonthsAgo",
+      "label": "Did your licence expire more than 6 months ago?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal requires an eligible licence that will expire in 6 months or less, or expired no more than 6 months ago. If true, the flow ends; a licence expired more than 6 months requires reapplication rather than renewal.",
+      "sourceRef": "Eligibility — 'you hold an eligible driver licence that will expire in 6 months or less, or expired no more than 6 months ago'; Reasons you may not be able to renew or upgrade online — 'your licence expired more than 6 months ago'"
+    },
+    {
+      "name": "holdsLearnerLicenceOrDualClassIncludingLearner",
+      "label": "Do you hold a learner driver or rider licence, or a dual-class licence that includes a learner class?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal is only available for provisional (P1, P2) and full-class licences, not a learner licence, and not a dual-class licence where one class is still a learner class. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Reasons you may not be able to renew or upgrade online — 'you hold a learner driver or rider licence'; 'you hold a dual class licence that includes a learner class (for example, you hold full C and learner R – you cannot renew your full C online)'"
+    },
+    {
+      "name": "hasLicenceRestrictions",
+      "label": "Does your licence have any restrictions — for example, cancelled, disqualified, suspended, refused, pending an appeal or suspension decision, a restricted-journey condition, or an outstanding fine payment?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal requires the licence not be subject to any enforcement-related restriction. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Eligibility — 'your licence is not subject to any restrictions related to enforcement (for example, cancelled, disqualified, suspended, refused, or pending an appeal or suspension decision)'; Reasons you may not be able to renew or upgrade online — 'you have any restrictions on your licence (for example, restricted journey, outstanding fine payment or enforcement)'"
+    },
+    {
+      "name": "hasOverdueMedicalAssessment",
+      "label": "Do you have an overdue NSW Fitness to Drive medical assessment?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal requires that any recorded medical condition's Fitness to Drive assessment not be overdue. A medical condition must be notified to TfNSW as soon as it occurs, not just at renewal. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Eligibility — 'your up-to-date medical conditions are recorded with Transport for NSW (TfNSW) and your NSW Fitness to Drive medical assessment is not overdue'; Reasons you may not be able to renew or upgrade online — 'you have a medical assessment that is overdue'"
+    },
+    {
+      "name": "signatureAndPhotoOlderThanTenPointFiveYears",
+      "label": "Were your signature and photograph taken by Transport for NSW more than 10.5 years before your renewed licence would expire?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal reuses the signature and photograph already on file, which must have been taken within 10.5 years before the new licence expires. If true, the flow ends and the applicant must visit a Service NSW Centre in person for a new photo and signature.",
+      "sourceRef": "Eligibility — \"you've had your signature and photograph taken by TfNSW within 10.5 years before the new licence expires\""
+    },
+    {
+      "name": "hasInterlockOrQCondition",
+      "label": "Does your licence have an interlock condition, or a Q (temporary overseas visitor) condition?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Modelled as disqualifying for online renewal (interlock-program participants and temporary-overseas-visitor Q-condition holders are treated conservatively as requiring in-person handling), based on the source page's own bullet under its 'Eligibility' list: 'your licence has an interlock or Q (temporary overseas visitor) condition.' That sentence is not phrased as a negation ('...does not have...') the way every sibling bullet in the same list is — a likely wording gap on the source page itself, not a transcription choice here (see VERIFICATION.md). If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Eligibility — 'your licence has an interlock or Q (temporary overseas visitor) condition.'"
+    },
+    {
+      "name": "failsEyesightRequirements",
+      "label": "Do you fail to meet the eyesight requirements for online renewal?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal requires meeting the applicable eyesight-test-currency rule: for C and/or R licences, a test within 10.5 years of the renewed licence's expiry if under 45, or within 5.5 years if 45 or older; for LR, MR, HR, HC, or MC classes, a test within the last 12 months; for Passenger Transport code PT T011, a commercial standard test on the same day as renewal. If true, the flow ends and the applicant must visit a service centre, optometrist, or ophthalmologist instead.",
+      "sourceRef": "Eligibility — 'you meet the eyesight requirements'; Eyesight requirements section; Reasons you may not be able to renew or upgrade online — 'you don't meet the eyesight requirements'"
+    },
+    {
+      "name": "holdsCombinedDriverAndBoatLicence",
+      "label": "Do you hold a combined driver licence and boat licence?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A combined driver/boat licence cannot be renewed online. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Reasons you may not be able to renew or upgrade online — 'you hold a combined driver licence and boat licence'"
+    },
+    {
+      "name": "wantsTenYearLicenceTerm",
+      "label": "Would you like a 10-year licence term?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A 10-year term is available only in person, for drivers aged 21 to 44. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Introduction — \"You'll need to visit a Service NSW Centre in person if you'd like a 10-year licence (available for drivers aged 21 to 44)\"; Reasons you may not be able to renew or upgrade online — 'you're between 21 and 44 years old and would like a 10-year licence'"
+    },
+    {
+      "name": "holdsPassengerTransportCodeT012",
+      "label": "Do you hold Passenger Transport licence code PT T012?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "PT T012 holders require a commercial standard eyesight test that cannot be completed through online renewal. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Reasons you may not be able to renew or upgrade online — 'you hold a Passenger Transport licence code PT T012 – holders are required to pass commercial standard eyesight tests'"
+    },
+    {
+      "name": "addressChangedWithinLastFourteenDays",
+      "label": "Have you changed your address within the last 14 days?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal requires no address change on file within the last 14 days. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Reasons you may not be able to renew or upgrade online — \"you've changed your address within the last 14 days\""
+    },
+    {
+      "name": "wantsPhotoCardAtSameTime",
+      "label": "Would you like to apply for a NSW Photo Card at the same time as this renewal?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Applying for a NSW Photo Card alongside a licence renewal can only be done in person, where a reduced Photo Card application fee also applies. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Reasons you may not be able to renew or upgrade online — \"you'd like to apply for a NSW Photo Card at the same time\""
+    },
+    {
+      "name": "lastRenewalWasPhotoKit",
+      "label": "Was your last renewal done using a photo-kit?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A licence last renewed via a photo-kit (the paper-based process used for applicants temporarily interstate or overseas) is not eligible for this online renewal path. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Reasons you may not be able to renew or upgrade online — 'your last renewal was done using a photo-kit'"
+    },
+    {
+      "name": "needsOlderDriverAssessment",
+      "label": "Do you need to complete an older driver assessment?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "An older driver assessment cannot be completed through online renewal. If true, the flow ends and the applicant must visit a Service NSW Centre in person instead.",
+      "sourceRef": "Reasons you may not be able to renew or upgrade online — 'you need to complete an older driver assessment'"
+    },
+    {
+      "name": "licenceClass",
+      "label": "Licence class being renewed",
+      "type": "enum",
+      "required": true,
+      "description": "The full driver or rider licence class held. A dual-class option pairs R (rider) with one of C, LR, MR, HR, HC, or MC when both classes are full.",
+      "sourceRef": "Eligibility — 'single class full licence (C, R, LR, MR, HR, HC, MC)'; 'dual class licence, both classes full (C, LR, MR, HR, HC, MC combined with R)'",
+      "validation": { "enum": ["C", "R", "LR", "MR", "HR", "HC", "MC", "C+R", "LR+R", "MR+R", "HR+R", "HC+R", "MC+R"] }
+    },
+    {
+      "name": "currentLicenceExpiryDate",
+      "label": "Current licence expiry date",
+      "type": "date",
+      "required": true,
+      "description": "The expiry date printed on the licence being renewed. Online renewal is available while this date is no more than 6 months in the future, or no more than 6 months in the past.",
+      "sourceRef": "Eligibility — 'you hold an eligible driver licence that will expire in 6 months or less, or expired no more than 6 months ago'"
+    },
+    {
+      "name": "renewalTermYears",
+      "label": "Renewal term (years)",
+      "type": "enum",
+      "required": true,
+      "description": "The length of the new full licence being renewed. A 10-year term also exists but is available only in person (see wantsTenYearLicenceTerm).",
+      "sourceRef": "Introduction — 'Full licence – 1, 3 or 5-year licences only'",
+      "validation": { "enum": ["1", "3", "5"] }
+    },
+    {
+      "name": "nswDriverLicenceNumber",
+      "label": "NSW driver licence number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The current driver licence number, used to link the licence record to a MyServiceNSW Account. The source page describes this step only as 'Enter your NSW driver licence details' without naming the specific field; this field is a reasonable inference by analogy to every other online driver-licence renewal in this registry (ca/on/mto, us/ca/dmv, gb/dvla, nz/nzta), each of which requires the current licence number to identify the applicant's record, not a direct quote of a named input field (see VERIFICATION.md).",
+      "sourceRef": "How to renew or upgrade online — \"Log in, or create your MyServiceNSW Account. Enter your NSW driver licence details if your account is new or you haven't previously entered them.\"",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "eligibleForConcessionFee",
+      "label": "Are you eligible for a concession (reduced) licence fee?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant qualifies for a concession rate rather than the standard licence fee. Specific online payment card types were not independently confirmed for this service and are therefore not enumerated here.",
+      "sourceRef": "What you need — 'the licence fee, or your concession details'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Online renewal eligibility",
+      "fields": [
+        "outsideEligibleAgeRange",
+        "licenceExpiredMoreThanSixMonthsAgo",
+        "holdsLearnerLicenceOrDualClassIncludingLearner",
+        "hasLicenceRestrictions",
+        "hasOverdueMedicalAssessment",
+        "signatureAndPhotoOlderThanTenPointFiveYears",
+        "hasInterlockOrQCondition",
+        "failsEyesightRequirements",
+        "holdsCombinedDriverAndBoatLicence",
+        "wantsTenYearLicenceTerm",
+        "holdsPassengerTransportCodeT012",
+        "addressChangedWithinLastFourteenDays",
+        "wantsPhotoCardAtSameTime",
+        "lastRenewalWasPhotoKit",
+        "needsOlderDriverAssessment"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible-age-range",
+          "when": { "field": "outsideEligibleAgeRange", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-expired-over-six-months",
+          "when": { "field": "licenceExpiredMoreThanSixMonthsAgo", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-learner-class-involved",
+          "when": { "field": "holdsLearnerLicenceOrDualClassIncludingLearner", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-licence-restrictions",
+          "when": { "field": "hasLicenceRestrictions", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-overdue-medical-assessment",
+          "when": { "field": "hasOverdueMedicalAssessment", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-photo-signature-outdated",
+          "when": { "field": "signatureAndPhotoOlderThanTenPointFiveYears", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-interlock-or-q-condition",
+          "when": { "field": "hasInterlockOrQCondition", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-eyesight-requirements",
+          "when": { "field": "failsEyesightRequirements", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-combined-driver-boat-licence",
+          "when": { "field": "holdsCombinedDriverAndBoatLicence", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-wants-ten-year-term",
+          "when": { "field": "wantsTenYearLicenceTerm", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-passenger-transport-t012",
+          "when": { "field": "holdsPassengerTransportCodeT012", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-recent-address-change",
+          "when": { "field": "addressChangedWithinLastFourteenDays", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-wants-photo-card-simultaneously",
+          "when": { "field": "wantsPhotoCardAtSameTime", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-last-renewal-was-photo-kit",
+          "when": { "field": "lastRenewalWasPhotoKit", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-needs-older-driver-assessment",
+          "when": { "field": "needsOlderDriverAssessment", "equals": true }
+        },
+        { "to": "licence_details" }
+      ]
+    },
+    {
+      "id": "licence_details",
+      "title": "Licence being renewed",
+      "fields": ["licenceClass", "currentLicenceExpiryDate", "renewalTermYears"],
+      "next": "identify"
+    },
+    {
+      "id": "identify",
+      "title": "Identify your licence",
+      "fields": ["nswDriverLicenceNumber"],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "fields": ["eligibleForConcessionFee"]
+    }
+  ]
+}
