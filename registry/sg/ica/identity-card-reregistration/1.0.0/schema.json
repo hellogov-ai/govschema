@@ -1,0 +1,338 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/ica/identity-card-reregistration",
+  "version": "1.0.0",
+  "title": "Singapore Identity Card (NRIC) Re-Registration (Age 30/55)",
+  "description": "A Singapore Citizen or Permanent Resident, notified digitally by ICA (via SMS/Singpass app) on reaching the mandatory age-30 or age-55 IC re-registration checkpoint, confirms or updates their registered particulars, submits a fresh photograph, and pays the re-registration fee via ICA's Singpass-authenticated e-Service. Because ICA already holds the applicant's current NRIC particulars on file (this is a scheduled review-and-confirm cycle, not a from-scratch re-entry like a loss/damage report), most particulars fields are optional unless the applicant is changing them — see VERIFICATION.md. Does not model the loss/damage replacement flow (a distinct document, sg/ica/identity-card-replacement), first-time registration at age 15, the separate change-of-race application, or the physical collection/thumbprint step at an ICA counter. Does not submit the application; the live ICA source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration & Checkpoints Authority",
+    "abbreviation": "ICA",
+    "url": "https://www.ica.gov.sg/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://www.ica.gov.sg/documents/ic/re-registration",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "'Re-Register Identity Card for 30/55-year-olds' process page; online service at https://eservices.ica.gov.sg/esvclandingpage/iconline (Singpass-authenticated)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from ICA's live 'Re-Register Identity Card for 30/55-year-olds' process page, cross-checked against the closely related 'Replace Identity Card (Change of Particulars/Damaged)' page and the general 'Photo Guidelines' page. Unlike sg/ica/identity-card-replacement, ICA publishes no downloadable PDF form for this flow — it is online-only — so the core NRIC particulars fields are modelled by analogy to the sibling document's PDF-sourced field set (the same underlying ICA particulars record), not independently field-verified against this exact e-Service. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "residencyStatus",
+      "label": "Residency status",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Determines the re-registration fee (S$10 for citizens, S$50 for permanent residents) and which supporting documents apply.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'Fees' ('S$10 for Singapore citizens'; 'S$50 for Singapore permanent residents')",
+      "validation": { "enum": ["singapore_citizen", "permanent_resident"] }
+    },
+    {
+      "name": "nricNumber",
+      "label": "NRIC No.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The number of the Identity Card being re-registered, as currently on record with ICA.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'NRIC NO.' field (the same underlying ICA particulars record) — see VERIFICATION.md.",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "fullName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name as currently registered on the IC, confirmed or updated as part of this application.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'NAME' field — see VERIFICATION.md.",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nameInChineseJawiTamil",
+      "label": "Name in Chinese/Jawi/Tamil",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name rendered in Chinese, Jawi, or Tamil script, if the current IC carries one. Left blank otherwise.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I field — see VERIFICATION.md.",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's current residential address, confirmed or updated as part of this application.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'ADDRESS' field — see VERIFICATION.md.",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "As currently registered on the IC. No third option was found on the sibling document's source form.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'SEX' field — see VERIFICATION.md.",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's date of birth. Determines eligibility for this re-registration checkpoint (mandatory before the 31st and 56th birthdays) and is one of the three identifiers ICA's own status-check e-Service asks for.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — eligibility statement ('reach the age of 30 (before their 31st birthday), and again ... age of 55 (before their 56th birthday)') and 'Enquire Application Status' ('IC Number, Date of Issue, Date of Birth')"
+    },
+    {
+      "name": "race",
+      "label": "Race",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Race as currently registered on the IC. ICA does not publish a closed list, so this is modelled as free text rather than a guessed enum.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'RACE' field — see VERIFICATION.md.",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "dialectGroup",
+      "label": "Dialect group",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Chinese dialect group, where applicable (e.g. Hokkien, Teochew, Cantonese). ICA does not publish a closed list, so this is modelled as free text rather than a guessed enum.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'DIALECT GROUP' field — see VERIFICATION.md.",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "countryOrPlaceOfBirth",
+      "label": "Country/place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Country or place of birth, as currently registered on the IC.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'COUNTRY/PLACE OF BIRTH' field — see VERIFICATION.md.",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's nationality, as currently registered on the IC.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'NATIONALITY' field — see VERIFICATION.md.",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "contactNumber",
+      "label": "Contact no.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's contact telephone number, for correspondence about the application.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's PDF-sourced Part I 'CONTACT NO.' field — see VERIFICATION.md.",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's email address. ICA notifies applicants of approval via SMS and email.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'Processing Time' ('Once your re-registration has been approved, you will be notified via SMS and email.')",
+      "validation": { "minLength": 3, "maxLength": 254 }
+    },
+    {
+      "name": "photo",
+      "label": "Colour photograph",
+      "type": "file",
+      "required": true,
+      "description": "Recent (within the last 3 months), digital, colour, passport-sized photograph, 400x514 pixels for e-Service upload, in jpg, jpeg, heic, heif, or png format, no larger than 8MB.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'Your recent passport-sized, digital, coloured photograph taken within the last three months'; ICA Photo Guidelines",
+      "validation": { "maxBytes": 8388608, "mediaTypes": ["image/jpeg", "image/heic", "image/heif", "image/png"] }
+    },
+    {
+      "name": "wantsToAddReligiousName",
+      "label": "Include a religious name?",
+      "type": "boolean",
+      "required": false,
+      "description": "Singapore citizens only. If checked, a baptism or religious certificate (containing the applicant's NRIC number or date of birth) must be provided.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'For Singapore citizens ... Baptism or religious certificate to include a religious name'"
+    },
+    {
+      "name": "hasNameChangeByDeedPoll",
+      "label": "Name changed by deed poll?",
+      "type": "boolean",
+      "required": false,
+      "description": "Singapore citizens only. If checked, a deed poll document must be provided.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'For Singapore citizens ... Deed poll for a change of name'"
+    },
+    {
+      "name": "wantsToAddMarriedName",
+      "label": "Include married name?",
+      "type": "boolean",
+      "required": false,
+      "description": "Citizens and permanent residents. If checked, a marriage certificate must be provided. Permanent residents with a change of name must first update their passport and provide the updated passport page instead of relying on this alone.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'Marriage certificate (if you want to include your married name)' (citizens and permanent residents)"
+    },
+    {
+      "name": "declarationConfirmed",
+      "label": "Declaration confirmed",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant confirms the submitted particulars, photograph, and supporting documents are true and complete before submitting the online application. ICA's process page does not publish the e-Service's exact declaration statement text (no downloadable form exists for this flow, unlike the sibling loss/damage document) — see VERIFICATION.md.",
+      "sourceRef": "Inferred: every other Singpass e-Service application step modelled in this registry ends in an explicit applicant declaration before submission (cf. sg/iras/individual-income-tax-return-formb1's declarationConfirmed) — see VERIFICATION.md."
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration date",
+      "type": "date",
+      "required": true,
+      "description": "Date the applicant submits the online application.",
+      "sourceRef": "Inferred by analogy from sg/ica/identity-card-replacement's Part II 'DATE' field — see VERIFICATION.md."
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "visa_or_mastercard = Visa or Mastercard; amex = American Express; internet_direct_debit = Internet Direct Debit; paynow = PayNow. Current fees (S$10 for Singapore citizens, S$50 for Singapore permanent residents) are published on the live source and are deliberately not encoded here.",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'For online applications, payment can be made using: Visa or MasterCard ... American Express (AMEX) ... Internet Direct Debit ... PayNow.'",
+      "validation": {
+        "enum": ["visa_or_mastercard", "amex", "internet_direct_debit", "paynow"]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "baptismOrReligiousCertificate",
+      "label": "Baptism or religious certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "residencyStatus", "equals": "singapore_citizen" },
+          { "field": "wantsToAddReligiousName", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'For Singapore citizens ... Baptism or religious certificate to include a religious name (certificate should contain the applicant's NRIC number or date of birth)'"
+    },
+    {
+      "id": "deedPollForNameChange",
+      "label": "Deed poll for a change of name",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "residencyStatus", "equals": "singapore_citizen" },
+          { "field": "hasNameChangeByDeedPoll", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'For Singapore citizens ... Deed poll for a change of name'"
+    },
+    {
+      "id": "marriageCertificate",
+      "label": "Marriage certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "wantsToAddMarriedName", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'Marriage certificate (if you want to include your married name)'"
+    },
+    {
+      "id": "passportPersonalParticularsPage",
+      "label": "Passport personal particulars page(s)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "residencyStatus", "equals": "permanent_resident" },
+      "belongsTo": "applicant",
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'For Singapore permanent residents ... The page(s) of your current passport which contains your personal particulars (bearing new name if applicable)'"
+    },
+    {
+      "id": "reregistrationFee",
+      "label": "IC re-registration fee",
+      "category": "payment",
+      "required": true,
+      "methods": ["visa_or_mastercard", "amex", "internet_direct_debit", "paynow"],
+      "sourceRef": "Re-Register Identity Card for 30/55-year-olds — 'Fees' (S$10 for Singapore citizens; S$50 for Singapore permanent residents — amount deliberately not encoded, see paymentMethod)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Residency status",
+      "fields": ["residencyStatus"],
+      "next": "particulars_review"
+    },
+    {
+      "id": "particulars_review",
+      "title": "Confirm or update registered particulars",
+      "fields": [
+        "nricNumber",
+        "fullName",
+        "nameInChineseJawiTamil",
+        "address",
+        "sex",
+        "dateOfBirth",
+        "race",
+        "dialectGroup",
+        "countryOrPlaceOfBirth",
+        "nationality",
+        "contactNumber",
+        "email"
+      ],
+      "next": "photo_and_supporting_documents"
+    },
+    {
+      "id": "photo_and_supporting_documents",
+      "title": "Photo and supporting documents",
+      "fields": ["photo", "wantsToAddReligiousName", "hasNameChangeByDeedPoll", "wantsToAddMarriedName"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["declarationConfirmed", "declarationDate"],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Payment details",
+      "fields": ["paymentMethod"]
+    }
+  ]
+}
