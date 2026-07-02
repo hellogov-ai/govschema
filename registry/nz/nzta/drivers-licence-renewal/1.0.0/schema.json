@@ -1,0 +1,431 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/nzta/drivers-licence-renewal",
+  "version": "1.0.0",
+  "title": "New Zealand Driver Licence Renewal",
+  "description": "Renew a New Zealand driver licence using NZTA's DL1 form ('Application for new, reissue or renewal of driver licence'), one shared paper form NZTA uses for first-time applications, reissues, and renewals alike. This document models the renewal use of that form: applicant identity and evidence-of-identity pathway, contact and address details (including whether the address is printed on the physical card), the licence class and stage being renewed, and the medical declaration that can trigger a medical-certificate requirement. The completed form and original supporting documents are taken in person to a driver licensing agent (a third-party network NZTA accredits, not an NZTA office); this document does not submit the renewal or model the driver licensing agent network itself. It does not model: the DL26 identity-referee process beyond flagging when it applies, in-person tests (vision/written/road) a lapsed licence might require, the separate 80-years-and-over senior renewal considerations beyond flagging the medical-certificate trigger for age 75+, or fee amounts (NZTA's fee schedule varies by application/licence type and is not modelled as authoritative data, consistent with every other schema in this registry). It pairs with us/ca/dmv/drivers-license-renewal, gb/dvla/driving-licence-renewal-photocard, ie/dttas/driving-licence-renewal, and ca/on/mto/drivers-licence-renewal to show the same process across five jurisdictions. The live nzta.govt.nz sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "NZ Transport Agency Waka Kotahi",
+    "abbreviation": "NZTA",
+    "url": "https://www.nzta.govt.nz"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-NZ"
+  },
+  "source": {
+    "url": "https://www.nzta.govt.nz/assets/resources/application-for-driver-licence-dl1/docs/dl1.pdf",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "DL1 (12/25 edition) — Application for new, reissue or renewal of driver licence"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from a direct pdfjs-dist text/position extraction of the official DL1 (12/25 edition) form, a static (non-fillable) 4-page PDF. nzta.govt.nz blocks direct fetch tooling in this sandbox (an Incapsula WAF challenge page, same class of block recorded for canada.ca in the CA T1 schema's VERIFICATION.md); the form was retrieved from its most recent Wayback Machine capture (2026-05-25) instead of live, and cross-checked against the NZTA 'licences by vehicle type' guidance page (also WAF-blocked live; summarized via automated fetch-and-summarize tooling rather than a direct extraction, a weaker method, used only for the non-gating licence-class-number descriptions). Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "licenceNumber",
+      "label": "New Zealand driver licence number (if you know it)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's current NZ driver licence number, if known. Optional: a driver licensing agent can look this up if the applicant doesn't have it to hand.",
+      "sourceRef": "DL1 §1, New Zealand driver licence number (if you know it)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DL1 §2, Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DL1 §2, Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "middleNames",
+      "label": "Middle names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DL1 §2, Name",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "namesDifferFromId",
+      "label": "Are the names on this form different to any of the names on your ID?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the applicant must also give their previous name and provide a name change document (see the `nameChangeDocument` entry in `documents`).",
+      "sourceRef": "DL1 §3, Are the names on this form different to any of the names on your ID?"
+    },
+    {
+      "name": "previousName",
+      "label": "Previous name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "namesDifferFromId", "equals": true },
+      "visibleWhen": { "field": "namesDifferFromId", "equals": true },
+      "classification": "pii",
+      "sourceRef": "DL1 §3, Previous name",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Free-text gender, self-described by the applicant; NZTA states the licence itself does not display gender (see www.nzta.govt.nz/gender). The DL1 form's own selectable options for this question render as graphical elements this extraction's text layer did not capture, so no closed `enum` is asserted here — see VERIFICATION.md.",
+      "sourceRef": "DL1 §4, Gender",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "organDonationWillingness",
+      "label": "Would you be willing to donate organs in the event of your death?",
+      "type": "boolean",
+      "required": true,
+      "description": "In the event of the licence holder's death, their next-of-kin will be asked for their agreement regardless of this answer.",
+      "sourceRef": "DL1 §5, Organ donation"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "DL1 §6, Date of birth"
+    },
+    {
+      "name": "placeOfBirthTown",
+      "label": "Place of birth — town/city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DL1 §7, Place of birth — Town/city",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Place of birth — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DL1 §7, Place of birth — Country",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "identityPathway",
+      "label": "Which evidence-of-identity pathway applies?",
+      "type": "enum",
+      "required": true,
+      "description": "photo_licence_or_passport = the applicant presents a current (or expired up to 2 years) NZ photo driver licence, or a current NZ passport — either is sufficient on its own. primary_and_supporting_id = the applicant instead presents one primary ID document and one supporting ID document (see the `primaryIdentityDocument` and `supportingIdentityDocument` entries in `documents`).",
+      "sourceRef": "DL1 §8, Evidence of identity — 'If you have one of these, this is all you need' / 'If you don't have one of the above, you'll need one primary ID and one supporting ID'",
+      "validation": { "enum": ["photo_licence_or_passport", "primary_and_supporting_id"] }
+    },
+    {
+      "name": "neitherIdentityDocumentHasPhoto",
+      "label": "Does neither of your two ID documents have a photo?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "identityPathway", "equals": "primary_and_supporting_id" },
+      "visibleWhen": { "field": "identityPathway", "equals": "primary_and_supporting_id" },
+      "description": "Only relevant on the primary_and_supporting_id pathway. If true, an identity referee document (DL26) must also be attached (see the `identityRefereeDocumentDL26` entry in `documents`).",
+      "sourceRef": "DL1 §8, 'If neither of your forms of ID has a photo: Identity referee document attached (DL26)'"
+    },
+    {
+      "name": "physicalAddress",
+      "label": "Physical address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DL1 §10, Physical address",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "mailingAddress",
+      "label": "Mailing address (if different from physical address)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DL1 §11, Mailing address (if different from above)",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "addressPrintedOnLicence",
+      "label": "Do you want an address printed on your licence?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the applicant must also choose which address is printed. Removing or changing a printed address later may incur a fee (see www.nzta.govt.nz/address-on-licence).",
+      "sourceRef": "DL1 §12, Address printed on licence"
+    },
+    {
+      "name": "addressPrintedOnLicenceSource",
+      "label": "Which address should be printed on your licence?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "addressPrintedOnLicence", "equals": true },
+      "visibleWhen": { "field": "addressPrintedOnLicence", "equals": true },
+      "sourceRef": "DL1 §12, Address printed on licence — Physical address or Mailing address",
+      "validation": { "enum": ["physical_address", "mailing_address"] }
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile phone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The form provides a separate area-code box for a landline (`otherPhone`) but no confirmed format for either number, so this is modelled as an opaque string.",
+      "sourceRef": "DL1 §13, Mobile phone",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "otherPhone",
+      "label": "Other phone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DL1 §13, Other phone",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional. Giving an email address lets NZTA send application updates, reminders, and formal notices to that address.",
+      "sourceRef": "DL1 §14, Email address",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "licenceClassAppliedFor",
+      "label": "Licence class",
+      "type": "enum",
+      "required": true,
+      "description": "The driver licence class being renewed. DL1 itself lists only the class numbers (1-6); it does not define each class's vehicle scope on the form (that is published separately — see 'New Zealand driver licence classes: what you can drive' on nzta.govt.nz — and is not asserted here as this schema's own claim).",
+      "sourceRef": "DL1 §15, What type of licence are you applying for? — Class 1 / Class 2 / Class 3 / Class 4 / Class 5 / Class 6",
+      "validation": { "enum": ["1", "2", "3", "4", "5", "6"] }
+    },
+    {
+      "name": "licenceStageAppliedFor",
+      "label": "Licence stage",
+      "type": "enum",
+      "required": true,
+      "description": "The stage of the class being renewed. DL1's grid offers all three stages (learner/restricted/full) only for class 1 and class 6; classes 2-5 offer only learner/full — this schema does not enforce that class/stage pairing (validation.enum lists the full value set per §6.4.1; a producer or consumer applying this schema should treat 'restricted' as inapplicable to classes 2-5 per the source form's own layout).",
+      "sourceRef": "DL1 §15, licence class and type grid",
+      "validation": { "enum": ["learner", "restricted", "full"] }
+    },
+    {
+      "name": "hasMedicalConditionAffectingDriving",
+      "label": "Do you have a medical condition or disability that could affect your ability to drive safely?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "DL1 §16, Medical declaration",
+      "description": "Examples given on the form: Alzheimer's, head or spinal injuries, diabetes, high blood pressure, eyesight conditions, mental illness, epilepsy or fits, or stroke."
+    },
+    {
+      "name": "medicalConditionAffectedDrivingLast5Years",
+      "label": "Has that condition or disability affected your ability to drive safely in the last 5 years?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "hasMedicalConditionAffectingDriving", "equals": true },
+      "visibleWhen": { "field": "hasMedicalConditionAffectingDriving", "equals": true },
+      "classification": "health",
+      "description": "If true, a medical certificate must be provided with the application (see the `medicalCertificate` entry in `documents`).",
+      "sourceRef": "DL1 §16, Medical declaration"
+    },
+    {
+      "name": "turning75OrOlderAtRenewal",
+      "label": "Will you be turning 75 or older at the time of this renewal?",
+      "type": "boolean",
+      "required": true,
+      "description": "A medical certificate may also be required for an applicant turning 75 or older, independent of the medical-condition questions above.",
+      "sourceRef": "DL1 page 3, What to bring — 'You may also need a medical certificate if... you're turning 75 or over'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "primaryIdentityDocument",
+      "label": "Primary evidence of identity",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "nz_photo_driver_licence_current_or_expired_up_to_2_years",
+        "nz_passport_current",
+        "refugee_travel_document",
+        "overseas_passport",
+        "firearms_licence",
+        "citizenship_certificate",
+        "emergency_travel_document",
+        "full_birth_certificate_issued_from_1_january_1998",
+        "certificate_of_identity_passports_act_1992",
+        "certificate_of_identity_immigration_act_2009"
+      ],
+      "issuingAuthority": "Must be issued in New Zealand, except an overseas passport",
+      "sourceRef": "DL1 §8, Evidence of identity / 1. Primary ID type"
+    },
+    {
+      "id": "supportingIdentityDocument",
+      "label": "Supporting evidence of identity",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "identityPathway", "equals": "primary_and_supporting_id" },
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "kiwi_access_or_18_plus_card",
+        "community_services_card",
+        "supergold_card",
+        "veteran_supergold_card",
+        "student_photo_id_card",
+        "employee_photo_id_card",
+        "electoral_roll_record",
+        "inland_revenue_number",
+        "utility_bill_or_bank_statement",
+        "overseas_driver_licence",
+        "steps_to_freedom_form"
+      ],
+      "issuingAuthority": "Must be issued in New Zealand, except an overseas driver licence",
+      "sourceRef": "DL1 §8, Evidence of identity / 2. Supporting ID type"
+    },
+    {
+      "id": "identityRefereeDocumentDL26",
+      "label": "Identity referee document (DL26)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "neitherIdentityDocumentHasPhoto", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DL1 §8, Evidence of identity — 'If neither of your forms of ID has a photo: Identity referee document attached (DL26)'"
+    },
+    {
+      "id": "nameChangeDocument",
+      "label": "Name change document",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "namesDifferFromId", "equals": true },
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "birth_certificate_showing_both_names",
+        "marriage_or_civil_union_certificate",
+        "copy_of_particulars_of_marriage_or_civil_union",
+        "dissolution_of_marriage_or_civil_union_order",
+        "certificate_of_annulment",
+        "deed_poll_certificate_or_name_change_certificate",
+        "statutory_declaration_of_name_change_registered_with_bdm"
+      ],
+      "issuingAuthority": "Must be issued in New Zealand",
+      "sourceRef": "DL1 §9, Name change document"
+    },
+    {
+      "id": "medicalCertificate",
+      "label": "Medical certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "medicalConditionAffectedDrivingLast5Years", "equals": true },
+          { "field": "licenceClassAppliedFor", "in": ["2", "3", "4", "5"] },
+          { "field": "turning75OrOlderAtRenewal", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "DL1 page 3, What to bring — Medical certificate"
+    },
+    {
+      "id": "declarationAttestation",
+      "label": "Applicant declaration",
+      "category": "attestation",
+      "required": true,
+      "statement": "I declare that, to the best of my knowledge and belief, my licence is not currently suspended or revoked, and/or that I am not disqualified from obtaining or holding a driver licence. I declare that, to the best of my knowledge and belief, all the information I have given for this application is correct. I declare that the medical fitness information provided above is true and accurate.",
+      "sourceRef": "DL1 §Declaration"
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": [
+        "licenceNumber",
+        "surname",
+        "firstName",
+        "middleNames",
+        "namesDifferFromId",
+        "previousName",
+        "gender",
+        "organDonationWillingness",
+        "dateOfBirth",
+        "placeOfBirthTown",
+        "placeOfBirthCountry"
+      ],
+      "next": "identity_evidence"
+    },
+    {
+      "id": "identity_evidence",
+      "title": "Evidence of identity",
+      "fields": ["identityPathway", "neitherIdentityDocumentHasPhoto"],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Address and contact details",
+      "fields": [
+        "physicalAddress",
+        "mailingAddress",
+        "addressPrintedOnLicence",
+        "addressPrintedOnLicenceSource",
+        "mobilePhone",
+        "otherPhone",
+        "emailAddress"
+      ],
+      "next": "licence_class"
+    },
+    {
+      "id": "licence_class",
+      "title": "Licence class and type",
+      "fields": ["licenceClassAppliedFor", "licenceStageAppliedFor"],
+      "next": "medical_declaration"
+    },
+    {
+      "id": "medical_declaration",
+      "title": "Medical declaration",
+      "fields": [
+        "hasMedicalConditionAffectingDriving",
+        "medicalConditionAffectedDrivingLast5Years",
+        "turning75OrOlderAtRenewal"
+      ]
+    }
+  ]
+}
