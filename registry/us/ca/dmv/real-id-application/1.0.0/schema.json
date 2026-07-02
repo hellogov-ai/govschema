@@ -1,0 +1,438 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/ca/dmv/real-id-application",
+  "version": "1.0.0",
+  "title": "California REAL ID Application",
+  "description": "Apply for a first-time, federally-compliant REAL ID driver's license or identification card in California, on behalf of the California Department of Motor Vehicles (DMV). It models the DMV's own online, pre-visit document checklist and the identity-verification fields a REAL ID applicant supplies: one proof-of-identity document, any full-name-change history, and two different proofs of California residency. It pairs with the published us/ca/dmv/drivers-license-renewal — that schema models an existing licence-holder's renewal-method branch, including the boolean gate upgradingToRealId, but does not itself expand the REAL ID document-checklist shape this schema models in full. It is scoped to an adult (18+) applicant who is not an AB 60 (undocumented-resident) licence holder; it does not model AB 60 applications, a minor applicant's name-change tracing-document rules, the DMV's own in-office steps (vision test, photo, signature, biometrics, payment), or the source's separately-documented 'Second Residency' edge case. It does not submit the application; the live dmv.ca.gov source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-CA"
+  },
+  "authority": {
+    "name": "California Department of Motor Vehicles",
+    "abbreviation": "CA DMV",
+    "url": "https://www.dmv.ca.gov/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/real-id/",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "REAL ID Checklist (interactive tool), https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/real-id/real-id-checklist/"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live dmv.ca.gov 'REAL ID' landing page, the 'What Is REAL ID?' guidance/FAQ page, the interactive 'REAL ID Checklist' tool, and the 'Driver's License / ID Card Application' (online eDL 44) page — all fetched live as raw HTML, 2026-07-02, no block encountered. Status remains 'draft'. See VERIFICATION.md for the full list of pages consulted."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isAB60LicenseHolder",
+      "label": "Are you applying for, or renewing, an AB 60 driver's license?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "AB 60 licenses are issued to individuals who cannot provide proof of legal presence in the United States. The source states plainly that AB 60 applicants/renewers are not eligible to receive a REAL ID. If true, the flow ends.",
+      "sourceRef": "What Is REAL ID? — 'Individuals applying for or renewing an AB 60 driver's license are not eligible to receive a REAL ID driver's license or identification card.'"
+    },
+    {
+      "name": "fullLastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must match the name on the proof-of-identity document selected below, unless a name change is being documented.",
+      "sourceRef": "Driver's License / ID Card Application (online eDL 44) — 'basic information such as name, address, and date of birth'"
+    },
+    {
+      "name": "fullFirstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Driver's License / ID Card Application (online eDL 44) — 'basic information such as name, address, and date of birth'"
+    },
+    {
+      "name": "fullMiddleName",
+      "label": "Middle name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Driver's License / ID Card Application (online eDL 44) — 'basic information such as name, address, and date of birth'"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full date, YYYY-MM-DD. Must match the date of birth on the proof-of-identity document selected below (the REAL ID Checklist requires the identity document to 'include your date of birth and your full name').",
+      "sourceRef": "Driver's License / ID Card Application (online eDL 44) — 'basic information such as name, address, and date of birth'"
+    },
+    {
+      "name": "socialSecurityNumber",
+      "label": "Social Security number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The source states an applicant 'will be asked to provide your Social Security number on your REAL ID application (exceptions may apply)', without detailing the exception; modelled here as required, with the exception left unmodelled (see VERIFICATION.md honesty flag).",
+      "sourceRef": "What Is REAL ID? — 'You will be asked to provide your Social Security number on your REAL ID application (exceptions may apply).'",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "residenceAddressLine1",
+      "label": "California mailing address — street address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must be the same California mailing address shown on both proof-of-residency documents supplied below.",
+      "sourceRef": "REAL ID Checklist — 'BOTH documents must show your first and last name with the same mailing address that is listed on your REAL ID application.'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "residenceAddressLine2",
+      "label": "California mailing address — apartment, suite, or unit (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "REAL ID Checklist — 'the same mailing address that is listed on your REAL ID application'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "residenceAddressCity",
+      "label": "California mailing address — city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "REAL ID Checklist — 'the same mailing address that is listed on your REAL ID application'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "residenceAddressPostalCode",
+      "label": "California mailing address — ZIP code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "5-digit or ZIP+4 format, e.g. 90210 or 90210-1234.",
+      "sourceRef": "REAL ID Checklist — 'the same mailing address that is listed on your REAL ID application'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Proof of identity document",
+      "type": "enum",
+      "required": true,
+      "description": "You must present ONE proof-of-identity document that includes your date of birth and your full name (first, middle, and last).",
+      "sourceRef": "REAL ID Checklist — 'Proof of Identity ... Check mark the document below that you'll use as your proof of identity.'",
+      "validation": {
+        "enum": [
+          "us_passport_or_passport_card",
+          "us_birth_certificate_original_or_certified",
+          "permanent_resident_card",
+          "foreign_passport_with_us_visa_and_i94",
+          "foreign_passport_with_i94_fsm_rmi_palau",
+          "certificate_of_naturalization_or_citizenship",
+          "us_territory_birth_certificate_certified",
+          "employment_authorization_document_i766",
+          "permanent_resident_card_with_i797c_or_i797",
+          "us_certificate_of_birth_abroad_or_consular_report",
+          "foreign_passport_stamped_processed_for_i551",
+          "documents_reflecting_tps_benefit_eligibility"
+        ]
+      }
+    },
+    {
+      "name": "fullNameMatchesIdentityDocument",
+      "label": "Does your current full name match what is on your identity document?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "REAL ID Checklist — 'Does your current full name match what is on your identity document?'"
+    },
+    {
+      "name": "passportContainsCurrentFullName",
+      "label": "Does your valid passport contain your current full name?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "fullNameMatchesIdentityDocument", "equals": false },
+      "description": "Asked by the source's interactive checklist alongside the name-change questions. The checklist is a client-rendered wizard; this schema could not confirm from a static extraction whether the source shows this question only when identityDocumentType is a passport, or whenever the name does not match — modelled conservatively as visible whenever the name does not match (see VERIFICATION.md honesty flag).",
+      "sourceRef": "REAL ID Checklist — 'Does your valid passport contain your current full name?'"
+    },
+    {
+      "name": "howManyNameChanges",
+      "label": "How many times have you changed your full name?",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "fullNameMatchesIdentityDocument", "equals": false },
+      "description": "Examples include adoption, marriage, divorce. The source's checklist tool collects up to 5 name changes as separate numbered entries; this schema records only the count and the first name change in full (see VERIFICATION.md — a GSP-0009 repeating-structure exclusion, since GovSchema v0.3 has no repeating-field construct).",
+      "sourceRef": "REAL ID Checklist — 'How many times have you changed your full name? Examples include adoption, marriage, divorce. Please enter a number from 1 to 5.'",
+      "validation": { "minimum": 1, "maximum": 5 }
+    },
+    {
+      "name": "nameAtBirth",
+      "label": "Full name at birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "fullNameMatchesIdentityDocument", "equals": false },
+      "sourceRef": "REAL ID Checklist — 'First Full Name Change ... Full name at birth:'"
+    },
+    {
+      "name": "changedFullNameTo",
+      "label": "I changed my full name to",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "fullNameMatchesIdentityDocument", "equals": false },
+      "description": "The full name resulting from the first (or only) name change on record. Additional name changes beyond the first are out of scope for v1.0.0 (see VERIFICATION.md).",
+      "sourceRef": "REAL ID Checklist — 'First Full Name Change ... I changed my full name to:'"
+    },
+    {
+      "name": "nameChangeReason",
+      "label": "Reason for name change",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "fullNameMatchesIdentityDocument", "equals": false },
+      "sourceRef": "REAL ID Checklist — 'First Full Name Change ... Reason for name change: Adoption / Dissolution of Marriage/Domestic Partnership / Domestic Partnership / Legal Name Change / Marriage'",
+      "validation": {
+        "enum": [
+          "adoption",
+          "dissolution_of_marriage_or_domestic_partnership",
+          "domestic_partnership",
+          "legal_name_change",
+          "marriage"
+        ]
+      }
+    },
+    {
+      "name": "usesPoBoxForMailingAddress",
+      "label": "Do you use a P.O. Box?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, one proof-of-residency document must show both the P.O. Box and the physical residence address, and the other may show only the P.O. Box.",
+      "sourceRef": "REAL ID Checklist — 'Use a P.O. Box? One document MUST show both your P.O. Box and physical (residence) address, and one document may show only the P.O. Box.'"
+    },
+    {
+      "name": "residencyDocumentType1",
+      "label": "First proof-of-residency document",
+      "type": "enum",
+      "required": true,
+      "description": "You must present TWO DIFFERENT printed documents showing your California mailing address; this is the first. Must be a different document type from residencyDocumentType2.",
+      "sourceRef": "REAL ID Checklist — 'Two Proofs of Residency ... Check mark the TWO different documents below that you'll use as your proof of California residency.'",
+      "validation": {
+        "enum": [
+          "home_utility_or_cellular_phone_bill",
+          "bank_or_credit_union_or_credit_card_records",
+          "insurance_documents",
+          "medical_documents",
+          "document_issued_by_us_government_agency",
+          "mortgage_bill",
+          "employment_documents",
+          "tax_return_irs_or_ca_ftb",
+          "faith_based_organization_document",
+          "rental_or_lease_agreement",
+          "school_documents",
+          "usps_change_of_address_confirmation",
+          "property_tax_bill_or_statement",
+          "residency_attestation_letter",
+          "deed_or_title_to_residential_property",
+          "voter_registration_confirmation",
+          "proof_of_resident_tuition_payment",
+          "boe_266_homeowners_property_tax_exemption",
+          "court_documents_listing_ca_residency",
+          "ca_vehicle_or_vessel_title_or_registration",
+          "dl933_no_fee_id_card_eligibility_verification"
+        ]
+      }
+    },
+    {
+      "name": "residencyDocumentType2",
+      "label": "Second proof-of-residency document",
+      "type": "enum",
+      "required": true,
+      "description": "The second of the two required, different, proof-of-residency documents. Must be a different document type from residencyDocumentType1 — GovSchema v0.3 has no cross-field 'not equal to another field' validation keyword, so this rule is recorded here in prose, not enforced structurally (see VERIFICATION.md).",
+      "sourceRef": "REAL ID Checklist — 'Two Proofs of Residency ... Check mark the TWO different documents below that you'll use as your proof of California residency.'",
+      "validation": {
+        "enum": [
+          "home_utility_or_cellular_phone_bill",
+          "bank_or_credit_union_or_credit_card_records",
+          "insurance_documents",
+          "medical_documents",
+          "document_issued_by_us_government_agency",
+          "mortgage_bill",
+          "employment_documents",
+          "tax_return_irs_or_ca_ftb",
+          "faith_based_organization_document",
+          "rental_or_lease_agreement",
+          "school_documents",
+          "usps_change_of_address_confirmation",
+          "property_tax_bill_or_statement",
+          "residency_attestation_letter",
+          "deed_or_title_to_residential_property",
+          "voter_registration_confirmation",
+          "proof_of_resident_tuition_payment",
+          "boe_266_homeowners_property_tax_exemption",
+          "court_documents_listing_ca_residency",
+          "ca_vehicle_or_vessel_title_or_registration",
+          "dl933_no_fee_id_card_eligibility_verification"
+        ]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocument",
+      "label": "Proof of identity document",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "us_passport_or_passport_card",
+        "us_birth_certificate_original_or_certified",
+        "permanent_resident_card",
+        "foreign_passport_with_us_visa_and_i94",
+        "foreign_passport_with_i94_fsm_rmi_palau",
+        "certificate_of_naturalization_or_citizenship",
+        "us_territory_birth_certificate_certified",
+        "employment_authorization_document_i766",
+        "permanent_resident_card_with_i797c_or_i797",
+        "us_certificate_of_birth_abroad_or_consular_report",
+        "foreign_passport_stamped_processed_for_i551",
+        "documents_reflecting_tps_benefit_eligibility"
+      ],
+      "sourceRef": "REAL ID Checklist — 'Proof of Identity ... This document must include your date of birth and your full name (first, middle, and last).'"
+    },
+    {
+      "id": "nameChangeDocument",
+      "label": "Legal name change document",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "fullNameMatchesIdentityDocument", "equals": false },
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "adoption_documents",
+        "name_change_document",
+        "marriage_certificate",
+        "domestic_partnership_certificate_or_declaration",
+        "dissolution_document"
+      ],
+      "sourceRef": "REAL ID Checklist — 'Ensure you bring at least one of the following to document each legal name change.' One document per legal name change on record; this schema models only the first name change (see the nameChangeReason field and VERIFICATION.md)."
+    },
+    {
+      "id": "residencyDocument1",
+      "label": "First proof-of-residency document",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "home_utility_or_cellular_phone_bill",
+        "bank_or_credit_union_or_credit_card_records",
+        "insurance_documents",
+        "medical_documents",
+        "document_issued_by_us_government_agency",
+        "mortgage_bill",
+        "employment_documents",
+        "tax_return_irs_or_ca_ftb",
+        "faith_based_organization_document",
+        "rental_or_lease_agreement",
+        "school_documents",
+        "usps_change_of_address_confirmation",
+        "property_tax_bill_or_statement",
+        "residency_attestation_letter",
+        "deed_or_title_to_residential_property",
+        "voter_registration_confirmation",
+        "proof_of_resident_tuition_payment",
+        "boe_266_homeowners_property_tax_exemption",
+        "court_documents_listing_ca_residency",
+        "ca_vehicle_or_vessel_title_or_registration",
+        "dl933_no_fee_id_card_eligibility_verification"
+      ],
+      "sourceRef": "REAL ID Checklist — 'To prove that you live in California, you must present TWO DIFFERENT printed documents that show your California mailing address.'"
+    },
+    {
+      "id": "residencyDocument2",
+      "label": "Second proof-of-residency document",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "home_utility_or_cellular_phone_bill",
+        "bank_or_credit_union_or_credit_card_records",
+        "insurance_documents",
+        "medical_documents",
+        "document_issued_by_us_government_agency",
+        "mortgage_bill",
+        "employment_documents",
+        "tax_return_irs_or_ca_ftb",
+        "faith_based_organization_document",
+        "rental_or_lease_agreement",
+        "school_documents",
+        "usps_change_of_address_confirmation",
+        "property_tax_bill_or_statement",
+        "residency_attestation_letter",
+        "deed_or_title_to_residential_property",
+        "voter_registration_confirmation",
+        "proof_of_resident_tuition_payment",
+        "boe_266_homeowners_property_tax_exemption",
+        "court_documents_listing_ca_residency",
+        "ca_vehicle_or_vessel_title_or_registration",
+        "dl933_no_fee_id_card_eligibility_verification"
+      ],
+      "sourceRef": "REAL ID Checklist — 'To prove that you live in California, you must present TWO DIFFERENT printed documents that show your California mailing address.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Eligibility",
+      "fields": ["isAB60LicenseHolder"],
+      "transitions": [
+        { "to": null, "exitReason": "not-eligible-ab60-license-holder", "when": { "field": "isAB60LicenseHolder", "equals": true } },
+        { "to": "identity" }
+      ]
+    },
+    {
+      "id": "identity",
+      "title": "Identity",
+      "fields": ["fullLastName", "fullFirstName", "fullMiddleName", "dateOfBirth", "socialSecurityNumber"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "California mailing address",
+      "fields": ["residenceAddressLine1", "residenceAddressLine2", "residenceAddressCity", "residenceAddressPostalCode"],
+      "next": "identity_document"
+    },
+    {
+      "id": "identity_document",
+      "title": "Proof of identity and name history",
+      "fields": ["identityDocumentType", "fullNameMatchesIdentityDocument", "passportContainsCurrentFullName", "howManyNameChanges", "nameAtBirth", "changedFullNameTo", "nameChangeReason"],
+      "next": "residency_documents"
+    },
+    {
+      "id": "residency_documents",
+      "title": "Proof of California residency",
+      "fields": ["usesPoBoxForMailingAddress", "residencyDocumentType1", "residencyDocumentType2"]
+    }
+  ]
+}
