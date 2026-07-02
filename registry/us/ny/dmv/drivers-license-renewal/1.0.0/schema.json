@@ -1,0 +1,533 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/ny/dmv/drivers-license-renewal",
+  "version": "1.0.0",
+  "title": "New York Driver License Renewal",
+  "description": "Renew a standard (non-commercial) New York State driver license by mail or in person, on behalf of the New York State Department of Motor Vehicles (NYS DMV), using form MV-44 (Application for Permit, Driver License or Non-Driver ID Card, edition 4/26) — the form NY DMV directs an applicant to when renewing without a mailed renewal notice, or when renewing at a DMV office. It pairs with us/ca/dmv/drivers-license-renewal, gb/dvla/driving-licence-renewal-photocard, ie/dttas/driving-licence-renewal, ca/on/mto/drivers-licence-renewal, nz/nzta/drivers-licence-renewal, and au/nsw/service-nsw/driver-licence-renewal to show the same process across seven jurisdictions. It models only the standard driver-license renewal path (purpose 'Renew', credential type 'License'): it does not model applying for a learner permit or non-driver ID card, any purpose other than renewal (new, replacement, change type, update info, transfer to New York, conditional, or restricted use), a commercial driver license (CDL — see the existing us/ca/dmv/commercial-drivers-license-application for that shape), an applicant under 18 who needs parent/guardian consent, the form's bundled United States Selective Service System registration section (see the existing us/sss/selective-service-registration schema for that shape), or the form's bundled New York State Voter Registration Application (a distinct civic-registration process; compare the still-open 'California Voter Registration' catalog candidate) — all out of scope for v1.0.0. It also does not model the separate, authenticated MyDMV/NY.gov ID online renewal transaction, which uses no downloadable form and was not independently reachable pre-login. It does not submit the renewal; the live dmv.ny.gov source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-NY"
+  },
+  "authority": {
+    "name": "New York State Department of Motor Vehicles",
+    "abbreviation": "NYS DMV",
+    "url": "https://dmv.ny.gov"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://dmv.ny.gov/driver-license/renew-a-driver-license",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "MV-44 (4/26) — Application for Permit, Driver License or Non-Driver ID Card, https://dmv.ny.gov/forms/mv44.pdf"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live dmv.ny.gov 'Renew a Driver License' guidance page (fetched 2026-07-02, raw HTML) and the official MV-44 (4/26) fillable AcroForm PDF it links, downloaded directly from dmv.ny.gov and extracted field-by-field with pdfjs-dist. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "credentialTypeApplyingFor",
+      "label": "Applying for",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "MV-44 is used to apply for a learner permit, a driver license, or a non-driver ID card. Only 'license' is in scope for this renewal schema; if the applicant is applying for a permit or non-driver ID card instead, the flow ends.",
+      "sourceRef": "MV-44 p.1, 'APPLYING FOR' — License / Permit / ID card",
+      "validation": { "enum": ["license", "permit", "non_driver_id"] }
+    },
+    {
+      "name": "purposeForApplication",
+      "label": "Purpose for application",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "MV-44's single-select purpose radio group. Only 'renew' is in scope for this schema; every other purpose ends the flow. Option order reconstructed from the PDF's left-to-right widget positions rather than a directly legible label-to-box mapping in the extracted text layer (see VERIFICATION.md).",
+      "sourceRef": "MV-44 p.1, 'PURPOSE FOR APPLICATION' — New / Change Type / Replacement / Renew / Update Info / Transfer to New York / Conditional / Restricted",
+      "validation": { "enum": ["new", "change_type", "replacement", "renew", "update_info", "transfer_to_new_york", "conditional", "restricted"] }
+    },
+    {
+      "name": "isApplyingForCommercialDriverLicense",
+      "label": "Are you applying for, or renewing, a commercial driver license (CDL)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "MV-44 page 2 carries a 'COMMERCIAL DRIVER LICENSE APPLICANTS ONLY' certification block distinct from the standard-license questions. CDL applications are out of scope for this schema (see the existing us/ca/dmv/commercial-drivers-license-application for that shape). If true, the flow ends.",
+      "sourceRef": "MV-44 p.2, 'COMMERCIAL DRIVER LICENSE APPLICANTS ONLY'"
+    },
+    {
+      "name": "requiresParentOrGuardianConsent",
+      "label": "Is the applicant under 18, applying for a junior license or a non-driver ID card as a minor, and therefore required to have a parent or guardian's consent?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "MV-44 page 2 has a 'PARENT/GUARDIAN CONSENT' block for junior-license and under-16 non-driver-ID applicants. Out of scope for this adult-renewal schema. If true, the flow ends.",
+      "sourceRef": "MV-44 p.2, 'CERTIFICATION' — 'Junior License' / 'Non-driver ID Card (under 16)' / 'PARENT/GUARDIAN CONSENT'"
+    },
+    {
+      "name": "hasCurrentOrPriorNyCredential",
+      "label": "Do you now have, or did you ever have, a New York driver license, learner permit, or non-driver ID card?",
+      "type": "boolean",
+      "required": true,
+      "description": "Expected true for a renewal. Modelled as a directly-asked field rather than assumed, since it is a literal question on the form.",
+      "sourceRef": "MV-44 p.1 — 'Do you now have, or did you ever have, a New York driver license, learner permit, or non-driver ID card?'"
+    },
+    {
+      "name": "nyCredentialIdNumber",
+      "label": "ID number on New York State driver license, learner permit, or non-driver ID card",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The identifier on the applicant's current or most recent NY credential.",
+      "sourceRef": "MV-44 p.1 — 'ID NUMBER ON NEW YORK STATE DRIVER LICENSE, LEARNER PERMIT, or NON-DRIVER ID CARD'"
+    },
+    {
+      "name": "fullLastName",
+      "label": "Full last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "MV-44 p.1 — 'FULL LAST NAME'"
+    },
+    {
+      "name": "fullFirstName",
+      "label": "Full first name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "MV-44 p.1 — 'FULL FIRST NAME'"
+    },
+    {
+      "name": "fullMiddleName",
+      "label": "Full middle name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional: not every applicant has a middle name on record.",
+      "sourceRef": "MV-44 p.1 — 'FULL MIDDLE NAME'"
+    },
+    {
+      "name": "suffix",
+      "label": "Suffix",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'SUFFIX'"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Modelled as a full ISO 8601 date. The source PDF's own 'DATE OF BIRTH' widget is three comboboxes (Month, Day, and a two-digit Year 00-99) — a form-design quirk of the fillable PDF itself, not something this schema's date type needs to replicate; see VERIFICATION.md.",
+      "sourceRef": "MV-44 p.1 — 'DATE OF BIRTH' (Month MM / Day DD / Year YY)"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'SEX' (M / F / X)",
+      "validation": { "enum": ["M", "F", "X"] }
+    },
+    {
+      "name": "heightFeet",
+      "label": "Height — feet",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'HEIGHT' Feet",
+      "validation": { "minimum": 1, "maximum": 9 }
+    },
+    {
+      "name": "heightInches",
+      "label": "Height — inches",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'HEIGHT' Inches",
+      "validation": { "minimum": 0, "maximum": 11 }
+    },
+    {
+      "name": "eyeColor",
+      "label": "Eye color",
+      "type": "string",
+      "required": true,
+      "description": "No enumerated option list is printed on the form itself; modelled as free text rather than a guessed set of options, the same discipline used for gender/eye-color fields elsewhere in this registry.",
+      "sourceRef": "MV-44 p.1 — 'EYE COLOR'"
+    },
+    {
+      "name": "telephoneAreaCode",
+      "label": "Telephone area code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'TELEPHONE NUMBER (Home/Mobile)' Area Code",
+      "validation": { "pattern": "^[0-9]{3}$" }
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "MV-44 p.1 — 'TELEPHONE NUMBER (Home/Mobile)'"
+    },
+    {
+      "name": "telephoneType",
+      "label": "Telephone type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'TELEPHONE NUMBER Type'",
+      "validation": { "enum": ["Home", "Mobile"] }
+    },
+    {
+      "name": "hasNameChanged",
+      "label": "Has your name changed?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'Has your name changed?'"
+    },
+    {
+      "name": "formerName",
+      "label": "Former name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "hasNameChanged", "equals": true },
+      "description": "Print your former name exactly as it appears on your present license or non-driver ID card.",
+      "sourceRef": "MV-44 p.1 — 'If \"Yes\", print your former name exactly as it appears on your present license or non-driver ID card.'"
+    },
+    {
+      "name": "otherChangeDescription",
+      "label": "Other change — what is the change and the reason for it?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'OTHER CHANGE: What is the change and the reason for it (new license class, wrong date of birth, etc.)?'"
+    },
+    {
+      "name": "neverIssuedSocialSecurityNumber",
+      "label": "Have you never been issued a Social Security Number?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'If you have never been issued a Social Security Number, check this box'"
+    },
+    {
+      "name": "socialSecurityNumber",
+      "label": "Social Security number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "neverIssuedSocialSecurityNumber", "equals": false },
+      "description": "Required if the applicant has ever been issued an SSN. 9 digits, no dashes.",
+      "sourceRef": "MV-44 p.1 — 'SOCIAL SECURITY NUMBER (SSN)'",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "residentialAddressLine",
+      "label": "Address where you live",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street address only — a P.O. Box is not accepted. This address will appear on the photo document.",
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU LIVE — DO NOT GIVE P.O. BOX. THIS ADDRESS WILL APPEAR ON YOUR PHOTO DOCUMENT.'"
+    },
+    {
+      "name": "residentialAddressAptNo",
+      "label": "Address where you live — apartment number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU LIVE' Apt. No."
+    },
+    {
+      "name": "residentialCity",
+      "label": "Address where you live — city or town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU LIVE' City or Town"
+    },
+    {
+      "name": "residentialState",
+      "label": "Address where you live — state",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU LIVE' State",
+      "validation": { "enum": ["NY", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WV", "WI", "WY"] }
+    },
+    {
+      "name": "residentialZip",
+      "label": "Address where you live — ZIP code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU LIVE' Zip Code",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "residentialCounty",
+      "label": "Address where you live — county",
+      "type": "string",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU LIVE' County"
+    },
+    {
+      "name": "mailingAddressLine",
+      "label": "Address where you get your mail",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only required if different from the address where you live. Include street number and name, Rural Delivery and/or box number.",
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU GET YOUR MAIL — Required if different from address where you live.'"
+    },
+    {
+      "name": "mailingAddressAptNo",
+      "label": "Address where you get your mail — apartment number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU GET YOUR MAIL' Apt. No."
+    },
+    {
+      "name": "mailingCity",
+      "label": "Address where you get your mail — city or town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU GET YOUR MAIL' City or Town"
+    },
+    {
+      "name": "mailingState",
+      "label": "Address where you get your mail — state",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU GET YOUR MAIL' State",
+      "validation": { "enum": ["NY", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WV", "WI", "WY"] }
+    },
+    {
+      "name": "mailingZip",
+      "label": "Address where you get your mail — ZIP code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU GET YOUR MAIL' Zip Code",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "mailingCounty",
+      "label": "Address where you get your mail — county",
+      "type": "string",
+      "required": false,
+      "sourceRef": "MV-44 p.1 — 'ADDRESS WHERE YOU GET YOUR MAIL' County"
+    },
+    {
+      "name": "hasMailingAddressChanged",
+      "label": "Has your mailing address changed?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'HAS YOUR MAILING ADDRESS CHANGED?'"
+    },
+    {
+      "name": "hasResidentialAddressChanged",
+      "label": "Has the address where you live changed?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'HAS THE ADDRESS WHERE YOU LIVE CHANGED?'"
+    },
+    {
+      "name": "excludeVehicleRegistrationsFromAddressUpdate",
+      "label": "Exclude your vehicle registrations from this address update",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "any": [ { "field": "hasMailingAddressChanged", "equals": true }, { "field": "hasResidentialAddressChanged", "equals": true } ] },
+      "description": "If either address changed, every vehicle registration tied to this ID number is updated to the new address unless this box is checked.",
+      "sourceRef": "MV-44 p.1 — 'If you answered yes to either of the questions above, then addresses on all vehicle registrations tied to your ID number will also be updated with this address, unless you check this box.'"
+    },
+    {
+      "name": "hasOutOfStateLicenseValidOrRecentlyExpired",
+      "label": "Do you have a permit or driver license, valid or expired within the last two years, issued by any place other than New York State?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "MV-44 p.1 — 'Do you have a permit or driver license that is valid or that has expired within the last two years, issued by any place other than New York State?'"
+    },
+    {
+      "name": "outOfStateLicenseIssuedIn",
+      "label": "Where was your out-of-state permit or license issued?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasOutOfStateLicenseValidOrRecentlyExpired", "equals": true },
+      "sourceRef": "MV-44 p.1 — 'If \"Yes\", where was it issued?'"
+    },
+    {
+      "name": "outOfStateLicenseExpirationDate",
+      "label": "Out-of-state permit or license — date of expiration",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasOutOfStateLicenseValidOrRecentlyExpired", "equals": true },
+      "sourceRef": "MV-44 p.1 — 'Date of Expiration'"
+    },
+    {
+      "name": "outOfStateLicenseType",
+      "label": "Out-of-state permit or license — type of license",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasOutOfStateLicenseValidOrRecentlyExpired", "equals": true },
+      "sourceRef": "MV-44 p.1 — 'Type of License'"
+    },
+    {
+      "name": "outOfStateLicenseIdNumber",
+      "label": "Out-of-state permit or license ID number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "hasOutOfStateLicenseValidOrRecentlyExpired", "equals": true },
+      "description": "An out-of-state permit, driver license, or ID card may be subject to cancellation upon issuance of a New York credential.",
+      "sourceRef": "MV-44 p.1 — 'Out-of-State Permit or License ID No.'"
+    },
+    {
+      "name": "wantsVeteranDesignation",
+      "label": "Would you like to have \"Veteran\" printed on the front of your photo document?",
+      "type": "boolean",
+      "required": false,
+      "description": "Requires proof of an honorable discharge from military service (for example, DD-214 or DD-215) — see the documents[] entry veteranDischargeProof.",
+      "sourceRef": "MV-44 p.1 — 'VETERAN STATUS — Check this box if you would like to have \"Veteran\" printed on the front of your photo document.'"
+    },
+    {
+      "name": "wantsLifePassItOnDonation",
+      "label": "Would you like to make a $1 voluntary donation to the Life Pass It On Trust Fund?",
+      "type": "boolean",
+      "required": false,
+      "description": "A voluntary $1 donation for organ and tissue donation research and outreach, added to the total transaction fee.",
+      "sourceRef": "MV-44 p.1 — 'Check this box to make a $1 voluntary donation to the Life Pass It On Trust Fund for organ and tissue donation research and outreach.'"
+    },
+    {
+      "name": "wantsDonateLifeRegistry",
+      "label": "Would you like to be added to the Donate Life Registry?",
+      "type": "enum",
+      "required": true,
+      "description": "The form requires an answer to this question: enroll (and sign/date the consent) or skip.",
+      "sourceRef": "MV-44 p.1 — 'You must answer the following question: Would you like to be added to the Donate Life Registry? Yes (sign and date consent below) / Skip This Question'",
+      "validation": { "enum": ["yes_sign_and_date", "skip_this_question"] }
+    },
+    {
+      "name": "donorConsentDate",
+      "label": "Donor consent — signature date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "wantsDonateLifeRegistry", "equals": "yes_sign_and_date" },
+      "sourceRef": "MV-44 p.1 — 'Donor Consent Signature and Date'"
+    },
+    {
+      "name": "certificationPrintedName",
+      "label": "Certification — please print name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "MV-44 p.2 — 'PLEASE PRINT NAME'"
+    },
+    {
+      "name": "certificationDate",
+      "label": "Certification date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "MV-44 p.2 — 'CERTIFICATION DATE'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicationCertification",
+      "label": "Applicant certification",
+      "category": "attestation",
+      "required": true,
+      "statement": "I certify that the information I have given on this application and on any documentation provided in support of this application is true and complete. I understand that making a false statement on this application, or submitting any documentation in support of this application that is false, may be punishable as a criminal offense. I understand that personally identifiable information collected for the purpose of issuing a license or identification card may be verified against nationwide DMV systems for accuracy.",
+      "sourceRef": "MV-44 p.2 — 'CERTIFICATION'. Excludes MV-44's conditional certification clauses that apply only to a replacement, out-of-state transfer, conditional/restricted-use license, or Selective Service registration — none of which are in scope for this v1.0.0 standard-renewal schema."
+    },
+    {
+      "id": "donateLifeRegistryConsentSignature",
+      "label": "Donate Life Registry consent signature",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "wantsDonateLifeRegistry", "equals": "yes_sign_and_date" },
+      "belongsTo": "applicant",
+      "statement": "You are certifying that you are 16 years of age or older; consenting to donate your organs and tissues for transplantation and research; authorizing DMV to transfer your name and identifying information to the Donate Life Registry; and authorizing federally regulated organ procurement organizations and New York State licensed tissue and eye banks to have access to this information upon your death.",
+      "sourceRef": "MV-44 p.1 — 'NEW YORK STATE ORGAN AND TISSUE DONATION'"
+    },
+    {
+      "id": "veteranDischargeProof",
+      "label": "Proof of honorable discharge from military service",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "wantsVeteranDesignation", "equals": true },
+      "belongsTo": "applicant",
+      "acceptedTypes": ["dd214", "dd215"],
+      "sourceRef": "MV-44 p.1 — 'You must present proof that indicates an honorable discharge from military service (ex: DD-214, DD-215).'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "scope",
+      "title": "Applying for and purpose",
+      "fields": ["credentialTypeApplyingFor", "purposeForApplication", "isApplyingForCommercialDriverLicense", "requiresParentOrGuardianConsent"],
+      "transitions": [
+        { "to": null, "exitReason": "not-eligible-not-a-license", "when": { "field": "credentialTypeApplyingFor", "notEquals": "license" } },
+        { "to": null, "exitReason": "not-eligible-not-a-renewal", "when": { "field": "purposeForApplication", "notEquals": "renew" } },
+        { "to": null, "exitReason": "not-eligible-commercial-driver-license", "when": { "field": "isApplyingForCommercialDriverLicense", "equals": true } },
+        { "to": null, "exitReason": "not-eligible-requires-parent-guardian-consent", "when": { "field": "requiresParentOrGuardianConsent", "equals": true } },
+        { "to": "current_credential" }
+      ]
+    },
+    {
+      "id": "current_credential",
+      "title": "Current NY credential",
+      "fields": ["hasCurrentOrPriorNyCredential", "nyCredentialIdNumber"],
+      "next": "identity"
+    },
+    {
+      "id": "identity",
+      "title": "Identity",
+      "fields": ["fullLastName", "fullFirstName", "fullMiddleName", "suffix", "dateOfBirth", "sex", "heightFeet", "heightInches", "eyeColor", "telephoneAreaCode", "telephoneNumber", "telephoneType", "hasNameChanged", "formerName", "otherChangeDescription"],
+      "next": "ssn"
+    },
+    {
+      "id": "ssn",
+      "title": "Social Security number",
+      "fields": ["neverIssuedSocialSecurityNumber", "socialSecurityNumber"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Address",
+      "fields": ["residentialAddressLine", "residentialAddressAptNo", "residentialCity", "residentialState", "residentialZip", "residentialCounty", "mailingAddressLine", "mailingAddressAptNo", "mailingCity", "mailingState", "mailingZip", "mailingCounty", "hasMailingAddressChanged", "hasResidentialAddressChanged", "excludeVehicleRegistrationsFromAddressUpdate"],
+      "next": "prior_license_history"
+    },
+    {
+      "id": "prior_license_history",
+      "title": "Out-of-state licence history",
+      "fields": ["hasOutOfStateLicenseValidOrRecentlyExpired", "outOfStateLicenseIssuedIn", "outOfStateLicenseExpirationDate", "outOfStateLicenseType", "outOfStateLicenseIdNumber"],
+      "next": "designations"
+    },
+    {
+      "id": "designations",
+      "title": "Optional designations",
+      "fields": ["wantsVeteranDesignation", "wantsLifePassItOnDonation", "wantsDonateLifeRegistry", "donorConsentDate"],
+      "next": "certification"
+    },
+    {
+      "id": "certification",
+      "title": "Certification",
+      "fields": ["certificationPrintedName", "certificationDate"]
+    }
+  ]
+}
