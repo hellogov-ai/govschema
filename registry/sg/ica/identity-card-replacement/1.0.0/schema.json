@@ -1,0 +1,352 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/ica/identity-card-replacement",
+  "version": "1.0.0",
+  "title": "Singapore Identity Card (NRIC) Loss/Damage Replacement",
+  "description": "A Singapore Citizen or Permanent Resident reports the loss (or applies to replace a damaged) National Registration Identity Card (NRIC), Singapore's mandatory national identity document, and applies for a replacement. Models Part I (Particulars of Applicant) and Part II (Declaration by Applicant) of ICA's official 'Application for Replacement of NRIC (Loss)' form, plus the payment step described on the primary online process page. It does not model reporting or applying on behalf of another person (a proxy/medical-incapacity path, submitted separately via a distinct FormSG form), the optional 'Authorisation to a Proxy to collect Identity Card' counter-collection step, or the scheduled age-30/age-55 re-registration cycle (a distinct document, sg/ica/identity-card-reregistration). It does not submit the application; the live ICA source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration & Checkpoints Authority",
+    "abbreviation": "ICA",
+    "url": "https://www.ica.gov.sg/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://www.ica.gov.sg/documents/ic/loss",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Application for Replacement of NRIC (Loss) Form; online service at https://eservices.ica.gov.sg/esvclandingpage/iconline (Singpass-authenticated)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from ICA's live 'Lost Identity Card' process page and the official 'Application for Replacement of NRIC (Loss)' PDF form, decoded page-by-page (rendered to raster images and read directly, since the PDF's content streams use a custom glyph encoding with no extractable Unicode text and it carries no AcroForm/annotation fields). The primary self-service e-Service (eservices.ica.gov.sg/esvclandingpage/iconline) is Singpass-authenticated and could not be entered; per this registry's convention for Singpass-gated flows (see sg/ica/passport-application), the fields were instead grounded in the one ICA-published, field-by-field, independently inspectable specification of this exact form: the PDF applicants fill in, which a live, unauthenticated FormSG endpoint (form.gov.sg, public JSON API, see VERIFICATION.md) independently corroborates as the canonical replacement-application form (it is the exact document a proxy reporter is instructed to download, complete, and upload). Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "nricNumber",
+      "label": "NRIC No.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The number of the lost or damaged National Registration Identity Card being replaced.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'NRIC NO.'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "fullName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name as registered on the current NRIC. Underline the surname, if any, on the paper form; this schema does not model that formatting instruction as data.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'NAME (Underline surname, if any)'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nameInChineseJawiTamil",
+      "label": "Name in Chinese/Jawi/Tamil",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name rendered in Chinese, Jawi, or Tamil script, if the current NRIC carries one. Left blank otherwise.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'NAME IN CHINESE/JAWI/TAMIL (if applicable)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nameInHanyuPinyin",
+      "label": "Name in Hanyu Pinyin",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name rendered in Hanyu Pinyin. Leave blank if not required.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'NAME IN HANYU PINYIN (Underline surname, if any) (leave blank if not required)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "alias",
+      "label": "Alias",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Any alias registered against the applicant's identity. Leave blank if not required.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'ALIAS (Underline surname, if any) (leave blank if not required)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "marriedName",
+      "label": "Married name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name adopted through marriage, if any. Leave blank if not required.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'MARRIED NAME (Underline surname, if any) (leave blank if not required)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's current residential address, as a single free-text block (the paper form provides one open address box rather than separate line/town/postcode fields).",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'ADDRESS'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The form offers only Male/Female checkboxes; no third option was found on the form.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'SEX'",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's date of birth, as registered on the current NRIC.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'DATE OF BIRTH'"
+    },
+    {
+      "name": "race",
+      "label": "Race",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Race as registered on the current NRIC (e.g. Chinese, Malay, Indian, Eurasian, or another registered race). ICA does not publish a closed list on this form or its guidance, so this is modelled as free text rather than a guessed enum.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'RACE'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Religion, if the applicant chooses to have one recorded. ICA does not publish a closed list on this form or its guidance, so this is modelled as free text rather than a guessed enum.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'RELIGION'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "dialectGroup",
+      "label": "Dialect group",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Chinese dialect group, where applicable (e.g. Hokkien, Teochew, Cantonese). ICA does not publish a closed list on this form or its guidance, so this is modelled as free text rather than a guessed enum.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'DIALECT GROUP'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "countryOrPlaceOfBirth",
+      "label": "Country/place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Country or place of birth, as registered on the current NRIC.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'COUNTRY/PLACE OF BIRTH'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's nationality, as registered on the current NRIC.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'NATIONALITY'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "contactNumber",
+      "label": "Contact no.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's contact telephone number.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'CONTACT NO.'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's email address, for correspondence about the application.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part I, 'EMAIL'",
+      "validation": { "minLength": 3, "maxLength": 254 }
+    },
+    {
+      "name": "photo",
+      "label": "Colour photograph",
+      "type": "file",
+      "required": true,
+      "description": "Recent (within the last 3 months), unedited, colour photograph taken against a plain white background, full face with a neutral expression, 400x514 pixels for e-Service upload, in jpg, jpeg, heic, heif, or png format, no larger than 8MB.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — photo box ('Colour photo must be taken against white background, and taken within the last 3 months'); ICA Photo Guidelines",
+      "validation": { "maxBytes": 8388608, "mediaTypes": ["image/jpeg", "image/heic", "image/heif", "image/png"] }
+    },
+    {
+      "name": "reasonForNameChange",
+      "label": "Reason for a change of particulars (if any)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text note of any accompanying change of particulars (e.g. a change of name), which requires the matching supporting document listed in documents[]. Left blank when this application only reports a loss/damage with no change of particulars.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — 'Please attach the following documents: ... Supporting documents for any change of particulars e.g. deed poll for a change in name'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "declarationInformationTrue",
+      "label": "Declaration: information is true, accurate, and complete",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant declares that all information submitted is true, accurate, and complete to the best of their knowledge and belief, and understands that concealing or misrepresenting information may lead to prosecution and withdrawal of any facilities, rights, or privileges granted under this application.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part II, Declaration by Applicant (first paragraph)"
+    },
+    {
+      "name": "consentPhotographReuse",
+      "label": "Declaration: consent to reuse of submitted photograph",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant consents to the use of the photograph submitted in this application for other facilities applied for with ICA within 3 months from this date.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part II, Declaration by Applicant (second paragraph)"
+    },
+    {
+      "name": "declarationNoForeignCitizenship",
+      "label": "Declaration: no foreign citizenship or travel document acquired",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant also declares that they have not acquired any foreign citizenship or been issued any foreign travel document. Per the form's own footnote, this declaration applies only to a Singapore Citizen above 21 years old.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part II, Declaration by Applicant (third paragraph, footnoted '# Applies only to Singapore Citizen above 21 years old')"
+    },
+    {
+      "name": "acknowledgeNoRefundIfRecovered",
+      "label": "Acknowledgement: no refund if the lost IC is later recovered",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant acknowledges that any request for a refund of the IC replacement fee will not be granted if the lost IC is subsequently recovered, and that a recovered IC (now invalid) must be returned to ICA for cancellation.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part II, Declaration by Applicant (fourth paragraph, 'For lost ICs')"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration date",
+      "type": "date",
+      "required": true,
+      "description": "Date the applicant signs the declaration.",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — Part II, 'DATE'"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "visa_or_mastercard = Visa or Mastercard; amex = American Express; internet_direct_debit = Internet Direct Debit; paynow = PayNow. Current fees (S$100 for a first loss, S$300 for a second or subsequent loss) are published on the live source and are deliberately not encoded here.",
+      "sourceRef": "Lost Identity Card — 'Fees' (payment methods: Visa, Mastercard, AMEX, Internet Direct Debit, PayNow)",
+      "validation": {
+        "enum": ["visa_or_mastercard", "amex", "internet_direct_debit", "paynow"]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "doctorMemoOrLpa",
+      "label": "Doctor's memo or Lasting Power of Attorney (as required)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — 'Please attach the following documents: Doctor Memo/ Lasting Power of Attorney (as required)'"
+    },
+    {
+      "id": "changeOfParticularsSupportingDocument",
+      "label": "Supporting document for a change of particulars (e.g. deed poll for a change of name)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "reasonForNameChange", "notEquals": "" },
+      "belongsTo": "applicant",
+      "sourceRef": "Application for Replacement of NRIC (Loss) — 'Please attach the following documents: ... Supporting documents for any change of particulars e.g. deed poll for a change in name'"
+    },
+    {
+      "id": "replacementFee",
+      "label": "IC replacement fee",
+      "category": "payment",
+      "required": true,
+      "methods": ["visa_or_mastercard", "amex", "internet_direct_debit", "paynow"],
+      "sourceRef": "Lost Identity Card — 'Fees' (S$100 for a first loss; S$300 for a second or subsequent loss — amount deliberately not encoded, see paymentMethod)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "particulars_of_applicant",
+      "title": "Part I — Particulars of Applicant",
+      "fields": [
+        "nricNumber",
+        "fullName",
+        "nameInChineseJawiTamil",
+        "nameInHanyuPinyin",
+        "alias",
+        "marriedName",
+        "address",
+        "sex",
+        "dateOfBirth",
+        "race",
+        "religion",
+        "dialectGroup",
+        "countryOrPlaceOfBirth",
+        "nationality",
+        "contactNumber",
+        "email"
+      ],
+      "next": "photo_and_supporting_documents"
+    },
+    {
+      "id": "photo_and_supporting_documents",
+      "title": "Photo and supporting documents",
+      "fields": ["photo", "reasonForNameChange"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Part II — Declaration by Applicant",
+      "fields": [
+        "declarationInformationTrue",
+        "consentPhotographReuse",
+        "declarationNoForeignCitizenship",
+        "acknowledgeNoRefundIfRecovered",
+        "declarationDate"
+      ],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Payment details",
+      "fields": ["paymentMethod"]
+    }
+  ]
+}
