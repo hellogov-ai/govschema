@@ -1,0 +1,839 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ca/ircc/passport-renewal-simplified",
+  "version": "2.0.0",
+  "title": "Canada Adult Simplified Renewal Passport Application (Form PPTC 054)",
+  "description": "Renewal of an eligible adult's Canadian passport using the Simplified Renewal process (Form PPTC 054), which requires no guarantor and no proof of citizenship, but does require two references and a mandatory emergency contact. This document describes the eligibility conditions, the applicant inputs, and the online/mail/in-person submission flow. It does not submit the form; the live canada.ca source is always authoritative (see verification).",
+  "status": "verified",
+  "jurisdiction": {
+    "country": "CA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration, Refugees and Citizenship Canada, Passport Program",
+    "abbreviation": "IRCC",
+    "url": "https://www.canada.ca/en/immigration-refugees-citizenship.html"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-CA"
+  },
+  "source": {
+    "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/renew-adult-passport.html",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "PPTC 054 (02-2026) E — Adult Simplified Renewal Passport Application"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Field-by-field re-review against the live canada.ca guidance pages and the current PPTC 054 (02-2026) E form PDF, both retrieved directly this pass (the v1.x HTTP 403 access block no longer applied when fetched via a real browser session; see VERIFICATION.md). Found and fixed a MAJOR drift: v1.1.0's description claimed 'no references' but the live form's Section 5 (References, two persons) and Section 6 (Emergency Contact Information, MANDATORY) are real, currently-required field groups that were entirely unmodeled; the eligibility gate `currentPassportWithinExpiryWindow` mischaracterized a flat 15-year issue-date window as a tiered valid/expired-less-than-1-year rule; and `paymentMethod`'s `cash` option contradicted the form's own instructions, which state cash is not accepted for any application submitted in Canada. Shipped as 2.0.0 per VERSIONING.md (field removal/rename + enum narrowing + new required fields). See VERIFICATION.md for the full comparison."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "currentPassportIssuedAge16OrOlder",
+      "label": "Was your current (or most recent) passport issued when you were 16 or older?",
+      "type": "boolean",
+      "required": true,
+      "description": "Simplified Renewal (PPTC 054) is only available if your most recent adult passport was issued at age 16 or older. A passport issued before age 16, or a child's passport, is not eligible for this process.",
+      "sourceRef": "PPTC 054 Instructions §A — 'been issued when you were 16 years of age or older on the date you applied'"
+    },
+    {
+      "name": "currentPassportValidity",
+      "label": "Was your current (or most recent) passport a 5-year or 10-year adult passport?",
+      "type": "boolean",
+      "required": true,
+      "description": "The passport being renewed must have been a 5-year or 10-year adult validity passport (not a limited-validity, emergency, or temporary travel document).",
+      "sourceRef": "PPTC 054 Instructions §A — 'been valid 5 or 10 years'"
+    },
+    {
+      "name": "currentPassportIssuedWithinFifteenYears",
+      "label": "Was your current (or most recent) passport issued within the last 15 years?",
+      "type": "boolean",
+      "required": true,
+      "description": "Simplified Renewal requires the previous passport to have been issued within 15 years of the date of this application — a flat window measured from the previous passport's issue date, not from its expiry or a separate valid/expired split. Supersedes v1.1.0's `currentPassportWithinExpiryWindow`, which mischaracterized this as a tiered 'valid or expired <1 year' rule; the live source states only the 15-year issue-date condition.",
+      "sourceRef": "PPTC 054 Instructions §A — 'been issued in the last 15 years'; check-who-renew.html — 'was issued within 15 years of the date you apply for your renewal'"
+    },
+    {
+      "name": "passportLostStolenOrDamaged",
+      "label": "Was your most recent passport reported lost, stolen, or is it damaged?",
+      "type": "boolean",
+      "required": true,
+      "description": "If your most recent passport was reported lost or stolen, or is damaged beyond normal wear and tear, you cannot use Simplified Renewal and must apply for a new passport instead (Form PPTC 203 documents the lost/stolen/damaged/found declaration).",
+      "sourceRef": "PPTC 054 Instructions §B/§J — Form PPTC 203 required if the passport cannot be provided because it is lost, stolen, damaged, or found"
+    },
+    {
+      "name": "personalDetailsUnchanged",
+      "label": "Are your legal name, date of birth, place of birth, and gender identifier the same as on your most recent passport?",
+      "type": "boolean",
+      "required": true,
+      "description": "Simplified Renewal cannot be used if any of these have changed since your most recent passport was issued (including a name change from marriage, divorce, or legal change). The gender identifier condition is satisfied either by the gender printed on the most recent passport or by an observation-sticker gender. If any changed, you must apply for a new passport with Form PPTC 153 instead.",
+      "sourceRef": "PPTC 054 Instructions §A/§I — 'the same name, date of birth and place of birth you want on your new passport'; 'the same gender identifier ... printed on your current passport or the gender on the observation sticker'"
+    },
+    {
+      "name": "residentInCanada",
+      "label": "Is your home and mailing address in Canada?",
+      "type": "boolean",
+      "required": true,
+      "description": "Online renewal requires a home and mailing address in Canada. Applicants residing outside Canada renew through the nearest Canadian embassy, high commission, or consulate instead (a separate process, out of scope here). Online renewal is additionally capacity-limited: canada.ca states it is 'currently accepting a limited number of online applications each day', not a document-modeled field but a live operational constraint consumers should surface to users choosing the online channel.",
+      "sourceRef": "Eligibility: online renewal requires a Canadian home and mailing address; submit-form-fees.html — 'Available for a limited number of people'"
+    },
+    {
+      "name": "surname",
+      "label": "Surname (as it appears on your current passport)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must be written exactly as it appears in the most recent passport.",
+      "sourceRef": "PPTC 054 §1 — 'Surname (last name) as it appears in the most recent passport'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must be written exactly as it appears in the most recent passport.",
+      "sourceRef": "PPTC 054 §1 — 'Given name(s) as it appears in the most recent passport'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "formerSurnames",
+      "label": "All former surnames (including surname at birth, if different)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Comma-separated list of every former surname, including a birth surname if different from the current one. These will not appear on the new passport.",
+      "sourceRef": "PPTC 054 §1 — 'All former surnames (including surname at birth if different from above. These will not appear in the passport.)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "parentSurnameAtBirth",
+      "label": "Surname of parent(s) at their birth",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. One or both parents' surname(s) at their own birth. Enter \"unknown\" if not known.",
+      "sourceRef": "PPTC 054 §1 / Instructions §I — 'Surname of parent(s) at their birth ... If your parent's surname is unknown enter \"unknown\"'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "anticipatedTravelDate",
+      "label": "Anticipated date of travel (month and day, or unknown)",
+      "type": "string",
+      "required": false,
+      "description": "Month and day only (no year), or left as \"unknown\". Informational only; does not affect processing time and is not a guarantee of delivery by that date.",
+      "sourceRef": "PPTC 054 §1 — 'Anticipated date of travel ... Unknown / Month / Day'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD, as it appears on the previous passport.",
+      "sourceRef": "PPTC 054 §1 — 'Date of birth as it appears in the previous passport'"
+    },
+    {
+      "name": "placeOfBirthCity",
+      "label": "Place of birth — city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §1 — 'Applicant's place of birth — City'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "placeOfBirthProvinceOrCountry",
+      "label": "Place of birth — province/territory (if born in Canada) or country",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §1 — 'Applicant's place of birth — Country or Territory / Prov./Terr./State (if applicable)'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "sexOrGenderIdentifier",
+      "label": "Gender identifier to appear on the passport",
+      "type": "enum",
+      "required": true,
+      "description": "F = Female, M = Male, X = Another gender. Must match the gender identifier on the most recent passport, or the gender recorded on its observation sticker (see personalDetailsUnchanged).",
+      "sourceRef": "PPTC 054 §1 — 'Sex as it appears in the previous passport: F Female, M Male, X Another gender'",
+      "validation": { "enum": ["F", "M", "X"] }
+    },
+    {
+      "name": "eyeColour",
+      "label": "Natural eye colour",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §1 — 'Natural eye colour'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "height",
+      "label": "Height",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Free text; the form accepts cm or in.",
+      "sourceRef": "PPTC 054 §1 — 'Height (cm or in)'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "homeAddressLine1",
+      "label": "Home address — street address",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §1 — 'Current home address — Number, Street'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "homeAddressLine2",
+      "label": "Home address — apartment or unit (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §1 — 'Current home address — Apt.'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "homeAddressCity",
+      "label": "Home address — city",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §1 — 'Current home address — City'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "homeAddressProvince",
+      "label": "Home address — province or territory",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Two-letter Canada Post abbreviation, e.g. ON, BC, QC.",
+      "sourceRef": "PPTC 054 §1 — 'Current home address — Prov./Terr./State'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "homeAddressPostalCode",
+      "label": "Home address — postal code",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Canadian postal code format, e.g. K1A 0G3.",
+      "sourceRef": "PPTC 054 §1 — 'Current home address — Postal/ZIP code'",
+      "validation": { "pattern": "^[A-Za-z][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]$" }
+    },
+    {
+      "name": "mailingAddressSameAsHome",
+      "label": "Is your mailing address the same as your home address?",
+      "type": "boolean",
+      "required": true,
+      "description": "If no, the live form collects a separate mailing address for delivery of the new passport; not modelled as separate fields here (SPEC §12, deferred nested/conditional detail).",
+      "sourceRef": "PPTC 054 §1 — 'Mailing address (if different from current home address)'"
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. A valid email address. The live source notes email is not transmitted over a secure connection.",
+      "sourceRef": "PPTC 054 §1 — 'Email address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "phone",
+      "label": "Phone number (primary)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +14165551234.",
+      "sourceRef": "PPTC 054 §1 — 'Telephone (primary)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "phoneSecondary",
+      "label": "Phone number (other, optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "PPTC 054 §1 — 'Telephone (other)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "mostRecentPassportNumber",
+      "label": "Most recent passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The number printed on the passport you are renewing.",
+      "sourceRef": "PPTC 054 §2 — 'Passport number'",
+      "validation": { "pattern": "^[A-Za-z0-9]{6,9}$" }
+    },
+    {
+      "name": "mostRecentPassportIssueDate",
+      "label": "Issue date of your most recent passport",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD.",
+      "sourceRef": "PPTC 054 §2 — 'Date of issue (YYYY-MM-DD)'"
+    },
+    {
+      "name": "mostRecentPassportExpiryDate",
+      "label": "Expiry date of your most recent passport",
+      "type": "date",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD.",
+      "sourceRef": "PPTC 054 §2 — 'Date of expiry (YYYY-MM-DD)'"
+    },
+    {
+      "name": "mostRecentPassport",
+      "label": "Your most recent Canadian passport",
+      "type": "file",
+      "required": true,
+      "description": "Enclose or present any Canadian passport issued to you that is not expired; it will be cancelled and returned unless you request otherwise (see returnPreviousPassport). Provide as PDF, JPEG, or PNG for a digital submission; the live source publishes size limits.",
+      "sourceRef": "PPTC 054 §2 — 'Enclose any Canadian passport issued to you that is not expired'"
+    },
+    {
+      "name": "returnPreviousPassport",
+      "label": "Would you like your previous passport returned to you?",
+      "type": "enum",
+      "required": false,
+      "description": "If neither option is selected, the previous passport is not returned and is securely destroyed. Check for a visa in the previous passport before requesting its destruction.",
+      "sourceRef": "PPTC 054 §2 — 'Would you like the previous passport returned to you? Yes, please return it to me. / No, please securely destroy it.'",
+      "validation": { "enum": ["return_to_applicant", "securely_destroy"] }
+    },
+    {
+      "name": "productRequested",
+      "label": "What are you renewing?",
+      "type": "enum",
+      "required": true,
+      "description": "five_year = 5-year adult passport; ten_year = 10-year adult passport.",
+      "sourceRef": "PPTC 054 §3 — 'Choose one (1) of the following periods of validity: 5-year or 10-year'",
+      "validation": { "enum": ["five_year", "ten_year"] }
+    },
+    {
+      "name": "hasDifferentAddressInLastTwoYears",
+      "label": "Have you lived at a different address in the last 2 years?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the live form collects up to two prior addresses with from/to dates (PPTC 054 §4A); this document models one prior address (previousAddressLastTwoYears*) as a scope trim, matching the single-entry convention used elsewhere in this registry (e.g. de/bmi/residence-registration). A future version could add a repeatable address-history group once the spec supports a natural repeat construct.",
+      "sourceRef": "PPTC 054 §4A — 'Addresses in the last two (2) years — Same as current home address / Different from current home address (complete below)'"
+    },
+    {
+      "name": "previousAddressLastTwoYearsLine1",
+      "label": "Previous address (last 2 years) — street address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "visibleWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §4A — 'Number, Street, Apt.'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "previousAddressLastTwoYearsCity",
+      "label": "Previous address (last 2 years) — city",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "visibleWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §4A — 'City'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "previousAddressLastTwoYearsProvinceOrCountry",
+      "label": "Previous address (last 2 years) — province/territory/state or country",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "visibleWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §4A — 'Prov./Terr./State, Country or Territory'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "previousAddressLastTwoYearsPostalCode",
+      "label": "Previous address (last 2 years) — postal/ZIP code",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §4A — 'Postal/ZIP code'",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "previousAddressLastTwoYearsFrom",
+      "label": "Previous address (last 2 years) — from (year-month)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "visibleWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "description": "YYYY-MM.",
+      "sourceRef": "PPTC 054 §4A — 'From (YYYY-MM)'",
+      "validation": { "pattern": "^[0-9]{4}-[0-9]{2}$" }
+    },
+    {
+      "name": "previousAddressLastTwoYearsTo",
+      "label": "Previous address (last 2 years) — to (year-month)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "visibleWhen": { "field": "hasDifferentAddressInLastTwoYears", "equals": true },
+      "description": "YYYY-MM.",
+      "sourceRef": "PPTC 054 §4A — 'To (YYYY-MM)'",
+      "validation": { "pattern": "^[0-9]{4}-[0-9]{2}$" }
+    },
+    {
+      "name": "occupationEmployedLastTwoYears",
+      "label": "Were you employed (full- or part-time) in the last 2 years?",
+      "type": "boolean",
+      "required": false,
+      "description": "Check-all-that-apply item; more than one of occupationEmployedLastTwoYears, occupationInSchoolLastTwoYears, and occupationOtherLastTwoYears may be true.",
+      "sourceRef": "PPTC 054 §4B — 'I was employed (full- or part-time)'"
+    },
+    {
+      "name": "occupationInSchoolLastTwoYears",
+      "label": "Were you in school (full- or part-time) in the last 2 years?",
+      "type": "boolean",
+      "required": false,
+      "description": "Check-all-that-apply item; more than one of occupationEmployedLastTwoYears, occupationInSchoolLastTwoYears, and occupationOtherLastTwoYears may be true.",
+      "sourceRef": "PPTC 054 §4B — 'I was in school (full- or part-time)'"
+    },
+    {
+      "name": "occupationOtherLastTwoYears",
+      "label": "Other occupation status in the last 2 years (e.g. homemaker, unemployed, retired)",
+      "type": "boolean",
+      "required": false,
+      "description": "Check-all-that-apply item; more than one of occupationEmployedLastTwoYears, occupationInSchoolLastTwoYears, and occupationOtherLastTwoYears may be true.",
+      "sourceRef": "PPTC 054 §4B — 'Other, e.g. homemaker, unemployed or retired'"
+    },
+    {
+      "name": "occupationDetails",
+      "label": "Occupation details for the last 2 years",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "occupationEmployedLastTwoYears", "equals": true },
+        { "field": "occupationInSchoolLastTwoYears", "equals": true },
+        { "field": "occupationOtherLastTwoYears", "equals": true }
+      ] },
+      "visibleWhen": { "any": [
+        { "field": "occupationEmployedLastTwoYears", "equals": true },
+        { "field": "occupationInSchoolLastTwoYears", "equals": true },
+        { "field": "occupationOtherLastTwoYears", "equals": true }
+      ] },
+      "description": "Free text collapsing the live form's per-entry employer/school/other name, address, phone, field of employment or studies, and start/end dates. The live form allows this detail as a single entry; not modelled as discrete sub-fields (scope trim, same convention as previousAddressLastTwoYears*).",
+      "sourceRef": "PPTC 054 §4B — 'Enter full details below for the last two (2) years: Employer, school or other; Address; Telephone (primary); Field of employment or studies; Date (from); Date (to)'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "reference1FullName",
+      "label": "Reference 1 — full name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must not be a relative, must be 18 or older, and must have known the applicant at least 2 years.",
+      "sourceRef": "PPTC 054 §5 — 'Provide the following information for two (2) persons who are not your relatives ... Surname (last name), Given name(s)'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "reference1Relationship",
+      "label": "Reference 1 — relationship to the applicant",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Cannot be an immediate or extended family member, spouse, common-law partner, child, or grandchild.",
+      "sourceRef": "PPTC 054 §5 — 'Relationship to the applicant'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "reference1AddressLine1",
+      "label": "Reference 1 — address (street)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — 'Address — Number, Street, Apt.'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "reference1AddressCity",
+      "label": "Reference 1 — address (city)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — 'Address — City'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "reference1AddressProvinceOrCountry",
+      "label": "Reference 1 — address (province/territory/state or country)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — 'Address — Prov./Terr./State, Country or Territory'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "reference1AddressPostalCode",
+      "label": "Reference 1 — address (postal/ZIP code)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — 'Address — Postal/ZIP code'",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "reference1Phone",
+      "label": "Reference 1 — phone (primary)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "PPTC 054 §5 — 'Telephone (primary)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "reference1PhoneSecondary",
+      "label": "Reference 1 — phone (other, optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "PPTC 054 §5 — 'Telephone (other)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "reference1Email",
+      "label": "Reference 1 — email (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — 'Email address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "reference1YearsKnown",
+      "label": "Reference 1 — number of years known",
+      "type": "integer",
+      "required": true,
+      "description": "Must be at least 2, per the eligibility condition for who may be a reference.",
+      "sourceRef": "PPTC 054 §5 — 'Has known me for — Number of years'",
+      "validation": { "minimum": 2 }
+    },
+    {
+      "name": "reference2FullName",
+      "label": "Reference 2 — full name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Must not be a relative, must be 18 or older, and must have known the applicant at least 2 years.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Surname (last name), Given name(s)'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "reference2Relationship",
+      "label": "Reference 2 — relationship to the applicant",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Cannot be an immediate or extended family member, spouse, common-law partner, child, or grandchild.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Relationship to the applicant'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "reference2AddressLine1",
+      "label": "Reference 2 — address (street)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Address — Number, Street, Apt.'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "reference2AddressCity",
+      "label": "Reference 2 — address (city)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Address — City'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "reference2AddressProvinceOrCountry",
+      "label": "Reference 2 — address (province/territory/state or country)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Address — Prov./Terr./State, Country or Territory'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "reference2AddressPostalCode",
+      "label": "Reference 2 — address (postal/ZIP code)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Address — Postal/ZIP code'",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "reference2Phone",
+      "label": "Reference 2 — phone (primary)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Telephone (primary)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "reference2PhoneSecondary",
+      "label": "Reference 2 — phone (other, optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Telephone (other)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "reference2Email",
+      "label": "Reference 2 — email (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Email address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "reference2YearsKnown",
+      "label": "Reference 2 — number of years known",
+      "type": "integer",
+      "required": true,
+      "description": "Must be at least 2, per the eligibility condition for who may be a reference.",
+      "sourceRef": "PPTC 054 §5 — second reference block, 'Has known me for — Number of years'",
+      "validation": { "minimum": 2 }
+    },
+    {
+      "name": "emergencyContactFullName",
+      "label": "Emergency contact — full name",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Mandatory section: used if the applicant requires emergency assistance while outside Canada. Unlike references, does not exclude family members.",
+      "sourceRef": "PPTC 054 §6 — 'EMERGENCY CONTACT INFORMATION (MANDATORY) ... Surname (last name), Given name(s)'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "emergencyContactRelationship",
+      "label": "Emergency contact — relationship to the applicant",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §6 — 'Relationship to the applicant'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact — phone (daytime)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "PPTC 054 §6 — 'Telephone (daytime)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "emergencyContactPhoneSecondary",
+      "label": "Emergency contact — phone (other, optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "PPTC 054 §6 — 'Telephone (other)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "emergencyContactEmail",
+      "label": "Emergency contact — email (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §6 — 'Email address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "emergencyContactAddressLine1",
+      "label": "Emergency contact — current home address (street)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §6 — 'Current home address — Number, Street, Apt.'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "emergencyContactAddressCity",
+      "label": "Emergency contact — current home address (city)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §6 — 'Current home address — City'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "emergencyContactAddressProvinceOrState",
+      "label": "Emergency contact — current home address (province/territory/state)",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §6 — 'Current home address — Prov./Terr./State'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "emergencyContactAddressPostalCode",
+      "label": "Emergency contact — current home address (postal/ZIP code)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "PPTC 054 §6 — 'Current home address — Postal/ZIP code'",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "photo",
+      "label": "Passport photo(s)",
+      "type": "file",
+      "required": true,
+      "description": "Two identical, unaltered photos taken within the last 6 months by a commercial photographer, meeting the published Canadian passport photo requirements; photos must not be created or modified using AI, editing applications, or filters. One photo must carry the photographer's studio name, address, and the date taken on the back. No signature is required on the photos. Online renewal accepts a single digital photo meeting the same requirements. Provide as JPEG or PNG for a digital submission.",
+      "sourceRef": "PPTC 054 §L — Canadian passport photo instructions"
+    },
+    {
+      "name": "submissionChannel",
+      "label": "How are you submitting this application?",
+      "type": "enum",
+      "required": true,
+      "description": "online = Renew online through the IRCC secure account (requires a Canadian home/mailing address and a digital photo; currently capacity-limited, see residentInCanada); mail = Mail the completed form, previous passport, and photos to the Passport Program in Gatineau, Quebec (or the Mississauga PO Box for BC/YT/NT/NU); in_person = Submit at a Service Canada Centre or Passport Program regional office.",
+      "sourceRef": "PPTC 054 §E/§F — Applying in person / Applying by mail",
+      "validation": { "enum": ["online", "mail", "in_person"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "debit_credit = Debit or credit card (Visa, MasterCard, American Express; Interac, Visa Debit, Mastercard Debit; embossed prepaid cards); certified_cheque_or_money_order = Certified cheque or money order, or a cheque from a Canadian federal/provincial/territorial government department, payable to the Receiver General for Canada, in the exact amount, in Canadian funds. Cash and personal cheques are not accepted for any application submitted in Canada; `cash` has been removed from this enum (v1.1.0 incorrectly modelled it as accepted in person). Confirm the current fee on the live source.",
+      "sourceRef": "PPTC 054 §C — 'The Passport Program ... does not accept personal cheques or payment in cash for applications submitted in Canada'",
+      "validation": { "enum": ["debit_credit", "certified_cheque_or_money_order"] }
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Check you can use Simplified Renewal",
+      "fields": [
+        "currentPassportIssuedAge16OrOlder",
+        "currentPassportValidity",
+        "currentPassportIssuedWithinFifteenYears",
+        "passportLostStolenOrDamaged",
+        "personalDetailsUnchanged",
+        "residentInCanada"
+      ],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Your details",
+      "fields": [
+        "surname",
+        "givenNames",
+        "formerSurnames",
+        "parentSurnameAtBirth",
+        "anticipatedTravelDate",
+        "dateOfBirth",
+        "placeOfBirthCity",
+        "placeOfBirthProvinceOrCountry",
+        "sexOrGenderIdentifier",
+        "eyeColour",
+        "height",
+        "homeAddressLine1",
+        "homeAddressLine2",
+        "homeAddressCity",
+        "homeAddressProvince",
+        "homeAddressPostalCode",
+        "mailingAddressSameAsHome",
+        "email",
+        "phone",
+        "phoneSecondary"
+      ],
+      "next": "most_recent_passport"
+    },
+    {
+      "id": "most_recent_passport",
+      "title": "Your most recent passport",
+      "fields": [
+        "mostRecentPassportNumber",
+        "mostRecentPassportIssueDate",
+        "mostRecentPassportExpiryDate",
+        "mostRecentPassport",
+        "returnPreviousPassport"
+      ],
+      "next": "additional_personal_info"
+    },
+    {
+      "id": "additional_personal_info",
+      "title": "Address and occupation history (last 2 years)",
+      "fields": [
+        "hasDifferentAddressInLastTwoYears",
+        "previousAddressLastTwoYearsLine1",
+        "previousAddressLastTwoYearsCity",
+        "previousAddressLastTwoYearsProvinceOrCountry",
+        "previousAddressLastTwoYearsPostalCode",
+        "previousAddressLastTwoYearsFrom",
+        "previousAddressLastTwoYearsTo",
+        "occupationEmployedLastTwoYears",
+        "occupationInSchoolLastTwoYears",
+        "occupationOtherLastTwoYears",
+        "occupationDetails"
+      ],
+      "next": "references"
+    },
+    {
+      "id": "references",
+      "title": "References",
+      "fields": [
+        "reference1FullName",
+        "reference1Relationship",
+        "reference1AddressLine1",
+        "reference1AddressCity",
+        "reference1AddressProvinceOrCountry",
+        "reference1AddressPostalCode",
+        "reference1Phone",
+        "reference1PhoneSecondary",
+        "reference1Email",
+        "reference1YearsKnown",
+        "reference2FullName",
+        "reference2Relationship",
+        "reference2AddressLine1",
+        "reference2AddressCity",
+        "reference2AddressProvinceOrCountry",
+        "reference2AddressPostalCode",
+        "reference2Phone",
+        "reference2PhoneSecondary",
+        "reference2Email",
+        "reference2YearsKnown"
+      ],
+      "next": "emergency_contact"
+    },
+    {
+      "id": "emergency_contact",
+      "title": "Emergency contact",
+      "fields": [
+        "emergencyContactFullName",
+        "emergencyContactRelationship",
+        "emergencyContactPhone",
+        "emergencyContactPhoneSecondary",
+        "emergencyContactEmail",
+        "emergencyContactAddressLine1",
+        "emergencyContactAddressCity",
+        "emergencyContactAddressProvinceOrState",
+        "emergencyContactAddressPostalCode"
+      ],
+      "next": "supporting_items"
+    },
+    {
+      "id": "supporting_items",
+      "title": "Photo, product, submission, and payment",
+      "fields": ["photo", "productRequested", "submissionChannel", "paymentMethod"]
+    }
+  ]
+}
