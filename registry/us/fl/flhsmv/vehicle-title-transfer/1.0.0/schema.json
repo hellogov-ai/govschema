@@ -1,0 +1,1015 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/flhsmv/vehicle-title-transfer",
+  "version": "1.0.0",
+  "title": "Florida Vehicle Title Transfer (Form HSMV 82040)",
+  "description": "Transfer ownership of a motor vehicle to a new owner in Florida using the data model of Form HSMV 82040 (Application for Certificate of Motor Vehicle Title). HSMV 82040 is a single, multi-purpose FLHSMV form: an 'Application Type' checkbox at the top selects between Original (first-ever Florida title, no ownership change) and Transfer, and several 'if applicable' sections cover lienholders, sales-tax exemptions, repossession, and other certifications. This document models the Transfer application type only. The form is not submitted online: it is printed at the top with 'Please submit this form to your local tax collector office or license plate agency', and is filed in person or by mail at a county tax collector office or license plate agency. Out of scope: the Original application type (a distinct process — a vehicle's first-ever Florida certificate of title with no change of ownership); the 'Off-Highway Vehicle Type' checkboxes (All-Terrain Vehicle/Recreational Off-Highway Vehicle/Off-Highway Motorcycle-specific); Section 3 brand/usage/condition checkboxes (e.g. rebuilt, flood, kit car — vehicle-condition flags orthogonal to the ownership transfer); the vehicle length (feet/inches) fields (trailer-specific); Section 7 (Dealer Sales Tax Report and motor vehicle trade-in information, dealer-only); Section 8 (VIN physical-inspection verification, completed and signed by a third-party licensed Florida dealer, Florida notary public, law enforcement officer, or authorized FLHSMV/tax collector/license plate agency employee — not data the applicant supplies); and Section 13 (Release of Spouse or Heirs Interest, a decedent's-estate transfer scenario). It does not submit the application; the live Florida Department of Highway Safety and Motor Vehicles source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "subnational",
+    "subdivision": "US-FL"
+  },
+  "authority": {
+    "name": "Florida Department of Highway Safety and Motor Vehicles",
+    "abbreviation": "FLHSMV",
+    "url": "https://www.flhsmv.gov/"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.flhsmv.gov/pdf/forms/82040.pdf",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Form HSMV 82040 (Rev. 07/23)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-02",
+    "notes": "Source-derived reference schema transcribed field-by-field from the live Form HSMV 82040 (Rev. 07/23) AcroForm PDF at flhsmv.gov, fetched directly with curl at HTTP 200 (no CDN block encountered; response Last-Modified header of 2024-01-10 is consistent with the form's own printed 'Rev. 07/23' revision line). Both layers of the PDF were decoded: page.getTextContent() (pdfjs-dist) for the printed instruction/warning prose, and page.getAnnotations() for the AcroForm's 226 named field widgets across both pages, which is the authoritative source for exact field labels, groupings (e.g. which checkboxes share one radio-group fieldName), and page/section placement. Status remains 'draft' pending independent second-reviewer field-by-field re-check."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "certificateOfTitlePrintOption",
+      "label": "Request to print Certificate of Title",
+      "type": "enum",
+      "required": true,
+      "description": "no = do not print a paper certificate of title at this time (Florida allows electronic title records with no paper title issued). yes_in_office = print the paper title for pickup in office. yes_mailed = print and mail the paper title.",
+      "sourceRef": "Form HSMV 82040 header",
+      "validation": { "enum": ["no", "yes_in_office", "yes_mailed"] }
+    },
+    {
+      "name": "ownerCustomerNumber",
+      "label": "Customer Number",
+      "type": "string",
+      "required": false,
+      "description": "FLHSMV customer number, if the owner already has one on file. The form's adjacent Fleet Number and Unit Number fields are fleet-account-specific and out of scope for this document.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "ownerCountyOfResidence",
+      "label": "Owner's County of Residence",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "ownerIsFloridaResident",
+      "label": "Are you a Florida Resident?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1 — Owner Details"
+    },
+    {
+      "name": "ownerIsUsCitizen",
+      "label": "Are you a US Citizen?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1 — Owner Details"
+    },
+    {
+      "name": "ownerIsDeafOrHardOfHearing",
+      "label": "Are you deaf or hard of hearing?",
+      "type": "boolean",
+      "required": false,
+      "description": "Voluntary.",
+      "sourceRef": "Form HSMV 82040 Section 1 — Owner Details"
+    },
+    {
+      "name": "jointOwnershipType",
+      "label": "Joint ownership — OR or AND",
+      "type": "enum",
+      "required": false,
+      "description": "When there is joint ownership, whether 'or' or 'and' is to be shown on the title when issued. If neither box is checked, the title will be issued with 'and.'",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "enum": ["and", "or"] }
+    },
+    {
+      "name": "lifeEstateOrRemainderPerson",
+      "label": "Life Estate/Remainder Person",
+      "type": "boolean",
+      "required": false,
+      "description": "Select, if applicable. The form permits selecting more than one of lifeEstateOrRemainderPerson, tenancyByTheEntirety, and withRightsOfSurvivorship, so no mutual exclusivity is asserted among them.",
+      "sourceRef": "Form HSMV 82040 Section 1"
+    },
+    {
+      "name": "tenancyByTheEntirety",
+      "label": "Tenancy by the Entirety",
+      "type": "boolean",
+      "required": false,
+      "description": "Select, if applicable. See lifeEstateOrRemainderPerson.",
+      "sourceRef": "Form HSMV 82040 Section 1"
+    },
+    {
+      "name": "withRightsOfSurvivorship",
+      "label": "With Rights of Survivorship",
+      "type": "boolean",
+      "required": false,
+      "description": "Select, if applicable. See lifeEstateOrRemainderPerson.",
+      "sourceRef": "Form HSMV 82040 Section 1"
+    },
+    {
+      "name": "ownerFullName",
+      "label": "Owner's Name as It Appears on Driver License (First, Full Middle/Maiden, & Last Name)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "ownerPhone",
+      "label": "Owner's Phone Number",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary. International E.164 format, e.g. +19045551234.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "ownerEmail",
+      "label": "Owner's Email",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "ownerSex",
+      "label": "Owner's Sex",
+      "type": "string",
+      "required": true,
+      "description": "As recorded on the owner's driver license/ID; the form does not print its own closed code list for this box, so no enum is asserted here.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "ownerDateOfBirth",
+      "label": "Owner's Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form HSMV 82040 Section 1"
+    },
+    {
+      "name": "ownerDlOrFeidNumber",
+      "label": "Owner's FL DL/ID or FEID/Suffix Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Florida driver license/ID number, or Federal Employer Identification Number (FEID) with suffix when the owner is a business entity.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "ownerMailingAddressLine1",
+      "label": "Owner's Mailing Address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "ownerMailingAddressCity",
+      "label": "Owner's Mailing Address — city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "ownerMailingAddressState",
+      "label": "Owner's Mailing Address — state",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter USPS state abbreviation.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "ownerMailingAddressZipCode",
+      "label": "Owner's Mailing Address — ZIP code",
+      "type": "string",
+      "required": true,
+      "description": "5-digit or ZIP+4 U.S. format.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "ownerResidentialAddressLine1",
+      "label": "Owner's Residential Street Address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "ownerResidentialAddressCity",
+      "label": "Owner's Residential Street Address — city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "ownerResidentialAddressState",
+      "label": "Owner's Residential Street Address — state",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter USPS state abbreviation.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "ownerResidentialAddressZipCode",
+      "label": "Owner's Residential Street Address — ZIP code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "mailToName",
+      "label": "Mail To Customer Name",
+      "type": "string",
+      "required": false,
+      "description": "If the certificate of title should be mailed to someone other than the owner named above.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "mailToPhone",
+      "label": "Mail To's Phone Number",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary. Required when mailToName is given. International E.164 format.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "mailToEmail",
+      "label": "Mail To's Email",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "mailToSex",
+      "label": "Mail To's Sex",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "mailToDateOfBirth",
+      "label": "Mail To's Date of Birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form HSMV 82040 Section 1"
+    },
+    {
+      "name": "mailToDlOrFeidNumber",
+      "label": "Mail To's FL DL/ID or FEID/Suffix Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "mailToAddressLine1",
+      "label": "Mail To's Address",
+      "type": "string",
+      "required": false,
+      "description": "If different from the above mailing address.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "mailToAddressCity",
+      "label": "Mail To's Address — city",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "mailToAddressState",
+      "label": "Mail To's Address — state",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "mailToAddressZipCode",
+      "label": "Mail To's Address — ZIP code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "coOwnerIsFloridaResident",
+      "label": "Co-Owner — Are you a Florida Resident?",
+      "type": "boolean",
+      "required": false,
+      "description": "Only if the new registration has a co-owner or lessee.",
+      "sourceRef": "Form HSMV 82040 Section 1 — Co-Owner Details"
+    },
+    {
+      "name": "coOwnerIsUsCitizen",
+      "label": "Co-Owner — Are you a US Citizen?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1 — Co-Owner Details"
+    },
+    {
+      "name": "coOwnerIsDeafOrHardOfHearing",
+      "label": "Co-Owner — Are you deaf or hard of hearing?",
+      "type": "boolean",
+      "required": false,
+      "description": "Voluntary.",
+      "sourceRef": "Form HSMV 82040 Section 1 — Co-Owner Details"
+    },
+    {
+      "name": "coOwnerOrLesseeType",
+      "label": "Co-Owner or Lessee",
+      "type": "enum",
+      "required": false,
+      "description": "Required when a second name is given in coOwnerFullName.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "enum": ["co_owner", "lessee"] }
+    },
+    {
+      "name": "coOwnerFullName",
+      "label": "Co-Owner's or Lessee's Name as It Appears on Driver License (First, Full Middle/Maiden, & Last Name)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "coOwnerPhone",
+      "label": "Co-Owner's Phone Number",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary. International E.164 format.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "coOwnerEmail",
+      "label": "Co-Owner's Email",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary.",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "coOwnerSex",
+      "label": "Co-Owner's Sex",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "coOwnerDateOfBirth",
+      "label": "Co-Owner's Date of Birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form HSMV 82040 Section 1"
+    },
+    {
+      "name": "coOwnerDlOrFeidNumber",
+      "label": "Co-Owner's FL DL/ID or FEID/Suffix Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "coOwnerMailingAddressLine1",
+      "label": "Co-Owner's/Lessee's Mailing Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "coOwnerMailingAddressCity",
+      "label": "Co-Owner's/Lessee's Mailing Address — city",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "coOwnerMailingAddressState",
+      "label": "Co-Owner's/Lessee's Mailing Address — state",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "coOwnerMailingAddressZipCode",
+      "label": "Co-Owner's/Lessee's Mailing Address — ZIP code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "coOwnerResidentialAddressLine1",
+      "label": "Co-Owner's/Lessee's Residential Street Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "coOwnerResidentialAddressCity",
+      "label": "Co-Owner's/Lessee's Residential Street Address — city",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "coOwnerResidentialAddressState",
+      "label": "Co-Owner's/Lessee's Residential Street Address — state",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "coOwnerResidentialAddressZipCode",
+      "label": "Co-Owner's/Lessee's Residential Street Address — ZIP code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 1",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "vehicleIdentificationNumber",
+      "label": "Vehicle Identification Number (VIN)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "minLength": 1, "maxLength": 17 }
+    },
+    {
+      "name": "floridaTitleNumber",
+      "label": "Florida Title Number",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's existing Florida title number, when it is already titled in Florida.",
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "licensePlateNumber",
+      "label": "License Plate Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "previousStateOfIssue",
+      "label": "Previous State of Issue",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter USPS abbreviation of the state that previously issued a title or registration for this vehicle, when it is coming from out of state.",
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "vehicleMake",
+      "label": "Make/Manufacturer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "vehicleModel",
+      "label": "Model",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "vehicleYear",
+      "label": "Year",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "minimum": 1900, "maximum": 2100 }
+    },
+    {
+      "name": "vehicleBody",
+      "label": "Body",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "vehicleColor",
+      "label": "Color",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "vehicleWeight",
+      "label": "Weight",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehicleGvw",
+      "label": "GVW",
+      "type": "number",
+      "required": false,
+      "description": "Gross Vehicle Weight, if applicable.",
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehicleBhpOrCc",
+      "label": "BHP/CC",
+      "type": "string",
+      "required": false,
+      "description": "Brake horsepower (BHP) or engine displacement in cubic centimeters (CC), as applicable to the vehicle type; the form prints a single combined blank, not two separate boxes.",
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "vanUseType",
+      "label": "Van Use",
+      "type": "enum",
+      "required": false,
+      "description": "If applicable — only for a van.",
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": { "enum": ["passenger", "other"] }
+    },
+    {
+      "name": "fuelType",
+      "label": "Fuel Type",
+      "type": "enum",
+      "required": false,
+      "description": "Alternative fuel type, only if applicable. Leave unset for a conventional gasoline or diesel vehicle; the form prints no checkbox for those, only for the alternative fuel types listed here.",
+      "sourceRef": "Form HSMV 82040 Section 2",
+      "validation": {
+        "enum": [
+          "natural_gas_liquid",
+          "natural_gas_compressed",
+          "hybrid_gas_electric",
+          "hybrid_diesel_electric",
+          "electric"
+        ]
+      }
+    },
+    {
+      "name": "hasElectronicLienTitleAccount",
+      "label": "ELT Customer",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the lienholder participates in Florida's Electronic Lien and Title (ELT) program. Only if a lienholder applies.",
+      "sourceRef": "Form HSMV 82040 Section 4"
+    },
+    {
+      "name": "lienholderIdType",
+      "label": "Lienholder identifier type",
+      "type": "enum",
+      "required": false,
+      "description": "Which identifier is being supplied for the lienholder in lienholderIdValue. Only if a lienholder applies.",
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "enum": ["feid_suffix", "dmv_account", "dl_id_sex_dob"] }
+    },
+    {
+      "name": "lienholderIdValue",
+      "label": "Lienholder's FEID/Suffix #, DMV Account #, or DL/ID #, Sex and DOB",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Required when lienholderIdType is given.",
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "lienholderPhone",
+      "label": "Lienholder's Phone Number",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary. International E.164 format.",
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "lienholderEmail",
+      "label": "Lienholder's Email",
+      "type": "string",
+      "required": false,
+      "description": "Voluntary.",
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "dateOfLien",
+      "label": "Date of Lien",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 4"
+    },
+    {
+      "name": "lienholderMailingAddressLine1",
+      "label": "Lienholder's Mailing Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "lienholderMailingAddressCity",
+      "label": "Lienholder's Mailing Address — city",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "lienholderMailingAddressState",
+      "label": "Lienholder's Mailing Address — state",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "lienholderMailingAddressZipCode",
+      "label": "Lienholder's Mailing Address — ZIP code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "lienholderName",
+      "label": "Lienholder's Name",
+      "type": "string",
+      "required": false,
+      "description": "If this box is not checked (see lienholderAuthorizesMailTitleToOwner), the title will be mailed to the first lienholder.",
+      "sourceRef": "Form HSMV 82040 Section 4",
+      "validation": { "maxLength": 160 }
+    },
+    {
+      "name": "lienholderAuthorizesMailTitleToOwner",
+      "label": "Check this box if you, lienholder representative, authorize the Department to send the motor vehicle title to the owner",
+      "type": "boolean",
+      "required": false,
+      "description": "On the paper form this checkbox is paired with the lienholder representative's signature. When unchecked (the default), the title is mailed to the first lienholder instead of the owner.",
+      "sourceRef": "Form HSMV 82040 Section 4"
+    },
+    {
+      "name": "acquisitionType",
+      "label": "How and when was the motor vehicle acquired?",
+      "type": "enum",
+      "required": true,
+      "description": "If ownership has transferred, how the motor vehicle was acquired.",
+      "sourceRef": "Form HSMV 82040 Section 5",
+      "validation": { "enum": ["sale", "gift", "repossession", "court_order", "inheritance", "other"] }
+    },
+    {
+      "name": "salePrice",
+      "label": "Sale price",
+      "type": "number",
+      "required": false,
+      "visibleWhen": { "field": "acquisitionType", "equals": "sale" },
+      "requiredWhen": { "field": "acquisitionType", "equals": "sale" },
+      "description": "U.S. dollars.",
+      "sourceRef": "Form HSMV 82040 Section 5",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherAcquisitionTypeSpecify",
+      "label": "Specify — other acquisition type",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "acquisitionType", "equals": "other" },
+      "requiredWhen": { "field": "acquisitionType", "equals": "other" },
+      "sourceRef": "Form HSMV 82040 Section 5",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "dateAcquired",
+      "label": "Date Acquired",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 5"
+    },
+    {
+      "name": "odometerDigitCount",
+      "label": "5- or 6-digit odometer",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the odometer reads in five or six digits.",
+      "sourceRef": "Form HSMV 82040 Section 6",
+      "validation": { "enum": ["five_digit", "six_digit"] }
+    },
+    {
+      "name": "odometerReading",
+      "label": "Odometer reading",
+      "type": "integer",
+      "required": true,
+      "description": "Whole miles only, no tenths.",
+      "sourceRef": "Form HSMV 82040 Section 6",
+      "validation": { "minimum": 0, "maximum": 999999 }
+    },
+    {
+      "name": "dateOdometerRead",
+      "label": "Date Read",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 6"
+    },
+    {
+      "name": "odometerCertification",
+      "label": "Odometer certification",
+      "type": "enum",
+      "required": true,
+      "description": "WARNING: Federal and State law requires that you state the mileage in connection with an application for a Certificate of Title. Failure to complete or providing a false statement may result in fines or imprisonment.",
+      "sourceRef": "Form HSMV 82040 Section 6",
+      "validation": {
+        "enum": ["reflects_actual_mileage", "not_actual_mileage", "exceeds_mechanical_limits"]
+      }
+    },
+    {
+      "name": "salesTaxExemptionCertificateBasis",
+      "label": "Sales tax exemption — certificate basis",
+      "type": "enum",
+      "required": false,
+      "description": "If applicable. Certifies the vehicle is exempt from Florida Sales and Use Tax (Chapter 212, Florida Statutes) on this certificate-based ground.",
+      "sourceRef": "Form HSMV 82040 Section 9",
+      "validation": { "enum": ["purchaser_holds_exemption_certificate", "rental_use"] }
+    },
+    {
+      "name": "exemptionCertificateNumber",
+      "label": "Consumer's Certificate of Exemption Number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "salesTaxExemptionCertificateBasis", "equals": "purchaser_holds_exemption_certificate" },
+      "requiredWhen": { "field": "salesTaxExemptionCertificateBasis", "equals": "purchaser_holds_exemption_certificate" },
+      "sourceRef": "Form HSMV 82040 Section 9",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "rentalSalesTaxRegistrationNumber",
+      "label": "Sales Tax Registration Number (rental use)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "salesTaxExemptionCertificateBasis", "equals": "rental_use" },
+      "requiredWhen": { "field": "salesTaxExemptionCertificateBasis", "equals": "rental_use" },
+      "description": "The purchase of a recreational vehicle to be offered for rent as living accommodations does not qualify for this exemption.",
+      "sourceRef": "Form HSMV 82040 Section 9",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "salesTaxExemptionTransactionReason",
+      "label": "Ownership of this vehicle is not subject to Florida Sales and Use Tax for the following reason",
+      "type": "enum",
+      "required": false,
+      "description": "If applicable — a second, transaction-type-based exemption ground, distinct from salesTaxExemptionCertificateBasis.",
+      "sourceRef": "Form HSMV 82040 Section 9",
+      "validation": {
+        "enum": [
+          "inheritance",
+          "gift",
+          "divorce_decree",
+          "transfer_between_married_couple",
+          "other",
+          "even_trade_or_trade_down"
+        ]
+      }
+    },
+    {
+      "name": "otherExemptionReasonSpecify",
+      "label": "Specify — other sales tax exemption reason",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "salesTaxExemptionTransactionReason", "equals": "other" },
+      "requiredWhen": { "field": "salesTaxExemptionTransactionReason", "equals": "other" },
+      "sourceRef": "Form HSMV 82040 Section 9",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "evenTradeOrTradeDownTerms",
+      "label": "Terms of even trade or trade down",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "salesTaxExemptionTransactionReason", "equals": "even_trade_or_trade_down" },
+      "requiredWhen": { "field": "salesTaxExemptionTransactionReason", "equals": "even_trade_or_trade_down" },
+      "description": "State the facts of the even trade or trade down and the transferor information, including the transferor's name and address.",
+      "sourceRef": "Form HSMV 82040 Section 9",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "certifiesRepossession",
+      "label": "I certify that this motor vehicle was repossessed upon default in the terms of the lien instrument and is now in my possession",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "acquisitionType", "equals": "repossession" },
+      "requiredWhen": { "field": "acquisitionType", "equals": "repossession" },
+      "sourceRef": "Form HSMV 82040 Section 10"
+    },
+    {
+      "name": "certifiesTitleLostOrDestroyed",
+      "label": "I certify that the certificate of title is lost or destroyed",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 11"
+    },
+    {
+      "name": "certifiesVehicleNotOperatedUntilRegistered",
+      "label": "The vehicle identified will not be operated on the streets and highways of this state until properly registered",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 11"
+    },
+    {
+      "name": "certifiesOtherNonUse",
+      "label": "Other (explain) — non-use/other certification",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form HSMV 82040 Section 11"
+    },
+    {
+      "name": "otherNonUseCertificationExplain",
+      "label": "Explanation — other non-use/certification",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "certifiesOtherNonUse", "equals": true },
+      "requiredWhen": { "field": "certifiesOtherNonUse", "equals": true },
+      "sourceRef": "Form HSMV 82040 Section 11",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "applicantAttestsFactsTrueUnderPenaltyOfPerjury",
+      "label": "Under penalties of perjury, I declare that I have read the foregoing document and that the facts stated in it are true",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 12"
+    },
+    {
+      "name": "applicantOwnerSignatureDate",
+      "label": "Date of Applicant, Owner signature",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form HSMV 82040 Section 12"
+    },
+    {
+      "name": "coApplicantSignatureDate",
+      "label": "Date of Applicant, Co-Owner signature",
+      "type": "date",
+      "required": false,
+      "description": "Only when a co-owner is also applying and signing.",
+      "sourceRef": "Form HSMV 82040 Section 12"
+    },
+    {
+      "name": "physicallyInspectedVin",
+      "label": "I/We physically inspected the VIN",
+      "type": "boolean",
+      "required": false,
+      "description": "A self-certification by the applicant(s), distinct from the third-party inspector verification in Section 8 (out of scope for this document — see the top-level description).",
+      "sourceRef": "Form HSMV 82040 Section 12"
+    }
+  ],
+  "steps": [
+    {
+      "id": "application_options",
+      "title": "Certificate of title print option",
+      "fields": ["certificateOfTitlePrintOption"],
+      "next": "owner_information"
+    },
+    {
+      "id": "owner_information",
+      "title": "Owner/applicant information",
+      "fields": [
+        "ownerCustomerNumber", "ownerCountyOfResidence",
+        "ownerIsFloridaResident", "ownerIsUsCitizen", "ownerIsDeafOrHardOfHearing",
+        "jointOwnershipType", "lifeEstateOrRemainderPerson", "tenancyByTheEntirety", "withRightsOfSurvivorship",
+        "ownerFullName", "ownerPhone", "ownerEmail", "ownerSex", "ownerDateOfBirth", "ownerDlOrFeidNumber",
+        "ownerMailingAddressLine1", "ownerMailingAddressCity", "ownerMailingAddressState", "ownerMailingAddressZipCode",
+        "ownerResidentialAddressLine1", "ownerResidentialAddressCity", "ownerResidentialAddressState", "ownerResidentialAddressZipCode"
+      ],
+      "next": "mail_to"
+    },
+    {
+      "id": "mail_to",
+      "title": "Mail-to recipient, if different from owner",
+      "fields": [
+        "mailToName", "mailToPhone", "mailToEmail", "mailToSex", "mailToDateOfBirth", "mailToDlOrFeidNumber",
+        "mailToAddressLine1", "mailToAddressCity", "mailToAddressState", "mailToAddressZipCode"
+      ],
+      "next": "co_owner"
+    },
+    {
+      "id": "co_owner",
+      "title": "Co-owner/lessee details",
+      "fields": [
+        "coOwnerIsFloridaResident", "coOwnerIsUsCitizen", "coOwnerIsDeafOrHardOfHearing", "coOwnerOrLesseeType",
+        "coOwnerFullName", "coOwnerPhone", "coOwnerEmail", "coOwnerSex", "coOwnerDateOfBirth", "coOwnerDlOrFeidNumber",
+        "coOwnerMailingAddressLine1", "coOwnerMailingAddressCity", "coOwnerMailingAddressState", "coOwnerMailingAddressZipCode",
+        "coOwnerResidentialAddressLine1", "coOwnerResidentialAddressCity", "coOwnerResidentialAddressState", "coOwnerResidentialAddressZipCode"
+      ],
+      "next": "vehicle_description"
+    },
+    {
+      "id": "vehicle_description",
+      "title": "Motor vehicle description",
+      "fields": [
+        "vehicleIdentificationNumber", "floridaTitleNumber", "licensePlateNumber", "previousStateOfIssue",
+        "vehicleMake", "vehicleModel", "vehicleYear", "vehicleBody", "vehicleColor",
+        "vehicleWeight", "vehicleGvw", "vehicleBhpOrCc", "vanUseType", "fuelType"
+      ],
+      "next": "lienholder"
+    },
+    {
+      "id": "lienholder",
+      "title": "Lienholder information",
+      "fields": [
+        "hasElectronicLienTitleAccount", "lienholderIdType", "lienholderIdValue", "lienholderPhone", "lienholderEmail",
+        "dateOfLien", "lienholderMailingAddressLine1", "lienholderMailingAddressCity", "lienholderMailingAddressState",
+        "lienholderMailingAddressZipCode", "lienholderName", "lienholderAuthorizesMailTitleToOwner"
+      ],
+      "next": "transfer_type"
+    },
+    {
+      "id": "transfer_type",
+      "title": "Transfer type",
+      "fields": ["acquisitionType", "salePrice", "otherAcquisitionTypeSpecify", "dateAcquired"],
+      "next": "odometer"
+    },
+    {
+      "id": "odometer",
+      "title": "Odometer declaration",
+      "fields": ["odometerDigitCount", "odometerReading", "dateOdometerRead", "odometerCertification"],
+      "next": "sales_tax_exemption"
+    },
+    {
+      "id": "sales_tax_exemption",
+      "title": "Sales tax exemption certification",
+      "fields": [
+        "salesTaxExemptionCertificateBasis", "exemptionCertificateNumber", "rentalSalesTaxRegistrationNumber",
+        "salesTaxExemptionTransactionReason", "otherExemptionReasonSpecify", "evenTradeOrTradeDownTerms"
+      ],
+      "next": "repossession_declaration"
+    },
+    {
+      "id": "repossession_declaration",
+      "title": "Repossession declaration",
+      "fields": ["certifiesRepossession"],
+      "next": "non_use_certifications"
+    },
+    {
+      "id": "non_use_certifications",
+      "title": "Non-use and other certifications",
+      "fields": [
+        "certifiesTitleLostOrDestroyed", "certifiesVehicleNotOperatedUntilRegistered",
+        "certifiesOtherNonUse", "otherNonUseCertificationExplain"
+      ],
+      "next": "attestation"
+    },
+    {
+      "id": "attestation",
+      "title": "Application attestment and signatures",
+      "fields": [
+        "applicantAttestsFactsTrueUnderPenaltyOfPerjury", "applicantOwnerSignatureDate",
+        "coApplicantSignatureDate", "physicallyInspectedVin"
+      ]
+    }
+  ]
+}
