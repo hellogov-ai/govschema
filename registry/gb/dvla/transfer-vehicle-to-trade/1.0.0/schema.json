@@ -1,0 +1,138 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/dvla/transfer-vehicle-to-trade",
+  "version": "1.0.0",
+  "title": "United Kingdom Sale or Transfer of a Vehicle to the Motor Trade (V5C)",
+  "description": "A private seller notifies DVLA that they have sold, part-exchanged, or given their vehicle to a motor trader, garage, scrapyard, insurance company, finance company, or other car-buying service, through the online 'Sold a vehicle to the motor trade' service. It models the trader's name and address (captured via a live UK postcode lookup), the vehicle look-up (registration number plus the V5C log book's document reference number), and the optional seller email confirmation. It does not model a private, person-to-person sale or gift (a separate DVLA digital service, change-private-vehicle-sale.service.gov.uk, modelled in gb/dvla/vehicle-keeper-change-v5c), vehicle tax, or the postal no-log-book fallback. It does not submit the notification; the live gov.uk source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/sold-bought-vehicle",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "V5C; online service at https://transfer-vehicle-to-trade.service.gov.uk/seller"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live gov.uk 'Tell DVLA you've sold, transferred or bought a vehicle' smart-answer wizard's 'sold it to a motor trader' branch, and from the live, unauthenticated screens of the DVLA online service it links to, transfer-vehicle-to-trade.service.gov.uk/seller (exact HTML form field names/ids captured for every screen up to and including vehicle look-up, including a real UK postcode-lookup API call; a mock vehicle registration number and V5C reference number were submitted and correctly rejected with 'Unable to find a vehicle record', since the service validates against real DVLA vehicle records and has no public test/sandbox mode). Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "traderName",
+      "label": "Trader name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name of the company the vehicle was sold or given to. This includes an insurance company, finance company, scrap yard, or any car-buying service.",
+      "sourceRef": "Sold a vehicle to the motor trade — 'Provide trader details' — input name wizard_shared_capture_trader_details[name], maxlength 58",
+      "validation": { "minLength": 1, "maxLength": 58 }
+    },
+    {
+      "name": "traderAddressLine1",
+      "label": "Trader's address — street address",
+      "type": "string",
+      "required": true,
+      "description": "Directly observed via the service's live UK postcode-lookup screen ('Find trader's address'): an optional house name/number plus a postcode are submitted to a real address-lookup API, and the seller then selects the correct address from the returned list. This field is the resolved address's building/street line, e.g. 'Buckingham Palace'.",
+      "sourceRef": "Sold a vehicle to the motor trade — 'Find trader's address' (postcode lookup) and 'Select trader address' (result list) — house-number input name wizard_shared_capture_trader_address[house_number], maxlength 30",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "traderAddressTown",
+      "label": "Trader's address — town or city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Sold a vehicle to the motor trade — 'Select trader address' (resolved address, e.g. 'London')",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "traderPostcode",
+      "label": "Trader's address — postcode",
+      "type": "string",
+      "required": true,
+      "description": "UK postcode, e.g. SW1A 1AA. Also the value submitted into the live postcode-lookup input (wizard_shared_capture_trader_address[postcode], maxlength 8, alphanumeric only) before an exact address is selected from the results.",
+      "sourceRef": "Sold a vehicle to the motor trade — 'Find trader's address' — input name wizard_shared_capture_trader_address[postcode], maxlength 8, alphanumeric only",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "vehicleRegistrationNumber",
+      "label": "Vehicle registration number",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's number plate, e.g. AB12CDE. Used with v5cDocumentReferenceNumber to look up the vehicle against DVLA's own record before the notification can proceed.",
+      "sourceRef": "Sold a vehicle to the motor trade — 'Details of the vehicle being sold' — input name wizard_shared_capture_vehicle_details[vehicle_registration_number], maxlength 8, uppercase alphanumeric only",
+      "validation": { "pattern": "^[A-Z0-9]{2,8}$" }
+    },
+    {
+      "name": "v5cDocumentReferenceNumber",
+      "label": "Latest V5C registration certificate (logbook) document reference number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The 11-digit reference number printed on the vehicle's most recently issued V5C log book. Must come from the latest V5C issued for the vehicle — an older, superseded V5C's reference number will be rejected. Note: the service's own rejection page describes this same number as coming from the log book's yellow 'sell, transfer or part-exchange your vehicle to the motor trade' section, while the field's on-screen label refers to the main V5C document reference — both point at the one number on the current V5C; see VERIFICATION.md for the discrepancy in DVLA's own copy.",
+      "sourceRef": "Sold a vehicle to the motor trade — 'Details of the vehicle being sold' — input name wizard_shared_capture_vehicle_details[vehicle_v5_number], numeric only, maxlength 11",
+      "validation": { "pattern": "^[0-9]{11}$" }
+    },
+    {
+      "name": "sellerEmailAddress",
+      "label": "Your email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional. If given, DVLA sends the seller an email confirmation in addition to the confirmation letter and any vehicle-tax refund cheque.",
+      "sourceRef": "Sold your vehicle into the motor trade (wizard guidance) — 'You'll be sent: an email confirmation (if you gave your email address)' (field not directly observed as a screen — see VERIFICATION.md honesty flag)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "trader_details",
+      "title": "Provide trader details",
+      "fields": ["traderName"],
+      "next": "trader_address"
+    },
+    {
+      "id": "trader_address",
+      "title": "Find trader's address",
+      "fields": ["traderAddressLine1", "traderAddressTown", "traderPostcode"],
+      "next": "vehicle_lookup"
+    },
+    {
+      "id": "vehicle_lookup",
+      "title": "Details of the vehicle being sold",
+      "fields": ["vehicleRegistrationNumber", "v5cDocumentReferenceNumber"],
+      "next": "confirmation_email"
+    },
+    {
+      "id": "confirmation_email",
+      "title": "Email confirmation (optional)",
+      "fields": ["sellerEmailAddress"]
+    }
+  ]
+}
