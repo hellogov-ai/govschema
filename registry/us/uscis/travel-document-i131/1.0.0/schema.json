@@ -1,0 +1,1461 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/uscis/travel-document-i131",
+  "version": "1.0.0",
+  "title": "United States Application for Travel Document — Reentry Permit and Advance Parole (Form I-131)",
+  "description": "Apply for a Reentry Permit (to preserve lawful permanent resident status while abroad for an extended period) or an Advance Parole Document (permission to return to the United States after temporary travel while an immigration benefit application, such as Form I-485, is pending, or under certain other bases) using Department of Homeland Security / USCIS Form I-131, Application for Travel Documents, Parole Documents, and Arrival/Departure Records. Form I-131 also covers a Refugee Travel Document, a TPS Travel Authorization Document, and humanitarian parole / parole-in-place / re-parole requests (Part 1, Item Numbers 2, 3, 4, and 6-11); those application types are out of scope for this document — see VERIFICATION.md. It does not submit the application; the live U.S. Citizenship and Immigration Services (USCIS) source is always authoritative (see verification).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "U.S. Citizenship and Immigration Services",
+    "abbreviation": "USCIS",
+    "url": "https://www.uscis.gov/i-131"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.uscis.gov/i-131",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "Form I-131 (Edition 01/20/25)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema transcribed field-by-field from the live Form I-131 PDF at uscis.gov (fetched directly with curl, HTTP 200, no access block) using pdfjs-dist getFieldObjects()/getTextContent() (reading-order-sorted by glyph position) against all 14 pages. Scoped to the Reentry Permit and Advance Parole application types per the source issue; the Refugee Travel Document, TPS Travel Authorization Document, and initial-parole/parole-in-place/re-parole application types (Part 1, Item Numbers 2, 3, 4, 6-11; Parts 6, 8, 9) are out of scope — see VERIFICATION.md Scope decisions. Status remains 'draft' pending independent field-by-field source review by a second reviewer."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "travelDocumentType",
+      "label": "Application type — travel document requested",
+      "type": "enum",
+      "required": true,
+      "description": "Form I-131 also supports a Refugee Travel Document, a TPS Travel Authorization Document, and initial-parole/parole-in-place/re-parole Arrival-Departure Records (Part 1, Item Numbers 2, 3, 4, and 6-11); those application types are out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "Form I-131 Part 1, Item Numbers 1 and 5",
+      "validation": {
+        "enum": [
+          "reentry_permit",
+          "advance_parole"
+        ]
+      }
+    },
+    {
+      "name": "advanceParoleBasis",
+      "label": "Basis for the Advance Parole Document request",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "advance_parole"
+      },
+      "description": "Select the single basis under which advance parole is sought.",
+      "sourceRef": "Form I-131 Part 1, Item Number 5, options A-M",
+      "validation": {
+        "enum": [
+          "pending_i485_adjustment_of_status",
+          "pending_i589_asylum_application",
+          "pending_initial_i821_tps",
+          "deferred_enforced_departure",
+          "approved_i821d_daca",
+          "approved_i914_or_i914_supplement_a_t_nonimmigrant",
+          "approved_i918_or_i918_supplement_a_u_nonimmigrant",
+          "current_parolee_under_ina_212d5",
+          "approved_i817_family_unity",
+          "pending_i687_temporary_resident_section_245a",
+          "approved_v_nonimmigrant_status",
+          "cnmi_long_term_residence",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "advanceParoleBasisReference",
+      "label": "Receipt number / class of admission / explanation supporting the basis above",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "travelDocumentType",
+            "equals": "advance_parole"
+          },
+          {
+            "field": "advanceParoleBasis",
+            "notEquals": "deferred_enforced_departure"
+          }
+        ]
+      },
+      "description": "For a petition-based basis, the receipt number of the underlying Form (I-485, I-589, I-821, I-821D, I-914/I-914A, I-918/I-918A, I-817, I-687); for 'current_parolee_under_ina_212d5', the class of admission; for 'other', a written explanation. Not applicable for 'deferred_enforced_departure', which has no associated reference number.",
+      "sourceRef": "Form I-131 Part 1, Item Number 5.A-5.M (receipt number / class of admission / explanation blanks)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "holdsRefugeeStatusOrDerivedLPR",
+      "label": "Do you hold status as a refugee, were you paroled as a refugee, or are you a lawful permanent resident as a direct result of being a refugee?",
+      "type": "boolean",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Form I-131 Part 1, Item Number 13"
+    },
+    {
+      "name": "familyName",
+      "label": "Your full name — family name (last name)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 2, Item Number 1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "givenName",
+      "label": "Your full name — given name (first name)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 2, Item Number 1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "middleName",
+      "label": "Your full name — middle name (if applicable)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 2, Item Number 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherNamesUsed",
+      "label": "Other names used (if applicable)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. The form provides three structured family/given/middle name rows; modeled here as a semicolon-separated list of full names pending the GSP-0009 repeating-groups gap, consistent with the existing otherNamesUsed field on us/uscis/change-of-address-ar11 and us/dos/passport-application-ds11.",
+      "sourceRef": "Form I-131 Part 2, Item Number 2",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "mailingAddressInCareOfName",
+      "label": "Current mailing address or safe address — in care of name (if any)",
+      "type": "string",
+      "required": false,
+      "description": "If applicable.",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (In Care Of Name)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "mailingAddressLine1",
+      "label": "Current mailing address or safe address — street number and name",
+      "type": "string",
+      "required": true,
+      "description": "Street address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (Street Number and Name)",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "mailingAddressApt",
+      "label": "Current mailing address or safe address — apartment/floor/suite",
+      "type": "string",
+      "required": false,
+      "description": "If applicable. The form pairs this with an Apt./Ste./Flr. checkbox and a number; recorded here as free text (e.g. \"Apt. 4B\").",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (Apt./Ste./Flr. Number)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Current mailing address or safe address — city or town",
+      "type": "string",
+      "required": true,
+      "description": "City component of the address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (City or Town)",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Current mailing address or safe address — state",
+      "type": "string",
+      "required": false,
+      "description": "For a U.S. address; leave blank for a foreign address (use mailingAddressProvince instead).",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (State)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "mailingAddressZipCode",
+      "label": "Current mailing address or safe address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "For a U.S. address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (ZIP Code)",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "mailingAddressProvince",
+      "label": "Current mailing address or safe address — province",
+      "type": "string",
+      "required": false,
+      "description": "For a foreign address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (Province)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "mailingAddressPostalCode",
+      "label": "Current mailing address or safe address — postal code",
+      "type": "string",
+      "required": false,
+      "description": "For a foreign address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (Postal Code)",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "mailingAddressCountry",
+      "label": "Current mailing address or safe address — country",
+      "type": "string",
+      "required": true,
+      "description": "Country component of the address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 3 (Country)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "physicalAddressDiffersFromMailing",
+      "label": "Is your current physical address different from your mailing address?",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, give the physicalAddress* fields. Not itself a numbered form item; inferred from the form's \"if different from the above address\" instruction, the same synthetic-boolean treatment used for us/uscis/permanent-resident-card-replacement-i90.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 preamble"
+    },
+    {
+      "name": "physicalAddressInCareOfName",
+      "label": "Current physical address (if different from mailing) — in care of name (if any)",
+      "type": "string",
+      "required": false,
+      "description": "If applicable.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (In Care Of Name)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "physicalAddressLine1",
+      "label": "Current physical address (if different from mailing) — street number and name",
+      "type": "string",
+      "requiredWhen": {
+        "field": "physicalAddressDiffersFromMailing",
+        "equals": true
+      },
+      "description": "Street address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (Street Number and Name)",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "physicalAddressApt",
+      "label": "Current physical address (if different from mailing) — apartment/floor/suite",
+      "type": "string",
+      "required": false,
+      "description": "If applicable. The form pairs this with an Apt./Ste./Flr. checkbox and a number; recorded here as free text (e.g. \"Apt. 4B\").",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (Apt./Ste./Flr. Number)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "physicalAddressCity",
+      "label": "Current physical address (if different from mailing) — city or town",
+      "type": "string",
+      "requiredWhen": {
+        "field": "physicalAddressDiffersFromMailing",
+        "equals": true
+      },
+      "description": "City component of the address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (City or Town)",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "physicalAddressState",
+      "label": "Current physical address (if different from mailing) — state",
+      "type": "string",
+      "required": false,
+      "description": "For a U.S. address; leave blank for a foreign address (use physicalAddressProvince instead).",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (State)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "physicalAddressZipCode",
+      "label": "Current physical address (if different from mailing) — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "For a U.S. address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (ZIP Code)",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "physicalAddressProvince",
+      "label": "Current physical address (if different from mailing) — province",
+      "type": "string",
+      "required": false,
+      "description": "For a foreign address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (Province)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "physicalAddressPostalCode",
+      "label": "Current physical address (if different from mailing) — postal code",
+      "type": "string",
+      "required": false,
+      "description": "For a foreign address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (Postal Code)",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "physicalAddressCountry",
+      "label": "Current physical address (if different from mailing) — country",
+      "type": "string",
+      "requiredWhen": {
+        "field": "physicalAddressDiffersFromMailing",
+        "equals": true
+      },
+      "description": "Country component of the address.",
+      "sourceRef": "Form I-131 Part 2, Item Number 4 (Country)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "alienRegistrationNumber",
+      "label": "Alien Registration Number (A-Number) (if any)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. Digits only (the form prefixes a printed \"A-\"); leave blank if none has been assigned.",
+      "sourceRef": "Form I-131 Part 2, Item Number 5",
+      "validation": {
+        "pattern": "^[0-9]{7,9}$"
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 2, Item Number 6",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "countryOfCitizenshipOrNationality",
+      "label": "Country of citizenship or nationality",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 2, Item Number 7",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 2, Item Number 8",
+      "validation": {
+        "enum": [
+          "male",
+          "female"
+        ]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. YYYY-MM-DD.",
+      "sourceRef": "Form I-131 Part 2, Item Number 9"
+    },
+    {
+      "name": "socialSecurityNumber",
+      "label": "U.S. Social Security Number (if any)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 2, Item Number 10",
+      "validation": {
+        "pattern": "^[0-9]{3}-?[0-9]{2}-?[0-9]{4}$"
+      }
+    },
+    {
+      "name": "uscisOnlineAccountNumber",
+      "label": "USCIS Online Account Number (if any)",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Form I-131 Part 2, Item Number 11",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "classOfAdmission",
+      "label": "Class of Admission (COA) (if any)",
+      "type": "string",
+      "required": false,
+      "description": "The immigration classification under which the applicant was admitted or granted status (e.g. \"IR1\", \"CR1\", \"F2A\"), if any.",
+      "sourceRef": "Form I-131 Part 2, Item Number 12",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "mostRecentI94RecordNumber",
+      "label": "Most Recent Form I-94 Arrival/Departure Record Number (if any)",
+      "type": "string",
+      "required": false,
+      "description": "Conditionally required by the form when the applicant is physically present in the United States and seeking a TPS travel authorization document, advance parole, re-parole, or parole in place (Part 1, Item Numbers 4, 5, 8, 9, 10, or 11); not modeled as a hard requiredWhen because \"physically present in the United States\" is not itself a captured field in this document's scope.",
+      "sourceRef": "Form I-131 Part 2, Item Number 13",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "ethnicity",
+      "label": "Ethnicity (select only one box)",
+      "type": "enum",
+      "required": true,
+      "description": "Select only one box.",
+      "sourceRef": "Form I-131 Part 3, Item Number 1",
+      "validation": {
+        "enum": [
+          "hispanic_or_latino",
+          "not_hispanic_or_latino"
+        ]
+      }
+    },
+    {
+      "name": "race",
+      "label": "Race (select all applicable boxes)",
+      "type": "string",
+      "required": true,
+      "description": "Select all applicable boxes. Modeled as a comma-separated list of: american_indian_or_alaska_native, asian, black_or_african_american, native_hawaiian_or_other_pacific_islander, white — the same enum vocabulary and multi-select-as-string treatment as us/uscis/permanent-resident-card-replacement-i90, pending the GSP-0009 repeating/multi-select gap.",
+      "sourceRef": "Form I-131 Part 3, Item Number 2",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "heightFeet",
+      "label": "Height — feet",
+      "type": "integer",
+      "required": true,
+      "description": "The form presents this as a dropdown of whole feet.",
+      "sourceRef": "Form I-131 Part 3, Item Number 3",
+      "validation": {
+        "minimum": 2,
+        "maximum": 8
+      }
+    },
+    {
+      "name": "heightInches",
+      "label": "Height — inches",
+      "type": "integer",
+      "required": true,
+      "description": "The form presents this as a dropdown of whole inches.",
+      "sourceRef": "Form I-131 Part 3, Item Number 3",
+      "validation": {
+        "minimum": 0,
+        "maximum": 11
+      }
+    },
+    {
+      "name": "weightPounds",
+      "label": "Weight — pounds",
+      "type": "integer",
+      "required": true,
+      "description": "The form provides three single-digit boxes for pounds.",
+      "sourceRef": "Form I-131 Part 3, Item Number 4",
+      "validation": {
+        "minimum": 1,
+        "maximum": 999
+      }
+    },
+    {
+      "name": "eyeColor",
+      "label": "Eye color (select only one box)",
+      "type": "enum",
+      "required": true,
+      "description": "Select only one box.",
+      "sourceRef": "Form I-131 Part 3, Item Number 5",
+      "validation": {
+        "enum": [
+          "black",
+          "blue",
+          "brown",
+          "gray",
+          "green",
+          "hazel",
+          "maroon",
+          "pink",
+          "unknown_other"
+        ]
+      }
+    },
+    {
+      "name": "hairColor",
+      "label": "Hair color (select only one box)",
+      "type": "enum",
+      "required": true,
+      "description": "Select only one box.",
+      "sourceRef": "Form I-131 Part 3, Item Number 6",
+      "validation": {
+        "enum": [
+          "bald_no_hair",
+          "black",
+          "blond",
+          "brown",
+          "gray",
+          "red",
+          "sandy",
+          "white",
+          "unknown_other"
+        ]
+      }
+    },
+    {
+      "name": "everInRemovalProceedings",
+      "label": "Has the person who will receive the travel document, if approved, been in any exclusion, deportation, removal, or rescission proceedings?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, provide a detailed explanation using the form's Part 13 Additional Information continuation space (out of scope for this document).",
+      "sourceRef": "Form I-131 Part 4, Item Number 1"
+    },
+    {
+      "name": "everIssuedReentryPermitOrRefugeeTravelDocument",
+      "label": "Have you EVER before been issued a Reentry Permit or Refugee Travel Document?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, give priorReentryOrRefugeeDocumentDateIssued and priorReentryOrRefugeeDocumentDisposition for the last document issued.",
+      "sourceRef": "Form I-131 Part 4, Item Number 2.a"
+    },
+    {
+      "name": "priorReentryOrRefugeeDocumentDateIssued",
+      "label": "Date Issued (of the last Reentry Permit or Refugee Travel Document)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "everIssuedReentryPermitOrRefugeeTravelDocument",
+        "equals": true
+      },
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Form I-131 Part 4, Item Number 2.b"
+    },
+    {
+      "name": "priorReentryOrRefugeeDocumentDisposition",
+      "label": "Disposition of the last Reentry Permit or Refugee Travel Document (attached, lost, stolen, damaged/destroyed, still in my possession, etc.)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "everIssuedReentryPermitOrRefugeeTravelDocument",
+        "equals": true
+      },
+      "sourceRef": "Form I-131 Part 4, Item Number 2.c",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "everIssuedAdvanceParoleDocument",
+      "label": "Have you EVER been issued an Advance Parole Document?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, give priorAdvanceParoleDateIssued and priorAdvanceParoleDisposition for the last document issued.",
+      "sourceRef": "Form I-131 Part 4, Item Number 3.a"
+    },
+    {
+      "name": "priorAdvanceParoleDateIssued",
+      "label": "Date Issued (of the last Advance Parole Document)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "everIssuedAdvanceParoleDocument",
+        "equals": true
+      },
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Form I-131 Part 4, Item Number 3.b"
+    },
+    {
+      "name": "priorAdvanceParoleDisposition",
+      "label": "Disposition of the last Advance Parole Document (attached, lost, stolen, damaged/destroyed, still in my possession, etc.)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "everIssuedAdvanceParoleDocument",
+        "equals": true
+      },
+      "sourceRef": "Form I-131 Part 4, Item Number 3.c",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "requestingReplacementDocument",
+      "label": "Are you requesting a replacement Reentry Permit or Advance Parole Document?",
+      "type": "boolean",
+      "required": true,
+      "description": "The form's Item Number 4 also covers replacement of a Refugee Travel Document or TPS Travel Authorization Document, out of scope for this document.",
+      "sourceRef": "Form I-131 Part 4, Item Number 4"
+    },
+    {
+      "name": "replacementReason",
+      "label": "Reason for requesting a replacement document",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestingReplacementDocument",
+        "equals": true
+      },
+      "description": "Select one.",
+      "sourceRef": "Form I-131 Part 4, Item Number 5",
+      "validation": {
+        "enum": [
+          "issued_but_not_received",
+          "lost_stolen_or_damaged",
+          "incorrect_information_applicant_caused",
+          "incorrect_information_uscis_error"
+        ]
+      }
+    },
+    {
+      "name": "correctionItemsNeeded",
+      "label": "Information that needs to be corrected (select all applicable boxes)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "replacementReason",
+            "equals": "incorrect_information_applicant_caused"
+          },
+          {
+            "field": "replacementReason",
+            "equals": "incorrect_information_uscis_error"
+          }
+        ]
+      },
+      "description": "Modeled as a comma-separated list of: name, a_number, country_of_birth_or_citizenship, terms_and_conditions, date_of_birth, sex, validity_date, photo — the same multi-select-as-string treatment as the race field, pending GSP-0009.",
+      "sourceRef": "Form I-131 Part 4, Item Number 6.a",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "correctionExplanation",
+      "label": "Explanation of what is incorrect on the current document",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "replacementReason",
+            "equals": "incorrect_information_applicant_caused"
+          },
+          {
+            "field": "replacementReason",
+            "equals": "incorrect_information_uscis_error"
+          }
+        ]
+      },
+      "description": "Attach copies of any documents supporting the correction request (out of scope for this data-only document).",
+      "sourceRef": "Form I-131 Part 4, Item Number 6.a (explanation box)",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "replacedDocumentReceiptNumber",
+      "label": "Receipt number of the Form I-131 related to the document you are seeking to replace",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestingReplacementDocument",
+        "equals": true
+      },
+      "sourceRef": "Form I-131 Part 4, Item Number 6.b",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "reentryPermitDeliveryMethod",
+      "label": "Where do you want your Reentry Permit sent?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "reentry_permit"
+      },
+      "description": "The form's Item Numbers 7-9 apply to Reentry Permit and Refugee Travel Document delivery only; an Advance Parole Document applicant skips directly to Part 7 (see Form Item Number 6.b instruction).",
+      "sourceRef": "Form I-131 Part 4, Item Number 7",
+      "validation": {
+        "enum": [
+          "us_address_on_file",
+          "overseas_embassy_consulate_or_field_office"
+        ]
+      }
+    },
+    {
+      "name": "reentryPermitOverseasCity",
+      "label": "City or Town of the U.S. Embassy, U.S. Consulate, or USCIS international field office",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "reentryPermitDeliveryMethod",
+        "equals": "overseas_embassy_consulate_or_field_office"
+      },
+      "sourceRef": "Form I-131 Part 4, Item Number 7.b",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "reentryPermitOverseasCountry",
+      "label": "Country of the U.S. Embassy, U.S. Consulate, or USCIS international field office",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "reentryPermitDeliveryMethod",
+        "equals": "overseas_embassy_consulate_or_field_office"
+      },
+      "sourceRef": "Form I-131 Part 4, Item Number 7.b",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "reentryPermitNotificationDeliveryMethod",
+      "label": "Where should the notification to pick up the Reentry Permit be sent?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "reentryPermitDeliveryMethod",
+        "equals": "overseas_embassy_consulate_or_field_office"
+      },
+      "description": "Only asked when the document itself is being sent to an overseas embassy/consulate/field office.",
+      "sourceRef": "Form I-131 Part 4, Item Number 8",
+      "validation": {
+        "enum": [
+          "address_on_file",
+          "alternate_address"
+        ]
+      }
+    },
+    {
+      "name": "notificationAddressInCareOfName",
+      "label": "Notification address — in care of name (if any)",
+      "type": "string",
+      "required": false,
+      "description": "If applicable.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (In Care Of Name)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "notificationAddressLine1",
+      "label": "Notification address — street number and name",
+      "type": "string",
+      "requiredWhen": {
+        "field": "reentryPermitNotificationDeliveryMethod",
+        "equals": "alternate_address"
+      },
+      "description": "Street address.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (Street Number and Name)",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "notificationAddressApt",
+      "label": "Notification address — apartment/floor/suite",
+      "type": "string",
+      "required": false,
+      "description": "If applicable. The form pairs this with an Apt./Ste./Flr. checkbox and a number; recorded here as free text (e.g. \"Apt. 4B\").",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (Apt./Ste./Flr. Number)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "notificationAddressCity",
+      "label": "Notification address — city or town",
+      "type": "string",
+      "requiredWhen": {
+        "field": "reentryPermitNotificationDeliveryMethod",
+        "equals": "alternate_address"
+      },
+      "description": "City component of the address.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (City or Town)",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "notificationAddressState",
+      "label": "Notification address — state",
+      "type": "string",
+      "required": false,
+      "description": "For a U.S. address; leave blank for a foreign address (use notificationAddressProvince instead).",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (State)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "notificationAddressZipCode",
+      "label": "Notification address — ZIP code",
+      "type": "string",
+      "required": false,
+      "description": "For a U.S. address.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (ZIP Code)",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "notificationAddressProvince",
+      "label": "Notification address — province",
+      "type": "string",
+      "required": false,
+      "description": "For a foreign address.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (Province)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "notificationAddressPostalCode",
+      "label": "Notification address — postal code",
+      "type": "string",
+      "required": false,
+      "description": "For a foreign address.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (Postal Code)",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "notificationAddressCountry",
+      "label": "Notification address — country",
+      "type": "string",
+      "requiredWhen": {
+        "field": "reentryPermitNotificationDeliveryMethod",
+        "equals": "alternate_address"
+      },
+      "description": "Country component of the address.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.a (Country)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "notificationDaytimePhoneNumber",
+      "label": "Notification address — daytime phone number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "reentryPermitNotificationDeliveryMethod",
+        "equals": "alternate_address"
+      },
+      "description": "In international E.164 format.",
+      "sourceRef": "Form I-131 Part 4, Item Number 9.b",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "notificationEmail",
+      "label": "Notification address — email address (if any)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form I-131 Part 4, Item Number 9.c",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "timeSpentOutsideUS",
+      "label": "Since becoming a permanent resident of the United States (or during the past 5 years, whichever is less), how much total time have you spent outside the United States?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "reentry_permit"
+      },
+      "sourceRef": "Form I-131 Part 5, Item Number 1",
+      "validation": {
+        "enum": [
+          "less_than_6_months",
+          "6_months_to_1_year",
+          "1_to_2_years",
+          "2_to_3_years",
+          "3_to_4_years",
+          "more_than_4_years"
+        ]
+      }
+    },
+    {
+      "name": "dateOfIntendedDeparture",
+      "label": "Date of Intended Departure",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "advance_parole"
+      },
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Form I-131 Part 7, Item Number 1"
+    },
+    {
+      "name": "purposeOfTrip",
+      "label": "Purpose of trip",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "advance_parole"
+      },
+      "description": "If extra space is needed, the form directs the applicant to Part 13 Additional Information (out of scope for this document).",
+      "sourceRef": "Form I-131 Part 7, Item Number 2",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "countriesToVisit",
+      "label": "List the countries you intend to visit",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "advance_parole"
+      },
+      "sourceRef": "Form I-131 Part 7, Item Number 3",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "numberOfTrips",
+      "label": "How many trips do you intend to use this document?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "advance_parole"
+      },
+      "sourceRef": "Form I-131 Part 7, Item Number 4",
+      "validation": {
+        "enum": [
+          "one_trip",
+          "more_than_one_trip"
+        ]
+      }
+    },
+    {
+      "name": "expectedLengthOfTripDays",
+      "label": "Expected Length of Trip (in days)",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "advance_parole"
+      },
+      "sourceRef": "Form I-131 Part 7, Item Number 5",
+      "validation": {
+        "minimum": 1,
+        "maximum": 999
+      }
+    },
+    {
+      "name": "applicantDaytimePhoneNumber",
+      "label": "Applicant's Daytime Telephone Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "Form I-131 Part 10, Item Number 1",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "applicantMobilePhoneNumber",
+      "label": "Applicant's Mobile Telephone Number (if any)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "Form I-131 Part 10, Item Number 2",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "applicantEmail",
+      "label": "Applicant's Email Address (if any)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 10, Item Number 3",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "applicantSignatureDate",
+      "label": "Date of Signature",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD. By signing, the applicant certifies under penalty of perjury that all responses and information provided are complete, true, and correct.",
+      "sourceRef": "Form I-131 Part 10, Item Number 4"
+    },
+    {
+      "name": "usedInterpreter",
+      "label": "Was an interpreter used to complete this application?",
+      "type": "boolean",
+      "required": false,
+      "description": "Not itself a numbered form item; inferred from the Part 11 heading \"If no interpreter was used, skip to Part 12,\" the same synthetic-boolean treatment used for us/uscis/permanent-resident-card-replacement-i90's usedInterpreter field. If true, complete the interpreter* fields.",
+      "sourceRef": "Form I-131 Part 11 heading"
+    },
+    {
+      "name": "interpreterFamilyName",
+      "label": "Interpreter's Family Name (Last Name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedInterpreter",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 11, Item Number 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "interpreterGivenName",
+      "label": "Interpreter's Given Name (First Name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedInterpreter",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 11, Item Number 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "interpreterBusinessOrOrganizationName",
+      "label": "Interpreter's Business or Organization Name (if any)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form I-131 Part 11, Item Number 2",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "interpreterLanguage",
+      "label": "Language in which the interpreter is fluent (in addition to English) and communicated with the applicant",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedInterpreter",
+        "equals": true
+      },
+      "sourceRef": "Form I-131 Part 11, Interpreter's Certification (language blank)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "interpreterDaytimePhoneNumber",
+      "label": "Interpreter's Daytime Telephone Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedInterpreter",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "Form I-131 Part 11, Item Number 3",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "interpreterMobilePhoneNumber",
+      "label": "Interpreter's Mobile Telephone Number (if any)",
+      "type": "string",
+      "required": false,
+      "description": "In international E.164 format.",
+      "sourceRef": "Form I-131 Part 11, Item Number 4",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "interpreterEmail",
+      "label": "Interpreter's Email Address (if any)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form I-131 Part 11, Item Number 5",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "interpreterSignatureDate",
+      "label": "Date of Interpreter's Signature",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedInterpreter",
+        "equals": true
+      },
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Form I-131 Part 11, Item Number 6"
+    },
+    {
+      "name": "usedPreparer",
+      "label": "Was this application prepared by someone other than the applicant?",
+      "type": "boolean",
+      "required": false,
+      "description": "Not itself a numbered form item; inferred from the Part 12 heading, the same synthetic-boolean treatment used for us/uscis/permanent-resident-card-replacement-i90's usedPreparer field. If true, complete the preparer* fields.",
+      "sourceRef": "Form I-131 Part 12 heading"
+    },
+    {
+      "name": "preparerFamilyName",
+      "label": "Preparer's Family Name (Last Name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedPreparer",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 12, Item Number 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "preparerGivenName",
+      "label": "Preparer's Given Name (First Name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedPreparer",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form I-131 Part 12, Item Number 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "preparerBusinessOrOrganizationName",
+      "label": "Preparer's Business or Organization Name (if any)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form I-131 Part 12, Item Number 2",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "preparerDaytimePhoneNumber",
+      "label": "Preparer's Daytime Telephone Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedPreparer",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format.",
+      "sourceRef": "Form I-131 Part 12, Item Number 3",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "preparerMobilePhoneNumber",
+      "label": "Preparer's Mobile Telephone Number (if any)",
+      "type": "string",
+      "required": false,
+      "description": "In international E.164 format.",
+      "sourceRef": "Form I-131 Part 12, Item Number 4",
+      "validation": {
+        "pattern": "^\\+[1-9][0-9]{1,14}$"
+      }
+    },
+    {
+      "name": "preparerEmail",
+      "label": "Preparer's Email Address (if any)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form I-131 Part 12, Item Number 5",
+      "validation": {
+        "maxLength": 160
+      }
+    },
+    {
+      "name": "preparerSignatureDate",
+      "label": "Date of Preparer's Signature",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "usedPreparer",
+        "equals": true
+      },
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Form I-131 Part 12, Item Number 6"
+    }
+  ],
+  "steps": [
+    {
+      "id": "application_type",
+      "title": "Application type",
+      "fields": [
+        "travelDocumentType",
+        "advanceParoleBasis",
+        "advanceParoleBasisReference",
+        "holdsRefugeeStatusOrDerivedLPR"
+      ],
+      "next": "applicant_information"
+    },
+    {
+      "id": "applicant_information",
+      "title": "Information about you",
+      "fields": [
+        "familyName",
+        "givenName",
+        "middleName",
+        "otherNamesUsed",
+        "mailingAddressInCareOfName",
+        "mailingAddressLine1",
+        "mailingAddressApt",
+        "mailingAddressCity",
+        "mailingAddressState",
+        "mailingAddressZipCode",
+        "mailingAddressProvince",
+        "mailingAddressPostalCode",
+        "mailingAddressCountry",
+        "physicalAddressDiffersFromMailing",
+        "physicalAddressInCareOfName",
+        "physicalAddressLine1",
+        "physicalAddressApt",
+        "physicalAddressCity",
+        "physicalAddressState",
+        "physicalAddressZipCode",
+        "physicalAddressProvince",
+        "physicalAddressPostalCode",
+        "physicalAddressCountry",
+        "alienRegistrationNumber",
+        "countryOfBirth",
+        "countryOfCitizenshipOrNationality",
+        "sex",
+        "dateOfBirth",
+        "socialSecurityNumber",
+        "uscisOnlineAccountNumber",
+        "classOfAdmission",
+        "mostRecentI94RecordNumber"
+      ],
+      "next": "biographic_information"
+    },
+    {
+      "id": "biographic_information",
+      "title": "Biographic information of the person who will receive the travel document",
+      "fields": [
+        "ethnicity",
+        "race",
+        "heightFeet",
+        "heightInches",
+        "weightPounds",
+        "eyeColor",
+        "hairColor"
+      ],
+      "next": "processing_information"
+    },
+    {
+      "id": "processing_information",
+      "title": "Processing information",
+      "fields": [
+        "everInRemovalProceedings",
+        "everIssuedReentryPermitOrRefugeeTravelDocument",
+        "priorReentryOrRefugeeDocumentDateIssued",
+        "priorReentryOrRefugeeDocumentDisposition",
+        "everIssuedAdvanceParoleDocument",
+        "priorAdvanceParoleDateIssued",
+        "priorAdvanceParoleDisposition",
+        "requestingReplacementDocument",
+        "replacementReason",
+        "correctionItemsNeeded",
+        "correctionExplanation",
+        "replacedDocumentReceiptNumber",
+        "reentryPermitDeliveryMethod",
+        "reentryPermitOverseasCity",
+        "reentryPermitOverseasCountry",
+        "reentryPermitNotificationDeliveryMethod",
+        "notificationAddressInCareOfName",
+        "notificationAddressLine1",
+        "notificationAddressApt",
+        "notificationAddressCity",
+        "notificationAddressState",
+        "notificationAddressZipCode",
+        "notificationAddressProvince",
+        "notificationAddressPostalCode",
+        "notificationAddressCountry",
+        "notificationDaytimePhoneNumber",
+        "notificationEmail"
+      ],
+      "next": "reentry_permit_details"
+    },
+    {
+      "id": "reentry_permit_details",
+      "title": "Complete only if applying for a Reentry Permit",
+      "fields": [
+        "timeSpentOutsideUS"
+      ],
+      "next": "advance_parole_travel"
+    },
+    {
+      "id": "advance_parole_travel",
+      "title": "Information about your proposed travel — complete only if applying for an Advance Parole Document",
+      "fields": [
+        "dateOfIntendedDeparture",
+        "purposeOfTrip",
+        "countriesToVisit",
+        "numberOfTrips",
+        "expectedLengthOfTripDays"
+      ],
+      "next": "applicant_certification"
+    },
+    {
+      "id": "applicant_certification",
+      "title": "Applicant's contact information, certification, and signature",
+      "fields": [
+        "applicantDaytimePhoneNumber",
+        "applicantMobilePhoneNumber",
+        "applicantEmail",
+        "applicantSignatureDate"
+      ],
+      "next": "interpreter"
+    },
+    {
+      "id": "interpreter",
+      "title": "Interpreter's contact information, certification, and signature",
+      "fields": [
+        "usedInterpreter",
+        "interpreterFamilyName",
+        "interpreterGivenName",
+        "interpreterBusinessOrOrganizationName",
+        "interpreterLanguage",
+        "interpreterDaytimePhoneNumber",
+        "interpreterMobilePhoneNumber",
+        "interpreterEmail",
+        "interpreterSignatureDate"
+      ],
+      "next": "preparer"
+    },
+    {
+      "id": "preparer",
+      "title": "Preparer's contact information, declaration, and signature",
+      "fields": [
+        "usedPreparer",
+        "preparerFamilyName",
+        "preparerGivenName",
+        "preparerBusinessOrOrganizationName",
+        "preparerDaytimePhoneNumber",
+        "preparerMobilePhoneNumber",
+        "preparerEmail",
+        "preparerSignatureDate"
+      ]
+    }
+  ]
+}
