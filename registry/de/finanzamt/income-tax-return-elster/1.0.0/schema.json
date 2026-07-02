@@ -1,0 +1,721 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/finanzamt/income-tax-return-elster",
+  "version": "1.0.0",
+  "title": "Germany Individual Income Tax Return (Einkommensteuererklärung, via ELSTER, tax year 2025)",
+  "description": "Prepare an individual's German income tax return ('Einkommensteuererklärung') via Mein ELSTER, the federal tax administration's free online filing portal (elster.de), for tax year 2025. ELSTER's 'vorausgefüllte Steuererklärung' (VaSt) service pre-fills up to four years of electronically-reported third-party data once the taxpayer authenticates and consents in their ELSTER account: master data (name, address, bank details, religion), employer wage-tax certificates (Lohnsteuerbescheinigung), wage-replacement benefits, pension benefit notifications, health/long-term-care insurance contributions, Riester/Rürup pension contract data, health-insurance subsidies, asset-building savings scheme contributions, and interest/capital income under an exemption order — the applicant reviews, corrects, and completes the pre-filled figures rather than filling a blank form, the same shape as au/ato/individual-tax-return-mytax and sg/iras/individual-income-tax-return-formb1. This document models the field set of the paper form ELSTER's own screens mirror, the Hauptvordruck 'ESt 1 A' (2025 edition, form codes 2025ESt1A011NET/012NET): tax-office routing, the taxpayer's identity and address, marital/assessment status and (where married or in a civil partnership) the spouse's identity and address, refund bank details, the employee savings-bonus application, income-replacement benefits subject to the progression clause, a supplementary-statements gate, and the declaration/signature. Out of scope: every income, deduction, and dependent-related Anlage (schedule) the Hauptvordruck itself defers to — Anlage N (employment income), Anlage Vorsorgeaufwand (pension/insurance contributions), Anlage Sonderausgaben (special expenses, donations, church tax), Anlage Kind (one per child), and every other Anlage — none of which the Hauptvordruck itself contains a line item for; it does not submit the return or compute tax owed; the live Mein ELSTER portal and the live ELSTER/BZSt sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bundeszentralamt für Steuern (ELSTER), submissions routed to the taxpayer's local Finanzamt",
+    "abbreviation": "ELSTER",
+    "url": "https://www.elster.de/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "de-DE"
+  },
+  "source": {
+    "url": "https://www.elster.de/elsterweb/infoseite/belegabruf_(privatpersonen)",
+    "retrievedAt": "2026-07-02",
+    "documentRef": "ELSTER 'Belegabruf (Privatpersonen)' / vorausgefüllte Steuererklärung (VaSt) guidance page, plus the official Hauptvordruck 'ESt 1 A' (2025 edition, form codes 2025ESt1A011NET/012NET, dated September 2025) whose field set ELSTER's online screens mirror"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-02",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from two kinds of primary sources. (1) elster.de's own 'Belegabruf (Privatpersonen)' guidance page, describing the VaSt pre-fill service's nine data categories, the ELSTER-account/consent precondition, and the taxpayer's ongoing obligation to review pre-filled data before submission. (2) The official Hauptvordruck 'ESt 1 A' (2025 edition) PDF, which supplied every numbered field on the main form. The BMF's own form-distribution site (formulare-bfinv.de) is a client-rendered SPA that a plain curl/WebFetch GET cannot deep-link into (returns an empty shell or a 303->400 redirect); the PDF itself was instead retrieved from two independent static mirrors that host the unmodified BMF-generated file (finanzamt-rente-im-ausland.de, a Finanzamt Neubrandenburg subdomain, and steuern.de, a private tax portal whose PDF is byte-identical apart from a prepended ad page) — corroborated as the authentic BMF artifact via embedded XMP metadata (dc:creator 'BMF, Vordruckkommission ESt', xmp:CreatorTool 'Formular-Management-System der Bundesfinanzverwaltung 3.6.3', and the in-text document codes 2025ESt1A011NET/012NET). This is a **static, print-only PDF**: every copy examined carries an /AcroForm dictionary but with an empty Fields[] array and zero Widget annotations (no /XFA either) — pdfjs-dist's getFieldObjects() returns null — so fields were reconstructed from the pdfjs-dist text layer read page by page (German umlauts extracted intact) rather than from AcroForm field names, a different non-fillable shape from NAT 2541's/DL1's position-sorted extraction (no field boxes to position-sort; the Hauptvordruck's own printed line numbers anchor each field instead). This is the third published 'review a pre-filled return' shape (after au/ato/individual-tax-return-mytax and sg/iras/individual-income-tax-return-formb1); every field is optional unless it is core routing/identity/refund data every filer supplies regardless of what VaSt pre-fills, or the declaration itself. Not on the edition axis: Germany's Einkommensteuererklärung is a calendar-year return but a distinct jurisdiction from the one us-tax-year/gb-tax-year name, the same GSP-0019 gap now confirmed in a sixth jurisdiction (after IE, NZ, CA, AU, SG) — see spec/proposals/0019-generalize-edition-scheme-calendar-tax-year.md. No live Mein ELSTER walkthrough was performed (it requires a registered, identity-verified ELSTER account not available in this environment); VERIFICATION.md includes a worked mock-data walkthrough instead, and the conformance packet validates a complete example filing against this schema's own required/requiredWhen constraints. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-02"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "hasElsterAccountWithVerifiedIdentity",
+      "label": "Registered, identity-verified Mein ELSTER account",
+      "type": "boolean",
+      "required": true,
+      "description": "A free Mein ELSTER account with verified identity (via the ELSTER certificate registration process) is required to file online and to authorize retrieval of the pre-filled return (Belegabruf/VaSt).",
+      "sourceRef": "elster.de 'Belegabruf (Privatpersonen)' — account and consent precondition"
+    },
+    {
+      "name": "taxNumber",
+      "label": "Steuernummer (tax number)",
+      "type": "string",
+      "required": false,
+      "description": "The tax number assigned by the taxpayer's local Finanzamt. May be unknown to first-time filers, who leave it blank for the Finanzamt to assign.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 4 — Steuernummer",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "competentFinanzamt",
+      "label": "An das Finanzamt (competent tax office)",
+      "type": "string",
+      "required": true,
+      "description": "The name of the taxpayer's local Finanzamt (tax office), determined by place of residence.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 5 — An das Finanzamt",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "formerFinanzamtIfMoved",
+      "label": "Bisheriges Finanzamt (former tax office, if you moved)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 6 — Bei Wohnsitzwechsel: bisheriges Finanzamt",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "daytimePhoneNumber",
+      "label": "Telefonische Rückfragen tagsüber unter Nummer (daytime contact number)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 7",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "taxIdNumber",
+      "label": "Identifikationsnummer (tax ID)",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's 11-digit Steuerliche Identifikationsnummer.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 8 — Identifikationsnummer",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Geburtsdatum (date of birth)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 8 — Geburtsdatum",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "dateOfDeathIfApplicable",
+      "label": "Sterbedatum (date of death, if applicable)",
+      "type": "date",
+      "required": false,
+      "description": "Completed by the person filing on behalf of a deceased taxpayer.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 8 — im Sterbefall: Sterbedatum"
+    },
+    {
+      "name": "familyName",
+      "label": "Name (family name)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 9 — Name",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "firstName",
+      "label": "Vorname (first name)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 10 — Vorname",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "titleAcademicDegree",
+      "label": "Titel, akademischer Grad (title, academic degree)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 11 — Titel, akademischer Grad",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "religionKey",
+      "label": "Religionsschlüssel (religion code for church tax)",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter religion code used to determine church-tax liability, e.g. EV (Evangelisch), RK (Römisch-Katholisch), or VD (nicht kirchensteuerpflichtig / not liable). Other Land-specific codes exist for other church-tax-levying religious communities; not modelled as a closed list here (see VERIFICATION.md), the same discipline as the ATO/IRAS offset and benefit codes in this registry.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 9-11 — Religion",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "religionChangedThisYear",
+      "label": "Änderung der Religion im Jahr 2025",
+      "type": "enum",
+      "required": false,
+      "description": "Whether and how the taxpayer's church-tax-relevant religion changed during the tax year.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 12 — Änderung der Religion im Jahr",
+      "validation": {
+        "enum": [
+          "left_church",
+          "changed_religion",
+          "joined_church"
+        ]
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Ausgeübter Beruf (occupation)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 12 — Ausgeübter Beruf",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "street",
+      "label": "Straße (street)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 13 — Straße",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "houseNumber",
+      "label": "Hausnummer (house number)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 14 — Hausnummer",
+      "validation": {
+        "maxLength": 10
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "houseNumberSuffixOrAddressAddition",
+      "label": "Hausnummerzusatz, Adressergänzung (house number suffix / address addition)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 14 — Hausnummerzusatz, Adressergänzung",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "postalCode",
+      "label": "Postleitzahl (postal code)",
+      "type": "string",
+      "required": true,
+      "description": "German (or foreign) postal code. Foreign postal codes are not constrained to the 5-digit German format.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 15 — Postleitzahl (Inland/Ausland)",
+      "validation": {
+        "maxLength": 15
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "city",
+      "label": "Wohnort (city)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 16 — Wohnort",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "countryIfForeignAddress",
+      "label": "Staat, falls Anschrift im Ausland (country, if address is abroad)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 17 — Staat (falls Anschrift im Ausland)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Familienstand (marital status)",
+      "type": "enum",
+      "required": false,
+      "description": "Left unset for a taxpayer who is single and has never had one of the below statuses.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 18 — Familienstand",
+      "validation": {
+        "enum": [
+          "married_or_civil_partnership",
+          "widowed",
+          "divorced_or_partnership_dissolved",
+          "permanently_separated"
+        ]
+      }
+    },
+    {
+      "name": "maritalStatusSinceDate",
+      "label": "Seit dem / Tag der Trennung (status effective date)",
+      "type": "date",
+      "required": false,
+      "description": "The date the selected marital status took effect (or, for permanent separation, the date of separation).",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 18",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married_or_civil_partnership",
+          "widowed",
+          "divorced_or_partnership_dissolved",
+          "permanently_separated"
+        ]
+      }
+    },
+    {
+      "name": "assessmentType",
+      "label": "Veranlagungsart (assessment type)",
+      "type": "enum",
+      "required": false,
+      "description": "Only completed by married taxpayers/civil partners: joint assessment, separate assessment, or a declared community-of-property arrangement.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 19",
+      "validation": {
+        "enum": [
+          "joint_assessment",
+          "separate_assessment",
+          "community_of_property"
+        ]
+      },
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseTaxIdNumber",
+      "label": "Identifikationsnummer der Ehefrau/des Ehemanns bzw. der Lebenspartnerin/des Lebenspartners",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 20-24 — Person B",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      },
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Geburtsdatum der Ehefrau/des Ehemanns bzw. der Lebenspartnerin/des Lebenspartners",
+      "type": "date",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 20-24 — Person B",
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseFamilyName",
+      "label": "Name der Ehefrau/des Ehemanns bzw. der Lebenspartnerin/des Lebenspartners",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 20-24 — Person B",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseFirstName",
+      "label": "Vorname der Ehefrau/des Ehemanns bzw. der Lebenspartnerin/des Lebenspartners",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 20-24 — Person B",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseReligionKey",
+      "label": "Religionsschlüssel der Ehefrau/des Ehemanns bzw. der Lebenspartnerin/des Lebenspartners",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 20-24 — Person B",
+      "validation": {
+        "maxLength": 2
+      },
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseOccupation",
+      "label": "Ausgeübter Beruf der Ehefrau/des Ehemanns bzw. der Lebenspartnerin/des Lebenspartners",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 20-24 — Person B",
+      "validation": {
+        "maxLength": 100
+      },
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseAddressDifferentFromApplicant",
+      "label": "Anschrift der Ehefrau/des Ehemanns weicht ab (spouse's address differs)",
+      "type": "boolean",
+      "required": false,
+      "description": "Only completed if the spouse/partner's address differs from the taxpayer's own address above.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 25-29",
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "equals": "married_or_civil_partnership"
+      }
+    },
+    {
+      "name": "spouseStreet",
+      "label": "Straße (spouse's street, if different)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 25-29",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "spouseAddressDifferentFromApplicant",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseHouseNumber",
+      "label": "Hausnummer (spouse's house number, if different)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 25-29",
+      "validation": {
+        "maxLength": 10
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "spouseAddressDifferentFromApplicant",
+        "equals": true
+      }
+    },
+    {
+      "name": "spousePostalCode",
+      "label": "Postleitzahl (spouse's postal code, if different)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 25-29",
+      "validation": {
+        "maxLength": 15
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "spouseAddressDifferentFromApplicant",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseCity",
+      "label": "Wohnort (spouse's city, if different)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 25-29",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "spouseAddressDifferentFromApplicant",
+        "equals": true
+      }
+    },
+    {
+      "name": "refundAccountIsForeign",
+      "label": "Refund account is held at a foreign (non-German) financial institution",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 30-32"
+    },
+    {
+      "name": "ibanDomestic",
+      "label": "IBAN (inländisches Geldinstitut)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 30 — IBAN (inländisches Geldinstitut)",
+      "validation": {
+        "maxLength": 34
+      },
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "refundAccountIsForeign",
+        "equals": false
+      }
+    },
+    {
+      "name": "ibanForeign",
+      "label": "IBAN (ausländisches Geldinstitut)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 31 — IBAN (ausländisches Geldinstitut)",
+      "validation": {
+        "maxLength": 34
+      },
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "refundAccountIsForeign",
+        "equals": true
+      }
+    },
+    {
+      "name": "bicForeign",
+      "label": "BIC zur IBAN des ausländischen Geldinstituts",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 32 — BIC zur IBAN des ausländischen Geldinstituts",
+      "validation": {
+        "maxLength": 11
+      },
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "refundAccountIsForeign",
+        "equals": true
+      }
+    },
+    {
+      "name": "accountHolderName",
+      "label": "Kontoinhaber/-in (account holder)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the account holder, if different from the taxpayer (e.g. spouse or a third party, which requires a separate assignment form / Abtretungsvordruck not modelled here).",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 33 — Kontoinhaber/-in",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "appliesForEmployeeSavingsBonus",
+      "label": "Antrag auf Festsetzung der Arbeitnehmer-Sparzulage",
+      "type": "boolean",
+      "required": false,
+      "description": "Application for assessment of the employee savings bonus (Arbeitnehmer-Sparzulage) on asset-building savings scheme (VL) contributions.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 34"
+    },
+    {
+      "name": "hasReceivedIncomeReplacementBenefits",
+      "label": "Einkommensersatzleistungen bezogen (received income-replacement benefits)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer received income-replacement benefits subject to the progression clause (Progressionsvorbehalt) during the year — e.g. Arbeitslosengeld (unemployment benefit), Elterngeld (parental allowance), Insolvenzgeld, Krankengeld (sick pay), Mutterschaftsgeld (maternity benefit), or Verdienstausfallentschädigung (loss-of-earnings compensation).",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 35-36 — Einkommensersatzleistungen"
+    },
+    {
+      "name": "totalIncomeReplacementBenefitsAmount",
+      "label": "Total income-replacement benefits received",
+      "type": "number",
+      "required": false,
+      "description": "Total amount of the income-replacement benefits named above. The 2025 Hauptvordruck's exact per-benefit-type box layout was not independently confirmed at box level — see VERIFICATION.md.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 35-36 — Einkommensersatzleistungen",
+      "requiredWhen": {
+        "field": "hasReceivedIncomeReplacementBenefits",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasSupplementaryStatements",
+      "label": "Ergänzende Angaben zur Steuererklärung",
+      "type": "boolean",
+      "required": false,
+      "description": "Gate for the supplementary-statements section (four reason codes new in the 2025 edition); the supplementary statements themselves are out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck line 37 — Ergänzende Angaben zur Steuererklärung"
+    },
+    {
+      "name": "preparedWithTaxAdvisorOrAssociation",
+      "label": "Erstellt durch Steuerberater/-in oder Lohnsteuerhilfeverein",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the return was prepared with the involvement of a tax advisor or wage-tax assistance association (Lohnsteuerhilfeverein).",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 38-40"
+    },
+    {
+      "name": "declarationSigned",
+      "label": "Erklärung unterschrieben (declaration signed)",
+      "type": "boolean",
+      "required": true,
+      "description": "The taxpayer must review and confirm the completed (and, where applicable, pre-filled) return as true and complete before submitting.",
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 38-40 — Unterschrift"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Datum der Unterschrift (date of signature)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "ESt 1 A (2025), Hauptvordruck lines 38-40 — Unterschrift"
+    }
+  ],
+  "steps": [
+    {
+      "id": "elster_access",
+      "title": "Access to Mein ELSTER",
+      "fields": [
+        "hasElsterAccountWithVerifiedIdentity"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "no-elster-account",
+          "when": {
+            "field": "hasElsterAccountWithVerifiedIdentity",
+            "equals": false
+          }
+        },
+        {
+          "to": "routing_and_contact"
+        }
+      ]
+    },
+    {
+      "id": "routing_and_contact",
+      "title": "Tax office routing and contact (lines 4-7)",
+      "fields": [
+        "taxNumber",
+        "competentFinanzamt",
+        "formerFinanzamtIfMoved",
+        "daytimePhoneNumber"
+      ],
+      "next": "identity"
+    },
+    {
+      "id": "identity",
+      "title": "Taxpayer identity (lines 8-12)",
+      "fields": [
+        "taxIdNumber",
+        "dateOfBirth",
+        "dateOfDeathIfApplicable",
+        "familyName",
+        "firstName",
+        "titleAcademicDegree",
+        "religionKey",
+        "religionChangedThisYear",
+        "occupation"
+      ],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Taxpayer address (lines 13-17)",
+      "fields": [
+        "street",
+        "houseNumber",
+        "houseNumberSuffixOrAddressAddition",
+        "postalCode",
+        "city",
+        "countryIfForeignAddress"
+      ],
+      "next": "marital_status"
+    },
+    {
+      "id": "marital_status",
+      "title": "Marital status and assessment type (lines 18-19)",
+      "fields": [
+        "maritalStatus",
+        "maritalStatusSinceDate",
+        "assessmentType"
+      ],
+      "next": "spouse_details"
+    },
+    {
+      "id": "spouse_details",
+      "title": "Spouse/partner details, if married or in a civil partnership (lines 20-29)",
+      "fields": [
+        "spouseTaxIdNumber",
+        "spouseDateOfBirth",
+        "spouseFamilyName",
+        "spouseFirstName",
+        "spouseReligionKey",
+        "spouseOccupation",
+        "spouseAddressDifferentFromApplicant",
+        "spouseStreet",
+        "spouseHouseNumber",
+        "spousePostalCode",
+        "spouseCity"
+      ],
+      "next": "refund_account"
+    },
+    {
+      "id": "refund_account",
+      "title": "Refund account details (lines 30-33)",
+      "fields": [
+        "refundAccountIsForeign",
+        "ibanDomestic",
+        "ibanForeign",
+        "bicForeign",
+        "accountHolderName"
+      ],
+      "next": "other_declarations"
+    },
+    {
+      "id": "other_declarations",
+      "title": "Other main-form declarations (lines 34-37, 38-40)",
+      "fields": [
+        "appliesForEmployeeSavingsBonus",
+        "hasReceivedIncomeReplacementBenefits",
+        "totalIncomeReplacementBenefitsAmount",
+        "hasSupplementaryStatements",
+        "preparedWithTaxAdvisorOrAssociation"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and signature",
+      "fields": [
+        "declarationSigned",
+        "declarationDate"
+      ]
+    }
+  ]
+}
