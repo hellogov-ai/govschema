@@ -26,13 +26,17 @@ screen set has not been completed. It therefore remains `draft`, not
 - **Authority:** Australian Securities and Investments Commission (ASIC),
   the national companies regulator under the Corporations Act 2001.
 - **Process guidance:** <https://www.asic.gov.au/regulatory-resources/forms/forms-folder/201-application-for-registration-as-an-australian-company/>,
-  fetched live 2026-07-03, confirms Form 201 remains ASIC's current
-  regulatory form for this process and describes it as an "11-page form"
-  collecting "company details, officeholder appointments, and registered
-  office information" — matching the retrieved PDF's page count (8 numbered
-  pages of substantive content plus a cover/lodgement-details page) and
-  section structure. Fee and modern-channel confirmation from business.gov.au
-  live search results: "you must register it on the Australian companies
+  fetched live 2026-07-03 (raw HTML, not a summarizer), confirms Form 201
+  remains ASIC's current regulatory form for this process. The page's own
+  content is limited to "Use Form 201 to register a new Australian company"
+  plus lodgement and fee details (201A/201B/201C denote fee categories for
+  the same form, not distinct page counts or field descriptions) — it does
+  not describe the form's page count or field contents; those were verified
+  directly against the retrieved PDF itself (8 pages total, "Page 1 of 8"
+  through "Page 8 of 8", with the lodgement-details/cover content embedded
+  in page 1 rather than a separate page). Fee and modern-channel confirmation
+  from business.gov.au live search results: "you must register it on the
+  Australian companies
   register, managed by ASIC. The fee is $636 from 1 July 2026 ($611 until 30
   June 2026)" and "you can use the Australian Government Business
   Registration Service at register.business.gov.au to handle multiple
