@@ -1,0 +1,555 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "in/eci/voter-registration",
+  "version": "1.0.0",
+  "title": "India Voter Registration (Form 6 — Application for Inclusion of Name in Electoral Roll)",
+  "description": "First-time registration of an eligible Indian citizen's name in the electoral roll for their constituency, administered by the Election Commission of India (ECI) under the Registration of Electors Rules, 1960 (Form 6). Available online through the National Voters' Service Portal / Voter Helpline app, or on paper submitted to the Electoral Registration Officer (ERO). To register, an applicant must be an Indian citizen who has attained 18 years of age on the qualifying date and is ordinarily resident in the constituency (Representation of the People Act, 1950, s.19); this document does not model those three facts as gating fields because Form 6 itself prints no age/citizenship/residency eligibility tick-box — they are established indirectly through the date-of-birth, address, and declaration fields already collected, and asserted affirmatively in the closing declaration. Models the common first-time application: applicant name, one relative's particulars, Aadhaar (or its absence), gender, date of birth with age-proof document, present residential address with residence-proof document, an optional disability declaration, and an optional cross-reference to a family member already on the roll at the same address. Does not model: Form 7 (objection to inclusion/claim), Form 8 (correction of entries/shifting of residence/replacement EPIC/marking as Person with Disability for an existing elector), Form 8A (transposition within the same Assembly Constituency), overseas-elector or service-elector registration (each a distinct ECI form), or removal from the roll. Does not submit the application; the live voters.eci.gov.in Citizen Service Portal and the Electoral Registration Officer are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Election Commission of India, under the Representation of the People Act, 1950 and the Registration of Electors Rules, 1960",
+    "abbreviation": "ECI",
+    "url": "https://voters.eci.gov.in"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-IN"
+  },
+  "source": {
+    "url": "https://voters.eci.gov.in/formspdf/Form_6_English.pdf",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Form 6 — 'Application Form for New Voters' (See Rules 13(1) and (26) of the Registration of Electors Rules, 1960), Election Commission of India, together with its appended field guidelines"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-03",
+    "notes": "Source-derived reference schema authored directly from the ECI's own downloadable Form 6 PDF (fetched directly via curl, HTTP 200) and its companion guidelines PDF ('To be appended to Form-6 — Guidelines for filling up the Application Form-6', also fetched directly), both plain (non-encrypted, non-CID-keyed) PDFs whose text was extracted with a scratch npm install of pdfjs-dist (legacy build) run against each page's text content. Every field, its numbering (e.g. Item (5), Item 8(a)), and every enumerated option (identity/age/residence document lists, gender, disability categories) is quoted or closely paraphrased from these two documents. Status remains 'draft' pending a live walkthrough of the online voters.eci.gov.in / NVSP registration wizard, which could not be reached in this environment (the NVSP legacy domain returned an expired TLS certificate; the current voters.eci.gov.in Citizen Service Portal's live Form 6 wizard was not attempted this cycle). See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "assemblyConstituencyName",
+      "label": "Assembly Constituency — name",
+      "type": "string",
+      "required": false,
+      "description": "Name of the Assembly Constituency in which the applicant is ordinarily resident, addressed to that constituency's Electoral Registration Officer. The ERO's own guidelines state an application will not be rejected merely for omitting or mis-stating this, since the ERO can assist in identifying the correct constituency.",
+      "sourceRef": "Form 6, heading — 'No. & Name of Assembly Constituency'; Guidelines §1(a)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "parliamentaryConstituencyName",
+      "label": "Parliamentary Constituency — name (Union Territories without a Legislative Assembly only)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the Parliamentary Constituency, filled in only by applicants in a Union Territory that has no Legislative Assembly (so has no Assembly Constituency to name instead).",
+      "sourceRef": "Form 6, heading — 'No. & Name of Parliamentary Constituency@ (@ only for Union Territories not having Legislative Assembly)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "nameOfficialLanguageGivenName",
+      "label": "Name (in official language of State) — given name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "First name followed by middle name, in the official language of the State. Per the appended guidelines, entries may be furnished in either the official language of the State or in English and this alone will not be a ground for rejecting the application, so this field and nameEnglishGivenName are each individually optional here — but at least one of the two must be supplied for the application to be complete.",
+      "sourceRef": "Form 6, Item 1(a) 'Name (In Official Language of State) — First Name followed by Middle Name'; Guidelines §1(b), §2",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nameOfficialLanguageSurname",
+      "label": "Surname (in official language of State), if any",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form 6, Item 1(a) 'Surname (if any)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nameEnglishGivenName",
+      "label": "Name (in English, BLOCK LETTERS) — given name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "First name followed by middle name, in English capital letters. If left blank, the system transliterates the official-language name (Item 1(a)) into English automatically, which the form itself warns may introduce spelling variance. See nameOfficialLanguageGivenName's description for the at-least-one-of-the-two rule.",
+      "sourceRef": "Form 6, Item 1(b) 'Name (In English in BLOCK LETTERS) — First Name followed by Middle Name'; Disclaimer: 'If name not filled in English, it will be transliterated by software.'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nameEnglishSurname",
+      "label": "Surname (in English), if any",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form 6, Item 1(b) 'Surname (if any)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "relativeType",
+      "label": "Relative furnished at Item 2 — relationship",
+      "type": "enum",
+      "required": true,
+      "description": "Name and surname of any one relative must be furnished, chosen from these five options printed on the form. legal_guardian_orphan applies to an orphan applicant's legal guardian; guru_third_gender applies to a Third Gender applicant's Guru. For a married female applicant, the guidelines state the husband's name may preferably be given.",
+      "sourceRef": "Form 6, Item 2(a) 'Name and Surname (in official language of State) of any one of the relatives:- Father Or Mother Or Husband Or Wife Or Legal Guardian in case of orphan/Guru in case of Third Gender'; Guidelines §3",
+      "validation": { "enum": ["father", "mother", "husband", "wife", "legal_guardian_orphan", "guru_third_gender"] }
+    },
+    {
+      "name": "relativeNameOfficialLanguage",
+      "label": "Relative's name and surname (in official language of State)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "At least one of this field and relativeNameEnglish must be supplied, mirroring the applicant's own at-least-one-language rule at Item 1.",
+      "sourceRef": "Form 6, Item 2(a)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "relativeNameEnglish",
+      "label": "Relative's name and surname (in English)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form 6, Item 2(b) 'Name and Surname (In English in BLOCK LETTERS) of the relative mentioned above'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile number (self or relative)",
+      "type": "string",
+      "required": false,
+      "description": "Mobile number of the applicant if available, or of the relative named at Item 2.",
+      "sourceRef": "Form 6, Item 3 'Mobile No. of Self (if available) (or) Of relative mentioned at Item No. 2'",
+      "validation": { "pattern": "^[0-9]{10}$" }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email ID (self or relative)",
+      "type": "string",
+      "required": false,
+      "description": "Email address of the applicant if available, or of the relative named at Item 2.",
+      "sourceRef": "Form 6, Item 4 'Email ID of Self (If available) (or) Of relative mentioned at Item No. 2'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "hasAadhaar",
+      "label": "Do you have an Aadhaar number?",
+      "type": "boolean",
+      "required": true,
+      "description": "The form requires ticking one of two boxes: furnishing the Aadhaar number, or declaring its absence. Furnishing an Aadhaar number is used for authentication of entries and is not itself a precondition of eligibility.",
+      "sourceRef": "Form 6, Item 5 'Aadhaar Details:- (Please tick the appropriate box) (a) Aadhaar Number or (b) I am not able to furnish my Aadhaar Number because I don't have Aadhaar Number.'; Guidelines §4"
+    },
+    {
+      "name": "aadhaarNumber",
+      "label": "Aadhaar number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "hasAadhaar", "equals": true },
+      "description": "12-digit Aadhaar number issued by the Unique Identification Authority of India (UIDAI).",
+      "sourceRef": "Form 6, Item 5(a)",
+      "validation": { "pattern": "^[0-9]{12}$" }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 6, Item 6 'Gender — Male / Female / Third Gender'",
+      "validation": { "enum": ["male", "female", "third_gender"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "DD/MM/YYYY on the source form (printed as eight single-digit boxes), represented here as one ISO date field per this registry's comb-field convention.",
+      "sourceRef": "Form 6, Item 7(a) 'Date of Birth d d / m m / y y y y'"
+    },
+    {
+      "name": "ageProofDocumentType",
+      "label": "Document attached as proof of date of birth",
+      "type": "enum",
+      "required": true,
+      "description": "A self-attested copy of one of these six documents should be attached. If none is available, use 'other' and name the document in ageProofOtherDocument, in which case field verification by the ERO is required (see declarationOtherAgeProofDocumentName).",
+      "sourceRef": "Form 6, Item 7(b)(i) 'Document for Proof of Date of Birth — (Any one of these) 1. Birth certificate issued by Competent Local Body/Municipal Authority/Registrar of Births & Deaths 2. Aadhaar Card 3. PAN Card 4. Driving License 5. Certificates of Class X or Class XII issued by CBSE/ICSE/State Education Boards, if it contains Date of Birth 6. Indian Passport'",
+      "validation": {
+        "enum": [
+          "birth_certificate", "aadhaar_card", "pan_card", "driving_licence",
+          "class_x_xii_certificate", "indian_passport", "other"
+        ]
+      }
+    },
+    {
+      "name": "ageProofOtherDocumentName",
+      "label": "Name of other document submitted as age proof",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "ageProofDocumentType", "equals": "other" },
+      "description": "Named only if none of the six listed age-proof documents is available. The declaration portion of the form additionally requires naming this same document again, and applying in person for field verification.",
+      "sourceRef": "Form 6, Item 7(b)(ii) 'Any Other Document for Proof of Date of Birth :- (If none of the above documents is available) (Pl. Specify)'; DECLARATION (iv)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "presentAddressHouseNo",
+      "label": "Present ordinary residence — House/Building/Apartment No.",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, Item 8(a) 'House/Building/Apartment No.'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "presentAddressStreetLocality",
+      "label": "Present ordinary residence — Street/Area/Locality/Mohalla/Road",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, Item 8(a) 'Street/Area/Locality/Mohalla/Road'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "presentAddressTownVillage",
+      "label": "Present ordinary residence — Town/Village",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, Item 8(a) 'Town/Village'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressPostOffice",
+      "label": "Present ordinary residence — Post Office",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, Item 8(a) 'Post Office'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressPinCode",
+      "label": "Present ordinary residence — PIN code",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, Item 8(a) 'PIN Code'",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "presentAddressTehsilTaluqaMandal",
+      "label": "Present ordinary residence — Tehsil/Taluqa/Mandal",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form 6, Item 8(a) 'Tehsil/Taluqa/Mandal'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressDistrict",
+      "label": "Present ordinary residence — District",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, Item 8(a) 'District'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressState",
+      "label": "Present ordinary residence — State/UT",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, Item 8(a) 'State/UT'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "residenceProofDocumentType",
+      "label": "Document attached as proof of residence",
+      "type": "enum",
+      "required": true,
+      "description": "A self-attested copy in the applicant's own name, or in the name of a parent/spouse/adult child already enrolled as elector at the same address, should be attached. If none of the seven listed documents is available, use 'other' and name it in residenceProofOtherDocumentName; the ERO must then conduct field verification.",
+      "sourceRef": "Form 6, Item 8(b)(i) 'Document for proof of residence :- (Any one of these) 1. Water/Electricity/Gas connection Bill for that address (atleast 1 year) 2. Aadhaar Card 3. Current passbook of Nationalized/Scheduled Bank/Post Office 4. Indian Passport 5. Revenue Department's Land Owning records including KisanBahi 6. Registered Rent Lease Deed (In case of tenant) 7. Registered Sale Deed (In case of ownhouse)'",
+      "validation": {
+        "enum": [
+          "utility_bill", "aadhaar_card", "bank_or_post_office_passbook", "indian_passport",
+          "land_owning_records", "registered_rent_lease_deed", "registered_sale_deed", "other"
+        ]
+      }
+    },
+    {
+      "name": "residenceProofOtherDocumentName",
+      "label": "Name of other document submitted as residence proof",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "residenceProofDocumentType", "equals": "other" },
+      "description": "Named only if none of the seven listed residence-proof documents is available; the applicant must then undergo field verification by an officer designated by the Electoral Registration Officer (e.g. for homeless citizens with no documentary proof of ordinary residence).",
+      "sourceRef": "Form 6, Item 8(b)(ii) 'Any Other document for Proof of residence: - (If none of the above documents is available) (Pl. Specify) #'; Note '#'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "hasDisability",
+      "label": "Do you have a disability you wish to declare? (optional)",
+      "type": "boolean",
+      "required": true,
+      "description": "The disability declaration itself is optional; this gating question makes that branch explicit for GovSchema's conditional-field grammar.",
+      "sourceRef": "Form 6, Item 9 'Category of disability, if any (Optional)'"
+    },
+    {
+      "name": "disabilityCategory",
+      "label": "Category of disability",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "hasDisability", "equals": true },
+      "sourceRef": "Form 6, Item 9 'Locomotive / Visual / Deaf & Dumb / If any other (Give description)'",
+      "validation": { "enum": ["locomotive", "visual", "deaf_and_dumb", "other"] }
+    },
+    {
+      "name": "disabilityOtherDescription",
+      "label": "Description of disability (if 'other')",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "disabilityCategory", "equals": "other" },
+      "requiredWhen": { "field": "disabilityCategory", "equals": "other" },
+      "sourceRef": "Form 6, Item 9 'If any other (Give description)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "disabilityPercentage",
+      "label": "Percentage of disability",
+      "type": "number",
+      "required": false,
+      "requiredWhen": { "field": "hasDisability", "equals": true },
+      "sourceRef": "Form 6, Item 9 'Percentage of disability: %'",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "disabilityCertificateAttached",
+      "label": "Is a disability certificate attached?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "hasDisability", "equals": true },
+      "sourceRef": "Form 6, Item 9 'Certificate attached (Tick the appropriate box) Yes No'"
+    },
+    {
+      "name": "hasFamilyMemberAlreadyEnrolled",
+      "label": "Do you currently reside with a family member already included in the electoral roll at this address?",
+      "type": "boolean",
+      "required": true,
+      "description": "Item 10 has no printed yes/no tick-box of its own — it is simply left blank when not applicable — so this schema adds an explicit gating boolean, consistent with this registry's convention for inferred gates (e.g. au/aec/voter-enrolment's nameChanged).",
+      "sourceRef": "Form 6, Item 10 'The details of my family member already included in the electoral roll at current address with whom I currently reside are as under:'"
+    },
+    {
+      "name": "familyMemberName",
+      "label": "Family member's name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "hasFamilyMemberAlreadyEnrolled", "equals": true },
+      "sourceRef": "Form 6, Item 10 'Name of family member:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "familyMemberRelationship",
+      "label": "Relationship with family member",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasFamilyMemberAlreadyEnrolled", "equals": true },
+      "sourceRef": "Form 6, Item 10 'Relationship with applicant'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "familyMemberEpicNumber",
+      "label": "Family member's EPIC number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "hasFamilyMemberAlreadyEnrolled", "equals": true },
+      "description": "Elector's Photo Identity Card number of the family member named above.",
+      "sourceRef": "Form 6, Item 10 'His/her EPIC no.:'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "placeOfBirthVillageTown",
+      "label": "Declaration — place of birth (Village/Town)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, DECLARATION (i) 'place of my birth is:- Village/Town'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthDistrict",
+      "label": "Declaration — district of birth",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, DECLARATION (i) 'District'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthState",
+      "label": "Declaration — State/UT of birth",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 6, DECLARATION (i) 'State/UT'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ordinarilyResidentSinceMonthYear",
+      "label": "Declaration — ordinarily resident at the present address since (month and year)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant declares they are ordinarily resident at the address given at Item 8(a) since this month/year.",
+      "sourceRef": "Form 6, DECLARATION (ii) 'I am ordinarily a resident at the address mentioned at Sr. No. 8(a) in Form 6 since ________ (mention month and year)'",
+      "validation": { "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$" }
+    },
+    {
+      "name": "declarationAndConsent",
+      "label": "Declaration",
+      "type": "boolean",
+      "required": true,
+      "description": "By signing (or, per the form's accessibility note, a witnessed left-hand thumb impression where the applicant is unable to sign), the applicant declares under Section 31 of the Representation of the People Act, 1950: they are a citizen of India; they are applying for inclusion in the electoral roll for the first time and their name is not already included in any Assembly/Parliamentary Constituency; and, if no listed age-proof document is available, that they have enclosed the alternative document named in ageProofOtherDocumentName. The form presents this as one combined declaration attached to a single signature, modelled here as one field.",
+      "sourceRef": "Form 6, DECLARATION (i)-(v); accessibility instructions"
+    }
+  ],
+  "documents": [
+    {
+      "id": "photograph",
+      "label": "Recent passport-size colour photograph",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 6 — 'SPACE FOR PASTING ONE RECENT UNSIGNED PASSPORT SIZE COLOR PHOTOGRAPH (4.5 CM X 3.5 CM) SHOWING FRONTAL VIEW OF FULL FACE WITH WHITE BACKGROUND'; Guidelines §1(d)"
+    },
+    {
+      "id": "ageProofDocument",
+      "label": "Self-attested copy of age-proof document",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "birth_certificate", "aadhaar_card", "pan_card", "driving_licence",
+        "class_x_xii_certificate", "indian_passport", "other"
+      ],
+      "sourceRef": "Form 6, Item 7(b); Guidelines §6"
+    },
+    {
+      "id": "residenceProofDocument",
+      "label": "Self-attested copy of residence-proof document",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "utility_bill", "aadhaar_card", "bank_or_post_office_passbook", "indian_passport",
+        "land_owning_records", "registered_rent_lease_deed", "registered_sale_deed", "other"
+      ],
+      "sourceRef": "Form 6, Item 8(b); Guidelines §7"
+    },
+    {
+      "id": "disabilityCertificate",
+      "label": "Disability certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "all": [
+        { "field": "hasDisability", "equals": true },
+        { "field": "disabilityCertificateAttached", "equals": true }
+      ] },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 6, Item 9 'Certificate attached'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "constituency",
+      "title": "Constituency",
+      "fields": ["assemblyConstituencyName", "parliamentaryConstituencyName"],
+      "next": "your_name"
+    },
+    {
+      "id": "your_name",
+      "title": "Your name",
+      "fields": [
+        "nameOfficialLanguageGivenName", "nameOfficialLanguageSurname",
+        "nameEnglishGivenName", "nameEnglishSurname"
+      ],
+      "next": "relative_details"
+    },
+    {
+      "id": "relative_details",
+      "title": "Relative's particulars",
+      "fields": ["relativeType", "relativeNameOfficialLanguage", "relativeNameEnglish"],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact details",
+      "fields": ["mobileNumber", "emailAddress"],
+      "next": "identity_and_demographics"
+    },
+    {
+      "id": "identity_and_demographics",
+      "title": "Aadhaar, gender, and date of birth",
+      "fields": [
+        "hasAadhaar", "aadhaarNumber", "gender", "dateOfBirth",
+        "ageProofDocumentType", "ageProofOtherDocumentName"
+      ],
+      "next": "residence_details"
+    },
+    {
+      "id": "residence_details",
+      "title": "Present ordinary residence",
+      "fields": [
+        "presentAddressHouseNo", "presentAddressStreetLocality", "presentAddressTownVillage",
+        "presentAddressPostOffice", "presentAddressPinCode", "presentAddressTehsilTaluqaMandal",
+        "presentAddressDistrict", "presentAddressState",
+        "residenceProofDocumentType", "residenceProofOtherDocumentName"
+      ],
+      "next": "disability_details"
+    },
+    {
+      "id": "disability_details",
+      "title": "Disability (optional)",
+      "fields": [
+        "hasDisability", "disabilityCategory", "disabilityOtherDescription",
+        "disabilityPercentage", "disabilityCertificateAttached"
+      ],
+      "next": "family_elector_details"
+    },
+    {
+      "id": "family_elector_details",
+      "title": "Family member already on the roll",
+      "fields": [
+        "hasFamilyMemberAlreadyEnrolled", "familyMemberName",
+        "familyMemberRelationship", "familyMemberEpicNumber"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": [
+        "placeOfBirthVillageTown", "placeOfBirthDistrict", "placeOfBirthState",
+        "ordinarilyResidentSinceMonthYear", "declarationAndConsent"
+      ]
+    }
+  ]
+}
