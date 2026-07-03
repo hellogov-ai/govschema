@@ -1,0 +1,1776 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/irishimmigration/short-stay-visa-avats",
+  "version": "1.0.0",
+  "title": "Ireland Short-Stay (C) Visa Application (AVATS)",
+  "description": "Give the online details for an Irish short-stay \"C\" visa application (a proposed stay in Ireland of 90 days or less) through AVATS (Automated Visa Application and Tracking System), the online data-entry system operated by Immigration Service Delivery, Department of Justice, Home Affairs and Migration, at visas.inis.gov.ie. AVATS collects the applicant's details across a linear sequence of online pages, issues an eight-digit application number partway through (details can be saved and resumed for 30 days), and, once submitted, produces a printed \"Application Form\" (marked \"NOT VALID FOR TRAVEL\") that the applicant must sign and, together with supporting documents, the visa fee, and (where required) biometrics, submit in person or by post to the relevant Irish Embassy, Consulate, Visa Office, or Visa Application Centre; this document models only the online data-entry step, not that in-person submission. This document models an adult (18 or over) visa-required, non-EEA/Swiss/UK national applying for themselves for a Short Stay (C) visa for visit/tourism, business, a conference or event, or another short-stay purpose. Out of scope: preclearance applications (offered instead of a visa to non-visa-required nationalities); Long Stay (D) visas (e.g. Join Family applications, or any proposed stay over 90 days); the Free Movement Directive pathway for a family member of an EU/EEA/Swiss/UK national exercising free-movement rights; an application completed by a parent or legal guardian on behalf of an applicant under 18; the additional Employment Visa Application question set (Employment Permit/Atypical Working Authorisation reference, proposed Irish employer details); and the additional Study Visa Application question set (course acceptance, fees, English-language proficiency, educational history, financial sponsor for study). It does not submit the application; the live visas.inis.gov.ie AVATS source is always authoritative (see VERIFICATION.md).",
+  "status": "verified",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration Service Delivery, Department of Justice, Home Affairs and Migration",
+    "abbreviation": "ISD",
+    "url": "https://www.irishimmigration.ie/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.irishimmigration.ie/coming-to-visit-ireland/giving-your-details-on-avats-for-a-visa-preclearance-application/",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "AVATS (Automated Visa Application and Tracking System) online application, per Immigration Service Delivery's field-by-field \"Giving your details on AVATS\" guidance"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Closes the Visa vertical's IE gap (GOV-803 research cycle). Direct curl/fetch of visas.inis.gov.ie serves a JavaScript bot-verification interstitial (the same access-block class recorded elsewhere in this registry, e.g. france-visas.gouv.fr), but a headless Playwright browser with a realistic user agent passes the challenge and reaches the real AVATS wizard. This schema was authored from Immigration Service Delivery's own field-by-field \"Giving your details on AVATS\" guidance (last updated 2025-10-14, fetched directly with no access block) and the 'Required Documents - Short Stay C Visa' FAQ PDF, then field-by-field verified against the live wizard: a mock adult Indian national's Visit - Tourist / Short Stay (C) / Single-journey application was driven through every page from the Welcome screen through the Family Details page (eligibility/reason, passport & dates, personal details, residency & biometrics, full immigration-history branching, passport issue/expiry with both previous-passport slots, employment/college, travelling-with-others, contact/host in Ireland including both the personally-known and not-personally-known paths, and family details including the Married branch), confirming every live control ID, picklist, and requiredness rule this schema asserts, and catching/fixing several mismatches with the prose guidance in the process: the 'previously granted'/'previously refused' visa questions are independently mandatory, not conditioned on 'previously applied'; the grant/refusal detail sub-questions are each a single free-text field, not three; biometric exemption is always asked, not conditioned on current-location country; up to two (not one) previous passports are accepted, and none of the previous-passport fields are actually mandatory; the host/contact address has four lines, not three, and carries optional date-of-birth/email fields on the personally-known branch; the criminal-conviction section has no separate trial-date input; family-in-Ireland surname/forename are separate fields; relationship-to-applicant pickers are closed enumerations, not free text; and the live system also surfaced a country-coverage-dependent online visa-fee-payment facility (phased rollout from 8 December 2025) not mentioned in the reviewed guidance, noted on the proofOfFeePayment document entry. The Form Assistance and Declaration pages (the flow's final two steps), and the dependent-children repeating sub-fields, were not independently reached in this pass and remain modelled from the prose guidance alone; the exact Declaration attestation wording is shown only within the live session and is not reproduced here. No data was submitted; every test session was abandoned before the final Submit step. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "verified-schema",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": true,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "nationality",
+      "label": "Nationality (country that issued the passport you will travel on)",
+      "type": "string",
+      "required": true,
+      "description": "Pick the country for which you hold a passport. Applicants with dual nationality pick the country that issued the passport they intend to travel on; a holder of a 1951 Refugee Convention Travel Document picks \"Stateless\". This answer determines which application categories AVATS offers in the Reason for Travel question.",
+      "sourceRef": "AVATS guidance — Nationality",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "visaOrPreclearanceType",
+      "label": "Type of Visa or Preclearance",
+      "type": "string",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        "Short Stay (C)"
+      ],
+      "description": "Confirmed live as a direct two-option radio choice labelled \"Short Stay (C)\" / \"Long Stay (D)\" (AVATS control rdblstVisaStayType). The reviewed guidance describes some Reason for Travel values as forcing this choice (e.g. a visit visa is always Short Stay (C); a Join Family application is always Long Stay (D)); AVATS may pre-select or lock the radio in those cases via client-side script. This schema models only the Short Stay (C) pathway (a proposed stay of 90 days or less) for a visa-required nationality — Long Stay (D) visas and preclearance applications are out of scope.",
+      "sourceRef": "AVATS guidance — Type of Visa or Preclearance"
+    },
+    {
+      "name": "reasonForTravel",
+      "label": "Reason for Travel",
+      "type": "string",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        "Visit - Family",
+        "Visit - Friend",
+        "Visit - Tourist",
+        "Business",
+        "Conference/Event",
+        "Other"
+      ],
+      "description": "Confirmed live AVATS picklist (control ddlVisaCategory) includes, among others: Business, Conference/Event, Employment, Exam, three \"Family member of EU/EEA/Swiss cit.\" variants, International Protection - Family Reunification, Internship, six \"Join Family\" variants, Join Ship, Marriage, Medical Treatment, Minister of Religion, Other, Performance/Tournament, Study, Training, Transit, Visit - Family, Visit - Friend, Visit - Tourist, Volunteer, and six \"Preclearance - ...\" variants. All are truthful, well-formed answers; values outside this schema's eligible set route to a Long Stay (D) application, a preclearance application, or an additional purpose-specific question set (Employment Visa Application / Study Visa Application sections) not modelled by this schema.",
+      "sourceRef": "AVATS guidance — Reason for Travel"
+    },
+    {
+      "name": "journeyType",
+      "label": "Journey Type",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Single",
+          "Multiple"
+        ]
+      },
+      "description": "A Single Journey visa allows one trip to Ireland while valid; a Multiple Journey visa allows more than one. The application fee for Multiple is higher than for Single, and an overpayment is not refunded if only Single is granted.",
+      "sourceRef": "AVATS guidance — Single or Multiple Journey Visa"
+    },
+    {
+      "name": "purposeOfTravelDetails",
+      "label": "Purpose of Travel (additional information)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "reasonForTravel",
+        "equals": "Other"
+      },
+      "description": "Optional free-text elaboration on the reason for travel; important to complete when Reason for Travel is \"Other\".",
+      "sourceRef": "AVATS guidance — Purpose of Travel",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "passportType",
+      "label": "Type of Passport",
+      "type": "enum",
+      "required": true,
+      "description": "Confirmed live AVATS picklist (control ddlPassportType). Most applicants hold a National Passport.",
+      "sourceRef": "AVATS guidance — Passport Details",
+      "validation": {
+        "enum": [
+          "National Passport",
+          "Diplomatic Passport",
+          "Travel Document (1951 Convention)",
+          "Aliens Passport",
+          "Government Official Passport",
+          "Service",
+          "Internationally Recognised Travel Document"
+        ]
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "As shown on the passport or travel document used to apply.",
+      "sourceRef": "AVATS guidance — Passport Details",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "proposedEntryDate",
+      "label": "Proposed date of entry to Ireland",
+      "type": "date",
+      "required": true,
+      "description": "Date the applicant intends to enter Ireland.",
+      "sourceRef": "AVATS guidance — Proposed Dates"
+    },
+    {
+      "name": "proposedExitDate",
+      "label": "Proposed date of leaving Ireland",
+      "type": "date",
+      "required": true,
+      "description": "For a multiple-entry application, the intended date of leaving Ireland on the first trip. AVATS allows this to be left blank only for a Long Stay application or a Free Movement Directive family-member application intending to stay over 90 days — both out of scope for this Short Stay (C) schema, so this field is always required here.",
+      "sourceRef": "AVATS guidance — Proposed Dates"
+    },
+    {
+      "name": "surname",
+      "label": "Surname (family name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the passport. If the passport shows only a forename or only a surname, AVATS still requires an answer to both questions; the convention is to enter \".\" in the one that would otherwise be blank.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "forename",
+      "label": "Forename (given name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the passport. See surname for the \".\" convention when the passport has no forename.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherName",
+      "label": "Any other name (e.g. maiden name or name at birth)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "AVATS requires an answer to this question; enter \".\" if there is no other name to give.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Displayed on the live AVATS form as ddmmyyyy (e.g. 07091982 for 7 September 1982); modelled here as an ISO full-date per the GovSchema date type.",
+      "sourceRef": "AVATS guidance — Personal details"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Male",
+          "Female"
+        ]
+      },
+      "description": "Confirmed live as a two-option radio choice labelled \"Male\" / \"Female\" (AVATS control rdblstGender).",
+      "sourceRef": "AVATS guidance — Personal details"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "description": "Picked from a country list.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "currentLocationCountry",
+      "label": "Current location (country of residence)",
+      "type": "string",
+      "required": true,
+      "description": "The country where the applicant is currently living. \"Ireland\" is not offered — a visa/preclearance application cannot be made while already in Ireland.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "currentAddressLine1",
+      "label": "Current address, line 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A Post Office Box address is not accepted.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "currentAddressLine2",
+      "label": "Current address, line 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional continuation line; AVATS allows up to 4 address lines.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "currentAddressLine3",
+      "label": "Current address, line 3",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional continuation line; AVATS allows up to 4 address lines.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "currentAddressLine4",
+      "label": "Current address, line 4",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional continuation line; AVATS allows up to 4 address lines.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactPhone",
+      "label": "Contact telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A number at which the Deciding Officer can contact the applicant during daytime working hours.",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "contactEmail",
+      "label": "Contact email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "AVATS guidance — Personal details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "residenceDurationYears",
+      "label": "Length of residence in present country — years",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "residenceDurationMonths",
+      "label": "Length of residence in present country — months",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "minimum": 0,
+        "maximum": 11
+      }
+    },
+    {
+      "name": "permissionToReturn",
+      "label": "Do you have permission to return to your present country of residence after your stay in Ireland?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "biometricsExempt",
+      "label": "Are you exempt from the requirement to provide biometrics?",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirmed live as an always-mandatory question on the Immigration History page (AVATS control rdblstBiometric), with a linked \"Checklist of Biometric Exemptions\". This contradicts the reviewed prose guidance's suggestion that the question is only shown for applicants resident in certain countries; live behaviour is authoritative.",
+      "sourceRef": "AVATS guidance — Biometric information"
+    },
+    {
+      "name": "biometricsExemptionBasis",
+      "label": "Basis of biometric exemption",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "biometricsExempt",
+        "equals": true
+      },
+      "validation": {
+        "enum": [
+          "Child under 5 years of age",
+          "Head of State or household member",
+          "Head of Government or Government Minister, or household member",
+          "Accredited diplomat, consular officer, or household member",
+          "Diplomat transiting the State, or household member",
+          "Diplomatic courier",
+          "Diplomat in a Government Minister delegation with note verbale and invitation letter",
+          "Intergovernmental-organisation official or household member (with supporting note and invitation letter)",
+          "Airline crew member transiting within 7 days",
+          "Physically unable to provide biometrics"
+        ]
+      },
+      "description": "The ten exemption categories set out in the AVATS guidance's biometric-exemption list.",
+      "sourceRef": "AVATS guidance — Exemptions from giving biometric information"
+    },
+    {
+      "name": "previouslyAppliedForIrishVisaOrPreclearance",
+      "label": "Have you ever applied for an Irish visa or preclearance?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "previouslyGrantedIrishVisaOrPreclearance",
+      "label": "Have you ever been granted an Irish visa or preclearance?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "description": "Confirmed live as an independent mandatory question (AVATS control rdblstVisaIssue), asked regardless of the answer to \"have you ever applied\" — not a sub-question of it as the reviewed guidance prose implied."
+    },
+    {
+      "name": "previousGrantDetails",
+      "label": "Location, application number, and year of the previously granted visa/preclearance",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "previouslyGrantedIrishVisaOrPreclearance",
+        "equals": true
+      },
+      "description": "Confirmed live as a single free-text field (AVATS control txtrefNo): \"Please provide the location, application number and year of issue.\"",
+      "sourceRef": "AVATS live system — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "previouslyRefusedIrishVisaOrPreclearance",
+      "label": "Have you ever been refused an Irish visa or preclearance?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "description": "Confirmed live as an independent mandatory question (AVATS control rdblstRefusedVisa), asked regardless of the answer to \"have you ever applied\" — not a sub-question of it as the reviewed guidance prose implied."
+    },
+    {
+      "name": "previousRefusalDetails",
+      "label": "Location of application, year, and reference number of the previous refusal",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "previouslyRefusedIrishVisaOrPreclearance",
+        "equals": true
+      },
+      "description": "Confirmed live as a single free-text field (AVATS control txtlocOfAppRefuse): \"If you have been refused before, please provide location of application, year and reference number.\"",
+      "sourceRef": "AVATS live system — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "previouslyVisitedIreland",
+      "label": "Have you ever been to Ireland before (legally or illegally, at any time)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "previousVisitPurpose",
+      "label": "Purpose of your previous trip to Ireland",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "previouslyVisitedIreland",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "previousVisitDeptOfJusticeRef",
+      "label": "Department of Justice reference number from a previous stay (if issued)",
+      "type": "string",
+      "required": false,
+      "description": "Optional; most short-stay visitors will not have been issued one.",
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "previousVisitGnibNumber",
+      "label": "Garda National Immigration Bureau (GNIB) number from a previous stay (if issued)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "previousVisitPpsNumber",
+      "label": "Personal Public Service (PPS) number from a previous stay (if issued)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "familyMembersInIreland",
+      "label": "Do you have family members living in Ireland (including extended family and former spouse/step-family)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "familyMemberSurname",
+      "label": "Surname of your main family contact in Ireland",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "familyMembersInIreland",
+        "equals": true
+      },
+      "description": "Confirmed live as separate surname/forename fields (AVATS controls txtSurnameFamilyInIreland / txtForenamesFamilyInIreland). AVATS provides space for one family contact; applicants with more than one family member in Ireland list the rest on a separate sheet submitted with supporting documentation.",
+      "sourceRef": "AVATS live system — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "familyMemberForename",
+      "label": "Forename of your main family contact in Ireland",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "familyMembersInIreland",
+        "equals": true
+      },
+      "description": "Confirmed live as separate surname/forename fields (AVATS controls txtSurnameFamilyInIreland / txtForenamesFamilyInIreland). AVATS provides space for one family contact; applicants with more than one family member in Ireland list the rest on a separate sheet submitted with supporting documentation.",
+      "sourceRef": "AVATS live system — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "familyMemberDateOfBirth",
+      "label": "Date of birth of your main family contact in Ireland",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "familyMembersInIreland",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "familyMemberRelationship",
+      "label": "Relationship of your main family contact in Ireland to you",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "familyMembersInIreland",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "enum": [
+          "Spouse",
+          "Parent",
+          "Child",
+          "Extended Family",
+          "Partner",
+          "Other"
+        ]
+      },
+      "description": "Confirmed live AVATS picklist (control ddlRelationToApplicant)."
+    },
+    {
+      "name": "familyMemberDeptOfJusticeRef",
+      "label": "Family member's Department of Justice reference number (non-EEA/Swiss/UK nationals)",
+      "type": "string",
+      "required": false,
+      "description": "Begins with \"69/\"; only some longer-resident family members were issued this (legacy) number, and it does not appear on an Irish Residence Permit. Leave blank if never issued.",
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "refusedEntryToIreland",
+      "label": "Have you ever been refused entry to Ireland by an Irish Immigration Officer at a port of entry?",
+      "type": "boolean",
+      "required": true,
+      "description": "Covers being refused entry after travelling with a visa, without a visa, with preclearance, or without preclearance.",
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "deportedOrNotifiedFromIreland",
+      "label": "Have you ever been deported from Ireland, or notified that you are subject to a Deportation Order?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "refusedVisaOtherCountry",
+      "label": "Have you ever been refused a visa for a country other than Ireland?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "refusedEntryDeportedOverstayedOtherCountry",
+      "label": "Have you ever been refused entry to, deported from, or otherwise asked to leave a country other than Ireland?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "otherCountryImmigrationIssueDetails",
+      "label": "Details of the country, dates, and reason",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "refusedEntryToIreland",
+            "equals": true
+          },
+          {
+            "field": "deportedOrNotifiedFromIreland",
+            "equals": true
+          },
+          {
+            "field": "refusedVisaOtherCountry",
+            "equals": true
+          },
+          {
+            "field": "refusedEntryDeportedOverstayedOtherCountry",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "hasCriminalConvictions",
+      "label": "Do you have any criminal convictions?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Immigration history and criminal record"
+    },
+    {
+      "name": "convictionReason",
+      "label": "Reason for the conviction (what was the crime)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 500
+      },
+      "description": "Confirmed live (AVATS control txtConvictionDtls)."
+    },
+    {
+      "name": "convictionTrialLocation",
+      "label": "Where the trial took place (and, if relevant, when)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 200
+      },
+      "description": "Confirmed live as a single free-text field (AVATS control txtConvictionLoc). There is no separate trial-date input on the live system despite the reviewed guidance's \"when was the trial\" question; if needed, record the date within this field or convictionSentenceLength."
+    },
+    {
+      "name": "convictionSentenceLength",
+      "label": "Length of sentence",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Immigration history and criminal record",
+      "validation": {
+        "maxLength": 100
+      },
+      "description": "Confirmed live as a free-text field (AVATS control txtConvictionSentence)."
+    },
+    {
+      "name": "passportIssuingCountryOrOrganisation",
+      "label": "Country or organisation which issued your passport/travel document",
+      "type": "string",
+      "required": true,
+      "sourceRef": "AVATS guidance — Passport issue and expiry",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "passportDateOfIssue",
+      "label": "Passport/travel document date of issue",
+      "type": "date",
+      "required": true,
+      "sourceRef": "AVATS guidance — Passport issue and expiry"
+    },
+    {
+      "name": "passportDateOfExpiry",
+      "label": "Passport/travel document date of expiry",
+      "type": "date",
+      "required": true,
+      "sourceRef": "AVATS guidance — Passport issue and expiry"
+    },
+    {
+      "name": "isFirstPassport",
+      "label": "Is this your first passport?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Passport issue and expiry"
+    },
+    {
+      "name": "previousPassportNumber",
+      "label": "1. Previous passport/travel document number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Confirmed live (AVATS control txtPPTNo1) as an OPTIONAL field, not enforced as mandatory even when isFirstPassport is false — contrary to this schema's original reading of the prose guidance. AVATS provides space for up to two previous passports; applicants with more list the rest on a separate sheet submitted with supporting documentation.",
+      "sourceRef": "AVATS guidance — Passport issue and expiry",
+      "validation": {
+        "maxLength": 30
+      },
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      }
+    },
+    {
+      "name": "previousPassportIssuingAuthority",
+      "label": "1. Previous passport issuing country or organisation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "AVATS guidance — Passport issue and expiry",
+      "validation": {
+        "maxLength": 200
+      },
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      },
+      "description": "Confirmed live (AVATS control txtIssueAuth1), optional."
+    },
+    {
+      "name": "previousPassportDateOfIssue",
+      "label": "1. Previous passport date of issue",
+      "type": "date",
+      "required": false,
+      "sourceRef": "AVATS guidance — Passport issue and expiry",
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      },
+      "description": "Confirmed live (AVATS control txtIssueDate1), optional."
+    },
+    {
+      "name": "previousPassportDateOfExpiry",
+      "label": "1. Previous passport date of expiry",
+      "type": "date",
+      "required": false,
+      "sourceRef": "AVATS guidance — Passport issue and expiry",
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      },
+      "description": "Confirmed live (AVATS control txtExpDate1), optional."
+    },
+    {
+      "name": "previousPassportNumber2",
+      "label": "2. Previous passport/travel document number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      },
+      "description": "Confirmed live (AVATS control txtPPTNo2), optional; the second of up to two previous-passport slots AVATS provides.",
+      "sourceRef": "AVATS live system — Passport issue and expiry",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "previousPassportIssuingAuthority2",
+      "label": "2. Previous passport issuing country or organisation",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      },
+      "description": "Confirmed live (AVATS control txtIssueAuth2), optional.",
+      "sourceRef": "AVATS live system — Passport issue and expiry",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "previousPassportDateOfIssue2",
+      "label": "2. Previous passport date of issue",
+      "type": "date",
+      "required": false,
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      },
+      "description": "Confirmed live (AVATS control txtIssueDate2), optional.",
+      "sourceRef": "AVATS live system — Passport issue and expiry"
+    },
+    {
+      "name": "previousPassportDateOfExpiry2",
+      "label": "2. Previous passport date of expiry",
+      "type": "date",
+      "required": false,
+      "visibleWhen": {
+        "field": "isFirstPassport",
+        "equals": false
+      },
+      "description": "Confirmed live (AVATS control txtExpDate2), optional.",
+      "sourceRef": "AVATS live system — Passport issue and expiry"
+    },
+    {
+      "name": "currentlyEmployed",
+      "label": "Are you currently employed?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Employment and college"
+    },
+    {
+      "name": "employerName",
+      "label": "Current employer name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyEmployed",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "employmentDuration",
+      "label": "Duration of employment",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyEmployed",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "positionHeld",
+      "label": "Position held",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyEmployed",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "employerWorkAddress",
+      "label": "Work address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyEmployed",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "employerContactPhone",
+      "label": "Employer's business telephone number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyEmployed",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "employerContactEmail",
+      "label": "Employer's email address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyEmployed",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "currentlyStudent",
+      "label": "Are you currently a student?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Employment and college"
+    },
+    {
+      "name": "schoolName",
+      "label": "School or college name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyStudent",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "schoolAddress",
+      "label": "School or college address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyStudent",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "schoolContactPhone",
+      "label": "School or college phone number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyStudent",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "schoolContactEmail",
+      "label": "School or college email address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "currentlyStudent",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Employment and college",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "travellingWithOthers",
+      "label": "Will you be travelling with any other person (business colleague, family member, or as part of a group)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Travelling with others"
+    },
+    {
+      "name": "travelCompanionsDetails",
+      "label": "Names and relationship (if any) of travelling companions",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travellingWithOthers",
+        "equals": true
+      },
+      "description": "AVATS provides space for up to four companions (or, for a group, the group leader's name). Applicants travelling with more than four people list the rest on a separate sheet submitted with supporting documentation.",
+      "sourceRef": "AVATS guidance — Travelling with others",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "hostAddressLine1",
+      "label": "Address in Ireland where you will stay, or your Irish-based contact/host's address, line 1",
+      "type": "string",
+      "required": true,
+      "description": "If no personal contact or host, give the accommodation address; enter \"Not arranged\" if accommodation is not yet arranged. If travelling on business/to a conference/event give the Irish-based host/organiser's business address; if coming to work/study give the employer/college's address; if visiting/joining family or friends give their home address.",
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "hostAddressLine2",
+      "label": "Address in Ireland, line 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "hostAddressLine3",
+      "label": "Address in Ireland, line 3",
+      "type": "string",
+      "required": false,
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 200
+      },
+      "description": "Confirmed live: AVATS provides 4 address lines for the host/contact address (control txtAddressln3)."
+    },
+    {
+      "name": "hostAddressLine4",
+      "label": "Address in Ireland, line 4",
+      "type": "string",
+      "required": false,
+      "description": "Confirmed live (AVATS control txtAddressln4).",
+      "sourceRef": "AVATS live system — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "hostContactPhone",
+      "label": "Daytime telephone number at which the Irish contact/host can be reached",
+      "type": "string",
+      "required": true,
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "hostPersonallyKnown",
+      "label": "Is your host/contact in Ireland personally known to you?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland"
+    },
+    {
+      "name": "hostSurname",
+      "label": "Host/contact's surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "hostPersonallyKnown",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "hostForename",
+      "label": "Host/contact's forename",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "hostPersonallyKnown",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "hostCountryOfNationality",
+      "label": "Host/contact's country of nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hostPersonallyKnown",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "hostOccupation",
+      "label": "Host/contact's occupation",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hostPersonallyKnown",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "hostRelationshipToApplicant",
+      "label": "Host/contact's relationship to you",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hostPersonallyKnown",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "hostDeptOfJusticeRef",
+      "label": "Host/contact's Department of Justice, Home Affairs and Migration reference number (non-EEA/Swiss/UK nationals)",
+      "type": "string",
+      "required": false,
+      "description": "Begins with \"69/\"; only some longer-resident contacts were issued this (legacy) number, and it does not appear on an Irish Residence Permit. Leave blank if never issued.",
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "hostDateOfBirth",
+      "label": "Host/contact's date of birth",
+      "type": "date",
+      "required": false,
+      "description": "Confirmed live as an optional field (AVATS control txtDOB, on the host-personally-known branch).",
+      "sourceRef": "AVATS live system — Contact/Host in Ireland"
+    },
+    {
+      "name": "hostEmail",
+      "label": "Host/contact's email address",
+      "type": "string",
+      "required": false,
+      "description": "Confirmed live as an optional field (AVATS control txtEmail, on the host-personally-known branch).",
+      "sourceRef": "AVATS live system — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "hostContactNameIfNotPersonallyKnown",
+      "label": "Surname and forename of the person you have had contact with at the company/college/organisation",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "hostPersonallyKnown",
+        "equals": false
+      },
+      "sourceRef": "AVATS guidance — Contact/Host in Ireland",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "personalStatus",
+      "label": "Personal (marital) status",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Single",
+          "Married",
+          "Widowed",
+          "Divorced",
+          "Separated",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "sourceRef": "AVATS guidance — Your Family"
+    },
+    {
+      "name": "spouseSurname",
+      "label": "Spouse/partner's surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "personalStatus",
+        "in": [
+          "Married",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "sourceRef": "AVATS guidance — Your Family",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseForename",
+      "label": "Spouse/partner's forename",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "personalStatus",
+        "in": [
+          "Married",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "sourceRef": "AVATS guidance — Your Family",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseOtherName",
+      "label": "Spouse/partner's other name (e.g. maiden name or name at birth)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "AVATS guidance — Your Family",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Spouse/partner's date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "personalStatus",
+        "in": [
+          "Married",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "sourceRef": "AVATS guidance — Your Family"
+    },
+    {
+      "name": "spouseHasOwnPassport",
+      "label": "Does your spouse/partner hold their own passport?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "personalStatus",
+        "in": [
+          "Married",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "description": "Confirmed live (AVATS control rdblstOwnPassport), asked before the spouse/partner passport number field.",
+      "sourceRef": "AVATS live system — Your Family"
+    },
+    {
+      "name": "spousePassportNumber",
+      "label": "Spouse/partner's passport number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "personalStatus",
+            "in": [
+              "Married",
+              "Unmarried Partner",
+              "Civil Partnership"
+            ]
+          },
+          {
+            "field": "spouseHasOwnPassport",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "AVATS guidance — Your Family",
+      "validation": {
+        "maxLength": 30
+      },
+      "description": "Confirmed live (AVATS control txtSpousePPTNo), asked only when spouseHasOwnPassport is true."
+    },
+    {
+      "name": "spouseGender",
+      "label": "Spouse/partner's gender",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "personalStatus",
+        "in": [
+          "Married",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "validation": {
+        "enum": [
+          "Male",
+          "Female"
+        ]
+      },
+      "sourceRef": "AVATS guidance — Your Family"
+    },
+    {
+      "name": "spouseCurrentCountryOfResidence",
+      "label": "Country in which your spouse/partner currently lives",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "personalStatus",
+        "in": [
+          "Married",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "sourceRef": "AVATS guidance — Your Family",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseTravellingWithApplicant",
+      "label": "Will your spouse/partner be travelling with you?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "personalStatus",
+        "in": [
+          "Married",
+          "Unmarried Partner",
+          "Civil Partnership"
+        ]
+      },
+      "description": "If your spouse/partner also requires a visa or preclearance, they must make their own separate application (and pay a separate fee, if any).",
+      "sourceRef": "AVATS guidance — Your Family"
+    },
+    {
+      "name": "dependentChildrenCount",
+      "label": "Number of dependent children",
+      "type": "integer",
+      "required": true,
+      "description": "AVATS provides space for up to six dependent children on the form itself; families with more list the rest on a separate sheet submitted with supporting documentation. If any dependent child is visa- or preclearance-required, they must make a separate application and pay a separate fee (if any).",
+      "sourceRef": "AVATS guidance — Your Family",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "dependentChildrenDetails",
+      "label": "Dependent children's details (surname, forename, date of birth, gender, nationality, and whether travelling on your passport or their own)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "dependentChildrenCount",
+        "greaterThan": 0
+      },
+      "sourceRef": "AVATS guidance — Your Family",
+      "validation": {
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "receivedFormAssistance",
+      "label": "Did you receive assistance from an agent or agency in giving these details?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "AVATS guidance — Assistance with this form"
+    },
+    {
+      "name": "formAssistanceAgentName",
+      "label": "Name of the agent",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedFormAssistance",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Assistance with this form",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "formAssistanceAgencyNameAndAddress",
+      "label": "Name and address of the agency",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedFormAssistance",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Assistance with this form",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "formAssistanceContactPhone",
+      "label": "Daytime telephone number at which the agent can be contacted",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedFormAssistance",
+        "equals": true
+      },
+      "sourceRef": "AVATS guidance — Assistance with this form",
+      "validation": {
+        "maxLength": 30
+      }
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "exitNotBeforeEntry",
+      "compare": {
+        "field": "proposedExitDate",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "proposedEntryDate"
+      }
+    },
+    {
+      "id": "passportExpiryAfterIssue",
+      "compare": {
+        "field": "passportDateOfExpiry",
+        "operator": "greaterThan",
+        "compareTo": "passportDateOfIssue"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicationSummaryForm",
+      "label": "Signed AVATS application summary form",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "print-sign-and-submit-in-person",
+      "sourceRef": "AVATS guidance — Get the Application Form / Submission of application and documents"
+    },
+    {
+      "id": "declarationAttestation",
+      "label": "Signed Declaration on the printed Application Form",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "AVATS guidance — Declaration. Only the applicant may sign; a parent or legal guardian signs on behalf of an applicant under 18. The exact Declaration wording is shown only within the live, authenticated AVATS session and is not reproduced in the reviewed guidance."
+    },
+    {
+      "id": "passportOrTravelDocument",
+      "label": "Passport or travel document used to apply",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "passport",
+        "travel-document-1951-convention"
+      ],
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ"
+    },
+    {
+      "id": "previousPassports",
+      "label": "All previous passports",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ"
+    },
+    {
+      "id": "passportPhotographs",
+      "label": "2 passport-sized photographs",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ"
+    },
+    {
+      "id": "proofOfFeePayment",
+      "label": "Proof of visa fee payment, or evidence of a fee exemption",
+      "category": "payment",
+      "required": true,
+      "methods": [
+        "fee-exemption-evidence",
+        "payment-receipt"
+      ],
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ. Confirmed live: AVATS' own homepage states a phased online visa-fee-payment facility began 8 December 2025, with country coverage expanding over time (see AVATS Online Payments Country Coverage on the live homepage); where the applicant's country is not yet covered, the fee is paid by another method the generated application summary form specifies."
+    },
+    {
+      "id": "residencePermissionEvidence",
+      "label": "Evidence of permission to reside in your current country, if it did not issue your passport",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ — Required only where the applicant lives in a country other than the one that issued their passport/travel document: a full-colour copy of the residence permission (both sides, if a card) and confirmation of at least 3 months' permission to remain after the planned date of leaving Ireland. Not expressible as a single-field requiredWhen condition in this schema; see the source FAQ for the exact trigger."
+    },
+    {
+      "id": "documentationOnPreviousIssues",
+      "label": "Documentation on previous visa refusals, other immigration issues, or criminal convictions",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "previouslyRefusedIrishVisaOrPreclearance",
+            "equals": true
+          },
+          {
+            "field": "refusedEntryToIreland",
+            "equals": true
+          },
+          {
+            "field": "deportedOrNotifiedFromIreland",
+            "equals": true
+          },
+          {
+            "field": "refusedVisaOtherCountry",
+            "equals": true
+          },
+          {
+            "field": "refusedEntryDeportedOverstayedOtherCountry",
+            "equals": true
+          },
+          {
+            "field": "hasCriminalConvictions",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ"
+    },
+    {
+      "id": "travelOrMedicalInsurance",
+      "label": "Travel or medical insurance, where required",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ — Not universally required; whether it applies depends on the applicant's nationality and itinerary."
+    },
+    {
+      "id": "applicationLetter",
+      "label": "Signed and dated application letter",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ — Must contain: the applicant's full contact details; the AVATS application number; details of family members in Ireland, in the UK, and in any EU/EEA member state; the reason for the proposed trip; and a commitment to obey the conditions of the visa in full, not rely on public services or become a burden on the State, and leave Ireland before the immigration permission expires."
+    },
+    {
+      "id": "itinerary",
+      "label": "Itinerary",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ — What the applicant will do in Ireland, the proposed dates of travel, and how they will travel there. If the travel path involves other countries, evidence of the necessary visas for those countries (or an explanation why none is held)."
+    },
+    {
+      "id": "proofOfAccommodation",
+      "label": "Proof of accommodation",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ — Printed reservation confirmations (emails or letters) showing the dates of stay at each place. If staying with family or friends instead, state who the applicant is staying with and provide evidence that person lives at that address (e.g. a tenancy agreement and a recent utility bill)."
+    },
+    {
+      "id": "financialEvidence",
+      "label": "Evidence of finances",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Required Documents — Short Stay 'C' Visa FAQ — 6 months' bank statements. If someone else is funding the trip, that sponsor's own financial evidence instead (e.g. a tax document such as an end-of-year return, or an employment detail summary)."
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_and_reason",
+      "title": "Nationality and reason for travel",
+      "fields": [
+        "nationality",
+        "visaOrPreclearanceType",
+        "reasonForTravel",
+        "journeyType",
+        "purposeOfTravelDetails"
+      ],
+      "next": "passport_and_dates"
+    },
+    {
+      "id": "passport_and_dates",
+      "title": "Passport details and proposed dates",
+      "fields": [
+        "passportType",
+        "passportNumber",
+        "proposedEntryDate",
+        "proposedExitDate"
+      ],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal details",
+      "fields": [
+        "surname",
+        "forename",
+        "otherName",
+        "dateOfBirth",
+        "gender",
+        "countryOfBirth",
+        "currentLocationCountry",
+        "currentAddressLine1",
+        "currentAddressLine2",
+        "currentAddressLine3",
+        "currentAddressLine4",
+        "contactPhone",
+        "contactEmail"
+      ],
+      "next": "residency_and_biometrics"
+    },
+    {
+      "id": "residency_and_biometrics",
+      "title": "Residency and biometrics",
+      "fields": [
+        "residenceDurationYears",
+        "residenceDurationMonths",
+        "permissionToReturn",
+        "biometricsExempt",
+        "biometricsExemptionBasis"
+      ],
+      "next": "immigration_history"
+    },
+    {
+      "id": "immigration_history",
+      "title": "Immigration history and criminal record",
+      "fields": [
+        "previouslyAppliedForIrishVisaOrPreclearance",
+        "previouslyGrantedIrishVisaOrPreclearance",
+        "previousGrantDetails",
+        "previouslyRefusedIrishVisaOrPreclearance",
+        "previousRefusalDetails",
+        "previouslyVisitedIreland",
+        "previousVisitPurpose",
+        "previousVisitDeptOfJusticeRef",
+        "previousVisitGnibNumber",
+        "previousVisitPpsNumber",
+        "familyMembersInIreland",
+        "familyMemberSurname",
+        "familyMemberForename",
+        "familyMemberDateOfBirth",
+        "familyMemberRelationship",
+        "familyMemberDeptOfJusticeRef",
+        "refusedEntryToIreland",
+        "deportedOrNotifiedFromIreland",
+        "refusedVisaOtherCountry",
+        "refusedEntryDeportedOverstayedOtherCountry",
+        "otherCountryImmigrationIssueDetails",
+        "hasCriminalConvictions",
+        "convictionReason",
+        "convictionTrialLocation",
+        "convictionSentenceLength"
+      ],
+      "next": "passport_issue_and_expiry"
+    },
+    {
+      "id": "passport_issue_and_expiry",
+      "title": "Passport issue and expiry",
+      "fields": [
+        "passportIssuingCountryOrOrganisation",
+        "passportDateOfIssue",
+        "passportDateOfExpiry",
+        "isFirstPassport",
+        "previousPassportNumber",
+        "previousPassportIssuingAuthority",
+        "previousPassportDateOfIssue",
+        "previousPassportDateOfExpiry",
+        "previousPassportNumber2",
+        "previousPassportIssuingAuthority2",
+        "previousPassportDateOfIssue2",
+        "previousPassportDateOfExpiry2"
+      ],
+      "next": "employment_and_education"
+    },
+    {
+      "id": "employment_and_education",
+      "title": "Employment and college",
+      "fields": [
+        "currentlyEmployed",
+        "employerName",
+        "employmentDuration",
+        "positionHeld",
+        "employerWorkAddress",
+        "employerContactPhone",
+        "employerContactEmail",
+        "currentlyStudent",
+        "schoolName",
+        "schoolAddress",
+        "schoolContactPhone",
+        "schoolContactEmail"
+      ],
+      "next": "travelling_with_others"
+    },
+    {
+      "id": "travelling_with_others",
+      "title": "Travelling with others",
+      "fields": [
+        "travellingWithOthers",
+        "travelCompanionsDetails"
+      ],
+      "next": "contact_host_in_ireland"
+    },
+    {
+      "id": "contact_host_in_ireland",
+      "title": "Contact/host in Ireland",
+      "fields": [
+        "hostAddressLine1",
+        "hostAddressLine2",
+        "hostAddressLine3",
+        "hostAddressLine4",
+        "hostContactPhone",
+        "hostPersonallyKnown",
+        "hostSurname",
+        "hostForename",
+        "hostCountryOfNationality",
+        "hostOccupation",
+        "hostRelationshipToApplicant",
+        "hostDeptOfJusticeRef",
+        "hostDateOfBirth",
+        "hostEmail",
+        "hostContactNameIfNotPersonallyKnown"
+      ],
+      "next": "family_details"
+    },
+    {
+      "id": "family_details",
+      "title": "Your family",
+      "fields": [
+        "personalStatus",
+        "spouseSurname",
+        "spouseForename",
+        "spouseOtherName",
+        "spouseDateOfBirth",
+        "spouseHasOwnPassport",
+        "spousePassportNumber",
+        "spouseGender",
+        "spouseCurrentCountryOfResidence",
+        "spouseTravellingWithApplicant",
+        "dependentChildrenCount",
+        "dependentChildrenDetails"
+      ],
+      "next": "form_assistance"
+    },
+    {
+      "id": "form_assistance",
+      "title": "Assistance with this form",
+      "fields": [
+        "receivedFormAssistance",
+        "formAssistanceAgentName",
+        "formAssistanceAgencyNameAndAddress",
+        "formAssistanceContactPhone"
+      ]
+    }
+  ]
+}
