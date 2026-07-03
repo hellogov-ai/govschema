@@ -1,0 +1,262 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nl/rvig/passport-application",
+  "version": "1.0.0",
+  "title": "Netherlands Passport Application/Renewal (Nederlands Paspoort)",
+  "description": "Apply for a first Dutch passport or renew an existing one in person at the applicant's municipality (gemeente) passport desk (Burgerzaken), under the Paspoortwet 1991 and the Paspoortuitvoeringsregeling Nederland (PUN), for which the Rijksdienst voor Identiteitsgegevens (RvIG) sets the nationally standardised data and process requirements on behalf of the Ministry of the Interior and Kingdom Relations (BZK). There is no online submission channel for the application itself: the applicant (and, for a minor, at least one parent/guardian) must attend in person, presenting an identity document and giving fingerprints (age 12+) that are checked against the municipality's population register (Basisregistratie Personen, BRP), which already holds the applicant's core personal data. Some municipalities let an applicant pre-fill the same data online via DigiD ahead of the appointment, but this does not replace the in-person biometric capture. This document models the citizenship and registration eligibility gates, the applicant's core identifying data, the minor/guardian consent path (including the case where a co-holder of parental authority cannot attend in person), and the service options every applicant chooses (processing speed and delivery method). It does not model: the Nederlandse identiteitskaart (national identity card, a related but distinct product with its own GovSchema document), the nooddocument (emergency travel document) or alien/refugee passport processes, the Verklaring van Nederlanderschap (Dutch nationality certificate), or fee amounts, which vary by age tier and change over time and are deliberately not encoded here as a single authoritative figure, consistent with de/bmi/passport-application. It does not submit the application; the live gemeente and rijksoverheid.nl sources are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Gemeente (Burgerzaken/paspoortbalie), under the Paspoortwet 1991 and the Paspoortuitvoeringsregeling Nederland (PUN)",
+    "abbreviation": "RvIG",
+    "url": "https://www.rvig.nl"
+  },
+  "process": {
+    "type": "application",
+    "language": "nl-NL"
+  },
+  "source": {
+    "url": "https://loket.digitaal.utrecht.nl/nl/producten/paspoort-of-identiteitskaart-aanvragen",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "No form number — in-person application recorded directly at the gemeente passport desk. Minor-consent branch uses the national 'Toestemming ouder/gezaghebber voor minderjarige aanvrager(s)' form (Stcrt. 2008, nr. 115, Ministerie van Algemene Zaken)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the municipality of Utrecht's official digital loket page (fetched directly, HTTP 200), which describes required documents, the full age-tiered/expedited fee schedule, processing times, fingerprint capture (12+), DigiD-based pre-fill and remote-consent options, and minor consent requirements. Cross-checked against rijksoverheid.nl's national Q&A page on where and how to apply, which independently corroborates the mandatory in-person attendance, the documents to bring, and the ~5-working-day standard processing time, and confirms the process is identical nationwide regardless of which gemeente the applicant is registered in — the same convention nl/rdw/drivers-licence-renewal and de/bmi/passport-application applied to their own municipality-administered-but-nationally-regulated processes. The minor-consent fields are additionally cross-checked directly against the national consent form's own bilingual (Dutch/English) field text, extracted from the published PDF (Stcrt. 2008, nr. 115) via a zlib-stream text extraction of its content streams. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isDutchNational",
+      "label": "Are you a Dutch national?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "A Nederlands paspoort may only be issued to a Dutch national. A non-citizen resident with a valid residence permit uses a vreemdelingenpaspoort (alien passport) or, if a recognised refugee, a vluchtelingenpaspoort (refugee passport) instead — neither is modelled in this document.",
+      "sourceRef": "Rijksoverheid.nl 'Waar en hoe kan ik een paspoort of identiteitskaart aanvragen?' — 'Alleen Nederlanders kunnen een paspoort aanvragen'; nationality requirement also confirmed on the Utrecht loket page"
+    },
+    {
+      "name": "registeredInApplyingMunicipality",
+      "label": "Are you applying at the municipality (gemeente) where you are registered?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "The applicant must apply at the gemeente where they are registered in the Basisregistratie Personen (BRP). Dutch nationals living abroad, or those not registered anywhere in the Netherlands, apply at a Dutch embassy/consulate or a designated border municipality instead — not modelled here.",
+      "sourceRef": "Rijksoverheid.nl 'Waar en hoe kan ik een paspoort of identiteitskaart aanvragen?' — 'U vraagt een paspoort aan bij de gemeente waar u staat ingeschreven'"
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As held in the Basisregistratie Personen (BRP) and confirmed against the identity document presented at the appointment, not freely declared by the applicant — see VERIFICATION.md.",
+      "sourceRef": "Utrecht loket page — required documents confirm the applicant's registered personal data",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As held in the Basisregistratie Personen (BRP) and confirmed against the identity document presented at the appointment — see VERIFICATION.md.",
+      "sourceRef": "Utrecht loket page — required documents confirm the applicant's registered personal data",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "YYYY-MM-DD. Determines the age-tiered fee (under 18 vs. 18 and older) and whether fingerprints are captured (12 and older).",
+      "sourceRef": "Utrecht loket page — age-tiered fee schedule; fingerprint capture from age 12"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As held in the Basisregistratie Personen (BRP), matching the 'Geboorteplaats' field on the national minor-consent form's own applicant data block.",
+      "sourceRef": "Toestemmingsverklaring (Stcrt. 2008, nr. 115) — 'Geboorteplaats / Place of birth'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Is the applicant under 18?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, at least one parent or legal guardian (gezaghouder) with parental authority (gezag) must consent to the application, and the minor must also attend the appointment and collection in person.",
+      "sourceRef": "Utrecht loket page — 'Under 18 years (passport): Written parental consent required; child must attend appointment and collection'"
+    },
+    {
+      "name": "allAuthorizedGuardiansAttendingInPerson",
+      "label": "Will every parent/guardian who holds parental authority (gezag) over the child attend the appointment in person?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "description": "If true, consent is given in person at the counter and no separate consent form is needed. If false, whichever parent/guardian cannot attend must give consent another way — see absentGuardianConsentMethod.",
+      "sourceRef": "Utrecht loket page — 'Parents unable to attend appointments can provide online consent through DigiD... Alternative: Printable PDF forms available for those without DigiD access'"
+    },
+    {
+      "name": "absentGuardianConsentMethod",
+      "label": "How will the parent/guardian who cannot attend give consent?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "applicantIsMinor", "equals": true },
+          { "field": "allAuthorizedGuardiansAttendingInPerson", "equals": false }
+        ]
+      },
+      "description": "digid_online_consent = the absent parent/guardian logs in with DigiD (SMS or app verification) and completes the digital toestemmingsverklaring, valid for 3 months from completion. signed_paper_form = the absent parent/guardian signs the printable Toestemmingsverklaring (Stcrt. 2008, nr. 115), valid for 3 months from the signature date, with a copy of their own valid passport/ID photo page attached to verify the signature.",
+      "sourceRef": "Utrecht loket page — 'de digitale toestemmingsverklaring... 3 maanden geldig'; 'Alternative: Printable PDF forms available'; Toestemmingsverklaring (Stcrt. 2008, nr. 115) — 'Deze verklaring heeft een geldigheid van drie maanden vanaf datum ondertekening'",
+      "validation": { "enum": ["digid_online_consent", "signed_paper_form"] }
+    },
+    {
+      "name": "consentingGuardianRelationship",
+      "label": "What is the consenting parent/guardian's relationship to the child?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "applicantIsMinor", "equals": true },
+          { "field": "allAuthorizedGuardiansAttendingInPerson", "equals": false }
+        ]
+      },
+      "description": "Matches the consent form's own checkbox for who is giving consent.",
+      "sourceRef": "Toestemmingsverklaring (Stcrt. 2008, nr. 115) — 'Vader / Moeder / Gezaghouder' ('Father / Mother / Legal guardian')",
+      "validation": { "enum": ["father", "mother", "legal_guardian"] }
+    },
+    {
+      "name": "processingSpeed",
+      "label": "Processing speed",
+      "type": "enum",
+      "required": true,
+      "description": "standard = collection roughly 5-6 working days after application. expedited = spoedaanvraag; if submitted before 14:00, collection from 12:00 the next business day, otherwise two business days later, at a higher fee. Documents not collected within 3 months of readiness are destroyed.",
+      "sourceRef": "Utrecht loket page — 'Standard processing takes 6 working days'; 'applying before 2 PM can collect the next business day after 12 PM'; 'Documents must be collected within 3 months or they are destroyed'; fee table (e.g. adult standard EUR 88.65 vs. expedited EUR 148.95)",
+      "validation": { "enum": ["standard", "expedited"] }
+    },
+    {
+      "name": "deliveryMethod",
+      "label": "How would you like to receive your passport?",
+      "type": "enum",
+      "required": true,
+      "description": "pickup_at_municipality = collect the finished passport at the gemeente counter (no extra fee). home_delivery = have it delivered, at an additional fee (EUR 19.00 per the Utrecht fee table).",
+      "sourceRef": "Utrecht loket page — 'Delivery service costs €19.00'",
+      "validation": { "enum": ["pickup_at_municipality", "home_delivery"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "existingTravelDocuments",
+      "label": "All existing travel documents, including expired ones",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "issuingAuthority": "Any gemeente or Dutch mission that previously issued the applicant a passport or identiteitskaart",
+      "sourceRef": "Utrecht loket page — 'Required Documents: All existing travel documents, including expired ones'; Rijksoverheid.nl — 'alle reisdocumenten die in uw bezit zijn'"
+    },
+    {
+      "id": "passportPhoto",
+      "label": "Colour passport photo",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": { "issuedWithin": "P6M" },
+      "sourceRef": "Utrecht loket page — 'A color passport photo meeting official standards, maximaal 6 maanden oud'; Rijksoverheid.nl pasfoto-eisen"
+    },
+    {
+      "id": "guardianConsentDocument",
+      "label": "Signed or DigiD toestemmingsverklaring from the absent parent/guardian",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "applicantIsMinor", "equals": true },
+          { "field": "allAuthorizedGuardiansAttendingInPerson", "equals": false }
+        ]
+      },
+      "belongsTo": "responsible-party",
+      "freshness": { "issuedWithin": "P3M" },
+      "statement": "Toestemming ouder/gezaghebber voor minderjarige aanvrager(s) — Parental/Legal guardian consent for minor applicant(s)",
+      "sourceRef": "Toestemmingsverklaring (Stcrt. 2008, nr. 115); Utrecht loket page — digital and printable consent options"
+    },
+    {
+      "id": "guardianIdentityDocumentCopy",
+      "label": "Copy of the absent guardian's own valid passport/ID photo page",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "applicantIsMinor", "equals": true },
+          { "field": "allAuthorizedGuardiansAttendingInPerson", "equals": false },
+          { "field": "absentGuardianConsentMethod", "equals": "signed_paper_form" }
+        ]
+      },
+      "belongsTo": "responsible-party",
+      "sourceRef": "Toestemmingsverklaring (Stcrt. 2008, nr. 115) — 'Ter controle van mijn handtekening voeg ik een kopie bij van de houderpagina van mijn geldige paspoort' ('To verify my signature I enclose a copy of the biodata page of my valid passport')"
+    },
+    {
+      "id": "applicationFeePayment",
+      "label": "Passport application fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "methods": ["debit_card", "cash"],
+      "sourceRef": "Utrecht loket page fee table (2026): passport under 18 EUR 67.05 standard / EUR 127.35 expedited; passport 18+ EUR 88.65 standard / EUR 148.95 expedited; paid at the appointment by debit card or cash"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Nationality and registration eligibility",
+      "fields": ["isDutchNational", "registeredInApplyingMunicipality"],
+      "transitions": [
+        { "to": null, "exitReason": "not_eligible_non_dutch_national", "when": { "field": "isDutchNational", "equals": false } },
+        { "to": null, "exitReason": "not_registered_in_applying_municipality", "when": { "field": "registeredInApplyingMunicipality", "equals": false } },
+        { "to": "applicant_details" }
+      ]
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": ["lastName", "firstNames", "dateOfBirth", "placeOfBirth", "applicantIsMinor"],
+      "next": "guardian_consent"
+    },
+    {
+      "id": "guardian_consent",
+      "title": "Parental/guardian consent",
+      "fields": ["allAuthorizedGuardiansAttendingInPerson", "absentGuardianConsentMethod", "consentingGuardianRelationship"],
+      "next": "service_options"
+    },
+    {
+      "id": "service_options",
+      "title": "Service options",
+      "fields": ["processingSpeed", "deliveryMethod"]
+    }
+  ]
+}
