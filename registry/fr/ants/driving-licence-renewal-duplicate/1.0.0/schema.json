@@ -1,0 +1,512 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fr/ants/driving-licence-renewal-duplicate",
+  "version": "1.0.0",
+  "title": "France Driving Licence Renewal or Duplicate (Cerfa 14882*01, Permis de conduire — renouvellement, duplicata ou catégorie AM)",
+  "description": "Request a replacement French driving licence (permis de conduire) following loss, theft, damage, non-receipt of a previously requested title, expiry of the licence's own validity period, or a change of civil/marital status; or request reinstatement of category AM after a cancellation, suspension, or invalidation. Since 2017 the great majority of these requests are lodged online through ANTS (permisdeconduire.ants.gouv.fr), behind a FranceConnect or ANTS-account login this review could not reach; that portal collects the same underlying data set defined by Cerfa 14882*01, 'Demande de renouvellement de permis de conduire, de duplicata ou de catégorie AM après annulation, suspension ou invalidation', which remains the counter/paper fallback and the authoritative field-level reference for the process (Art. R. 211-1, R. 221-1, R. 221-4 du Code de la route; Art. 8 de l'arrêté du 20 avril 2012 modifié). This document models that field set and the current online process's documents, fee, and eligibility rules; it does not model the ANTS portal's own screen-by-screen flow. See VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Agence Nationale des Titres Sécurisés (national identity-document-issuing system operator) / Ministère de l'Intérieur et des Outre-mer",
+    "abbreviation": "ANTS",
+    "url": "https://permisdeconduire.ants.gouv.fr"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1727",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Cerfa 14882*01 — 'Demande de renouvellement de permis de conduire, de duplicata ou de catégorie AM après annulation, suspension ou invalidation'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from service-public.gouv.fr's own current guidance pages (F1727 'Perte du permis de conduire français', R42947 renewal-for-expiry guidance, securite-routiere.gouv.fr's loss/theft pages) for the 2026 online process, fee, and document requirements, plus the official Cerfa 14882*01 form's own printed field labels for the underlying data model, extracted as machine-readable text (the retrieved PDF has a text layer, unlike several other FR Cerfa forms in this registry that are scanned images). The live ANTS online submission channel (permisdeconduire.ants.gouv.fr) requires an authenticated account this review could not reach, so the field-by-field comparison the practice requires has not been completed against that live screen set — status remains draft. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestReason",
+      "label": "Why are you requesting a new licence?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates which supporting document(s) this schema requires. theft = vol du titre; damage = détérioration du titre; non_receipt = défaut de réception d'un titre demandé; loss = perte du titre; expiry = expiration de la durée de validité du titre; civil_status_change = changement d'état civil et/ou matrimonial.",
+      "sourceRef": "'A la suite de (veuillez cocher la case correspondante) : Vol du titre / Détérioration du titre / Défaut de réception d'un titre demandé / Perte du titre / Expiration de la durée de validité du titre / Changement d'état civil et/ou matrimonial'",
+      "validation": {
+        "enum": ["theft", "damage", "non_receipt", "loss", "expiry", "civil_status_change"]
+      }
+    },
+    {
+      "name": "procedureType",
+      "label": "What are you requesting?",
+      "type": "enum",
+      "required": true,
+      "description": "renewal = RENOUVELLEMENT; duplicate = DUPLICATA, restricted by the form's own footnote (1) to holders of a valid category C, C1, C1E, CE, D, D1, D1E, or DE licence requesting replacement after loss, theft, or damage — this schema does not enforce that eligibility rule programmatically since it depends on the applicant's category codes, modelled below as a free-text list; category_am = reinstatement of category AM after a cancellation, suspension, or invalidation.",
+      "sourceRef": "'RENOUVELLEMENT   DUPLICATA (1)   CATÉGORIE AM' — footnote (1): 'Le duplicata du permis de conduire ne peut être obtenu que par les personnes titulaires d'une catégorie C, C1, C1E, CE, D, D1, D1E, DE en cours de validité, en cas de perte, de vol ou de détérioration de leur titre.'",
+      "validation": {
+        "enum": ["renewal", "duplicate", "category_am"]
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "'Sexe : Femme / Homme'",
+      "validation": {
+        "enum": ["M", "F"]
+      }
+    },
+    {
+      "name": "familyName",
+      "label": "Birth family name (Nom de naissance)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name that appears on the applicant's birth certificate (acte de naissance).",
+      "sourceRef": "'Nom de naissance (C'est le nom qui figure sur votre acte de naissance)'"
+    },
+    {
+      "name": "usageName",
+      "label": "Usage name (Nom d'usage), if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Nom d'usage (s'il y a lieu)'"
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s) (Prénom(s))",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Prénom(s) (Dans l'ordre de l'état civil)'"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth (Date de naissance)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "'Date de naissance Jour Mois Année'"
+    },
+    {
+      "name": "placeOfBirthCommune",
+      "label": "Place of birth — commune (town)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Commune de naissance'"
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Place of birth — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Pays'"
+    },
+    {
+      "name": "placeOfBirthDepartment",
+      "label": "Place of birth — département or overseas collectivity, if born in France",
+      "type": "string",
+      "required": false,
+      "description": "Left blank when the applicant was born outside France, mirroring the equivalent field on the sibling fr/ants/national-identity-card-application-first-adult schema's identical header block.",
+      "sourceRef": "'Département ou Collectivité d'outre-mer'"
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile phone (recommended)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional but recommended: used to contact the applicant about the request's progress.",
+      "sourceRef": "'Téléphone portable ... (Recommandé)'"
+    },
+    {
+      "name": "email",
+      "label": "Email (recommended)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional but recommended: used to contact the applicant about the request's progress.",
+      "sourceRef": "'Courriel (Recommandé)'"
+    },
+    {
+      "name": "addressStreetNumber",
+      "label": "Home address — street number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'N° de la voie'"
+    },
+    {
+      "name": "addressStreetNumberExtension",
+      "label": "Home address — street number extension (bis, ter, etc.)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Extension : bis, ter, etc.'"
+    },
+    {
+      "name": "addressStreetType",
+      "label": "Home address — street type (avenue, boulevard, etc.)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Type de voie : avenue, boulevard, etc.'"
+    },
+    {
+      "name": "addressStreetName",
+      "label": "Home address — street name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Nom de la voie'"
+    },
+    {
+      "name": "addressComplement",
+      "label": "Home address — complement (floor, staircase, apartment, building, residence, lieu-dit, PO box)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Complément d'adresse (Étage, escalier, appartement - Immeuble, bâtiment, résidence - Lieu-dit - Boîte postale)'"
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Home address — postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Code postal'"
+    },
+    {
+      "name": "addressCommune",
+      "label": "Home address — commune (town)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Commune'"
+    },
+    {
+      "name": "categoriesHeld",
+      "label": "Licence categories currently held",
+      "type": "string",
+      "required": true,
+      "description": "Comma-separated list of category codes the applicant currently holds, drawn from the form's own checklist (AM, A1, A2, A, B1, B, BE, C1, C1E, C, CE, D1, D1E, D, DE). Modelled as a delimited string rather than a repeating/array value since GovSchema v0.3 has no native multi-select field type (GSP-0009, composite/repeating values, is not yet folded into the accepted spec) — see VERIFICATION.md.",
+      "sourceRef": "'Catégorie(s) obtenue(s) : AM A1 A2 A B1 B BE C1 C1E C CE D1 D1E D DE'",
+      "validation": {
+        "pattern": "^(AM|A1|A2|A|B1|B|BE|C1|C1E|C|CE|D1|D1E|D|DE)(\\s*,\\s*(AM|A1|A2|A|B1|B|BE|C1|C1E|C|CE|D1|D1E|D|DE))*$"
+      }
+    },
+    {
+      "name": "categoriesRequested",
+      "label": "Licence categories requested on the new title",
+      "type": "string",
+      "required": true,
+      "description": "Same format as categoriesHeld. Ordinarily equal to categoriesHeld for a plain renewal/duplicate; differs only for a category_am request adding category AM.",
+      "sourceRef": "'Catégorie(s) demandée(s) : AM A1 A2 A B1 B BE C1 C1E C CE D1 D1E D DE'",
+      "validation": {
+        "pattern": "^(AM|A1|A2|A|B1|B|BE|C1|C1E|C|CE|D1|D1E|D|DE)(\\s*,\\s*(AM|A1|A2|A|B1|B|BE|C1|C1E|C|CE|D1|D1E|D|DE))*$"
+      }
+    },
+    {
+      "name": "involvesHeavyVehicleCategory",
+      "label": "Do the categories held or requested include C, C1, C1E, CE, D, D1, D1E, or DE?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates the medicalCertificate document. Asked directly rather than parsed out of categoriesHeld/categoriesRequested, so this schema does not silently assert an unsourced parsing rule over the delimited category string — the same reasoning the sibling sg/spf/driving-licence-application schema used for its isApplyingForMotorcycleClass field.",
+      "sourceRef": "Derived from Code de la route's periodic medical-fitness requirement for heavy/professional categories, referenced by securite-routiere.gouv.fr's guidance ('avis médical' required 'pour les catégories lourdes C et D') and by this Cerfa's own duplicata footnote listing the same category set."
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Declaration — place (Fait à)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Fait à ... le ...'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration — date (le)",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant signs the attestation, immediately before submission.",
+      "sourceRef": "'Fait à ... le ... Je soussigné(e), le (la) déclarant(e), atteste sur l'honneur que les renseignements de la présente demande sont exacts et ne pas faire l'objet d'une suspension du permis de conduire en cours d'exécution ou d'une interdiction judiciaire de solliciter la délivrance du permis de conduire.'"
+      },
+    {
+      "name": "deliveryMethod",
+      "label": "How should the new licence be sent?",
+      "type": "enum",
+      "required": true,
+      "description": "postal requires the applicant to have deposited the request in person at the counter with the current title (or its loss/theft attestation) attached; counter_pickup means retrieval in person.",
+      "sourceRef": "'Mode d'expédition du titre : Voie postale / Retrait au guichet — Si vous souhaitez recevoir votre titre par courrier, vous êtes tenu de déposer en personne votre demande de renouvellement au guichet en y joignant votre titre actuel (ou son attestation de perte ou de vol).'",
+      "validation": {
+        "enum": ["postal", "counter_pickup"]
+      }
+    },
+    {
+      "name": "optOutOfDataReuse",
+      "label": "I object to my personal data being reused for purposes other than those for which it was collected",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'Je m'oppose à la réutilisation de mes données personnelles à des fins autres que celles pour lesquelles, elles sont collectées'"
+    },
+    {
+      "name": "hasLegalRepresentative",
+      "label": "Is the applicant a non-emancipated minor applying through a legal representative?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates the legalRep* fields. Category AM (mopeds) and A1/B1 can be held from age 14/16, so this form provides for a minor applicant's legal representative.",
+      "sourceRef": "'Représentant légal (si mineur non émancipé)'"
+    },
+    {
+      "name": "legalRepFullName",
+      "label": "Legal representative — full name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "visibleWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "classification": "pii",
+      "description": "The form gives a single 'Je soussigné(e) ... ' attestation line rather than separate family-name/given-name boxes for this block, unlike the applicant's own name fields above.",
+      "sourceRef": "'Je soussigné(e) ... né(e) le ... demeurant à ...'"
+    },
+    {
+      "name": "legalRepDateOfBirth",
+      "label": "Legal representative — date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "visibleWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "classification": "sensitive-pii",
+      "sourceRef": "'né(e) le'"
+    },
+    {
+      "name": "legalRepAddress",
+      "label": "Legal representative — home address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "visibleWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "classification": "pii",
+      "sourceRef": "'demeurant à'"
+    },
+    {
+      "name": "legalRepAddressPostalCode",
+      "label": "Legal representative — home address postal code",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "visibleWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "classification": "pii",
+      "sourceRef": "'code postal'"
+    },
+    {
+      "name": "legalRepAddressCommune",
+      "label": "Legal representative — home address commune (town)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "visibleWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "classification": "pii",
+      "sourceRef": "'commune'"
+    },
+    {
+      "name": "legalRepDeclarationPlace",
+      "label": "Legal representative — declaration place",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "visibleWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "sourceRef": "'A ... le ... Signature du représentant légal agissant au nom du demandeur déclare sur l'honneur que les renseignements de la présente demande sont exacts.'"
+    },
+    {
+      "name": "legalRepDeclarationDate",
+      "label": "Legal representative — declaration date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "visibleWhen": { "field": "hasLegalRepresentative", "equals": true },
+      "sourceRef": "'A ... le ... Signature du représentant légal'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityPhoto",
+      "label": "Digital identity photo-signature, compliant with official standards (NFZ 12-010)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "service-public.gouv.fr F1727 — 'Photo-signature numérisée'"
+    },
+    {
+      "id": "identityProof",
+      "label": "Valid proof of identity (national identity card or passport)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "service-public.gouv.fr F1727 — 'Justificatif d'identité'"
+    },
+    {
+      "id": "proofOfAddress",
+      "label": "Proof of home address",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P6M"
+      },
+      "sourceRef": "service-public.gouv.fr F1727 — 'Justificatif de domicile de moins de 6 mois'"
+    },
+    {
+      "id": "medicalCertificate",
+      "label": "Medical fitness certificate (avis médical, Cerfa 14880*02)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "involvesHeavyVehicleCategory",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "service-public.gouv.fr F1727 — 'Avis médical (pour les catégories C et D uniquement)'"
+    },
+    {
+      "id": "lossOrTheftDeclaration",
+      "label": "Loss declaration (submitted together with the online request) or theft declaration receipt from police/gendarmerie",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "in": ["loss", "theft"]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "securite-routiere.gouv.fr — loss and theft guidance pages; service-public.gouv.fr F1727. For loss, the declaration is made together with the replacement request itself, directly on ANTS. For theft, the declaration can only be made in person at a police station or gendarmerie, which issues a receipt valid to drive in France for 2 months while the replacement request is filed."
+    },
+    {
+      "id": "damagedOrPriorLicence",
+      "label": "The damaged original licence, or the current licence (for a civil/marital-status-change request)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "in": ["damage", "civil_status_change"]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Cerfa 14882*01 'pièces à fournir' guidance — 'Dans le cas d'une demande pour changement d'état civil ou détérioration de l'original, joindre ce dernier à la demande.'"
+    },
+    {
+      "id": "taxStamp",
+      "label": "Digital tax stamp (timbre fiscal numérique), 25 EUR",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "EUR",
+        "value": 25
+      },
+      "sourceRef": "service-public.gouv.fr F1727 — 'timbre fiscal numérique de 25 €'"
+    },
+    {
+      "id": "signature",
+      "label": "Signed, dated declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form footer — declaration place/date and 'Je soussigné(e), le (la) déclarant(e), atteste sur l'honneur...'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "request_details",
+      "title": "What you need and why",
+      "fields": [
+        "requestReason",
+        "procedureType"
+      ]
+    },
+    {
+      "id": "identity",
+      "title": "Your identity",
+      "fields": [
+        "sex",
+        "familyName",
+        "usageName",
+        "givenNames",
+        "dateOfBirth",
+        "placeOfBirthCommune",
+        "placeOfBirthCountry",
+        "placeOfBirthDepartment"
+      ]
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Home address and contact",
+      "fields": [
+        "addressStreetNumber",
+        "addressStreetNumberExtension",
+        "addressStreetType",
+        "addressStreetName",
+        "addressComplement",
+        "addressPostalCode",
+        "addressCommune",
+        "mobilePhone",
+        "email"
+      ]
+    },
+    {
+      "id": "categories",
+      "title": "Licence categories",
+      "fields": [
+        "categoriesHeld",
+        "categoriesRequested",
+        "involvesHeavyVehicleCategory"
+      ]
+    },
+    {
+      "id": "legal_representative",
+      "title": "Legal representative (if applicant is a minor)",
+      "fields": [
+        "hasLegalRepresentative",
+        "legalRepFullName",
+        "legalRepDateOfBirth",
+        "legalRepAddress",
+        "legalRepAddressPostalCode",
+        "legalRepAddressCommune",
+        "legalRepDeclarationPlace",
+        "legalRepDeclarationDate"
+      ]
+    },
+    {
+      "id": "declaration_and_delivery",
+      "title": "Declaration and delivery",
+      "fields": [
+        "declarationPlace",
+        "declarationDate",
+        "deliveryMethod",
+        "optOutOfDataReuse"
+      ]
+    }
+  ]
+}
