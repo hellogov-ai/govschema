@@ -47,11 +47,25 @@ not `verified`.
     (`stmwi.bayern.de/fileadmin/user_upload/stmwi/publikationen/pdf/Gewerbeanmeldung.pdf`) —
     a third independent copy, retrieved to confirm the Sachsen/Hamburg field
     set was not an outlier.
-  - All three carry the identical field content in the identical numbered
+  - Hamburg and Sachsen carry identical field content in identical numbered
     order (1 through 33, with 25/27 reserved for section headings rather
     than data fields), which is the direct evidence for the
     "bundeseinheitlicher Vordruck" (nationally uniform form) claim in this
-    document's `description`.
+    document's `description`. Bayern is **not** a clean third confirmation
+    of that numbering: its edition inserts one extra field — a "Name des
+    Geschäfts ... (Geschäftsbezeichnung)" trade-name field, immediately
+    after the register-entry fields — that Hamburg and Sachsen do not have,
+    which shifts all of Bayern's own subsequent field numbers by +1 relative
+    to Hamburg/Sachsen (its own intro text cites "Feldern 4 bis 11" for the
+    personal-details block that Hamburg/Sachsen number "fields 3-9"). An
+    earlier draft of this document mis-cited that Bayern-only field as
+    Hamburg's field 3 (which is actually "Surname") and modelled it as a
+    `tradeName` field; that field has been removed from this version since
+    it is not part of the Hamburg/Sachsen canonical numbering this document
+    otherwise uses throughout, and a Land-specific extra field is out of
+    scope for a v1.0.0 built on the nationally-standardized form. Everything
+    else in Bayern's field content and ordering (register-entry fields
+    onward, once its own +1 shift is accounted for) matches Hamburg/Sachsen.
 - **PDF extraction method:** `pdfjs-dist`'s `getTextContent()` (full printed
   instructional text, in both German and — for Hamburg's edition — English)
   and `getAnnotations()` (each fillable field's internal AcroForm name),
@@ -76,13 +90,15 @@ not `verified`.
   per-field explanations, not inferred from the bare form layout.
 - **Note-field numbering caveat:** Düsseldorf's own instructional PDF uses a
   field numbering shifted by roughly +1 to +2 in the personal-details/
-  activity sections relative to the Hamburg/Sachsen/Bayern form editions
-  themselves (a cosmetic drafting difference between that city's internal
-  crib sheet and the GewA 1 form proper) — this document's `sourceRef`s cite
-  the Hamburg-numbered form fields (the form itself, which agents actually
-  see), and use Düsseldorf's guidance only for the underlying *rule*
-  (which entity type completes which section), matched by field content/
-  label rather than by number, to avoid propagating that numbering drift.
+  activity sections relative to the Hamburg/Sachsen form editions themselves
+  (a cosmetic drafting difference between that city's internal crib sheet
+  and the GewA 1 form proper) — this document's `sourceRef`s cite the
+  Hamburg-numbered form fields (the form itself, which agents actually see),
+  and use Düsseldorf's guidance only for the underlying *rule* (which entity
+  type completes which section), matched by field content/label rather than
+  by number, to avoid propagating that numbering drift. Bayern's own
+  numbering is shifted similarly (see above) and was likewise not used for
+  any `sourceRef` in this document — only Hamburg's numbering is cited.
 - **Supporting-documents list (`documents[]`):** the GewA 1 form itself does
   not print a checklist of attachments; the identity-document copy, the
   register extract (for already-registered entities), the Handwerksrolle
