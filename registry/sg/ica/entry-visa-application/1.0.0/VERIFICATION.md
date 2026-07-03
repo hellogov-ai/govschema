@@ -95,7 +95,9 @@ memory for the other verticals' closure history).
   Singapore, five-year residence history, travelling companion) →
   `emailAddress` through `companionTravelDocumentNumber`.
   `longerStayReasonAndDuration` gates on `intendedLengthOfStay` equals
-  `More than 30 days`; `singaporeAddressOtherDetails` gates on
+  `More than 30 days`; `singaporeAddressType` is a 5-way enum (`Next of
+  Kin's Place`, `Relative's Place`, `Friend's Place`, `Hotel`, `Others`) per
+  the form's own radio options; `singaporeAddressOtherDetails` gates on
   `singaporeAddressType` equals `Others`; `priorResidenceDetails` gates on
   `residedElsewhereLastFiveYears` equals `true`; the five
   `companion*` fields gate on `hasTravellingCompanion` equals `true`
@@ -127,11 +129,16 @@ memory for the other verticals' closure history).
   `documents[]` entry rather than a field, since it is the local contact's
   own signed attestation, not applicant-supplied data.
 - **Form 14A, Part IV** (antecedent: refused entry/deported, convicted,
-  prohibited from entering, entered under a different name) →
+  prohibited from entering, entered using a different name, sex,
+  nationality/citizenship, or date of birth) →
   `previouslyRefusedEntryOrDeported` through
-  `previouslyEnteredSingaporeUsingDifferentName`, each an independent
-  boolean per the form's own four-row Yes/No table. `previousNameUsed` gates
-  on `previouslyEnteredSingaporeUsingDifferentName` equals `true`.
+  `previouslyEnteredSingaporeUsingDifferentParticulars`, each an independent
+  boolean per the form's own four-row Yes/No table. The fourth row's
+  question (d) is broader than "different name" alone — it covers a
+  different name, sex, nationality/citizenship, or date of birth — so the
+  field and its label capture all four variants rather than name only.
+  `previousParticularsUsed` gates on
+  `previouslyEnteredSingaporeUsingDifferentParticulars` equals `true`.
   `antecedentDetails` ("if any of the answers is yes, please furnish
   details") gates on an `any` composition (GSP-0013) of all four booleans
   equalling `true` — the first use of `any` composition in a Visa-vertical
@@ -166,8 +173,8 @@ same `equals`/`notEquals`/`in`/`greaterThan`/`greaterThanOrEqual`/`all`/
 OK   Scenario 1: solo social visitor via Singpass local contact, single, no branch triggers
 OK   Scenario 2: married applicant w/ spouse SG citizen, >30 day stay, company local
      contact, PRC national, travelling companion, antecedent yes
-OK   Scenario 3: applicant entered SG under a different name previously (antecedent
-     branch via previouslyEnteredSingaporeUsingDifferentName)
+OK   Scenario 3: applicant entered SG under different particulars previously (antecedent
+     branch via previouslyEnteredSingaporeUsingDifferentParticulars)
 FAIL Negative control: married applicant missing spouseStatus (expected FAIL)
     - MISSING required field: spouseStatus
 FAIL Negative control: travel document expiry before issue date (expected FAIL)
@@ -178,7 +185,7 @@ Scenarios 1-3 together exercise every `requiredWhen` branch this document
 defines (spouse/partner fields; other-travel-document details; longer-stay
 reason; other-Singapore-address details; prior-residence details;
 travelling-companion sub-fields; individual-vs-company local-contact
-sub-fields; previous-name-used; antecedent details via the `any`
+sub-fields; previous-particulars-used; antecedent details via the `any`
 composition) and the `crossFieldValidation` rule
 (`travelDocumentExpiryAfterIssue`), all of which held. The final two
 scenarios are negative controls confirming the evaluator actually enforces
@@ -249,3 +256,19 @@ local-contact/agent who has them) to confirm the authenticated data-entry
 screens field-by-field, which would also resolve the exact online treatment
 of Part II's non-asterisked fields (e.g. `annualIncomeSgd`, `religion`)
 that this document has conservatively modelled as optional.
+
+## Review-fix note (pre-merge, GOV-824)
+
+The review gate's `pdfjs-dist` AcroForm extraction (a more complete method
+than this document's zlib/paren-regex extraction) surfaced two fidelity
+gaps, both fixed in this revision before merge:
+
+1. `singaporeAddressType`'s enum was missing 3 of the form's 5 real options
+   (`Next of Kin's Place`, `Relative's Place`, `Friend's Place`) — corrected
+   above.
+2. `previouslyEnteredSingaporeUsingDifferentName` (renamed
+   `previouslyEnteredSingaporeUsingDifferentParticulars`) and its follow-up
+   detail field (renamed `previousParticularsUsed`) narrowed Part IV's
+   question (d) — which covers a different name, sex, nationality/
+   citizenship, or date of birth — down to name only. Both are now
+   corrected above.
