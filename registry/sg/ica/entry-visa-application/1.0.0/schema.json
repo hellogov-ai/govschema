@@ -1,0 +1,1023 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/ica/entry-visa-application",
+  "version": "1.0.0",
+  "title": "Singapore Entry Visa Application (Form 14A)",
+  "description": "Give the details for a Singapore entry visa application: the visa a national of a visa-required country/territory needs before travelling to Singapore. Singapore does not accept visa applications at the immigration checkpoint or over the counter, and does not offer a direct applicant self-service portal; every application is submitted on the applicant's behalf by a Singapore-resident local contact (a Singapore Citizen, Permanent Resident, or a Singapore-registered company/hotel) or an authorised visa agent/overseas mission, using the Immigration & Checkpoints Authority's (ICA) online SAVE (Submission of Application for Visa Electronically) e-Service or, where no such intermediary is available, a paper submission through an authorised visa agent or the nearest Singapore overseas mission. This document models ICA's own canonical Form 14A ('Application for Entry Visa') that the applicant completes, plus Form V39A ('Letter of Introduction for Visa Application') that the local contact or company completes and signs to introduce the applicant. It does not model the authenticated SAVE e-Service screens themselves, which are gated behind the local contact's Singpass or the company's Corppass account; the live source is always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration & Checkpoints Authority",
+    "abbreviation": "ICA",
+    "url": "https://www.ica.gov.sg"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.ica.gov.sg/docs/default-source/ica/forms/form14a.pdf",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Form 14A — Application for Entry Visa (Immigration Act 1959, Section 55(1)), plus Form V39A — Letter of Introduction for Visa Application (https://www.ica.gov.sg/docs/default-source/ica/forms/formv39a.pdf)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Closes the Visa vertical's last remaining gap (GOV-822 research cycle; Visa was 8/9 after GOV-815 authored de/auswaertiges-amt/national-visa-application, with SG the sole remaining jurisdiction). ICA's SAVE e-Service (eservices.ica.gov.sg) requires a Singpass (individual local contact) or Corppass (company/hotel local contact) login before any data-entry screen renders, the same login-gated-form class already recorded elsewhere in this registry (e.g. nz/dia/realme-verified-identity, de/auswaertiges-amt/national-visa-application). Per source-of-truth fidelity, this document was instead authored field-by-field from ICA's own canonical Form 14A and Form V39A PDFs, which SAVE is confirmed to digitise 1:1 (ICA's e-Visa media release: local contacts 'no longer need to submit the application form and supporting document to ICA' in person). Status remains 'draft' pending a field-by-field pass against the authenticated SAVE e-Service itself. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "submissionChannel",
+      "label": "How will this application be submitted?",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Local contact with Singpass via SAVE",
+          "Company or hotel local contact with Corppass via SAVE",
+          "Authorised visa agent",
+          "Singapore overseas mission"
+        ]
+      },
+      "description": "ICA does not accept visa applications submitted directly by the applicant or over the counter. Determines which route (and which of the localContact* fields below) applies. Not itself a box on Form 14A; captured because an agent preparing this application needs to know which intermediary route is available before the form's own fields are relevant.",
+      "sourceRef": "ICA — Check if You Need an Entry Visa (visa_requirements) and e-Visa media release"
+    },
+    {
+      "name": "fullName",
+      "label": "Name (full name as shown in travel document)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "alias",
+      "label": "Alias",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form 14A — Part I"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["Male", "Female"]
+      },
+      "sourceRef": "Form 14A — Part I"
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["Single", "Married", "Separated", "Divorced", "Widowed", "Cohabited", "Customary"]
+      },
+      "sourceRef": "Form 14A — Part I"
+    },
+    {
+      "name": "spouseStatus",
+      "label": "Nationality/citizenship of spouse",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": ["Married", "Cohabited", "Customary"]
+      },
+      "validation": {
+        "enum": ["Singapore Citizen", "Singapore Permanent Resident", "Others"]
+      },
+      "description": "Whether the applicant's spouse is a Singapore Citizen, Singapore Permanent Resident (each requiring the spouse's NRIC number), or of another nationality (please specify).",
+      "sourceRef": "Form 14A — Part I"
+    },
+    {
+      "name": "spouseNricNumber",
+      "label": "Spouse's NRIC No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "spouseStatus",
+        "in": ["Singapore Citizen", "Singapore Permanent Resident"]
+      },
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "spouseOtherNationalityDetails",
+      "label": "Spouse's nationality/citizenship (please specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "spouseStatus",
+        "equals": "Others"
+      },
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "countryPlaceOfBirth",
+      "label": "Country/place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "stateProvinceOfBirth",
+      "label": "State/province of birth",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "race",
+      "label": "Race (e.g. Malay, Indian, Chinese, Caucasian, etc)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "nationalityCitizenship",
+      "label": "Nationality/citizenship",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "travelDocumentType",
+      "label": "Type of travel document held",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "International Passport",
+          "Diplomatic Passport",
+          "Official Passport",
+          "Service Passport",
+          "Document of Identity",
+          "Certificate of Identity",
+          "Others"
+        ]
+      },
+      "sourceRef": "Form 14A — Part I"
+    },
+    {
+      "name": "otherTravelDocumentTypeDetails",
+      "label": "Other travel document type (please specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "Others"
+      },
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "travelDocumentNumber",
+      "label": "Travel document no.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "travelDocumentIssuedDate",
+      "label": "Travel document issued date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 14A — Part I"
+    },
+    {
+      "name": "travelDocumentExpiryDate",
+      "label": "Travel document expiry date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 14A — Part I"
+    },
+    {
+      "name": "travelDocumentCountryPlaceOfIssue",
+      "label": "Country/place of issue",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "prcIdNumber",
+      "label": "PRC ID number (for Chinese nationals only)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Applicable only where nationalityCitizenship is Chinese.",
+      "sourceRef": "Form 14A — Part I",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "countryPlaceOfOriginResidence",
+      "label": "Country/place of origin/residence",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part I (Address in Country/Place of Origin/Residence)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "divisionStateProvinceOfOriginResidence",
+      "label": "Division/state/province of origin/residence",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part I (Address in Country/Place of Origin/Residence)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "prefectureOfOriginResidence",
+      "label": "Prefecture of origin/residence",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part I (Address in Country/Place of Origin/Residence)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "countyDistrictOfOriginResidence",
+      "label": "County/district of origin/residence",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part I (Address in Country/Place of Origin/Residence)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "addressOfOriginResidence",
+      "label": "Address (in country/place of origin/residence)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part I (Address in Country/Place of Origin/Residence)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part II",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactNumber",
+      "label": "Contact number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part II",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part II",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "highestQualification",
+      "label": "Highest academic/professional qualification attained",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["No Formal Education", "Primary", "Secondary", "Pre-University", "Diploma", "University", "Post-Graduate"]
+      },
+      "sourceRef": "Form 14A — Part II"
+    },
+    {
+      "name": "annualIncomeSgd",
+      "label": "Annual income in Singapore dollars (SGD)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Form 14A — Part II"
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form 14A — Part II",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "expectedDateOfArrival",
+      "label": "Expected date of arrival in Singapore",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 14A — Part II"
+    },
+    {
+      "name": "typeOfVisa",
+      "label": "Type of visa",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["Single Journey", "Double Journey", "Triple Journey", "Multiple Journey"]
+      },
+      "sourceRef": "Form 14A — Part II"
+    },
+    {
+      "name": "purposeOfVisit",
+      "label": "Purpose of visit",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["Social", "Business"]
+      },
+      "sourceRef": "Form 14A — Part II"
+    },
+    {
+      "name": "purposeDetails",
+      "label": "Details of purpose",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part II",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "intendedLengthOfStay",
+      "label": "How long do you intend to stay in Singapore?",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["Less than 30 days", "More than 30 days"]
+      },
+      "sourceRef": "Form 14A — Part II"
+    },
+    {
+      "name": "longerStayReasonAndDuration",
+      "label": "If your intended stay is more than 30 days, state the reason and the duration",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "intendedLengthOfStay",
+        "equals": "More than 30 days"
+      },
+      "sourceRef": "Form 14A — Part II",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "singaporeAddressType",
+      "label": "Where will you be staying in Singapore?",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["Hotel", "Others"]
+      },
+      "sourceRef": "Form 14A — Part II (Address in Singapore)"
+    },
+    {
+      "name": "singaporeAddressOtherDetails",
+      "label": "Accommodation in Singapore (please specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "singaporeAddressType",
+        "equals": "Others"
+      },
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "singaporeBlockHouseNo",
+      "label": "Block/house no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "singaporeFloorNo",
+      "label": "Floor no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "singaporeUnitNo",
+      "label": "Unit no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "singaporePostalCode",
+      "label": "Postal code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "singaporeStreetName",
+      "label": "Street name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "singaporeContactNo",
+      "label": "Contact no. (Singapore address)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "singaporeBuildingName",
+      "label": "Building name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 14A — Part II (Address in Singapore)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "residedElsewhereLastFiveYears",
+      "label": "Did you reside in other countries/places, other than your country/place of origin, for one year or more during the last 5 years?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 14A — Part II"
+    },
+    {
+      "name": "priorResidenceDetails",
+      "label": "Period of stay, country/place, and address of prior residence(s)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "residedElsewhereLastFiveYears",
+        "equals": true
+      },
+      "description": "One row per country/place on the source form's table (period of stay, country/place, address, from, to). This document collapses the repeating table into a single free-text field, the same treatment used elsewhere in this registry for small repeating tables (e.g. de/auswaertiges-amt/national-visa-application's previousStaysDetails).",
+      "sourceRef": "Form 14A — Part II",
+      "validation": {
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "hasTravellingCompanion",
+      "label": "Is the applicant travelling with a companion?",
+      "type": "boolean",
+      "required": false,
+      "description": "Only applicable where the applicant is 12 years old or younger at the point of application. Details are not required if the applicant is accompanied by an airline representative.",
+      "sourceRef": "Form 14A — Part II (Details of Travelling Companion)"
+    },
+    {
+      "name": "companionRelationshipToApplicant",
+      "label": "Relationship of travelling companion to applicant",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTravellingCompanion",
+        "equals": true
+      },
+      "sourceRef": "Form 14A — Part II (Details of Travelling Companion)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "companionName",
+      "label": "Name of travelling companion",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "hasTravellingCompanion",
+        "equals": true
+      },
+      "sourceRef": "Form 14A — Part II (Details of Travelling Companion)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "companionDateOfBirth",
+      "label": "Date of birth of travelling companion",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "hasTravellingCompanion",
+        "equals": true
+      },
+      "sourceRef": "Form 14A — Part II (Details of Travelling Companion)"
+    },
+    {
+      "name": "companionSex",
+      "label": "Sex of travelling companion",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTravellingCompanion",
+        "equals": true
+      },
+      "validation": {
+        "enum": ["Male", "Female"]
+      },
+      "sourceRef": "Form 14A — Part II (Details of Travelling Companion)"
+    },
+    {
+      "name": "companionNationality",
+      "label": "Nationality/citizenship of travelling companion",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTravellingCompanion",
+        "equals": true
+      },
+      "sourceRef": "Form 14A — Part II (Details of Travelling Companion)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "companionTravelDocumentNumber",
+      "label": "Travel document number of travelling companion",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "hasTravellingCompanion",
+        "equals": true
+      },
+      "sourceRef": "Form 14A — Part II (Details of Travelling Companion)",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "localContactType",
+      "label": "Is the local contact an individual, or a company/hotel?",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["Individual", "Company or Hotel"]
+      },
+      "description": "Form V39A (Letter of Introduction for Visa Application) is completed and signed differently depending on whether the local contact is an individual or a company/hotel.",
+      "sourceRef": "Form 14A — Part III; Form V39A"
+    },
+    {
+      "name": "localContactName",
+      "label": "Name of local contact / company / hotel",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part III",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "localContactRelationshipToApplicant",
+      "label": "Relationship of local contact/company/hotel to applicant",
+      "type": "string",
+      "required": true,
+      "description": "Form V39A gives example categories: father, mother, brother, sister, son, daughter, spouse, business partner; for others, please specify.",
+      "sourceRef": "Form 14A — Part III; Form V39A",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "localContactNricNumber",
+      "label": "Local contact's NRIC (Pink/Blue) No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "localContactType",
+        "equals": "Individual"
+      },
+      "sourceRef": "Form V39A",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "localContactCompanyUen",
+      "label": "Unique Entity Number (UEN) of company/firm",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "localContactType",
+        "equals": "Company or Hotel"
+      },
+      "sourceRef": "Form V39A",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "localContactCompanyRepresentativeDetails",
+      "label": "Name, NRIC no. and designation/capacity of the person acting on behalf of the company/firm",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "localContactType",
+        "equals": "Company or Hotel"
+      },
+      "sourceRef": "Form V39A",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "localContactAddress",
+      "label": "Address of local contact / company name and address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form V39A",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "localContactNumber",
+      "label": "Local contact's contact number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part III; Form V39A",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "localContactEmail",
+      "label": "Local contact's email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 14A — Part III; Form V39A",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "embarkationCountryPlace",
+      "label": "Country/place of embarkation (coming to Singapore from)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form V39A",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "previouslyRefusedEntryOrDeported",
+      "label": "Has ever been refused entry into or deported from any country/place, including Singapore?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 14A — Part IV"
+    },
+    {
+      "name": "previouslyConvictedInCourt",
+      "label": "Has ever been convicted in a court of law in any country/place, including Singapore?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 14A — Part IV"
+    },
+    {
+      "name": "previouslyProhibitedFromEnteringSingapore",
+      "label": "Has ever been prohibited from entering Singapore?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 14A — Part IV"
+    },
+    {
+      "name": "previouslyEnteredSingaporeUsingDifferentName",
+      "label": "Has entered Singapore using a different name?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 14A — Part IV"
+    },
+    {
+      "name": "previousNameUsed",
+      "label": "Name previously used to enter Singapore",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "previouslyEnteredSingaporeUsingDifferentName",
+        "equals": true
+      },
+      "sourceRef": "Form 14A — Part IV",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "antecedentDetails",
+      "label": "If any of the above answers is yes, please furnish details",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "previouslyRefusedEntryOrDeported", "equals": true },
+          { "field": "previouslyConvictedInCourt", "equals": true },
+          { "field": "previouslyProhibitedFromEnteringSingapore", "equals": true },
+          { "field": "previouslyEnteredSingaporeUsingDifferentName", "equals": true }
+        ]
+      },
+      "sourceRef": "Form 14A — Part IV",
+      "validation": {
+        "maxLength": 2000
+      }
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "travelDocumentExpiryAfterIssue",
+      "compare": {
+        "field": "travelDocumentExpiryDate",
+        "operator": "greaterThan",
+        "compareTo": "travelDocumentIssuedDate"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Passport-size photograph, affixed to the application",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 14A — page 1 header: 'Affix a recent passport-size photograph here'"
+    },
+    {
+      "id": "declarationAttestation",
+      "label": "Signed declaration by the applicant that the application's particulars are true, accurate and complete",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I declare that all information submitted in this application is true, accurate and complete to the best of my knowledge and belief. I understand that, if I have concealed relevant information or provided false, inaccurate or misleading information, I may be prosecuted and any facilities, rights or privileges granted under this application may be withdrawn.",
+      "sourceRef": "Form 14A — Part V, Declaration by Applicant, signed and dated by the applicant"
+    },
+    {
+      "id": "localContactIntroductionLetter",
+      "label": "Signed Letter of Introduction for Visa Application (Form V39A) from the local contact or company",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "sourceRef": "Form V39A, signed either by the local contact (individual) or by a person acting on behalf of the company/firm, dated"
+    }
+  ],
+  "steps": [
+    {
+      "id": "submission_route",
+      "title": "Submission route",
+      "fields": [
+        "submissionChannel"
+      ],
+      "next": "applicant_identity"
+    },
+    {
+      "id": "applicant_identity",
+      "title": "Particulars of applicant — identity",
+      "fields": [
+        "fullName",
+        "alias",
+        "dateOfBirth",
+        "sex",
+        "maritalStatus",
+        "spouseStatus",
+        "spouseNricNumber",
+        "spouseOtherNationalityDetails",
+        "countryPlaceOfBirth",
+        "stateProvinceOfBirth",
+        "race",
+        "nationalityCitizenship"
+      ],
+      "next": "travel_document"
+    },
+    {
+      "id": "travel_document",
+      "title": "Particulars of applicant — travel document",
+      "fields": [
+        "travelDocumentType",
+        "otherTravelDocumentTypeDetails",
+        "travelDocumentNumber",
+        "travelDocumentIssuedDate",
+        "travelDocumentExpiryDate",
+        "travelDocumentCountryPlaceOfIssue",
+        "prcIdNumber"
+      ],
+      "next": "origin_residence"
+    },
+    {
+      "id": "origin_residence",
+      "title": "Address in country/place of origin or residence",
+      "fields": [
+        "countryPlaceOfOriginResidence",
+        "divisionStateProvinceOfOriginResidence",
+        "prefectureOfOriginResidence",
+        "countyDistrictOfOriginResidence",
+        "addressOfOriginResidence"
+      ],
+      "next": "other_details"
+    },
+    {
+      "id": "other_details",
+      "title": "Other details",
+      "fields": [
+        "emailAddress",
+        "contactNumber",
+        "occupation",
+        "highestQualification",
+        "annualIncomeSgd",
+        "religion",
+        "expectedDateOfArrival",
+        "typeOfVisa",
+        "purposeOfVisit",
+        "purposeDetails",
+        "intendedLengthOfStay",
+        "longerStayReasonAndDuration"
+      ],
+      "next": "singapore_address"
+    },
+    {
+      "id": "singapore_address",
+      "title": "Address in Singapore",
+      "fields": [
+        "singaporeAddressType",
+        "singaporeAddressOtherDetails",
+        "singaporeBlockHouseNo",
+        "singaporeFloorNo",
+        "singaporeUnitNo",
+        "singaporePostalCode",
+        "singaporeStreetName",
+        "singaporeContactNo",
+        "singaporeBuildingName"
+      ],
+      "next": "residence_history"
+    },
+    {
+      "id": "residence_history",
+      "title": "Residence in other countries/places",
+      "fields": [
+        "residedElsewhereLastFiveYears",
+        "priorResidenceDetails"
+      ],
+      "next": "travelling_companion"
+    },
+    {
+      "id": "travelling_companion",
+      "title": "Details of travelling companion",
+      "fields": [
+        "hasTravellingCompanion",
+        "companionRelationshipToApplicant",
+        "companionName",
+        "companionDateOfBirth",
+        "companionSex",
+        "companionNationality",
+        "companionTravelDocumentNumber"
+      ],
+      "next": "local_contact"
+    },
+    {
+      "id": "local_contact",
+      "title": "Particulars of local contact",
+      "fields": [
+        "localContactType",
+        "localContactName",
+        "localContactRelationshipToApplicant",
+        "localContactNricNumber",
+        "localContactCompanyUen",
+        "localContactCompanyRepresentativeDetails",
+        "localContactAddress",
+        "localContactNumber",
+        "localContactEmail",
+        "embarkationCountryPlace"
+      ],
+      "next": "antecedent"
+    },
+    {
+      "id": "antecedent",
+      "title": "Antecedent of applicant",
+      "fields": [
+        "previouslyRefusedEntryOrDeported",
+        "previouslyConvictedInCourt",
+        "previouslyProhibitedFromEnteringSingapore",
+        "previouslyEnteredSingaporeUsingDifferentName",
+        "previousNameUsed",
+        "antecedentDetails"
+      ]
+    }
+  ]
+}
