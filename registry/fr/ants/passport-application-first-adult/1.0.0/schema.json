@@ -1,0 +1,511 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fr/ants/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "France Passport Application for an Adult, First-Time (Cerfa 12100*02, Passeport — première demande)",
+  "description": "Apply for a first-ever French passport as an adult (majeur) French national. Since the online-services reform, the vast majority of applications are prepared through ANTS's own pré-demande en ligne service (predemande-passeport.ants.gouv.fr) and then finalised in person — with fingerprint/photo capture — at any passport-equipped mairie in France, or at a French embassy/consulate abroad; applicants who skip the online pré-demande instead complete the same underlying état-civil field set on the paper form (Cerfa 12100*02, 'Demande de passeport') handed to them at the counter. This document models that Cerfa 12100*02 field set — the same underlying data both channels collect — rather than the pré-demande portal's own screen-by-screen flow, which sits behind an authenticated account this review could not reach; see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Agence Nationale des Titres Sécurisés (national passport-issuing system operator) / Ministère de l'Intérieur et des Outre-mer",
+    "abbreviation": "ANTS",
+    "url": "https://www.ants.gouv.fr"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://www.service-public.fr/particuliers/vosdroits/F14929",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Cerfa 12100*02 — 'Demande de passeport' (majeur), the counter-fallback form underlying ANTS's online pré-demande service"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from service-public.fr's own guidance page for a first-time adult passport (F14929, fetched live, HTTP 200, 'Vérifié le 08 avril 2026') for process steps, document requirements, and fiscal-stamp fees, plus the official Cerfa 12100*02 form's own printed field labels and instructional tooltips (extracted from a third-party fillable-PDF mirror's AcroForm/XFA widget metadata via pdfjs-dist getAnnotations, since the direct consulate mirror link had moved) — cross-checked for form number, edition, and section structure against two independent descriptive sources (juristique.org, documentissime.fr). The live online submission channel (ANTS's predemande-passeport.ants.gouv.fr) requires an authenticated account this review could not reach, so the field-by-field comparison the practice requires has not been completed against that live screen set — status remains draft. Several checkbox groups on the source PDF (type-of-request marker, nationality-justification-document checklist) exposed only coordinates and numeric export values through the extracted widget metadata, not their adjacent printed labels, and no OCR tool was available in this environment to read them — left unmodeled rather than guessed. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "familyName",
+      "label": "Family name (NOM)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name that appears on the applicant's birth certificate (acte de naissance).",
+      "sourceRef": "'Nom : C'est le nom qui figure sur votre acte de naissance.'"
+    },
+    {
+      "name": "hasUsageName",
+      "label": "Do you want to add a usage name (nom d'usage) to your passport?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates the usageName/usageNameOrigin fields. A nom d'usage is a second name used alongside the family name, e.g. a spouse's name.",
+      "sourceRef": "'Deuxième nom : Cette rubrique doit être renseignée uniquement si vous portez (ou souhaitez porter) un nom d'usage.'"
+    },
+    {
+      "name": "usageName",
+      "label": "Usage name (deuxième nom / NOM D'USAGE)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "Printed after the family name on the passport. To have this name printed before the family name instead, the applicant must say so at the counter — not captured by this form.",
+      "sourceRef": "'Le deuxième nom figurera alors à la suite du nom de famille sur votre passeport. Si vous souhaitez porter ce 2eme nom avant votre nom de famille, veuillez le préciser au guichet.'"
+    },
+    {
+      "name": "usageNameOrigin",
+      "label": "Usage name — where does it come from?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "description": "parent_not_transmitted_at_birth = the birth name of the other parent, not transmitted to the applicant at birth; spouse_if_married = the applicant's spouse's name, if married; ex_spouse_after_divorce_with_authorization = a former spouse's name, following divorce, with court authorization; deceased_spouse_name = a deceased spouse's name.",
+      "sourceRef": "'Le \"Deuxième nom\" est: - soit le nom de naissance de l'autre parent qui ne vous a pas été transmis à la naissance. - soit le nom de votre époux(se) si vous êtes marié(e). - soit le nom de votre ex-conjoint en cas de divorce (sur autorisation). - soit le nom de votre époux(se) décédé(e)'",
+      "validation": {
+        "enum": [
+          "parent_not_transmitted_at_birth",
+          "spouse_if_married",
+          "ex_spouse_after_divorce_with_authorization",
+          "deceased_spouse_name"
+        ]
+      }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s) (PRÉNOM)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "All given names, in birth-certificate order, separated by a space. If the usual first name differs from the legal first name, this must be flagged to the counter agent — not captured by this form.",
+      "sourceRef": "'Veuillez indiquer tous vos prénom dans l'ordre de l'état civil en les séparant par un espace.'"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Applicant état-civil block — 'Sexe' checkboxes",
+      "validation": {
+        "enum": [
+          "M",
+          "F"
+        ]
+      }
+    },
+    {
+      "name": "heightMeters",
+      "label": "Height (TAILLE), in meters",
+      "type": "number",
+      "required": true,
+      "description": "The form's own example uses a French-locale comma decimal (e.g. '1,20 m'); the field's semantic value is a plain decimal number of meters.",
+      "sourceRef": "'Veuillez indiquer votre taille en mètres. Ex : 1,20 m'"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "'Veuillez indiquer votre date de naissance au format JJMMAAAA'"
+    },
+    {
+      "name": "placeOfBirthCommune",
+      "label": "Place of birth: commune / town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Veuillez indiquer votre lieu de naissance.'"
+    },
+    {
+      "name": "departmentOfBirth",
+      "label": "Département of birth, if born in France",
+      "type": "string",
+      "required": false,
+      "description": "Left blank when the applicant was born outside France.",
+      "sourceRef": "'Veuillez indiquer le numéro de votre département de naissance. Si vous êtes né à l'étranger, n'indiquez aucun numéro, ne remplissez pas ce champ.'"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Veuillez saisir votre pays de naissance en toutes lettres.'"
+    },
+    {
+      "name": "addressStreet",
+      "label": "Home address — street line",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Veuillez indiquer votre adresse la plus complète possible : n°, extension (bis, ter, ...), nom de la voie, code postal, commune.'"
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Home address — postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Code postal :'"
+    },
+    {
+      "name": "addressCommune",
+      "label": "Home address — commune (town)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Commune :'"
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile phone (recommended)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional but recommended: used to contact the applicant during processing or to notify by SMS when the passport is ready for collection. Entered as 10 digits with no spaces.",
+      "sourceRef": "'La mention de votre numéro de tél. portable si vous en avez un est facultative. ... Les 10 chiffres ne doivent pas être espacés lors de la saisie.'"
+    },
+    {
+      "name": "fatherFamilyName",
+      "label": "Father — birth name (NOM DU PÈRE)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Requiredness could not be confirmed from the extracted form metadata — see VERIFICATION.md.",
+      "sourceRef": "'il s'agit du nom de naissance du père.'"
+    },
+    {
+      "name": "fatherGivenNames",
+      "label": "Father — given name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Les prénoms doivent être indiqués dans l'ordre de l'état civil en les séparant par un espace.'"
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Father — date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "'La date de naissance doit être saisie au format JJMMAAAA. S'il vous manque des éléments, vous pouvez la saisir au format MMAAAA (mois année) ou au format AAAA (année).'"
+    },
+    {
+      "name": "fatherPlaceOfBirth",
+      "label": "Father — place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Lieu de naissance.'"
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Father — nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Nationalité : texte'"
+    },
+    {
+      "name": "motherFamilyName",
+      "label": "Mother — birth name (NOM DE LA MÈRE)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Requiredness could not be confirmed from the extracted form metadata — see VERIFICATION.md.",
+      "sourceRef": "'il s'agit du nom de naissance de la mère.'"
+    },
+    {
+      "name": "motherGivenNames",
+      "label": "Mother — given name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Les prénoms doivent être indiqués dans l'ordre de l'état civil en les séparant par un espace.'"
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Mother — date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "'La date de naissance doit être saisie au format JJMMAAAA. S'il vous manque des éléments, vous pouvez la saisir au format MMAAAA (mois année) ou au format AAAA (année).'"
+    },
+    {
+      "name": "motherPlaceOfBirth",
+      "label": "Mother — place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Lieu de naissance.'"
+    },
+    {
+      "name": "motherNationality",
+      "label": "Mother — nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Nationalité : texte'"
+    },
+    {
+      "name": "idCardStatus",
+      "label": "Do you have a French national identity card?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Determines which supporting documents (existing ID card, birth certificate, proof of nationality) are required, per service-public.fr's own branching guidance for a first-time adult passport.",
+      "sourceRef": "F14929 — 'Vous avez une carte d'identité valide' / 'Vous avez une carte d'identité périmée' (expiration: moins de 5 ans / + de 5 ans) / 'Vous n'avez pas de carte d'identité'",
+      "validation": {
+        "enum": [
+          "valid",
+          "expired_under_5_years",
+          "expired_over_5_years",
+          "none"
+        ]
+      }
+    },
+    {
+      "name": "hasCompletedPredemande",
+      "label": "Have you already completed the online pré-demande?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "If yes, the applicant brings the pré-demande number and/or QR code instead of a signed paper form. If no, the applicant fills and signs the paper form handed to them at the counter.",
+      "sourceRef": "'Si vous avez fait la pré-demande, le numéro et/ou QR code obtenus (si vous n'avez pas fait de pré-demande, vous devrez remplir et signer le formulaire qui vous sera remis au guichet)'"
+    },
+    {
+      "name": "predemandeNumber",
+      "label": "Pré-demande number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCompletedPredemande",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasCompletedPredemande",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "'le numéro et/ou QR code obtenus'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of declaration / signature (Fait le)",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant signs the attestation on the paper form's footer, immediately before submission.",
+      "sourceRef": "'Jour de la déclaration' / 'Mois de la déclaration' / 'Année de la déclaration'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "existingIdCard",
+      "label": "Existing French national identity card (valid or expired)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "idCardStatus",
+        "in": [
+          "valid",
+          "expired_under_5_years",
+          "expired_over_5_years"
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "F14929 — 'Votre carte d'identité'"
+    },
+    {
+      "id": "identityPhoto",
+      "label": "Identity photo, compliant with official standards",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P6M"
+      },
+      "sourceRef": "F14929 — 'Photo d'identité de moins de 6 mois et conforme aux normes'"
+    },
+    {
+      "id": "proofOfAddress",
+      "label": "Proof of home address",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P1Y"
+      },
+      "sourceRef": "F14929 — 'Justificatif du domicile de moins de 1 an'"
+    },
+    {
+      "id": "birthCertificate",
+      "label": "Birth certificate (copie intégrale or extrait avec filiation)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "idCardStatus",
+        "equals": "none"
+      },
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P3M"
+      },
+      "sourceRef": "F14929 — 'il faut fournir un acte de naissance (copie intégrale ou extrait avec filiation) de moins de 3 mois.' Not required when the applicant's birth commune has dematerialised civil-status records (checked directly with the commune) — an exception this schema does not model as a separate branch; see VERIFICATION.md."
+    },
+    {
+      "id": "proofOfFrenchNationality",
+      "label": "Proof of French nationality",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "idCardStatus",
+        "equals": "none"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "F14929 — 'Justificatif de nationalité française si votre nationalité ne ressort pas de votre acte de naissance.'"
+    },
+    {
+      "id": "predemandeReference",
+      "label": "Pré-demande number and/or QR code",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCompletedPredemande",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "F14929 — 'Si vous avez fait la pré-demande, le numéro et/ou QR code obtenus'"
+    },
+    {
+      "id": "fiscalStamp",
+      "label": "Timbre fiscal (fiscal stamp), passport fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "EUR",
+        "value": 86
+      },
+      "methods": [
+        "online-fiscal-stamp-purchase",
+        "tobacconist-in-person"
+      ],
+      "sourceRef": "F14929 — 'Vous devez acheter un timbre fiscal d'un montant de 86 € (43 € en Guyane).' 86 EUR in mainland France and most territories; 43 EUR in Guyane (not modelled as a separate amount here — see VERIFICATION.md). Purchased online in advance, or at an approved tobacconist (bureau de tabac); when a pré-demande is completed, the stamp can instead be purchased at the end of that online procedure."
+    },
+    {
+      "id": "signature",
+      "label": "Signed, dated declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form footer — declaration date fields ('Jour/Mois/Année de la déclaration') and signature block; exact attestation wording not sourced verbatim, see VERIFICATION.md."
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Your identity",
+      "fields": [
+        "familyName",
+        "hasUsageName",
+        "usageName",
+        "usageNameOrigin",
+        "givenNames",
+        "sex",
+        "heightMeters"
+      ]
+    },
+    {
+      "id": "birth_details",
+      "title": "Date and place of birth",
+      "fields": [
+        "dateOfBirth",
+        "placeOfBirthCommune",
+        "departmentOfBirth",
+        "countryOfBirth"
+      ]
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Home address and contact",
+      "fields": [
+        "addressStreet",
+        "addressPostalCode",
+        "addressCommune",
+        "mobilePhone"
+      ]
+    },
+    {
+      "id": "filiation_father",
+      "title": "Father's identity",
+      "fields": [
+        "fatherFamilyName",
+        "fatherGivenNames",
+        "fatherDateOfBirth",
+        "fatherPlaceOfBirth",
+        "fatherNationality"
+      ]
+    },
+    {
+      "id": "filiation_mother",
+      "title": "Mother's identity",
+      "fields": [
+        "motherFamilyName",
+        "motherGivenNames",
+        "motherDateOfBirth",
+        "motherPlaceOfBirth",
+        "motherNationality"
+      ]
+    },
+    {
+      "id": "identity_document_status",
+      "title": "Existing identity documents and pré-demande",
+      "fields": [
+        "idCardStatus",
+        "hasCompletedPredemande",
+        "predemandeNumber"
+      ]
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and signature",
+      "fields": [
+        "declarationDate"
+      ]
+    }
+  ]
+}
