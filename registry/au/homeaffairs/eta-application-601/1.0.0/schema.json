@@ -1,0 +1,386 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "au/homeaffairs/eta-application-601",
+  "version": "1.0.0",
+  "title": "Australia Electronic Travel Authority (ETA, subclass 601)",
+  "description": "Apply for an Electronic Travel Authority (ETA, subclass 601), Australia's lightweight travel-authorisation counterpart to a visa waiver for passport holders of certain eligible countries and jurisdictions. AUD 20 service fee (no separate Visa Application Charge); valid for travel to Australia for 12 months or until the passport expires (whichever is shorter), granted for multiple entries, up to 3 months stay per entry. Applied for almost exclusively through the free 'AustralianETA' mobile app, which reads the applicant's passport via NFC chip scan and a live facial photo; the ImmiAccount web channel and travel-agent submission were retired in 2022 (GOV-276). This document models an eligible adult applicant applying for themselves for tourism, a family/friend visit, or business-visitor activities. Out of scope: an application made by a travel agent or airline representative on behalf of someone else (the app's separate 'industry user' IATA-verification flow); an applicant under 18 (the 'best interests of the child' criterion is not modelled); an applicant who already holds a criminal conviction, has previously failed the health requirement, or is otherwise ineligible for an ETA and must instead apply for a Visitor (subclass 600) visa; and dual/multiple citizenship beyond a single additional passport. It does not submit the application; the live Department of Home Affairs source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Home Affairs",
+    "abbreviation": "Home Affairs",
+    "url": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-AU"
+  },
+  "source": {
+    "url": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Subclass 601 — Electronic Travel Authority; Australian ETA App — Guidance notes for industry users"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema opening the AU×Visa gap (Visa is the least-covered of the 6 focus verticals, 3/9 jurisdictions before this document). immi.homeaffairs.gov.au blocks direct WebFetch/curl retrieval with HTTP 403 (consistent with the existing gov-au-wayback-workaround pattern for passports.gov.au/dfat.gov.au); recovered via a 2026-05-15 Wayback Machine capture of the visa-listing page, which embeds the full eligibility criteria, process steps, fee, and validity as structured JSON in the page's own client-side rendering payload (not just prose), giving higher confidence than a prose summary alone. The live AustralianETA app itself was not driven directly — it requires a physical NFC-enabled mobile device to scan a passport chip, which is not available in this environment — so the field model is reconstructed from two official sources: the Wayback-captured eligibility/process page, and the official 'Australian ETA App – Guidance notes for industry users' PDF (fetched directly from immi.homeaffairs.gov.au/supporting/files/, no access block, extracted with pdfjs-dist per the gov-form-pdf-extraction technique), which walks through every app screen in the applicant flow (passport scan, chip read, biographic confirmation, photo, other-passports/visa check, alias/address/phone, email verification, ETA questions, payment) even though it is written for a travel-agent/industry user assisting an applicant rather than for the applicant self-service flow. The three general suitability criteria (genuine-visitor intent, health requirement, debt to the Australian Government) are stated as eligibility criteria on the official page but their exact live in-app question wording was not independently confirmed — modelled as mandatory self-declarations by the same convention already established in this registry's gb/homeoffice/eta-application and ca/ircc/eta-application documents. Status remains 'draft' pending a field-by-field pass against the live app on an NFC-enabled device. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isGenuineTemporaryVisitor",
+      "label": "Do you intend to stay in Australia only temporarily, for tourism, a family/friend visit, or business-visitor activities, and to obey any conditions attached to the visa?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Mandatory eligibility self-declaration ('Be a genuine visitor'). If false, this document does not apply.",
+      "sourceRef": "Eligibility — 'Be a genuine visitor': 'You must only intend to stay temporarily in Australia and obey any condition or stay period attached to your visa.'"
+    },
+    {
+      "name": "meetsHealthRequirement",
+      "label": "Do you meet Australia's health requirement for this visa?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Mandatory eligibility self-declaration. If the applicant has previously failed to meet the health requirement, or will be entering health care or hospital environments, the most appropriate visa is a Visitor (subclass 600) visa instead, not an ETA.",
+      "sourceRef": "Eligibility — 'Meet our health requirement'"
+    },
+    {
+      "name": "hasCriminalConvictionOrDomesticViolenceHistory",
+      "label": "Do you have any criminal conviction, in any country, or any domestic violence history?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "Mandatory eligibility self-declaration ('Meet our character requirement'), asked explicitly in the app's 'ETA questions' step. If true, this document does not apply — the applicant should instead apply for a Visitor (subclass 600) visa and provide evidence about the conviction(s); the official sources reviewed state this exclusion without giving a separate in-app field for describing the conviction. The official process page states criminal conviction and domestic violence history together as one declared item; whether the live app splits them into two separate yes/no questions was not independently confirmed (see VERIFICATION.md).",
+      "sourceRef": "Eligibility — 'Meet our character requirement'; Step by step — 'Provide accurate information': 'any criminal conviction or domestic violence history'; App Guidance §12, 'ETA questions'"
+    },
+    {
+      "name": "hasPaidBackAustralianGovernmentDebt",
+      "label": "If you or any family member owes the Australian Government money, has it been paid back or arranged to be paid back?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Mandatory eligibility self-declaration ('Have paid back debt to the Australian Government'). Applies even if the debt belongs to a family member who is not applying for this ETA. If false, this document does not apply.",
+      "sourceRef": "Eligibility — 'Have paid back debt to the Australian Government'"
+    },
+    {
+      "name": "passportIssuingCountry",
+      "label": "Passport-issuing country or jurisdiction",
+      "type": "enum",
+      "required": true,
+      "description": "Must be one of the ETA-eligible passport countries/jurisdictions. Read automatically from the passport chip during the app's scan step; the applicant cannot apply for an ETA on a non-citizen passport, certificate of identity, or other travel document such as a Titre de Voyage. An ETA-eligible-passport holder who is also an Australian citizen cannot apply — Australian citizens have an automatic right of entry and need no visa.",
+      "sourceRef": "Eligibility — 'Have an eligible passport' (full list of eligible countries/jurisdictions)",
+      "validation": {
+        "enum": [
+          "andorra", "austria", "belgium", "brunei", "canada", "denmark", "finland", "france",
+          "germany", "greece", "hong_kong_sar_of_china", "iceland", "ireland", "italy", "japan",
+          "liechtenstein", "luxembourg", "malaysia", "malta", "monaco", "norway", "portugal",
+          "san_marino", "singapore", "south_korea", "spain", "sweden", "switzerland",
+          "taiwan_excluding_official_or_diplomatic_passports", "the_netherlands",
+          "united_kingdom_british_citizen", "united_kingdom_british_national_overseas",
+          "united_states_of_america", "vatican_city"
+        ]
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. Read from the passport's biographic (photo) page/chip during the app's scan step.",
+      "sourceRef": "App Guidance §6-7, 'Scanning the applicant's passport' / 'Reading the ePassport chip'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "familyName",
+      "label": "Family name (surname)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the passport; pre-filled from the chip scan. Where given name(s) appear in the passport's machine-readable zone as part of the family name, or where a name is longer than 24 characters, the app truncates/rearranges it and this is not an error requiring a rescan.",
+      "sourceRef": "App Guidance §8, 'Confirm biographic information'",
+      "validation": { "minLength": 1, "maxLength": 24 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the passport; pre-filled from the chip scan. See familyName's description for the truncation/rearrangement behaviour for long or MRZ-combined names.",
+      "sourceRef": "App Guidance §8, 'Confirm biographic information'",
+      "validation": { "minLength": 1, "maxLength": 24 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full date, YYYY-MM-DD. Pre-filled from the passport chip scan.",
+      "sourceRef": "Step by step — 'scan your passport to pre-fill your name, date of birth, passport number and other details'"
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport issue date",
+      "type": "date",
+      "required": true,
+      "description": "Full date, YYYY-MM-DD. Pre-filled from the passport chip scan.",
+      "sourceRef": "App Guidance §8, 'Confirm biographic information'"
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Passport expiry date",
+      "type": "date",
+      "required": true,
+      "description": "Full date, YYYY-MM-DD. The ETA is valid for 12 months or until this date, whichever is shorter; if the passport used to apply expires or is replaced, the ETA ceases and a new ETA must be sought.",
+      "sourceRef": "Overview — 'This is a temporary visa...for either 12 months, or for the period your passport is valid, whichever is shorter'; Visa label — 'Your ETA is attached to your current passport'"
+    },
+    {
+      "name": "nationalIdNumber",
+      "label": "National Identity (ID) number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Only required when the applicant's country no longer includes a National ID number on its passports, in which case the app prompts for it manually after the chip scan. Left blank when the passport's chip already carries it.",
+      "sourceRef": "App Guidance §8, 'Confirm biographic information': 'the app will prompt you to manually add the applicant's National ID number to the application'",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "holdsOtherPassports",
+      "label": "Do you hold a passport in your name from another country?",
+      "type": "boolean",
+      "required": true,
+      "description": "Dual/multiple nationals must declare and add details of every other passport they hold.",
+      "sourceRef": "Eligibility — 'If you hold more than one passport, you must declare this in your ETA application and provide details of your other passports'; App Guidance §10, 'Other passports and existing visas'"
+    },
+    {
+      "name": "otherPassportCountry",
+      "label": "Other passport — issuing country",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "holdsOtherPassports", "equals": true },
+      "description": "Models a single additional passport; the live app's 'Add another passport' link supports declaring more than one, which is a known simplification of this document (see VERIFICATION.md).",
+      "sourceRef": "App Guidance §10, 'Other passports and existing visas'",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "otherPassportNumber",
+      "label": "Other passport — number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "holdsOtherPassports", "equals": true },
+      "classification": "sensitive-pii",
+      "sourceRef": "App Guidance §10, 'Other passports and existing visas'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "hasExistingAustralianVisa",
+      "label": "Do you already hold an existing Australian visa?",
+      "type": "boolean",
+      "required": false,
+      "description": "The app lets the applicant check for an existing visa, which may show that an ETA is unnecessary.",
+      "sourceRef": "App Guidance §10, 'Other passports and existing visas': 'You can check if an applicant has an existing visa. This may assist in determining whether they require an ETA or not.'"
+    },
+    {
+      "name": "applicantPhoto",
+      "label": "Live photo of the applicant",
+      "type": "file",
+      "required": true,
+      "description": "A good-quality, passport-style live photo taken within the app: applicant facing the camera, plain background, well-lit, avoiding heavy-rimmed glasses. Used to confirm the applicant is the person shown in the passport.",
+      "sourceRef": "App Guidance §9, 'Taking the applicant's photo'"
+    },
+    {
+      "name": "hasOtherNames",
+      "label": "Are you, or have you ever been, known by any other name?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Step by step — 'Provide accurate information': 'if you have been known by any other name'; App Guidance §11.1, 'Alias and home information'"
+    },
+    {
+      "name": "otherNameDetails",
+      "label": "Details of other name(s)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasOtherNames", "equals": true },
+      "classification": "pii",
+      "sourceRef": "App Guidance §11.1, 'Alias and home information'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "homeAddressLine1",
+      "label": "Home address — line 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "App Guidance §11.1, 'Alias and home information': 'you will also need to add the applicant's address and phone number'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "homeAddressLine2",
+      "label": "Home address — line 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "App Guidance §11.1, 'Alias and home information'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "homeAddressCity",
+      "label": "Home address — city/town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "App Guidance §11.1, 'Alias and home information'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "homeAddressCountry",
+      "label": "Home address — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "App Guidance §11.1, 'Alias and home information'",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "homeAddressPostalCode",
+      "label": "Home address — postal/ZIP code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional because not every country/address format the app's address look-up supports uses a postal code.",
+      "sourceRef": "App Guidance §11.1, 'Alias and home information'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "homePhoneNumber",
+      "label": "Home phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must be provided in the correct format for the applicant's selected home country.",
+      "sourceRef": "App Guidance §11.1, 'Alias and home information': 'Phone numbers must be provided in the correct format for the selected home country'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Verified in-app by a one-time code sent to this address (5 minutes to enter it). The ETA outcome notification and service-fee payment receipt are sent here.",
+      "sourceRef": "App Guidance §11.2, 'Email verification'",
+      "validation": { "minLength": 3, "maxLength": 160 }
+    },
+    {
+      "name": "contactAddressInAustralia",
+      "label": "Intended contact address for your stay in Australia",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Free-text address/accommodation details for the stay (e.g. hotel, host's address) — the source does not break this into separate structured address lines.",
+      "sourceRef": "Step by step — 'Apply using the Australian ETA app': 'answer some questions, including...contact details in Australia'; App Guidance §12, 'ETA questions': 'enter the applicant's intended contact details for their stay in Australia'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_screening",
+      "title": "Eligibility screening",
+      "fields": [
+        "isGenuineTemporaryVisitor",
+        "meetsHealthRequirement",
+        "hasCriminalConvictionOrDomesticViolenceHistory",
+        "hasPaidBackAustralianGovernmentDebt"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible-not-genuine-temporary-visitor",
+          "when": { "field": "isGenuineTemporaryVisitor", "equals": false }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-health-requirement-apply-for-visitor-600",
+          "when": { "field": "meetsHealthRequirement", "equals": false }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-character-requirement-apply-for-visitor-600",
+          "when": { "field": "hasCriminalConvictionOrDomesticViolenceHistory", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-outstanding-australian-government-debt",
+          "when": { "field": "hasPaidBackAustralianGovernmentDebt", "equals": false }
+        },
+        { "to": "passport_and_personal_details" }
+      ]
+    },
+    {
+      "id": "passport_and_personal_details",
+      "title": "Passport scan and personal details",
+      "fields": [
+        "passportIssuingCountry",
+        "passportNumber",
+        "familyName",
+        "givenNames",
+        "dateOfBirth",
+        "passportIssueDate",
+        "passportExpiryDate",
+        "nationalIdNumber"
+      ],
+      "next": "other_passports_and_visas"
+    },
+    {
+      "id": "other_passports_and_visas",
+      "title": "Other passports and existing visas",
+      "fields": [
+        "holdsOtherPassports",
+        "otherPassportCountry",
+        "otherPassportNumber",
+        "hasExistingAustralianVisa"
+      ],
+      "next": "photo"
+    },
+    {
+      "id": "photo",
+      "title": "Applicant photo",
+      "fields": ["applicantPhoto"],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Alias, home address, and contact information",
+      "fields": [
+        "hasOtherNames",
+        "otherNameDetails",
+        "homeAddressLine1",
+        "homeAddressLine2",
+        "homeAddressCity",
+        "homeAddressCountry",
+        "homeAddressPostalCode",
+        "homePhoneNumber",
+        "emailAddress"
+      ],
+      "next": "eta_questions"
+    },
+    {
+      "id": "eta_questions",
+      "title": "ETA questions — contact details for your stay",
+      "fields": ["contactAddressInAustralia"]
+    }
+  ]
+}
