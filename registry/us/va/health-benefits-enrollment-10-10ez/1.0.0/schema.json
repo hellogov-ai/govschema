@@ -1,0 +1,1542 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/va/health-benefits-enrollment-10-10ez",
+  "version": "1.0.0",
+  "title": "United States VA Health Care Enrollment Application (Form 10-10EZ)",
+  "description": "Apply for enrollment in the U.S. Department of Veterans Affairs (VA) health care system, or for VA health services requiring only registration, using Form 10-10EZ. Models the base form's inline capacity: General Information, Military Service Information (including a military-exposure/TERA branch relevant to VA's priority-group and toxic-exposure determinations), Insurance Information, Dependent Information (one spouse and one dependent child; the source form directs claims for additional dependents to a separate continuation sheet), Employment Information, the Financial Disclosure opt-in/opt-out gating Sections VII-VIII (previous-calendar-year income and deductible expenses), and the consent/signature section. Does not model: the online va.gov application wizard (this document is sourced from the static fillable PDF, which VA's own instructions treat as collecting the same information as the online channel), additional dependents beyond one spouse and one child, or the separate VA Form 10-10EZR (health benefits renewal/update, for Veterans already enrolled). Does not submit the application; the live va.gov 'Apply for VA health care' online service and the mailed paper form are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "U.S. Department of Veterans Affairs, Veterans Health Administration",
+    "abbreviation": "VA",
+    "url": "https://www.va.gov"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.va.gov/find-forms/about-form-10-10ez/",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "VA Form 10-10EZ (FEB 2025 edition) — Application for Health Benefits; OMB Control No. 2900-0091"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-03",
+    "notes": "Directly downloadable from va.gov (no bot-block encountered), current FEB 2025 edition. Fetched via curl (HTTP 200) and processed with a scratch npm install of pdfjs-dist (legacy build): both the page-by-page text content AND the underlying AcroForm/XFA field annotations (name + type, e.g. F[0].P4[0].SSN[0] [Tx]) were extracted via pdfjs-dist's getAnnotations() API, giving this document unusually direct field-name traceability (each field's sourceRef cites the actual internal PDF field name alongside its printed question number and label), following the precedent set by au/aec/voter-enrolment's PDF field-name extraction technique. Status remains 'draft' pending a live walkthrough of the va.gov online application wizard, not attempted this cycle. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "typeOfBenefitApplyingFor",
+      "label": "Type of benefit(s) applying for",
+      "type": "enum",
+      "required": true,
+      "description": "Enrollment: VA Medical Benefits Package under 38 CFR 17.36. Registration: VA Health Services under the 'enrollment not required' eligibility criteria of 38 CFR 17.37 (only Sections I-III need be completed).",
+      "sourceRef": "VA Form 10-10EZ (FEB 2025), field F[0].P4[0].TypeOfBenefitsApplyingFor — 'ENROLLMENT' / 'REGISTRATION (Complete Sections I, II, and III)'",
+      "validation": {
+        "enum": [
+          "enrollment",
+          "registration"
+        ]
+      }
+    },
+    {
+      "name": "veteranFullName",
+      "label": "Veteran's name (Last, First, Middle Name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 1A. VETERAN'S NAME, field LastFirstMiddle",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "preferredName",
+      "label": "Preferred name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 1B. PREFERRED NAME, field PreferredNameForVeteran",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "mothersMaidenName",
+      "label": "Mother's maiden name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 2. MOTHER'S MAIDEN NAME, field MothersMaidenName",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 3. SEX, field BirthSex — 'FEMALE' / 'MALE'",
+      "validation": {
+        "enum": [
+          "female",
+          "male"
+        ]
+      }
+    },
+    {
+      "name": "raceEthnicity",
+      "label": "Race/ethnicity",
+      "type": "enum",
+      "required": false,
+      "description": "Collected for statistical purposes only. The source form allows checking more than one box; this document models the single primary selection.",
+      "sourceRef": "VA Form 10-10EZ, 4. WHAT IS YOUR RACE/ETHNICITY?, field Race[0-7]",
+      "validation": {
+        "enum": [
+          "asian",
+          "american_indian_or_alaska_native",
+          "black_or_african_american",
+          "white",
+          "native_hawaiian_or_other_pacific_islander",
+          "hispanic_or_latino",
+          "middle_eastern_or_north_african",
+          "choose_not_to_answer"
+        ]
+      }
+    },
+    {
+      "name": "socialSecurityNumber",
+      "label": "Social Security number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, 5. SOCIAL SECURITY NO., field SSN",
+      "validation": {
+        "pattern": "^[0-9]{3}-[0-9]{2}-[0-9]{4}$"
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, 6A. DATE OF BIRTH, field DOB"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth (city and state)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 6B. PLACE OF BIRTH, field PlaceOfBirth",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "preferredLanguage",
+      "label": "Preferred language",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 7. PREFERRED LANGUAGE, field PreferredLanguage",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 8. RELIGION, field Religion",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "mailingAddressStreet",
+      "label": "Mailing address — street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 9A. MAILING ADDRESS, field MailingAddress_Street",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Mailing address — city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 9B. CITY, field MailingAddress_City",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Mailing address — state",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 9C. STATE, field MailingAddress_State",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "mailingAddressZipCode",
+      "label": "Mailing address — ZIP code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 9D. ZIP CODE, field MailingAddress_ZipCode",
+      "validation": {
+        "pattern": "^[0-9]{5}(-[0-9]{4})?$"
+      }
+    },
+    {
+      "name": "mailingAddressCounty",
+      "label": "Mailing address — county",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 9E. COUNTY, field MailingAddress_County",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "homePhone",
+      "label": "Home telephone number (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 9F. HOME TELEPHONE NO. (optional), field HOMEPhone",
+      "validation": {
+        "pattern": "^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$"
+      }
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile telephone number (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 9G. MOBILE TELEPHONE NO. (optional), field MOBILEPhone",
+      "validation": {
+        "pattern": "^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$"
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 9H. E-MAIL ADDRESS (optional), field EmailAddress",
+      "validation": {
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "homeAddressSameAsMailing",
+      "label": "Is your home address the same as your mailing address?",
+      "type": "boolean",
+      "required": true,
+      "description": "Inferred gate: the source form prints separate mailing (9) and home (10) address blocks without a printed shortcut, so this document adds an explicit boolean per this registry's convention.",
+      "sourceRef": "VA Form 10-10EZ, 10A-10E. HOME ADDRESS"
+    },
+    {
+      "name": "homeAddressStreet",
+      "label": "Home address — street",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 10A. HOME ADDRESS, field HomeAddress_Street",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsMailing",
+        "equals": false
+      }
+    },
+    {
+      "name": "homeAddressCity",
+      "label": "Home address — city",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 10B. CITY, field HomeAddress_City",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsMailing",
+        "equals": false
+      }
+    },
+    {
+      "name": "homeAddressState",
+      "label": "Home address — state",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 10C. STATE, field HomeAddress_State",
+      "validation": {
+        "maxLength": 2
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsMailing",
+        "equals": false
+      }
+    },
+    {
+      "name": "homeAddressZipCode",
+      "label": "Home address — ZIP code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 10D. ZIP CODE, field HomeAddress_ZipCode",
+      "validation": {
+        "pattern": "^[0-9]{5}(-[0-9]{4})?$"
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsMailing",
+        "equals": false
+      }
+    },
+    {
+      "name": "homeAddressCounty",
+      "label": "Home address — county",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 10E. COUNTY, field HomeAddress_County",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsMailing",
+        "equals": false
+      }
+    },
+    {
+      "name": "currentMaritalStatus",
+      "label": "Current marital status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 11. CURRENT MARITAL STATUS, field CurrentMaritalStatus — 'MARRIED' / 'NEVER MARRIED' / 'SEPARATED' / 'WIDOWED' / 'DIVORCED'",
+      "validation": {
+        "enum": [
+          "married",
+          "never_married",
+          "separated",
+          "widowed",
+          "divorced"
+        ]
+      }
+    },
+    {
+      "name": "nextOfKinName",
+      "label": "Next of kin — name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 12A. NEXT OF KIN NAME, field NextOfKinName",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "nextOfKinAddress",
+      "label": "Next of kin — address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 12B. NEXT OF KIN ADDRESS, field NextOfKinAddress",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "nextOfKinRelationship",
+      "label": "Next of kin — relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 12C. NEXT OF KIN RELATIONSHIP, field NextOfKinRelationship",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "nextOfKinPhone",
+      "label": "Next of kin — telephone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 12D. NEXT OF KIN TELEPHONE NO., field NEXTOFKINPhone",
+      "validation": {
+        "pattern": "^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$"
+      }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency contact — name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 13A. EMERGENCY CONTACT NAME, field EmergencyContactName",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact — telephone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 13B. EMERGENCY CONTACT TELEPHONE NO., field EMERGENCYCONTACTPhone",
+      "validation": {
+        "pattern": "^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$"
+      }
+    },
+    {
+      "name": "designee",
+      "label": "Designee to receive possession of personal property left on VA premises",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Does not constitute a will or transfer of title.",
+      "sourceRef": "VA Form 10-10EZ, 14. DESIGNEE, field Designee",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "preferredVaFacility",
+      "label": "Which VA medical center or outpatient clinic do you prefer?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 15. WHICH VA MEDICAL CENTER OR OUTPATIENT CLINIC DO YOU PREFER?, field PreferredVACenter",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "wantsFirstAppointmentContact",
+      "label": "Would you like VA to contact you to schedule your first appointment?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 16. WOULD YOU LIKE FOR VA TO CONTACT YOU TO SCHEDULE YOUR FIRST APPOINTMENT?, field ScheduleFirstAppointment"
+    },
+    {
+      "name": "lastBranchOfService",
+      "label": "Last branch of service",
+      "type": "string",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 1A. LAST BRANCH OF SERVICE, field LastBranchOfService",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "lastEntryDate",
+      "label": "Last entry date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 1B. LAST ENTRY DATE, field LASTENTRYDATE"
+    },
+    {
+      "name": "futureDischargeDate",
+      "label": "Future discharge date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 1C. FUTURE DISCHARGE DATE, field FUTUREDISCHARGEDATE"
+    },
+    {
+      "name": "lastDischargeDate",
+      "label": "Last discharge date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 1D. LAST DISCHARGE DATE, field LASTDISCHARGEDATE"
+    },
+    {
+      "name": "dischargeType",
+      "label": "Discharge type",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 1E. DISCHARGE TYPE, field DischargeType",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "militaryServiceNumber",
+      "label": "Military service number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, 1F. MILITARY SERVICE NUMBER, field MilitaryServiceNumber",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "isPurpleHeartRecipient",
+      "label": "Are you a Purple Heart award recipient?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 2A. ARE YOU A PURPLE HEART AWARD RECIPIENT?, field Section2_2A"
+    },
+    {
+      "name": "isFormerPow",
+      "label": "Are you a former Prisoner of War?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 2B. ARE YOU A FORMER PRISONER OF WAR?, field Section2_2B"
+    },
+    {
+      "name": "servedCombatTheaterAfter1998",
+      "label": "Did you serve in a combat theater of operations after 11/11/1998?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 2C. DID YOU SERVE IN A COMBAT THEATER OF OPERATIONS AFTER 11/11/1998?, field Section2_2C"
+    },
+    {
+      "name": "dischargedForServiceConnectedDisability",
+      "label": "Were you discharged or retired from military for a disability incurred in the line of duty?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 2D. WERE YOU DISCHARGED OR RETIRED FROM MILITARY FOR A DISABILITY INCURRED IN THE LINE OF DUTY?, field Section2_2D"
+    },
+    {
+      "name": "servedGulfWar1990to1998",
+      "label": "Did you serve in SW Asia during the Gulf War between August 2, 1990 and November 11, 1998?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 2E. DID YOU SERVE IN SW ASIA DURING THE GULF WAR BETWEEN AUGUST 2, 1990 AND NOVEMBER 11, 1998?, field Section2_2E"
+    },
+    {
+      "name": "hasVaServiceConnectedRating",
+      "label": "Do you have a VA service-connected rating?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 2F. DO YOU HAVE A VA SERVICE-CONNECTED RATING?, field Section2_2F"
+    },
+    {
+      "name": "servedIonizingRadiationLocation",
+      "label": "Did you serve in an ionizing radiation location and participate in any nuclear testing, treatments, or clean up?",
+      "type": "boolean",
+      "required": true,
+      "description": "Example locations: Hiroshima and Nagasaki cleanup, Enewetak Atoll, response to nuclear-weapons-carrying B-52 incidents at Palomares, Spain and Thule Air Force Base, Greenland.",
+      "sourceRef": "VA Form 10-10EZ, 3A, field RadioButtonList[0]"
+    },
+    {
+      "name": "servedGulfWarHazardLocation",
+      "label": "Did you serve in any Gulf War hazard locations?",
+      "type": "boolean",
+      "required": true,
+      "description": "Iraq, Kuwait, Saudi Arabia, the neutral zone between Iraq and Saudi Arabia, Bahrain, Qatar, the United Arab Emirates, Oman, Yemen, Lebanon, Somalia, Afghanistan, Israel, Egypt, Turkey, Syria, Jordan, Djibouti, Uzbekistan, the Gulf of Aden, the Gulf of Oman, the Persian Gulf, the Arabian Sea, and the Red Sea.",
+      "sourceRef": "VA Form 10-10EZ, 3B, field RadioButtonList[1]"
+    },
+    {
+      "name": "gulfWarHazardServiceFrom",
+      "label": "Gulf War hazard location service — from (approximate MM/YYYY)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 3B 'WHEN DID YOU SERVE IN THESE LOCATIONS? ... FROM', field DateFrom1",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "servedGulfWarHazardLocation",
+        "equals": true
+      }
+    },
+    {
+      "name": "gulfWarHazardServiceTo",
+      "label": "Gulf War hazard location service — to (approximate MM/YYYY)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 3B, field DateTo1",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "servedGulfWarHazardLocation",
+        "equals": true
+      }
+    },
+    {
+      "name": "deployedInSupportOfNamedOperations",
+      "label": "Were you deployed in support of Enduring Freedom, Freedom's Sentinel, Iraqi Freedom, New Dawn, Inherent Resolve, or Resolute Support Mission?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, 3C, field RadioButtonList[2]"
+    },
+    {
+      "name": "servedHerbicideLocation",
+      "label": "Did you serve in any herbicide (e.g. Agent Orange) locations?",
+      "type": "boolean",
+      "required": true,
+      "description": "Republic of Vietnam (incl. 12 nautical mile territorial waters), Thailand at a US/Royal Thai base, Laos, specific Cambodia locations, Guam/American Samoa, Johnston Atoll, Korean demilitarized zone, or aboard a C-123 aircraft known to have sprayed herbicide agent.",
+      "sourceRef": "VA Form 10-10EZ, 3D, field RadioButtonList[3]"
+    },
+    {
+      "name": "herbicideServiceFrom",
+      "label": "Herbicide location service — from (approximate MM/YYYY)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 3D, field DateFrom2",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "servedHerbicideLocation",
+        "equals": true
+      }
+    },
+    {
+      "name": "herbicideServiceTo",
+      "label": "Herbicide location service — to (approximate MM/YYYY)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 3D, field DateTo2",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "servedHerbicideLocation",
+        "equals": true
+      }
+    },
+    {
+      "name": "exposureCategory",
+      "label": "Have you been exposed to any of the following?",
+      "type": "enum",
+      "required": false,
+      "description": "The source form allows checking more than one box; this document models the single primary category. See VA's Public Health website (publichealth.va.gov/exposures) for additional exposure categories.",
+      "sourceRef": "VA Form 10-10EZ, 3E, field ExposedToTheFollowing[0-9] — air pollutants / chemicals / contaminated water at Camp Lejeune / radiation / SHAD / occupational hazards / asbestos / mustard gas / warfare agents / other",
+      "validation": {
+        "enum": [
+          "air_pollutants",
+          "chemicals",
+          "contaminated_water_camp_lejeune",
+          "radiation",
+          "shad",
+          "occupational_hazards",
+          "asbestos",
+          "mustard_gas",
+          "warfare_agents",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "exposureCategoryOtherDescription",
+      "label": "Description of other exposure",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, 3E 'OTHER (Specify)', field SpecifyOther",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "exposureCategory",
+        "equals": "other"
+      }
+    },
+    {
+      "name": "exposureServiceFrom",
+      "label": "Exposure — from (approximate MM/YYYY)",
+      "type": "string",
+      "required": false,
+      "description": "Meaningful only if exposureCategory is answered; not encoded as a requiredWhen since exposureCategory is itself optional with no printed yes/no gate.",
+      "sourceRef": "VA Form 10-10EZ, 3E 'WHEN WERE YOU EXPOSED?', field DateFrom3",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      }
+    },
+    {
+      "name": "exposureServiceTo",
+      "label": "Exposure — to (approximate MM/YYYY)",
+      "type": "string",
+      "required": false,
+      "description": "Meaningful only if exposureCategory is answered.",
+      "sourceRef": "VA Form 10-10EZ, 3E, field DateTo3",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      }
+    },
+    {
+      "name": "hasHealthInsurance",
+      "label": "Do you have health insurance coverage (including through a spouse or other person)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Inferred gate: Section III's fields are only meaningful if the applicant has coverage to declare.",
+      "sourceRef": "VA Form 10-10EZ, SECTION III - INSURANCE INFORMATION"
+    },
+    {
+      "name": "healthInsuranceCompanyDetails",
+      "label": "Health insurance company name, address, and telephone number",
+      "type": "string",
+      "required": false,
+      "description": "Include coverage through a spouse or other person.",
+      "sourceRef": "VA Form 10-10EZ, III.1. ENTER YOUR HEALTH INSURANCE COMPANY NAME, ADDRESS AND TELEPHONE NUMBER, field HealthInsuranceInformation",
+      "validation": {
+        "maxLength": 300
+      },
+      "requiredWhen": {
+        "field": "hasHealthInsurance",
+        "equals": true
+      }
+    },
+    {
+      "name": "policyHolderName",
+      "label": "Name of policy holder",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, III.2. NAME OF POLICY HOLDER, field NameOfPolicyHodler",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "hasHealthInsurance",
+        "equals": true
+      }
+    },
+    {
+      "name": "policyNumber",
+      "label": "Policy number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, III.3. POLICY NUMBER, field PolicyNumber",
+      "validation": {
+        "maxLength": 50
+      },
+      "requiredWhen": {
+        "field": "hasHealthInsurance",
+        "equals": true
+      }
+    },
+    {
+      "name": "groupCode",
+      "label": "Group code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, III.4. GROUP CODE, field GroupCode",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "eligibleForMedicaid",
+      "label": "Are you eligible for Medicaid?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, III.5. ARE YOU ELIGIBLE FOR MEDICAID?, field EligibleForMedicaid"
+    },
+    {
+      "name": "enrolledInMedicarePartA",
+      "label": "Are you enrolled in Medicare Hospital Insurance Part A?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, III.6A. ARE YOU ENROLLED IN MEDICARE HOSPITAL INSURANCE PART A?, field EnrolledInMedicareHospitalInsurance"
+    },
+    {
+      "name": "medicarePartAEffectiveDate",
+      "label": "Medicare Part A effective date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, III.6B. EFFECTIVE DATE, field EffectiveDate",
+      "requiredWhen": {
+        "field": "enrolledInMedicarePartA",
+        "equals": true
+      }
+    },
+    {
+      "name": "medicareNumber",
+      "label": "Medicare number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, III.6C. MEDICARE NUMBER, field MedicareClaimNumber",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "enrolledInMedicarePartA",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasSpouse",
+      "label": "Do you have a spouse to declare?",
+      "type": "boolean",
+      "required": true,
+      "description": "Include a spouse even if you did not live together, as long as you contributed support last calendar year. Inferred gate for the spouse fields.",
+      "sourceRef": "VA Form 10-10EZ, SECTION IV - DEPENDENT INFORMATION, 1. SPOUSE'S NAME"
+    },
+    {
+      "name": "spouseFullName",
+      "label": "Spouse's name (Last, First, Middle Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, IV.1. SPOUSE'S NAME, field SpousesName",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseSocialSecurityNumber",
+      "label": "Spouse's Social Security number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, IV.1A. SPOUSE'S SOCIAL SECURITY NUMBER, field SPOUSESSN",
+      "validation": {
+        "pattern": "^[0-9]{3}-[0-9]{2}-[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Spouse's date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, IV.1B. SPOUSE'S DATE OF BIRTH, field SPOUSEDOB",
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseSex",
+      "label": "Spouse's sex",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, IV.1C. SPOUSE'S SEX, field Sex — 'MALE' / 'FEMALE'",
+      "validation": {
+        "enum": [
+          "male",
+          "female"
+        ]
+      },
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "dateOfMarriage",
+      "label": "Date of marriage",
+      "type": "date",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, IV.1D. DATE OF MARRIAGE, field DATEOFMARRIAGE",
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseAddressAndPhone",
+      "label": "Spouse's address and telephone number, if different from Veteran's",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, IV.1E. SPOUSE'S ADDRESS AND TELEPHONE NUMBER, field SpouseAddressAndTelephoneNumber",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "supportedNonresidentSpouseOrChild",
+      "label": "If your spouse or dependent child did not live with you last year, did you provide support?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, IV.3. IF YOUR SPOUSE OR DEPENDENT CHILD DID NOT LIVE WITH YOU LAST YEAR, DID YOU PROVIDE SUPPORT?, field RadioButtonList",
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "hasSpouse",
+            "equals": true
+          },
+          {
+            "field": "hasChild",
+            "equals": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "hasChild",
+      "label": "Do you have a dependent child to declare?",
+      "type": "boolean",
+      "required": true,
+      "description": "Biological, adopted, and stepchildren who are unmarried and under 18, or at least 18 but under 23 and attending school (full or part-time), or became permanently unable to support themselves before age 18. This document models one child inline, matching the base form's printed capacity ('use a separate sheet for additional dependents').",
+      "sourceRef": "VA Form 10-10EZ, SECTION IV - DEPENDENT INFORMATION, 2. CHILD'S NAME"
+    },
+    {
+      "name": "childFullName",
+      "label": "Child's name (Last, First, Middle Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "VA Form 10-10EZ, IV.2. CHILD'S NAME, field ChildsName",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "hasChild",
+        "equals": true
+      }
+    },
+    {
+      "name": "childDateOfBirth",
+      "label": "Child's date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, IV.2A. CHILD'S DATE OF BIRTH, field CHILDDOB",
+      "requiredWhen": {
+        "field": "hasChild",
+        "equals": true
+      }
+    },
+    {
+      "name": "childSocialSecurityNumber",
+      "label": "Child's Social Security number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "VA Form 10-10EZ, IV.2B. CHILD'S SOCIAL SECURITY NO., field CHILDSSN",
+      "validation": {
+        "pattern": "^[0-9]{3}-[0-9]{2}-[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "hasChild",
+        "equals": true
+      }
+    },
+    {
+      "name": "dateChildBecameDependent",
+      "label": "Date child became your dependent",
+      "type": "date",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, IV.2C. DATE CHILD BECAME YOUR DEPENDENT, field DATECHILDBECAMEYOURDEPENDENT",
+      "requiredWhen": {
+        "field": "hasChild",
+        "equals": true
+      }
+    },
+    {
+      "name": "childRelationshipToVeteran",
+      "label": "Child's relationship to you",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, IV.2D. CHILD'S RELATIONSHIP TO YOU, field RelationshipToYou — 'SON' / 'DAUGHTER' / 'STEPSON' / 'STEPDAUGHTER'",
+      "validation": {
+        "enum": [
+          "son",
+          "daughter",
+          "stepson",
+          "stepdaughter"
+        ]
+      },
+      "requiredWhen": {
+        "field": "hasChild",
+        "equals": true
+      }
+    },
+    {
+      "name": "childPermanentlyDisabledBefore18",
+      "label": "Was child permanently and totally disabled before the age of 18?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, IV.2E. WAS CHILD PERMANENTLY AND TOTALLY DISABLED BEFORE THE AGE OF 18?, field ChildPermanentlyDiasbledBefore18",
+      "requiredWhen": {
+        "field": "hasChild",
+        "equals": true
+      }
+    },
+    {
+      "name": "childAttendedSchoolLastYear",
+      "label": "If child is between 18 and 23 years of age, did child attend school last calendar year?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, IV.2F. IF CHILD IS BETWEEN 18 AND 23 YEARS OF AGE, DID CHILD ATTEND SCHOOL LAST CALENDAR YEAR?, field DidChildAttendSchooLastYear"
+    },
+    {
+      "name": "childCollegeVocationalExpensesPaidByChild",
+      "label": "Expenses paid by your dependent child with reportable income for college, vocational rehabilitation, or training",
+      "type": "number",
+      "required": false,
+      "description": "For example, tuition, books, materials.",
+      "sourceRef": "VA Form 10-10EZ, IV.2G. EXPENSES PAID BY YOUR DEPENDENT CHILD..., field ExpensesPaifByDependentCHild",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "veteranEmploymentStatus",
+      "label": "Veteran's employment status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, V.1A. VETERAN'S EMPLOYMENT STATUS, field VeteransEmploymentStatus — 'FULL TIME' / 'PART TIME' / 'NOT EMPLOYED' / 'RETIRED'",
+      "validation": {
+        "enum": [
+          "full_time",
+          "part_time",
+          "not_employed",
+          "retired"
+        ]
+      }
+    },
+    {
+      "name": "dateOfRetirement",
+      "label": "Date of retirement",
+      "type": "date",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, V.1B. DATE OF RETIREMENT, field DATEOFRETIREMENT",
+      "requiredWhen": {
+        "field": "veteranEmploymentStatus",
+        "equals": "retired"
+      }
+    },
+    {
+      "name": "employerCompanyName",
+      "label": "Company name",
+      "type": "string",
+      "required": false,
+      "description": "Completed if employed or retired.",
+      "sourceRef": "VA Form 10-10EZ, V.1C. COMPANY NAME, field CompanyName",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "veteranEmploymentStatus",
+        "in": [
+          "full_time",
+          "part_time",
+          "retired"
+        ]
+      }
+    },
+    {
+      "name": "employerCompanyAddress",
+      "label": "Company address",
+      "type": "string",
+      "required": false,
+      "description": "Completed if employed or retired.",
+      "sourceRef": "VA Form 10-10EZ, V.1D. COMPANY ADDRESS, field CompleteAddress",
+      "validation": {
+        "maxLength": 300
+      },
+      "requiredWhen": {
+        "field": "veteranEmploymentStatus",
+        "in": [
+          "full_time",
+          "part_time",
+          "retired"
+        ]
+      }
+    },
+    {
+      "name": "employerCompanyPhone",
+      "label": "Company phone number",
+      "type": "string",
+      "required": false,
+      "description": "Completed if employed or retired.",
+      "sourceRef": "VA Form 10-10EZ, V.1E. COMPANY PHONE NUMBER, field CompanyPhone",
+      "validation": {
+        "pattern": "^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "veteranEmploymentStatus",
+        "in": [
+          "full_time",
+          "part_time",
+          "retired"
+        ]
+      }
+    },
+    {
+      "name": "wantsToDiscloseFinancialInfo",
+      "label": "Will you provide your household financial information for last calendar year?",
+      "type": "boolean",
+      "required": true,
+      "description": "Financial disclosure is not required, but VA is not currently enrolling new applicants who decline unless they have other qualifying eligibility factors (e.g. former POW, Purple Heart recipient, recently discharged combat Veteran, TERA service, disability discharge, VA service-connected disability compensation, VA pension, Medicaid, Agent Orange exposure location, SW Asia Gulf War service, or 30+ days at Camp Lejeune between 1953-1987).",
+      "sourceRef": "VA Form 10-10EZ, SECTION VI - FINANCIAL DISCLOSURE, field Section6 — 'No, I do not wish to provide financial information...' / 'Yes, I will provide my household financial information...'"
+    },
+    {
+      "name": "veteranGrossEmploymentIncome",
+      "label": "Veteran — gross annual income from employment (excluding farm/ranch/property/business)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, VII.1 (Veteran column), field Table1[0].#subform[1].Amount[0]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "wantsToDiscloseFinancialInfo",
+        "equals": true
+      }
+    },
+    {
+      "name": "veteranNetFarmRanchIncome",
+      "label": "Veteran — net income from farm, ranch, property, or business",
+      "type": "number",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, VII.2 (Veteran column), field Table1[0].#subform[1].Amount[1]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "wantsToDiscloseFinancialInfo",
+        "equals": true
+      }
+    },
+    {
+      "name": "veteranOtherIncome",
+      "label": "Veteran — other income amounts (e.g. Social Security, compensation, pension, interest, dividends)",
+      "type": "number",
+      "required": false,
+      "description": "Excludes welfare.",
+      "sourceRef": "VA Form 10-10EZ, VII.3 (Veteran column), field Table1[0].#subform[1].Amount[2]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "wantsToDiscloseFinancialInfo",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseGrossEmploymentIncome",
+      "label": "Spouse — gross annual income from employment",
+      "type": "number",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, VII.1 (Spouse column), field Table1[0].#subform[2].Amount[3]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsToDiscloseFinancialInfo",
+            "equals": true
+          },
+          {
+            "field": "hasSpouse",
+            "equals": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "spouseNetFarmRanchIncome",
+      "label": "Spouse — net income from farm, ranch, property, or business",
+      "type": "number",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, VII.2 (Spouse column), field Table1[0].#subform[2].Amount[4]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsToDiscloseFinancialInfo",
+            "equals": true
+          },
+          {
+            "field": "hasSpouse",
+            "equals": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "spouseOtherIncome",
+      "label": "Spouse — other income amounts",
+      "type": "number",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, VII.3 (Spouse column), field Table1[0].#subform[2].Amount[5]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsToDiscloseFinancialInfo",
+            "equals": true
+          },
+          {
+            "field": "hasSpouse",
+            "equals": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "childGrossEmploymentIncome",
+      "label": "Child — gross annual income from employment",
+      "type": "number",
+      "required": false,
+      "description": "Include the child's income information if it could have been used to pay household expenses.",
+      "sourceRef": "VA Form 10-10EZ, VII.1 (Child 1 column), field Table1[0].#subform[3].Amount[6]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsToDiscloseFinancialInfo",
+            "equals": true
+          },
+          {
+            "field": "hasChild",
+            "equals": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "childNetFarmRanchIncome",
+      "label": "Child — net income from farm, ranch, property, or business",
+      "type": "number",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, VII.2 (Child 1 column), field Table1[0].#subform[3].Amount[7]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsToDiscloseFinancialInfo",
+            "equals": true
+          },
+          {
+            "field": "hasChild",
+            "equals": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "childOtherIncome",
+      "label": "Child — other income amounts",
+      "type": "number",
+      "required": false,
+      "sourceRef": "VA Form 10-10EZ, VII.3 (Child 1 column), field Table1[0].#subform[3].Amount[8]",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsToDiscloseFinancialInfo",
+            "equals": true
+          },
+          {
+            "field": "hasChild",
+            "equals": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "nonReimbursedMedicalExpenses",
+      "label": "Total non-reimbursed medical expenses paid by you or your spouse",
+      "type": "number",
+      "required": false,
+      "description": "E.g. payments for doctors, dentists, medications, Medicare, health insurance, hospital and nursing home. Do not list expenses you expect to be reimbursed for. VA calculates a deductible and the net medical expenses you may claim.",
+      "sourceRef": "VA Form 10-10EZ, VIII.1, field Section8_Q1",
+      "validation": {
+        "minimum": 0
+      },
+      "visibleWhen": {
+        "field": "wantsToDiscloseFinancialInfo",
+        "equals": true
+      }
+    },
+    {
+      "name": "funeralBurialExpensesPaid",
+      "label": "Amount paid last calendar year for funeral and burial expenses for your deceased spouse or dependent child",
+      "type": "number",
+      "required": false,
+      "description": "Including prepaid burial expenses. Also enter the spouse or child's information in Section IV.",
+      "sourceRef": "VA Form 10-10EZ, VIII.2, field Section8_Q2",
+      "validation": {
+        "minimum": 0
+      },
+      "visibleWhen": {
+        "field": "wantsToDiscloseFinancialInfo",
+        "equals": true
+      }
+    },
+    {
+      "name": "educationalExpensesPaid",
+      "label": "Amount paid last calendar year for your own college or vocational educational expenses",
+      "type": "number",
+      "required": false,
+      "description": "E.g. tuition, books, fees, materials. Do not list dependents' educational expenses.",
+      "sourceRef": "VA Form 10-10EZ, VIII.3, field Section8_Q3",
+      "validation": {
+        "minimum": 0
+      },
+      "visibleWhen": {
+        "field": "wantsToDiscloseFinancialInfo",
+        "equals": true
+      }
+    },
+    {
+      "name": "signatureOfApplicant",
+      "label": "Signature of applicant (sign in ink)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The Veteran, or an individual to whom Power of Attorney has been delegated, must sign and date the form. If signing with an 'X', 2 witnesses who know the signer must also sign and print their names. By submitting, the applicant agrees to pay applicable VA copayments and assigns to VA any third-party claim for the cost of medical services provided, per 38 U.S.C. Section 1729 and 42 U.S.C. 2651.",
+      "sourceRef": "VA Form 10-10EZ, SIGNATURE OF APPLICANT, field SignatureOfApplicant",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "dateSigned",
+      "label": "Date signed",
+      "type": "date",
+      "required": true,
+      "sourceRef": "VA Form 10-10EZ, DATE, field DateSigned"
+    }
+  ],
+  "documents": [
+    {
+      "id": "dischargeOrSeparationPapers",
+      "label": "Discharge or separation papers (e.g. DD-214, or 'WD' Form for WWII Veterans)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "VA Form 10-10EZ, Section II instructions, page 1 — may be attached with the signed application to expedite processing if not currently receiving VA benefits"
+    },
+    {
+      "id": "militaryExposureStatement",
+      "label": "Written statement regarding a claimed military exposure, or witness statements",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "VA Form 10-10EZ, Section II instructions, page 1 \"If claiming a Military Exposure, you may provide us a written statement, or statements from people who witnessed your claimed exposure(s).\""
+    },
+    {
+      "id": "powerOfAttorneyDocument",
+      "label": "Power of Attorney documents",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "VA Form 10-10EZ, page 3 'Attach any continuation sheets, a copy of supporting materials and your Power of Attorney documents to your application.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "general_information",
+      "title": "Section I — General information",
+      "fields": [
+        "typeOfBenefitApplyingFor",
+        "veteranFullName",
+        "preferredName",
+        "mothersMaidenName",
+        "sex",
+        "raceEthnicity",
+        "socialSecurityNumber",
+        "dateOfBirth",
+        "placeOfBirth",
+        "preferredLanguage",
+        "religion",
+        "mailingAddressStreet",
+        "mailingAddressCity",
+        "mailingAddressState",
+        "mailingAddressZipCode",
+        "mailingAddressCounty",
+        "homePhone",
+        "mobilePhone",
+        "emailAddress",
+        "homeAddressSameAsMailing",
+        "homeAddressStreet",
+        "homeAddressCity",
+        "homeAddressState",
+        "homeAddressZipCode",
+        "homeAddressCounty",
+        "currentMaritalStatus",
+        "nextOfKinName",
+        "nextOfKinAddress",
+        "nextOfKinRelationship",
+        "nextOfKinPhone",
+        "emergencyContactName",
+        "emergencyContactPhone",
+        "designee",
+        "preferredVaFacility",
+        "wantsFirstAppointmentContact"
+      ],
+      "next": "military_service"
+    },
+    {
+      "id": "military_service",
+      "title": "Section II — Military service information",
+      "fields": [
+        "lastBranchOfService",
+        "lastEntryDate",
+        "futureDischargeDate",
+        "lastDischargeDate",
+        "dischargeType",
+        "militaryServiceNumber",
+        "isPurpleHeartRecipient",
+        "isFormerPow",
+        "servedCombatTheaterAfter1998",
+        "dischargedForServiceConnectedDisability",
+        "servedGulfWar1990to1998",
+        "hasVaServiceConnectedRating",
+        "servedIonizingRadiationLocation",
+        "servedGulfWarHazardLocation",
+        "gulfWarHazardServiceFrom",
+        "gulfWarHazardServiceTo",
+        "deployedInSupportOfNamedOperations",
+        "servedHerbicideLocation",
+        "herbicideServiceFrom",
+        "herbicideServiceTo",
+        "exposureCategory",
+        "exposureCategoryOtherDescription",
+        "exposureServiceFrom",
+        "exposureServiceTo"
+      ],
+      "next": "insurance_information"
+    },
+    {
+      "id": "insurance_information",
+      "title": "Section III — Insurance information",
+      "fields": [
+        "hasHealthInsurance",
+        "healthInsuranceCompanyDetails",
+        "policyHolderName",
+        "policyNumber",
+        "groupCode",
+        "eligibleForMedicaid",
+        "enrolledInMedicarePartA",
+        "medicarePartAEffectiveDate",
+        "medicareNumber"
+      ],
+      "next": "dependent_information"
+    },
+    {
+      "id": "dependent_information",
+      "title": "Section IV — Dependent information",
+      "fields": [
+        "hasSpouse",
+        "spouseFullName",
+        "spouseSocialSecurityNumber",
+        "spouseDateOfBirth",
+        "spouseSex",
+        "dateOfMarriage",
+        "spouseAddressAndPhone",
+        "supportedNonresidentSpouseOrChild",
+        "hasChild",
+        "childFullName",
+        "childDateOfBirth",
+        "childSocialSecurityNumber",
+        "dateChildBecameDependent",
+        "childRelationshipToVeteran",
+        "childPermanentlyDisabledBefore18",
+        "childAttendedSchoolLastYear",
+        "childCollegeVocationalExpensesPaidByChild"
+      ],
+      "next": "employment_information"
+    },
+    {
+      "id": "employment_information",
+      "title": "Section V — Employment information",
+      "fields": [
+        "veteranEmploymentStatus",
+        "dateOfRetirement",
+        "employerCompanyName",
+        "employerCompanyAddress",
+        "employerCompanyPhone"
+      ],
+      "next": "financial_disclosure"
+    },
+    {
+      "id": "financial_disclosure",
+      "title": "Section VI — Financial disclosure",
+      "fields": [
+        "wantsToDiscloseFinancialInfo"
+      ],
+      "next": "income_and_expenses"
+    },
+    {
+      "id": "income_and_expenses",
+      "title": "Sections VII-VIII — Income and deductible expenses",
+      "fields": [
+        "veteranGrossEmploymentIncome",
+        "veteranNetFarmRanchIncome",
+        "veteranOtherIncome",
+        "spouseGrossEmploymentIncome",
+        "spouseNetFarmRanchIncome",
+        "spouseOtherIncome",
+        "childGrossEmploymentIncome",
+        "childNetFarmRanchIncome",
+        "childOtherIncome",
+        "nonReimbursedMedicalExpenses",
+        "funeralBurialExpensesPaid",
+        "educationalExpensesPaid"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Section IX — Consent and signature",
+      "fields": [
+        "signatureOfApplicant",
+        "dateSigned"
+      ]
+    }
+  ]
+}
