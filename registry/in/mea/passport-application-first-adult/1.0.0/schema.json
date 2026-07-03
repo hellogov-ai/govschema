@@ -1,0 +1,556 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "in/mea/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "India Fresh Passport Application (Ordinary, Adult, Citizen by Birth)",
+  "description": "Apply for a first (never previously issued) Indian ordinary passport as an adult who is a citizen of India by birth — Case I(A)(1) of the Ministry of External Affairs' (MEA) applicant-category table, the majority pathway for an Indian-resident adult applicant with no prior passport, name change, or pending litigation complications beyond a simple pending-criminal-case declaration. Application is submitted through the Passport Seva Online Portal and finalised at an in-person appointment at a Passport Seva Kendra (PSK), Post Office PSK (POPSK), District Passport Cell (DPC), Speed Post Centre (SPC), or Citizen Service Centre (CSC), where documents are verified and biometrics/photograph captured; a paper Passport Application Form and Supplementary Form (ICR-scanned) remain in use at non-PSK collection centres and share the same columns modelled here. This document models the applicant-detail, family-detail, address, and service-option fields common to every Case I(A)(1) applicant. It does not model: minor applicants (Case I(B), which requires parent/guardian consent per Annexure C/D and is a distinct schema); re-issue of an existing/expired/lost/damaged passport; citizenship by descent, registration, or naturalization (Case I(A)(2)/(3), which require different supporting documents); diplomatic/official passport holders; or a single authoritative fee figure, since the fee schedule (Table 4) changes over time and is not encoded here as a fixed amount, consistent with de/bmi/passport-application and nl/rvig/passport-application. It does not submit the application; the live passportindia.gov.in Passport Seva portal and the Regional Passport Office are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of External Affairs, Government of India (Passport Seva / Regional Passport Office), under the Passports Act, 1967",
+    "abbreviation": "MEA",
+    "url": "https://www.passportindia.gov.in"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-IN"
+  },
+  "source": {
+    "url": "https://www.passportindia.gov.in/AppOnlineProject/pdf/ApplicationformInstructionBooklet-V3.0.pdf",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Passport Application Form and Supplementary Form — Instructions Booklet V3.0 (Ministry of External Affairs)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored directly from the MEA's official 'Application Form Instruction Booklet V3.0' PDF (fetched directly, HTTP 200), which gives column-by-column guidance for the Passport Application Form and Supplementary Form, the applicant-category table (Table 2), the overall document list (Table 3), and the fee list (Table 4). The PDF renders its text via embedded CID-keyed fonts that a naive content-stream (Tj/TJ paren) regex extraction cannot decode (it recovers only kerning-array whitespace); a scratch npm install of pdfjs-dist (legacy build, Node require) was used instead to run its font glyph-to-Unicode mapping and extract full page text — a new technique for this class of PDF, distinct from the raster-and-read technique used for GOV-634's glyph-obfuscated PDF and the zlib-stream/paren-regex technique used elsewhere, applicable when a PDF has real embedded-font text (not images) but non-trivial CID encoding poppler/pdftoppm is unavailable to rasterize. The instruction booklet itself states field guidance narratively ('put a cross in the appropriate box') without listing exact enum strings for gender/marital status/employment type; those three enumerations were additionally cross-checked against a raw (non-AI-summarised) curl fetch of bankbazaar.com's independent field-by-field summary of the live application form, which lists 'Gender: Male, Female, Transgender', 'Marital Status: Single, Married, Divorced, Widow/Widower, Separated', and the employment-type list verbatim — a secondary corroborating source, not the primary MEA source, flagged here honestly per the same source-fidelity discipline used for prior schemas' caveats. Status remains 'draft' pending a live-portal field-by-field pass. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "previouslyHeldIndianPassport",
+      "label": "Have you ever held an Indian passport, including one that has since expired?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "A 'Fresh Passport' application (Column 1.1) is only for an applicant who has never held a passport. An applicant who has previously held one uses a 're-issue of passport' application instead — not modelled in this document.",
+      "sourceRef": "Instructions Booklet V3.0, Column 1: Service Required — 'Put a cross against Fresh Passport if you have never held a passport'"
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Is the applicant under 18 years of age?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "A minor applicant (Case I(B)) requires parent/legal-guardian consent (Annexure C or D) and a different supporting-document set, and must attend with the consenting parent/guardian — a distinct schema, not modelled here.",
+      "sourceRef": "Instructions Booklet V3.0, Table 2 — Case I(B) 'Minor'; Annexure C/D"
+    },
+    {
+      "name": "citizenshipBasis",
+      "label": "Citizenship of India by",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": ["birth"],
+      "description": "birth = born an Indian citizen (Case I(A)(1), modelled in this document). descent = born to Indian parent(s) outside India (Case I(A)(2)). registration_naturalization = citizenship granted by the Ministry of Home Affairs (Case I(A)(3)). The descent and registration/naturalization pathways require different supporting documents (Document No. 4/5/6, or 7) and are not modelled here.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.8: 'Citizenship of India by' — birth, descent, registration, or naturalization; Table 2 Case I(A)(1)/(2)/(3)",
+      "validation": { "enum": ["birth", "descent", "registration_naturalization"] }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Leave blank if you do not use a surname; write your full name in Given Name instead. Some embassies (e.g. UAE, European countries) insist on a surname for visa issuance.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.1: Applicant's Given Name & Surname",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "givenName",
+      "label": "Given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full given name as it should appear on the passport, in CAPITAL LETTERS, with no initials or honorifics/titles.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.1: Applicant's Given Name & Surname",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "hasAlias",
+      "label": "Are you known by any other name (alias)?",
+      "type": "boolean",
+      "required": true,
+      "description": "For example, if your name is Rajesh Bansal and your alias is Raja, answer yes and give the alias in the Supplementary Form.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.2: Are you known by any other names (aliases)?"
+    },
+    {
+      "name": "aliasGivenName",
+      "label": "Alias given name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "hasAlias", "equals": true },
+      "description": "Given name portion of the alias, per Supplementary Form Column 1.1.",
+      "sourceRef": "Instructions Booklet V3.0, Supplementary Form Column 1.1: Alias Name1, Given Name & Surname",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "hasNameEverChanged",
+      "label": "Have you ever changed your name?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applies to any change, even marginal (e.g. Harvinder to Harjinder), and to a name/surname changed on marriage.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.3: Have you ever changed your name?"
+    },
+    {
+      "name": "previousGivenName",
+      "label": "Previous given name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "hasNameEverChanged", "equals": true },
+      "description": "Given name portion of the name held before the change, per Supplementary Form Column 2.1.",
+      "sourceRef": "Instructions Booklet V3.0, Supplementary Form Column 2.1: Previous Name1, Given Name & Surname",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "DD-MM-YYYY on the source form; represented here as YYYY-MM-DD. Requires an attached proof-of-date-of-birth document.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.4: Date of Birth"
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "If born before the partition of India (15 August 1947) at a place now in Pakistan or Bangladesh, write 'Undivided India' as the place of birth and leave District/State blank.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthCity",
+      "label": "Place of birth (village/town/city)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "placeOfBirthCountry", "equals": "India" },
+      "description": "Only required if born in India. Leave blank if born outside India.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth — 'if born in India, write the place of birth ... under the respective headings'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthDistrict",
+      "label": "District of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "placeOfBirthCountry", "equals": "India" },
+      "description": "Only required if born in India.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthState",
+      "label": "State/Union Territory of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "placeOfBirthCountry", "equals": "India" },
+      "description": "Only required if born in India.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Put a cross on the appropriate box.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.6; corroborated verbatim ('Gender: Male, Female, Transgender') against a raw fetch of bankbazaar.com's application-form field summary",
+      "validation": { "enum": ["male", "female", "transgender"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Put a cross on the appropriate box. Married applicants must also give a spouse name.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.7; corroborated verbatim ('Marital Status: Single, Married, Divorced, Widow/Widower, Separated') against a raw fetch of bankbazaar.com's application-form field summary",
+      "validation": { "enum": ["single", "married", "divorced", "widow_widower", "separated"] }
+    },
+    {
+      "name": "panNumber",
+      "label": "PAN (if available)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Permanent Account Number issued by the Income Tax Department, if the applicant has one.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.9",
+      "validation": { "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$", "maxLength": 10 }
+    },
+    {
+      "name": "voterIdNumber",
+      "label": "Voter ID (if available)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Elector's Photo Identity Card (EPIC) number issued by the Election Commission of India, if the applicant has one.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.10",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "employmentType",
+      "label": "Employment type",
+      "type": "enum",
+      "required": true,
+      "description": "Put a cross on the appropriate box. Selecting a government/PSU/statutory-body category requires an Identity Certificate (Annexure A) from the employer.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.11; corroborated verbatim against a raw fetch of bankbazaar.com's application-form field summary",
+      "validation": {
+        "enum": [
+          "government", "psu", "statutory_body", "retired_government_servant",
+          "self_employed", "private", "homemaker", "not_employed",
+          "retired_private_service", "student",
+          "cii_ficci_assocham_member_company_owner_partner_director", "others"
+        ]
+      }
+    },
+    {
+      "name": "employerOrganizationName",
+      "label": "Name of organization (if employed in Government/Statutory Body/PSU)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "employmentType", "in": ["government", "psu", "statutory_body"] },
+      "description": "Name of the Government office, Statutory Body, or Public Sector Undertaking employing the applicant.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.12",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "isSpouseGovernmentServant",
+      "label": "Is your spouse a government servant?",
+      "type": "boolean",
+      "required": true,
+      "description": "Affects which supporting documents are required (see Section D of the source booklet). Applies to the applicant's spouse; the equivalent question for a minor applicant's parent is out of scope of this adult-only document.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.13: Is either of your parent (in case of minor)/spouse, a government servant?"
+    },
+    {
+      "name": "educationalQualification",
+      "label": "Educational qualification",
+      "type": "string",
+      "required": true,
+      "description": "Highest educational qualification, as selected on the source form. Modelled here as free text because the source booklet directs the applicant to 'put a cross in the appropriate box' without enumerating the box labels; a live-portal pass is needed to confirm the exact closed list (tracked for a future MINOR update).",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.14: Educational Qualification",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "eligibleForNonECR",
+      "label": "Are you eligible for Non-ECR (Emigration Check Not Required) category?",
+      "type": "boolean",
+      "required": true,
+      "description": "Non-ECR (formerly ECNR) status is available to, among others, matriculation-and-above qualification holders, income-tax payers, professional degree holders, and persons over 50. If not eligible, the passport is issued in the ECR category, printed on the passport. A true answer requires a supporting Non-ECR eligibility document.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.15: Are you eligible for Non-ECR Category?"
+    },
+    {
+      "name": "distinguishingMark",
+      "label": "Visible distinguishing mark",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "E.g. a mole or birth mark on the forehead. Leave blank if none.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.16: Visible distinguishing mark",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "aadhaarNumber",
+      "label": "Aadhaar number (if available)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "12-digit Aadhaar number issued by the Unique Identification Authority of India (UIDAI). Furnishing it can expedite processing and it may also serve as proof of address/identity.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.17: Aadhaar Number",
+      "validation": { "pattern": "^[0-9]{12}$" }
+    },
+    {
+      "name": "fatherGivenName",
+      "label": "Father's given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 3: Family Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "motherGivenName",
+      "label": "Mother's given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 3: Family Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "legalGuardianName",
+      "label": "Legal guardian's name (if applicable)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only applicable where a legal guardian, rather than a parent, has custody. Requires an attached Court decree/order.",
+      "sourceRef": "Instructions Booklet V3.0, Column 3: Family Details — 'You need to attach Court decree/order in respect of your legal guardian'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse's name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "maritalStatus", "equals": "married" },
+      "description": "As written in the spouse's own passport, if the spouse holds one.",
+      "sourceRef": "Instructions Booklet V3.0, Column 3.4 — 'If your spouse has a passport, write his/her name in Column 3.4 as written in the passport'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressLine1",
+      "label": "Present residential address — House No. and Street Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4.2: House No. and Street Name",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "presentAddressCity",
+      "label": "Present address — City/Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4: Present Residential Address Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressState",
+      "label": "Present address — State/Union Territory",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4: Present Residential Address Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressPinCode",
+      "label": "Present address — PIN code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4: Present Residential Address Details",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "permanentAddressSameAsPresent",
+      "label": "Is your permanent address the same as your present address?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Instructions Booklet V3.0, Column 4.3: Is permanent address same as present address?"
+    },
+    {
+      "name": "permanentAddressLine1",
+      "label": "Permanent address — House No. and Street Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "permanentAddressSameAsPresent", "equals": false },
+      "sourceRef": "Instructions Booklet V3.0, Supplementary Form Column 3: Permanent Residential Address (If it is different from present residential address)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency contact — name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 5: Emergency Contact Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact — phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 5: Emergency Contact Details",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "emergencyContactAddress",
+      "label": "Emergency contact — address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 5: Emergency Contact Details",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "hasPendingCriminalCase",
+      "label": "Is a criminal case pending against you in any court?",
+      "type": "boolean",
+      "required": true,
+      "description": "A pending criminal case does not bar an application, but the applicant must enclose written court permission to travel abroad; a short-validity (typically one year) passport is normally issued instead.",
+      "sourceRef": "Instructions Booklet V3.0, Column 7: Other Details"
+    },
+    {
+      "name": "processingSpeed",
+      "label": "Type of application",
+      "type": "enum",
+      "required": true,
+      "description": "normal = standard processing. tatkaal = expedited scheme; no proof of urgency is required and Post-Passport-Issuance police verification applies in all Tatkaal cases; a higher fee applies.",
+      "sourceRef": "Instructions Booklet V3.0, Column 1.4: Type of Application",
+      "validation": { "enum": ["normal", "tatkaal"] }
+    },
+    {
+      "name": "passportBookletType",
+      "label": "Passport booklet size",
+      "type": "enum",
+      "required": true,
+      "description": "36-page or 60-page booklet; the 60-page booklet carries a higher fee.",
+      "sourceRef": "Instructions Booklet V3.0, Column 1.5: Type of Passport Booklet",
+      "validation": { "enum": ["36_pages", "60_pages"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "proofOfPresentAddress",
+      "label": "Proof of present residential address",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "water_bill", "telephone_bill", "electricity_bill", "income_tax_assessment_order",
+        "election_photo_id_card", "gas_connection_bill", "employer_certificate",
+        "spouse_passport_copy", "aadhaar_card", "rent_agreement", "bank_account_passbook"
+      ],
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 1: Proof of Present Address"
+    },
+    {
+      "id": "proofOfDateOfBirth",
+      "label": "Proof of date of birth",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "birth_certificate", "school_leaving_or_matriculation_certificate", "life_insurance_policy_bond",
+        "service_record_extract", "driving_licence", "election_photo_id_card", "pan_card"
+      ],
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 2: Proof of Date of Birth"
+    },
+    {
+      "id": "proofOfNonECRCategory",
+      "label": "Documentary proof of eligibility for Non-ECR category",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "eligibleForNonECR", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 3; Column 2.15"
+    },
+    {
+      "id": "identityCertificate",
+      "label": "Identity Certificate from employer (Annexure 'A')",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "employmentType", "in": ["government", "psu", "statutory_body"] },
+      "belongsTo": "applicant",
+      "issuingAuthority": "The applicant's Central/State Government department, Statutory Body, or Public Sector Undertaking employer",
+      "sourceRef": "Instructions Booklet V3.0, Annexure 'A'; Table 3, Document No. 45"
+    },
+    {
+      "id": "courtPermissionLetter",
+      "label": "Court permission to travel abroad",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "hasPendingCriminalCase", "equals": true },
+      "belongsTo": "applicant",
+      "statement": "Written permission granted by the Court allowing the applicant to travel abroad notwithstanding the pending criminal case.",
+      "sourceRef": "Instructions Booklet V3.0, Column 7: Other Details"
+    },
+    {
+      "id": "applicationFeePayment",
+      "label": "Passport application fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "methods": ["cash", "demand_draft", "credit_card", "debit_card"],
+      "sourceRef": "Instructions Booklet V3.0, Section E: Fee List; Column 8 — payment method depends on the submission location (cash only at PSK/POPSK; cash or demand draft at SPC; demand draft only at DPC; cash or card at CSC). Fee amount varies by booklet size, validity, and Tatkaal election (Table 4) and changes over time; not encoded here as a single figure, consistent with de/bmi/passport-application and nl/rvig/passport-application."
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Eligibility for the fresh-passport, adult, citizen-by-birth pathway",
+      "fields": ["previouslyHeldIndianPassport", "applicantIsMinor", "citizenshipBasis"],
+      "transitions": [
+        { "to": null, "exitReason": "not_eligible_previously_held_passport_use_reissue", "when": { "field": "previouslyHeldIndianPassport", "equals": true } },
+        { "to": null, "exitReason": "not_eligible_minor_applicant", "when": { "field": "applicantIsMinor", "equals": true } },
+        { "to": null, "exitReason": "not_eligible_citizenship_basis_not_birth", "when": { "field": "citizenshipBasis", "notEquals": "birth" } },
+        { "to": "applicant_details" }
+      ]
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": [
+        "surname", "givenName", "hasAlias", "aliasGivenName", "hasNameEverChanged", "previousGivenName",
+        "dateOfBirth", "placeOfBirthCountry", "placeOfBirthCity", "placeOfBirthDistrict", "placeOfBirthState",
+        "gender", "maritalStatus", "panNumber", "voterIdNumber", "employmentType", "employerOrganizationName",
+        "isSpouseGovernmentServant", "educationalQualification", "eligibleForNonECR", "distinguishingMark", "aadhaarNumber"
+      ],
+      "next": "family_details"
+    },
+    {
+      "id": "family_details",
+      "title": "Family details",
+      "fields": ["fatherGivenName", "motherGivenName", "legalGuardianName", "spouseName"],
+      "next": "address_and_contact"
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Address and emergency contact",
+      "fields": [
+        "presentAddressLine1", "presentAddressCity", "presentAddressState", "presentAddressPinCode",
+        "permanentAddressSameAsPresent", "permanentAddressLine1",
+        "emergencyContactName", "emergencyContactPhone", "emergencyContactAddress"
+      ],
+      "next": "service_options"
+    },
+    {
+      "id": "service_options",
+      "title": "Other details and service options",
+      "fields": ["hasPendingCriminalCase", "processingSpeed", "passportBookletType"]
+    }
+  ]
+}
