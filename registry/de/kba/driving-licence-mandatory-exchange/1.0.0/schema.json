@@ -1,0 +1,365 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/kba/driving-licence-mandatory-exchange",
+  "version": "1.0.0",
+  "title": "Germany Mandatory Driving Licence Exchange (Führerschein-Umtausch, Pflichtumtausch alter Fahrerlaubnisse in den EU-Kartenführerschein)",
+  "description": "Exchange an older German driving licence document (a pre-1999 paper 'Lappen' or an early plastic-card licence issued before 19 January 2013) for the current EU card-format licence, as required by Anlage 8e (implementing § 24a Abs. 2 Satz 1) der Fahrerlaubnis-Verordnung (FeV), itself transposing the Third EU Driving Licence Directive (2006/126/EC). The exchange is purely administrative: the underlying driving entitlement is carried over unchanged and, ordinarily, without a new exam, medical check, or eyesight test — those are only required for an applicant who additionally elects to keep or add a category-upgrade option this schema also models (e.g. a pre-1999 Class 3 holder aged 50+ retaining the extended >12t towing combination, or adding Class T for agricultural/forestry vehicles), per Anlage 5 and Anlage 6 FeV. Every licence holder must complete the exchange by 19 January 2033 at the latest; older cohorts face earlier deadlines set out in Anlage 8e FeV's two tables (by birth year for licences issued through 1998, by issue year for licences issued from 1999 onward) — this schema models the request itself, not the deadline computation, which the source material expresses as tables rather than a formula this format's condition grammar can express against a single scalar field (see VERIFICATION.md). Applications are filed with the applicant's local Fahrerlaubnisbehörde (driving licence authority, typically the Straßenverkehrsamt of a Landkreis or kreisfreie Stadt); the Kraftfahrt-Bundesamt (KBA) maintains the federal Fahrerlaubnisregister these local authorities check and record against. This document is modelled from a representative fillable municipal application form (Landkreis Ludwigsburg, Baden-Württemberg); exact office names, submission channels (paper, in-person, or a local online portal), and minor layout details vary by the several hundred individual Fahrerlaubnisbehörden nationwide, while the federal legal basis, required documents, and fee are uniform. See VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Kraftfahrt-Bundesamt (Fahrerlaubnisregister, federal framework) / local Fahrerlaubnisbehörde (Straßenverkehrsamt, driving licence office of the Landkreis or kreisfreie Stadt)",
+    "abbreviation": "KBA",
+    "url": "https://www.kba.de"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://www.landkreis-ludwigsburg.de/fileadmin/user_upload/seiteninhalte/info-und-a-b-z-formulare/fahrerlaubnis/antrag-auf-fuehrerscheinumtausch-2018-ausfuellbar.pdf",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Landkreis Ludwigsburg — 'Antrag auf Umstellung einer Fahrerlaubnis alten Rechts in einen neuen EU-Kartenführerschein' (fillable municipal application form, implementing Anlage 8e FeV)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from a live, fillable municipal AcroForm (Landkreis Ludwigsburg) for the field-level data model, cross-checked against the federal deadline tables published in Anlage 8e FeV (gesetze-im-internet.de, the official federal law portal) and the Bundesregierung's and ADAC's own current guidance for the exchange's cost, required documents, and deadline framework. Because the process is executed by several hundred independent local Fahrerlaubnisbehörden rather than one national portal, the field-by-field comparison this practice calls for has been completed against one representative office's live fillable form (Baden-Württemberg), not against every local variant — other Länder's equivalent forms (Rendsburg-Eckernförde, Potsdam) were spot-checked for field-set consistency but not extracted structurally. Status remains draft pending a cross-check against a second Land's office. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "lastName",
+      "label": "Last name (Name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Name:'"
+    },
+    {
+      "name": "birthNameIfDifferent",
+      "label": "Birth name, if different from last name (Geburtsname bei Abweichung vom Familiennamen)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Geburtsname (bei Abweichung vom Familiennamen):'"
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s) (Vorname/n)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Vorname/n:'"
+    },
+    {
+      "name": "sex",
+      "label": "Sex (Geschlecht)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "'Geschlecht: w   m'",
+      "validation": {
+        "enum": ["W", "M"]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth (Geburtsdatum)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Together with currentLicenceIssueDate, determines which of Anlage 8e FeV's two deadline tables applies to the applicant and by which date the exchange is compulsory. This schema does not compute that deadline (see top-level description and VERIFICATION.md).",
+      "sourceRef": "'Geburtsdatum:'"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth (Geburtsort)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Geburtsort:'"
+    },
+    {
+      "name": "addressStreet",
+      "label": "Home address — street and house number (Straße)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Straße:'"
+    },
+    {
+      "name": "addressPostalCodeAndCity",
+      "label": "Home address — postal code and city (PLZ/Ort)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Modelled as a single combined field, matching the source form's own single 'PLZOrt' widget rather than separate postal-code and city boxes.",
+      "sourceRef": "'PLZ/Ort:'"
+    },
+    {
+      "name": "phone",
+      "label": "Telephone (Tel.)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Tel.:'"
+    },
+    {
+      "name": "email",
+      "label": "Email address (Email-Adresse)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Email-Adresse:'"
+    },
+    {
+      "name": "currentLicenceIssuingAuthority",
+      "label": "Current licence — issuing authority (Ausstellende Behörde)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Ausstellende Behörde:'"
+    },
+    {
+      "name": "currentLicenceIssueDate",
+      "label": "Current licence — issue date (Ausstellungsdatum)",
+      "type": "date",
+      "required": true,
+      "description": "Determines which Anlage 8e FeV deadline table applies: Table I (by birth year) for licences issued through 31 December 1998, Table II (by issue year) for licences issued from 1 January 1999 onward.",
+      "sourceRef": "'Ausstellungsdatum:'"
+    },
+    {
+      "name": "currentLicenceNumber",
+      "label": "Current licence — document number (Führerscheinnummer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Führerscheinnummer:'"
+    },
+    {
+      "name": "currentLicenceCategories",
+      "label": "Current licence — categories held (Fahrerlaubnis-Klasse(n))",
+      "type": "string",
+      "required": true,
+      "description": "Comma-separated list of category codes drawn from the form's own checklist. The new EU card licence's category set is derived from these under Anlage 3 (conversion table) and § 76 FeV's transitional provisions; this schema records the categories the applicant declares as currently held, not the converted output categories, which the issuing authority determines.",
+      "sourceRef": "'Fahrerlaubnis-Klasse(n): 1  1a  1b  2  3  4  5  A1  A  B  BE  C1  C1E  C  CE  D1  D1E  D  DE  M  L  S  T'",
+      "validation": {
+        "pattern": "^(1a|1b|1|2|3|4|5|A1|A|B|BE|C1E|C1|CE|C|D1E|D1|DE|D|M|L|S|T)(\\s*,\\s*(1a|1b|1|2|3|4|5|A1|A|B|BE|C1E|C1|CE|C|D1E|D1|DE|D|M|L|S|T))*$"
+      }
+    },
+    {
+      "name": "isPre1999Class3Holder",
+      "label": "Are you exchanging a Class 3 licence issued before 1 January 1999?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates the two Class-3-specific upgrade options below, which only apply to holders converting a pre-1999 old-law Class 3 entitlement (the old combined car/light-truck/trailer class that no longer exists as such in the current class system).",
+      "sourceRef": "'Als Inhaber(in) der alten Fahrerlaubnisklasse 3 beantrage ich zudem folgende Fahrerlaubnisklassen:'"
+    },
+    {
+      "name": "requestsExtendedTowingCombination",
+      "label": "Do you want to keep the extended >12t–18.5t towing combination previously included in Class 3?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isPre1999Class3Holder", "equals": true },
+      "visibleWhen": { "field": "isPre1999Class3Holder", "equals": true },
+      "fieldRole": "eligibility",
+      "description": "Class 3 holders otherwise receive unrestricted Class C1E automatically; this option additionally retains the old class's larger combination (tractor unit up to 7.5t plus a trailer up to 1.5x the tractor's weight, maximum 3 axles), which by default is granted only until age 50 and needs supporting medical and vision certificates to extend a further 5 years for an applicant who has already turned 50 at the time of application. Gates medicalCertificate and visionTestCertificate.",
+      "sourceRef": "'Ich beantrage die bisher in der alten Fahrerlaubnisklasse 3 enthaltene Zugkombination über 12 t bis 18,5 t ... Mir ist bekannt, dass die obige Zugkombination bis zum 50. Lebensjahr befristet erteilt wird. Da ich zum Zeitpunkt der Antragstellung mein 50. Lebensjahr bereits vollendet habe, füge ich für eine weitere auf fünf Jahre befristete Erteilung der Zugkombination die folgenden Unterlagen bei: ärztliche Untersuchung nach Anlage 5 Nr. 1 ... augenärztliche Untersuchung nach Anlage 6 Nr. 2'"
+    },
+    {
+      "name": "requestsClassT",
+      "label": "Do you request Class T (agricultural and forestry vehicles)?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isPre1999Class3Holder", "equals": true },
+      "visibleWhen": { "field": "isPre1999Class3Holder", "equals": true },
+      "fieldRole": "eligibility",
+      "description": "Only available to applicants working in agriculture or forestry; once the pre-1999 Class 3 conversion is completed, Class T can no longer be added retroactively. Gates agriculturalActivityProof.",
+      "sourceRef": "'Fahrerlaubnisklasse T: ... Ich bin in der Land- bzw. Forstwirtschaft tätig und beantrage daher die Erteilung der Klasse T. ... Hinweis: Nach erfolgter Umstellung der alten Fahrerlaubnisklasse 3 ist eine nachträgliche Beantragung und Zuteilung der Fahrerlaubnisklasse T nicht mehr möglich!'"
+    },
+    {
+      "name": "issuingAuthorityRecordsUnavailable",
+      "label": "Was your current licence issued by an authority other than your present Fahrerlaubnisbehörde?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates recordExtract: when the original issuing authority differs from the office processing this exchange, that office typically needs a Karteikartenabschrift (driving-licence record transcript) from the original issuer before it can confirm the categories held.",
+      "sourceRef": "'Karteikartenabschrift von der zuletzt ausstellenden Behörde'"
+    },
+    {
+      "name": "collectionMethod",
+      "label": "How should the new licence be provided?",
+      "type": "enum",
+      "required": true,
+      "description": "postal_after_surrender: the old licence is invalidated and returned, and the new EU card licence is mailed home — available only for licences issued by 31 December 1998. pickup_in_person: the new licence is collected in person at the Fahrerlaubnisbehörde.",
+      "sourceRef": "'Bestätigung durch Bürgermeisteramt: alter Führerschein entwertet zurück, neuen EU-Kartenführerschein bitte zusenden (Hinweis: Es können nur Führerscheine, die bis zum 31.12.1998 ausgestellt wurden, entwertet werden.) / neuer EU-Kartenführerschein wird in der Fahrerlaubnisbehörde ... abgeholt.'",
+      "validation": {
+        "enum": ["postal_after_surrender", "pickup_in_person"]
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration date (Datum)",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant signs the application, immediately before submission.",
+      "sourceRef": "'Datum'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityProof",
+      "label": "Valid proof of identity (Personalausweis or Reisepass) or an official record of date and place of birth",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "'ein amtlicher Nachweis über Ort und Tag der Geburt (Personalausweis oder Reisepass)'"
+    },
+    {
+      "id": "biometricPhoto",
+      "label": "Biometric photo, 35 x 45 mm",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "'ein biometrisches Lichtbild (35 x 45 mm)'"
+    },
+    {
+      "id": "currentLicence",
+      "label": "The current driving licence being exchanged",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Bundesregierung FAQ — required documents for the exchange: current driving licence, plus valid ID and a biometric photo"
+    },
+    {
+      "id": "recordExtract",
+      "label": "Karteikartenabschrift (driving-licence record transcript) from the original issuing authority",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "issuingAuthorityRecordsUnavailable",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "'Karteikartenabschrift von der zuletzt ausstellenden Behörde'"
+    },
+    {
+      "id": "medicalCertificate",
+      "label": "Medical fitness certificate, Anlage 5 Nr. 1 FeV (after age 50)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestsExtendedTowingCombination",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "'ärztliche Untersuchung nach Anlage 5 Nr. 1 Fahrerlaubnisverordnung (nach Vollendung des 50. Lebensjahres)'"
+    },
+    {
+      "id": "visionTestCertificate",
+      "label": "Vision test certificate, Anlage 6 Nr. 2 FeV (after age 50)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestsExtendedTowingCombination",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "'augenärztliche Untersuchung nach Anlage 6 Nr. 2 Fahrerlaubnisverordnung (nach Vollendung des 50. Lebensjahres)'"
+    },
+    {
+      "id": "agriculturalActivityProof",
+      "label": "Proof of activity in agriculture or forestry",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestsClassT",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "'Einen Nachweis über meine Tätigkeit in der Land- bzw. Forstwirtschaft lege ich diesem Antrag bei.'"
+    },
+    {
+      "id": "exchangeFee",
+      "label": "Exchange fee, approximately 25 EUR (exact amount set by each Land's fee schedule under the Gebührenordnung für Maßnahmen im Straßenverkehr, GebOSt)",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "EUR",
+        "value": 25
+      },
+      "sourceRef": "'Nach der Gebührenordnung für Maßnahmen im Straßenverkehr ist für die Ausstellung des EU-Kartenführerscheins eine Gebühr von 24,00 Euro zu entrichten.' — the Ludwigsburg form cites 24.00 EUR; the Bundesregierung's and ADAC's national guidance cites approximately 25 EUR as the figure varies slightly by Land under GebOSt."
+    },
+    {
+      "id": "signature",
+      "label": "Signed, dated application",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form footer — 'Datum' with signature line"
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_details",
+      "title": "Your personal details",
+      "fields": [
+        "lastName",
+        "birthNameIfDifferent",
+        "firstNames",
+        "sex",
+        "dateOfBirth",
+        "placeOfBirth",
+        "addressStreet",
+        "addressPostalCodeAndCity",
+        "phone",
+        "email"
+      ]
+    },
+    {
+      "id": "current_licence",
+      "title": "Your current driving licence",
+      "fields": [
+        "currentLicenceIssuingAuthority",
+        "currentLicenceIssueDate",
+        "currentLicenceNumber",
+        "currentLicenceCategories",
+        "issuingAuthorityRecordsUnavailable"
+      ]
+    },
+    {
+      "id": "class_3_upgrade_options",
+      "title": "Old Class 3 upgrade options",
+      "fields": [
+        "isPre1999Class3Holder",
+        "requestsExtendedTowingCombination",
+        "requestsClassT"
+      ]
+    },
+    {
+      "id": "collection_and_declaration",
+      "title": "Collection and declaration",
+      "fields": [
+        "collectionMethod",
+        "declarationDate"
+      ]
+    }
+  ]
+}
