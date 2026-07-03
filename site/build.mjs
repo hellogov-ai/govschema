@@ -275,7 +275,7 @@ function renderPage(page, site) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${esc(page.title || site.name)}</title>
   <meta name="description" content="${attr((page.meta && page.meta.description) || site.description)}" />
-  <meta name="theme-color" content="${attr(site.themeColor || "#163a6b")}" />
+  <meta name="theme-color" content="${attr(site.themeColor || "#1a1a18")}" />
   <meta property="og:title" content="${attr(page.title || site.name)}" />
   <meta property="og:description" content="${attr((page.meta && page.meta.description) || site.description)}" />
   <meta property="og:type" content="website" />
