@@ -1,0 +1,607 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fr/ants/national-identity-card-application-first-adult",
+  "version": "1.0.0",
+  "title": "France National Identity Card Application for an Adult, First-Time (Cerfa 12100*03, Carte nationale d'identité — première demande)",
+  "description": "Apply for a first-ever French national identity card (carte nationale d'identité, CNI) as an adult (majeur) French national. Since the online-services reform, most applicants prepare their request through ANTS's pré-demande en ligne service (predemande-cni.ants.gouv.fr, sharing the same portal family as the passport pré-demande) and then finalise it in person — with fingerprint/photo capture — at any CNI-equipped mairie in France, or at a French embassy/consulate abroad; applicants who skip the online pré-demande instead complete the same underlying état-civil field set on the paper form handed to them at the counter. This document models that field set from Cerfa 12100*03, 'Demande de carte nationale d'identité / passeport' — a single combined form covering both documents, of which this schema captures the CNI branch and the fields common to both — rather than the pré-demande portal's own screen-by-screen flow, which sits behind an authenticated account this review could not reach; see VERIFICATION.md. Unlike the sibling passport schema (fr/ants/passport-application-first-adult, sourced from the older Cerfa 12100*02 edition), the CNI is free of charge and this newer *03 edition's combined form asks each parent's role (père/mère) rather than assuming a fixed father/mother order.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Agence Nationale des Titres Sécurisés (national identity-document-issuing system operator) / Ministère de l'Intérieur et des Outre-mer",
+    "abbreviation": "ANTS",
+    "url": "https://www.ants.gouv.fr"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://www.service-public.fr/particuliers/vosdroits/F1341",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Cerfa 12100*03 — 'Demande de carte nationale d'identité / passeport' (majeur), the combined counter-fallback form underlying ANTS's online pré-demande service for both documents"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from service-public.fr's own guidance pages for a first-time adult CNI (F1341, 'Carte d'identité d'un majeur : première demande', and R45668, the pré-demande guidance) for process steps, document requirements, fee-free status, and validity/retrieval windows, plus the official Cerfa 12100*03 form's own printed field labels — extracted by rendering the form to page images (via pdfjs-dist + node-canvas, since the source PDF is scanned/rasterised with no text layer or AcroForm annotations, the same PDF shape documented for other FR Cerfa forms in this registry) and reading the rendered pages directly, since no OCR tool was available in this environment. The PDF itself was retrieved from a French sub-prefecture's own official government subdomain (polynesie-francaise.pref.gouv.fr), not a third-party mirror — the strongest sourcing tier used for a FR Cerfa in this registry to date. The live online submission channel (ANTS's predemande-cni.ants.gouv.fr) requires an authenticated account this review could not reach, so the field-by-field comparison the practice requires has not been completed against that live screen set — status remains draft. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form header — 'Femme' / 'Homme' checkboxes",
+      "validation": {
+        "enum": [
+          "M",
+          "F"
+        ]
+      }
+    },
+    {
+      "name": "familyName",
+      "label": "Family name (Nom)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name that appears on the applicant's birth certificate (acte de naissance) or livret de famille.",
+      "sourceRef": "'Nom (C'est le nom qui figure sur votre acte de naissance ou sur votre livret de famille.)'"
+    },
+    {
+      "name": "hasUsageName",
+      "label": "Do you want to add a usage name (nom d'usage) to your identity card?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates the usageName/usageNameRelation/wantsUsageNamePrefixWord fields. A nom d'usage is a second name used alongside the family name (facultatif — optional).",
+      "sourceRef": "'Nom d'usage (Facultatif)'"
+    },
+    {
+      "name": "usageName",
+      "label": "Usage name (Nom d'usage)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "'Nom d'usage'"
+    },
+    {
+      "name": "usageNameRelation",
+      "label": "Usage name — whose name is it?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "description": "father = the applicant's father's name; mother = the applicant's mother's name; husband = the applicant's husband's name; wife = the applicant's wife's name.",
+      "sourceRef": "'Précisez s'il s'agit du nom de votre : – père – mère – époux – épouse'",
+      "validation": {
+        "enum": [
+          "father",
+          "mother",
+          "husband",
+          "wife"
+        ]
+      }
+    },
+    {
+      "name": "wantsUsageNamePrefixWord",
+      "label": "Do you want a word to appear before the usage name?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasUsageName",
+        "equals": true
+      },
+      "fieldRole": "eligibility",
+      "description": "Gates usageNamePrefixWord.",
+      "sourceRef": "'Souhaitez-vous faire apparaître un mot devant le nom d'usage ? Oui / Non'"
+    },
+    {
+      "name": "usageNamePrefixWord",
+      "label": "Usage name prefix word",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsUsageNamePrefixWord",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "wantsUsageNamePrefixWord",
+        "equals": true
+      },
+      "description": "spouse = 'époux(se)'; widowed = 'veuf(ve)'.",
+      "sourceRef": "'Si oui, lequel : époux(se) / veuf(ve)'",
+      "validation": {
+        "enum": [
+          "spouse",
+          "widowed"
+        ]
+      }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s) (Prénom(s))",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Prénom(s)'"
+    },
+    {
+      "name": "heightMeters",
+      "label": "Height (Taille), in meters",
+      "type": "number",
+      "required": true,
+      "description": "Common to both the CNI and passport branches of this form (unlike eye colour, which the form marks passport-only). The form's own layout uses a comma-separated decimal (', m'); the field's semantic value is a plain decimal number of meters.",
+      "sourceRef": "'Taille , m'"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth (Né(e) le)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "'Né(e) le J M An'"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Né(e) le ... À'"
+    },
+    {
+      "name": "departmentOfBirth",
+      "label": "Département of birth, if born in France",
+      "type": "string",
+      "required": false,
+      "description": "Left blank when the applicant was born outside France.",
+      "sourceRef": "'N° département de naissance'"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Pays de naissance'"
+    },
+    {
+      "name": "addressStreet",
+      "label": "Home address — street line",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Adresse'"
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Home address — postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Code postal'"
+    },
+    {
+      "name": "addressCommune",
+      "label": "Home address — commune (town)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Commune'"
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile phone (recommended)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional but recommended: used to contact the applicant about the request.",
+      "sourceRef": "'Tél. portable(1)' — footnote (1): 'Donnée facultative. À compléter si vous souhaitez recevoir des informations concernant votre titre.'"
+    },
+    {
+      "name": "parent1Role",
+      "label": "First parent — père or mère?",
+      "type": "enum",
+      "required": false,
+      "description": "Requiredness could not be confirmed from the rendered form image — see VERIFICATION.md. The form presents two identical filiation blocks, each headed by its own 'PÈRE  MÈRE' selector, rather than a fixed father-then-mother order.",
+      "sourceRef": "'PÈRE   MÈRE' (first filiation block header)",
+      "validation": {
+        "enum": [
+          "pere",
+          "mere"
+        ]
+      }
+    },
+    {
+      "name": "parent1FamilyName",
+      "label": "First parent — birth name (Nom)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Requiredness could not be confirmed from the rendered form image — see VERIFICATION.md.",
+      "sourceRef": "'Nom(2)' — footnote (2): 'C'est le nom qui figure sur son acte de naissance.'"
+    },
+    {
+      "name": "parent1GivenNames",
+      "label": "First parent — given name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Prénom(s)' (first filiation block)"
+    },
+    {
+      "name": "parent1DateOfBirth",
+      "label": "First parent — date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "'Né(e) le J M An' (first filiation block)"
+    },
+    {
+      "name": "parent1PlaceOfBirth",
+      "label": "First parent — place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'À' (first filiation block)"
+    },
+    {
+      "name": "parent1Nationality",
+      "label": "First parent — nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Nationalité' (first filiation block)"
+    },
+    {
+      "name": "parent2Role",
+      "label": "Second parent — père or mère?",
+      "type": "enum",
+      "required": false,
+      "description": "Requiredness could not be confirmed from the rendered form image — see VERIFICATION.md.",
+      "sourceRef": "'PÈRE   MÈRE' (second filiation block header)",
+      "validation": {
+        "enum": [
+          "pere",
+          "mere"
+        ]
+      }
+    },
+    {
+      "name": "parent2FamilyName",
+      "label": "Second parent — birth name (Nom)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Nom(2)' (second filiation block)"
+    },
+    {
+      "name": "parent2GivenNames",
+      "label": "Second parent — given name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Prénom(s)' (second filiation block)"
+    },
+    {
+      "name": "parent2DateOfBirth",
+      "label": "Second parent — date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "'Né(e) le J M An' (second filiation block)"
+    },
+    {
+      "name": "parent2PlaceOfBirth",
+      "label": "Second parent — place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'À' (second filiation block)"
+    },
+    {
+      "name": "parent2Nationality",
+      "label": "Second parent — nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Nationalité' (second filiation block)"
+    },
+    {
+      "name": "nationalityBasis",
+      "label": "You are French because...",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "The form's own checklist of nationality bases, used when French nationality does not already appear evident (e.g. from the birth certificate). born_in_france_parent_born_in_france; born_in_france_parent_born_in_former_french_territory; born_in_france_parent_french; not_born_in_france_parent_french; parent_became_french_before_majority; french_by_marriage; born_in_france_parents_not_french (naturalized by double birthright / droit du sol, a distinct declared-nationality basis); naturalized; reintegrated (réintégré(e) dans la nationalité française); french_by_declaration_other_than_marriage; other.",
+      "sourceRef": "'Vous êtes français(e) parce que : – vous êtes né(e) en France et l'un au moins de vos parents est né en France – vous êtes né(e) en France et l'un au moins de vos parents est né dans un ancien département ou territoire français – vous êtes né(e) en France et l'un au moins de vos parents est français – vous n'êtes pas né(e) en France et l'un au moins de vos parents est français – l'un de vos parents est devenu français avant votre majorité – vous êtes de nationalité française par mariage – vous êtes né(e) en France et vos parents ne sont pas français – vous êtes naturalisé(e) français(e) – vous avez été réintégré(e) dans la nationalité française – vous êtes français(e) par déclaration (autrement que par mariage) – autre motif'",
+      "validation": {
+        "enum": [
+          "born_in_france_parent_born_in_france",
+          "born_in_france_parent_born_in_former_french_territory",
+          "born_in_france_parent_french",
+          "not_born_in_france_parent_french",
+          "parent_became_french_before_majority",
+          "french_by_marriage",
+          "born_in_france_parents_not_french",
+          "naturalized",
+          "reintegrated",
+          "french_by_declaration_other_than_marriage",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "identityDocumentStatus",
+      "label": "Do you already have a French identity document (ID card or passport)?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Determines which supporting documents (existing document, birth certificate, proof of nationality) are required, per service-public.fr's own branching guidance for a first-time adult CNI.",
+      "sourceRef": "F1341 — document requirements differ for 'avec passeport valide', 'avec passeport périmé (moins de 5 ans)', and 'avec passeport périmé (plus de 5 ans) ou sans document'",
+      "validation": {
+        "enum": [
+          "valid_passport_or_id",
+          "expired_under_5_years",
+          "expired_over_5_years_or_none"
+        ]
+      }
+    },
+    {
+      "name": "isApplicantUnderGuardianship",
+      "label": "Is the applicant an adult under guardianship (majeur en tutelle)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "CNI-specific branch: gates guardianAcknowledgment. Not asked on the passport branch of this combined form.",
+      "sourceRef": "'Uniquement dans le cas d'une demande de CNI : Si le demandeur est un majeur en tutelle, le tuteur (cocher l'une des 2 cases) :'"
+    },
+    {
+      "name": "guardianAcknowledgment",
+      "label": "Guardian's acknowledgment",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "isApplicantUnderGuardianship",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "isApplicantUnderGuardianship",
+        "equals": true
+      },
+      "description": "informed_with_attestation = the guardian is informed of the request and has attached an attestation; co_signatory = the guardian is a co-signatory of the present form.",
+      "sourceRef": "'est informé de la demande et a joint une attestation / est signataire du présent formulaire'",
+      "validation": {
+        "enum": [
+          "informed_with_attestation",
+          "co_signatory"
+        ]
+      }
+    },
+    {
+      "name": "refusesFingerprintRetentionBeyond90Days",
+      "label": "Do you refuse retention of your digitised fingerprints beyond 90 days?",
+      "type": "boolean",
+      "required": false,
+      "description": "CNI-specific right (not offered on the passport branch): by default the digitised fingerprint image is kept until the 90th day after the card is issued (or after a refusal to issue). Exercising this refusal requires completing and signing a separate dedicated form handed out at deposit, joined to the application file — not modelled as a field of this Cerfa itself.",
+      "sourceRef": "'le demandeur peut refuser que l'image numérisée de ses empreintes digitales soit conservée dans le traitement autorisé ... au-delà d'un délai de 90 jours à compter de la date de délivrance de la carte nationale d'identité ou, en cas de refus de délivrance, à compter de la date de ce refus.'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of declaration / signature",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant (or guardian) signs the attestation on the form's footer, immediately before submission.",
+      "sourceRef": "'Je certifie l'exactitude de ces déclarations. Date ... Signature du demandeur ou du tuteur'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "existingIdentityDocument",
+      "label": "Existing French passport or national identity card (valid or expired)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "identityDocumentStatus",
+        "in": [
+          "valid_passport_or_id",
+          "expired_under_5_years"
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "F1341 — document list for applicants who already hold a valid or recently-expired passport"
+    },
+    {
+      "id": "identityPhoto",
+      "label": "Identity photo, compliant with official standards",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P6M"
+      },
+      "sourceRef": "F1341 — 'Photo d'identité de moins de 6 mois et conforme aux normes'"
+    },
+    {
+      "id": "proofOfAddress",
+      "label": "Proof of home address",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P1Y"
+      },
+      "sourceRef": "F1341 — 'Justificatif de domicile de moins de 1 an'"
+    },
+    {
+      "id": "birthCertificate",
+      "label": "Birth certificate (copie intégrale or extrait avec filiation)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "identityDocumentStatus",
+        "equals": "expired_over_5_years_or_none"
+      },
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P3M"
+      },
+      "sourceRef": "F1341 — 'un acte de naissance (copie intégrale ou extrait avec filiation) de moins de 3 mois', when the applicant's birth commune's civil-status records are not dematerialised. Not required when the commune's records are dematerialised (checked directly by the mairie) — an exception this schema does not model as a separate branch; see VERIFICATION.md."
+    },
+    {
+      "id": "proofOfFrenchNationality",
+      "label": "Proof of French nationality",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "identityDocumentStatus",
+        "equals": "expired_over_5_years_or_none"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "F1341 — 'justificatif de nationalité française si votre nationalité ne ressort pas de votre acte de naissance'"
+    },
+    {
+      "id": "guardianAttestation",
+      "label": "Guardian's attestation (attestation du tuteur)",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "guardianAcknowledgment",
+        "equals": "informed_with_attestation"
+      },
+      "belongsTo": "responsible-party",
+      "sourceRef": "'est informé de la demande et a joint une attestation'"
+    },
+    {
+      "id": "signature",
+      "label": "Signed, dated declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form footer — declaration date and 'Signature du demandeur ou du tuteur'; verso card also carries a dedicated 'SIGNATURE DU DEMANDEUR' box. Exact attestation wording not sourced verbatim, see VERIFICATION.md."
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Your identity",
+      "fields": [
+        "sex",
+        "familyName",
+        "hasUsageName",
+        "usageName",
+        "usageNameRelation",
+        "wantsUsageNamePrefixWord",
+        "usageNamePrefixWord",
+        "givenNames",
+        "heightMeters"
+      ]
+    },
+    {
+      "id": "birth_details",
+      "title": "Date and place of birth",
+      "fields": [
+        "dateOfBirth",
+        "placeOfBirth",
+        "departmentOfBirth",
+        "countryOfBirth"
+      ]
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Home address and contact",
+      "fields": [
+        "addressStreet",
+        "addressPostalCode",
+        "addressCommune",
+        "mobilePhone"
+      ]
+    },
+    {
+      "id": "filiation_parent1",
+      "title": "First parent's identity",
+      "fields": [
+        "parent1Role",
+        "parent1FamilyName",
+        "parent1GivenNames",
+        "parent1DateOfBirth",
+        "parent1PlaceOfBirth",
+        "parent1Nationality"
+      ]
+    },
+    {
+      "id": "filiation_parent2",
+      "title": "Second parent's identity",
+      "fields": [
+        "parent2Role",
+        "parent2FamilyName",
+        "parent2GivenNames",
+        "parent2DateOfBirth",
+        "parent2PlaceOfBirth",
+        "parent2Nationality"
+      ]
+    },
+    {
+      "id": "nationality_and_documents",
+      "title": "Nationality basis and existing documents",
+      "fields": [
+        "nationalityBasis",
+        "identityDocumentStatus"
+      ]
+    },
+    {
+      "id": "guardianship",
+      "title": "Guardianship (if applicable)",
+      "fields": [
+        "isApplicantUnderGuardianship",
+        "guardianAcknowledgment"
+      ]
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration, fingerprint-retention choice, and signature",
+      "fields": [
+        "refusesFingerprintRetentionBeyond90Days",
+        "declarationDate"
+      ]
+    }
+  ]
+}
