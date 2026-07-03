@@ -1,0 +1,242 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nl/rdw/drivers-licence-renewal",
+  "version": "1.0.0",
+  "title": "Netherlands Driving Licence Online Renewal (Rijbewijs Online Verlengen)",
+  "description": "Renew a Dutch driving licence (rijbewijs), or add a category to one, through the Netherlands Vehicle Authority's (Rijksdienst voor het Wegverkeer, RDW) online renewal service at rdw.nl/rijbewijsverlengen. This is the Dutch analogue to gb/dvla/driving-licence-renewal-photocard, ie/dttas/driving-licence-renewal, and nz/nzta/drivers-licence-renewal, and is the first schema in this registry for the Netherlands (NL) in the DMV vertical. The online channel is only available in participating municipalities, to holders of a valid Dutch driving licence issued after 1 October 2006 that has not been lost or reported stolen; other applicants (including every first-time applicant) must renew or apply in person at their municipality (gemeente) instead, which this document does not model. This document does not submit the renewal, book a photographer session, or complete the CBR (Centraal Bureau Rijvaardigheidsbewijzen) medical fitness process it may depend on; the live rdw.nl, cbr.nl, and rijksoverheid.nl sources are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Netherlands Vehicle Authority",
+    "abbreviation": "RDW",
+    "url": "https://www.rdw.nl"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "nl-NL"
+  },
+  "source": {
+    "url": "https://www.rdw.nl/het-rijbewijs/aanvragen-of-verlengen/rijbewijs-online-verlengen",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "RDW 'Rijbewijs online verlengen' (Online driving licence renewal) service page, and RDW brochure 'Uw rijbewijs online verlengen' (3 B 2400b)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from RDW's own service page and printed brochure describing the three-step online renewal flow (RDW-approved photographer session → application code → mijn RDW online application → gemeente pickup), cross-referenced with Rijksoverheid.nl's official Q&A pages on the 75-plus renewal medical process and the full driving-licence category list, and RDW's own 'Gezondheidsverklaring aanvragen' page listing who must complete a CBR health declaration before renewing. The actual mijn RDW renewal screens (rdw.nl/rijbewijsverlengen) are gated behind a DigiD-app-with-ID-check login and could not be reached or walked through in this session; likewise cbr.nl (which hosts the Gezondheidsverklaring itself and its published question list) could not be reached at all in this session (connection consistently timed out) and is not used as a source here. Status remains 'draft'; no live-portal or in-person walkthrough was performed. See VERIFICATION.md for the full field-by-field source table and out-of-scope items."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "livesInParticipatingMunicipality",
+      "label": "Do you live in a municipality where online renewal is possible?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Online renewal is not offered by every Dutch municipality (gemeente). If false, the applicant must renew at their municipality's counter instead, which this document does not model.",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — 'De voorwaarden: U woont in een gemeente waar online verlengen mogelijk is.'"
+    },
+    {
+      "name": "currentLicenceEligibleForOnlineRenewal",
+      "label": "Do you hold a valid Dutch driving licence issued after 1 October 2006 that has not been lost or reported stolen?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "A Dutch driving licence issued on or before 1 October 2006, or one that has been lost or reported stolen, cannot be renewed through this online service; the applicant must use their municipality's in-person process (or the separate lost/stolen-licence procedure) instead, neither of which this document models.",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — 'U bent in het bezit van een geldig Nederlands rijbewijs.'; RDW 'Rijbewijs aanvragen na vermissing of diefstal'"
+    },
+    {
+      "name": "hasDigidAppWithIdCheck",
+      "label": "Do you have the DigiD app with ID-check activated?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Logging in to the online renewal service requires the DigiD app with the ID-check feature; logging in by SMS code alone is not sufficient.",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — 'U heeft de DigiD-app met ID-check.'"
+    },
+    {
+      "name": "renewalReason",
+      "label": "Are you renewing your driving licence, or adding a category to it?",
+      "type": "enum",
+      "required": true,
+      "description": "The same online service handles a plain renewal and a category-extension request.",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — 'U vraagt een verlenging van uw rijbewijs of een categorie-uitbreiding aan.'",
+      "validation": { "enum": ["renewal", "category_extension"] }
+    },
+    {
+      "name": "categoryRequested",
+      "label": "Which driving licence category are you adding?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "renewalReason", "equals": "category_extension" },
+      "description": "The driving licence category code being added to the applicant's existing licence.",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — 'categorie-uitbreiding'; Rijksoverheid.nl 'Welke rijbewijscategorieën zijn er?' for the category list",
+      "validation": { "enum": ["AM", "A1", "A2", "A", "B", "BE", "C1", "C1E", "C", "CE", "D1", "D1E", "D", "DE", "T"] }
+    },
+    {
+      "name": "turning75OrOlderAtExpiry",
+      "label": "Will you be 75 years old or older when your current licence expires?",
+      "type": "boolean",
+      "required": true,
+      "description": "Drivers whose licence expires at or after their 75th birthday must complete a CBR Gezondheidsverklaring (health declaration) and medical examination before they can renew; the renewed licence is then valid for a maximum of 5 years instead of the usual 10.",
+      "sourceRef": "Rijksoverheid.nl 'Hoe kan ik als 75-plusser mijn rijbewijs verlengen?'; RDW 'Gezondheidsverklaring aanvragen'"
+    },
+    {
+      "name": "appliesForOrHoldsCategoryCOrD",
+      "label": "Are you applying for, or do you hold, a category C or D (lorry or bus) licence?",
+      "type": "boolean",
+      "required": true,
+      "description": "Category C/C1/CE/C1E (lorry) and D/D1/DE/D1E (bus) licences require a CBR Gezondheidsverklaring (health declaration) regardless of the holder's age.",
+      "sourceRef": "RDW 'Gezondheidsverklaring aanvragen' — who needs a health declaration"
+    },
+    {
+      "name": "hasMedicalConditionAffectingDriving",
+      "label": "Do you have a medical condition that could affect your ability to drive safely?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "description": "Also triggers the CBR Gezondheidsverklaring (health declaration) requirement, independent of age or licence category. This document does not itemise the Gezondheidsverklaring's own list of medical topics/questions, since cbr.nl (the only source that publishes it) could not be reached in this session — see VERIFICATION.md.",
+      "sourceRef": "RDW 'Gezondheidsverklaring aanvragen' — who needs a health declaration"
+    },
+    {
+      "name": "geschiktheidVerklaringObtained",
+      "label": "Have you already received a valid CBR Verklaring van Geschiktheid (fitness-to-drive declaration)?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "turning75OrOlderAtExpiry", "equals": true },
+        { "field": "appliesForOrHoldsCategoryCOrD", "equals": true },
+        { "field": "hasMedicalConditionAffectingDriving", "equals": true },
+        { "all": [
+          { "field": "renewalReason", "equals": "category_extension" },
+          { "field": "categoryRequested", "notEquals": "AM" }
+        ] }
+      ] },
+      "description": "A Verklaring van Geschiktheid, issued by CBR after reviewing the Gezondheidsverklaring (and any required medical examination), is valid for 1 year from issue and must be obtained before the online renewal can proceed whenever a health declaration is triggered. If false, the applicant must complete the Gezondheidsverklaring via Mijn CBR (or on paper) first, which this document does not model.",
+      "sourceRef": "RDW 'Gezondheidsverklaring aanvragen' — 'De registratie van de Verklaring van Geschiktheid is 1 jaar geldig.'; 'Bij de aanvraag van uw eerste rijbewijs en bij iedere nieuwe rijbewijscategorie die u haalt (geldt niet voor bromfietsrijbewijs: categorie AM).'"
+    },
+    {
+      "name": "applicationCode",
+      "label": "Application code",
+      "type": "string",
+      "required": true,
+      "description": "The code sent by email or SMS after an RDW-approved photographer or photo booth electronically transmits the applicant's new passport photo and signature to RDW. Valid for 6 months.",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — Stap 1: 'Binnen een paar minuten ontvangt u een e-mail of SMS van de RDW. Hierin staat een aanvraagcode waarmee u het rijbewijs online kunt verlengen.'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "pickupLocation",
+      "label": "Where in your municipality do you want to collect your new licence?",
+      "type": "string",
+      "required": true,
+      "description": "The applicant chooses a pickup location within their municipality during the online application; some municipalities require an appointment to collect the licence.",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — Stap 2: 'U kunt zelf aangeven op welke locatie binnen de gemeente u uw rijbewijs wilt ophalen.'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "digitalPhotoAndSignature",
+      "label": "Digital passport photo and signature",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — Stap 1: taken at an RDW-approved photographer or photo booth, who transmits the photo and signature to RDW electronically; the applicant pays the photographer directly for this."
+    },
+    {
+      "id": "currentLicenceSurrendered",
+      "label": "Current driving licence, surrendered on pickup",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "surrendered-on-collection",
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — Stap 3: 'Neem uw huidige rijbewijs mee, dat moet u inleveren.'"
+    },
+    {
+      "id": "geschiktheidVerklaring",
+      "label": "CBR Verklaring van Geschiktheid (fitness-to-drive declaration)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "turning75OrOlderAtExpiry", "equals": true },
+        { "field": "appliesForOrHoldsCategoryCOrD", "equals": true },
+        { "field": "hasMedicalConditionAffectingDriving", "equals": true },
+        { "all": [
+          { "field": "renewalReason", "equals": "category_extension" },
+          { "field": "categoryRequested", "notEquals": "AM" }
+        ] }
+      ] },
+      "belongsTo": "applicant",
+      "issuingAuthority": "Centraal Bureau Rijvaardigheidsbewijzen (CBR)",
+      "freshness": { "issuedWithin": "P1Y" },
+      "sourceRef": "RDW 'Gezondheidsverklaring aanvragen' — 'De registratie van de Verklaring van Geschiktheid is 1 jaar geldig.'; 'Bij de aanvraag van uw eerste rijbewijs en bij iedere nieuwe rijbewijscategorie die u haalt (geldt niet voor bromfietsrijbewijs: categorie AM).'"
+    },
+    {
+      "id": "renewalFeePayment",
+      "label": "Online renewal fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": { "currency": "EUR", "value": 53.65 },
+      "methods": ["ideal", "wero"],
+      "sourceRef": "RDW 'Uw rijbewijs online verlengen' brochure — Stap 2: 'U rekent meteen af met iDEAL.'; RDW 'Rijbewijs online verlengen' service page (iDEAL/Wero, EUR 53.65)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "online_channel_eligibility",
+      "title": "Check whether you can renew online",
+      "fields": ["livesInParticipatingMunicipality", "currentLicenceEligibleForOnlineRenewal", "hasDigidAppWithIdCheck"],
+      "transitions": [
+        { "to": null, "exitReason": "not_in_participating_municipality", "when": { "field": "livesInParticipatingMunicipality", "equals": false } },
+        { "to": null, "exitReason": "current_licence_not_eligible_for_online_channel", "when": { "field": "currentLicenceEligibleForOnlineRenewal", "equals": false } },
+        { "to": null, "exitReason": "no_digid_app_with_id_check", "when": { "field": "hasDigidAppWithIdCheck", "equals": false } },
+        { "to": "renewal_details" }
+      ]
+    },
+    {
+      "id": "renewal_details",
+      "title": "What are you renewing?",
+      "fields": ["renewalReason", "categoryRequested"],
+      "next": "health_declaration"
+    },
+    {
+      "id": "health_declaration",
+      "title": "Health declaration (Gezondheidsverklaring)",
+      "fields": ["turning75OrOlderAtExpiry", "appliesForOrHoldsCategoryCOrD", "hasMedicalConditionAffectingDriving", "geschiktheidVerklaringObtained"],
+      "next": "photo_and_application_code"
+    },
+    {
+      "id": "photo_and_application_code",
+      "title": "Photo, signature, and application code",
+      "fields": ["applicationCode"],
+      "next": "online_application"
+    },
+    {
+      "id": "online_application",
+      "title": "Complete the online application and pay",
+      "fields": ["pickupLocation"]
+    }
+  ]
+}
