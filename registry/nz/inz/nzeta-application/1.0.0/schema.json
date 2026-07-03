@@ -1,0 +1,282 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/inz/nzeta-application",
+  "version": "1.0.0",
+  "title": "New Zealand Electronic Travel Authority (NZeTA)",
+  "description": "Request an NZeTA (New Zealand Electronic Travel Authority), New Zealand's lightweight travel-authorisation counterpart to a visa waiver, required for most visa-waiver-country citizens (and some other eligible travellers) flying or cruising to New Zealand, including those only transiting. From NZD $17 via the free mobile app or NZD $23 via the online form; processing is typically within 72 hours (longer if further investigation is needed); valid 2 years for travellers (5 years for airline crew) or until the passport expires, whichever is shorter, for stays of up to 3 months per visit (6 months for UK citizens), capped at 6 months within any 12-month period. This document models an eligible adult visa-waiver-country passport holder requesting an NZeTA for themselves online, for a visit (not transit). Out of scope: the transit-only pathway (qTransit/qVWTTransit in the live application); cruise or cargo ship passengers; the separate eligibility pathway for Chinese or Pacific Islands Forum citizens travelling from Australia with an eligible Australian visa, and for Australian citizens/permanent residents; airline crew members; a request already covered by an existing NZeTA (the application's change-request flow); more than one additional passport or more than one other declared name; and a single request covering more than one traveller (the app and online form both support submitting for a group, up to 10 people via the app). It does not submit the request; the live Immigration New Zealand source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration New Zealand",
+    "abbreviation": "INZ",
+    "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/nzeta"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-NZ"
+  },
+  "source": {
+    "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/nzeta",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "New Zealand Electronic Travel Authority (NZeTA) overview and eligibility pages; live NZeTA application (nzeta.immigration.govt.nz) compiled client application"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema opening the NZ leg of the Visa vertical's gap (Visa is the least-covered of the 6 focus verticals; NZ had no Visa schema before this document even though nzeta.immigration.govt.nz was not previously in discovery/catalog.json at all — a genuine catalog gap surfaced by this cycle's phase-2 research, not just an unauthored candidate). The live application at nzeta.immigration.govt.nz is a JavaScript (Angular) single-page app that renders no server-side field markup, so it was not read via a plain WebFetch/curl request (would return only the loading shell). Instead, field identifiers were extracted directly from the compiled application bundle via a 2026-05-15 Wayback Machine capture (main/lazy-loaded chunk .js files), which exposes the live form-control field keys verbatim (e.g. qPassportGivenName, qPassportSurname, qDOB, qGender, qCountryOfBirth, qPlaceOfBirth, qCitizenship, qIssuingCountry, qPassportNumber, qPassportExpiryDate, qNationalID, qEmailAddress, qConfirmEmailAddress, qConvictedEver, qDeported, qProhibitedEntry, qMedical, qOtherGivenName, qOtherSurname, qOtherNames) even though the associated human-readable label text is loaded from a separate i18n resource this environment could not retrieve. Field labels, requiredness, grouping, and descriptions were therefore reconstructed by combining these confirmed live field keys with the official immigration.govt.nz overview/eligibility prose (fetched directly, no access block, unlike the AU/DFAT-style blocks recorded elsewhere in this registry). Several third-party 'NZeTA' application-guide sites surfaced during research (nzetaonlinevisa.com, nz-eta.info, nzetapermit.com, nzeta-visa.org and similar) were deliberately NOT used as sources: they read as unofficial visa-reseller/markup sites rather than government or authorized-partner sources, and citing them would violate source-of-truth fidelity. Status remains 'draft' pending a full field-by-field pass against the live nzeta.immigration.govt.nz form (or app) with a real test passport. See VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "passportIssuingCountry",
+      "label": "Passport-issuing country/territory",
+      "type": "string",
+      "required": true,
+      "description": "Must be a visa-waiver country/territory (or another NZeTA-eligible category) for the applicant to be eligible; a national of a country not on the eligible list must apply for a visa instead of an NZeTA.",
+      "sourceRef": "Live application field qIssuingCountry; overview — 'a citizen of a visa waiver country or territory'",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "citizenship",
+      "label": "Citizenship/nationality shown on your passport",
+      "type": "string",
+      "required": true,
+      "description": "As shown on the passport's biographic page.",
+      "sourceRef": "Live application field qCitizenship",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Personal identifier; handle as sensitive data. Must be the same passport used to travel to New Zealand.",
+      "sourceRef": "Live application field qPassportNumber",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "familyName",
+      "label": "Family name (surname)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Exactly as it appears on the passport.",
+      "sourceRef": "Live application field qPassportSurname",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Exactly as it appears on the passport.",
+      "sourceRef": "Live application field qPassportGivenName",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full date, YYYY-MM-DD, as shown on the passport.",
+      "sourceRef": "Live application field qDOB"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The live application exposes a gender field with a diverse-gender option (field keys genderOptions/genderDiverse alongside qGender), but the exact set of option labels shown to the applicant was not independently confirmed against the rendered form — see VERIFICATION.md.",
+      "sourceRef": "Live application field qGender / genderOptions / genderDiverse",
+      "validation": { "enum": ["male", "female", "another_gender"] }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country/territory of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Live application field qCountryOfBirth",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "City/town of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Live application field qPlaceOfBirth",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Passport expiry date",
+      "type": "date",
+      "required": true,
+      "description": "Full date, YYYY-MM-DD. Must be valid for at least 3 months after the applicant's intended departure from New Zealand; the NZeTA is valid for 2 years or until this date, whichever is shorter, and ceases if the passport used to request it expires or is replaced.",
+      "sourceRef": "Live application field qPassportExpiryDate; overview — passport 'valid for at least 3 months after the date you intend to leave New Zealand'"
+    },
+    {
+      "name": "nationalIdNumber",
+      "label": "National Identity (ID) number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Only applicable for passports that carry a National ID number field; left blank otherwise.",
+      "sourceRef": "Live application field qNationalID",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "hasOtherNames",
+      "label": "Have you ever been known by any other name?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Live application fields qOtherGivenName / qOtherSurname / qOtherNames"
+    },
+    {
+      "name": "otherGivenNames",
+      "label": "Other given name(s) previously used",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasOtherNames", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Live application field qOtherGivenName",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "otherFamilyName",
+      "label": "Other family name previously used",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasOtherNames", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Live application field qOtherSurname",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Used to send the NZeTA outcome and receipt.",
+      "sourceRef": "Live application field qEmailAddress",
+      "validation": { "minLength": 3, "maxLength": 160 }
+    },
+    {
+      "name": "confirmEmailAddress",
+      "label": "Confirm email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must exactly match emailAddress; the live application validates this field on entry (rejecting, for example, a stray space in the address).",
+      "sourceRef": "Live application field qConfirmEmailAddress",
+      "validation": { "minLength": 3, "maxLength": 160 }
+    },
+    {
+      "name": "hasCriminalConviction",
+      "label": "Have you ever been convicted of a crime in any country?",
+      "type": "boolean",
+      "required": true,
+      "description": "Character declaration. A 'yes' does not by itself refuse the request; it may prompt further investigation, per the overview's 'good character' requirement.",
+      "sourceRef": "Live application field qConvictedEver; overview — 'good character', 'character questions (criminal history...)'"
+    },
+    {
+      "name": "criminalConvictionDetails",
+      "label": "Details of the conviction(s)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasCriminalConviction", "equals": true },
+      "sourceRef": "Live application field qConvictedEver",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "hasBeenDeportedOrRefusedEntry",
+      "label": "Have you ever been deported from, or refused entry to, any country, or are you currently prohibited from entering New Zealand?",
+      "type": "boolean",
+      "required": true,
+      "description": "Character declaration combining the live application's separate deportation and prohibited-entry questions; whether these render as one combined question or two separate ones on the live form was not independently confirmed — see VERIFICATION.md.",
+      "sourceRef": "Live application fields qDeported, qProhibitedEntry; overview — 'previous deportations or removals', 'security concerns'"
+    },
+    {
+      "name": "deportationOrRefusalDetails",
+      "label": "Details of the deportation, removal, or entry refusal",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBeenDeportedOrRefusedEntry", "equals": true },
+      "sourceRef": "Live application fields qDeported, qProhibitedEntry",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "travelingForMedicalTreatmentOrHasCondition",
+      "label": "Are you coming to New Zealand for medical treatment or consultation, or do you have a health condition requiring ongoing care?",
+      "type": "boolean",
+      "required": true,
+      "description": "Health declaration. A 'yes' triggers a follow-up health questionnaire in the live application (field key showMedicalQuiz) whose exact questions were not independently confirmed — see VERIFICATION.md.",
+      "sourceRef": "Live application fields qMedical, showMedicalQuiz; overview — 'good health', 'whether you are entering NZ for medical reasons'"
+    },
+    {
+      "name": "medicalDetails",
+      "label": "Details of the medical treatment, consultation, or condition",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "travelingForMedicalTreatmentOrHasCondition", "equals": true },
+      "sourceRef": "Live application field qMedical",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "applicantPhoto",
+      "label": "Photo of the applicant",
+      "type": "file",
+      "required": true,
+      "description": "A digital passport-style photo, uploaded in the online form or taken live in the app (the app supports switching between front/rear camera, field key qMultiCam).",
+      "sourceRef": "Required documents — 'one acceptable photo, or a device capable of taking one'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "passport_and_identity",
+      "title": "Passport and identity details",
+      "fields": [
+        "passportIssuingCountry", "citizenship", "passportNumber", "familyName", "givenNames",
+        "dateOfBirth", "gender", "countryOfBirth", "placeOfBirth", "passportExpiryDate", "nationalIdNumber"
+      ],
+      "next": "other_names"
+    },
+    {
+      "id": "other_names",
+      "title": "Other names",
+      "fields": ["hasOtherNames", "otherGivenNames", "otherFamilyName"],
+      "next": "contact"
+    },
+    {
+      "id": "contact",
+      "title": "Contact details",
+      "fields": ["emailAddress", "confirmEmailAddress"],
+      "next": "character_and_health"
+    },
+    {
+      "id": "character_and_health",
+      "title": "Character and health questions",
+      "fields": [
+        "hasCriminalConviction", "criminalConvictionDetails",
+        "hasBeenDeportedOrRefusedEntry", "deportationOrRefusalDetails",
+        "travelingForMedicalTreatmentOrHasCondition", "medicalDetails"
+      ],
+      "next": "photo"
+    },
+    {
+      "id": "photo",
+      "title": "Applicant photo",
+      "fields": ["applicantPhoto"]
+    }
+  ]
+}
