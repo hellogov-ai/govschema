@@ -97,7 +97,8 @@ non-English-only source.
 | Column 2.16 — distinguishing mark | `distinguishingMark` |
 | Column 2.17 — Aadhaar Number | `aadhaarNumber` |
 | Column 3 — Family Details, spouse name from spouse's passport | `fatherGivenName`, `motherGivenName`, `legalGuardianName`, `spouseName` |
-| Column 4 — Present Residential Address Details | `presentAddressLine1/City/State/PinCode`, `permanentAddressSameAsPresent`, `permanentAddressLine1` |
+| Column 4 — Present Residential Address Details | `presentAddressLine1/City/State/PinCode`, `permanentAddressSameAsPresent` |
+| Supplementary Form Column 3 — Permanent Residential Address (if different from present) | `permanentAddressLine1` |
 | Column 5 — Emergency Contact Details | `emergencyContactName/Phone/Address` |
 | Column 7 — Other Details (pending criminal case, court permission) | `hasPendingCriminalCase`, `documents[].courtPermissionLetter` |
 | Column 1.4 — Type of Application (Normal/Tatkaal) | `processingSpeed` |
