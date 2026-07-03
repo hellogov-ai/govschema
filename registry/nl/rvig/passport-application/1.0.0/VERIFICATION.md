@@ -132,6 +132,25 @@ citizen-facing PDF that does exist for the minor-consent branch.
 - **Vreemdelingenpaspoort, vluchtelingenpaspoort, and nooddocument
   (emergency travel document)** are distinct products/processes and out of
   scope.
+- **Whether the Utrecht-sourced consent mechanics (DigiD online consent,
+  printable-PDF fallback, the "1 guardian attends in person" case) are
+  confirmed for the full under-18 population, or only for under-12s.** The
+  Utrecht loket page states the general passport rule as "Kinderen jonger dan
+  18 jaar hebben toestemming nodig" (consent needed under 18), but the
+  detailed walkthrough of *how* to give that consent is published under a
+  subheading scoped explicitly to "Aanvragen (kind jonger dan 12 jaar)"
+  (Applying — child younger than 12); the page has no equivalent subsection
+  for 13-17-year-olds, and rijksoverheid.nl's national cross-check page does
+  not mention consent mechanics at all. It is very likely the same national
+  DigiD/toestemmingsverklaring service (Stcrt. 2008, nr. 115 is itself
+  worded for "minderjarige aanvrager(s)" generally, with no age split) covers
+  every minor under 18, not just under-12s — Utrecht's page most plausibly
+  frames its walkthrough around the lower ID-card threshold because the page
+  covers both passport and ID-card products together — but this document
+  does not have a source that states the 13-17 case explicitly, so
+  `allAuthorizedGuardiansAttendingInPerson`/`absentGuardianConsentMethod`
+  should be treated as inferred-by-extension for applicants aged 12-17
+  until a `verified` pass confirms it directly.
 
 ## Scope and jurisdiction notes
 
