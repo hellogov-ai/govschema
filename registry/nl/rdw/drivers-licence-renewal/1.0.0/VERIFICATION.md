@@ -59,6 +59,7 @@ practice.
 | RDW brochure, "De voorwaarden" (conditions) | `livesInParticipatingMunicipality`, `currentLicenceEligibleForOnlineRenewal`, `hasDigidAppWithIdCheck` |
 | RDW brochure, "U vraagt een verlenging... of een categorie-uitbreiding" | `renewalReason`, `categoryRequested` |
 | RDW 'Gezondheidsverklaring aanvragen' — who needs a health declaration | `turning75OrOlderAtExpiry`, `appliesForOrHoldsCategoryCOrD`, `hasMedicalConditionAffectingDriving` |
+| RDW 'Gezondheidsverklaring aanvragen' — "Bij de aanvraag van uw eerste rijbewijs en bij iedere nieuwe rijbewijscategorie die u haalt (geldt niet voor bromfietsrijbewijs: categorie AM)" (any new category except AM also triggers the health declaration) | `geschiktheidVerklaringObtained`'s and `documents[].geschiktheidVerklaring`'s `renewalReason == "category_extension" AND categoryRequested != "AM"` `requiredWhen` branch |
 | RDW 'Gezondheidsverklaring aanvragen' — Verklaring van Geschiktheid 1-year validity | `geschiktheidVerklaringObtained`, `documents[].geschiktheidVerklaring` |
 | RDW brochure, Stap 1 (photographer session and application code) | `applicationCode`, `documents[].digitalPhotoAndSignature` |
 | RDW brochure, Stap 2 (pickup location, iDEAL payment) | `pickupLocation`, `documents[].renewalFeePayment` |
