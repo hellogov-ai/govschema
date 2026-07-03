@@ -1,0 +1,1236 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nl/belastingdienst/individual-income-tax-return-m-form",
+  "version": "1.0.0",
+  "title": "Netherlands Individual Income Tax Return for a Migration Year (M-biljet, M-form 2025)",
+  "description": "Prepare an individual's Dutch income tax return (aangifte inkomstenbelasting, premie volksverzekeringen en inkomensafhankelijke bijdrage Zvw) for a year in which they emigrated from, or immigrated to, the Netherlands — the 'M-form' (M-biljet). Unlike a full calendar-year resident (who must file online via Mijn Belastingdienst, DigiD-gated) or a full calendar-year non-resident (who uses the separate online non-resident-taxpayer service), a migration-year filer is the one population the Belastingdienst still lets file on a directly downloadable paper form, because the M-biljet splits every income line into a domestic period (as a resident) and a foreign period (as a non-resident with only Dutch-source income/assets). This document models the M-biljet's cover sheet (voorblad: identity, address, bank account for refund) and the core individual/employment-income questions: residency dates and national-insurance liability (question 1), fiscal-partner determination (questions 2-3), the domestic/foreign period split (question 4), and box 1 wage, pension/annuity, exempt international-organisation income, foreign employment/pension income, the public-transport commuting deduction, and other-work income (questions 5-11). Out of scope: result from making assets available to a related party (question 12), business profit/self-employment and the accompanying jaarstukken (annual-accounts) booklet (questions 13-23), box 2 substantial-interest income, box 3 savings-and-investments income (questions 51-69, extensively redesigned for the 2025 'werkelijk rendement' actual-yield reform), personal deductions, and the double-taxation relief computation — each is a distinct, much larger sub-schedule of the same form; see VERIFICATION.md. It does not submit the return, compute tax owed or refunded, or determine which of the three aangifte types (M/P/C) an individual must use.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Belastingdienst (Netherlands Tax Administration)",
+    "abbreviation": "Belastingdienst",
+    "url": "https://www.belastingdienst.nl"
+  },
+  "process": {
+    "type": "filing",
+    "language": "nl"
+  },
+  "source": {
+    "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/themaoverstijgend/programmas_en_formulieren/aanvragen-m-formulier-2025",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "M-biljet 2025 (Aangifte Inkomstenbelasting, Premie volksverzekeringen, Inkomensafhankelijke bijdrage Zvw 2025), versie 0.7 - 24 september 2025, direct PDF at odb.belastingdienst.nl/wp-content/uploads/2026/01/M-biljet-2025_90-versie.pdf"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored directly from the Belastingdienst's own official M-biljet 2025 PDF, fetched live from odb.belastingdienst.nl (no access block). This is the eighth reference schema to hit the GSP-0019 calendar-tax-year edition gap (after IE Form 11S, NZ IR3, CA T1, AU myTax, SG Form B1, DE ELSTER, FR form n°2042): spec v0.3's edition.scheme enum (SPEC.md S5.7) remains closed to us-tax-year/gb-tax-year/award-year, so this document is published at the plain, non-edition registry path with the tax year recorded in title/description instead, consistent with all seven prior cases. No live authenticated Mijn Belastingdienst walkthrough was performed for the M-form itself (creating a real DigiD-verified account requires real identity verification not available in this environment); the practice's live-screen comparison step is therefore outstanding and status remains draft. See VERIFICATION.md for the full scope rationale, the mock-data test run, and the field-by-field source table."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "initialsAndName",
+      "label": "Initials and surname (Voorletter(s) en naam)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Voorblad — 'Uw persoonlijke gegevens: Voorletter(s) en naam'"
+    },
+    {
+      "name": "streetAndHouseNumber",
+      "label": "Street and house number (Straat en huisnummer)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The Belastingdienst only updates a filer's address of record via the separate 'Adreswijziging buiten Nederland doorgeven' form, not this return, so this field records the address already on file rather than requesting a change.",
+      "sourceRef": "Voorblad — 'Uw persoonlijke gegevens: Straat en huisnummer'"
+    },
+    {
+      "name": "postalCodeAndCity",
+      "label": "Postal code and city (Postcode en plaats)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Voorblad — 'Uw persoonlijke gegevens: Postcode en plaats'"
+    },
+    {
+      "name": "burgerservicenummer",
+      "label": "Citizen service number (Burgerservicenummer, BSN)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "9 digits. If the BSN has only 8 digits, prefix a 0.",
+      "sourceRef": "Voorblad — 'Uw persoonlijke gegevens: Burgerservicenummer'; instructions p.2 — 'Het burgerservicenummer bestaat uit 9 cijfers'",
+      "validation": {
+        "pattern": "^[0-9]{9}$"
+      }
+    },
+    {
+      "name": "countryOfResidenceCode",
+      "label": "Country code of your country of residence (Landcode van uw woonland)",
+      "type": "string",
+      "required": true,
+      "description": "A country code always consists of 3 letters, per the form's own instructions.",
+      "sourceRef": "Voorblad — 'Uw persoonlijke gegevens: Landcode van uw woonland'; instructions p.2 — 'Een landcode bestaat altijd uit 3 letters'",
+      "validation": {
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth (Geboortedatum)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Voorblad — 'Uw persoonlijke gegevens: Geboortedatum'"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Daytime phone number (Telefoonnummer)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "In case the Belastingdienst has questions about the return.",
+      "sourceRef": "Voorblad — 'Uw telefoonnummer'"
+    },
+    {
+      "name": "refundBankAccountNumber",
+      "label": "Bank account number for a refund (Rekeningnummer voor teruggaaf)",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "Voorblad — 'Rekeningnummer voor teruggaaf'"
+    },
+    {
+      "name": "taxConsultantBeconNumber",
+      "label": "Tax consultant's Becon number (Beconnummer belastingconsulent)",
+      "type": "string",
+      "required": false,
+      "description": "Only applicable if a registered tax consultant prepared the return.",
+      "sourceRef": "Voorblad — 'Beconnummer belastingconsulent. Als dat van toepassing is.'"
+    },
+    {
+      "name": "emigrationDate",
+      "label": "Emigration date, if you moved out of the Netherlands in 2025 (Emigratiedatum)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Question 1a — 'Emigratiedatum'"
+    },
+    {
+      "name": "immigrationDate",
+      "label": "Immigration date, if you moved to the Netherlands in 2025 (Immigratiedatum)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Question 1b — 'Immigratiedatum'"
+    },
+    {
+      "name": "foreignPeriodCountryCode",
+      "label": "Country you lived in during the foreign period of 2025 (Landcode)",
+      "type": "string",
+      "required": true,
+      "description": "3-letter country code. Models the primary country of the foreign period; a filer who lived in more than one foreign country during 2025 repeats question 1c per country on the paper form, out of scope here (single-country simplification, see VERIFICATION.md).",
+      "sourceRef": "Question 1c — 'In welk(e) land(en) ... Landcode ... Periode buiten Nederland woonde u in 2025?'",
+      "validation": {
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    {
+      "name": "foreignPeriodFrom",
+      "label": "Foreign period of 2025 — from",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Question 1c — 'Periode buiten Nederland woonde u in 2025'"
+    },
+    {
+      "name": "foreignPeriodTo",
+      "label": "Foreign period of 2025 — to",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Question 1c — 'Periode buiten Nederland woonde u in 2025'"
+    },
+    {
+      "name": "nationalityCountryCode",
+      "label": "Your nationality (Wat is uw nationaliteit?)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "3-letter country code.",
+      "sourceRef": "Question 1d — 'Wat is uw nationaliteit? Vermeld de landcode.'",
+      "validation": {
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    {
+      "name": "compulsorilyInsuredInNL2025",
+      "label": "Were you compulsorily insured in the Netherlands in 2025 for the national insurance schemes (AOW, Anw, Wlz) and the Zorgverzekeringswet?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates whether the full-year or split-period insurance questions (1f-1j) apply. See the toelichting for question 1e for the full decision tree.",
+      "sourceRef": "Question 1e — 'Was u in 2025 in Nederland verplicht verzekerd voor de volksverzekeringen (AOW, Anw en Wlz) en de Zorgverzekeringswet?'"
+    },
+    {
+      "name": "insuredAllYear2025",
+      "label": "Does your insurance liability apply for all of 2025 for all of the national insurance schemes (AOW, Anw, Wlz) and the Zorgverzekeringswet?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "compulsorilyInsuredInNL2025",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "compulsorilyInsuredInNL2025",
+        "equals": true
+      },
+      "sourceRef": "Question 1e flowchart — 'Geldt uw verzekeringsplicht voor heel 2025 voor alle volksverzekeringen ... en de Zorgverzekeringswet?'"
+    },
+    {
+      "name": "notInsuredForAowAnwAllYear",
+      "label": "Were you, for all of 2025, not insured in the Netherlands for the AOW and Anw?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "insuredAllYear2025",
+        "equals": false
+      },
+      "sourceRef": "Question 1f — 'Was u heel 2025 niet in Nederland verzekerd voor de AOW en de Anw?'"
+    },
+    {
+      "name": "aowAnwInsuredPeriodFrom",
+      "label": "Period compulsorily insured for AOW and Anw — from",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "notInsuredForAowAnwAllYear",
+        "equals": false
+      },
+      "visibleWhen": {
+        "field": "notInsuredForAowAnwAllYear",
+        "equals": false
+      },
+      "sourceRef": "Question 1g — 'Vul de periode in waarin u verplicht verzekerd was voor de AOW en de Anw'"
+    },
+    {
+      "name": "aowAnwInsuredPeriodTo",
+      "label": "Period compulsorily insured for AOW and Anw — to",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "notInsuredForAowAnwAllYear",
+        "equals": false
+      },
+      "visibleWhen": {
+        "field": "notInsuredForAowAnwAllYear",
+        "equals": false
+      },
+      "sourceRef": "Question 1g — 'Vul de periode in waarin u verplicht verzekerd was voor de AOW en de Anw'"
+    },
+    {
+      "name": "notInsuredForWlzZvwAllYear",
+      "label": "Were you, for all of 2025, not insured in the Netherlands for the Wlz and the Zorgverzekeringswet?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "insuredAllYear2025",
+        "equals": false
+      },
+      "sourceRef": "Question 1h — 'Was u heel 2025 niet in Nederland verzekerd voor de Wlz en de Zorgverzekeringswet?'"
+    },
+    {
+      "name": "wlzZvwInsuredPeriodFrom",
+      "label": "Period compulsorily insured for Wlz and Zorgverzekeringswet — from",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "notInsuredForWlzZvwAllYear",
+        "equals": false
+      },
+      "visibleWhen": {
+        "field": "notInsuredForWlzZvwAllYear",
+        "equals": false
+      },
+      "sourceRef": "Question 1i — 'Vul de periode in waarin u verplicht verzekerd was voor de Wlz en de Zorgverzekeringswet'"
+    },
+    {
+      "name": "wlzZvwInsuredPeriodTo",
+      "label": "Period compulsorily insured for Wlz and Zorgverzekeringswet — to",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "notInsuredForWlzZvwAllYear",
+        "equals": false
+      },
+      "visibleWhen": {
+        "field": "notInsuredForWlzZvwAllYear",
+        "equals": false
+      },
+      "sourceRef": "Question 1i — 'Vul de periode in waarin u verplicht verzekerd was voor de Wlz en de Zorgverzekeringswet'"
+    },
+    {
+      "name": "hadDutchIncomeOrAssetsDuringForeignPeriod",
+      "label": "Did you have income from, or assets in, the Netherlands during the foreign period of 2025?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "If your fiscal partner or housemate — not you — had the Dutch income or assets, see the toelichting for question 1j.",
+      "sourceRef": "Question 1j — 'Had u in 2025 in de buitenlandse periode inkomsten uit Nederland of bezittingen in Nederland?'"
+    },
+    {
+      "name": "qualifyingNonResidentTaxpayer",
+      "label": "Did you meet the conditions to be a qualifying non-resident taxpayer (kwalificerend buitenlands belastingplichtige) during the foreign period?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadDutchIncomeOrAssetsDuringForeignPeriod",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadDutchIncomeOrAssetsDuringForeignPeriod",
+        "equals": true
+      },
+      "fieldRole": "eligibility",
+      "description": "Simplifies the source form's own branching flowchart for residents of Suriname/Aruba, Belgium (with a Dutch-taxed-income condition for one or both partners), the EU/EEA/Switzerland/Bonaire/Saba/Sint Eustatius (subject to the qualifying-non-resident-taxpayer conditions), and any other country (no equivalent status) into a single outcome flag. When true, the domestic-period fields in this return also cover income/assets outside the Netherlands and certain deductions may apply; when false, only Dutch-source income/assets are reported for the foreign period. See the toelichting for question 1j for the full country-by-country decision tree.",
+      "sourceRef": "Question 1j flowchart"
+    },
+    {
+      "name": "hadSpouseOrCohabitant2025",
+      "label": "Did you have a spouse or housemate in 2025?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A structurally separated spouse is treated as not having a fiscal partner — see the toelichting for question 2.",
+      "sourceRef": "Question 2 — 'Had u in 2025 een echtgenoot of huisgenoot? Let op! Leefde u duurzaam gescheiden? Lees dan de toelichting bij vraag 2.'"
+    },
+    {
+      "name": "fiscalPartnerAllYear2025",
+      "label": "Were you and this person fiscal partners of each other for all of 2025?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadSpouseOrCohabitant2025",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadSpouseOrCohabitant2025",
+        "equals": true
+      },
+      "description": "Simplifies question 2's marriage/qualifying-non-resident/Belgium/Suriname-Aruba/registered-cohabitant decision tree (questions 2a-2b) into its outcome: whether the two of you were fiscal partners for the whole of 2025. When true, you and your fiscal partner may divide certain income and deductions between you, and your fiscal partner must sign the return's cover sheet.",
+      "sourceRef": "Questions 2, 2a, 2b"
+    },
+    {
+      "name": "fiscalPartnerDomesticPeriodOnly",
+      "label": "Were you and this person fiscal partners of each other during the domestic period of 2025 only?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "fiscalPartnerAllYear2025",
+        "equals": false
+      },
+      "description": "Question 2c's outcome for a couple who were only both taxable residents (or only both non-residents) for part of 2025.",
+      "sourceRef": "Question 2c"
+    },
+    {
+      "name": "partnerInitialsAndName",
+      "label": "Fiscal partner — initials and name (Voorletter(s) en naam fiscale partner)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "Question 3a — 'Voorletter(s) en naam fiscale partner'"
+    },
+    {
+      "name": "partnerBurgerservicenummer",
+      "label": "Fiscal partner — citizen service number (Burgerservicenummer fiscale partner)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "Question 3a — 'Burgerservicenummer fiscale partner'",
+      "validation": {
+        "pattern": "^[0-9]{9}$"
+      }
+    },
+    {
+      "name": "partnerDateOfBirth",
+      "label": "Fiscal partner — date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "Question 3b — 'Geboortedatum fiscale partner'"
+    },
+    {
+      "name": "partnerCountryOfResidenceCode",
+      "label": "Country code of your fiscal partner's country of residence, if different from yours",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Question 3c — 'Woonde uw fiscale partner in 2025 in een ander land dan u? Vermeld dan de code van het woonland.'",
+      "validation": {
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    {
+      "name": "divorceOrSeparationRequestDate",
+      "label": "Date a divorce or separation-from-bed-and-board request was filed, if any",
+      "type": "date",
+      "required": false,
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Question 3d — 'Is er een verzoek tot echtscheiding of scheiding van tafel en bed ingediend? Vul dan hier de datum in.'"
+    },
+    {
+      "name": "fiscalPartnerHasSigned",
+      "label": "Has your fiscal partner signed the cover sheet (voorblad)?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "fiscalPartnerAllYear2025",
+            "equals": true
+          },
+          {
+            "field": "fiscalPartnerDomesticPeriodOnly",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Voorblad — 'Ondertekening fiscale partner: Handtekening fiscale partner'; question 2 — 'Uw fiscale partner moet zijn handtekening zetten op het voorblad van de aangifte.'"
+    },
+    {
+      "name": "domesticPeriodMonths",
+      "label": "Number of full months in 2025 you lived in the Netherlands (based on your emigration/immigration date)",
+      "type": "integer",
+      "required": true,
+      "description": "Used to determine entitlement to the full tax credit (heffingskorting) versus a time-proportionate one. If the answer to the first flowchart question at 1j was 'No' (no Dutch income/assets during the foreign period), enter 0 for the foreign period rather than for this field.",
+      "sourceRef": "Question 4a-4b — 'Aantal (volle) maanden in 2025, op basis van uw emigratie- of immigratiedatum'",
+      "validation": {
+        "minimum": 0,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "hadDutchEmploymentIncome",
+      "label": "Did you have income from employment in the Netherlands in 2025, such as wages or a sickness-benefit payment?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Also covers employment income in the Netherlands for an employer based outside the Netherlands.",
+      "sourceRef": "Question 5 — 'Had u in 2025 inkomsten uit loondienst in Nederland, zoals loon of een ziektewetuitkering?'"
+    },
+    {
+      "name": "employerName",
+      "label": "Name of your employer (Naam van uw werkgever(s))",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "Models a single primary Dutch employer for 2025; a filer with more than one employer during the year repeats question 5a per employer on the paper form (out of scope simplification, see VERIFICATION.md).",
+      "sourceRef": "Question 5a — 'Naam van uw werkgever(s)'"
+    },
+    {
+      "name": "wageWithheldPayrollTax",
+      "label": "Payroll tax withheld on this wage (Ingehouden loonheffing)",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 5a — 'Ingehouden loonheffing'"
+    },
+    {
+      "name": "wageAmount",
+      "label": "Wage, sickness-benefit and other employment income that was subject to payroll tax withholding (Loon)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 5a — 'Loon, ziektewetuitkeringen en andere inkomsten uit loondienst die onder de loonheffing vielen'"
+    },
+    {
+      "name": "wageDomesticPeriod",
+      "label": "Wage over the domestic period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 5b — 'Loon over de binnenlandse periode'"
+    },
+    {
+      "name": "wageForeignPeriod",
+      "label": "Wage over the foreign period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 5c — 'Loon over de buitenlandse periode'"
+    },
+    {
+      "name": "tipsAndOtherIncome",
+      "label": "Tips and other employment income not subject to payroll tax withholding (Fooien en andere inkomsten)",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "description": "Income from other (non-employment) work is reported at question 11, not here.",
+      "sourceRef": "Question 5d — 'Fooien en andere inkomsten uit loondienst die niet onder de loonheffing vielen'"
+    },
+    {
+      "name": "tipsDomesticPeriod",
+      "label": "Tips and other income over the domestic period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 5e — 'Fooien en andere inkomsten over de binnenlandse periode'"
+    },
+    {
+      "name": "tipsForeignPeriod",
+      "label": "Tips and other income over the foreign period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 5f — 'Fooien en andere inkomsten over de buitenlandse periode'"
+    },
+    {
+      "name": "hadDutchPensionIncome",
+      "label": "Did you have payouts from the Netherlands in 2025, such as AOW state pension, occupational pension, or annuity payments?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Question 6 — 'Had u in 2025 uitkeringen uit Nederland, zoals AOW, pensioen, lijfrente en andere uitkeringen?'"
+    },
+    {
+      "name": "pensionProviderName",
+      "label": "Name of the benefit-paying institution (Naam van de uitkeringsinstantie(s))",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "Question 6a — 'Naam van de uitkeringsinstantie(s)'"
+    },
+    {
+      "name": "pensionWithheldPayrollTax",
+      "label": "Payroll tax withheld on this pension/benefit",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 6a — 'Ingehouden loonheffing'"
+    },
+    {
+      "name": "pensionOrBenefitAmount",
+      "label": "Pension or benefit amount subject to payroll tax withholding",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 6a — 'Pensioen of uitkering'"
+    },
+    {
+      "name": "pensionDomesticPeriod",
+      "label": "Pension/benefits over the domestic period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 6b — 'Pensioen en uitkeringen over de binnenlandse periode'"
+    },
+    {
+      "name": "pensionForeignPeriod",
+      "label": "Pension/benefits over the foreign period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 6c — 'Pensioen en uitkeringen over de buitenlandse periode'"
+    },
+    {
+      "name": "annuitySurrenderAmount",
+      "label": "Annuity surrender payout on which you owe revisierente (Afkoopsommen lijfrente)",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "description": "Also requires question 94 on the source form (personal deductions section), out of scope in this document — see VERIFICATION.md.",
+      "sourceRef": "Question 6d — 'Afkoopsommen lijfrente waarover u revisierente moet betalen'"
+    },
+    {
+      "name": "annuitySurrenderProviderName",
+      "label": "Name of the insurer/institution paying the annuity surrender",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "Question 6d — 'Naam van de uitkeringsinstantie(s)/verzekeraar lijfrente'"
+    },
+    {
+      "name": "annuitySurrenderWithheldTax",
+      "label": "Payroll tax withheld on the annuity surrender",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 6d — 'Ingehouden loonheffing'"
+    },
+    {
+      "name": "annuitySurrenderDomesticPeriod",
+      "label": "Annuity surrender over the domestic period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 6e — 'Afkoopsommen lijfrente over de binnenlandse periode'"
+    },
+    {
+      "name": "annuitySurrenderForeignPeriod",
+      "label": "Annuity surrender over the foreign period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadDutchPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 6f — 'Afkoopsommen lijfrente over de buitenlandse periode'"
+    },
+    {
+      "name": "hadExemptInternationalOrgIncome",
+      "label": "Did you have exempt income in 2025 as an employee of an international organisation (e.g. EU, UN, NATO), or an exempt EU pension?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Question 7 — 'Had u in 2025 vrijgestelde inkomsten als werknemer bij een internationale organisatie, zoals de EU, VN of NAVO? Of had u een vrijgesteld pensioen van de EU?'"
+    },
+    {
+      "name": "exemptOrgName",
+      "label": "Name of the international organisation (exempt wage)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadExemptInternationalOrgIncome",
+        "equals": true
+      },
+      "sourceRef": "Question 7a — 'Naam van de organisatie'"
+    },
+    {
+      "name": "exemptWageAmount",
+      "label": "Exempt wage from an international organisation",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadExemptInternationalOrgIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 7a — 'Vrijgesteld loon'"
+    },
+    {
+      "name": "exemptPensionOrgName",
+      "label": "Name of the organisation paying the exempt EU pension",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadExemptInternationalOrgIncome",
+        "equals": true
+      },
+      "sourceRef": "Question 7b — 'Naam van de organisatie'"
+    },
+    {
+      "name": "exemptPensionAmount",
+      "label": "Exempt EU pension amount",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadExemptInternationalOrgIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 7b — 'Vrijgesteld pensioen'"
+    },
+    {
+      "name": "hadForeignEmploymentIncome",
+      "label": "Did you have employment income from outside the Netherlands in 2025, such as wages?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Report only the domestic-period portion of this income; the foreign-period portion is not reported here.",
+      "sourceRef": "Question 8 — 'Had u in 2025 inkomsten uit loondienst buiten Nederland, zoals loon?'"
+    },
+    {
+      "name": "foreignEmployerNameAndAddress",
+      "label": "Name and address of your employer(s) outside the Netherlands",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadForeignEmploymentIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadForeignEmploymentIncome",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "Question 8a — 'Naam en adres van uw werkgever(s)'"
+    },
+    {
+      "name": "foreignWageAmount",
+      "label": "Wage from outside the Netherlands (domestic period only)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadForeignEmploymentIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadForeignEmploymentIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 8a — 'Loon'"
+    },
+    {
+      "name": "hadForeignPensionIncome",
+      "label": "Did you have payouts from outside the Netherlands in 2025, such as pension, disability, unemployment, or government benefits?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Report only the domestic-period portion of this income; the foreign-period portion is not reported here.",
+      "sourceRef": "Question 9 — 'Had u in 2025 uitkeringen buiten Nederland, zoals pensioen, invaliditeitsuitkeringen, werkloosheidsuitkeringen of overheidsuitkeringen?'"
+    },
+    {
+      "name": "foreignBenefitProviderNameAndAddress",
+      "label": "Name and address of the benefit-paying institution(s) outside the Netherlands",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadForeignPensionIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadForeignPensionIncome",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "Question 9a — 'Naam en adres van de uitkeringsinstantie(s)'"
+    },
+    {
+      "name": "foreignPensionAmount",
+      "label": "Pension or benefit amount from outside the Netherlands (domestic period only)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadForeignPensionIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadForeignPensionIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 9a — 'Pensioen of uitkering'"
+    },
+    {
+      "name": "hadPublicTransportCommute",
+      "label": "Did you commute to work by public transport in 2025, more than 10 km one-way, holding a public-transport or travel statement?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Question 10 — 'Reisde u in 2025 met het openbaar vervoer naar uw werk? En was de afstand enkele reis tussen uw woning en het werk meer dan 10 km? En beschikte u over een openbaarvervoerverklaring of reisverklaring?'"
+    },
+    {
+      "name": "commutingDeductionCalculated",
+      "label": "Public-transport commuting deduction, per the Belastingdienst's calculation aid (Reisaftrek openbaar vervoer)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadPublicTransportCommute",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadPublicTransportCommute",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 10a — 'Reisaftrek openbaar vervoer. Neem over uit de rekenhulp in de toelichting bij vraag 10.'"
+    },
+    {
+      "name": "employerCommutingReimbursement",
+      "label": "Employer reimbursements for public transport, per the calculation aid",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadPublicTransportCommute",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 10b — 'Vergoedingen van uw werkgever voor het openbaar vervoer'"
+    },
+    {
+      "name": "netCommutingDeduction",
+      "label": "Total public-transport commuting deduction (10a minus 10b, minimum 0)",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadPublicTransportCommute",
+        "equals": true
+      },
+      "classification": "financial",
+      "description": "Enter 0 if the result of 10a minus 10b is negative.",
+      "sourceRef": "Question 10c — 'Trek af: 10a min 10b. Totaal reisaftrek openbaar vervoer. Vul 0 in als de uitkomst negatief is.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "commutingDeductionDomesticPeriod",
+      "label": "Commuting deduction over the domestic period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadPublicTransportCommute",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 10d — 'Reisaftrek over de binnenlandse periode'"
+    },
+    {
+      "name": "commutingDeductionForeignPeriod",
+      "label": "Commuting deduction over the foreign period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadPublicTransportCommute",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 10e — 'Reisaftrek over de buitenlandse periode'"
+    },
+    {
+      "name": "hadOtherWorkIncome",
+      "label": "Did you have income from other work in 2025 not subject to payroll tax withholding and not business profit — including artiste/professional-sportsperson income or extraordinary remuneration?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Question 11 — 'Had u in 2025 opbrengsten uit overig werk die niet onder de loonheffing vielen en die ook geen winst uit onderneming waren? Of gold voor u de artiesten- of beroepssportersregeling?'"
+    },
+    {
+      "name": "otherWorkRevenue",
+      "label": "Revenue from other work (Opbrengsten uit overig werk)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadOtherWorkIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hadOtherWorkIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 11a — 'Opbrengsten uit overig werk'"
+    },
+    {
+      "name": "otherWorkDeductibleCosts",
+      "label": "Deductible costs and expenses (Aftrekbare kosten en lasten)",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadOtherWorkIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 11b — 'Aftrekbare kosten en lasten'"
+    },
+    {
+      "name": "otherWorkResult",
+      "label": "Result from other work (11a minus 11b; enter a minus sign if negative)",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadOtherWorkIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 11c — 'Trek af: 11a min 11b. Resultaat uit overig werk. Zet een minteken voor het bedrag als dit negatief is.'"
+    },
+    {
+      "name": "otherWorkResultDomesticPeriod",
+      "label": "Result from other work over the domestic period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadOtherWorkIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 11d — 'Resultaat uit overig werk over de binnenlandse periode'"
+    },
+    {
+      "name": "otherWorkResultForeignPeriod",
+      "label": "Result from other work over the foreign period",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadOtherWorkIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 11e — 'Resultaat uit overig werk over de buitenlandse periode'"
+    },
+    {
+      "name": "otherWorkWithheldTax",
+      "label": "Dutch payroll tax withheld on artiste/professional-sportsperson income reported at 11a",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "hadOtherWorkIncome",
+        "equals": true
+      },
+      "classification": "financial",
+      "sourceRef": "Question 11f — 'Nederlandse loonheffing die is ingehouden op de bij vraag 11a vermelde opbrengsten die onder de artiesten- of beroepssportersregeling vielen'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of signature (Ondertekening — Datum)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Voorblad — 'Ondertekening: Datum'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "cover_sheet",
+      "title": "Cover sheet (voorblad): identity, address, bank account",
+      "fields": [
+        "initialsAndName",
+        "streetAndHouseNumber",
+        "postalCodeAndCity",
+        "burgerservicenummer",
+        "countryOfResidenceCode",
+        "dateOfBirth",
+        "phoneNumber",
+        "refundBankAccountNumber",
+        "taxConsultantBeconNumber"
+      ]
+    },
+    {
+      "id": "residency_and_insurance",
+      "title": "Living abroad, residency period, and national-insurance liability",
+      "fields": [
+        "emigrationDate",
+        "immigrationDate",
+        "foreignPeriodCountryCode",
+        "foreignPeriodFrom",
+        "foreignPeriodTo",
+        "nationalityCountryCode",
+        "compulsorilyInsuredInNL2025",
+        "insuredAllYear2025",
+        "notInsuredForAowAnwAllYear",
+        "aowAnwInsuredPeriodFrom",
+        "aowAnwInsuredPeriodTo",
+        "notInsuredForWlzZvwAllYear",
+        "wlzZvwInsuredPeriodFrom",
+        "wlzZvwInsuredPeriodTo",
+        "hadDutchIncomeOrAssetsDuringForeignPeriod",
+        "qualifyingNonResidentTaxpayer"
+      ]
+    },
+    {
+      "id": "fiscal_partner",
+      "title": "Fiscal partner",
+      "fields": [
+        "hadSpouseOrCohabitant2025",
+        "fiscalPartnerAllYear2025",
+        "fiscalPartnerDomesticPeriodOnly",
+        "partnerInitialsAndName",
+        "partnerBurgerservicenummer",
+        "partnerDateOfBirth",
+        "partnerCountryOfResidenceCode",
+        "divorceOrSeparationRequestDate",
+        "fiscalPartnerHasSigned"
+      ]
+    },
+    {
+      "id": "domestic_period",
+      "title": "Period of Dutch tax liability in 2025",
+      "fields": [
+        "domesticPeriodMonths"
+      ]
+    },
+    {
+      "id": "wage_and_benefits_nl",
+      "title": "Wage and sickness benefits from the Netherlands",
+      "fields": [
+        "hadDutchEmploymentIncome",
+        "employerName",
+        "wageWithheldPayrollTax",
+        "wageAmount",
+        "wageDomesticPeriod",
+        "wageForeignPeriod",
+        "tipsAndOtherIncome",
+        "tipsDomesticPeriod",
+        "tipsForeignPeriod"
+      ]
+    },
+    {
+      "id": "pension_and_benefits_nl",
+      "title": "AOW, pension, annuity, and other payouts from the Netherlands",
+      "fields": [
+        "hadDutchPensionIncome",
+        "pensionProviderName",
+        "pensionWithheldPayrollTax",
+        "pensionOrBenefitAmount",
+        "pensionDomesticPeriod",
+        "pensionForeignPeriod",
+        "annuitySurrenderAmount",
+        "annuitySurrenderProviderName",
+        "annuitySurrenderWithheldTax",
+        "annuitySurrenderDomesticPeriod",
+        "annuitySurrenderForeignPeriod"
+      ]
+    },
+    {
+      "id": "exempt_international_org_income",
+      "title": "Exempt income from an international organisation",
+      "fields": [
+        "hadExemptInternationalOrgIncome",
+        "exemptOrgName",
+        "exemptWageAmount",
+        "exemptPensionOrgName",
+        "exemptPensionAmount"
+      ]
+    },
+    {
+      "id": "foreign_income",
+      "title": "Wage and pension/benefits from outside the Netherlands",
+      "fields": [
+        "hadForeignEmploymentIncome",
+        "foreignEmployerNameAndAddress",
+        "foreignWageAmount",
+        "hadForeignPensionIncome",
+        "foreignBenefitProviderNameAndAddress",
+        "foreignPensionAmount"
+      ]
+    },
+    {
+      "id": "commuting_deduction",
+      "title": "Public-transport commuting deduction",
+      "fields": [
+        "hadPublicTransportCommute",
+        "commutingDeductionCalculated",
+        "employerCommutingReimbursement",
+        "netCommutingDeduction",
+        "commutingDeductionDomesticPeriod",
+        "commutingDeductionForeignPeriod"
+      ]
+    },
+    {
+      "id": "other_work_income",
+      "title": "Income from other work",
+      "fields": [
+        "hadOtherWorkIncome",
+        "otherWorkRevenue",
+        "otherWorkDeductibleCosts",
+        "otherWorkResult",
+        "otherWorkResultDomesticPeriod",
+        "otherWorkResultForeignPeriod",
+        "otherWorkWithheldTax"
+      ]
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and signature",
+      "fields": [
+        "declarationDate"
+      ]
+    }
+  ]
+}
