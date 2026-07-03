@@ -1,0 +1,712 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/gewerbeamt/business-registration",
+  "version": "1.0.0",
+  "title": "Germany Business/Trade Registration (Gewerbeanmeldung, GewA 1) — § 14 GewO / § 55c GewO",
+  "description": "Register the start of a commercial trade (Gewerbe) in Germany using the bundeseinheitlich (nationally standardized) 'Gewerbe-Anmeldung' form GewA 1, filed with the locally competent Gewerbeamt/Ordnungsamt (trade office) of the municipality where the business premises (Betriebsstätte) is located. The form's layout is prescribed nationwide by the Gewerbeanzeigeverordnung (GewAnzV, a federal ordinance under the Gewerbeordnung/GewO) so every municipality's edition collects the same field set, even though intake, channel (paper, in person, or a municipal online form), and fees are set locally. This is the closest German analogue to sg/acra/sole-proprietorship-registration and fr/inpi/micro-entrepreneur-activity-declaration: it models a natural person registering as a sole trader (Einzelunternehmer), as one managing partner of an unregistered civil-law partnership (GbR — each managing partner files their own copy of this form), or as the legal representative of an already-registered legal entity/registered partnership (e.g. GmbH, OHG) filing on the entity's behalf. Full incorporation of a GmbH or AG itself (drafting the Gesellschaftsvertrag/Satzung and the Handelsregister entry) requires notarial certification under the Beurkundungsgesetz and is out of scope — this schema begins after any such entity already exists (or is being formed as a sole proprietorship/GbR, which needs no notary), at the point of registering the resulting trade with the Gewerbeamt, which closes the Business Formation vertical's last open jurisdiction candidate (DE).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Gewerbeamt/Ordnungsamt (the locally competent municipal trade office, per § 14 GewO), using the nationally standardized form prescribed by the Gewerbeanzeigeverordnung under the Bundesministerium für Wirtschaft und Klimaschutz's Gewerbeordnung framework",
+    "abbreviation": "Gewerbeamt",
+    "url": "https://www.gewerbe-anmeldung.de"
+  },
+  "process": {
+    "type": "registration",
+    "language": "de-DE"
+  },
+  "source": {
+    "url": "https://fhh1.hamburg.de/Dibis/form/pdf/Formular-Gewerbeanmeldung_en.pdf",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "GewA 1 — 'Gewerbe-Anmeldung nach § 14 GewO oder § 55c GewO', bundeseinheitlicher Vordruck (Freie und Hansestadt Hamburg's official bilingual German/English edition; content and field order cross-checked against the Freistaat Sachsen (formularservice-sachsen.de), Freistaat Bayern (stmwi.bayern.de) editions of the same nationally standardized form, and the City of Düsseldorf Ordnungsamt's field-by-field guidance 'Anleitung zur Gewerbeanmeldung')"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from the genuine fillable-AcroForm GewA 1 PDFs published by three separate Länder/municipalities (Hamburg's own bilingual German/English edition, Sachsen's formularservice edition, and Bayern's state-ministry edition), extracted with pdfjs-dist's getTextContent()/getAnnotations() (the same technique used for fr/inpi/micro-entrepreneur-activity-declaration). All three editions carry the same field content in the same numbered order (1 through 33, with gaps at 25 and 27 reserved for form-internal headings rather than data fields), confirming the Gewerbeanzeigeverordnung's nationwide standardization claim rather than relying on a single municipality's copy. Field-level requiredness/conditional-visibility guidance (which fields sole traders vs. partnerships vs. legal entities complete, which fields are relevant only for takeovers/relocations, which are craft-business- or foreign-national-only) was corroborated against the City of Düsseldorf Ordnungsamt's own official 4-page 'Anleitung zur Gewerbeanmeldung' (field-by-field completion guide), not inferred from the form layout alone. Registration cost (municipality-set, roughly EUR 10-65, not modelled as a fixed documents[].amount) and the 'promptly, at the latest within about a week of starting the activity' filing-deadline norm under § 14 GewO were cross-checked across independent secondary explainer sources (gewerbeanmeldung.de, taxfix.de, gruenderplattform.de) since no single primary source states both a numeric fee and deadline uniformly (fee is legally left to each municipality's Kostensatzung). No live municipal online-Gewerbeanmeldung portal was submitted to end-to-end for this version (channel and screen layout vary per municipality, with many still paper/in-person only), so status remains 'draft', not 'verified'; the underlying GewA 1 field set itself is federally uniform regardless of channel."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantType",
+      "label": "Who is registering?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Sole traders (Einzelunternehmer) leave the register-entry fields (1-2 on the source form) blank. A GbR (unregistered civil-law partnership) partner notes 'GbR' plus the other partners' names in the company-name field instead of a register entry; each managing partner of a GbR files a separate copy of this form for the same business. A registered legal entity/partnership (e.g. GmbH, OHG) already entered — or in the process of being entered ('i.G.') — in the Handels-, Genossenschafts-, or Vereinsregister provides its registered name, legal form, and register entry.",
+      "sourceRef": "Fields 1-2, 'Im Handels-, Genossenschafts- oder Vereinsregister eingetragener Name mit Rechtsform'; Düsseldorf Ordnungsamt Anleitung — 'Einzelunternehmen: Lassen Sie Feld 1 und 2 leer. GbR: ... tragen alle Gesellschafter ein.'",
+      "validation": { "enum": ["sole_trader", "gbr_partner", "registered_legal_entity"] }
+    },
+    {
+      "name": "registeredCompanyName",
+      "label": "Registered name with legal form",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "applicantType", "equals": "gbr_partner" }, { "field": "applicantType", "equals": "registered_legal_entity" } ] },
+      "visibleWhen": { "any": [ { "field": "applicantType", "equals": "gbr_partner" }, { "field": "applicantType", "equals": "registered_legal_entity" } ] },
+      "description": "For a GbR: the partnership's working name, marked 'GbR'. For a registered legal entity not yet entered in the register, append 'i. G.' (in Gründung) and attach a notarised copy of the Gesellschaftsvertrag/Satzung.",
+      "sourceRef": "Field 1 — 'Name entered in the Commercial Register, Register of Co-operatives or Register of Associations citing legal structure (if necessary in case of GbR: details of the other shareholders)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "registerEntryLocationAndNumber",
+      "label": "Place and number of register entry",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "registered_legal_entity" },
+      "visibleWhen": { "field": "applicantType", "equals": "registered_legal_entity" },
+      "description": "Where the entity is already entered in the Handels-, Genossenschafts-, or Vereinsregister, the register court/location and entry number. Left blank for an entity still 'i. G.' (not yet entered).",
+      "sourceRef": "Field 2 — 'Place and no. of entry in register'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "gbrPartnerNames",
+      "label": "Other managing partners (GbR)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "gbr_partner" },
+      "visibleWhen": { "field": "applicantType", "equals": "gbr_partner" },
+      "description": "Full names of the GbR's other managing partners. Each managing partner separately files their own copy of this form for the same business.",
+      "sourceRef": "Field 1 note; Düsseldorf Ordnungsamt Anleitung — 'Bei Anmeldung einer Personengesellschaft z. B. einer GbR muss jeder Gesellschafter eine eigene Gewerbeanmeldung ... vornehmen.'",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "familyName",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "For a registered legal entity, the surname of its legal representative (fields 3-9 apply to the representative, not the entity itself), except for a domestic AG.",
+      "sourceRef": "Field 3 — 'Surname'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 4 — 'Given names'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "birthName",
+      "label": "Name at birth (if different from surname)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 5 — 'Name at birth (if different from surname)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The source form offers only a binary male/female (männlich/weiblich) checkbox; this schema reflects that as published, not as a design choice.",
+      "sourceRef": "Field 4a — 'Gender — male / female'",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 6 — 'Date of birth'"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 7 — 'Place and country of birth'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 7 — 'Place and country of birth'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "isGermanNational",
+      "label": "German national?",
+      "type": "boolean",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 8 — 'Nationality(ies) — German / other'",
+      "validation": {}
+    },
+    {
+      "name": "otherNationality",
+      "label": "Nationality, if not German",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isGermanNational", "equals": false },
+      "visibleWhen": { "field": "isGermanNational", "equals": false },
+      "classification": "pii",
+      "sourceRef": "Field 8 — 'Nationality(ies) — German / other:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "homeAddressStreet",
+      "label": "Home address — street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 9 — 'Residential address (street, house no., postcode, place)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "homeAddressHouseNumber",
+      "label": "Home address — house number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 9 — 'Residential address'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "homeAddressPostalCode",
+      "label": "Home address — postcode",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "German postcodes (Postleitzahl) are 5 digits.",
+      "sourceRef": "Field 9 — 'Residential address'",
+      "validation": { "pattern": "^[0-9]{5}$", "minLength": 5, "maxLength": 5 }
+    },
+    {
+      "name": "homeAddressCity",
+      "label": "Home address — place",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 9 — 'Residential address'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "homePhoneNumber",
+      "label": "Home telephone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 9 — 'Tel.no.'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "homeFaxNumber",
+      "label": "Home fax number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 9 — 'Fax.no'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "homeEmailOrWebsite",
+      "label": "Email/web (voluntary)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 9 — 'optional: Email/web'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "numberOfManagingPartnersOrRepresentatives",
+      "label": "Number of managing partners / legal representatives",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "applicantType", "equals": "gbr_partner" }, { "field": "applicantType", "equals": "registered_legal_entity" } ] },
+      "visibleWhen": { "any": [ { "field": "applicantType", "equals": "gbr_partner" }, { "field": "applicantType", "equals": "registered_legal_entity" } ] },
+      "description": "Sole traders and registered sole merchants (eingetragene Kaufleute) leave this blank. Otherwise the number of managing partners (Personengesellschaft) or legal representatives (juristische Person).",
+      "sourceRef": "Field 10 — 'Number of managing partners (only in case of non-incorporated companies) / Number of legal representatives (only in case of legal persons)'; Düsseldorf Ordnungsamt Anleitung — 'Einzelunternehmen und eingetragene Kaufleute lassen dieses Feld leer.'",
+      "validation": { "minimum": 1, "maximum": 50 }
+    },
+    {
+      "name": "isDomesticStockCorporationBranchOrDependentBranch",
+      "label": "Is this a domestic stock corporation (AG), branch office, or dependent branch office?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "registered_legal_entity" },
+      "visibleWhen": { "field": "applicantType", "equals": "registered_legal_entity" },
+      "fieldRole": "eligibility",
+      "description": "Gates whether a separately named authorised representative/manager must be given, distinct from the legal representative already named above.",
+      "sourceRef": "Field 11 — 'Persons/managers authorised as representatives (only in case of domestic AGs, branches and dependent branches)'"
+    },
+    {
+      "name": "authorizedRepresentativeName",
+      "label": "Authorised representative / manager — name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isDomesticStockCorporationBranchOrDependentBranch", "equals": true },
+      "visibleWhen": { "field": "isDomesticStockCorporationBranchOrDependentBranch", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Field 11 — 'Persons/managers authorised as representatives' — surname/given names",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "premisesStreet",
+      "label": "Business premises — street",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 12 — 'Permanent establishment — street, house-no., postcode, place'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "premisesHouseNumber",
+      "label": "Business premises — house number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 12 — 'Permanent establishment'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "premisesPostalCode",
+      "label": "Business premises — postcode",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 12 — 'Permanent establishment'",
+      "validation": { "pattern": "^[0-9]{5}$", "minLength": 5, "maxLength": 5 }
+    },
+    {
+      "name": "premisesCity",
+      "label": "Business premises — place",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 12 — 'Permanent establishment'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "premisesPhoneNumber",
+      "label": "Business premises — telephone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 12 — 'Tel.no.'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "premisesFaxNumber",
+      "label": "Business premises — fax number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 12 — 'Fax.no'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "premisesEmailOrWebsite",
+      "label": "Business premises — email/web (voluntary)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 12 — 'optional: Email/web'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "registrationScope",
+      "label": "This registration applies to",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the premises above is the business's principal establishment, a branch (Zweigniederlassung), or a dependent branch office (unselbständige Zweigstelle) of a principal establishment registered elsewhere.",
+      "sourceRef": "Field 20 — 'The registration applies to — a principal establishment / a branch / a dependent branch'",
+      "validation": { "enum": ["principal_establishment", "branch", "dependent_branch"] }
+    },
+    {
+      "name": "principalEstablishmentStreet",
+      "label": "Principal establishment — street",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "visibleWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "description": "Only completed if the premises being registered is merely a branch or dependent branch office of a principal establishment located elsewhere.",
+      "sourceRef": "Field 13 — 'Principal establishment (if permanent establishment is merely branch) — street, house-no., postcode, place'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "principalEstablishmentHouseNumber",
+      "label": "Principal establishment — house number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "visibleWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "sourceRef": "Field 13 — 'Principal establishment'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "principalEstablishmentPostalCode",
+      "label": "Principal establishment — postcode",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "visibleWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "sourceRef": "Field 13 — 'Principal establishment'",
+      "validation": { "pattern": "^[0-9]{5}$", "minLength": 5, "maxLength": 5 }
+    },
+    {
+      "name": "principalEstablishmentCity",
+      "label": "Principal establishment — place",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "visibleWhen": { "any": [ { "field": "registrationScope", "equals": "branch" }, { "field": "registrationScope", "equals": "dependent_branch" } ] },
+      "sourceRef": "Field 13 — 'Principal establishment'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "isVendingMachineBusiness",
+      "label": "Is this also a vending-machine-installation business (Automatenaufstellungsgewerbe)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Field 21 — 'a business installing vending machines'"
+    },
+    {
+      "name": "isItinerantTrade",
+      "label": "Is this also an itinerant trade (Reisegewerbe)?",
+      "type": "boolean",
+      "required": true,
+      "description": "A door-to-door/travelling trade conducted without a fixed commercial establishment, separately licensed under § 55c GewO. This field only flags the checkbox on the GewA 1 form; a Reisegewerbekarte application itself is a separate process out of scope here.",
+      "sourceRef": "Field 22 — 'an itinerant trader'"
+    },
+    {
+      "name": "activityDescription",
+      "label": "Registered activity",
+      "type": "string",
+      "required": true,
+      "description": "A precise description of the activity, e.g. 'Großhandel mit Elektrowaren' (wholesale of electrical goods) — generic phrasing like 'trade in goods of all kinds' is rejected in practice. If multiple activities are conducted, the main one should be indicated.",
+      "sourceRef": "Field 15 — 'Registered activity — if necessary use extra sheet (give precise description ...; in case of several activities, please underline main activity)'",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "isSecondaryOccupation",
+      "label": "Is the activity (initially) being run as a sideline (Nebenerwerb)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Collected for statistical purposes; it is not itself a legal eligibility gate.",
+      "sourceRef": "Field 16 — 'Is the business (initially) being run as a sideline?'; Düsseldorf Ordnungsamt Anleitung — 'Diese Angabe dient nur statistischen Zwecken.'"
+    },
+    {
+      "name": "activityStartDate",
+      "label": "Date of commencement of registered activity",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 17 — 'Date of commencement of registered activity'"
+    },
+    {
+      "name": "businessType",
+      "label": "Type of business registered",
+      "type": "enum",
+      "required": true,
+      "description": "Determines assignment to the Industrie- und Handelskammer (IHK) or Handwerkskammer (HWK) for statutory chamber membership.",
+      "sourceRef": "Field 18 — 'Type of business registered — Industry / Crafts / Trade / Other'; Düsseldorf Ordnungsamt Anleitung — 'Dieses Feld dient dazu, Ihr Gewerbe der IHK bzw. HWK zuzuordnen.'",
+      "validation": { "enum": ["industry", "crafts", "trade", "other"] }
+    },
+    {
+      "name": "fullTimeEmployeeCountAtStart",
+      "label": "Full-time employees at commencement (excluding owner)",
+      "type": "integer",
+      "required": true,
+      "description": "Enter 0 if none.",
+      "sourceRef": "Field 19 — 'Number of persons active when business activity commenced (excluding owner) — Full-time'",
+      "validation": { "minimum": 0, "maximum": 100000 }
+    },
+    {
+      "name": "partTimeEmployeeCountAtStart",
+      "label": "Part-time employees at commencement (excluding owner)",
+      "type": "integer",
+      "required": true,
+      "description": "Enter 0 if none.",
+      "sourceRef": "Field 19 — 'Number of persons active when business activity commenced (excluding owner) — Part-time'",
+      "validation": { "minimum": 0, "maximum": 100000 }
+    },
+    {
+      "name": "filingCategory",
+      "label": "Reason for registration — category",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Fields 23-24 — 'Reason — New establishment / Take-over'",
+      "validation": { "enum": ["new_establishment", "takeover"] }
+    },
+    {
+      "name": "newEstablishmentReason",
+      "label": "New establishment — reason",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "filingCategory", "equals": "new_establishment" },
+      "visibleWhen": { "field": "filingCategory", "equals": "new_establishment" },
+      "sourceRef": "Field 23 — 'New start-up / Re-opening following relocation from a different district of registration'",
+      "validation": { "enum": ["new_start_up", "reopening_after_relocation"] }
+    },
+    {
+      "name": "takeoverReason",
+      "label": "Takeover — reason",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "filingCategory", "equals": "takeover" },
+      "visibleWhen": { "field": "filingCategory", "equals": "takeover" },
+      "sourceRef": "Field 24 — 'Change of legal structure / Founding of business pursuant to the Reorganisation Act (e.g. merger, split) / Admission of partner / Inheritance/purchase/lease'",
+      "validation": { "enum": ["change_of_legal_form", "transformation_act_formation", "partner_admission", "inheritance_purchase_lease"] }
+    },
+    {
+      "name": "formerOperatorOrCompanyName",
+      "label": "Name of former operator or former business name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "visibleWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "description": "Not relevant for a brand-new start-up at a brand-new location.",
+      "sourceRef": "Field 26 — 'Name of former operator or former business name'; Düsseldorf Ordnungsamt Anleitung — '26-27 ... nur relevant, wenn es sich bei dem anzumeldenden Gewerbe nicht um eine Neugründung handelt.'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "formerEstablishmentStreet",
+      "label": "Former establishment — street",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "visibleWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "description": "The prior address: the old premises' address on relocation, or the taken-over business's address on a takeover.",
+      "sourceRef": "Field 14 — 'Former permanent establishment — street, house-no., postcode, place'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "formerEstablishmentHouseNumber",
+      "label": "Former establishment — house number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "visibleWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "sourceRef": "Field 14 — 'Former permanent establishment'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "formerEstablishmentPostalCode",
+      "label": "Former establishment — postcode",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "visibleWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "sourceRef": "Field 14 — 'Former permanent establishment'",
+      "validation": { "pattern": "^[0-9]{5}$", "maxLength": 5 }
+    },
+    {
+      "name": "formerEstablishmentCity",
+      "label": "Former establishment — place",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "visibleWhen": { "any": [ { "field": "filingCategory", "equals": "takeover" }, { "field": "newEstablishmentReason", "equals": "reopening_after_relocation" } ] },
+      "sourceRef": "Field 14 — 'Former permanent establishment'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "hasBusinessPermit",
+      "label": "Does a licence/permit exist for this activity?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Some activities (e.g. restaurants under § 2 GastG, certain financial or health-adjacent trades) require a specific permit before the trade may lawfully begin; the Gewerbeanmeldung itself is only a notification, not that permit.",
+      "sourceRef": "Field 28 — 'Does a licence/permit exist? If so, date of issue and issuing authority'"
+    },
+    {
+      "name": "businessPermitIssueDateAndAuthority",
+      "label": "Permit — issue date and issuing authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBusinessPermit", "equals": true },
+      "visibleWhen": { "field": "hasBusinessPermit", "equals": true },
+      "sourceRef": "Field 28 — 'If so, date of issue and issuing authority'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "hasCraftsRollCard",
+      "label": "Does a Handwerkskarte (crafts-roll card) exist?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "crafts" },
+      "visibleWhen": { "field": "businessType", "equals": "crafts" },
+      "description": "Only relevant for craft businesses (Handwerksbetriebe), which must be entered in the Handwerksrolle maintained by the competent Handwerkskammer before starting an 'essential' (zulassungspflichtig) craft.",
+      "sourceRef": "Field 29 — '[Only for craft-based firms] Does a craft card exist? If so, date of issue and name of chamber of crafts'"
+    },
+    {
+      "name": "craftsCardIssueDateAndChamber",
+      "label": "Crafts-roll card — issue date and chamber of crafts",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasCraftsRollCard", "equals": true },
+      "visibleWhen": { "field": "hasCraftsRollCard", "equals": true },
+      "sourceRef": "Field 29 — 'If so, date of issue and name of chamber of crafts'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "hasResidencePermit",
+      "label": "Does a residence permit (Aufenthaltsgenehmigung) exist?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isGermanNational", "equals": false },
+      "visibleWhen": { "field": "isGermanNational", "equals": false },
+      "description": "Only asked of non-German-national applicants; a residence/settlement permit permitting self-employed activity is a precondition for a non-EU national's trade registration.",
+      "sourceRef": "Field 30 — 'Does a residence permit exist? If so, date of issue and issuing authority'"
+    },
+    {
+      "name": "residencePermitIssueDateAndAuthority",
+      "label": "Residence permit — issue date and issuing authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasResidencePermit", "equals": true },
+      "visibleWhen": { "field": "hasResidencePermit", "equals": true },
+      "sourceRef": "Field 30 — 'If so, date of issue and issuing authority'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "residencePermitHasConditions",
+      "label": "Is the residence permit subject to a condition or restriction?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "hasResidencePermit", "equals": true },
+      "visibleWhen": { "field": "hasResidencePermit", "equals": true },
+      "description": "Does not apply to holders of an unconditional settlement permit (Niederlassungserlaubnis).",
+      "sourceRef": "Field 31 — 'Is the residence permit subject to a condition or restriction? — does not apply to holders of a settlement permit'"
+    },
+    {
+      "name": "residencePermitConditionsDetail",
+      "label": "Residence permit — conditions or restrictions",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "residencePermitHasConditions", "equals": true },
+      "visibleWhen": { "field": "residencePermitHasConditions", "equals": true },
+      "sourceRef": "Field 31 — 'If yes, it contains the following conditions or restrictions'",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of declaration / signature",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant (or authorised representative) signs the completed form immediately before submission to the Gewerbeamt.",
+      "sourceRef": "Fields 32-33 — 'Date' / 'Signature'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocumentCopy",
+      "label": "Copy of identity card or passport",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Standard Gewerbeamt intake requirement cross-checked across multiple municipal Gewerbeanmeldung guidance pages (e.g. gewerbeanmeldung.de, taxfix.de); not itself printed as a checklist line on the GewA 1 form."
+    },
+    {
+      "id": "commercialRegisterExtract",
+      "label": "Commercial/co-operative/association register extract",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "registered_legal_entity" },
+      "belongsTo": "applicant",
+      "sourceRef": "Field 2 context — 'Place and no. of entry in register'; secondary sourcing on registration document checklists"
+    },
+    {
+      "id": "craftsRollExtractOrCard",
+      "label": "Handwerksrolle entry extract or Handwerkskarte",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "crafts" },
+      "belongsTo": "applicant",
+      "sourceRef": "Field 29 — '[Only for craft-based firms] Does a craft card exist?'"
+    },
+    {
+      "id": "residencePermitCopy",
+      "label": "Copy of residence permit",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "hasResidencePermit", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Field 30 — 'Does a residence permit exist?'"
+    },
+    {
+      "id": "registrationFeePayment",
+      "label": "Registration fee",
+      "category": "payment",
+      "required": true,
+      "methods": ["cash", "card", "bank_transfer", "online_payment"],
+      "sourceRef": "Fee is set by each municipality's own Kostensatzung (roughly EUR 10-65), not published on the GewA 1 form itself; cross-checked across independent secondary explainer sources (gewerbeanmeldung.de, taxfix.de, gruenderplattform.de)."
+    }
+  ],
+  "steps": [
+    {
+      "id": "registrant_identity",
+      "title": "Registrant and entity identity",
+      "fields": [
+        "applicantType", "registeredCompanyName", "registerEntryLocationAndNumber", "gbrPartnerNames",
+        "familyName", "givenNames", "birthName", "sex", "dateOfBirth", "placeOfBirth", "countryOfBirth",
+        "isGermanNational", "otherNationality",
+        "homeAddressStreet", "homeAddressHouseNumber", "homeAddressPostalCode", "homeAddressCity",
+        "homePhoneNumber", "homeFaxNumber", "homeEmailOrWebsite",
+        "numberOfManagingPartnersOrRepresentatives", "isDomesticStockCorporationBranchOrDependentBranch", "authorizedRepresentativeName"
+      ],
+      "next": "business_premises"
+    },
+    {
+      "id": "business_premises",
+      "title": "Business premises",
+      "fields": [
+        "premisesStreet", "premisesHouseNumber", "premisesPostalCode", "premisesCity",
+        "premisesPhoneNumber", "premisesFaxNumber", "premisesEmailOrWebsite",
+        "registrationScope",
+        "principalEstablishmentStreet", "principalEstablishmentHouseNumber", "principalEstablishmentPostalCode", "principalEstablishmentCity"
+      ],
+      "next": "activity_and_classification"
+    },
+    {
+      "id": "activity_and_classification",
+      "title": "Activity and classification",
+      "fields": [
+        "isVendingMachineBusiness", "isItinerantTrade",
+        "activityDescription", "isSecondaryOccupation", "activityStartDate",
+        "businessType", "fullTimeEmployeeCountAtStart", "partTimeEmployeeCountAtStart"
+      ],
+      "next": "filing_reason"
+    },
+    {
+      "id": "filing_reason",
+      "title": "Reason for registration",
+      "fields": [
+        "filingCategory", "newEstablishmentReason", "takeoverReason", "formerOperatorOrCompanyName",
+        "formerEstablishmentStreet", "formerEstablishmentHouseNumber", "formerEstablishmentPostalCode", "formerEstablishmentCity"
+      ],
+      "next": "permits_and_declaration"
+    },
+    {
+      "id": "permits_and_declaration",
+      "title": "Permits, craft/foreign-national status, and declaration",
+      "fields": [
+        "hasBusinessPermit", "businessPermitIssueDateAndAuthority",
+        "hasCraftsRollCard", "craftsCardIssueDateAndChamber",
+        "hasResidencePermit", "residencePermitIssueDateAndAuthority", "residencePermitHasConditions", "residencePermitConditionsDetail",
+        "declarationDate"
+      ]
+    }
+  ]
+}
