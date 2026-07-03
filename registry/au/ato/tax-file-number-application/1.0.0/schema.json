@@ -1,0 +1,871 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "au/ato/tax-file-number-application",
+  "version": "1.0.0",
+  "title": "Australia Tax File Number (TFN) Application (NAT 1432, for individuals)",
+  "description": "Apply for a Tax File Number (TFN), the unique lifetime identifier the Australian Taxation Office (ATO) issues to individuals and organisations to administer tax and other Australian Government systems. Models the standard adult/family paper application (NAT 1432, 'Tax file number application or enquiry for an individual') for an Australian resident who has never had a TFN, is not sure if they have one, or cannot find their existing one — the same cross-cutting identity-identifier role as gb/hmrc's National Insurance number, ie/dsp/pps-number-application, ca/esdc/social-insurance-number-application, and nz/dia/realme-verified-identity. The live ATO site now also offers this same information collection online via a Digital ID (myID) or at a participating Australia Post retail outlet, and does not itself publish a field-by-field form for those channels; this document is derived from the paper NAT 1432 form (edition 12.2005, the most recent copy locatable, mirrored by a third party since ato.gov.au blocks direct/automated fetches — see VERIFICATION.md) and its official companion webpage prose (fetched via the Wayback Machine) confirming the same channel/eligibility rules remain current. Does not model: the NAT 1589 Aboriginal and Torres Strait Islander people's variant, the NAT 2628 application for an individual living outside Australia, the Individual Auto Registration (IAR) online pathway for foreign passport holders/permanent migrants/temporary visitors, or Norfolk Island residents' alternative process — each is a distinct form/pathway. Does not submit the application; the live ATO/Australia Post/Services Australia channels are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Australian Taxation Office",
+    "abbreviation": "ATO",
+    "url": "https://www.ato.gov.au"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-AU"
+  },
+  "source": {
+    "url": "https://www.ato.gov.au/forms-and-instructions/tfn-application-or-enquiry-for-individuals-instructions",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "NAT 1432 — Tax file number application or enquiry for an individual (edition 12.2005 located; current edition's field set confirmed structurally unchanged by the live ATO webpage prose describing the same application channels/eligibility)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-03",
+    "notes": "ato.gov.au 403-blocks direct curl/WebFetch (confirmed for both the informational webpage and the forms-and-instructions page). The live informational webpage content was instead retrieved via a Wayback Machine snapshot of the site's own Next.js JSON data endpoint (_next/data/.../australian-residents-tfn-application.json, captured 2026-03-02), which describes current application channels (Digital ID/myID, Australia Post, Services Australia paper form, by-post paper form) and confirms the paper form is NAT 1432, obtainable only through the ATO's Publications Ordering Service (iorder.com.au) rather than a direct ato.gov.au download. The paper form's own field-by-field content was sourced from a third-party accounting-firm mirror of NAT 1432 (edition 12.2005) located via web search, following this registry's retired-form-mirror precedent (fr/inpi's Cerfa mirror). Status remains 'draft' pending a live confirmation that the current (2026) edition of NAT 1432 has not changed field-by-field from the 2005 mirror. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "hasPriorTfnOrTaxHistory",
+      "label": "Have you ever had a TFN, applied for one before, or lodged an Australian tax return?",
+      "type": "enum",
+      "required": true,
+      "description": "Gates whether the prior-dealing details (Q1 continuation) are collected. 'not_sure' and 'yes' both trigger the same follow-up detail fields as the source form's single 'Not sure/Yes' branch.",
+      "sourceRef": "NAT 1432-12.2005, Q1 'Have you ever: had a tax file number (TFN); applied for a TFN before, or; lodged a tax return in Australia? No / Not sure / Yes'",
+      "validation": {
+        "enum": [
+          "no",
+          "not_sure",
+          "yes"
+        ]
+      }
+    },
+    {
+      "name": "priorDealingYear",
+      "label": "Prior dealing — what year did you last deal with the Tax Office?",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q1 continuation 'What year did you last deal with the Tax Office?'",
+      "validation": {
+        "minimum": 1900,
+        "maximum": 2100
+      },
+      "requiredWhen": {
+        "field": "hasPriorTfnOrTaxHistory",
+        "notEquals": "no"
+      }
+    },
+    {
+      "name": "priorFamilyName",
+      "label": "Prior dealing — family name at that time",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Write 'same' if unchanged from the applicant's current family name (per source form instruction).",
+      "sourceRef": "NAT 1432-12.2005, Q1 continuation 'Family name at that time'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasPriorTfnOrTaxHistory",
+        "notEquals": "no"
+      }
+    },
+    {
+      "name": "priorFirstGivenName",
+      "label": "Prior dealing — first given name at that time",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q1 continuation 'First given name'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasPriorTfnOrTaxHistory",
+        "notEquals": "no"
+      }
+    },
+    {
+      "name": "priorPostalAddressSuburb",
+      "label": "Prior dealing — postal address suburb/town at that time",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q1 continuation 'Postal address for tax matters at that time — Suburb/town'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasPriorTfnOrTaxHistory",
+        "notEquals": "no"
+      }
+    },
+    {
+      "name": "priorPostalAddressState",
+      "label": "Prior dealing — postal address state/territory at that time",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q1 continuation 'State/territory'",
+      "validation": {
+        "maxLength": 10
+      },
+      "requiredWhen": {
+        "field": "hasPriorTfnOrTaxHistory",
+        "notEquals": "no"
+      }
+    },
+    {
+      "name": "priorPostalAddressPostcode",
+      "label": "Prior dealing — postal address postcode at that time",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q1 continuation 'Postcode'",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      },
+      "requiredWhen": {
+        "field": "hasPriorTfnOrTaxHistory",
+        "notEquals": "no"
+      }
+    },
+    {
+      "name": "priorTaxAgentName",
+      "label": "Prior dealing — name of tax agent at that time (if applicable)",
+      "type": "string",
+      "required": false,
+      "description": "This document requires the field whenever prior-dealing details are given, matching the source's 'if applicable' as always-askable (leave blank if none); not modelled as a further nested condition.",
+      "sourceRef": "NAT 1432-12.2005, Q1 continuation 'Name of your tax agent at that time (if applicable)'",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "hasPriorTfnOrTaxHistory",
+        "notEquals": "no"
+      }
+    },
+    {
+      "name": "reasonForTfn",
+      "label": "Why do you need a TFN?",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "NAT 1432-12.2005, Q2 'Why do you need a TFN? (Place X in ONE box only)'",
+      "validation": {
+        "enum": [
+          "employer",
+          "help_loan",
+          "bank_or_financial_institution",
+          "child_support_agency",
+          "family_tax_benefit",
+          "dva",
+          "lodge_income_tax_return",
+          "centrelink",
+          "abn_or_business_registration",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "reasonOtherDescription",
+      "label": "Reason for TFN — description (if 'Other')",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q2 'Other reason (please describe)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "reasonForTfn",
+        "equals": "other"
+      }
+    },
+    {
+      "name": "authoriseSendTfnToCentrelink",
+      "label": "Do you authorise us to send your TFN to Centrelink?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005 'Do you authorise us to send your TFN to Centrelink? Yes No'",
+      "requiredWhen": {
+        "field": "reasonForTfn",
+        "equals": "centrelink"
+      }
+    },
+    {
+      "name": "authoriseSendTfnToDva",
+      "label": "Do you authorise us to send your TFN to DVA?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005 'Do you authorise us to send your TFN to DVA? Yes No'",
+      "requiredWhen": {
+        "field": "reasonForTfn",
+        "equals": "dva"
+      }
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q3 'Title: Mr Mrs Miss Ms Other'",
+      "validation": {
+        "enum": [
+          "mr",
+          "mrs",
+          "miss",
+          "ms",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "familyName",
+      "label": "Family name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q3 'What is your full name? Family name'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "firstGivenName",
+      "label": "First given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q3 'First given name'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherGivenNames",
+      "label": "Other given names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q3 'Other given names'",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q4 'What is your sex? Male Female'",
+      "validation": {
+        "enum": [
+          "male",
+          "female"
+        ]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "NAT 1432-12.2005, Q5 'What is your date of birth?'"
+    },
+    {
+      "name": "hasHadOtherName",
+      "label": "Have you ever had another name?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "NAT 1432-12.2005, Q6 'Have you ever had another name? No Yes'"
+    },
+    {
+      "name": "otherNameType",
+      "label": "Other name — type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q6 'Type of name? your previous married name / the name on your birth certificate / a shortened version of your name / your name before marriage / an anglicised name / an assumed name (known as) / your skin name / other'",
+      "validation": {
+        "enum": [
+          "previous_married_name",
+          "birth_certificate_name",
+          "shortened_version",
+          "name_before_marriage",
+          "anglicised_name",
+          "assumed_name",
+          "skin_name",
+          "other"
+        ]
+      },
+      "requiredWhen": {
+        "field": "hasHadOtherName",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherNameFamilyName",
+      "label": "Other name — family name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q6 'Family name' (other name)",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasHadOtherName",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherNameFirstGivenName",
+      "label": "Other name — first given name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q6 'First given name' (other name)",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasHadOtherName",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasSpouse",
+      "label": "Do you have a spouse (married or de facto)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "NAT 1432-12.2005, Q7 'Do you have a spouse (married or de facto)? No Yes'"
+    },
+    {
+      "name": "spouseFamilyName",
+      "label": "Spouse's family name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q7 'Spouse's family name'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseFirstGivenName",
+      "label": "Spouse's first given name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q7 'Spouse's first given name'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Spouse's date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "NAT 1432-12.2005, Q7 'Spouse's date of birth'",
+      "requiredWhen": {
+        "field": "hasSpouse",
+        "equals": true
+      }
+    },
+    {
+      "name": "postalAddressSuburb",
+      "label": "Postal address in Australia — suburb/town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Your TFN will be sent to this address.",
+      "sourceRef": "NAT 1432-12.2005, Q8 'What is your postal address in Australia? Suburb/town'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalAddressState",
+      "label": "Postal address in Australia — state/territory",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q8 'State/territory'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "postalAddressPostcode",
+      "label": "Postal address in Australia — postcode",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q8 'Postcode'",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "homeAddressSameAsPostal",
+      "label": "Is your home address the same as your postal address?",
+      "type": "boolean",
+      "required": true,
+      "description": "The source form lets the applicant write 'As above' at Q9 if the home address matches the postal address given at Q8; modelled as an explicit gating boolean per this registry's convention for inferred gates.",
+      "sourceRef": "NAT 1432-12.2005, Q9 \"Write 'As above' if same as postal address at question 8\""
+    },
+    {
+      "name": "homeAddressSuburb",
+      "label": "Home address — suburb/town/locality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Must be a permanent street address (e.g. '123 Smith St'); cannot be a post office box, RMB, RSD, or other delivery-point address. A temporary visitor may give their home-country address instead.",
+      "sourceRef": "NAT 1432-12.2005, Q9 'What is your home address? Suburb/town/locality'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsPostal",
+        "equals": false
+      }
+    },
+    {
+      "name": "homeAddressState",
+      "label": "Home address — state/territory",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q9 'State/territory'",
+      "validation": {
+        "maxLength": 10
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsPostal",
+        "equals": false
+      }
+    },
+    {
+      "name": "homeAddressPostcode",
+      "label": "Home address — postal code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q9 'Postal code'",
+      "validation": {
+        "maxLength": 10
+      },
+      "requiredWhen": {
+        "field": "homeAddressSameAsPostal",
+        "equals": false
+      }
+    },
+    {
+      "name": "homeAddressCountry",
+      "label": "Home address — country, if outside Australia",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q9 'Country if outside Australia'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "bornInAustralia",
+      "label": "Were you born in Australia?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "NAT 1432-12.2005, Q10 'Were you born in Australia? Yes No'"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q10 'Which country were you born in?'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "bornInAustralia",
+        "equals": false
+      }
+    },
+    {
+      "name": "dateArrivedInAustralia",
+      "label": "Date arrived in Australia",
+      "type": "date",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q10 'What date did you arrive in Australia?'",
+      "requiredWhen": {
+        "field": "bornInAustralia",
+        "equals": false
+      }
+    },
+    {
+      "name": "australianResidentForTax",
+      "label": "Are you an Australian resident for tax purposes?",
+      "type": "boolean",
+      "required": true,
+      "description": "An Australian resident for tax purposes is generally someone who has always lived in Australia, or someone who has come to Australia and lives here permanently. A person on a working holiday/backpacking is unlikely to qualify; an overseas student enrolled to study in Australia for more than six months may qualify, and must provide proof of student status.",
+      "sourceRef": "NAT 1432-12.2005, Q11 'Are you an Australian resident for tax purposes?'"
+    },
+    {
+      "name": "hasTaxAgent",
+      "label": "Do you have a tax agent?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "NAT 1432-12.2005, Q12 'Do you have a tax agent? Yes No'"
+    },
+    {
+      "name": "taxAgentBusinessName",
+      "label": "Tax agent — business name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q12 'Tax agent's business name'",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "hasTaxAgent",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxAgentRegistrationNumber",
+      "label": "Tax agent — registration number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q12 'Tax agent's registration number'",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "hasTaxAgent",
+        "equals": true
+      }
+    },
+    {
+      "name": "daytimePhoneNumber",
+      "label": "Daytime phone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q13 'Daytime phone number'",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q13 'Mobile number'",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q13 'Email address'",
+      "validation": {
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "wantsAdditionalContactPerson",
+      "label": "Should we contact a relative or friend if we need more information?",
+      "type": "boolean",
+      "required": true,
+      "description": "May be needed because of language difficulties, the applicant's age, illness, or infirmity. An applicant aged 15 or under must provide a contact person; a parent/guardian completing the application should give their own contact details. The contact person must be 16 or over.",
+      "sourceRef": "NAT 1432-12.2005, Q14 'If we need more information to process your application, do you want us to contact a relative or friend who can help us?'"
+    },
+    {
+      "name": "additionalContactPersonName",
+      "label": "Additional contact person — name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Q14 'Name of person we should contact'",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "wantsAdditionalContactPerson",
+        "equals": true
+      }
+    },
+    {
+      "name": "additionalContactPersonPhone",
+      "label": "Additional contact person — daytime phone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "NAT 1432-12.2005, Q14 'Their daytime phone number'",
+      "validation": {
+        "maxLength": 20
+      },
+      "requiredWhen": {
+        "field": "wantsAdditionalContactPerson",
+        "equals": true
+      }
+    },
+    {
+      "name": "declaration",
+      "label": "Declaration — information given is true and correct",
+      "type": "boolean",
+      "required": true,
+      "description": "By signing, the applicant (or a person legally entitled to sign on their behalf) declares the information given is true and correct, having read the form's privacy statement. Signing rules by age: 12 or under, a parent/guardian must sign; 13 to 15, the applicant or a parent/guardian must sign; 16 or older, the applicant must sign. There are penalties for deliberately giving false or misleading information, and for unauthorised use of a TFN.",
+      "sourceRef": "NAT 1432-12.2005, Declaration 'I declare that the information given on this application is true and correct.'"
+    },
+    {
+      "name": "signedByRepresentative",
+      "label": "Is this application being signed by a parent, guardian, or other person authorised to sign on the applicant's behalf, rather than the applicant?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applies for an applicant aged 15 or under, per the declaration's age-based signing rule.",
+      "sourceRef": "NAT 1432-12.2005, Declaration 'If you are legally entitled to sign on behalf of the person applying for a TFN, please provide your full name'; 'A person signing on behalf of the applicant must provide...'"
+    },
+    {
+      "name": "signerFullName",
+      "label": "Full name of the person signing on the applicant's behalf",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "NAT 1432-12.2005, Declaration \"please provide your full name\"",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "signedByRepresentative",
+        "equals": true
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "NAT 1432-12.2005, Declaration 'Date'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantProofOfIdentity",
+      "label": "Applicant proof of identity documents",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "australian_full_birth_certificate",
+        "australian_citizenship_certificate",
+        "overseas_passport_with_australian_immigration_status",
+        "australian_passport",
+        "australian_driver_licence",
+        "australian_learner_permit",
+        "medicare_card",
+        "australian_bank_account_statement",
+        "australian_firearm_licence",
+        "tertiary_student_id_card",
+        "secondary_student_id_card"
+      ],
+      "handling": "current-unaltered-originals-only-one-category-a-plus-one-or-two-category-b-documents-per-age-rule",
+      "sourceRef": "NAT 1432-12.2005, page ii 'Proof of identity requirements' — current, unaltered original documents (not photocopies); if aged 16+: one Category A document plus one Category B document, or one Category A document plus two different Category B documents; if under 16, Category B may also include a secondary examination certificate, record of achievement, or examination report issued within the last year; only one type of driver licence or student ID card may be used"
+    },
+    {
+      "id": "nameChangeLinkDocument",
+      "label": "Document showing the applicant's name change",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasHadOtherName",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "marriage_certificate",
+        "deed_poll",
+        "change_of_name_certificate"
+      ],
+      "sourceRef": "NAT 1432-12.2005, page ii \"if you have changed your name you must also provide a link document such as a marriage certificate, deed poll or change of name certificate\""
+    },
+    {
+      "id": "representativeProofOfIdentity",
+      "label": "Representative's (parent/guardian/other signer's) own proof of identity documents",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "signedByRepresentative",
+        "equals": true
+      },
+      "belongsTo": "responsible-party",
+      "sourceRef": "NAT 1432-12.2005, Declaration \"A person signing on behalf of the applicant must provide: their own full proof of identity documents\""
+    },
+    {
+      "id": "relationshipEvidenceDocument",
+      "label": "Document showing the representative's relationship to the applicant",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "signedByRepresentative",
+        "equals": true
+      },
+      "belongsTo": "responsible-party",
+      "acceptedTypes": [
+        "full_birth_certificate",
+        "guardianship_papers",
+        "medicare_card"
+      ],
+      "sourceRef": "NAT 1432-12.2005, Declaration \"a document showing the relationship (for example, full birth certificate, guardianship papers or Medicare card)\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "prior_history",
+      "title": "Prior TFN history",
+      "fields": [
+        "hasPriorTfnOrTaxHistory",
+        "priorDealingYear",
+        "priorFamilyName",
+        "priorFirstGivenName",
+        "priorPostalAddressSuburb",
+        "priorPostalAddressState",
+        "priorPostalAddressPostcode",
+        "priorTaxAgentName"
+      ],
+      "next": "reason"
+    },
+    {
+      "id": "reason",
+      "title": "Reason for applying",
+      "fields": [
+        "reasonForTfn",
+        "reasonOtherDescription",
+        "authoriseSendTfnToCentrelink",
+        "authoriseSendTfnToDva"
+      ],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal details",
+      "fields": [
+        "title",
+        "familyName",
+        "firstGivenName",
+        "otherGivenNames",
+        "sex",
+        "dateOfBirth"
+      ],
+      "next": "other_name"
+    },
+    {
+      "id": "other_name",
+      "title": "Other name",
+      "fields": [
+        "hasHadOtherName",
+        "otherNameType",
+        "otherNameFamilyName",
+        "otherNameFirstGivenName"
+      ],
+      "next": "spouse"
+    },
+    {
+      "id": "spouse",
+      "title": "Spouse",
+      "fields": [
+        "hasSpouse",
+        "spouseFamilyName",
+        "spouseFirstGivenName",
+        "spouseDateOfBirth"
+      ],
+      "next": "addresses"
+    },
+    {
+      "id": "addresses",
+      "title": "Addresses",
+      "fields": [
+        "postalAddressSuburb",
+        "postalAddressState",
+        "postalAddressPostcode",
+        "homeAddressSameAsPostal",
+        "homeAddressSuburb",
+        "homeAddressState",
+        "homeAddressPostcode",
+        "homeAddressCountry"
+      ],
+      "next": "birth_and_residency"
+    },
+    {
+      "id": "birth_and_residency",
+      "title": "Birth and residency",
+      "fields": [
+        "bornInAustralia",
+        "countryOfBirth",
+        "dateArrivedInAustralia",
+        "australianResidentForTax"
+      ],
+      "next": "tax_agent_and_contact"
+    },
+    {
+      "id": "tax_agent_and_contact",
+      "title": "Tax agent and contact details",
+      "fields": [
+        "hasTaxAgent",
+        "taxAgentBusinessName",
+        "taxAgentRegistrationNumber",
+        "daytimePhoneNumber",
+        "mobileNumber",
+        "emailAddress",
+        "wantsAdditionalContactPerson",
+        "additionalContactPersonName",
+        "additionalContactPersonPhone"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": [
+        "declaration",
+        "signedByRepresentative",
+        "signerFullName",
+        "declarationDate"
+      ]
+    }
+  ]
+}
