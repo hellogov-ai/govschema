@@ -1,0 +1,1255 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/auswaertiges-amt/national-visa-application",
+  "version": "1.0.0",
+  "title": "Germany National (Long-Stay, Category D) Visa Application",
+  "description": "Give the details for a German national (long-stay, category D) visa application: the entry visa a non-EU/EEA/Swiss national needs before travelling to Germany to take up employment (including a Blue Card (EU) or Opportunity Card pathway), study, undertake vocational training, or join family already resident in Germany, where the intended stay exceeds the 90-day Schengen short-stay limit. This document models the Federal Foreign Office's (Auswartiges Amt) own bilingual German/English 'Antrag auf Erteilung eines nationalen Visums' / 'Application for a national visa' form, used uniformly across every German mission worldwide regardless of purpose, plus the Consular Services Portal's (digital.diplo.de) pre-login country/mission routing step. The Consular Services Portal has digitised this same paper form for 28 long-stay purposes since January 2025 (Schengen/short-stay visas are explicitly not yet accepted on the portal), but gates the actual data-entry screens behind account registration and sign-in; this document therefore models the form's own field set rather than the authenticated portal UI (see VERIFICATION.md). It does not model a purpose-specific supplementary question set (e.g. Blue Card (EU) salary/qualification thresholds, an employment contract's specifics, or a university admission letter's details) that the portal or mission collects in addition to this base form for a given purpose; each is a candidate for its own future schema or a MINOR-version extension. It does not submit the application; the live source is always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Foreign Office (Auswartiges Amt)",
+    "abbreviation": "AA",
+    "url": "https://www.auswaertiges-amt.de"
+  },
+  "process": {
+    "type": "application",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://www.auswaertiges-amt.de/resource/blob/207850/f9342033f2933dc05da54151efe283db/aufenthalten-data.pdf",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Antrag auf Erteilung eines nationalen Visums / Application for a national visa (bilingual German-English national visa application form, hosted directly by the Federal Foreign Office and mirrored, byte-for-byte identical in content, at every German mission's own site)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Closes the Visa vertical's DE gap (GOV-815 research cycle; Visa was 7/9 after GOV-803 authored ie/irishimmigration/short-stay-visa-avats, with SG and DE remaining). The Consular Services Portal (digital.diplo.de) was driven live with a headless Playwright browser: its public pre-login pages (country-of-residence selection, live-confirmed responsible-mission routing for India across five missions, and the top-level purpose menu — Blue Card (EU), Opportunity Card, Family reunification, Taking up employment, Studies, Vocational training) were reached and screenshotted with no access block, but selecting a country and mission and clicking 'Apply online now' redirects through sso.digital.diplo.de (a Keycloak realm named AUSLPORTAL) and returns 'silent-check-sso.html#error=login_required' — the portal's actual data-entry screens are gated behind Bund ID/account registration, the same login-gated-form class already recorded elsewhere in this registry (e.g. nz/dia/realme-verified-identity). Per source-of-truth fidelity, this document was instead authored field-by-field from the Federal Foreign Office's own canonical PDF, which the portal's own overview page confirms it is digitising 1:1 ('you can apply online... register... submit details plus uploaded documents'). Status remains 'draft' pending a field-by-field pass against the authenticated portal itself. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "countryOfResidence",
+      "label": "In which country are you resident?",
+      "type": "string",
+      "required": true,
+      "description": "Selected from the Consular Services Portal's searchable country list before any account is created. This determines which German mission (embassy/consulate-general) is responsible for the application and is not itself a field on the paper national-visa application form.",
+      "sourceRef": "Consular Services Portal — live pre-login routing step (digital.diplo.de)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "responsibleMission",
+      "label": "Your responsible German mission",
+      "type": "string",
+      "required": true,
+      "description": "The specific German mission (e.g. a named embassy or consulate-general) the Consular Services Portal determines is responsible for the applicant, based on countryOfResidence. Confirmed live for India: Bangalore, Chennai, Kolkata, Mumbai, or New Delhi, each covering a distinct set of states/union territories. Selecting a country with only one mission skips this choice.",
+      "sourceRef": "Consular Services Portal — live pre-login routing step (digital.diplo.de)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname (Familienname)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "formerSurname",
+      "label": "Former surname(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s) (Vorname(n))",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth (day/month/year)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "currentNationality",
+      "label": "Current nationality (please state all nationalities)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "formerNationality",
+      "label": "Former nationalities",
+      "type": "string",
+      "required": false,
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "single",
+          "married",
+          "civil union",
+          "divorced",
+          "widowed"
+        ]
+      },
+      "description": "The form's German original lists ledig (single), verheiratet seit (married since), eingetragene Lebenspartnerschaft seit (civil union since), geschieden seit (divorced since), verwitwet seit (widowed since); the '...since' qualifier is captured separately in maritalStatusSinceDate.",
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "maritalStatusSinceDate",
+      "label": "Date since when the current marital status applies",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union",
+          "divorced",
+          "widowed"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "male",
+          "female"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "travelDocumentType",
+      "label": "Type of travel document (exact designation)",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Passport",
+          "Official passport",
+          "Diplomatic passport",
+          "Special passport",
+          "Other"
+        ]
+      },
+      "description": "'Special passport' corresponds to the form's 'sonstiger amtlicher Pass (Servicepass)'.",
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "otherTravelDocumentDetails",
+      "label": "Other travel document (please specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "Other"
+      },
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "travelDocumentNumber",
+      "label": "Number of travel document",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "travelDocumentDateOfIssue",
+      "label": "Date of issue",
+      "type": "date",
+      "required": true,
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "travelDocumentValidUntil",
+      "label": "Valid until",
+      "type": "date",
+      "required": true,
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "travelDocumentIssuedBy",
+      "label": "Issued by",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "residencePermitNumber",
+      "label": "Residence permit or equivalent document no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "residencePermitValidUntil",
+      "label": "Residence permit valid until",
+      "type": "date",
+      "required": false,
+      "sourceRef": "National visa application form — Section 1"
+    },
+    {
+      "name": "currentAddressStreet",
+      "label": "Current address — street, number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "currentAddressPostcodePlace",
+      "label": "Current address — postcode, place",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "phone",
+      "label": "Phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile phone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "National visa application form — Section 1",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "spouseSurname",
+      "label": "Spouse/registered partner's surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseFormerSurname",
+      "label": "Spouse/registered partner's former surname(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "spouseFirstNames",
+      "label": "Spouse/registered partner's first name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Spouse/registered partner's date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2"
+    },
+    {
+      "name": "spousePlaceOfBirth",
+      "label": "Spouse/registered partner's place of birth",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "spouseCountryOfBirth",
+      "label": "Spouse/registered partner's country of birth",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseCurrentNationality",
+      "label": "Spouse/registered partner's current nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "spouseFormerNationality",
+      "label": "Spouse/registered partner's former nationalities",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "spousePlaceOfResidence",
+      "label": "Spouse/registered partner's place of residence",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "civil union"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "childrenCount",
+      "label": "Number of children (including children over 18)",
+      "type": "integer",
+      "required": true,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Section 3 requires information on the applicant's children, including those aged over 18, even if they remain abroad.",
+      "sourceRef": "National visa application form — Section 3"
+    },
+    {
+      "name": "childrenDetails",
+      "label": "Children's details (surname, first names, sex, date and place of birth, nationality, place of residence)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "childrenCount",
+        "greaterThan": 0
+      },
+      "description": "One row per child on the source form's table. This document collapses the repeating table into a single free-text field, the same treatment used elsewhere in this registry for small repeating tables (e.g. ie/irishimmigration/short-stay-visa-avats' dependentChildrenDetails).",
+      "sourceRef": "National visa application form — Section 3",
+      "validation": {
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "fatherSurname",
+      "label": "Father's surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 100
+      },
+      "description": "Section 4 states this information is also required if the person concerned remains abroad."
+    },
+    {
+      "name": "fatherFirstNames",
+      "label": "Father's first name(s)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fatherDateAndPlaceOfBirth",
+      "label": "Father's date and place of birth",
+      "type": "string",
+      "required": true,
+      "description": "Modelled as a single field because the source form combines date and place of birth into one table column for this section (unlike Section 1, which uses separate boxes for the applicant).",
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Father's nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fatherPlaceOfResidence",
+      "label": "Father's place of residence",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "motherSurname",
+      "label": "Mother's surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 100
+      },
+      "description": "Section 4 states this information is also required if the person concerned remains abroad."
+    },
+    {
+      "name": "motherFirstNames",
+      "label": "Mother's first name(s)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherDateAndPlaceOfBirth",
+      "label": "Mother's date and place of birth",
+      "type": "string",
+      "required": true,
+      "description": "Modelled as a single field because the source form combines date and place of birth into one table column for this section (unlike Section 1, which uses separate boxes for the applicant).",
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "motherNationality",
+      "label": "Mother's nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherPlaceOfResidence",
+      "label": "Mother's place of residence",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 4",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "previouslyInGermany",
+      "label": "Have you ever been to Germany before?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "National visa application form — Section 5"
+    },
+    {
+      "name": "previousStaysDetails",
+      "label": "Dates and places of your last five stays in Germany (month/year)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "previouslyInGermany",
+        "equals": true
+      },
+      "description": "The source form provides five from/to/place rows; collapsed into one free-text field, the same treatment used for other small repeating tables in this document.",
+      "sourceRef": "National visa application form — Section 5",
+      "validation": {
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "intendedStayStreet",
+      "label": "Intended place of stay in Germany — street, number (if known)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "intendedStayPostcodePlace",
+      "label": "Intended place of stay in Germany — postcode, place",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "accommodationType",
+      "label": "How will you be accommodated?",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Single room",
+          "Apartment",
+          "Collective accommodation",
+          "Other"
+        ]
+      },
+      "sourceRef": "National visa application form — Section 6"
+    },
+    {
+      "name": "apartmentRoomsCount",
+      "label": "Number of rooms in the apartment",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "accommodationType",
+        "equals": "Apartment"
+      },
+      "validation": {
+        "minimum": 1
+      },
+      "sourceRef": "National visa application form — Section 6"
+    },
+    {
+      "name": "otherAccommodationDetails",
+      "label": "Other accommodation (please explain)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "accommodationType",
+        "equals": "Other"
+      },
+      "sourceRef": "National visa application form — Section 6",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "maintainsPermanentResidenceOutsideGermany",
+      "label": "Do you intend to maintain your permanent residence outside the Federal Republic of Germany?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "National visa application form — Section 7"
+    },
+    {
+      "name": "permanentResidenceLocation",
+      "label": "If so, where?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maintainsPermanentResidenceOutsideGermany",
+        "equals": true
+      },
+      "sourceRef": "National visa application form — Section 7",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "familyMembersAccompanying",
+      "label": "Do family members intend to accompany you?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "National visa application form — Section 8"
+    },
+    {
+      "name": "accompanyingFamilyMembersDetails",
+      "label": "If so, which?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "familyMembersAccompanying",
+        "equals": true
+      },
+      "sourceRef": "National visa application form — Section 8",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "purposeOfStay",
+      "label": "Purpose of stay in the Federal Republic of Germany",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Employment",
+          "Study",
+          "Au pair",
+          "Language course",
+          "Family reunion",
+          "Other"
+        ]
+      },
+      "description": "The Consular Services Portal (digital.diplo.de) organises this same underlying purpose into 28 more granular online application categories, e.g. three Blue Card (EU) variants and an Opportunity Card under 'Employment', and separate 'Taking up employment', 'Family reunification', 'Studies', and 'Vocational training' menu entries — confirmed live for Employment/Blue Card/Opportunity Card/Family reunification/Studies/Vocational training. This document models the base national-visa application data common to every purpose; a purpose-specific supplementary question set (e.g. Blue Card salary/qualification thresholds) is out of scope. See VERIFICATION.md.",
+      "sourceRef": "National visa application form — Section 9"
+    },
+    {
+      "name": "otherPurposeDetails",
+      "label": "Other purpose (please specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "purposeOfStay",
+        "equals": "Other"
+      },
+      "sourceRef": "National visa application form — Section 9",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "intendedEmployment",
+      "label": "If applicable, intended employment",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "purposeOfStay",
+        "equals": "Employment"
+      },
+      "sourceRef": "National visa application form — Section 9",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "stayNotExceedingTwelveMonths",
+      "label": "I intend to stay no longer than twelve months in the Federal territory and apply for a visa covering the whole duration of my stay",
+      "type": "boolean",
+      "required": true,
+      "description": "The exact statement the applicant confirms on the source form.",
+      "sourceRef": "National visa application form — Section 9"
+    },
+    {
+      "name": "referenceStreet",
+      "label": "Reference in Germany — street, number",
+      "type": "string",
+      "required": false,
+      "description": "E.g. employer, educational establishment, or relatives in Germany. The source form does not mark this section as universally mandatory.",
+      "sourceRef": "National visa application form — Section 10",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "referencePostcodePlace",
+      "label": "Reference in Germany — postcode, place",
+      "type": "string",
+      "required": false,
+      "sourceRef": "National visa application form — Section 10",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "referencePhone",
+      "label": "Reference in Germany — phone/mobile number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "National visa application form — Section 10",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "referenceEmail",
+      "label": "Reference in Germany — email address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "National visa application form — Section 10",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "professionTrained",
+      "label": "Trade or profession for which you trained",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 11",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "currentProfessionIfDifferent",
+      "label": "Current trade or profession, if different from the one you trained for",
+      "type": "string",
+      "required": false,
+      "sourceRef": "National visa application form — Section 11",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "intendedDurationFrom",
+      "label": "Intended duration of stay in Germany — from",
+      "type": "date",
+      "required": true,
+      "sourceRef": "National visa application form — Section 12"
+    },
+    {
+      "name": "intendedDurationTo",
+      "label": "Intended duration of stay in Germany — to",
+      "type": "date",
+      "required": true,
+      "sourceRef": "National visa application form — Section 12"
+    },
+    {
+      "name": "meansOfSubsistence",
+      "label": "What are your means of subsistence?",
+      "type": "string",
+      "required": true,
+      "sourceRef": "National visa application form — Section 13",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "hasHealthInsuranceForGermany",
+      "label": "Do you have health insurance that covers the Federal Republic of Germany?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "National visa application form — Section 13"
+    },
+    {
+      "name": "hasCriminalConvictions",
+      "label": "Have you ever been convicted?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "National visa application form — Section 14"
+    },
+    {
+      "name": "convictionGermanyWhenWhere",
+      "label": "Conviction germany — when and where",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "description": "Neither the Germany nor the Abroad sub-block is guaranteed to apply; the applicant completes whichever is relevant.",
+      "sourceRef": "National visa application form — Section 14",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "convictionGermanyReason",
+      "label": "Conviction germany — reason (what was the crime)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "sourceRef": "National visa application form — Section 14",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "convictionGermanyNatureAndExtent",
+      "label": "Conviction germany — nature and extent of penalty",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "sourceRef": "National visa application form — Section 14",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "convictionAbroadWhenWhere",
+      "label": "Conviction abroad — when and where",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "description": "Neither the Germany nor the Abroad sub-block is guaranteed to apply; the applicant completes whichever is relevant.",
+      "sourceRef": "National visa application form — Section 14",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "convictionAbroadReason",
+      "label": "Conviction abroad — reason (what was the crime)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "sourceRef": "National visa application form — Section 14",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "convictionAbroadNatureAndExtent",
+      "label": "Conviction abroad — nature and extent of penalty",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasCriminalConvictions",
+        "equals": true
+      },
+      "sourceRef": "National visa application form — Section 14",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "previouslyExpelledDeportedOrRefused",
+      "label": "Have you ever been expelled or deported from the Federal Republic of Germany, had an application for a residence permit rejected, or been refused entry into the Federal Republic of Germany?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "National visa application form — Section 15"
+    },
+    {
+      "name": "suffersNotifiableDisease",
+      "label": "Do you suffer from (or are you suspected of suffering from) any of the diseases listed in footnote 1?",
+      "type": "boolean",
+      "required": true,
+      "description": "Footnote 1 lists: smallpox, poliomyelitis, types of influenza not common in humans (e.g. bird flu, swine flu), acute pandemic influenza, severe acute respiratory syndrome (SARS), cholera, pneumonic plague, yellow fever, and viral haemorrhagic fever (e.g. Ebola, Lassa, Marburg).",
+      "sourceRef": "National visa application form — Section 16, footnote 1"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "intendedDurationToAfterFrom",
+      "compare": {
+        "field": "intendedDurationTo",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "intendedDurationFrom"
+      }
+    },
+    {
+      "id": "travelDocumentValidAfterIssue",
+      "compare": {
+        "field": "travelDocumentValidUntil",
+        "operator": "greaterThan",
+        "compareTo": "travelDocumentDateOfIssue"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Passport-style photo",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "National visa application form — page 1 header: 'Photo. Please do not use glue to attach the photo.'"
+    },
+    {
+      "id": "declarationAttestation",
+      "label": "Signed declaration that the application's particulars are correct and complete",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Ich versichere, vorstehende Angaben nach bestem Wissen und Gewissen richtig und vollstandig gemacht zu haben. / I declare that to the best of my knowledge the above particulars are correct and complete.",
+      "sourceRef": "National visa application form — page 4, exact bilingual attestation text, signed and dated (place and date) by the applicant, or by a minor's parent/legal guardian)"
+    },
+    {
+      "id": "legalNoticeAcknowledgement",
+      "label": "Signed acknowledgement of the legal consequences of false or incomplete information (Section 54(2) No. 8 in conjunction with Section 53 of the Residence Act)",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Ein Auslander kann ausgewiesen werden, wenn er falsche oder unvollstandige Angaben zur Erlangung eines deutschen Aufenthaltstitels oder eines Schengen-Visums macht... / A foreigner can be expelled if he or she has furnished false or incomplete information in order to gain a German residence permit or a Schengen visa. The applicant is obliged to provide all information to the best of his or her knowledge and belief. If he or she refuses to provide data or knowingly furnishes false or incomplete information, the visa application may be refused or, if a visa has already been issued, the applicant may be expelled from Germany.",
+      "sourceRef": "National visa application form — page 5, 'Belehrung nach Section 54 Abs. 2 Nr. 8 i.V.m. Section 53 AufenthG' / 'Information provided to applicants pursuant to Section 54 (2) 8 in conjunction with Section 53 of the Residence Act', signed and dated separately from the main declaration"
+    }
+  ],
+  "steps": [
+    {
+      "id": "portal_routing",
+      "title": "Country of residence and responsible mission",
+      "fields": [
+        "countryOfResidence",
+        "responsibleMission"
+      ],
+      "next": "applicant_identity"
+    },
+    {
+      "id": "applicant_identity",
+      "title": "Information on the applicant — identity",
+      "fields": [
+        "surname",
+        "formerSurname",
+        "firstNames",
+        "dateOfBirth",
+        "placeOfBirth",
+        "countryOfBirth",
+        "currentNationality",
+        "formerNationality",
+        "maritalStatus",
+        "maritalStatusSinceDate",
+        "sex"
+      ],
+      "next": "travel_document"
+    },
+    {
+      "id": "travel_document",
+      "title": "Information on the applicant — travel document and residence permit",
+      "fields": [
+        "travelDocumentType",
+        "otherTravelDocumentDetails",
+        "travelDocumentNumber",
+        "travelDocumentDateOfIssue",
+        "travelDocumentValidUntil",
+        "travelDocumentIssuedBy",
+        "residencePermitNumber",
+        "residencePermitValidUntil"
+      ],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Current address and contact details",
+      "fields": [
+        "currentAddressStreet",
+        "currentAddressPostcodePlace",
+        "email",
+        "phone",
+        "mobilePhone"
+      ],
+      "next": "spouse_partner"
+    },
+    {
+      "id": "spouse_partner",
+      "title": "Information on the applicant's spouse/registered partner",
+      "fields": [
+        "spouseSurname",
+        "spouseFormerSurname",
+        "spouseFirstNames",
+        "spouseDateOfBirth",
+        "spousePlaceOfBirth",
+        "spouseCountryOfBirth",
+        "spouseCurrentNationality",
+        "spouseFormerNationality",
+        "spousePlaceOfResidence"
+      ],
+      "next": "children"
+    },
+    {
+      "id": "children",
+      "title": "Information on the applicant's children",
+      "fields": [
+        "childrenCount",
+        "childrenDetails"
+      ],
+      "next": "parents"
+    },
+    {
+      "id": "parents",
+      "title": "Information on the applicant's parents",
+      "fields": [
+        "fatherSurname",
+        "fatherFirstNames",
+        "fatherDateAndPlaceOfBirth",
+        "fatherNationality",
+        "fatherPlaceOfResidence",
+        "motherSurname",
+        "motherFirstNames",
+        "motherDateAndPlaceOfBirth",
+        "motherNationality",
+        "motherPlaceOfResidence"
+      ],
+      "next": "previous_stays"
+    },
+    {
+      "id": "previous_stays",
+      "title": "Previous stays in Germany",
+      "fields": [
+        "previouslyInGermany",
+        "previousStaysDetails"
+      ],
+      "next": "intended_stay"
+    },
+    {
+      "id": "intended_stay",
+      "title": "Intended place of stay in Germany",
+      "fields": [
+        "intendedStayStreet",
+        "intendedStayPostcodePlace",
+        "accommodationType",
+        "apartmentRoomsCount",
+        "otherAccommodationDetails"
+      ],
+      "next": "residence_and_family"
+    },
+    {
+      "id": "residence_and_family",
+      "title": "Permanent residence and accompanying family",
+      "fields": [
+        "maintainsPermanentResidenceOutsideGermany",
+        "permanentResidenceLocation",
+        "familyMembersAccompanying",
+        "accompanyingFamilyMembersDetails"
+      ],
+      "next": "purpose_of_stay"
+    },
+    {
+      "id": "purpose_of_stay",
+      "title": "Purpose of stay in the Federal Republic of Germany",
+      "fields": [
+        "purposeOfStay",
+        "otherPurposeDetails",
+        "intendedEmployment",
+        "stayNotExceedingTwelveMonths"
+      ],
+      "next": "references_in_germany"
+    },
+    {
+      "id": "references_in_germany",
+      "title": "References in the Federal Republic of Germany",
+      "fields": [
+        "referenceStreet",
+        "referencePostcodePlace",
+        "referencePhone",
+        "referenceEmail"
+      ],
+      "next": "profession"
+    },
+    {
+      "id": "profession",
+      "title": "Trade or profession",
+      "fields": [
+        "professionTrained",
+        "currentProfessionIfDifferent"
+      ],
+      "next": "duration_of_stay"
+    },
+    {
+      "id": "duration_of_stay",
+      "title": "Intended duration of stay",
+      "fields": [
+        "intendedDurationFrom",
+        "intendedDurationTo"
+      ],
+      "next": "means_and_insurance"
+    },
+    {
+      "id": "means_and_insurance",
+      "title": "Means of subsistence and health insurance",
+      "fields": [
+        "meansOfSubsistence",
+        "hasHealthInsuranceForGermany"
+      ],
+      "next": "criminal_record"
+    },
+    {
+      "id": "criminal_record",
+      "title": "Criminal convictions",
+      "fields": [
+        "hasCriminalConvictions",
+        "convictionGermanyWhenWhere",
+        "convictionGermanyReason",
+        "convictionGermanyNatureAndExtent",
+        "convictionAbroadWhenWhere",
+        "convictionAbroadReason",
+        "convictionAbroadNatureAndExtent"
+      ],
+      "next": "immigration_history"
+    },
+    {
+      "id": "immigration_history",
+      "title": "Immigration history",
+      "fields": [
+        "previouslyExpelledDeportedOrRefused"
+      ],
+      "next": "health_declaration"
+    },
+    {
+      "id": "health_declaration",
+      "title": "Health declaration",
+      "fields": [
+        "suffersNotifiableDisease"
+      ]
+    }
+  ]
+}
