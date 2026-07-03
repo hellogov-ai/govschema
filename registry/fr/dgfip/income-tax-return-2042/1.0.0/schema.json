@@ -1,0 +1,1514 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fr/dgfip/income-tax-return-2042",
+  "version": "1.0.0",
+  "title": "France Individual Income Tax Return (Déclaration de revenus 2025, Form n°2042 / Cerfa 10330)",
+  "description": "Prepare an individual or household's French income tax return for the 2025 tax year (revenus 2025), filed in 2026. Online declaration through the taxpayer's personal account at impots.gouv.fr is mandatory for almost all filers; the online service pre-fills known salary, pension, and capital-income data reported by employers and financial institutions, and the taxpayer reviews, corrects, and completes it — the same 'review a pre-filled return' shape already published for de/finanzamt/income-tax-return-elster, au/ato/individual-tax-return-mytax, and sg/iras/individual-income-tax-return-formb1. Those unable to file online submit the paper form by post instead. This document models the field set of the main return, form n°2042 (Cerfa 10330, 2025 edition, form code 2025TIR135): household/marital situation and dependents, the taxpayer's (and spouse/partner's) identity and address, first-time-filer references, the core salary/pension/investment/property income lines the main form itself carries box codes for, deductible expenses, tax reductions and credits, withholding tax already paid, and bank details for refund and at-source withholding. Out of scope: form n°2044 (detailed rental-property income), n°2042-C-PRO (self-employed income), n°2042-RICI (detailed tax reductions/credits), n°2042-K/IOM (overseas-territory investment credits), and n°3916/3916-bis (foreign accounts/life-insurance contracts) — each is its own annex the main form only carries a summary box or checkbox for; see VERIFICATION.md. It does not submit the return, compute tax owed, or determine the taxpayer's prélèvement à la source rate.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Direction Générale des Finances Publiques",
+    "abbreviation": "DGFiP",
+    "url": "https://www.impots.gouv.fr"
+  },
+  "process": {
+    "type": "filing",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://www.impots.gouv.fr/formulaire/2042/declaration-des-revenus",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Form n°2042 (Cerfa 10330), 2025 edition, form code 2025TIR135, 'Déclaration des revenus' — direct PDF at impots.gouv.fr/sites/default/files/formulaires/2042/2026/2042_5535.pdf"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored directly from the DGFiP's own official form PDF, fetched live from impots.gouv.fr (HTTP 200, no access block — unlike several other jurisdictions' tax-form hosts in this registry, e.g. DE's formulare-bfinv.de SPA) via its 'formulaire/2042/declaration-des-revenus' index page. The PDF's 6 pages (état civil/identity, family situation and dependents, salaries/pensions/investment income, property income/deductible expenses/tax credits/withholding, hosting-attestation annex, first-time-filer checklist) were extracted with pdfjs-dist's text-layer reader; every numbered box code (e.g. 1AJ, 2DC, 4BA, 6NS, 7UD, 8HV) that anchors a field in this document was read directly off that extraction, not guessed. Cross-checked against impots.gouv.fr's own 'formulaire/2042/declaration-des-revenus' landing page and service-public.gouv.fr's English-language R1281 guidance page, both of which independently describe the same income/deduction/credit categories (salaries, pensions, capital income, property income; alimony, childcare, home-employment, donations, retirement-savings deductions) and confirm online filing via impots.gouv.fr is the mandatory default channel. No live authenticated impots.gouv.fr 'espace particulier' walkthrough was performed — creating a personal tax account requires real identity/tax-number verification not available in this environment — so the field-by-field comparison the practice requires against the live online screens has not been completed; status remains 'draft'. VERIFICATION.md includes a worked mock-data walkthrough and a conformance packet validating a complete example filing against this schema's own required/requiredWhen constraints instead. Scope cuts made explicit rather than guessed: (1) the paper form's own 'changement d'adresse en 2025/2026' mid-year house-move fields are not modeled — a minority-path detail with no box code; (2) income boxes for a form's '1re/2e personne à charge' columns (dependent children's own reportable income) are not modeled, only the two adult declarants' columns, matching this registry's existing us/irs/individual-income-tax-return-1040 precedent of modeling a fixed declarant/dependent slot count rather than an open-ended array; (3) niche single-purpose exemption boxes (tip income, overtime-hours exemption, value-sharing bonus exemption, household-employee flat-rate allowance) are out of scope, the same kind of narrow-line-item cut already made in the DE ELSTER and AU myTax schemas. Not on the edition axis: like Germany's Einkommensteuererklärung (see de/finanzamt/income-tax-return-elster VERIFICATION.md), France's déclaration de revenus is a genuine calendar-tax-year return, but spec/v0.3's `edition.scheme` enum (SPEC.md §5.7) only defines `us-tax-year`/`gb-tax-year`/`award-year` — none fits FR without the same misleading-scheme-name problem GSP-0019 already flagged for DE/IE/NZ/CA/AU/SG. This is the seventh jurisdiction confirming that gap; the tax year is recorded in `title`/`description` instead, per the DE ELSTER precedent."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "maritalStatus",
+      "label": "Family situation in 2025 (situation du foyer fiscal)",
+      "type": "enum",
+      "required": true,
+      "description": "married=Marié(e)s (M); single=Célibataire (C); divorced_separated=Divorcé(e)/séparé(e) (D); widowed=Veuf(ve) (V); pacsed=Pacsé(e)s (O).",
+      "sourceRef": "2042 p.2 — 'situation du foyer fiscal en 2025' checkboxes M/C/D/V/O",
+      "validation": {
+        "enum": [
+          "married",
+          "single",
+          "divorced_separated",
+          "widowed",
+          "pacsed"
+        ]
+      }
+    },
+    {
+      "name": "maritalStatusChangeDate",
+      "label": "Date of change in family situation during 2025, if any",
+      "type": "date",
+      "required": false,
+      "description": "Only populated when the marriage, Pacs, divorce/separation/Pacs dissolution, or death of declarant 1 or 2 happened during 2025 itself — not simply because the filer is currently married/pacsed/divorced/widowed from an earlier year.",
+      "sourceRef": "2042 p.2 — 'Date des changements en 2025 – Mariage X / Pacs X / Divorce/séparation/rupture de Pacs Y / Décès Z'"
+    },
+    {
+      "name": "spouseFiscalNumber",
+      "label": "Spouse or partner's tax number (N° fiscal de votre conjoint)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "pii",
+      "description": "Requested specifically to merge two previously-separate tax files when a marriage/Pacs happened during 2025 — not needed every year by a couple who has filed jointly since an earlier year.",
+      "sourceRef": "2042 p.2 — 'N° fiscal de votre conjoint', grouped under 'Date des changements en 2025'"
+    },
+    {
+      "name": "optsForSeparateDeclaration",
+      "label": "Opt for a separate declaration of 2025 income (case B)",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "description": "Only meaningful for a marriage/Pacs formed during 2025 — lets each partner file a separate return for that year instead of a single joint return.",
+      "sourceRef": "2042 p.2 — 'Vous optez pour la déclaration séparée de vos revenus 2025' (case B)"
+    },
+    {
+      "name": "isSingleParent",
+      "label": "Single parent living alone with dependents on 1 January 2025 (case T)",
+      "type": "boolean",
+      "required": false,
+      "description": "'Parent isolé' — single/divorced/separated and living alone on 1 Jan 2025 (or 31 Dec 2025 if divorced/separated during the year) with dependent children or invalids.",
+      "sourceRef": "2042 p.2 — 'b) parent isolé ... cochez' (case T)"
+    },
+    {
+      "name": "raisedChildAloneFiveYears",
+      "label": "Raised a now-independent child alone for at least 5 years (case L)",
+      "type": "boolean",
+      "required": false,
+      "description": "Single/divorced/separated/widowed filer who lived alone on 1 Jan 2025 with an adult (or deceased) child they raised alone for at least 5 years — grants an extra half-share.",
+      "sourceRef": "2042 p.2 — situations giving an extra half-share, item 1 (case L)"
+    },
+    {
+      "name": "hasDisabilityCardOrPension",
+      "label": "Holds a disability card, CMI, or invalidity pension of 40%+ (case P)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "2042 p.2 — extra half-share item 2 (case P)"
+    },
+    {
+      "name": "spouseHasDisabilityCardOrPension",
+      "label": "Spouse/partner holds the same disability status, or died holding it in 2025 (case F)",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "sourceRef": "2042 p.2 — extra half-share item 2, spouse variant (case F)"
+    },
+    {
+      "name": "numberOfDependentChildrenUnder18",
+      "label": "Number of unmarried dependent children under 18 (case F)",
+      "type": "integer",
+      "required": false,
+      "description": "Children born 1 Jan 2007 – 31 Dec 2025, or disabled regardless of age.",
+      "sourceRef": "2042 p.2 — 'Enfants à charge ... Nombre d'enfants non mariés de moins de 18 ans' (case F)"
+    },
+    {
+      "name": "dependentChildrenBirthYears",
+      "label": "Birth year(s) of dependent children under 18",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "numberOfDependentChildrenUnder18",
+        "greaterThan": 0
+      },
+      "sourceRef": "2042 p.2 — 'Année de naissance' under case F"
+    },
+    {
+      "name": "numberOfDisabledDependentChildren",
+      "label": "Of which, children holding a disability card or CMI-invalidité (case G)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "2042 p.2 — 'dont enfants titulaires de la carte d'invalidité ou de la CMI-invalidité' (case G)"
+    },
+    {
+      "name": "firstDependentChildName",
+      "label": "First dependent child — name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.2 — 'Renseignements sur vos enfants — Nom, prénom'"
+    },
+    {
+      "name": "firstDependentChildDateOfBirth",
+      "label": "First dependent child — date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "2042 p.2 — 'Renseignements sur vos enfants — Date de naissance'"
+    },
+    {
+      "name": "firstDependentChildPlaceOfBirth",
+      "label": "First dependent child — place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.2 — 'Renseignements sur vos enfants — Lieu de naissance'"
+    },
+    {
+      "name": "secondDependentChildName",
+      "label": "Second dependent child — name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.2 — 'Renseignements sur vos enfants — Nom, prénom' (second slot)"
+    },
+    {
+      "name": "secondDependentChildDateOfBirth",
+      "label": "Second dependent child — date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "2042 p.2 — 'Renseignements sur vos enfants — Date de naissance' (second slot)"
+    },
+    {
+      "name": "secondDependentChildPlaceOfBirth",
+      "label": "Second dependent child — place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.2 — 'Renseignements sur vos enfants — Lieu de naissance' (second slot)"
+    },
+    {
+      "name": "numberOfSharedCustodyChildrenUnder18",
+      "label": "Number of children under 18 in shared/alternating custody (case H)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "2042 p.2 — 'Enfants à charge en résidence alternée ou à charge partagée' (case H)"
+    },
+    {
+      "name": "numberOfDisabledSharedCustodyChildren",
+      "label": "Of which, disabled shared-custody children (case I)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "2042 p.2 — 'dont enfants titulaires de la carte d'invalidité ou de la CMI-invalidité' (case I)"
+    },
+    {
+      "name": "otherParentNameAndAddress",
+      "label": "Other parent's name and address (shared custody)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": {
+        "field": "numberOfSharedCustodyChildrenUnder18",
+        "greaterThan": 0
+      },
+      "sourceRef": "2042 p.2 — 'Nom et adresse de l'autre parent'"
+    },
+    {
+      "name": "numberOfOtherDisabledPersonsInHousehold",
+      "label": "Other invalids living in the household holding a disability card/CMI (case R)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "2042 p.2 — 'Autres personnes invalides vivant sous votre toit' (case R)"
+    },
+    {
+      "name": "numberOfAttachedAdultChildren",
+      "label": "Unmarried adult children (or widowed/divorced, no children) attached to this household (case J)",
+      "type": "integer",
+      "required": false,
+      "description": "Children born 1.1.2004–31.12.2006, or 1.1.2000–31.12.2006 if a student, who elect to be attached to the parents' tax household instead of filing their own return.",
+      "sourceRef": "2042 p.2 — 'd) rattachement en 2025 d'enfants majeurs ou mariés' (case J)"
+    },
+    {
+      "name": "numberOfMarriedOrFamilyDependentAdultChildren",
+      "label": "Married/Pacsed adult children, or unmarried adult children with their own dependents, attached to this household (case N)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "2042 p.2 — same section (case N)"
+    },
+    {
+      "name": "declarant1Title",
+      "label": "Declarant 1 — title",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "2042 p.1 — 'DÉCLARANT 1  Monsieur  Madame'",
+      "validation": {
+        "enum": [
+          "mr",
+          "mrs"
+        ]
+      }
+    },
+    {
+      "name": "familyNameDeclarant1",
+      "label": "Declarant 1 — birth name (Nom de naissance)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — état civil, déclarant 1, 'Nom de naissance'"
+    },
+    {
+      "name": "givenNamesDeclarant1",
+      "label": "Declarant 1 — given name(s) (Prénoms)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — état civil, déclarant 1, 'Prénoms'"
+    },
+    {
+      "name": "dateOfBirthDeclarant1",
+      "label": "Declarant 1 — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "2042 p.1 — état civil, déclarant 1, 'Date de naissance'"
+    },
+    {
+      "name": "placeOfBirthCommuneDeclarant1",
+      "label": "Declarant 1 — place of birth (commune)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'Lieu de naissance ... commune'"
+    },
+    {
+      "name": "departmentOfBirthDeclarant1",
+      "label": "Declarant 1 — département of birth, if born in France",
+      "type": "string",
+      "required": false,
+      "sourceRef": "2042 p.1 — 'Lieu de naissance ... département'"
+    },
+    {
+      "name": "countryOfBirthDeclarant1",
+      "label": "Declarant 1 — country of birth, if born abroad",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'ou pays si né(e) à l'étranger'"
+    },
+    {
+      "name": "mailingNameDeclarant1",
+      "label": "Name your mail should be addressed to (nom d'usage, no first name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'Nom auquel vos courriers seront adressés (nom d'usage sans le prénom)'"
+    },
+    {
+      "name": "phoneDeclarant1",
+      "label": "Declarant 1 — phone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'Votre téléphone'"
+    },
+    {
+      "name": "emailDeclarant1",
+      "label": "Declarant 1 — email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'Votre mél'"
+    },
+    {
+      "name": "declarant2Title",
+      "label": "Declarant 2 (spouse/partner) — title",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "sourceRef": "2042 p.1 — 'DÉCLARANT 2  Monsieur  Madame'",
+      "validation": {
+        "enum": [
+          "mr",
+          "mrs"
+        ]
+      }
+    },
+    {
+      "name": "familyNameDeclarant2",
+      "label": "Declarant 2 — birth name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — état civil, déclarant 2, 'Nom de naissance'"
+    },
+    {
+      "name": "givenNamesDeclarant2",
+      "label": "Declarant 2 — given name(s)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — état civil, déclarant 2, 'Prénoms'"
+    },
+    {
+      "name": "dateOfBirthDeclarant2",
+      "label": "Declarant 2 — date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "2042 p.1 — état civil, déclarant 2, 'Date de naissance'"
+    },
+    {
+      "name": "placeOfBirthCommuneDeclarant2",
+      "label": "Declarant 2 — place of birth (commune)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — déclarant 2, 'Lieu de naissance ... commune'"
+    },
+    {
+      "name": "departmentOfBirthDeclarant2",
+      "label": "Declarant 2 — département of birth, if born in France",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "sourceRef": "2042 p.1 — déclarant 2, 'Lieu de naissance ... département'"
+    },
+    {
+      "name": "countryOfBirthDeclarant2",
+      "label": "Declarant 2 — country of birth, if born abroad",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — déclarant 2, 'ou pays si né(e) à l'étranger'"
+    },
+    {
+      "name": "addressStreet",
+      "label": "Home address on 1 January 2026 — street line (n° rue)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'adresse au 1er janvier 2026 ... n o rue'"
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Home address — postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'code postal'"
+    },
+    {
+      "name": "addressCommune",
+      "label": "Home address — commune",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'commune'"
+    },
+    {
+      "name": "addressApartmentDetails",
+      "label": "Apartment / building details (n°, étage, escalier, bâtiment, résidence)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'Appartement n o étage escalier bâtiment résidence'"
+    },
+    {
+      "name": "numberOfRoomsInDwelling",
+      "label": "Number of rooms in the dwelling (nb. pièces)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "2042 p.1 — 'nb. pièces'"
+    },
+    {
+      "name": "housingStatus",
+      "label": "Housing status (Statut)",
+      "type": "enum",
+      "required": true,
+      "description": "owner=propriétaire; tenant=locataire; co_tenant=colocataire; hosted_free=hébergé gratuitement.",
+      "sourceRef": "2042 p.1 — 'Statut propriétaire locataire colocataire hébergé gratuitement'",
+      "validation": {
+        "enum": [
+          "owner",
+          "tenant",
+          "co_tenant",
+          "hosted_free"
+        ]
+      }
+    },
+    {
+      "name": "landlordName",
+      "label": "Landlord's name (nom du propriétaire)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "housingStatus",
+        "in": [
+          "tenant",
+          "co_tenant"
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'nom du propriétaire'"
+    },
+    {
+      "name": "coTenantName",
+      "label": "Co-tenant's name (nom du colocataire)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "housingStatus",
+        "equals": "co_tenant"
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'nom du colocataire'"
+    },
+    {
+      "name": "isFirstTimeFiler",
+      "label": "Filing an income tax return for the first time",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Gates whether prior fiscal reference numbers are required or an identity document must be attached instead.",
+      "sourceRef": "2042 p.1 — 'Vous déposez une déclaration pour la première fois : cochez'"
+    },
+    {
+      "name": "taxpayerFiscalNumber",
+      "label": "Your tax number (n° fiscal)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isFirstTimeFiler",
+        "equals": false
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'N° fiscal'"
+    },
+    {
+      "name": "fipNumber",
+      "label": "FIP number (from a prior return or tax notice)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "isFirstTimeFiler",
+        "equals": false
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.1 — 'N° FIP'"
+    },
+    {
+      "name": "wasAttachedToParentsHousehold",
+      "label": "Were you previously attached to your parents' tax household?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "isFirstTimeFiler",
+        "equals": true
+      },
+      "sourceRef": "2042 p.6 — 'Si vous étiez rattaché jusqu'à maintenant au foyer fiscal de vos parents'"
+    },
+    {
+      "name": "parentsNameAndAddress",
+      "label": "Parents' name and address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "wasAttachedToParentsHousehold",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.6 — 'Nom et prénoms des parents / Adresse des parents'"
+    },
+    {
+      "name": "salaryDeclarant1",
+      "label": "Salaries and wages (Traitements et salaires) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AJ)"
+    },
+    {
+      "name": "salaryDeclarant2",
+      "label": "Salaries and wages (Traitements et salaires) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BJ)"
+    },
+    {
+      "name": "householdEmployeeIncomeDeclarant1",
+      "label": "Income as a household employee (particuliers employeurs) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AA)"
+    },
+    {
+      "name": "householdEmployeeIncomeDeclarant2",
+      "label": "Income as a household employee (particuliers employeurs) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BA)"
+    },
+    {
+      "name": "unemploymentBenefitsDeclarant1",
+      "label": "Unemployment / early-retirement benefits (Chômage, préretraite) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AP)"
+    },
+    {
+      "name": "unemploymentBenefitsDeclarant2",
+      "label": "Unemployment / early-retirement benefits (Chômage, préretraite) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BP)"
+    },
+    {
+      "name": "pensionsAndAnnuitiesDeclarant1",
+      "label": "Pensions, retirement, and annuities (Pensions, retraites et rentes) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AS)"
+    },
+    {
+      "name": "pensionsAndAnnuitiesDeclarant2",
+      "label": "Pensions, retirement, and annuities (Pensions, retraites et rentes) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BS)"
+    },
+    {
+      "name": "disabilityPensionDeclarant1",
+      "label": "Invalidity pension (Pensions d'invalidité) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AZ)"
+    },
+    {
+      "name": "disabilityPensionDeclarant2",
+      "label": "Invalidity pension (Pensions d'invalidité) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BZ)"
+    },
+    {
+      "name": "alimonyReceivedDeclarant1",
+      "label": "Alimony received (Pensions alimentaires perçues) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AO)"
+    },
+    {
+      "name": "alimonyReceivedDeclarant2",
+      "label": "Alimony received (Pensions alimentaires perçues) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BO)"
+    },
+    {
+      "name": "foreignPensionIncomeDeclarant1",
+      "label": "Other taxable foreign-source pension income — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AM)"
+    },
+    {
+      "name": "foreignPensionIncomeDeclarant2",
+      "label": "Other taxable foreign-source pension income — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BM)"
+    },
+    {
+      "name": "actualExpensesDeductionDeclarant1",
+      "label": "Actual work-expense deduction claimed instead of the standard 10% (Frais réels) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1AK)"
+    },
+    {
+      "name": "actualExpensesDeductionDeclarant2",
+      "label": "Actual work-expense deduction claimed instead of the standard 10% (Frais réels) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 1 (box 1BK)"
+    },
+    {
+      "name": "taxableDividends",
+      "label": "Taxable dividend income eligible for the 40% allowance (Revenus des actions et parts)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 2 (box 2DC)"
+    },
+    {
+      "name": "otherDistributedIncome",
+      "label": "Other distributed income and similar (Autres revenus distribués et assimilés)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 2 (box 2TS)"
+    },
+    {
+      "name": "fixedIncomeInterest",
+      "label": "Interest and other fixed-income investment proceeds (Intérêts et autres produits de placement à revenu fixe)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 2 (box 2TR)"
+    },
+    {
+      "name": "lifeInsuranceProductsOver8Years",
+      "label": "Life-insurance/capitalisation contract proceeds, 8+ years, subject to the progressive scale",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 2 (box 2CH)"
+    },
+    {
+      "name": "socialContributionsDeductibleCSG",
+      "label": "Income already subject to social levies, with deductible CSG if opting for the progressive scale",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 2 (box 2BH)"
+    },
+    {
+      "name": "foreignTaxCreditOnSecurities",
+      "label": "Foreign tax credit on securities income (Crédits d'impôt sur valeurs étrangères)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.3 — section 2 (box 2AB)"
+    },
+    {
+      "name": "optsForProgressiveTaxScale",
+      "label": "Opt for taxation of investment income and capital gains at the progressive scale, not the flat levy (case 2OP)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "2042 p.3 — 'Vous optez pour l'imposition au barème de vos revenus de capitaux mobiliers et gains de cession de valeurs mobilières' (box 2OP)"
+    },
+    {
+      "name": "microFoncierReceipts",
+      "label": "Gross rental receipts under the micro-foncier regime, ≤ €15,000 (Recettes brutes sans abattement)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 4 (box 4BE)"
+    },
+    {
+      "name": "microFoncierForeignReceipts",
+      "label": "Of which, foreign-source micro-foncier receipts eligible for a French tax credit",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 4 (box 4BK)"
+    },
+    {
+      "name": "taxablePropertyIncome",
+      "label": "Taxable rental income under the actual-expense regime, carried from form n°2044 (Revenus fonciers imposables)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 4 (box 4BA)"
+    },
+    {
+      "name": "foreignSourcePropertyIncome",
+      "label": "Of which, foreign-source property income eligible for a French tax credit",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 4 (box 4BL)"
+    },
+    {
+      "name": "deductiblePropertyLoss",
+      "label": "Property-income loss deductible against property income (Déficit imputable sur les revenus fonciers)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 4 (box 4BB)"
+    },
+    {
+      "name": "deductibleLossAgainstGlobalIncome",
+      "label": "Property-income loss deductible against total household income (Déficit imputable sur le revenu global)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 4 (box 4BC)"
+    },
+    {
+      "name": "noLongerReceivesPropertyIncome",
+      "label": "No longer receives any rental/property income in 2026",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "2042 p.4 — section 4 (box 4BN)"
+    },
+    {
+      "name": "filesSpecialForm2044",
+      "label": "Filing a special form n°2044 (2044 spéciale)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "2042 p.4 — section 4 (box 4BZ)"
+    },
+    {
+      "name": "deductibleCSGOnCapitalIncome",
+      "label": "Deductible CSG calculated on capital/property income (CSG déductible)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6DE)"
+    },
+    {
+      "name": "alimonyPaidToAdultChild1",
+      "label": "Alimony paid to a first adult child (Pensions alimentaires versées à des enfants majeurs)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6EL)"
+    },
+    {
+      "name": "alimonyPaidToAdultChild2",
+      "label": "Alimony paid to a second adult child",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6EM)"
+    },
+    {
+      "name": "otherAlimonyPaid",
+      "label": "Other alimony paid (minor children, ascendants, etc.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6GU)"
+    },
+    {
+      "name": "alimonyRecipientNameAndAddress",
+      "label": "Name and address of alimony recipient(s)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "otherAlimonyPaid",
+        "greaterThan": 0
+      },
+      "classification": "pii",
+      "sourceRef": "2042 p.4 — 'Nom et adresse des bénéficiaires'"
+    },
+    {
+      "name": "perContributionsDeclarant1",
+      "label": "Contributions to new retirement savings plans (PER), deductible — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6NS)"
+    },
+    {
+      "name": "perContributionsDeclarant2",
+      "label": "Contributions to new retirement savings plans (PER), deductible — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6NT)"
+    },
+    {
+      "name": "perpContributionsDeclarant1",
+      "label": "Contributions to PERP/PRÉFON/COREM/CGOS-type plans — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6RS)"
+    },
+    {
+      "name": "perpContributionsDeclarant2",
+      "label": "Contributions to PERP/PRÉFON/COREM/CGOS-type plans — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 6 (box 6RT)"
+    },
+    {
+      "name": "newlyDomiciledInFranceIn2025",
+      "label": "Newly domiciled in France in 2025",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "2042 p.4 — section 6 (box 6QW)"
+    },
+    {
+      "name": "donationsToCharityJanToOct",
+      "label": "Donations to organisations helping people in difficulty, 1 Jan – 13 Oct 2025 (max €1,000)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 7 (box 7UD)"
+    },
+    {
+      "name": "donationsToCharityOctToDec",
+      "label": "Donations to organisations helping people in difficulty, 14 Oct – 31 Dec 2025 (max €2,000 incl. above)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 7 (box 7UQ)"
+    },
+    {
+      "name": "donationsForReligiousHeritage",
+      "label": "Donations for the preservation of religious heritage (max €1,000)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 7 (box 7UJ)"
+    },
+    {
+      "name": "donationsToOtherOrganizations",
+      "label": "Donations to other public-interest organisations, associations, or election candidates",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 7 (box 7UF)"
+    },
+    {
+      "name": "homeServiceExpenses",
+      "label": "Personal home-service expenses (Dépenses de services à la personne)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 7 (box 7DB)"
+    },
+    {
+      "name": "homeServiceAidReceived",
+      "label": "Aid received for home services (APA, PCH, prefinanced CESU, etc.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 7 (box 7DR)"
+    },
+    {
+      "name": "firstTimeDirectHomeEmployeeIn2025",
+      "label": "Directly employed a home worker for the first time in 2025",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "2042 p.4 — section 7 (box 7DQ)"
+    },
+    {
+      "name": "householdHasDisabilityCard",
+      "label": "You, your spouse, or a dependent holds a disability card or CMI-invalidité",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "2042 p.4 — section 7 (box 7DG)"
+    },
+    {
+      "name": "withholdingOnSalariesPensionsDeclarant1",
+      "label": "Withholding tax already paid on salaries/pensions (PAS) — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8HV)"
+    },
+    {
+      "name": "withholdingOnSalariesPensionsDeclarant2",
+      "label": "Withholding tax already paid on salaries/pensions (PAS) — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8IV)"
+    },
+    {
+      "name": "incomeTaxInstallmentsPaidDeclarant1",
+      "label": "Income-tax installments (acomptes) already paid — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8HW)"
+    },
+    {
+      "name": "incomeTaxInstallmentsPaidDeclarant2",
+      "label": "Income-tax installments (acomptes) already paid — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8IW)"
+    },
+    {
+      "name": "refundOfOverwithholdingDeclarant1",
+      "label": "Refund of over-withheld income tax already obtained — declarant 1",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8HY)"
+    },
+    {
+      "name": "refundOfOverwithholdingDeclarant2",
+      "label": "Refund of over-withheld income tax already obtained — declarant 2",
+      "type": "number",
+      "required": false,
+      "visibleWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married",
+          "pacsed"
+        ]
+      },
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8IY)"
+    },
+    {
+      "name": "advancePaymentReceivedForTaxCredits",
+      "label": "Advance of 60% on tax reductions/credits received at the start of the year (box 8EA)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8EA)"
+    },
+    {
+      "name": "foreignIncomeWithFrenchTaxCredit",
+      "label": "Foreign-source income giving a French tax credit equal to the French tax due (box 8TK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.4 — section 8 (box 8TK)"
+    },
+    {
+      "name": "ibanNumber",
+      "label": "IBAN for tax refunds and withholding direct debit",
+      "type": "string",
+      "required": false,
+      "description": "The source text says a RIB must 'obligatoirement' be attached, but does not specify whether an already-enrolled filer whose account is unchanged is asked to resupply it every year — modelled as optional rather than asserting a stronger unconditional claim than sourced; see VERIFICATION.md.",
+      "classification": "financial",
+      "sourceRef": "2042 p.2 — 'informations — coordonnées bancaires — Joignez obligatoirement un relevé d'identité bancaire'"
+    },
+    {
+      "name": "bicCode",
+      "label": "BIC/SWIFT code",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "2042 p.2 — 'coordonnées bancaires'"
+    },
+    {
+      "name": "authorizesDgfipDirectDebitMandate",
+      "label": "Authorizes DGFiP to instruct your bank to debit this account for tax due (mandate)",
+      "type": "boolean",
+      "required": false,
+      "description": "Signing this mandate authorizes DGFiP to send debit instructions to the taxpayer's bank; a refund request to the bank must be made within 8 weeks of an authorized debit.",
+      "sourceRef": "2042 p.2 — 'En signant ce formulaire de mandat, vous autorisez la DGFiP à envoyer des instructions à votre banque...'"
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Place of declaration (À)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "2042 p.1 — signature block 'À'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of declaration / signature (Le)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "2042 p.1 — signature block 'Le'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocumentCopy",
+      "label": "Copy of an identity document (ID card, passport, family record book)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "isFirstTimeFiler",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "2042 p.1 — 'Joignez une copie de justificatif de votre identité (carte d'identité, passeport, livret de famille, carte de séjour...)'"
+    },
+    {
+      "id": "leaseAgreementCopy",
+      "label": "Copy of the lease agreement for the dwelling as of 31 December 2025",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "isFirstTimeFiler",
+            "equals": true
+          },
+          {
+            "field": "housingStatus",
+            "in": [
+              "tenant",
+              "co_tenant"
+            ]
+          }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "2042 p.6 — first-time filer checklist, 'si vous êtes locataire ou colocataire'"
+    },
+    {
+      "id": "hostProofOfResidence",
+      "label": "Copy of the hosting person's most recent housing-tax, property-tax notice, or lease",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "isFirstTimeFiler",
+            "equals": true
+          },
+          {
+            "field": "housingStatus",
+            "equals": "hosted_free"
+          }
+        ]
+      },
+      "belongsTo": "other",
+      "sourceRef": "2042 p.6 — first-time filer checklist, 'si vous êtes hébergé à titre gratuit'"
+    },
+    {
+      "id": "hostingAttestation",
+      "label": "Signed hosting attestation (attestation d'hébergement) from the person hosting you",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "isFirstTimeFiler",
+            "equals": true
+          },
+          {
+            "field": "housingStatus",
+            "equals": "hosted_free"
+          }
+        ]
+      },
+      "belongsTo": "other",
+      "sourceRef": "2042 p.5 — 'attestation d'hébergement'; p.6 — 'signée par la personne qui vous hébergeait au 31 décembre 2025'"
+    },
+    {
+      "id": "bankDetailsRIB",
+      "label": "Bank account details (relevé d'identité bancaire, RIB)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "2042 p.2 — 'Joignez obligatoirement un relevé d'identité bancaire' — sourced text does not confirm whether an already-enrolled filer with an unchanged account is exempt; see VERIFICATION.md"
+    },
+    {
+      "id": "form2044",
+      "label": "Form n°2044 (property income under the actual-expense regime)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "taxablePropertyIncome",
+        "greaterThan": 0
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "2042 p.4 — 'Report du résultat déterminé sur la déclaration n o 2044'"
+    },
+    {
+      "id": "form2042RICI",
+      "label": "Form n°2042-RICI (detailed tax reductions and credits)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "2042 p.4 — 'Autres réductions/crédits d'impôt ? Reportez-vous au formulaire n o 2042 RICI.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "household_situation",
+      "title": "Family situation and household",
+      "fields": [
+        "maritalStatus",
+        "maritalStatusChangeDate",
+        "spouseFiscalNumber",
+        "optsForSeparateDeclaration",
+        "isSingleParent",
+        "raisedChildAloneFiveYears",
+        "hasDisabilityCardOrPension",
+        "spouseHasDisabilityCardOrPension"
+      ]
+    },
+    {
+      "id": "dependents",
+      "title": "Dependents",
+      "fields": [
+        "numberOfDependentChildrenUnder18",
+        "dependentChildrenBirthYears",
+        "numberOfDisabledDependentChildren",
+        "firstDependentChildName",
+        "firstDependentChildDateOfBirth",
+        "firstDependentChildPlaceOfBirth",
+        "secondDependentChildName",
+        "secondDependentChildDateOfBirth",
+        "secondDependentChildPlaceOfBirth",
+        "numberOfSharedCustodyChildrenUnder18",
+        "numberOfDisabledSharedCustodyChildren",
+        "otherParentNameAndAddress",
+        "numberOfOtherDisabledPersonsInHousehold",
+        "numberOfAttachedAdultChildren",
+        "numberOfMarriedOrFamilyDependentAdultChildren"
+      ]
+    },
+    {
+      "id": "identity",
+      "title": "Your identity (état civil)",
+      "fields": [
+        "declarant1Title",
+        "familyNameDeclarant1",
+        "givenNamesDeclarant1",
+        "dateOfBirthDeclarant1",
+        "placeOfBirthCommuneDeclarant1",
+        "departmentOfBirthDeclarant1",
+        "countryOfBirthDeclarant1",
+        "mailingNameDeclarant1",
+        "phoneDeclarant1",
+        "emailDeclarant1",
+        "declarant2Title",
+        "familyNameDeclarant2",
+        "givenNamesDeclarant2",
+        "dateOfBirthDeclarant2",
+        "placeOfBirthCommuneDeclarant2",
+        "departmentOfBirthDeclarant2",
+        "countryOfBirthDeclarant2"
+      ]
+    },
+    {
+      "id": "address",
+      "title": "Home address and housing",
+      "fields": [
+        "addressStreet",
+        "addressPostalCode",
+        "addressCommune",
+        "addressApartmentDetails",
+        "numberOfRoomsInDwelling",
+        "housingStatus",
+        "landlordName",
+        "coTenantName"
+      ]
+    },
+    {
+      "id": "first_time_filer",
+      "title": "First-time filer / prior fiscal references",
+      "fields": [
+        "isFirstTimeFiler",
+        "taxpayerFiscalNumber",
+        "fipNumber",
+        "wasAttachedToParentsHousehold",
+        "parentsNameAndAddress"
+      ]
+    },
+    {
+      "id": "salaries_pensions",
+      "title": "Salaries, pensions, and annuities",
+      "fields": [
+        "salaryDeclarant1",
+        "salaryDeclarant2",
+        "householdEmployeeIncomeDeclarant1",
+        "householdEmployeeIncomeDeclarant2",
+        "unemploymentBenefitsDeclarant1",
+        "unemploymentBenefitsDeclarant2",
+        "pensionsAndAnnuitiesDeclarant1",
+        "pensionsAndAnnuitiesDeclarant2",
+        "disabilityPensionDeclarant1",
+        "disabilityPensionDeclarant2",
+        "alimonyReceivedDeclarant1",
+        "alimonyReceivedDeclarant2",
+        "foreignPensionIncomeDeclarant1",
+        "foreignPensionIncomeDeclarant2",
+        "actualExpensesDeductionDeclarant1",
+        "actualExpensesDeductionDeclarant2"
+      ]
+    },
+    {
+      "id": "investment_income",
+      "title": "Investment income (capitaux mobiliers)",
+      "fields": [
+        "taxableDividends",
+        "otherDistributedIncome",
+        "fixedIncomeInterest",
+        "lifeInsuranceProductsOver8Years",
+        "socialContributionsDeductibleCSG",
+        "foreignTaxCreditOnSecurities",
+        "optsForProgressiveTaxScale"
+      ]
+    },
+    {
+      "id": "property_income",
+      "title": "Property income (revenus fonciers)",
+      "fields": [
+        "microFoncierReceipts",
+        "microFoncierForeignReceipts",
+        "taxablePropertyIncome",
+        "foreignSourcePropertyIncome",
+        "deductiblePropertyLoss",
+        "deductibleLossAgainstGlobalIncome",
+        "noLongerReceivesPropertyIncome",
+        "filesSpecialForm2044"
+      ]
+    },
+    {
+      "id": "deductible_expenses",
+      "title": "Deductible expenses",
+      "fields": [
+        "deductibleCSGOnCapitalIncome",
+        "alimonyPaidToAdultChild1",
+        "alimonyPaidToAdultChild2",
+        "otherAlimonyPaid",
+        "alimonyRecipientNameAndAddress",
+        "perContributionsDeclarant1",
+        "perContributionsDeclarant2",
+        "perpContributionsDeclarant1",
+        "perpContributionsDeclarant2",
+        "newlyDomiciledInFranceIn2025"
+      ]
+    },
+    {
+      "id": "tax_reductions_credits",
+      "title": "Tax reductions and credits",
+      "fields": [
+        "donationsToCharityJanToOct",
+        "donationsToCharityOctToDec",
+        "donationsForReligiousHeritage",
+        "donationsToOtherOrganizations",
+        "homeServiceExpenses",
+        "homeServiceAidReceived",
+        "firstTimeDirectHomeEmployeeIn2025",
+        "householdHasDisabilityCard"
+      ]
+    },
+    {
+      "id": "withholding_and_other",
+      "title": "Withholding tax already paid and other adjustments",
+      "fields": [
+        "withholdingOnSalariesPensionsDeclarant1",
+        "withholdingOnSalariesPensionsDeclarant2",
+        "incomeTaxInstallmentsPaidDeclarant1",
+        "incomeTaxInstallmentsPaidDeclarant2",
+        "refundOfOverwithholdingDeclarant1",
+        "refundOfOverwithholdingDeclarant2",
+        "advancePaymentReceivedForTaxCredits",
+        "foreignIncomeWithFrenchTaxCredit"
+      ]
+    },
+    {
+      "id": "bank_details",
+      "title": "Bank details for refund and withholding",
+      "fields": [
+        "ibanNumber",
+        "bicCode",
+        "authorizesDgfipDirectDebitMandate"
+      ]
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and signature",
+      "fields": [
+        "declarationPlace",
+        "declarationDate"
+      ]
+    }
+  ]
+}
