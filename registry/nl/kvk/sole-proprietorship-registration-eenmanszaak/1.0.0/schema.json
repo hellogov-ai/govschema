@@ -1,0 +1,536 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nl/kvk/sole-proprietorship-registration-eenmanszaak",
+  "version": "1.0.0",
+  "title": "Netherlands Sole Proprietorship Registration (Eenmanszaak, KVK Form 1)",
+  "description": "Register a new one-person sole proprietorship (eenmanszaak) — or report that an existing business or establishment is being taken over and continued as an eenmanszaak — in the Business Register (Handelsregister), on behalf of the Netherlands Chamber of Commerce (Kamer van Koophandel, KVK). This is the Dutch analogue to sg/acra/sole-proprietorship-registration, gb/companies-house/company-incorporation-in01, ie/cro/company-incorporation, ca/on/registration/business-incorporation, and de/gewerbeamt/business-registration, and is the first schema in this registry for the Netherlands (NL), a new jurisdiction. An eenmanszaak has exactly one owner, even if other people work in the business; the owner may only have one eenmanszaak at a time, though it may operate more than one establishment. Scoped to a single individual owner completing KVK Form 1 (Formulier 1): partnerships (vennootschap onder firma, two or more owners, a distinct KVK form), corporate or nominee position holders, and the equivalent kvk.nl/eenmanszaakregistration online pre-fill path are out of scope — see VERIFICATION.md. KVK requires the applicant to visit a KVK office in person, with a valid proof of identity, to complete the registration even when this form has been filled in and printed in advance; this document does not submit the registration or book that appointment, and does not model appointment scheduling. The official form is bilingual: an English translation (this document's primary source) auto-fills an authoritative Dutch original that alone is signed and submitted. The live kvk.nl and Business Register sources are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Netherlands Chamber of Commerce",
+    "abbreviation": "KVK",
+    "url": "https://www.kvk.nl"
+  },
+  "process": {
+    "type": "registration",
+    "language": "nl-NL"
+  },
+  "source": {
+    "url": "https://www.kvk.nl/en/about-the-business-register/download-form-1-registration-eenmanszaak-sole-proprietorship/",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "KVK Form 1 (Formulier 1) — 'Register an eenmanszaak (sole proprietorship)', English translation of version August 2025 (a bilingual EN/NL fillable AcroForm PDF; pages 1-5 are the English translation, pages 6-10 are the identically-fielded authoritative Dutch original)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored directly from KVK Form 1's own AcroForm field structure, extracted programmatically with pdfjs-dist (getAnnotations()/getTextContent() across both the English pages 1-5 and the mirrored Dutch pages 6-10, confirming the two page sets share identical field names and checkbox export values). This is the same PDF-field-extraction rigor as ca/on/registration/business-incorporation and de/gewerbeamt/business-registration, stronger than the automated-fetch-and-summarize sourcing used for sg/acra/sole-proprietorship-registration (Bizfile has no downloadable form at all). Programmatically checked every annotation's `required` flag: none of KVK Form 1's fields set the PDF's own Required bit, so this document's `required: true` assignments reflect the form's own prose instructions and standard registration necessity (core identity, trade name, activity, address, and signature-block fields), not a confirmed submission-time gate — the same honesty discipline applied to au/ato/individual-tax-return-mytax and sg/iras/individual-income-tax-return-formb1. Status remains 'draft'; no live-portal or in-person walkthrough was performed. See VERIFICATION.md for the field-by-field source table and out-of-scope items."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "registrationType",
+      "label": "Are you registering a new eenmanszaak, or continuing an existing business or establishment as an eenmanszaak?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "data",
+      "description": "Determines which start-date and prior-business fields apply. 'Continuing' means taking over an existing business or establishment (e.g. by purchase) and carrying it on as a sole proprietorship.",
+      "sourceRef": "Form 1, §1.1: Are you registering a new eenmanszaak or continuing an existing business or establishment?",
+      "validation": { "enum": ["new_eenmanszaak", "continuing_existing_business"] }
+    },
+    {
+      "name": "startDate",
+      "label": "Start date of the eenmanszaak",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "new_eenmanszaak" },
+      "description": "The date the applicant started setting up the new business — usually the date they start helping customers, though earlier registration is sometimes necessary (e.g. to arrange contracts).",
+      "sourceRef": "Form 1, §1.1: 'I am starting a new eenmanszaak. Start date of the eenmanszaak:'"
+    },
+    {
+      "name": "existingBusinessName",
+      "label": "Name of the existing business or establishment being taken over",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "description": "The registered name of the business or establishment the applicant is taking over and continuing as an eenmanszaak.",
+      "sourceRef": "Form 1, §1.1.1: 'The name of the business or establishment is:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "existingBusinessLocation",
+      "label": "Location of the existing business or establishment being taken over",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "description": "The registered location (place/municipality) of the business or establishment being taken over.",
+      "sourceRef": "Form 1, §1.1.1: 'The location of the business or establishment is:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "existingBusinessKvkNumber",
+      "label": "KVK number of the existing business or establishment",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "description": "The Business Register (KVK) number already assigned to the business or establishment being taken over.",
+      "sourceRef": "Form 1, §1.1.1: 'KVK number:'",
+      "validation": { "pattern": "^[0-9]{8}$", "minLength": 8, "maxLength": 8 }
+    },
+    {
+      "name": "continuationDate",
+      "label": "Date of continuation of the business or establishment",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "description": "The date the applicant takes over the business or establishment — the date on the signed takeover contract.",
+      "sourceRef": "Form 1, §1.1.2: 'The date of continuation of the business or establishment is:'"
+    },
+    {
+      "name": "originalEstablishmentDate",
+      "label": "Original start date of the business or establishment in the Business Register",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "description": "The original 'establishment date' the business or establishment first received in the Business Register. If unknown, KVK enters it instead, so this field is never required even on the continuation path.",
+      "sourceRef": "Form 1, §1.1.3: 'The start date of the company or establishment in the Business Register is... If you do not know the date, KVK will enter it for you.'"
+    },
+    {
+      "name": "primaryTradeName",
+      "label": "Trade name",
+      "type": "string",
+      "required": true,
+      "description": "The trade name (handelsnaam) the eenmanszaak uses to do business, written first if there is more than one.",
+      "sourceRef": "Form 1, §2.1.1: 'The trade name is:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "hasAdditionalTradeNames",
+      "label": "Does the eenmanszaak have more than one trade name?",
+      "type": "boolean",
+      "required": true,
+      "description": "An eenmanszaak may use more than one trade name, for example when it carries out different activities under different names.",
+      "sourceRef": "Form 1, §2.1: 'Does the eenmanszaak have 1 or more trade names?'"
+    },
+    {
+      "name": "additionalTradeNames",
+      "label": "Additional trade names",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasAdditionalTradeNames", "equals": true },
+      "description": "Any further trade names beyond the primary one, most important first.",
+      "sourceRef": "Form 1, §2.1.2: 'The trade names are:'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "businessActivities",
+      "label": "Activities of the eenmanszaak",
+      "type": "string",
+      "required": true,
+      "description": "Description of the eenmanszaak's current activities, products, and services — not planned future activities. KVK uses this description to assign one or more SBI (Standard Industrial Classification) codes, so it must be described clearly. Must be written in Dutch, per the form's own instructions.",
+      "sourceRef": "Form 1, §2.2: 'What are the activities of the eenmanszaak?' — 'Please note: You must describe your activities in Dutch.'",
+      "validation": { "minLength": 1, "maxLength": 1000 }
+    },
+    {
+      "name": "mainBusinessActivity",
+      "label": "Main activity of the eenmanszaak",
+      "type": "string",
+      "required": true,
+      "description": "Which of the described activities above is the eenmanszaak's main activity.",
+      "sourceRef": "Form 1, §2.3: 'What is the main activity of the eenmanszaak?'",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "sellsToConsumersRetail",
+      "label": "Does the eenmanszaak sell products to consumers (retail)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 1, §2.4: 'Does the eenmanszaak sell products to consumers (retail)?'"
+    },
+    {
+      "name": "retailInShop",
+      "label": "Sells in a shop",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Form 1, §2.4: retail channel — 'In a shop.'"
+    },
+    {
+      "name": "retailAtMarket",
+      "label": "Sells at a market",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Form 1, §2.4: retail channel — 'At a market.'"
+    },
+    {
+      "name": "retailViaStreetTrading",
+      "label": "Sells via street trading",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Form 1, §2.4: retail channel — 'Via street trading.'"
+    },
+    {
+      "name": "retailViaInternet",
+      "label": "Sells via the internet",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Form 1, §2.4: retail channel — 'Via the internet.'"
+    },
+    {
+      "name": "retailFromHome",
+      "label": "Sells from home",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Form 1, §2.4: retail channel — 'From home.'"
+    },
+    {
+      "name": "retailOtherChannel",
+      "label": "Sells via another channel not listed",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Form 1, §2.4: retail channel — 'Other:'"
+    },
+    {
+      "name": "retailOtherChannelDescription",
+      "label": "Description of the other sales channel",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "retailOtherChannel", "equals": true },
+      "sourceRef": "Form 1, §2.4: 'Other:' free-text channel description",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "sellsWholesale",
+      "label": "Does the eenmanszaak sell products to other businesses or legal entities (wholesale)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 1, §2.5: 'Does the eenmanszaak sell products to other businesses or legal entities (wholesale)?'"
+    },
+    {
+      "name": "importsGoods",
+      "label": "Does the eenmanszaak import products from abroad?",
+      "type": "boolean",
+      "required": true,
+      "description": "Includes importing ingredients or components for an end product, not only finished goods for resale.",
+      "sourceRef": "Form 1, §2.6: 'Does the eenmanszaak import products from abroad?'"
+    },
+    {
+      "name": "exportsGoods",
+      "label": "Does the eenmanszaak export products abroad?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 1, §2.7: 'Does the eenmanszaak export products abroad?'"
+    },
+    {
+      "name": "businessVisitingAddress",
+      "label": "Visiting address of the eenmanszaak",
+      "type": "string",
+      "required": true,
+      "description": "The address of the eenmanszaak's principal establishment. Cannot be a PO Box. If the visiting or postal address is not the owner's home address, KVK may require proof (e.g. rental agreement, proof of ownership, or a declaration of consent) that the eenmanszaak is allowed to use it.",
+      "sourceRef": "Form 1, §2.8: 'What is the visiting address of the eenmanszaak?'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "hasDifferentPostalAddress",
+      "label": "Is the postal address different from the visiting address?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 1, §2.9: 'Is the postal address of the eenmanszaak different from the visiting address?'"
+    },
+    {
+      "name": "businessPostalAddress",
+      "label": "Postal address of the eenmanszaak",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDifferentPostalAddress", "equals": true },
+      "description": "May be a PO Box address, unlike the visiting address.",
+      "sourceRef": "Form 1, §2.9: 'Yes, the postal address or PO Box address is:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "shieldVisitingAddress",
+      "label": "Shield the visiting address from the public Business Register?",
+      "type": "boolean",
+      "required": true,
+      "description": "If shielded, the visiting address is no longer visible in the public Business Register. Shielding requires a postal address different from the visiting address.",
+      "sourceRef": "Form 1, §2.10: 'Do you want to shield the visiting address, so that the address is not visible in the Business Register?'"
+    },
+    {
+      "name": "businessPhoneNumber1",
+      "label": "Telephone number 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A contact telephone number for the eenmanszaak. Not published in the Business Register.",
+      "sourceRef": "Form 1, §2.11: 'Telephone number 1:'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "businessPhoneNumber2",
+      "label": "Telephone number 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "An optional second contact telephone number for the eenmanszaak.",
+      "sourceRef": "Form 1, §2.11: 'Telephone number 2:'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "businessWebsiteUrl",
+      "label": "Website (URL)",
+      "type": "string",
+      "required": false,
+      "description": "The eenmanszaak's website address, if any. Published in the Business Register.",
+      "sourceRef": "Form 1, §2.11: 'URL (website):'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "businessEmailAddress",
+      "label": "Business email address",
+      "type": "string",
+      "required": true,
+      "description": "The eenmanszaak's email address. Published in the Business Register.",
+      "sourceRef": "Form 1, §2.11: 'Email address:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "employeeCount15PlusHoursPerWeek",
+      "label": "Number of people who work 15 hours or more per week",
+      "type": "integer",
+      "required": true,
+      "description": "Includes the owner, employees, hired and temporary workers, and other persons (e.g. family members) who work in the business. If the eenmanszaak has more than one establishment, count only the principal establishment.",
+      "sourceRef": "Form 1, §2.12: 'Number of people who work 15 hours or more per week:'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employeeCountUnder15HoursPerWeek",
+      "label": "Number of people who work less than 15 hours per week",
+      "type": "integer",
+      "required": true,
+      "description": "Same population as employeeCount15PlusHoursPerWeek, counted separately for those working under 15 hours per week at the principal establishment.",
+      "sourceRef": "Form 1, §2.12: 'Number of people who work less than 15 hours per week:'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "ownerLastName",
+      "label": "Owner — last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §3.1: 'Last name:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerFirstNames",
+      "label": "Owner — first name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As shown in the owner's passport.",
+      "sourceRef": "Form 1, §3.1: 'First name(s) (as shown in your passport):'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerCitizenServiceNumber",
+      "label": "Owner — citizen service number (BSN)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The Dutch Citizen Service Number (Burgerservicenummer, BSN), found on a Dutch passport, ID card, or driving licence, or issued on municipal registration for those from another country. Modelled as an 8-or-9-digit string per the BSN's publicly documented format (not independently confirmed against KVK's own field validation, which sets no length constraint on this field); see VERIFICATION.md.",
+      "sourceRef": "Form 1, §3.1: 'Citizen service number (BSN):'",
+      "validation": { "pattern": "^[0-9]{8,9}$", "minLength": 8, "maxLength": 9 }
+    },
+    {
+      "name": "ownerDateOfBirth",
+      "label": "Owner — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §3.1: 'Date of birth:'"
+    },
+    {
+      "name": "ownerPlaceOfBirth",
+      "label": "Owner — place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §3.1: 'Place of birth:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerCountryOfBirth",
+      "label": "Owner — country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §3.1: 'Country of birth:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerGender",
+      "label": "Owner — gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §3.1: 'Gender: Male / Female / Other'",
+      "validation": { "enum": ["male", "female", "other"] }
+    },
+    {
+      "name": "ownerHomeAddress",
+      "label": "Owner — home address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §3.1: 'Home address:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "allowMarketingUseOfAddress",
+      "label": "May other businesses use the visiting and postal address for marketing (unsolicited advertising)?",
+      "type": "boolean",
+      "required": true,
+      "description": "If declined, KVK records on the Business Register extract that other businesses may not use the eenmanszaak's visiting or postal address for marketing purposes, reducing unsolicited advertising mail and doorstep sellers.",
+      "sourceRef": "Form 1, §4.1: 'Are sellers allowed to use the visiting and postal address of the eenmanszaak from the Business Register?'"
+    },
+    {
+      "name": "hiresOutEmployeesForPayment",
+      "label": "Does the eenmanszaak sometimes hire out employees to other businesses or legal entities for payment?",
+      "type": "boolean",
+      "required": true,
+      "description": "Triggers a notification obligation under the Waadi Act (Wet allocatie arbeidskrachten door intermediairs). Answer 'No' if hiring out employees is itself one of the eenmanszaak's activities (e.g. a temp agency) — that case is described under businessActivities instead, not this field.",
+      "sourceRef": "Form 1, §5.1: 'Does the eenmanszaak sometimes hire out employees to businesses or legal entities for payment?'"
+    },
+    {
+      "name": "signerLastNameAndInitials",
+      "label": "Signer — last name and initial(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "By signing, the signer declares that all information entered is correct and that they are authorised to sign on behalf of the eenmanszaak.",
+      "sourceRef": "Form 1, §6.1: 'Last name and initial(s):'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "signerEmail",
+      "label": "Signer — email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §6.1: 'Email address:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "signerPhoneNumber",
+      "label": "Signer — telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 1, §6.1: 'Telephone number:'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "signingDate",
+      "label": "Signing date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 1, §6.1: 'Date:'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "ownerIdentityProof",
+      "label": "Owner's valid proof of identity",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["passport", "dutch_driving_licence", "european_identity_card", "dutch_foreign_nationals_document"],
+      "sourceRef": "Form 1, §6: 'Signing this form' — 'KVK requires a copy of a valid proof of identity from the owner of the eenmanszaak'; accepted types: Passport, Dutch driving licence, European identity card, A Dutch foreign nationals document"
+    },
+    {
+      "id": "ownerHandwrittenSignature",
+      "label": "Owner's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "The owner of the eenmanszaak must sign the form with a handwritten signature (not a copy or scan), on both the English and Dutch copies if both were used to complete the form; only the signed Dutch copy is given to KVK.",
+      "sourceRef": "Form 1, §3.1 and §6.1: handwritten signature requirements; 'About the English version of this form'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "start_or_continue",
+      "title": "Start or continue",
+      "fields": [
+        "registrationType", "startDate",
+        "existingBusinessName", "existingBusinessLocation", "existingBusinessKvkNumber",
+        "continuationDate", "originalEstablishmentDate"
+      ],
+      "next": "business_details"
+    },
+    {
+      "id": "business_details",
+      "title": "Details of the eenmanszaak",
+      "fields": [
+        "primaryTradeName", "hasAdditionalTradeNames", "additionalTradeNames",
+        "businessActivities", "mainBusinessActivity",
+        "sellsToConsumersRetail", "retailInShop", "retailAtMarket", "retailViaStreetTrading",
+        "retailViaInternet", "retailFromHome", "retailOtherChannel", "retailOtherChannelDescription",
+        "sellsWholesale", "importsGoods", "exportsGoods"
+      ],
+      "next": "address_and_contact"
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Address, contact details, and staff",
+      "fields": [
+        "businessVisitingAddress", "hasDifferentPostalAddress", "businessPostalAddress",
+        "shieldVisitingAddress", "businessPhoneNumber1", "businessPhoneNumber2",
+        "businessWebsiteUrl", "businessEmailAddress",
+        "employeeCount15PlusHoursPerWeek", "employeeCountUnder15HoursPerWeek"
+      ],
+      "next": "owner_details"
+    },
+    {
+      "id": "owner_details",
+      "title": "Details of the owner of the eenmanszaak",
+      "fields": [
+        "ownerLastName", "ownerFirstNames", "ownerCitizenServiceNumber", "ownerDateOfBirth",
+        "ownerPlaceOfBirth", "ownerCountryOfBirth", "ownerGender", "ownerHomeAddress"
+      ],
+      "next": "declarations"
+    },
+    {
+      "id": "declarations",
+      "title": "Advertising and hiring-out-employees declarations",
+      "fields": ["allowMarketingUseOfAddress", "hiresOutEmployeesForPayment"],
+      "next": "signing"
+    },
+    {
+      "id": "signing",
+      "title": "Signing this form",
+      "fields": ["signerLastNameAndInitials", "signerEmail", "signerPhoneNumber", "signingDate"]
+    }
+  ]
+}
