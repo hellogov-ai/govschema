@@ -1,0 +1,956 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fr/france-visas/schengen-visa-application",
+  "version": "1.0.0",
+  "title": "France Schengen Short-Stay Visa Application",
+  "description": "Apply online via France-Visas (the joint online service of the Ministry for Europe and Foreign Affairs and the Ministry of the Interior) for a Schengen short-stay visa (\"visa de court sejour\", up to 90 days in any 180-day period) to visit France (and the wider Schengen area) for tourism, business, family/friend visits, or other permitted short-stay purposes. The France-Visas online form collects the same data as the harmonised Schengen application form (CERFA N degree 14076*05, the standard form used across all Schengen states), and produces a printed, signed copy the applicant brings to an in-person appointment at a visa application centre (VFS Global, TLScontact, or CAPAGO, depending on location) or a French consulate/embassy, where biometrics (fingerprints and photo) are collected and supporting documents are checked; this document models only the preceding online data-entry step, not the appointment itself. This document models an adult third-country national applying for themselves for a standard short-stay visa. Out of scope: the long-stay national visa (CERFA N degree 14571, \"visa de long sejour\", for stays over 90 days, e.g. work, study, or family reunification visas); the parallel, narrower application pathway for a family member of an EU/EEA/Swiss/UK national exercising free-movement rights (CERFA boxes 17-18), which is exempt from several of the fields modelled here; an application made by a parent/legal guardian on behalf of a minor (CERFA box 10); the separate short-stay visa form for French overseas territories (DROM-CTOM, CERFA N degree 15934); and an application made through a proxy/representative. It does not submit the application; the live france-visas.gouv.fr source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "France-Visas (Ministry for Europe and Foreign Affairs / Ministry of the Interior)",
+    "abbreviation": "France-Visas",
+    "url": "https://france-visas.gouv.fr/en/"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://france-visas.gouv.fr/en/formulaires",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Formulaire harmonise de demande de visa Schengen, CERFA N\u00b014076*05 (\"Demande de visa Schengen\" / \"Application for Schengen Visa\")"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema opening France's first Visa-vertical document, closing the FR x Visa coverage gap identified by the GOV-756 and GOV-763 audits. france-visas.gouv.fr itself returns an interstitial bot-check page ('One moment please') on direct fetch of both its guidance pages and its own hosted copy of the CERFA form (same access-block class as several other jurisdictions' portals already recorded in this registry). The authoritative field-by-field source used instead is the identical CERFA 14076*05 PDF mirrored by formulaires.service-public.gouv.fr (France's official public-service forms portal, itself a gouv.fr property), fetched directly with no access block and extracted via the reused pdfjs-dist technique. Process/flow context (online form, appointment at a visa centre, biometrics, five-step process) came from service-public.gouv.fr's English guidance and independent third-party visa-centre operator descriptions (TLScontact) of the same official process, since france-visas.gouv.fr's own process pages were equally inaccessible. Status remains 'draft' pending a field-by-field pass against the live, authenticated france-visas.gouv.fr online form itself. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requiresSchengenVisa",
+      "label": "Does your nationality and purpose of travel require a Schengen short-stay visa before travelling to France?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "description": "Determined using France-Visas' own online 'visa wizard' (assistant-visa) tool before starting an application. True for a non-visa-exempt third-country national making a short stay (up to 90 days in any 180-day period). If false, this document does not apply \u2014 the traveller is visa-exempt, or needs the long-stay national visa instead.",
+      "sourceRef": "France-Visas 'Check your visa need' (assistant-visa) tool"
+    },
+    {
+      "name": "lastName",
+      "label": "Surname (family name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the travel document used to apply. CERFA box 1.",
+      "sourceRef": "CERFA 14076*05, box 1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "birthSurname",
+      "label": "Surname at birth (if different, e.g. maiden name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Prior family name(s), if different from the current surname. CERFA box 2.",
+      "sourceRef": "CERFA 14076*05, box 2",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s) (given names)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the travel document. CERFA box 3.",
+      "sourceRef": "CERFA 14076*05, box 3",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "CERFA box 4.",
+      "sourceRef": "CERFA 14076*05, box 4"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 5",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 6",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "currentNationality",
+      "label": "Current nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Determines whether this Schengen short-stay pathway (rather than visa-free entry) applies.",
+      "sourceRef": "CERFA 14076*05, box 7 ('Nationalite actuelle')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "nationalityAtBirthIfDifferent",
+      "label": "Nationality at birth, if different",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 7 ('Nationalite a la naissance, si differente')",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "otherNationalities",
+      "label": "Other nationality/nationalities held, if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 7 ('Autre(s) nationalite(s)')",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "description": "male / female / other, as the harmonised form's three checkboxes.",
+      "sourceRef": "CERFA 14076*05, box 8",
+      "validation": {
+        "enum": [
+          "male",
+          "female",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "single = celibataire. married = marie(e). registered_partnership = partenariat enregistre. separated = separe(e). divorced = divorce(e). widowed = veuf/veuve. other = any other status (to be specified).",
+      "sourceRef": "CERFA 14076*05, box 9",
+      "validation": {
+        "enum": [
+          "single",
+          "married",
+          "registered_partnership",
+          "separated",
+          "divorced",
+          "widowed",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "maritalStatusOtherDescription",
+      "label": "If marital status is 'other', please specify",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "other"
+      },
+      "sourceRef": "CERFA 14076*05, box 9 ('Autre (a preciser)')",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "nationalIdentityNumber",
+      "label": "National identity number, if applicable",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "CERFA 14076*05, box 11",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "travelDocumentType",
+      "label": "Type of travel document",
+      "type": "enum",
+      "required": true,
+      "description": "ordinary_passport = passeport ordinaire. diplomatic_passport = passeport diplomatique. service_passport = passeport de service. official_passport = passeport officiel. special_passport = passeport special. other = any other travel document (to be specified).",
+      "sourceRef": "CERFA 14076*05, box 12",
+      "validation": {
+        "enum": [
+          "ordinary_passport",
+          "diplomatic_passport",
+          "service_passport",
+          "official_passport",
+          "special_passport",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "travelDocumentTypeOtherDescription",
+      "label": "If travel document type is 'other', please specify",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelDocumentType",
+        "equals": "other"
+      },
+      "sourceRef": "CERFA 14076*05, box 12 ('Autre document de voyage (a preciser)')",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "travelDocumentNumber",
+      "label": "Travel document number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "CERFA 14076*05, box 13",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "travelDocumentIssueDate",
+      "label": "Travel document date of issue",
+      "type": "date",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 14"
+    },
+    {
+      "name": "travelDocumentExpiryDate",
+      "label": "Travel document valid until (expiry date)",
+      "type": "date",
+      "required": true,
+      "description": "Must remain valid for the intended stay (in practice, at least 3 months beyond the intended departure from the Schengen area).",
+      "sourceRef": "CERFA 14076*05, box 15"
+    },
+    {
+      "name": "travelDocumentIssuingCountry",
+      "label": "Travel document issued by (country)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 16",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 19",
+      "validation": {
+        "minLength": 3,
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 19",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "homeAddressLine1",
+      "label": "Home address \u2014 line 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 19 ('Adresse du domicile')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "homeAddressLine2",
+      "label": "Home address \u2014 line 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 19",
+      "validation": {
+        "maxLength": 120
+      }
+    },
+    {
+      "name": "homeAddressCity",
+      "label": "Home address \u2014 city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 19",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "homeAddressPostalCode",
+      "label": "Home address \u2014 postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 19",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "homeAddressCountry",
+      "label": "Home address \u2014 country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 19",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "residesInCountryOtherThanNationality",
+      "label": "Do you reside in a country other than your country of nationality?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 20"
+    },
+    {
+      "name": "residencePermitNumber",
+      "label": "Residence permit (or equivalent) number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "residesInCountryOtherThanNationality",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "CERFA 14076*05, box 20",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "residencePermitValidUntil",
+      "label": "Residence permit (or equivalent) valid until",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "residesInCountryOtherThanNationality",
+        "equals": true
+      },
+      "sourceRef": "CERFA 14076*05, box 20"
+    },
+    {
+      "name": "currentOccupation",
+      "label": "Current occupation",
+      "type": "string",
+      "required": true,
+      "description": "Not required for an applicant applying as the family member of an EU/EEA/Swiss/UK national (out of scope for this document \u2014 see description). CERFA marks this box with an asterisk (*) accordingly.",
+      "sourceRef": "CERFA 14076*05, box 21",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "employerOrEducationEstablishmentDetails",
+      "label": "Employer's name, address and telephone number (students: name and address of educational establishment)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 22",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "purposeOfJourney",
+      "label": "Purpose(s) of the journey",
+      "type": "enum",
+      "required": true,
+      "description": "tourism. business. family_or_friends_visit. culture. sports. official_visit. medical_reasons. study. airport_transit. other.",
+      "sourceRef": "CERFA 14076*05, box 23",
+      "validation": {
+        "enum": [
+          "tourism",
+          "business",
+          "family_or_friends_visit",
+          "culture",
+          "sports",
+          "official_visit",
+          "medical_reasons",
+          "study",
+          "airport_transit",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "purposeOfJourneyOtherDescription",
+      "label": "If purpose of journey is 'other', please specify",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "purposeOfJourney",
+        "equals": "other"
+      },
+      "sourceRef": "CERFA 14076*05, box 23 ('Autre (a preciser)')",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "additionalPurposeInformation",
+      "label": "Additional information on the purpose of the journey",
+      "type": "string",
+      "required": false,
+      "sourceRef": "CERFA 14076*05, box 24",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "mainDestinationMemberState",
+      "label": "Main destination Member State",
+      "type": "string",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 25",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "otherDestinationMemberStates",
+      "label": "Other destination Member State(s), if applicable",
+      "type": "string",
+      "required": false,
+      "sourceRef": "CERFA 14076*05, box 25",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "firstEntryMemberState",
+      "label": "Member State of first entry",
+      "type": "string",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 26",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "numberOfEntriesRequested",
+      "label": "Number of entries requested",
+      "type": "enum",
+      "required": true,
+      "description": "one = single entry. two = two entries. multiple = multiple entries.",
+      "sourceRef": "CERFA 14076*05, box 27",
+      "validation": {
+        "enum": [
+          "one",
+          "two",
+          "multiple"
+        ]
+      }
+    },
+    {
+      "name": "intendedFirstArrivalDate",
+      "label": "Intended date of arrival for the first intended stay in the Schengen area",
+      "type": "date",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 27"
+    },
+    {
+      "name": "intendedDepartureAfterFirstStayDate",
+      "label": "Intended date of departure from the Schengen area after the first intended stay",
+      "type": "date",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 27"
+    },
+    {
+      "name": "fingerprintsCollectedPreviously",
+      "label": "Have your fingerprints been collected previously for a Schengen visa application?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 28"
+    },
+    {
+      "name": "fingerprintsCollectionDateIfKnown",
+      "label": "Date fingerprints were collected, if known",
+      "type": "date",
+      "required": false,
+      "visibleWhen": {
+        "field": "fingerprintsCollectedPreviously",
+        "equals": true
+      },
+      "sourceRef": "CERFA 14076*05, box 28"
+    },
+    {
+      "name": "previousVisaNumberIfKnown",
+      "label": "Visa sticker number, if known",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "fingerprintsCollectedPreviously",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "CERFA 14076*05, box 28",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "finalDestinationEntryPermitDetails",
+      "label": "Entry permit for the final destination country, if applicable (issuing authority, valid from/until)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "CERFA 14076*05, box 29",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "invitingPersonOrHotelName",
+      "label": "Name of the inviting person(s) in the Member State(s), or name of the hotel(s)/temporary accommodation",
+      "type": "string",
+      "required": true,
+      "description": "Not required for an applicant applying as the family member of an EU/EEA/Swiss/UK national (out of scope \u2014 see description). CERFA marks this box with an asterisk (*) accordingly.",
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 30",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "invitingPersonOrHotelContactDetails",
+      "label": "Address, email address and telephone number of the inviting person(s)/hotel(s)/temporary accommodation",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 30",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 400
+      }
+    },
+    {
+      "name": "hostOrganizationNameAddressPhone",
+      "label": "Name, address and telephone number of the host company/organisation, if applicable",
+      "type": "string",
+      "required": false,
+      "sourceRef": "CERFA 14076*05, box 31",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "hostOrganizationContactPersonDetails",
+      "label": "Name, address, telephone number and email address of the contact person at the host company/organisation, if applicable",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 31",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "travelCostsFundedBy",
+      "label": "Cost of travelling and subsistence during the stay is financed by",
+      "type": "enum",
+      "required": true,
+      "description": "applicant = the applicant themselves. sponsor = a sponsor (host, company, or organisation).",
+      "sourceRef": "CERFA 14076*05, box 32",
+      "validation": {
+        "enum": [
+          "applicant",
+          "sponsor"
+        ]
+      }
+    },
+    {
+      "name": "applicantMeansOfSubsistence",
+      "label": "Applicant's own means of subsistence (select all that apply)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelCostsFundedBy",
+        "equals": "applicant"
+      },
+      "description": "Modelled as a comma-separated list of: cash, travellers_cheques, credit_card, prepaid_accommodation, prepaid_transport, other \u2014 multi-select-as-string treatment, pending GSP-0009 (see e.g. us/uscis/travel-document-i131).",
+      "sourceRef": "CERFA 14076*05, box 32",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "sponsorDetails",
+      "label": "Name/reference of the sponsor (host, company, or organisation) funding the trip",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelCostsFundedBy",
+        "equals": "sponsor"
+      },
+      "classification": "pii",
+      "description": "The form allows referencing the person/organisation already named in box 30 or 31, or naming another sponsor.",
+      "sourceRef": "CERFA 14076*05, box 32",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "sponsorMeansOfSubsistence",
+      "label": "Sponsor's means of subsistence provided (select all that apply)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "travelCostsFundedBy",
+        "equals": "sponsor"
+      },
+      "description": "Modelled as a comma-separated list of: cash, accommodation_provided, all_expenses_covered, prepaid_transport, other \u2014 multi-select-as-string treatment, pending GSP-0009.",
+      "sourceRef": "CERFA 14076*05, box 32",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "formCompletedByThirdParty",
+      "label": "Was this application form completed by someone other than the applicant?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "CERFA 14076*05, box 33"
+    },
+    {
+      "name": "thirdPartyPreparerName",
+      "label": "Name of the person who completed the form, if not the applicant",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "formCompletedByThirdParty",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 33",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "thirdPartyPreparerContactDetails",
+      "label": "Address, email address and telephone number of the person who completed the form",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "formCompletedByThirdParty",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "CERFA 14076*05, box 33",
+      "validation": {
+        "maxLength": 300
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "travelDocumentCopy",
+      "label": "Copy of the travel document (biographic page)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "passport",
+        "other-travel-document"
+      ],
+      "sourceRef": "CERFA 14076*05, administration section 'Documents justificatifs' \u2014 'Document de voyage'"
+    },
+    {
+      "id": "meansOfSubsistenceEvidence",
+      "label": "Evidence of means of subsistence",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "bank-statement",
+        "proof-of-earnings-letter",
+        "sponsorship-letter"
+      ],
+      "sourceRef": "CERFA 14076*05, administration section 'Documents justificatifs' \u2014 'Moyens de subsistance'"
+    },
+    {
+      "id": "invitationOrAccommodationEvidence",
+      "label": "Invitation letter or proof of accommodation",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "invitation-letter",
+        "hotel-booking-confirmation",
+        "host-attestation-daccueil"
+      ],
+      "sourceRef": "CERFA 14076*05, administration section 'Documents justificatifs' \u2014 'Invitation'"
+    },
+    {
+      "id": "travelMedicalInsuranceCertificate",
+      "label": "Travel medical insurance certificate",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "travel-medical-insurance-certificate"
+      ],
+      "sourceRef": "CERFA 14076*05, administration section 'Documents justificatifs' \u2014 'Assurance maladie en voyage'; covering at least EUR 30,000 and valid throughout the Schengen area, per the Schengen visa code"
+    },
+    {
+      "id": "meansOfTransportEvidence",
+      "label": "Evidence of means of transport (e.g. flight reservation or itinerary)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "flight-reservation",
+        "itinerary"
+      ],
+      "sourceRef": "CERFA 14076*05, administration section 'Documents justificatifs' \u2014 'Moyen de transport'"
+    },
+    {
+      "id": "visaFeePaymentReceipt",
+      "label": "Visa fee payment receipt",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "EUR",
+        "value": 90
+      },
+      "methods": [
+        "cash",
+        "card",
+        "money-order"
+      ],
+      "sourceRef": "france-visas.gouv.fr fee schedule ('frais-de-visa') \u2014 standard adult short-stay visa fee, EUR 90 (reduced/waived rates apply for children and certain categories, not modelled here)"
+    },
+    {
+      "id": "signedDeclaration",
+      "label": "Signed applicant declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I am aware and I consent that, for the examination of my application, the data required in this application form, my photograph and, if applicable, my fingerprints are compulsorily to be collected, and to the transmission of data concerning my application to the relevant authorities of the Member States and processing of such data by these authorities. I declare that, to the best of my knowledge, all particulars supplied by me are correct and complete. I am aware that any false statement will lead to my application being rejected or to the annulment of a visa already granted and may also render me liable to prosecution under the law of the Member State which deals with the application. I undertake to leave the territory of the Member States before the expiry of the visa, if granted.",
+      "sourceRef": "CERFA 14076*05, page 4 declaration/signature block"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_screening",
+      "title": "Eligibility screening",
+      "fields": [
+        "requiresSchengenVisa"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-required-visa-exempt-or-long-stay-needed",
+          "when": {
+            "field": "requiresSchengenVisa",
+            "equals": false
+          }
+        },
+        {
+          "to": "personal_details"
+        }
+      ]
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal details",
+      "fields": [
+        "lastName",
+        "birthSurname",
+        "firstNames",
+        "dateOfBirth",
+        "placeOfBirth",
+        "countryOfBirth",
+        "currentNationality",
+        "nationalityAtBirthIfDifferent",
+        "otherNationalities",
+        "sex",
+        "maritalStatus",
+        "maritalStatusOtherDescription",
+        "nationalIdentityNumber"
+      ],
+      "next": "travel_document"
+    },
+    {
+      "id": "travel_document",
+      "title": "Travel document",
+      "fields": [
+        "travelDocumentType",
+        "travelDocumentTypeOtherDescription",
+        "travelDocumentNumber",
+        "travelDocumentIssueDate",
+        "travelDocumentExpiryDate",
+        "travelDocumentIssuingCountry"
+      ],
+      "next": "contact_and_residence"
+    },
+    {
+      "id": "contact_and_residence",
+      "title": "Contact details and residence",
+      "fields": [
+        "email",
+        "phoneNumber",
+        "homeAddressLine1",
+        "homeAddressLine2",
+        "homeAddressCity",
+        "homeAddressPostalCode",
+        "homeAddressCountry",
+        "residesInCountryOtherThanNationality",
+        "residencePermitNumber",
+        "residencePermitValidUntil"
+      ],
+      "next": "occupation_and_employer"
+    },
+    {
+      "id": "occupation_and_employer",
+      "title": "Occupation and employer",
+      "fields": [
+        "currentOccupation",
+        "employerOrEducationEstablishmentDetails"
+      ],
+      "next": "travel_details"
+    },
+    {
+      "id": "travel_details",
+      "title": "Travel details",
+      "fields": [
+        "purposeOfJourney",
+        "purposeOfJourneyOtherDescription",
+        "additionalPurposeInformation",
+        "mainDestinationMemberState",
+        "otherDestinationMemberStates",
+        "firstEntryMemberState",
+        "numberOfEntriesRequested",
+        "intendedFirstArrivalDate",
+        "intendedDepartureAfterFirstStayDate"
+      ],
+      "next": "visa_and_entry_history"
+    },
+    {
+      "id": "visa_and_entry_history",
+      "title": "Visa and entry history",
+      "fields": [
+        "fingerprintsCollectedPreviously",
+        "fingerprintsCollectionDateIfKnown",
+        "previousVisaNumberIfKnown",
+        "finalDestinationEntryPermitDetails"
+      ],
+      "next": "host_and_accommodation"
+    },
+    {
+      "id": "host_and_accommodation",
+      "title": "Host and accommodation",
+      "fields": [
+        "invitingPersonOrHotelName",
+        "invitingPersonOrHotelContactDetails",
+        "hostOrganizationNameAddressPhone",
+        "hostOrganizationContactPersonDetails"
+      ],
+      "next": "funding"
+    },
+    {
+      "id": "funding",
+      "title": "Funding of travel and subsistence",
+      "fields": [
+        "travelCostsFundedBy",
+        "applicantMeansOfSubsistence",
+        "sponsorDetails",
+        "sponsorMeansOfSubsistence"
+      ],
+      "next": "form_completed_by_other_person"
+    },
+    {
+      "id": "form_completed_by_other_person",
+      "title": "Form completed by another person",
+      "fields": [
+        "formCompletedByThirdParty",
+        "thirdPartyPreparerName",
+        "thirdPartyPreparerContactDetails"
+      ]
+    }
+  ]
+}
