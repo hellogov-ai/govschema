@@ -118,6 +118,15 @@ did catch a real gating bug).
   encountered for its `citizenshipCertificateNumber` exemption. Documented in
   prose on `nameOfficialLanguageGivenName`/`nameEnglishGivenName`'s own
   descriptions instead of forced into an imprecise `requiredWhen`.
+- **`relativeType` splits one printed line into two enum values.** The form
+  prints "Legal Guardian in case of orphan/Guru in case of Third Gender" as a
+  single line alongside Father/Mother/Husband/Wife, but this schema models it
+  as two separate enum values (`legal_guardian_orphan`, `guru_third_gender`)
+  rather than one combined value, since a legal guardian and a Guru are
+  genuinely different relationships to the applicant despite sharing a
+  printed line — the same discipline `au/aec/voter-enrolment` used splitting
+  its `citizenshipStatus` branches by underlying AcroForm field grouping
+  rather than printed line breaks alone.
 - **Comb-style digit-box date collapsed to one field.** `dateOfBirth` is
   printed as eight single-digit boxes (`d d / m m / y y y y`); modelled as a
   single ISO `date` field, per this registry's existing comb-field
