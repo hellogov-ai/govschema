@@ -1,0 +1,562 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "au/asic/proprietary-company-registration",
+  "version": "1.0.0",
+  "title": "Australia Proprietary Company Registration (ASIC Form 201, Corporations Act 2001)",
+  "description": "Register a new proprietary company limited by shares (the standard small-business incorporation vehicle, commonly styled 'Pty Ltd') on the Australian companies register operated by the Australian Securities and Investments Commission (ASIC), under the Corporations Act 2001. Since the Business Registration Service (register.business.gov.au) launched, most applicants now lodge online through that service (which can bundle an ABN application alongside registration); the underlying field set both channels collect is the one ASIC's own Form 201, 'Application for registration as an Australian company', has published since 2011 and still lists as its regulatory form for this process. This document models that field set, scoped to the proprietary-company-limited-by-shares case — by far the most common path for an individual or small group incorporating a business — and leaves the public-company-specific governance sections (constitution lodgement, minimum three-director/office-hours requirements, ultimate-holding-company disclosure for regulated public companies) out of scope; see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Australian Securities and Investments Commission",
+    "abbreviation": "ASIC",
+    "url": "https://www.asic.gov.au"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.asic.gov.au/regulatory-resources/forms/forms-folder/201-application-for-registration-as-an-australian-company/",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "ASIC Form 201 — 'Application for registration as an Australian company' (Corporations Act 2001, s117)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from ASIC's own regulatory-resources page confirming Form 201 remains the current form for this process, plus business.gov.au's live guidance on the modern online lodgement channel and fee (the Business Registration Service, register.business.gov.au). The Form 201 PDF itself (dated 17 January 2011 on its own footer, the edition still linked from ASIC's page) was not directly downloadable from asic.gov.au in this sandbox (the direct link redirected to an unrelated resource) and was instead retrieved from a long-established third-party form-library mirror (calculus.net.au) — a static PDF with a genuine text layer (not scanned), so its printed field labels and instructional text were extracted directly via pdfjs-dist's getTextContent(), without needing OCR or image rendering. Cross-checked against ASIC's own page description ('11-page form ... collects company details, officeholder appointments, and registered office information'), which matches the retrieved PDF's page count and section structure. The live online lodgement screen flow (register.business.gov.au, requiring myGovID/RAM authentication) was not reached — see VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "stateOfRegistration",
+      "label": "State or Territory of registration",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Section 1 — 'I apply for registration of the company ... and nominate the State or Territory in which the company will be taken to be registered.'",
+      "validation": { "enum": ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"] }
+    },
+    {
+      "name": "hasProposedCompanyName",
+      "label": "Does the company have a proposed company name?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "If no, the company's name on registration will simply be its Australian Company Number (ACN).",
+      "sourceRef": "Section 2 — 'Does the company have a proposed company name? Yes / No. ... The company name on registration will be its Australian Company Number (ACN).'"
+    },
+    {
+      "name": "proposedCompanyName",
+      "label": "Proposed company name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasProposedCompanyName", "equals": true },
+      "visibleWhen": { "field": "hasProposedCompanyName", "equals": true },
+      "sourceRef": "Section 2 — 'If yes, the proposed company name is'"
+    },
+    {
+      "name": "nameReservationNumber",
+      "label": "Name reservation number (if any)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hasProposedCompanyName", "equals": true },
+      "sourceRef": "Section 2 — 'Name reservation number (if any)'"
+    },
+    {
+      "name": "companyLegalElement",
+      "label": "Legal element in the company name",
+      "type": "enum",
+      "required": true,
+      "description": "This schema is scoped to a proprietary company limited by shares, so the modelled choice is between the two label forms it may use.",
+      "sourceRef": "Section 2 — 'Tick the legal elements that apply: Pty. Ltd. / Proprietary Limited'",
+      "validation": { "enum": ["pty_ltd", "proprietary_limited"] }
+    },
+    {
+      "name": "isNameIdenticalToRegisteredBusinessName",
+      "label": "Is the proposed name identical to a registered business name?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "hasProposedCompanyName", "equals": true },
+      "fieldRole": "eligibility",
+      "sourceRef": "Section 2 continued — 'Is the proposed name identical to a registered business name(s)? Yes / No'"
+    },
+    {
+      "name": "identicalBusinessNameNumber",
+      "label": "Business number of the identical registered business name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNameIdenticalToRegisteredBusinessName", "equals": true },
+      "visibleWhen": { "field": "isNameIdenticalToRegisteredBusinessName", "equals": true },
+      "description": "Declares that the applicant owns, or is registering the company for the owner(s) of, the identical business name.",
+      "sourceRef": "Section 2 continued — 'I declare that I own, or am registering the company for the owner(s) of the identical business name(s) ... Business number, State/Territory of registration'"
+    },
+    {
+      "name": "registeredOfficeStreet",
+      "label": "Registered office — street address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A PO Box cannot be used as the registered office address.",
+      "sourceRef": "Section 2 continued — 'Registered office ... You cannot use a PO Box address. Office, unit, level / Street number and Street name'"
+    },
+    {
+      "name": "registeredOfficeSuburb",
+      "label": "Registered office — suburb/city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2 continued — 'Suburb/City'"
+    },
+    {
+      "name": "registeredOfficeState",
+      "label": "Registered office — State/Territory",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Section 2 continued — 'State/Territory'",
+      "validation": { "enum": ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"] }
+    },
+    {
+      "name": "registeredOfficePostcode",
+      "label": "Registered office — postcode",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2 continued — 'Postcode'"
+    },
+    {
+      "name": "doesCompanyOccupyRegisteredOffice",
+      "label": "Does the company occupy the registered-office premises?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Section 2 continued — 'Does the company occupy the premises? Yes / No'"
+    },
+    {
+      "name": "occupierName",
+      "label": "Name of the occupier of the premises",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "doesCompanyOccupyRegisteredOffice", "equals": false },
+      "visibleWhen": { "field": "doesCompanyOccupyRegisteredOffice", "equals": false },
+      "sourceRef": "Section 2 continued — 'If no, name of occupier'"
+    },
+    {
+      "name": "occupierConsentGiven",
+      "label": "Has the occupier consented in writing to the registered-office use?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "doesCompanyOccupyRegisteredOffice", "equals": false },
+      "visibleWhen": { "field": "doesCompanyOccupyRegisteredOffice", "equals": false },
+      "sourceRef": "Section 2 continued — 'Occupier's consent ... The occupier of the premises has consented in writing to the use of the specified address as the address of the registered office of the company and has not withdrawn that consent.'"
+    },
+    {
+      "name": "isPrincipalPlaceSameAsRegisteredOffice",
+      "label": "Is the principal place of business the same as the registered office?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Section 2 continued — 'Principal place of business. If same as registered office, write \"as above\".'"
+    },
+    {
+      "name": "principalPlaceStreet",
+      "label": "Principal place of business — street address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "visibleWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "classification": "pii",
+      "sourceRef": "Section 2 continued — 'Office, unit, level / Street number and Street name' (principal place of business block)"
+    },
+    {
+      "name": "principalPlaceSuburb",
+      "label": "Principal place of business — suburb/city",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "visibleWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "sourceRef": "Section 2 continued — 'Suburb/City' (principal place of business block)"
+    },
+    {
+      "name": "principalPlaceState",
+      "label": "Principal place of business — State/Territory",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "visibleWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "sourceRef": "Section 2 continued — 'State/Territory' (principal place of business block)"
+    },
+    {
+      "name": "principalPlacePostcode",
+      "label": "Principal place of business — postcode",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "visibleWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "sourceRef": "Section 2 continued — 'Postcode' (principal place of business block)"
+    },
+    {
+      "name": "principalPlaceCountry",
+      "label": "Principal place of business — country, if not Australia",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "isPrincipalPlaceSameAsRegisteredOffice", "equals": false },
+      "sourceRef": "Section 2 continued — 'Country (if not Australia)'"
+    },
+    {
+      "name": "director1FamilyName",
+      "label": "Director — family name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A proprietary company must have a minimum of one director, resident in Australia.",
+      "sourceRef": "Section 3 — 'Appoint officeholder ... Office held: Director / Secretary ... Family name'"
+    },
+    {
+      "name": "director1GivenNames",
+      "label": "Director — given names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Given names'"
+    },
+    {
+      "name": "director1FormerName",
+      "label": "Director — former name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Former name'"
+    },
+    {
+      "name": "director1AddressStreet",
+      "label": "Director — residential address, street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Street number and Street name'"
+    },
+    {
+      "name": "director1AddressSuburb",
+      "label": "Director — residential address, suburb/city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Suburb/City'"
+    },
+    {
+      "name": "director1AddressState",
+      "label": "Director — residential address, State/Territory",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'State/Territory'"
+    },
+    {
+      "name": "director1AddressPostcode",
+      "label": "Director — residential address, postcode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Postcode'"
+    },
+    {
+      "name": "director1Country",
+      "label": "Director — residential address, country (if not Australia)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Country (if not Australia)'"
+    },
+    {
+      "name": "director1DateOfBirth",
+      "label": "Director — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section 3 — 'Date of birth'"
+    },
+    {
+      "name": "director1PlaceOfBirth",
+      "label": "Director — place of birth (town/city, state/country)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Place of birth (town/city) (state/country)'"
+    },
+    {
+      "name": "hasSecondDirector",
+      "label": "Are you appointing a second director?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Section 3 continued — 'Appoint another officeholder'"
+    },
+    {
+      "name": "director2FamilyName",
+      "label": "Second director — family name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondDirector", "equals": true },
+      "visibleWhen": { "field": "hasSecondDirector", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Section 3 continued — 'Family name'"
+    },
+    {
+      "name": "director2GivenNames",
+      "label": "Second director — given names",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondDirector", "equals": true },
+      "visibleWhen": { "field": "hasSecondDirector", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Section 3 continued — 'Given names'"
+    },
+    {
+      "name": "director2DateOfBirth",
+      "label": "Second director — date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondDirector", "equals": true },
+      "visibleWhen": { "field": "hasSecondDirector", "equals": true },
+      "classification": "sensitive-pii",
+      "sourceRef": "Section 3 continued — 'Date of birth'"
+    },
+    {
+      "name": "hasSecretary",
+      "label": "Are you appointing a company secretary?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Optional for a proprietary company, but if appointed the secretary must reside in Australia.",
+      "sourceRef": "Section 3 — 'Office held: Director / Secretary' with guidance 'The office of secretary is optional, but if appointed one must reside in Australia.'"
+    },
+    {
+      "name": "secretaryFamilyName",
+      "label": "Secretary — family name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasSecretary", "equals": true },
+      "visibleWhen": { "field": "hasSecretary", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Family name' (secretary officeholder entry)"
+    },
+    {
+      "name": "secretaryGivenNames",
+      "label": "Secretary — given names",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasSecretary", "equals": true },
+      "visibleWhen": { "field": "hasSecretary", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Section 3 — 'Given names' (secretary officeholder entry)"
+    },
+    {
+      "name": "secretaryDateOfBirth",
+      "label": "Secretary — date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasSecretary", "equals": true },
+      "visibleWhen": { "field": "hasSecretary", "equals": true },
+      "classification": "sensitive-pii",
+      "sourceRef": "Section 3 — 'Date of birth' (secretary officeholder entry)"
+    },
+    {
+      "name": "shareClassCode",
+      "label": "Share class code",
+      "type": "enum",
+      "required": true,
+      "description": "ORD = ordinary shares, the overwhelmingly common case for a new proprietary company; other standard codes exist for special share structures.",
+      "sourceRef": "Section 5 — 'Standard share codes: A, B, ORD (ordinary), PRF (preference), RED (redeemable), SPE (special), EMP (employee's), FOU (founder's), LG (life governor's), MAN (management), CUMP, NCP, REDP, NRP, CRP, NCRP, PARP'",
+      "validation": { "enum": ["ORD", "A", "B", "PRF", "RED", "SPE", "EMP", "FOU", "LG", "MAN", "other"] }
+    },
+    {
+      "name": "numberOfSharesIssued",
+      "label": "Total number of shares issued",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Section 5 — 'Total number of shares'"
+    },
+    {
+      "name": "amountPaidPerShare",
+      "label": "Total amount paid on these shares",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Section 5 — 'Total amount paid on these shares'"
+    },
+    {
+      "name": "amountUnpaidPerShare",
+      "label": "Total amount unpaid on these shares",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section 5 — 'Total amount unpaid on these shares'"
+    },
+    {
+      "name": "areSharesIssuedOtherThanForCash",
+      "label": "Are any of these shares issued other than for cash?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "Section 5 — 'Are any of these shares issued other than for cash? Yes / No'"
+    },
+    {
+      "name": "member1GivenNames",
+      "label": "Member — given names",
+      "type": "string",
+      "required": false,
+      "description": "Either an individual member's given/family names, or a company member's name — mutually exclusive with member1CompanyName.",
+      "classification": "pii",
+      "sourceRef": "Section 6 — 'Given names Family name'"
+    },
+    {
+      "name": "member1FamilyName",
+      "label": "Member — family name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 6 — 'Family name'"
+    },
+    {
+      "name": "member1CompanyName",
+      "label": "Member — company name (if the member is a company)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 6 — 'Company name'"
+    },
+    {
+      "name": "member1AddressStreet",
+      "label": "Member — address, street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 6 — 'Address of individual or company ... Street number and Street name'"
+    },
+    {
+      "name": "member1AddressSuburb",
+      "label": "Member — address, suburb/city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 6 — 'Suburb/City'"
+    },
+    {
+      "name": "member1SharesTakenUp",
+      "label": "Member — number of shares taken up",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Section 6 — 'Number of shares taken up'"
+    },
+    {
+      "name": "member1IsFullyPaid",
+      "label": "Member's shares — fully paid?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 6 — 'Fully paid (y/n)'"
+    },
+    {
+      "name": "member1IsBeneficiallyHeld",
+      "label": "Member's shares — beneficially held?",
+      "type": "boolean",
+      "required": true,
+      "description": "Beneficially held means the owner of the shares is entitled to the direct benefit from them (e.g. dividends); shares held as trustee/nominee/on account of another are non-beneficially held.",
+      "sourceRef": "Section 6 — 'Beneficially held (y/n)'"
+    },
+    {
+      "name": "applicantCapacity",
+      "label": "Capacity of applicant",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Declaration by applicant — 'Capacity of applicant: Individual / Corporation / Agent for individual or corporation'",
+      "validation": { "enum": ["individual", "corporation", "agent"] }
+    },
+    {
+      "name": "applicantName",
+      "label": "Name of applicant (or agent)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Declaration by applicant — 'Provide family and given names OR corporation name (include ACN/ARBN if applicable)' / 'Name of agent'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date signed",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Declaration by applicant — 'Date signed'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "signature",
+      "label": "Signed declaration by applicant",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Declaration by applicant — 'I/we apply for registration of a company on the basis of the information in this form ... The information provided in this application and in any annexures is true and correct at the time of signing.' plus 'Signature of applicant'"
+    },
+    {
+      "id": "registrationFee",
+      "label": "ASIC company registration fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "AUD",
+        "value": 636
+      },
+      "methods": ["online-payment"],
+      "sourceRef": "business.gov.au live guidance: 'The fee is $636 from 1 July 2026 ($611 until 30 June 2026).' This document models the post-1-July-2026 amount."
+    }
+  ],
+  "steps": [
+    {
+      "id": "state_and_name",
+      "title": "State of registration and company name",
+      "fields": ["stateOfRegistration", "hasProposedCompanyName", "proposedCompanyName", "nameReservationNumber", "companyLegalElement", "isNameIdenticalToRegisteredBusinessName", "identicalBusinessNameNumber"]
+    },
+    {
+      "id": "registered_office",
+      "title": "Registered office",
+      "fields": ["registeredOfficeStreet", "registeredOfficeSuburb", "registeredOfficeState", "registeredOfficePostcode", "doesCompanyOccupyRegisteredOffice", "occupierName", "occupierConsentGiven"]
+    },
+    {
+      "id": "principal_place",
+      "title": "Principal place of business",
+      "fields": ["isPrincipalPlaceSameAsRegisteredOffice", "principalPlaceStreet", "principalPlaceSuburb", "principalPlaceState", "principalPlacePostcode", "principalPlaceCountry"]
+    },
+    {
+      "id": "officeholders",
+      "title": "Officeholders",
+      "fields": ["director1FamilyName", "director1GivenNames", "director1FormerName", "director1AddressStreet", "director1AddressSuburb", "director1AddressState", "director1AddressPostcode", "director1Country", "director1DateOfBirth", "director1PlaceOfBirth", "hasSecondDirector", "director2FamilyName", "director2GivenNames", "director2DateOfBirth", "hasSecretary", "secretaryFamilyName", "secretaryGivenNames", "secretaryDateOfBirth"]
+    },
+    {
+      "id": "shares",
+      "title": "Share structure",
+      "fields": ["shareClassCode", "numberOfSharesIssued", "amountPaidPerShare", "amountUnpaidPerShare", "areSharesIssuedOtherThanForCash"]
+    },
+    {
+      "id": "members",
+      "title": "Members",
+      "fields": ["member1GivenNames", "member1FamilyName", "member1CompanyName", "member1AddressStreet", "member1AddressSuburb", "member1SharesTakenUp", "member1IsFullyPaid", "member1IsBeneficiallyHeld"]
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["applicantCapacity", "applicantName", "declarationDate"]
+    }
+  ]
+}
