@@ -1,0 +1,616 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/companiesoffice/company-incorporation",
+  "version": "1.0.0",
+  "title": "New Zealand Company Incorporation (Companies Register, Companies Act 1993)",
+  "description": "Incorporate a new limited company on the New Zealand Companies Register, operated by the Companies Office (part of the Ministry of Business, Innovation and Employment). The entire process is online: an applicant reserves a company name, then submits directors', shareholders', and (optionally, in the same application) tax-registration details through an authenticated Companies Office online-services account, itself gated behind a RealMe® login. This document models the field set the Companies Office's own help-centre guides describe the application as collecting, since the live authenticated screen flow (companies-register.companiesoffice.govt.nz, behind RealMe) could not be reached directly — the same login-gated-form technique already used for nz/dia/realme-verified-identity in this registry; see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "New Zealand Companies Office (Ministry of Business, Innovation and Employment)",
+    "abbreviation": "Companies Office",
+    "url": "https://companies-register.companiesoffice.govt.nz"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://companies-register.companiesoffice.govt.nz/help-centre/starting-a-company/incorporating-a-company/",
+    "retrievedAt": "2026-07-03",
+    "documentRef": "Companies Office Help Centre — 'Incorporating a company' and related guides ('Registering the appointment of a director', 'Registering a shareholder', 'Issuing shares in a company', 'Ultimate holding companies', 'Tax registration'), under the Companies Act 1993"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-03",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored entirely from the Companies Office's own live Help Centre guides (fetched directly, HTTP 200, raw HTML parsed for article text — not an AI-summarized fetch), which describe in prose exactly what information the online incorporation application collects for directors, shareholders, company addresses, an ultimate holding company (if any), and the optional bundled tax registration. The live authenticated application screens themselves (companies-register.companiesoffice.govt.nz, behind a RealMe® login) were not reached — this mirrors the technique already used for nz/dia/realme-verified-identity, sourcing from the operator's own published description of a login-gated process rather than the live screens. business.govt.nz's general 'Starting a company' guidance page returned a RedShield bot-detection block on direct fetch (mirroring the nzta.govt.nz WAF-block already documented for this registry) and was instead read via a Wayback Machine snapshot, used only for corroboration, not as a primary field source."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-03"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "proposedCompanyName",
+      "label": "Proposed company name",
+      "type": "string",
+      "required": true,
+      "description": "Must be reserved before the incorporation application is completed; once reserved, the applicant has 20 working days to complete incorporation.",
+      "sourceRef": "'Incorporating a company' — 'Before you start an application to incorporate a New Zealand company with the Companies Office, you must create an online services account and reserve a company name.' / 'Once you have reserved a company name, you have 20 working days to complete the incorporation of your New Zealand company.'"
+    },
+    {
+      "name": "hasConstitution",
+      "label": "Will the company be incorporated with a constitution?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A New Zealand company may incorporate with or without a constitution, except a co-operative company, which must have one.",
+      "sourceRef": "'Incorporating a company' — 'When you incorporate as a limited company you can: do so without a constitution / buy one from a third party and upload it as part of your application, or / prepare and upload a copy of your own constitution.' / 'Co-operative companies must incorporate with a constitution.'"
+    },
+    {
+      "name": "constitutionSource",
+      "label": "Source of the constitution",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "hasConstitution", "equals": true },
+      "visibleWhen": { "field": "hasConstitution", "equals": true },
+      "sourceRef": "'Incorporating a company' — 'buy one from a third party and upload it as part of your application, or prepare and upload a copy of your own constitution'",
+      "validation": { "enum": ["purchased_from_third_party", "self_drafted"] }
+    },
+    {
+      "name": "registeredOfficeAddress",
+      "label": "Registered office address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Incorporating a company' — 'You must provide contact details for your company, including addresses for your registered office, service and correspondence.'"
+    },
+    {
+      "name": "addressForService",
+      "label": "Address for service",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Incorporating a company' — 'addresses for your registered office, service and correspondence'"
+    },
+    {
+      "name": "addressForCorrespondence",
+      "label": "Address for correspondence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Incorporating a company' — 'addresses for your registered office, service and correspondence'"
+    },
+    {
+      "name": "companyEmailAddress",
+      "label": "Company email address",
+      "type": "string",
+      "required": true,
+      "description": "This is the address the Companies Office sends the certificate of incorporation and future correspondence to, e.g. annual return reminders.",
+      "sourceRef": "'Incorporating a company' — 'You must also provide an email address. This is the address we send your company's certificate of incorporation and future correspondence to, for example, annual return reminders.'"
+    },
+    {
+      "name": "director1FullLegalName",
+      "label": "Director — full legal name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Registering the appointment of a director' — 'To register the appointment of a director you must tell us their: full legal name'"
+    },
+    {
+      "name": "director1DateOfBirth",
+      "label": "Director — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Not made publicly available on the register.",
+      "sourceRef": "'Registering the appointment of a director' — 'date and place of birth — this information is not made publicly available'"
+    },
+    {
+      "name": "director1PlaceOfBirth",
+      "label": "Director — place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "'Registering the appointment of a director' — 'date and place of birth — this information is not made publicly available'"
+    },
+    {
+      "name": "director1ResidentialAddress",
+      "label": "Director — residential address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must be a physical street address.",
+      "sourceRef": "'Registering the appointment of a director' — 'residential address — this must be a physical street address, not a PO Box, Private Bag or DX service'"
+    },
+    {
+      "name": "director1DateOfAppointment",
+      "label": "Director — date of appointment",
+      "type": "date",
+      "required": true,
+      "sourceRef": "'Registering the appointment of a director' — 'To register the appointment of a director you must tell us their: ... date of appointment.'"
+    },
+    {
+      "name": "director1ResidencyBasis",
+      "label": "Director — residency basis",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "At least one director of a New Zealand company must live in New Zealand, or live in Australia and currently be a director of a company incorporated in Australia.",
+      "sourceRef": "'Who can be a director' — 'All New Zealand companies must have at least one director who lives in: New Zealand, or / Australia and is a current director of a company incorporated in Australia.'",
+      "validation": { "enum": ["lives_in_new_zealand", "lives_in_australia_and_director_of_australian_company"] }
+    },
+    {
+      "name": "director1AustralianCompanyAcn",
+      "label": "Director — Australian Company Number (ACN) of the Australian company they direct",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "director1ResidencyBasis", "equals": "lives_in_australia_and_director_of_australian_company" },
+      "visibleWhen": { "field": "director1ResidencyBasis", "equals": "lives_in_australia_and_director_of_australian_company" },
+      "sourceRef": "'Who can be a director' — 'Note, you will be asked to provide that company's Australian Company Number (ACN) as part of the registration process.'"
+    },
+    {
+      "name": "director1Email",
+      "label": "Director — email address (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Registering the appointment of a director' — 'You can also tell us their email address, telephone, mobile and fax numbers if you want.'"
+    },
+    {
+      "name": "director1Phone",
+      "label": "Director — telephone/mobile number (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "'Registering the appointment of a director' — 'You can also tell us their email address, telephone, mobile and fax numbers if you want.'"
+    },
+    {
+      "name": "hasSecondDirector",
+      "label": "Are you appointing a second director?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "'Registering the appointment of a director' — every company director must be individually registered; a company may have more than one."
+    },
+    {
+      "name": "director2FullLegalName",
+      "label": "Second director — full legal name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondDirector", "equals": true },
+      "visibleWhen": { "field": "hasSecondDirector", "equals": true },
+      "classification": "pii",
+      "sourceRef": "'Registering the appointment of a director' — 'full legal name'"
+    },
+    {
+      "name": "director2DateOfBirth",
+      "label": "Second director — date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondDirector", "equals": true },
+      "visibleWhen": { "field": "hasSecondDirector", "equals": true },
+      "classification": "sensitive-pii",
+      "sourceRef": "'Registering the appointment of a director' — 'date and place of birth'"
+    },
+    {
+      "name": "director2ResidentialAddress",
+      "label": "Second director — residential address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondDirector", "equals": true },
+      "visibleWhen": { "field": "hasSecondDirector", "equals": true },
+      "classification": "pii",
+      "sourceRef": "'Registering the appointment of a director' — 'residential address — this must be a physical street address, not a PO Box, Private Bag or DX service'"
+    },
+    {
+      "name": "director2DateOfAppointment",
+      "label": "Second director — date of appointment",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondDirector", "equals": true },
+      "visibleWhen": { "field": "hasSecondDirector", "equals": true },
+      "sourceRef": "'Registering the appointment of a director' — 'date of appointment'"
+    },
+    {
+      "name": "shareholder1Type",
+      "label": "Shareholder — type",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "The information required depends on the type of shareholder: an individual person, a New Zealand company, another legal entity (e.g. an overseas registered company or limited partnership), or trustees jointly holding shares. Unincorporated trusts (e.g. family trusts) cannot themselves be registered — each trustee is registered instead.",
+      "sourceRef": "'Registering a shareholder' — 'You can only register a shareholder in your company if they are: an individual person / an New Zealand company, or / another legal entity ... You cannot register an unincorporated trust ... Instead you must register each trustee as holding shares jointly.'",
+      "validation": { "enum": ["individual", "nz_company", "other_entity", "trustees"] }
+    },
+    {
+      "name": "shareholder1FullLegalName",
+      "label": "Shareholder — full legal name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "shareholder1Type", "equals": "individual" },
+        { "field": "shareholder1Type", "equals": "trustees" }
+      ] },
+      "visibleWhen": { "any": [
+        { "field": "shareholder1Type", "equals": "individual" },
+        { "field": "shareholder1Type", "equals": "trustees" }
+      ] },
+      "classification": "pii",
+      "sourceRef": "'Registering a shareholder' — 'For individuals: Their: full legal name, residential address ...' / 'For trustees: For each trustee jointly holding shares, their full legal name, and residential address.'"
+    },
+    {
+      "name": "shareholder1ResidentialAddress",
+      "label": "Shareholder — residential address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "shareholder1Type", "equals": "individual" },
+        { "field": "shareholder1Type", "equals": "trustees" }
+      ] },
+      "visibleWhen": { "any": [
+        { "field": "shareholder1Type", "equals": "individual" },
+        { "field": "shareholder1Type", "equals": "trustees" }
+      ] },
+      "classification": "pii",
+      "sourceRef": "'Registering a shareholder' — 'residential address'"
+    },
+    {
+      "name": "shareholder1IrdNumber",
+      "label": "Shareholder — Inland Revenue number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "shareholder1Type", "equals": "individual" },
+      "classification": "sensitive-pii",
+      "description": "Required if the shareholder is a New Zealand resident and the company is being registered for tax.",
+      "sourceRef": "'Registering a shareholder' — 'Inland Revenue number (if the shareholder is an New Zealand resident, and you are registering your company for tax).'"
+    },
+    {
+      "name": "shareholder1CompanyName",
+      "label": "Shareholder — company/entity name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "shareholder1Type", "equals": "nz_company" },
+        { "field": "shareholder1Type", "equals": "other_entity" }
+      ] },
+      "visibleWhen": { "any": [
+        { "field": "shareholder1Type", "equals": "nz_company" },
+        { "field": "shareholder1Type", "equals": "other_entity" }
+      ] },
+      "sourceRef": "'Registering a shareholder' — 'For registered New Zealand companies: The company's: full legal name, and incorporation or registration number.' / 'For other entities: The entity's: full legal name, country of origin, and registered address.'"
+    },
+    {
+      "name": "shareholder1IncorporationNumber",
+      "label": "Shareholder — incorporation or registration number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "shareholder1Type", "equals": "nz_company" },
+      "visibleWhen": { "field": "shareholder1Type", "equals": "nz_company" },
+      "sourceRef": "'Registering a shareholder' — 'For registered New Zealand companies: The company's: full legal name, and incorporation or registration number.'"
+    },
+    {
+      "name": "shareholder1CountryOfOrigin",
+      "label": "Shareholder — country of origin",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "shareholder1Type", "equals": "other_entity" },
+      "visibleWhen": { "field": "shareholder1Type", "equals": "other_entity" },
+      "sourceRef": "'Registering a shareholder' — 'For other entities: The entity's: full legal name, country of origin, and registered address.'"
+    },
+    {
+      "name": "shareholder1RegisteredAddress",
+      "label": "Shareholder — registered address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "shareholder1Type", "equals": "other_entity" },
+      "visibleWhen": { "field": "shareholder1Type", "equals": "other_entity" },
+      "sourceRef": "'Registering a shareholder' — 'For other entities: The entity's: full legal name, country of origin, and registered address.'"
+    },
+    {
+      "name": "shareholder1NumberOfShares",
+      "label": "Shareholder — number of shares held",
+      "type": "integer",
+      "required": true,
+      "description": "Every New Zealand company must have at least one shareholder and issue at least one share.",
+      "sourceRef": "'Issuing shares in a company' — 'Every New Zealand company must have at least one shareholder and issue at least one share.' / 'Registering a shareholder' — 'You must record each shareholder's personal details and state how many shares they hold in your company.'"
+    },
+    {
+      "name": "hasSecondShareholder",
+      "label": "Are you registering a second shareholder?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "'Registering a shareholder' — 'At the time you submit your online application for incorporation, you need to register every shareholder in your company.'"
+    },
+    {
+      "name": "shareholder2Type",
+      "label": "Second shareholder — type",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondShareholder", "equals": true },
+      "visibleWhen": { "field": "hasSecondShareholder", "equals": true },
+      "sourceRef": "'Registering a shareholder' — shareholder type categories",
+      "validation": { "enum": ["individual", "nz_company", "other_entity", "trustees"] }
+    },
+    {
+      "name": "shareholder2FullLegalName",
+      "label": "Second shareholder — full legal name",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hasSecondShareholder", "equals": true },
+      "classification": "pii",
+      "sourceRef": "'Registering a shareholder' — 'full legal name'"
+    },
+    {
+      "name": "shareholder2NumberOfShares",
+      "label": "Second shareholder — number of shares held",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "hasSecondShareholder", "equals": true },
+      "visibleWhen": { "field": "hasSecondShareholder", "equals": true },
+      "sourceRef": "'Registering a shareholder' — 'state how many shares they hold in your company'"
+    },
+    {
+      "name": "hasUltimateHoldingCompany",
+      "label": "Does the company have an ultimate holding company (UHC)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "'Ultimate holding companies' — 'When you apply to incorporate your company you must tell us if your company has a UHC.'"
+    },
+    {
+      "name": "uhcName",
+      "label": "UHC — name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasUltimateHoldingCompany", "equals": true },
+      "visibleWhen": { "field": "hasUltimateHoldingCompany", "equals": true },
+      "sourceRef": "'Ultimate holding companies' — 'You must tell us your UHC's: name'"
+    },
+    {
+      "name": "uhcCountryOfRegistration",
+      "label": "UHC — country of registration",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasUltimateHoldingCompany", "equals": true },
+      "visibleWhen": { "field": "hasUltimateHoldingCompany", "equals": true },
+      "sourceRef": "'Ultimate holding companies' — 'country of registration'"
+    },
+    {
+      "name": "uhcRegistrationNumber",
+      "label": "UHC — registration number or code (if any)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hasUltimateHoldingCompany", "equals": true },
+      "sourceRef": "'Ultimate holding companies' — 'registration number or code (if any)'"
+    },
+    {
+      "name": "uhcRegisteredOfficeAddress",
+      "label": "UHC — registered office address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasUltimateHoldingCompany", "equals": true },
+      "visibleWhen": { "field": "hasUltimateHoldingCompany", "equals": true },
+      "sourceRef": "'Ultimate holding companies' — 'and registered office address'"
+    },
+    {
+      "name": "wantsTaxRegistration",
+      "label": "Do you want to register for tax as part of this incorporation?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Completing tax registration as part of incorporation returns the company's IRD number and GST number alongside the certificate of incorporation.",
+      "sourceRef": "'Tax registration' — 'You can apply for an IRD number for your company, register as an employer and register for goods and services tax (GST) when you incorporate your company online with the Companies Office.'"
+    },
+    {
+      "name": "businessIndustryClassificationCode",
+      "label": "Business Industry Classification (BIC) code",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "description": "A 7-character code classifying the business by the service it provides.",
+      "sourceRef": "'Tax registration' — 'A BIC is a 7-character code that classifies your business by the service it provides.' / 'If you want to register for GST and get an IRD number for your company you will need to provide a BIC code when you are incorporating your company.'"
+    },
+    {
+      "name": "tradingName",
+      "label": "Trading name, if different from the company name",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "sourceRef": "'Tax registration' — 'A trading name for your company (if it is different from your company name).'"
+    },
+    {
+      "name": "businessPremisesAddress",
+      "label": "Business premises address",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "description": "Defaults to the registered office address, but a different address can be chosen if that is not the place of business.",
+      "sourceRef": "'Tax registration' — 'The address of your company's premises (this defaults to your registered office, but you can choose another address if that is not your place of business).'"
+    },
+    {
+      "name": "postalAddressForTax",
+      "label": "Postal address for tax purposes",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "sourceRef": "'Tax registration' — 'A postal address for tax purposes.'"
+    },
+    {
+      "name": "taxContactPhoneNumber",
+      "label": "Contact phone number for tax registration",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "sourceRef": "'Tax registration' — 'A contact phone number (daytime or evening phone number, or a mobile or fax number).'"
+    },
+    {
+      "name": "taxContactPersonName",
+      "label": "Contact person for the tax registration application",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "classification": "pii",
+      "sourceRef": "'Tax registration' — 'A contact person (the name and phone number of the person responsible for your tax registration application).'"
+    },
+    {
+      "name": "offersFringeBenefits",
+      "label": "Will the company offer fringe benefits to employees?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "sourceRef": "'Tax registration' — 'Confirmation of whether you will be offering fringe benefits to ordinary or shareholder employees. If you answer yes, you need to provide further details.'"
+    },
+    {
+      "name": "wantsNonActiveDeclaration",
+      "label": "Do you want to declare the company non-active to Inland Revenue?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "description": "Equivalent to filing an IR433 form; confirms the company meets the non-active criteria on incorporation and wishes to be excused from filing annual income tax and imputation returns.",
+      "sourceRef": "'Tax registration' — 'You will also need to confirm if you want to make a declaration to Inland Revenue that the company is non-active — this is the equivalent of filing an IR433 form confirming that the company meets the non-active criteria on incorporation and wishes to be excused from filing annual income tax and imputation returns.'"
+    },
+    {
+      "name": "wantsEmployerRegistration",
+      "label": "Do you want to register as an employer for tax purposes?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "wantsTaxRegistration", "equals": true },
+      "fieldRole": "eligibility",
+      "sourceRef": "'Tax registration' — '3. Register as an employer. You'll need to give us some extra information if you want to register as an employer for tax purposes'"
+    },
+    {
+      "name": "employmentStartDate",
+      "label": "Date you will start employing staff",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "wantsEmployerRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsEmployerRegistration", "equals": true },
+      "description": "Can be up to 2 months in advance; this is the date the company will be registered as an employer.",
+      "sourceRef": "'Tax registration' — 'The date you will start employing staff (this date can be up to 2 months in advance and will be the date you'll be registered as an employer).'"
+    },
+    {
+      "name": "payFrequency",
+      "label": "How frequently will you pay employees?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsEmployerRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsEmployerRegistration", "equals": true },
+      "sourceRef": "'Tax registration' — 'how frequently you intend to pay your employees (for example, weekly, fortnightly, etc).'"
+    },
+    {
+      "name": "firstPayCycleDate",
+      "label": "First date of your normal pay cycle",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "wantsEmployerRegistration", "equals": true },
+      "visibleWhen": { "field": "wantsEmployerRegistration", "equals": true },
+      "sourceRef": "'Tax registration' — 'The first date of your normal pay cycle'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "directorConsentForm",
+      "label": "Director's consent for a new company (Form 2)",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "sourceRef": "'Registering the appointment of a director' — 'Form 2 — Director's consent for a new company' / each director must sign and return their consent form within 20 working days."
+    },
+    {
+      "id": "shareholderConsentForm",
+      "label": "Shareholder's consent for a new company (Form 3)",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "sourceRef": "'Registering a shareholder' — 'Form 3 — Shareholder's consent for a new company' / each shareholder must sign and return their consent form within 20 working days."
+    },
+    {
+      "id": "constitutionDocument",
+      "label": "Company constitution",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "hasConstitution", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "'Incorporating a company' — 'buy one from a third party and upload it as part of your application, or prepare and upload a copy of your own constitution'"
+    },
+    {
+      "id": "nameReservationFee",
+      "label": "Company name reservation fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "NZD",
+        "value": 10
+      },
+      "methods": ["online-payment"],
+      "sourceRef": "'Incorporating a company' — 'It costs $10 (plus GST) to reserve a company name'"
+    },
+    {
+      "id": "incorporationFee",
+      "label": "Company incorporation application fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "NZD",
+        "value": 118.74
+      },
+      "methods": ["online-payment"],
+      "sourceRef": "'Incorporating a company' — '$118.74 (plus GST) to apply to incorporate a company'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "name_and_constitution",
+      "title": "Company name and constitution",
+      "fields": ["proposedCompanyName", "hasConstitution", "constitutionSource"]
+    },
+    {
+      "id": "addresses",
+      "title": "Company addresses",
+      "fields": ["registeredOfficeAddress", "addressForService", "addressForCorrespondence", "companyEmailAddress"]
+    },
+    {
+      "id": "directors",
+      "title": "Directors",
+      "fields": ["director1FullLegalName", "director1DateOfBirth", "director1PlaceOfBirth", "director1ResidentialAddress", "director1DateOfAppointment", "director1ResidencyBasis", "director1AustralianCompanyAcn", "director1Email", "director1Phone", "hasSecondDirector", "director2FullLegalName", "director2DateOfBirth", "director2ResidentialAddress", "director2DateOfAppointment"]
+    },
+    {
+      "id": "shareholders",
+      "title": "Shareholders and shares",
+      "fields": ["shareholder1Type", "shareholder1FullLegalName", "shareholder1ResidentialAddress", "shareholder1IrdNumber", "shareholder1CompanyName", "shareholder1IncorporationNumber", "shareholder1CountryOfOrigin", "shareholder1RegisteredAddress", "shareholder1NumberOfShares", "hasSecondShareholder", "shareholder2Type", "shareholder2FullLegalName", "shareholder2NumberOfShares"]
+    },
+    {
+      "id": "ultimate_holding_company",
+      "title": "Ultimate holding company",
+      "fields": ["hasUltimateHoldingCompany", "uhcName", "uhcCountryOfRegistration", "uhcRegistrationNumber", "uhcRegisteredOfficeAddress"]
+    },
+    {
+      "id": "tax_registration",
+      "title": "Tax registration",
+      "fields": ["wantsTaxRegistration", "businessIndustryClassificationCode", "tradingName", "businessPremisesAddress", "postalAddressForTax", "taxContactPhoneNumber", "taxContactPersonName", "offersFringeBenefits", "wantsNonActiveDeclaration", "wantsEmployerRegistration", "employmentStartDate", "payFrequency", "firstPayCycleDate"]
+    }
+  ]
+}
