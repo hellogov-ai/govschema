@@ -1,0 +1,98 @@
+===============================================================
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+===============================================================
+
+Schema: ie/revenue/vehicle-registration-tax-vrt v1.0.0
+Generated: 2026-07-04
+
+Scenario: A private individual importing a used car purchased from a motor dealer in Great Britain, declaring it at an NCTS centre.
+
+STEP TRACE: eligibility_and_vehicle_facts -> vehicle_details -> seller_details -> third_party_importer -> purchase_and_entry_details -> declaration
+
+ELIGIBILITY OUTCOME
+-------------------
+Outcome: continues_to_declaration
+importerType is private_individual, so the flow reaches the declaration step rather than exiting to the authorised-trader (VRTVPD1/ROS) channel.
+
+COLLECTED VALUES
+----------------
+  Are you registering this vehicle as a private individual or as an authorised trader?: "private_individual"
+    (field: importerType, source: Form VRTVPD1 'Persons who hold a trader's licence...' vs Form VRTVPD2 'Persons other than authorised traders' — revenue.ie VRT forms listing)
+  Is the vehicle new or used?: "used"
+    (field: vehicleCondition, source: Revenue 'Registering an imported vehicle' — new-vehicle vs used-vehicle document requirements)
+  Where was the vehicle immediately before it entered Ireland?: "great_britain"
+    (field: importOrigin, source: NCTS VRT FAQ / Revenue guidance on post-Brexit imports — customs Master Reference Number (MRN) required for non-EU/Great Britain imports)
+  VIN / Chassis No.: "WBA3A5C50DF123456"
+    (field: vin, source: VRTVPD2 Section 1 — Vehicle Details: 'VIN / Chassis No.' (field Text2))
+  Foreign Registration No.: "LM19 XYZ"
+    (field: foreignRegistrationNumber, source: VRTVPD2 Section 1 — Vehicle Details: 'Foreign Registration No.' (field Text1))
+  Make: "BMW"
+    (field: make, source: VRTVPD2 Section 1 — Vehicle Details: 'Make' (field Text3))
+  Model: "3 Series"
+    (field: model, source: VRTVPD2 Section 1 — Vehicle Details: 'Model' (field Text5))
+  Version: "320d SE"
+    (field: vehicleVersion, source: VRTVPD2 Section 1 — Vehicle Details: 'Version' (field Text4))
+  Type of Seller (please tick one): "motor_dealer"
+    (field: sellerType, source: VRTVPD2 Section 2 — Person / Business From Whom The Vehicle Was Purchased: 'Type of Seller (please tick one): Motor Dealer / Auction House / Other Business / Private Individual' (field Check Box27))
+  Name / Business Name: "Northgate Motors Ltd"
+    (field: sellerName, source: VRTVPD2 Section 2: 'Name / Business Name:' (field Text10))
+  Address: "14 Northgate Road, Leeds, LS1 4AB, United Kingdom"
+    (field: sellerAddress, source: VRTVPD2 Section 2: 'Address:' (field Text11))
+  Contact Number: "+44 113 496 0000"
+    (field: sellerContactNumber, source: VRTVPD2 Section 2: 'Contact Number:' (field Text12))
+  VAT Number (if applicable): "GB123456789"
+    (field: sellerVatNumber, source: VRTVPD2 Section 2: 'VAT Number (if applicable):' (field TextVAT))
+  Email Address (if available): "sales@northgatemotors.example"
+    (field: sellerEmail, source: VRTVPD2 Section 2: 'Email Address (if available):' (field Text14))
+  Website (if available): "www.northgatemotors.example"
+    (field: sellerWebsite, source: VRTVPD2 Section 2: 'Website (if available):' (field Text15))
+  Purchase Price (incl. VAT): 18500
+    (field: purchasePriceIncludingVat, source: VRTVPD2 Section 4 — Vehicle Purchase Details: 'Purchase Price (incl. VAT):' (field Text16))
+  VAT Amount (if applicable): 3083.33
+    (field: vatAmount, source: VRTVPD2 Section 4: 'VAT Amount* (if applicable): ... * If the vehicle was not purchased from a Private Individual, please provide VAT amount details.' (field Text18))
+  Date of Sale / Purchase: "2026-06-02"
+    (field: dateOfSaleOrPurchase, source: VRTVPD2 Section 4: 'Date of Sale / Purchase:' (field Text17))
+  Date of Entry into the State: "2026-06-10"
+    (field: dateOfEntryIntoState, source: VRTVPD2 Section 4: 'Date of Entry into the State:' (field Text19); ncts.ie VRT FAQ — 7-day booking window and 30-day registration deadline)
+  Name (Block Letters): "MAIREAD WALSH"
+    (field: declarantName, source: VRTVPD2 Declaration: 'Name (Block Letters):' (field Text22))
+  Date: "2026-06-16"
+    (field: declarationDate, source: VRTVPD2 Declaration: 'Date:' (field Text20))
+  PPSN / Revenue Customer No.: "1234567TA"
+    (field: declarantPpsnOrRevenueCustomerNumber, source: VRTVPD2 Declaration: 'PPSN / Revenue Customer No.:' (field Text21))
+
+FIELDS NOT APPLICABLE IN THIS SCENARIO
+--------------------------------------
+  thirdPartyImporterName: not provided in this scenario (required=false)
+  thirdPartyImporterAddress: not provided in this scenario (required=false)
+  thirdPartyImporterContactNumber: not provided in this scenario (required=false)
+  thirdPartyImporterEmail: not provided in this scenario (required=false)
+  thirdPartyImporterRevenueCustomerNumber: not provided in this scenario (required=false)
+
+DOCUMENTS CHECKLIST
+-------------------
+  [REQUIRED] Photo identification (identity-document)
+      source: ncts.ie VRT FAQ / Revenue 'Procedure at NCTS Centre' — documents required at inspection
+  [REQUIRED] Invoice or Declaration of Sale from the vehicle seller (supporting-evidence)
+      source: VRTVPD2: 'An Invoice / Declaration of Sale from the vehicle seller must accompany this form.'
+  [REQUIRED] Proof of address (supporting-evidence)
+      source: ncts.ie VRT FAQ — utility bill or bank statement no more than 6 months old, or two independent online statements (one of them banking)
+  [REQUIRED] Documentary evidence of PPSN (supporting-evidence)
+      source: ncts.ie VRT FAQ — PPSN of the registered owner plus documentary proof (e.g. Public Services Card, P60)
+  [REQUIRED] Evidence of the vehicle's date of entry into the State (supporting-evidence)
+      source: ncts.ie VRT FAQ — shipping/travel documents (or customs MRN for non-EU/GB imports) evidencing date of entry
+  [REQUIRED] Customs declaration (Master Reference Number) (supporting-evidence)
+      source: NCTS/Revenue guidance on post-Brexit imports — customs MRN required for Great Britain / other non-EU imports
+  [REQUIRED] Foreign registration certificate or de-registration certificate (supporting-evidence)
+      source: Revenue 'Registering an imported vehicle' — used vehicles: foreign registration certificate (e.g. UK V5C) or de-registration certificate
+  [REQUIRED] CO2-at-manufacture and NOx emissions confirmation (supporting-evidence)
+      source: Revenue 'Registering an imported vehicle' — used vehicles: CO2-at-manufacture confirmation and NOx emissions confirmation
+  [optional] EU Certificate of Conformity (or individual vehicle approval certificate) (supporting-evidence)
+      source: Revenue 'Registering an imported vehicle' — new vehicles: hard-copy EU Certificate of Conformity or IVA/NSSTA certificate (also uploaded in advance via myAccount/ROS)
+  [REQUIRED] Signed declaration (VRTVPD2) (attestation)
+      statement: "I, the undersigned, declare that I purchased the vehicle detailed above, and that the information contained on this form and in the supporting documents is correct."
+      source: VRTVPD2 Declaration section
+
+SAFETY NOTICE
+-------------
+This packet was assembled by an automated agent from a GovSchema document (ie/revenue/vehicle-registration-tax-vrt). GovSchema describes and verifies government processes; it does not submit them. No value in this packet has been transmitted to Revenue, NCTS, or any government system. A human (the importer) must review every value below, gather the physical documents listed in documentsChecklist, book a real NCTS inspection appointment, and complete and sign the actual Form VRTVPD2 in person — this packet is illustrative mock data, not a substitute for that live process. VRT/NOx amounts are not modelled or estimated here; Revenue computes them at the inspection centre from the vehicle's actual OMSP and emissions data.
