@@ -1,0 +1,326 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/nzta/vehicle-licence-renewal",
+  "version": "1.0.0",
+  "title": "New Zealand Vehicle Licence (Rego) Renewal",
+  "description": "Renew a New Zealand vehicle's licence (rego) with NZ Transport Agency Waka Kotahi (NZTA), either through NZTA's own online renewal service (transact.nzta.govt.nz) or in person at a licensing agent using the paper Application to license motor vehicle form (MR1B). This is the recurring 'Registration/Tag' renewal counterpart to a one-time Title/ownership event (New Zealand has no standalone vehicle-ownership-transfer schema yet; NZTA's MR13B change-of-ownership form has no independently downloadable copy, per prior research) and to New Zealand's Drivers Licence Renewal schema (nz/nzta/drivers-licence-renewal), which covers the separate driver-credential renewal. Models an ordinary registered person's renewal of an already-licensed private vehicle, for a chosen number of months (online) or a specific expiry date (online only; the agent/MR1B path requires a separate Application to change licence expiry date, MR27, not modelled here), including the WoF/CoF prerequisite, the agent-path vehicle/registered-person/address/colour/usage fields MR1B collects, and the online-path payment instrument. It does not model: first-time vehicle registration when a vehicle first enters New Zealand (a separate, one-off process); applying for an exemption from continuous vehicle licensing (a separate MR24 form/online application); changing only the licence expiry date without a renewal (MR27, a separate form); updating the registered person's address (a separate 'Update your address and contact details' service, recommended but not required before this renewal); or ordering a replacement licence label (a separate service). It does not submit the renewal; the live NZTA services are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "NZ Transport Agency Waka Kotahi",
+    "abbreviation": "NZTA",
+    "url": "https://www.nzta.govt.nz"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-NZ"
+  },
+  "source": {
+    "url": "https://www.nzta.govt.nz/vehicles/licensing-rego/getting-your-vehicle-licence-rego",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "'Getting your vehicle licence (rego)' guidance page; MR1B (09/24 edition) — Application to license motor vehicle; transact.nzta.govt.nz/v2/vehicle-licence-renewal online renewal service"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from three live NZTA sources: the 'Getting your vehicle licence (rego)' and 'Licensing (rego) fees' guidance pages (both HTML-rendered, reached via a headless browser since direct curl/WebFetch requests are intercepted by an Incapsula bot-check on www.nzta.govt.nz — see VERIFICATION.md); the current MR1B (09/24 edition) 'Application to license motor vehicle' PDF, downloaded via the same browser session and text-extracted with pdfjs-dist getTextContent (a static form with no fillable AcroForm widgets); and a live, non-submitting walkthrough of NZTA's own online renewal wizard at transact.nzta.govt.nz/v2/vehicle-licence-renewal, which reached the real Step 1 'Enter vehicle details' screen and captured its actual input element ids and maxlength attributes (plate, reminderNumber, LicenceDurationList radio group, useExpiryDate) without entering a real plate number or proceeding past Step 1. Status remains draft, not verified."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "plateNumber",
+      "label": "Plate number",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's existing number plate. The live online renewal wizard's own input (id `plate`) is capped at 6 characters; example given is a fictitious plate.",
+      "sourceRef": "transact.nzta.govt.nz/v2/vehicle-licence-renewal — 'Plate number' (input id `plate`, Example ABC123); MR1B — 'Plate number'",
+      "validation": { "minLength": 1, "maxLength": 6 }
+    },
+    {
+      "name": "reminderNumber",
+      "label": "Reminder number",
+      "type": "string",
+      "required": false,
+      "description": "The 6-digit number on the top right-hand corner of the paper or email renewal reminder notice. Optional online: entering it lets the applicant see which address the label will be sent to.",
+      "sourceRef": "transact.nzta.govt.nz/v2/vehicle-licence-renewal — 'Reminder number (optional) — This is the 6-digit number on the top right hand corner of your renewal notice. Entering this will show you what address we'll send the label to.' (input id `reminderNumber`, maxlength 6)",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "vehicleExemptFromWofCofRequirement",
+      "label": "Is the vehicle exempt from needing a current WoF or CoF?",
+      "type": "boolean",
+      "required": true,
+      "description": "True if the vehicle is exempt from continuous vehicle licensing, or otherwise does not require a WoF/CoF for road use (for example, a moped).",
+      "sourceRef": "Getting your vehicle licence (rego) — 'Your vehicle must have a current warrant of fitness (WoF) or certificate of fitness (CoF) before you can get a licence or use the vehicle on the road. The exceptions are if your vehicle: is exempt from continuous vehicle licensing / doesn't require a WoF or CoF for road use, for example, if it's a moped.'"
+    },
+    {
+      "name": "currentWofOrCofHeld",
+      "label": "Vehicle has a current WoF or CoF",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "vehicleExemptFromWofCofRequirement", "equals": false },
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "Getting your vehicle licence (rego) — 'Have a current WoF or CoF — Your vehicle must have a current warrant of fitness (WoF) or certificate of fitness (CoF) before you can get a licence or use the vehicle on the road.'"
+    },
+    {
+      "name": "renewalChannel",
+      "label": "How do you want to renew?",
+      "type": "enum",
+      "required": true,
+      "description": "online = NZTA's own transact.nzta.govt.nz digital service (faster, label posted within 14 days); agent = in person at a licensing agent, either taking the reminder notice or a filled-out MR1B form.",
+      "sourceRef": "Getting your vehicle licence (rego) — 'Step 2: Renew your licence — You can renew online or at an agent.'",
+      "validation": { "enum": ["online", "agent"] }
+    },
+    {
+      "name": "useSpecificExpiryDate",
+      "label": "Choose a specific expiry date instead of a number of months",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "renewalChannel", "equals": "online" },
+      "description": "Online-only option. On the agent/MR1B path, changing to a specific expiry date requires a separate Application to change licence expiry date (MR27) form, not modelled here.",
+      "sourceRef": "transact.nzta.govt.nz/v2/vehicle-licence-renewal — 'Or select a specific expiry date' (checkbox id `useExpiryDate`); MR1B notes — 'If you want to change your licence to a specific expiry date, lodge an Application to change licence expiry date (MR27) form.'"
+    },
+    {
+      "name": "licenceDurationMonths",
+      "label": "How many months would you like to license your vehicle for?",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "useSpecificExpiryDate", "equals": false },
+      "sourceRef": "transact.nzta.govt.nz/v2/vehicle-licence-renewal — 'Select how long you want to license your vehicle for' (radio group id `LicenceDurationList`, options `LicenceDuration1Months`…`LicenceDuration12Months`); MR1B — 'How many months would you like to license your vehicle for? (please tick) 1 2 3 4 5 6 7 8 9 10 11 12'",
+      "validation": { "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] }
+    },
+    {
+      "name": "specificExpiryDate",
+      "label": "Specific licence expiry date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "useSpecificExpiryDate", "equals": true },
+          { "field": "renewalChannel", "equals": "online" }
+        ]
+      },
+      "sourceRef": "transact.nzta.govt.nz/v2/vehicle-licence-renewal — 'Or select a specific expiry date' (checkbox id `useExpiryDate`)"
+    },
+    {
+      "name": "onlinePaymentMethod",
+      "label": "Online payment method",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "renewalChannel", "equals": "online" },
+      "sourceRef": "transact.nzta.govt.nz/v2/vehicle-licence-renewal — 'What you'll need — A Visa or Mastercard credit or debit card, or your online banking details (POLi).'",
+      "validation": { "enum": ["visa_or_mastercard_credit_debit_card", "poli_internet_banking"] }
+    },
+    {
+      "name": "agentDocumentBrought",
+      "label": "Document brought to the agent",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "renewalChannel", "equals": "agent" },
+      "description": "renewal_reminder_notice = take the printed/emailed reminder to the agent; mr1b_form = fill out and bring the MR1B form (picked up at the agent or printed at home).",
+      "sourceRef": "Getting your vehicle licence (rego) — 'Renew in person — You can either: take the reminder to the agent / fill out an Application to license motor vehicle (MR1B) form — pick one up at the agent or print it at home.'",
+      "validation": { "enum": ["renewal_reminder_notice", "mr1b_form"] }
+    },
+    {
+      "name": "registeredPersonLastNameOrCompanyName",
+      "label": "Last name/company name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "renewalChannel", "equals": "agent" },
+          { "field": "agentDocumentBrought", "equals": "mr1b_form" }
+        ]
+      },
+      "classification": "pii",
+      "description": "Must be the name of the registered person.",
+      "sourceRef": "MR1B — 'Registered person details — *Last name/company name ... *Must be the name of the registered person.'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "registeredPersonFirstNames",
+      "label": "Full first names",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "renewalChannel", "equals": "agent" },
+          { "field": "agentDocumentBrought", "equals": "mr1b_form" }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "MR1B — 'Registered person details — *Full first names'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "vehicleMake",
+      "label": "Make",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "renewalChannel", "equals": "agent" },
+          { "field": "agentDocumentBrought", "equals": "mr1b_form" }
+        ]
+      },
+      "sourceRef": "MR1B — 'Vehicle details — Make'",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "vehicleModel",
+      "label": "Model",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "renewalChannel", "equals": "agent" },
+          { "field": "agentDocumentBrought", "equals": "mr1b_form" }
+        ]
+      },
+      "description": "State the manufacturer's designation (for example Corolla, Commodore) - not the year of manufacture.",
+      "sourceRef": "MR1B — 'Vehicle details — Model (see note 2)'; MR1B notes 2 — 'State the manufacturer's designation (for example Corolla, Commodore) - not the year of manufacture.'",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "vehicleBasicColour",
+      "label": "Basic colour",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "renewalChannel", "equals": "agent" },
+          { "field": "agentDocumentBrought", "equals": "mr1b_form" }
+        ]
+      },
+      "sourceRef": "MR1B — 'Vehicle colour — *Please select vehicle colour from note 5 overleaf and show here. *Basic colour'; MR1B notes 5 — 'Select your vehicle colours from the following list: Black Blue Brown Cream Gold Green Grey Orange Pink Purple Red Silver White Yellow'",
+      "validation": { "enum": ["black", "blue", "brown", "cream", "gold", "green", "grey", "orange", "pink", "purple", "red", "silver", "white", "yellow"] }
+    },
+    {
+      "name": "vehicleSecondColour",
+      "label": "Second colour",
+      "type": "enum",
+      "required": false,
+      "description": "Only applicable to a two-tone vehicle.",
+      "sourceRef": "MR1B — 'Vehicle colour — *Second colour'",
+      "validation": { "enum": ["black", "blue", "brown", "cream", "gold", "green", "grey", "orange", "pink", "purple", "red", "silver", "white", "yellow"] }
+    },
+    {
+      "name": "vehicleUsageChanged",
+      "label": "Has your vehicle usage changed since your last application?",
+      "type": "boolean",
+      "required": false,
+      "description": "New usage only needs to be declared if it has changed since the last application.",
+      "sourceRef": "MR1B — 'New usage — Only complete if your vehicle usage has changed since your last application (see note 6 for usage types).'"
+    },
+    {
+      "name": "newVehicleUsageCode",
+      "label": "New vehicle usage",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "vehicleUsageChanged", "equals": true },
+      "description": "Choose the usage code matching the vehicle's actual current use; an incorrect usage can result in a fine.",
+      "sourceRef": "MR1B notes 6 — 'Vehicle usage — 01 Private passenger / 02 Taxi, commercial passenger / 03 Transport licensed goods / 04 Other (standard) goods / 05 Commercial ambulance / 06 Non-commercial ambulance / 07 Rental / 08 Recovery service / 09 Fire brigade / 10 Exempt class A (EA) / 11 Exempt class B (EB) / 13 Special purpose (excluding EA & EB) / 14 Hearse / 16 Agricultural vehicle, EB, operates at 40km/h or less / 17 Agricultural vehicle, EB, operates at more than 40km/h / 18 Agricultural vehicle, operates at 40km/h or less / 19 Agricultural vehicle, operates at more than 40km/h'",
+      "validation": {
+        "enum": [
+          "private_passenger", "taxi_commercial_passenger", "transport_licensed_goods",
+          "other_standard_goods", "commercial_ambulance", "non_commercial_ambulance",
+          "rental", "recovery_service", "fire_brigade", "exempt_class_a", "exempt_class_b",
+          "special_purpose", "hearse", "agricultural_eb_40kmh_or_less",
+          "agricultural_eb_more_than_40kmh", "agricultural_40kmh_or_less",
+          "agricultural_more_than_40kmh"
+        ]
+      }
+    },
+    {
+      "name": "particularsCorrectDeclaration",
+      "label": "Declaration: the particulars given are correct",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "renewalChannel", "equals": "agent" },
+          { "field": "agentDocumentBrought", "equals": "mr1b_form" }
+        ]
+      },
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "MR1B — 'Applicant's signature X — I certify that the particulars given are correct.'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "mr1bApplicationForm",
+      "label": "Completed MR1B — Application to license motor vehicle form",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "renewalChannel", "equals": "agent" },
+          { "field": "agentDocumentBrought", "equals": "mr1b_form" }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Getting your vehicle licence (rego) — 'fill out an Application to license motor vehicle (MR1B) form – pick one up at the agent or print it at home.'"
+    },
+    {
+      "id": "licensingFeePayment",
+      "label": "Vehicle licensing (rego) fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Licensing (rego) fees — 'Rego fees include: a licence fee / an Accident Compensation Corporation (ACC) levy / an administration fee. ... Online – the administration fee is $8.66. At an agent – the administration fee is $11.99'. Amount not encoded as a fixed field value: NZTA computes the licence fee, ACC levy, and administration fee from the vehicle's type/fuel/weight class and chosen renewal channel, none of which the applicant enters directly as a dollar amount."
+    }
+  ],
+  "steps": [
+    {
+      "id": "identify_vehicle",
+      "title": "Identify the vehicle and confirm the WoF/CoF prerequisite",
+      "fields": ["plateNumber", "reminderNumber", "vehicleExemptFromWofCofRequirement", "currentWofOrCofHeld"],
+      "next": "choose_channel_and_period"
+    },
+    {
+      "id": "choose_channel_and_period",
+      "title": "Choose a renewal channel and licence period",
+      "fields": [
+        "renewalChannel", "useSpecificExpiryDate", "licenceDurationMonths", "specificExpiryDate"
+      ],
+      "transitions": [
+        { "to": "online_payment", "when": { "field": "renewalChannel", "equals": "online" } },
+        { "to": "agent_details", "when": { "field": "renewalChannel", "equals": "agent" } }
+      ]
+    },
+    {
+      "id": "online_payment",
+      "title": "Pay online",
+      "fields": ["onlinePaymentMethod"]
+    },
+    {
+      "id": "agent_details",
+      "title": "Bring the reminder or a completed MR1B form to an agent",
+      "fields": [
+        "agentDocumentBrought", "registeredPersonLastNameOrCompanyName", "registeredPersonFirstNames",
+        "vehicleMake", "vehicleModel", "vehicleBasicColour", "vehicleSecondColour",
+        "vehicleUsageChanged", "newVehicleUsageCode", "particularsCorrectDeclaration"
+      ]
+    }
+  ]
+}
