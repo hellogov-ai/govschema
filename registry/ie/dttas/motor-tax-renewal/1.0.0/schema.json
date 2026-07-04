@@ -1,0 +1,224 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/dttas/motor-tax-renewal",
+  "version": "1.0.0",
+  "title": "Ireland Motor Tax Renewal (Motor Tax Online)",
+  "description": "Renew an individual's Irish motor tax (the annual/periodic road-use charge, separate from the one-time Vehicle Registration Tax) through Motor Tax Online (motortax.ie), the joint Department of Transport / local-authority service. This document models the vehicle-tax-class eligibility gate, the registration-number-and-PIN login, the commercial (goods) vehicle roadworthiness and light-goods-declaration prerequisites, the tax-period choice, and the contact/insurance/payment details the online renewal collects. It does not model first-time taxing of a new or imported vehicle (a distinct dealer-mediated RF100 process), a change of registered particulars (Form RF111), a declaration that a vehicle is off the road (Form RF150), a motor-tax refund (Form RF120), or a replacement document (Form RF134) — each a separate motor-tax service. It does not renew the tax; the live motortax.ie/gov.ie sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Transport",
+    "abbreviation": "DoT",
+    "url": "https://www.gov.ie/en/department-of-transport/",
+    "operatedBy": {
+      "name": "Driver and Vehicle Computer Services Division, jointly with local authorities, via Motor Tax Online",
+      "abbreviation": "Motor Tax Online",
+      "url": "https://www.motortax.ie/OMT/omt.do",
+      "basis": "Motor tax is administered by the Department of Transport (whose Driver and Vehicle Computer Services Division maintains the National Vehicle and Driver File) but collected by local authorities' motor tax offices; Motor Tax Online is the joint online service through which most vehicle tax classes can be renewed without visiting a motor tax office."
+    }
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.motortax.ie/OMT/omt.do",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "No form number for the online channel — online self-service renewal via motortax.ie. The paper equivalent for postal/in-person renewal without a change of particulars has no single form number either (a computerised reminder form RF100B is issued automatically before renewal; RF111 is a distinct change-of-particulars form, out of scope here)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from the live motortax.ie login page (fetched directly, raw HTML, 2026-07-04) and the Department of Transport's gov.ie publication 'Motortax: Payments, Renewals and Refund information' (fetched directly, raw HTML, 2026-07-04), cross-checked against citizensinformation.ie coverage found via web search. A mock login (fabricated registration number and PIN) submitted to motortax.ie/OMT/login.do returned a real server-side 'Details Incorrect... The combination of registration number and PIN entered was not valid' message rather than a generic format error, confirming (as with ca/on/mto/vehicle-permit-renewal and au/nsw/service-nsw/vehicle-registration-renewal) that the screens beyond login require an already-issued, real Irish vehicle record and cannot be walked further with fabricated data. RF111 (the downloadable 'Change of Particulars' form) was initially investigated as a possible field-level source but was found to be a different service (notifying a name/address/colour/tax-class change), not a renewal application form, and is not used as a source. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "vehicleTaxClass",
+      "label": "What is the vehicle's tax class?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Only these tax classes can be renewed through Motor Tax Online; goods_vehicle, motor_caravan, and mobile_machine are renewal-only online (first-time taxing of those classes must be done at a motor tax office). other_not_listed means the vehicle's tax class is not one Motor Tax Online supports; the applicant must instead contact their local motor tax office.",
+      "sourceRef": "motortax.ie login page — 'What types of vehicle can be taxed online?' list; gov.ie 'Motortax: Payments, Renewals and Refund information' — 'The following tax classes are available for online processing'",
+      "validation": {
+        "enum": [
+          "private_car",
+          "goods_vehicle",
+          "motorcycle",
+          "agricultural_tractor_excavator_combine",
+          "general_haulage_tractor",
+          "dumper_or_forklift",
+          "hearse",
+          "disabled_adapted_vehicle",
+          "motor_caravan",
+          "vintage_or_veteran_vehicle",
+          "mobile_machine",
+          "other_not_listed"
+        ]
+      }
+    },
+    {
+      "name": "vehicleRegistrationNumber",
+      "label": "Vehicle registration number",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's Irish registration number, used with the PIN to log in to Motor Tax Online, e.g. 12D34567.",
+      "sourceRef": "motortax.ie login page (live, 2026-07-04) — 'Vehicle Registration Number:' login field (name=loginRegNo, maxlength 11)",
+      "validation": { "maxLength": 11 }
+    },
+    {
+      "name": "pin",
+      "label": "Personal Identification Number (PIN)",
+      "type": "string",
+      "classification": "document-security-code",
+      "required": true,
+      "description": "Issued with the motor tax renewal notification (a computerised reminder sent by the Driver and Vehicle Computer Services Division approximately 3-4 weeks before the renewal date), or retrievable online. For a first-time taxing of a new vehicle never previously taxed, or an imported vehicle, the PIN is instead the last six digits of the vehicle's chassis (VIN) number — but that first-time-taxing path is out of scope for this renewal schema. Handle as a sensitive identifier.",
+      "sourceRef": "motortax.ie login page (live, 2026-07-04) — 'PIN:' login field (name=loginPin, password input); gov.ie 'Motortax...' — 'a Personal Identification Number (PIN)... A PIN is issued with a motor tax renewal notification, or can be retrieved on the online motor tax website'"
+    },
+    {
+      "name": "taxPeriodMonths",
+      "label": "Tax period (months)",
+      "type": "enum",
+      "required": true,
+      "description": "Motor tax discs are issued for 3, 6, or 12 whole calendar months. A vehicle whose annual tax is EUR 119 or less can only be taxed for 12 months. Non-annual (3- or 6-month) discs carry a surcharge over the pro-rated annual rate.",
+      "sourceRef": "gov.ie 'Motortax: Payments, Renewals and Refund information' — 'Motor tax discs are issued for periods of three, six, or 12 whole calendar months... Vehicles with an annual tax of EUR119 or less can only be taxed for a 12-month period... there is a surcharge for non-annual discs'",
+      "validation": { "enum": ["3", "6", "12"] }
+    },
+    {
+      "name": "isLightGoodsVehicle",
+      "label": "Is this a light goods vehicle (design gross vehicle weight 3,500kg or less)?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "vehicleTaxClass", "equals": "goods_vehicle" },
+      "description": "Determines whether the light-goods declaration (RF111A) prerequisite applies. Only asked when vehicleTaxClass is goods_vehicle.",
+      "sourceRef": "gov.ie 'Motortax...' — 'in the case of light goods vehicles (vehicles whose design gross vehicle weight is less than 3,500 kg), the owner must have already submitted form RF111A... to the local motor tax office'"
+    },
+    {
+      "name": "lightGoodsDeclarationSubmitted",
+      "label": "Has Form RF111A already been submitted to your local motor tax office?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isLightGoodsVehicle", "equals": true },
+      "description": "RF111A is a declaration that the vehicle will only be used as a goods-carrying vehicle in the course of the owner's business. It must already be on file at the local motor tax office before a light goods vehicle can be renewed online; it is not itself submitted through Motor Tax Online.",
+      "sourceRef": "gov.ie 'Motortax...' — 'the owner must have already submitted form RF111A (declaration that the vehicle will only be used as a goods carrying vehicle in the course of the owners business) to the local motor tax office'"
+    },
+    {
+      "name": "roadworthinessCertificateHeld",
+      "label": "Do you hold a current certificate of roadworthiness (CRW/pass statement) for this vehicle?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "vehicleTaxClass", "equals": "goods_vehicle" },
+      "description": "A commercial (goods) vehicle can only be renewed online with a current roadworthiness certificate. Must be true to proceed online; if false, renewal must be done at a motor tax office instead.",
+      "sourceRef": "gov.ie 'Motortax...' — 'It is now possible for the owners of commercial vehicles to renew the tax over the internet. Vehicles must have a current roadworthiness certificate...'"
+    },
+    {
+      "name": "contactEmailAddress",
+      "label": "Email address",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "description": "Used by Motor Tax Online for the transaction and any related correspondence.",
+      "sourceRef": "motortax.ie login page — 'What do I need to tax my vehicle online? ... Email address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "insuranceCompanyName",
+      "label": "Insurance company",
+      "type": "string",
+      "required": true,
+      "description": "The name of the insurer covering the vehicle.",
+      "sourceRef": "gov.ie 'Motortax...' — 'your vehicle insurance details (name of insurer, policy number and expiry date)'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "insurancePolicyNumber",
+      "label": "Insurance policy number",
+      "type": "string",
+      "classification": "financial",
+      "required": true,
+      "description": "The vehicle's current motor insurance policy number.",
+      "sourceRef": "gov.ie 'Motortax...' — 'your vehicle insurance details (name of insurer, policy number and expiry date)'",
+      "validation": { "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "insurancePolicyExpiryDate",
+      "label": "Insurance policy expiry date",
+      "type": "date",
+      "required": true,
+      "description": "The vehicle's current motor insurance policy must be valid at least until the tax period being purchased begins; YYYY-MM-DD.",
+      "sourceRef": "gov.ie 'Motortax...' — 'your vehicle insurance details (name of insurer, policy number and expiry date)'"
+    },
+    {
+      "name": "paymentCardType",
+      "label": "Payment card type",
+      "type": "enum",
+      "required": true,
+      "description": "Motor Tax Online accepts Visa or MasterCard only; this schema does not model the card number, expiry, or CVV themselves (out of scope for a field-collection schema; handle as PCI-scoped data outside GovSchema).",
+      "sourceRef": "gov.ie 'Motortax...' — 'details of your payment card (Visa or MasterCard)'",
+      "validation": { "enum": ["visa", "mastercard"] }
+    }
+  ],
+  "steps": [
+    {
+      "id": "vehicle_tax_class",
+      "title": "Vehicle tax class",
+      "fields": ["vehicleTaxClass"],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible-tax-class-not-supported-online",
+          "when": { "field": "vehicleTaxClass", "equals": "other_not_listed" }
+        },
+        { "to": "log_in" }
+      ]
+    },
+    {
+      "id": "log_in",
+      "title": "Log in to Motor Tax Online",
+      "fields": ["vehicleRegistrationNumber", "pin"],
+      "next": "commercial_vehicle_checks"
+    },
+    {
+      "id": "commercial_vehicle_checks",
+      "title": "Commercial (goods) vehicle checks",
+      "fields": ["isLightGoodsVehicle", "lightGoodsDeclarationSubmitted", "roadworthinessCertificateHeld"],
+      "next": "tax_period"
+    },
+    {
+      "id": "tax_period",
+      "title": "Tax period",
+      "fields": ["taxPeriodMonths"],
+      "next": "contact_and_insurance"
+    },
+    {
+      "id": "contact_and_insurance",
+      "title": "Contact and insurance details",
+      "fields": ["contactEmailAddress", "insuranceCompanyName", "insurancePolicyNumber", "insurancePolicyExpiryDate"],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "fields": ["paymentCardType"]
+    }
+  ]
+}
