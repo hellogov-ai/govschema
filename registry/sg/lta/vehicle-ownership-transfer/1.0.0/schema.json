@@ -1,0 +1,310 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/lta/vehicle-ownership-transfer",
+  "version": "1.0.0",
+  "title": "Singapore Vehicle Ownership Transfer",
+  "description": "A private seller (the current registered owner) and buyer (the new registered owner) transfer a Singapore-registered vehicle's registration through the Land Transport Authority's OneMotoring digital service. The seller initiates the transfer with the vehicle's particulars and the new owner's identity and contact details; the new owner then logs in with Singpass within 5 days to confirm, provide their own particulars and Singapore address, and declare valid motor insurance, before paying the transfer fee. Models an individual-to-individual transfer of a privately owned car. It does not model a transfer to or from a company/business/ACRA-registered entity, a vehicle still under financing (a separate multi-step confirmation cycle with the financier), a Light/Heavy Goods Vehicle or bus (which carry additional licence/parking-certificate requirements), vehicle-registration-number retention, or deregistration. It does not submit the notification; the live LTA source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Land Transport Authority",
+    "abbreviation": "LTA",
+    "url": "https://www.lta.gov.sg/"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://onemotoring.lta.gov.sg/content/onemotoring/home/selling-deregistering/transfer-ownership.html",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Form M01 (Application Form for Transfer of Vehicle, VRLSO-F-M01-V10, January 2014 edition); online service at onemotoring.lta.gov.sg (Transfer Vehicle / Confirm Vehicle Transfer digital services)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live LTA OneMotoring 'Transfer ownership' guidance page (describing the current Singpass-authenticated digital flow) and the LTA-hosted Form M01 PDF (the paper/counter-channel predecessor, still linked from the live OneMotoring site, whose field layout — Section A: current owner, Section B: new owner, Section C: submitter — was used to source individual field names, labels, and structure not restated in the guidance prose). The live onemotoring.lta.gov.sg digital-service screens themselves are Singpass-gated and could not be exercised end to end without a genuine Singpass login; a mock application-packet test run (conformance/sg/lta/vehicle-ownership-transfer/1.0.0/application-packet.json) was assembled and checked against this schema's own required/requiredWhen/validation constraints instead of a live submission. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "vehicleRegistrationNumber",
+      "label": "Vehicle registration number",
+      "type": "string",
+      "required": true,
+      "description": "The Singapore vehicle registration number (number plate) of the vehicle being transferred.",
+      "sourceRef": "Form M01 — top of form, 'VEHICLE REGISTRATION NO.'",
+      "validation": { "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "roadTaxExpiryDate",
+      "label": "Road tax expiry date",
+      "type": "date",
+      "required": true,
+      "description": "The vehicle's current road tax expiry date. LTA's guidance states road tax arrears block a transfer, so this date evidences the road tax is current.",
+      "sourceRef": "Form M01 — top of form, 'ROAD TAX EXPIRY DATE (day) (month) (year)'"
+    },
+    {
+      "name": "currentOwnerIdType",
+      "label": "Current owner — identification type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the current (selling) owner is identified by NRIC/FIN or by passport. Models an individual seller only; company/business/ACRA-registered sellers are out of scope.",
+      "sourceRef": "Form M01 — Section A, '*NRIC (Singaporeans, Singapore PRs and Malaysians) / Passport (Foreigners other than Malaysians)'",
+      "validation": { "enum": ["nric_fin", "passport"] }
+    },
+    {
+      "name": "currentOwnerIdNumber",
+      "label": "Current owner — NRIC/FIN or passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The current owner's NRIC number (Singapore Citizens and Permanent Residents), Foreign Identification Number (FIN, for Malaysians), or passport number (foreigners other than Malaysians), matching currentOwnerIdType.",
+      "sourceRef": "Form M01 — Section A, NRIC/Passport number field",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "currentOwnerName",
+      "label": "Current owner — name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name of the current registered owner, as shown on their NRIC or passport.",
+      "sourceRef": "Form M01 — Section A, 'Name of Registered Owner (as in NRIC/Passport/ACRA Certificate)'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "currentOwnerContactNumber",
+      "label": "Current owner — contact number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The current owner's contact number, collected by the digital service so LTA and the new owner can reach them during the transfer. Not itemised as a labelled box on the 2014 paper Form M01, which predates the current digital flow; sourced from the live guidance page's description of the information the seller provides. See VERIFICATION.md.",
+      "sourceRef": "OneMotoring 'Transfer ownership' guidance page — key information required for the seller",
+      "validation": { "minLength": 8, "maxLength": 20 }
+    },
+    {
+      "name": "currentOwnerVehicleNotFinancedDeclaration",
+      "label": "Declaration: vehicle is not under any financing",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "The current owner's declaration that the vehicle is not under any financing and that proper consent has been obtained for its transfer. A vehicle still under financing follows a separate, longer confirmation cycle involving the financing company, which this schema does not model.",
+      "sourceRef": "Form M01 — Section A declaration, 'I/We declare that the vehicle is not under any financing and proper consent has been obtained for transfer of my/our vehicle'",
+      "eligibleValues": [true]
+    },
+    {
+      "name": "newOwnerIdType",
+      "label": "New owner — identification type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the new (buying) owner is identified by NRIC/FIN or by passport. Models an individual buyer only; company/business/ACRA-registered buyers are out of scope.",
+      "sourceRef": "Form M01 — Section B, '*NRIC (Singaporeans, Singapore PRs and Malaysians) / Passport (Foreigners other than Malaysians)'",
+      "validation": { "enum": ["nric_fin", "passport"] }
+    },
+    {
+      "name": "newOwnerIdNumber",
+      "label": "New owner — NRIC/FIN or passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The new owner's NRIC number, Foreign Identification Number (FIN), or passport number, matching newOwnerIdType.",
+      "sourceRef": "Form M01 — Section B, NRIC/Passport number field",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "newOwnerName",
+      "label": "New owner — name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name of the new registered owner, as shown on their NRIC or passport.",
+      "sourceRef": "Form M01 — Section B, 'Name of Registered Owner (as in NRIC / Passport / ACRA Certificate)'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "newOwnerBirthDate",
+      "label": "New owner — birth date",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "New owner's date of birth.",
+      "sourceRef": "Form M01 — Section B, 'Birth Date (DD/MM/YYYY)'"
+    },
+    {
+      "name": "newOwnerGender",
+      "label": "New owner — gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "New owner's gender, as printed on the form's tick-box.",
+      "sourceRef": "Form M01 — Section B, 'Gender (Please Tick) F M'",
+      "validation": { "enum": ["F", "M"] }
+    },
+    {
+      "name": "newOwnerPassportPlaceOfIssue",
+      "label": "New owner — place of issue of passport",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "newOwnerIdType", "equals": "passport" },
+      "description": "Place of issue of the new owner's passport. Applicable only when the new owner is a foreigner other than a Malaysian and is identified by passport.",
+      "sourceRef": "Form M01 — Section B, 'Place of Issue of Passport (applicable for foreigners other than Malaysians)'",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "newOwnerContactNumber",
+      "label": "New owner — contact number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The new owner's contact number. The seller supplies this when initiating the transfer, and LTA/the seller may use it to reach the new owner during the 5-day confirmation window. Not itemised as a labelled box on the 2014 paper Form M01; sourced from the live guidance page. See VERIFICATION.md.",
+      "sourceRef": "OneMotoring 'Transfer ownership' guidance page — 'the next owner's NRIC or Foreign Identification Number (FIN) number, and their contact number'",
+      "validation": { "minLength": 8, "maxLength": 20 }
+    },
+    {
+      "name": "newOwnerAddressBlockHouseNo",
+      "label": "New owner — registered address — block/house number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Block or house number of the new owner's registered address in Singapore.",
+      "sourceRef": "Form M01 — Section B, Registered Address in Singapore, 'Blk / House No.'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "newOwnerAddressStreetName",
+      "label": "New owner — registered address — street name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form M01 — Section B, Registered Address in Singapore, 'Street Name'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "newOwnerAddressFloorUnit",
+      "label": "New owner — registered address — floor and unit number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Floor and unit number of the new owner's registered address, where applicable (e.g. an HDB flat or condominium unit). The form marks this field with a footnote symbol suggesting it is conditional on the address type; not landed-property-applicable, so modelled as optional. See VERIFICATION.md.",
+      "sourceRef": "Form M01 — Section B, Registered Address in Singapore, 'Floor & Unit No.#'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "newOwnerAddressBuilding",
+      "label": "New owner — registered address — building name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form M01 — Section B, Registered Address in Singapore, 'Building'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "newOwnerAddressPostalCode",
+      "label": "Postal District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Postal identifier of the new owner's registered address. The 2014 paper Form M01 prints the label 'Postal District' (Singapore's pre-1995 28-district numbering, still informally used for property), rather than the modern 6-digit postal code used elsewhere in this registry (e.g. sg/acra/sole-proprietorship-registration's businessAddressPostalCode). This field name/pattern follow this registry's postal-code convention on the working assumption the current OneMotoring digital service asks for the 6-digit code, not the legacy district number; a future reviewer should confirm this against the live, Singpass-gated digital-service screen. See VERIFICATION.md.",
+      "sourceRef": "Form M01 — Section B, Registered Address in Singapore, 'Postal District'",
+      "validation": { "pattern": "^[0-9]{6}$", "minLength": 6, "maxLength": 6 }
+    },
+    {
+      "name": "newOwnerInsuranceCompanyName",
+      "label": "New owner — insurance company name",
+      "type": "string",
+      "required": true,
+      "description": "Name of the insurance company providing the new owner's motor insurance for the vehicle.",
+      "sourceRef": "Form M01 — Section B, 'Ins. Co's Name'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "newOwnerInsuranceValidDeclaration",
+      "label": "Declaration: vehicle has valid motor insurance in the new owner's name",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "The new owner's declaration that the vehicle has valid motor insurance in their name for not less than the full remaining period of valid road tax, and that it is valid as of the date of transfer. LTA will not allow the transfer to proceed without this.",
+      "sourceRef": "Form M01 — Section B declaration, 'The vehicle has valid motor insurance in my/our name for not less than the full period of valid road tax and is valid as of the date of transfer'",
+      "eligibleValues": [true]
+    }
+  ],
+  "documents": [
+    {
+      "id": "transferFee",
+      "label": "Vehicle transfer fee",
+      "category": "payment",
+      "required": true,
+      "amount": { "currency": "SGD", "value": 25 },
+      "methods": ["onemotoring-online-payment"],
+      "sourceRef": "OneMotoring 'Transfer ownership' guidance page — 'The new owner will need to pay the transfer fee of $25 via OneMotoring'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "seller_initiates_transfer",
+      "title": "Seller initiates the transfer",
+      "fields": [
+        "vehicleRegistrationNumber",
+        "roadTaxExpiryDate",
+        "currentOwnerIdType",
+        "currentOwnerIdNumber",
+        "currentOwnerName",
+        "currentOwnerContactNumber",
+        "currentOwnerVehicleNotFinancedDeclaration"
+      ],
+      "next": "buyer_confirms_transfer"
+    },
+    {
+      "id": "buyer_confirms_transfer",
+      "title": "New owner confirms the transfer (within 5 days)",
+      "fields": [
+        "newOwnerIdType",
+        "newOwnerIdNumber",
+        "newOwnerName",
+        "newOwnerBirthDate",
+        "newOwnerGender",
+        "newOwnerPassportPlaceOfIssue",
+        "newOwnerContactNumber"
+      ],
+      "next": "new_owner_address_and_insurance"
+    },
+    {
+      "id": "new_owner_address_and_insurance",
+      "title": "New owner's registered address and insurance",
+      "fields": [
+        "newOwnerAddressBlockHouseNo",
+        "newOwnerAddressStreetName",
+        "newOwnerAddressFloorUnit",
+        "newOwnerAddressBuilding",
+        "newOwnerAddressPostalCode",
+        "newOwnerInsuranceCompanyName",
+        "newOwnerInsuranceValidDeclaration"
+      ],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Pay the transfer fee",
+      "fields": []
+    }
+  ]
+}
