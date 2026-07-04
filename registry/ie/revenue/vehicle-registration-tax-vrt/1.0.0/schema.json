@@ -1,0 +1,437 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/revenue/vehicle-registration-tax-vrt",
+  "version": "1.0.0",
+  "title": "Ireland Vehicle Registration Tax (VRT) — Private Importer Declaration",
+  "description": "Register an imported vehicle in Ireland and declare it for Vehicle Registration Tax (VRT) as a private (non-trader) importer, using Form VRTVPD2 ('VRT — Vehicle Purchase Details Form, Persons other than authorised traders'). The vehicle must be presented for inspection at a National Car Testing Service (NCTS) centre, where VRTVPD2 and supporting documents are handed in; NCTS scans the declaration and forwards it to the Revenue Commissioners, who assess the VRT due from the vehicle's Open Market Selling Price (OMSP) and CO2/NOx emissions bands. This document models the declaration form's own fields (vehicle, seller, optional third-party importer, and purchase/entry details) plus the supporting-document set NCTS/Revenue require at the inspection appointment. It does not model: the authorised-trader channel (Form VRTVPD1, filed by TAN holders through Revenue Online Service (ROS) — gated behind a business ROS login this schema does not attempt to reach), the actual VRT/NOx levy amount (a government-computed output of OMSP and emissions data, not applicant-supplied input — see VERIFICATION.md), the NCTS inspection-appointment booking transaction itself, or the separate export repayment (VRTER1/VRTER2), Transfer of Residence exemption (VRT-TOR), amended-declaration (VRT19), or converted-vehicle (VRTCONV) processes, each a distinct Revenue form.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Office of the Revenue Commissioners",
+    "abbreviation": "Revenue",
+    "url": "https://www.revenue.ie",
+    "operatedBy": {
+      "name": "National Car Testing Service (NCTS), operated by Applus Inspection Services Ireland Ltd",
+      "abbreviation": "NCTS",
+      "url": "https://www.ncts.ie",
+      "basis": "Revenue contracts vehicle-registration inspection and VRT declaration intake to NCTS centres nationwide under the Finance Act 1992 VRT framework. The applicant books an inspection appointment and submits Form VRTVPD2 with supporting documents at an NCTS centre; NCTS scans the declaration and physically forwards the original to the Revenue Commissioners, who calculate and collect the VRT due."
+    }
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.revenue.ie/en/vrt/documents/vrt/form-vrtvpd2.pdf",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Form VRTVPD2, Revenue reference RPC016052_EN_WB_L_1 — 'VRT — Vehicle Purchase Details Form, Persons other than authorised traders'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from Form VRTVPD2, fetched directly as a raw PDF from revenue.ie (no bot-block encountered) and parsed with pdfjs-dist to enumerate its real AcroForm Widget annotations: 24 text fields (Tx) plus one 4-state checkbox group (Btn, field name 'Check Box27', export values MD/AH/OB/PI), 29 widgets total, confirming this is a genuine fillable form rather than a flat/scanned image. Every field name, label, and section grouping below was matched against the PDF's own extracted text content and cross-checked against a companion agent's independent extraction of the same PDF — the two extractions agreed on all 29 widgets before this schema was written. Cross-referenced against ncts.ie's VRT FAQ and Revenue's 'Calculating VRT'/'Registering an imported vehicle' guidance pages for the surrounding process (inspection booking, supporting-document checklist, OMSP/CO2/NOx calculation basis, and the 7-day booking / 30-day registration deadlines cited from date of entry into the State). See VERIFICATION.md for the full source list, field-by-field confirmation table, and honesty flags."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "importerType",
+      "label": "Are you registering this vehicle as a private individual or as an authorised trader?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Revenue publishes two separate VRT declaration channels: Form VRTVPD1 for TAN-holding authorised traders (filed through Revenue Online Service, which requires a business ROS login) and Form VRTVPD2 for everyone else. This schema models only the VRTVPD2 (private_individual) channel.",
+      "sourceRef": "Form VRTVPD1 'Persons who hold a trader's licence...' vs Form VRTVPD2 'Persons other than authorised traders' — revenue.ie VRT forms listing",
+      "validation": {
+        "enum": ["private_individual", "authorised_trader"]
+      },
+      "eligibleValues": ["private_individual"]
+    },
+    {
+      "name": "vehicleCondition",
+      "label": "Is the vehicle new or used?",
+      "type": "enum",
+      "required": true,
+      "description": "Not itself a VRTVPD2 field, but determines which supporting document Revenue/NCTS require at the inspection appointment: a hard-copy EU Certificate of Conformity (or an individual approval certificate) for a new vehicle, versus the foreign registration certificate and CO2/NOx-at-manufacture confirmation for a used one.",
+      "sourceRef": "Revenue 'Registering an imported vehicle' — new-vehicle vs used-vehicle document requirements",
+      "validation": {
+        "enum": ["new", "used"]
+      }
+    },
+    {
+      "name": "importOrigin",
+      "label": "Where was the vehicle immediately before it entered Ireland?",
+      "type": "enum",
+      "required": true,
+      "description": "Determines whether a customs declaration (MRN) is needed alongside the VRT declaration. Since the UK's exit from the EU, imports from Great Britain (though not Northern Ireland, under the Windsor Framework) are treated as third-country imports for customs purposes.",
+      "sourceRef": "NCTS VRT FAQ / Revenue guidance on post-Brexit imports — customs Master Reference Number (MRN) required for non-EU/Great Britain imports",
+      "validation": {
+        "enum": ["eu_member_state", "northern_ireland", "great_britain", "other_non_eu"]
+      }
+    },
+    {
+      "name": "vin",
+      "label": "VIN / Chassis No.",
+      "type": "string",
+      "required": true,
+      "classification": "financial",
+      "description": "Vehicle identification/chassis number. The form itself does not state a length; modelled at the standard ISO 3779 VIN length of 17 used throughout this registry (e.g. de/kba/vehicle-registration) as a reasonable inference, not a figure quoted from VRTVPD2 itself — see VERIFICATION.md.",
+      "sourceRef": "VRTVPD2 Section 1 — Vehicle Details: 'VIN / Chassis No.' (field Text2)",
+      "validation": {
+        "minLength": 17,
+        "maxLength": 17
+      }
+    },
+    {
+      "name": "foreignRegistrationNumber",
+      "label": "Foreign Registration No.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "vehicleCondition",
+        "equals": "used"
+      },
+      "description": "The vehicle's registration/number plate in the country it was registered in before import. Not applicable to a new vehicle that has never been registered anywhere.",
+      "sourceRef": "VRTVPD2 Section 1 — Vehicle Details: 'Foreign Registration No.' (field Text1)"
+    },
+    {
+      "name": "make",
+      "label": "Make",
+      "type": "string",
+      "required": true,
+      "sourceRef": "VRTVPD2 Section 1 — Vehicle Details: 'Make' (field Text3)"
+    },
+    {
+      "name": "model",
+      "label": "Model",
+      "type": "string",
+      "required": true,
+      "sourceRef": "VRTVPD2 Section 1 — Vehicle Details: 'Model' (field Text5)"
+    },
+    {
+      "name": "vehicleVersion",
+      "label": "Version",
+      "type": "string",
+      "required": false,
+      "description": "Trim/variant designation. VRTVPD2 carries no 'if applicable' annotation on this box (unlike the VAT number/amount and email/website fields below), but not every vehicle has a distinct named version/trim, so this is modelled as optional — an inference, not a sourced optionality rule; see VERIFICATION.md.",
+      "sourceRef": "VRTVPD2 Section 1 — Vehicle Details: 'Version' (field Text4)"
+    },
+    {
+      "name": "sellerType",
+      "label": "Type of Seller (please tick one)",
+      "type": "enum",
+      "required": true,
+      "description": "motor_dealer = Motor Dealer; auction_house = Auction House; other_business = Other Business; private_individual = Private Individual. Confirmed as a 4-state checkbox group sharing one field name (Check Box27) with export values MD/AH/OB/PI.",
+      "sourceRef": "VRTVPD2 Section 2 — Person / Business From Whom The Vehicle Was Purchased: 'Type of Seller (please tick one): Motor Dealer / Auction House / Other Business / Private Individual' (field Check Box27)",
+      "validation": {
+        "enum": ["motor_dealer", "auction_house", "other_business", "private_individual"]
+      }
+    },
+    {
+      "name": "sellerName",
+      "label": "Name / Business Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "VRTVPD2 Section 2: 'Name / Business Name:' (field Text10)"
+    },
+    {
+      "name": "sellerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "VRTVPD2 Section 2: 'Address:' (field Text11)"
+    },
+    {
+      "name": "sellerContactNumber",
+      "label": "Contact Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "VRTVPD2 Section 2: 'Contact Number:' (field Text12)"
+    },
+    {
+      "name": "sellerVatNumber",
+      "label": "VAT Number (if applicable)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VRTVPD2 Section 2: 'VAT Number (if applicable):' (field TextVAT)"
+    },
+    {
+      "name": "sellerEmail",
+      "label": "Email Address (if available)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VRTVPD2 Section 2: 'Email Address (if available):' (field Text14)"
+    },
+    {
+      "name": "sellerWebsite",
+      "label": "Website (if available)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VRTVPD2 Section 2: 'Website (if available):' (field Text15)"
+    },
+    {
+      "name": "thirdPartyImporterName",
+      "label": "Name",
+      "type": "string",
+      "required": false,
+      "description": "Completed only when the vehicle was purchased abroad and imported into the State by someone other than the purchaser named in the declaration.",
+      "sourceRef": "VRTVPD2 Section 3 — 'If the vehicle was purchased abroad and imported into the State by a third party please enter their details here: Name:' (field Text6)"
+    },
+    {
+      "name": "thirdPartyImporterAddress",
+      "label": "Address (include Eircode)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VRTVPD2 Section 3: 'Address (include Eircode):' (field Text7)"
+    },
+    {
+      "name": "thirdPartyImporterContactNumber",
+      "label": "Contact Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VRTVPD2 Section 3: 'Contact Number:' (field Text8)"
+    },
+    {
+      "name": "thirdPartyImporterEmail",
+      "label": "Email Address (if available)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "VRTVPD2 Section 3: 'Email Address (if available):' (field Text9)"
+    },
+    {
+      "name": "thirdPartyImporterRevenueCustomerNumber",
+      "label": "Revenue Customer No. (PPSN / VAT)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "VRTVPD2 Section 3: 'Revenue Customer No.: (PPSN / VAT)' (field Text23)"
+    },
+    {
+      "name": "purchasePriceIncludingVat",
+      "label": "Purchase Price (incl. VAT)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "Purchase price of the vehicle, VAT inclusive. VRT is always assessed in euro regardless of the currency the purchase was actually made in.",
+      "sourceRef": "VRTVPD2 Section 4 — Vehicle Purchase Details: 'Purchase Price (incl. VAT):' (field Text16)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "vatAmount",
+      "label": "VAT Amount (if applicable)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "sellerType",
+        "notEquals": "private_individual"
+      },
+      "classification": "financial",
+      "description": "Required whenever the vehicle was not purchased from a private individual, per the form's own footnote.",
+      "sourceRef": "VRTVPD2 Section 4: 'VAT Amount* (if applicable): ... * If the vehicle was not purchased from a Private Individual, please provide VAT amount details.' (field Text18)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "dateOfSaleOrPurchase",
+      "label": "Date of Sale / Purchase",
+      "type": "date",
+      "required": true,
+      "sourceRef": "VRTVPD2 Section 4: 'Date of Sale / Purchase:' (field Text17)"
+    },
+    {
+      "name": "dateOfEntryIntoState",
+      "label": "Date of Entry into the State",
+      "type": "date",
+      "required": true,
+      "description": "Starts two Revenue/NCTS deadlines that are not themselves VRTVPD2 fields: the NCTS inspection appointment must be booked within 7 days of this date, and the vehicle must be fully registered (inspected, declared, and VRT paid) within 30 days of this date.",
+      "sourceRef": "VRTVPD2 Section 4: 'Date of Entry into the State:' (field Text19); ncts.ie VRT FAQ — 7-day booking window and 30-day registration deadline"
+    },
+    {
+      "name": "declarantName",
+      "label": "Name (Block Letters)",
+      "type": "string",
+      "required": true,
+      "description": "Name of the purchaser/applicant making the declaration. The form instructs 'Please use BLOCK LETTERS only when completing this form.'",
+      "sourceRef": "VRTVPD2 Declaration: 'Name (Block Letters):' (field Text22)"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "VRTVPD2 Declaration: 'Date:' (field Text20)"
+    },
+    {
+      "name": "declarantPpsnOrRevenueCustomerNumber",
+      "label": "PPSN / Revenue Customer No.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "VRTVPD2 Declaration: 'PPSN / Revenue Customer No.:' (field Text21)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "photoIdentification",
+      "label": "Photo identification",
+      "category": "identity-document",
+      "required": true,
+      "acceptedTypes": ["passport", "driving_licence"],
+      "sourceRef": "ncts.ie VRT FAQ / Revenue 'Procedure at NCTS Centre' — documents required at inspection"
+    },
+    {
+      "id": "invoiceOrDeclarationOfSale",
+      "label": "Invoice or Declaration of Sale from the vehicle seller",
+      "category": "supporting-evidence",
+      "required": true,
+      "sourceRef": "VRTVPD2: 'An Invoice / Declaration of Sale from the vehicle seller must accompany this form.'"
+    },
+    {
+      "id": "addressProof",
+      "label": "Proof of address",
+      "category": "supporting-evidence",
+      "required": true,
+      "freshness": {
+        "issuedWithin": "P6M"
+      },
+      "sourceRef": "ncts.ie VRT FAQ — utility bill or bank statement no more than 6 months old, or two independent online statements (one of them banking)"
+    },
+    {
+      "id": "ppsnEvidence",
+      "label": "Documentary evidence of PPSN",
+      "category": "supporting-evidence",
+      "required": true,
+      "acceptedTypes": ["public_services_card", "p60", "payslip", "revenue_correspondence"],
+      "sourceRef": "ncts.ie VRT FAQ — PPSN of the registered owner plus documentary proof (e.g. Public Services Card, P60)"
+    },
+    {
+      "id": "entryDateEvidence",
+      "label": "Evidence of the vehicle's date of entry into the State",
+      "category": "supporting-evidence",
+      "required": true,
+      "acceptedTypes": ["shipping_document", "ferry_or_travel_ticket", "customs_mrn"],
+      "sourceRef": "ncts.ie VRT FAQ — shipping/travel documents (or customs MRN for non-EU/GB imports) evidencing date of entry"
+    },
+    {
+      "id": "customsDeclarationMrn",
+      "label": "Customs declaration (Master Reference Number)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "importOrigin",
+        "in": ["great_britain", "other_non_eu"]
+      },
+      "sourceRef": "NCTS/Revenue guidance on post-Brexit imports — customs MRN required for Great Britain / other non-EU imports"
+    },
+    {
+      "id": "foreignRegistrationCertificate",
+      "label": "Foreign registration certificate or de-registration certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "vehicleCondition",
+        "equals": "used"
+      },
+      "sourceRef": "Revenue 'Registering an imported vehicle' — used vehicles: foreign registration certificate (e.g. UK V5C) or de-registration certificate"
+    },
+    {
+      "id": "co2AndNoxEmissionsConfirmation",
+      "label": "CO2-at-manufacture and NOx emissions confirmation",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "vehicleCondition",
+        "equals": "used"
+      },
+      "sourceRef": "Revenue 'Registering an imported vehicle' — used vehicles: CO2-at-manufacture confirmation and NOx emissions confirmation"
+    },
+    {
+      "id": "euCertificateOfConformity",
+      "label": "EU Certificate of Conformity (or individual vehicle approval certificate)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "vehicleCondition",
+        "equals": "new"
+      },
+      "sourceRef": "Revenue 'Registering an imported vehicle' — new vehicles: hard-copy EU Certificate of Conformity or IVA/NSSTA certificate (also uploaded in advance via myAccount/ROS)"
+    },
+    {
+      "id": "signedDeclaration",
+      "label": "Signed declaration (VRTVPD2)",
+      "category": "attestation",
+      "required": true,
+      "statement": "I, the undersigned, declare that I purchased the vehicle detailed above, and that the information contained on this form and in the supporting documents is correct.",
+      "sourceRef": "VRTVPD2 Declaration section"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_and_vehicle_facts",
+      "title": "Eligibility and vehicle facts",
+      "fields": ["importerType", "vehicleCondition", "importOrigin"],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "authorised-trader-must-use-vrtvpd1-via-ros",
+          "when": {
+            "field": "importerType",
+            "equals": "authorised_trader"
+          }
+        },
+        {
+          "to": "vehicle_details"
+        }
+      ]
+    },
+    {
+      "id": "vehicle_details",
+      "title": "Vehicle details",
+      "fields": ["vin", "foreignRegistrationNumber", "make", "model", "vehicleVersion"],
+      "next": "seller_details"
+    },
+    {
+      "id": "seller_details",
+      "title": "Person or business the vehicle was purchased from",
+      "fields": ["sellerType", "sellerName", "sellerAddress", "sellerContactNumber", "sellerVatNumber", "sellerEmail", "sellerWebsite"],
+      "next": "third_party_importer"
+    },
+    {
+      "id": "third_party_importer",
+      "title": "Third-party importer (if applicable)",
+      "fields": ["thirdPartyImporterName", "thirdPartyImporterAddress", "thirdPartyImporterContactNumber", "thirdPartyImporterEmail", "thirdPartyImporterRevenueCustomerNumber"],
+      "next": "purchase_and_entry_details"
+    },
+    {
+      "id": "purchase_and_entry_details",
+      "title": "Purchase and entry details",
+      "fields": ["purchasePriceIncludingVat", "vatAmount", "dateOfSaleOrPurchase", "dateOfEntryIntoState"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["declarantName", "declarationDate", "declarantPpsnOrRevenueCustomerNumber"]
+    }
+  ]
+}
