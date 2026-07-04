@@ -1,0 +1,229 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gb/dvla/international-driving-permit",
+  "version": "1.0.0",
+  "title": "United Kingdom International Driving Permit (IDP)",
+  "description": "Apply in person for a UK International Driving Permit (IDP) — a translation document that supports a Great Britain or Northern Ireland driving licence in countries where the licence alone is not sufficient — issued over the counter at PayPoint stores, which the Driver and Vehicle Licensing Agency (DVLA) appointed as the exclusive IDP issuer from 1 April 2024 (GSP-0020), replacing the Post Office. There is no online application and no downloadable paper form: the applicant (or someone applying on their behalf with the correct documents) presents their driving licence, a passport-standard photo, proof of identity if the licence is a paper one, and the fee at a participating store, and the permit is issued the same visit. This document models that counter transaction at the field/requirement level documented on GOV.UK and PayPoint's own pages; it never submits anything or implies government endorsement of PayPoint beyond the DVLA-appointed issuer relationship it records.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GB",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Driver and Vehicle Licensing Agency",
+    "abbreviation": "DVLA",
+    "url": "https://www.gov.uk/government/organisations/driver-and-vehicle-licensing-agency",
+    "operatedBy": {
+      "name": "PayPoint",
+      "url": "https://www.paypoint.com/instore-services/international-driving-permits",
+      "basis": "Appointed by the DVLA as the exclusive over-the-counter issuer of International Driving Permits, following an open government procurement under the Public Contracts Regulations 2015, effective 1 April 2024 (replacing the Post Office). GSP-0020."
+    }
+  },
+  "process": {
+    "type": "application",
+    "language": "en-GB"
+  },
+  "source": {
+    "url": "https://www.gov.uk/driving-abroad/get-an-idp",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "No official form or form number exists; sourced from GOV.UK's 'Get an international driving permit (IDP)' and 'Check if you need an international driving permit (IDP)' guidance pages, and PayPoint's own 'International Driving Permits (IDPs)' service page (including its FAQ section), the DVLA-appointed issuer."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-04",
+    "notes": "Closes the 'IDL' gap of the DMV vertical (GOV-282/GOV-381 naming) for a non-US jurisdiction — the only prior IDP schemas in the registry are the US pair (us/dos/international-driving-permit-aaa, -aata), authored under GSP-0020's authority.operatedBy model. Authored per GOV-1105 directly from GOV.UK's two IDP guidance pages and PayPoint's own service page (fetched and read verbatim, not summarized secondhand), including PayPoint's FAQ, which was checked field-by-field against a third-party summary encountered during research: a secondary source claimed 'the licence holder must attend in person (you cannot apply for someone else)', but PayPoint's own FAQ states the opposite ('Yes, anyone can apply for an IDP on your behalf if they have all of your correct documents') — this document follows the primary source and models that as the applicantActingOnLicenceHoldersBehalf field. Status remains 'draft' pending a second independent field-by-field pass; see VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "livesInGBOrNorthernIreland",
+      "label": "Lives in Great Britain or Northern Ireland",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Eligibility requirement.",
+      "sourceRef": "GOV.UK — Get an IDP: 'You must: live in Great Britain or Northern Ireland'"
+    },
+    {
+      "name": "isAtLeast18",
+      "label": "Is 18 or over",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Eligibility requirement.",
+      "sourceRef": "GOV.UK — Get an IDP: 'You must: ... be 18 or over'"
+    },
+    {
+      "name": "holdsFullGBOrNIDrivingLicence",
+      "label": "Holds a full GB or Northern Ireland driving licence",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A provisional licence does not qualify; the licence must be a full GB or Northern Ireland licence, photocard or older paper version.",
+      "sourceRef": "GOV.UK — Get an IDP: 'have a full UK driving licence'; PayPoint FAQ: 'If you hold a full, valid GB or Northern Ireland driving licence, you can apply for an IDP'"
+    },
+    {
+      "name": "licenceIsChannelIslandsIoMForeignOrDiplomatic",
+      "label": "Driving licence is from the Channel Islands, Isle of Man, a foreign country, or is a diplomatic licence",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "Answering true means the applicant is not eligible to apply through this DVLA/PayPoint service.",
+      "sourceRef": "PayPoint — 'If you hold a driving licence from the Channel Islands, the Isle of Man, a foreign country or drive under a diplomatic licence, you are unfortunately not eligible to apply.'"
+    },
+    {
+      "name": "drivingLicenceType",
+      "label": "Driving licence type",
+      "type": "enum",
+      "required": true,
+      "description": "photocard or an older paper licence. A paper licence holder additionally needs another form of photographic ID (their passport) at the counter.",
+      "sourceRef": "PayPoint — Things you will need: 'Full valid GB or Northern Ireland driving licence - photocard or an older paper licence'",
+      "validation": { "enum": ["photocard", "paper"] }
+    },
+    {
+      "name": "drivingLicenceNumber",
+      "label": "Driving licence number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "GOV.UK / PayPoint — driving licence presented at the counter",
+      "validation": { "minLength": 1, "maxLength": 30 },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "proofOfIdentityPassportNumber",
+      "label": "Passport number (proof of identity for a paper licence)",
+      "type": "string",
+      "required": false,
+      "description": "Only needed when presenting an older paper driving licence, as an additional form of photographic ID.",
+      "sourceRef": "PayPoint — Things you will need: 'Original valid passport as proof of identification, if presenting an older paper version licence'",
+      "validation": { "minLength": 1, "maxLength": 20 },
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "drivingLicenceType", "equals": "paper" }
+    },
+    {
+      "name": "idpConventionType",
+      "label": "IDP type needed (1926, 1949, or 1968)",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the three IDP conventions to request depends on the destination country or countries; the applicant should check GOV.UK's or PayPoint's country checker before applying. The 1949 convention is the most common (e.g. the USA); the 1926 and 1968 conventions each cover a smaller set of countries (e.g. Italy and France require a 1968 IDP).",
+      "sourceRef": "GOV.UK — Check if you need an IDP: 'A 1926 or 1949 permit lasts for 12 months. A 1968 permit lasts for 3 years...'; PayPoint — 'There are three types of IDPs (1926, 1949, and 1968) and the type you need depends on the country or countries you're planning to visit.'",
+      "validation": { "enum": ["1926", "1949", "1968"] }
+    },
+    {
+      "name": "applicantActingOnLicenceHoldersBehalf",
+      "label": "Applying on behalf of the licence holder",
+      "type": "boolean",
+      "required": true,
+      "description": "PayPoint explicitly allows a third party to apply with the licence holder's correct documents, which is the pathway a human's agent would use.",
+      "sourceRef": "PayPoint FAQ — 'Is someone else able to apply for an IDP on my behalf? Yes, anyone can apply for an IDP on your behalf if they have all of your correct documents.'"
+    },
+    {
+      "name": "passportStandardPhotoAttached",
+      "label": "Passport-standard photo provided (one per permit)",
+      "type": "boolean",
+      "required": true,
+      "description": "Must be recent, a true likeness of the applicant showing the full head, in colour against a light background, in sharp focus, free from red-eye and shadows, free from reflection or glare from glasses, and undamaged.",
+      "sourceRef": "PayPoint FAQ — 'What photograph do I need for an IDP?'"
+    },
+    {
+      "name": "feeAmountGBP",
+      "label": "Fee paid (GBP)",
+      "type": "number",
+      "required": true,
+      "description": "Fixed fee of £5.50 per permit.",
+      "sourceRef": "GOV.UK — 'An IDP costs £5.50.'; PayPoint — 'The £5.50 application fee (cash or card)'",
+      "validation": { "minimum": 5.5, "maximum": 5.5 },
+      "classification": "financial"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "PayPoint — Things you will need: 'The £5.50 application fee (cash or card)'",
+      "validation": { "enum": ["cash", "card"] }
+    },
+    {
+      "name": "intendedTravelDate",
+      "label": "Intended travel date",
+      "type": "date",
+      "required": false,
+      "description": "Informational: an IDP cannot be applied for more than 3 months before the travel date.",
+      "sourceRef": "PayPoint — 'you cannot apply more than 3 months before you travel'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Eligibility",
+      "fields": [
+        "livesInGBOrNorthernIreland",
+        "isAtLeast18",
+        "holdsFullGBOrNIDrivingLicence",
+        "licenceIsChannelIslandsIoMForeignOrDiplomatic"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible",
+          "when": { "field": "livesInGBOrNorthernIreland", "equals": false }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible",
+          "when": { "field": "isAtLeast18", "equals": false }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible",
+          "when": { "field": "holdsFullGBOrNIDrivingLicence", "equals": false }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible",
+          "when": { "field": "licenceIsChannelIslandsIoMForeignOrDiplomatic", "equals": true }
+        },
+        { "to": "licence_and_identity" }
+      ]
+    },
+    {
+      "id": "licence_and_identity",
+      "title": "Driving licence and identity",
+      "fields": [
+        "drivingLicenceType",
+        "drivingLicenceNumber",
+        "proofOfIdentityPassportNumber",
+        "applicantActingOnLicenceHoldersBehalf"
+      ],
+      "next": "permit_selection"
+    },
+    {
+      "id": "permit_selection",
+      "title": "Permit type and travel",
+      "fields": ["idpConventionType", "intendedTravelDate"],
+      "next": "photo_and_payment"
+    },
+    {
+      "id": "photo_and_payment",
+      "title": "Photo and payment at the counter",
+      "fields": ["passportStandardPhotoAttached", "feeAmountGBP", "paymentMethod"]
+    }
+  ]
+}
