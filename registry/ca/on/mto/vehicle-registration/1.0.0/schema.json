@@ -1,0 +1,393 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ca/on/mto/vehicle-registration",
+  "version": "1.0.0",
+  "title": "Ontario Vehicle Registration (Permit and Licence Plate)",
+  "description": "Apply to the Ontario Ministry of Transportation (MTO), through a ServiceOntario Driver and Vehicle Licence Issuing Office, either to register a private vehicle for the first time and attach new number plates, or to apply for a replacement of a lost, stolen, or damaged vehicle permit, validation sticker, or number plates — both transactions use the same Application for Vehicle Registration form (SR-LV-006E). This is Ontario's Vehicle Registration/Tag/Title-family counterpart to the already-published nz/nzta/vehicle-licence-renewal and nl/rdw/vehicle-ownership-transfer: Canada (all provinces, not only Ontario) had a Drivers Licence Renewal schema (ca/on/mto/drivers-licence-renewal) but no Vehicle Registration/Tag/Title schema at all before this one. Models an ordinary individual registering an eligible passenger-class vehicle (passenger, motorcycle, moped, off-road vehicle, trailer, or motorized snow vehicle) or requesting a replacement document/plate, including the registrant/address/vehicle-identification fields, the vehicle-status declaration, the replacement-specific fields, and the compulsory automobile insurance certification. It does not model: commercial, bus, farm, dealer/manufacturer, or other business-fleet vehicle classes and their associated declarations (Section 5's CVOR/farm-truck/school-bus/historic-vehicle/low-speed-vehicle declarations); an ownership transfer between two individuals (a distinct 'Transfer' transaction type on the same form's office-use section, with no dedicated buyer/seller fields on the applicant-facing pages — a separate future schema); a gross-weight/seating-capacity change (Section 6); or the routine, non-eventful annual licence-plate renewal already reachable through ServiceOntario's own online/automatic renewal service (a separate, still-uncaptured live wizard — see the ca/on/mto/vehicle-permit-renewal discovery candidate). It does not submit the application; the live ServiceOntario service and the applicant's local Issuing Office are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CA",
+    "level": "subnational",
+    "subdivision": "CA-ON"
+  },
+  "authority": {
+    "name": "Ontario Ministry of Transportation",
+    "abbreviation": "MTO",
+    "url": "https://www.ontario.ca/page/ministry-transportation"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-CA"
+  },
+  "source": {
+    "url": "https://forms.mgcs.gov.on.ca/en/dataset/sr-lv-006",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "SR-LV-006E (2023/04) — Application for Vehicle Registration"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored directly from the current SR-LV-006E (edition 2023/04) 'Application for Vehicle Registration' PDF, downloaded without any bot-block from forms.mgcs.gov.on.ca (the Ontario government's own Central Forms Repository). This is a genuine fillable AcroForm (XFA) PDF with 128 real, named form-field widgets across 4 pages — richer sourcing than a static/flattened form, each field's own alternativeText/tooltip transcribed verbatim into this schema's sourceRef values. Page 4 ('Office Use Only') is staff-completed, not applicant-facing, and was used only as corroborating context (its 'Transaction Type' checklist confirms 'Original Registration' and 'Replacement' as the two transaction types this schema models). The live ServiceOntario/MTO transactional counter process itself is only reachable in person at an Issuing Office; no public online field-by-field walkthrough exists for this specific form. Status remains draft, not verified."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "transactionType",
+      "label": "Transaction type",
+      "type": "enum",
+      "required": true,
+      "description": "new_registration = registering a vehicle for the first time and/or attaching new number plates (Sections 1-3, 7, 8); replacement = applying for a replacement vehicle permit, validation sticker, or number plates (Section 4, plus 7, 8). Both are transaction types the source form's own office-use 'Transaction Type' checklist ('Original Registration' / 'Replacement') distinguishes.",
+      "sourceRef": "SR-LV-006E, page 4, Section B 'Transaction Type' — 'Original Registration ... Replacement'",
+      "validation": { "enum": ["new_registration", "replacement"] }
+    },
+    {
+      "name": "registrantIdentificationNumber",
+      "label": "Registrant Identification Number (Driver's Licence Number)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "classification": "pii",
+      "description": "New plate registrants only.",
+      "sourceRef": "SR-LV-006E, Section 1 — 'Registrant Identification Number (Driver's Licence Number). New Plate Registrants only.'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "registrantSex",
+      "label": "Sex",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "sourceRef": "SR-LV-006E, Section 1 — 'Sex'",
+      "validation": { "minLength": 1, "maxLength": 1 }
+    },
+    {
+      "name": "registrantDateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "classification": "pii",
+      "sourceRef": "SR-LV-006E, Section 1 — 'Date of Birth (yyyy/mm/dd)'"
+    },
+    {
+      "name": "registrantName",
+      "label": "Last Name, First Name and Middle Initial or Company Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "SR-LV-006E, Section 1 — 'Last Name, First Name and Middle Initial or Company Name'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "isNewRegistrantOrAddressChanged",
+      "label": "Are you a new registrant, or has your address changed?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the physical-address fields below must be completed.",
+      "sourceRef": "SR-LV-006E, Section 1 — 'Complete address section only if new registrant or address changed.'"
+    },
+    {
+      "name": "physicalAddressStreet",
+      "label": "Street Number and Name, P.O. Box Number, R.R. Number or Lot, Concession and Township",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistrantOrAddressChanged", "equals": true },
+      "classification": "pii",
+      "sourceRef": "SR-LV-006E, Section 1 — 'Street Number and Name, P.O. Box Number, R.R. Number or Lot, Concession and Township'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "physicalAddressApartment",
+      "label": "Apartment Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "SR-LV-006E, Section 1 — 'Apartment Number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "physicalAddressCity",
+      "label": "City, Town or Village",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistrantOrAddressChanged", "equals": true },
+      "sourceRef": "SR-LV-006E, Section 1 — 'City, Town or Village'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "physicalAddressPostalCode",
+      "label": "Postal Code",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistrantOrAddressChanged", "equals": true },
+      "sourceRef": "SR-LV-006E, Section 1 — 'Postal Code. Enter Postal Code in format: letter, digit, letter, digit, letter, digit.'",
+      "validation": { "pattern": "^[A-Za-z][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]$" }
+    },
+    {
+      "name": "mailingAddressDifferentFromPhysical",
+      "label": "Is the mailing address different from the physical address?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "SR-LV-006E, Section 1 — 'Mailing Address (Complete below only if mailing address is different from above)'"
+    },
+    {
+      "name": "mailingAddressStreet",
+      "label": "Mailing Address — Street Number and Name or Lot, Concession and Township",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "mailingAddressDifferentFromPhysical", "equals": true },
+      "classification": "pii",
+      "sourceRef": "SR-LV-006E, Section 1 — 'Mailing Address. Street Number and Name or Lot, Concession and Township.'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Mailing Address — City, Town or Village",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "mailingAddressDifferentFromPhysical", "equals": true },
+      "sourceRef": "SR-LV-006E, Section 1 — 'Mailing Address. City, Town or Village.'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "mailingAddressPostalCode",
+      "label": "Mailing Address — Postal Code",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "mailingAddressDifferentFromPhysical", "equals": true },
+      "sourceRef": "SR-LV-006E, Section 1 — 'Mailing Address. Postal Code.'",
+      "validation": { "pattern": "^[A-Za-z][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]$" }
+    },
+    {
+      "name": "vehicleToBeRegisteredToTwoIndividuals",
+      "label": "Vehicle to be registered to 2 individuals",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "SR-LV-006E, Section 1 — 'Check below if. Vehicle to be registered to 2 individuals.'"
+    },
+    {
+      "name": "existingPlateNumberToBeAttached",
+      "label": "Plate number to be attached",
+      "type": "string",
+      "required": false,
+      "description": "For a new registration: an existing plate number to be attached to this vehicle, if new number plates are not required. For a replacement: the plate number of the vehicle the lost/stolen/damaged permit, sticker, or plates belong to (Section 4's own 'Complete if applicable ... Plate Number').",
+      "sourceRef": "SR-LV-006E, Section 2 — 'Enter plate number to be attached'; Section 4 — 'Complete if applicable: Plate Number'",
+      "validation": { "minLength": 1, "maxLength": 15 }
+    },
+    {
+      "name": "newNumberPlatesRequired",
+      "label": "Are new number plates required?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "sourceRef": "SR-LV-006E, Section 2 — 'Are new number plates required? Yes / No'"
+    },
+    {
+      "name": "vehicleClass",
+      "label": "Vehicle Class",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "description": "Restricted to the individual/private vehicle classes this schema models. Commercial and Bus, also offered on the source form, are out of scope (business-fleet use).",
+      "sourceRef": "SR-LV-006E, Section 2 — 'Vehicle Class - Check one. Passenger / Motorcycle / Moped / Off-Road / Trailer / Motorized Snow / Commercial / Bus'",
+      "validation": { "enum": ["passenger", "motorcycle", "moped", "off_road", "trailer", "motorized_snow"] }
+    },
+    {
+      "name": "odometerKm",
+      "label": "Odometer (km)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "SR-LV-006E, Section 2 — 'Odometer (km)'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "returningPlatesForCreditOrCancellationNumber",
+      "label": "Plate number being returned for credit or cancellation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "SR-LV-006E, Section 2 — 'If returning plates for credit or cancellation, enter plate number'",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "vehicleStatus",
+      "label": "Is this vehicle to be registered?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "sourceRef": "SR-LV-006E, Section 3 — 'Vehicle Status. Is this vehicle to be registered? Fit / Unfit / Temporary / Other'",
+      "validation": { "enum": ["fit", "unfit", "temporary", "other"] }
+    },
+    {
+      "name": "vehicleStatusOtherDescription",
+      "label": "Other vehicle status (describe)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "vehicleStatus", "equals": "other" },
+      "sourceRef": "SR-LV-006E, Section 3 — 'Is this vehicle to be registered? ... Other'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "replacementItem",
+      "label": "Item being replaced",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "replacement" },
+      "sourceRef": "SR-LV-006E, Section 4 — 'I hereby make application for replacement of: Vehicle Permit / Validation Sticker / Number Plates'",
+      "validation": { "enum": ["vehicle_permit", "validation_sticker", "number_plates"] }
+    },
+    {
+      "name": "reasonForReplacement",
+      "label": "Reason for Replacement",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "replacement" },
+      "sourceRef": "SR-LV-006E, Section 4 — 'Reason for Replacement'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "replacementValidationNumber",
+      "label": "Validation Number",
+      "type": "string",
+      "required": false,
+      "description": "Complete if applicable.",
+      "sourceRef": "SR-LV-006E, Section 4 — 'Complete if applicable: Plate Number / Validation Number / Vehicle Identification Number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "vehicleIdentificationNumber",
+      "label": "Vehicle Identification Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "description": "Used both to identify the vehicle on a replacement application (Section 4, 'Complete if applicable') and to identify the insured vehicle on the compulsory insurance certificate (Section 7).",
+      "sourceRef": "SR-LV-006E, Section 4 — 'Vehicle Identification Number'; Section 7 — 'I hereby certify that the motor vehicle bearing Vehicle Identification Number (Serial Number) is insured...'",
+      "validation": { "minLength": 11, "maxLength": 17 }
+    },
+    {
+      "name": "insuranceCompanyName",
+      "label": "Name of Insurance Company",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "description": "Compulsory automobile insurance, per the Compulsory Automobile Insurance Act.",
+      "sourceRef": "SR-LV-006E, Section 7 — 'Certificate of Insurance (The Compulsory Automobile Insurance Act) ... Name of Insurance Company'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "insurancePolicyNumber",
+      "label": "Policy Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "sourceRef": "SR-LV-006E, Section 7 — 'Policy Number'",
+      "validation": { "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "applicantPrintedName",
+      "label": "Name (Please Print)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "SR-LV-006E, Section 8 — 'Name (Please Print)'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "informationTrueDeclaration",
+      "label": "Declaration: the information in this application is true",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Under provincial legislation, the penalty for making a false statement may include a fine and/or imprisonment and/or a driver's licence suspension.",
+      "sourceRef": "SR-LV-006E, Section 8 — 'I hereby certify the information in this application is true ... Authorized Signature ... the penalty for making a false statement may include a fine and/or imprisonment and/or a driver's licence suspension.'"
+    },
+    {
+      "name": "applicationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "SR-LV-006E, Section 8 — 'Date (yyyy/mm/dd)'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantIdentification",
+      "label": "Personal identification (or third-party/dealer-agent authorization)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "SR-LV-006E, page 4, Section D 'Identification Viewed' — 'Personal ID / Third Party / DAL'"
+    },
+    {
+      "id": "vehicleSourceDocument",
+      "label": "Source document proving the vehicle's origin (New Vehicle Information Statement/dealer certificate, or the vehicle portion of an existing Ontario, out-of-province, or out-of-country permit)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "transactionType", "equals": "new_registration" },
+      "belongsTo": "applicant",
+      "sourceRef": "SR-LV-006E, page 4, Section E 'Identify Source Document' — 'N.V.I.S. or Dealer Certificate / Permit-Vehicle Portion / Permit-Out of Province / Permit-Out of Country'"
+    },
+    {
+      "id": "registrationFeePayment",
+      "label": "Registration/validation/administration fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "SR-LV-006E, page 4, Section H 'Processing Information' — 'Validation ($) / Admin./Reg. ($) / HST ($) / RST ($)'. Amount not encoded as a fixed field value: MTO computes the validation fee, administration fee, and applicable HST/RST from the vehicle class, weight, and transaction type, none of which the applicant enters directly as a dollar amount."
+    }
+  ],
+  "steps": [
+    {
+      "id": "choose_transaction",
+      "title": "Choose the transaction type",
+      "fields": ["transactionType"],
+      "transitions": [
+        { "to": "registrant_and_vehicle", "when": { "field": "transactionType", "equals": "new_registration" } },
+        { "to": "replacement_details", "when": { "field": "transactionType", "equals": "replacement" } }
+      ]
+    },
+    {
+      "id": "registrant_and_vehicle",
+      "title": "Registrant, address, and vehicle details",
+      "fields": [
+        "registrantIdentificationNumber", "registrantSex", "registrantDateOfBirth", "registrantName",
+        "isNewRegistrantOrAddressChanged", "physicalAddressStreet", "physicalAddressApartment",
+        "physicalAddressCity", "physicalAddressPostalCode", "mailingAddressDifferentFromPhysical",
+        "mailingAddressStreet", "mailingAddressCity", "mailingAddressPostalCode",
+        "vehicleToBeRegisteredToTwoIndividuals", "existingPlateNumberToBeAttached",
+        "newNumberPlatesRequired", "vehicleClass", "odometerKm",
+        "returningPlatesForCreditOrCancellationNumber", "vehicleStatus", "vehicleStatusOtherDescription",
+        "vehicleIdentificationNumber", "insuranceCompanyName", "insurancePolicyNumber"
+      ],
+      "next": "certify_and_sign"
+    },
+    {
+      "id": "replacement_details",
+      "title": "Replacement details",
+      "fields": [
+        "registrantName", "existingPlateNumberToBeAttached", "replacementItem", "reasonForReplacement",
+        "replacementValidationNumber", "vehicleIdentificationNumber"
+      ],
+      "next": "certify_and_sign"
+    },
+    {
+      "id": "certify_and_sign",
+      "title": "Certify and sign",
+      "fields": ["applicantPrintedName", "informationTrueDeclaration", "applicationDate"]
+    }
+  ]
+}
