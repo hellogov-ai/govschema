@@ -157,6 +157,30 @@ therefore remains `draft`, not `verified`.
   in-person counter process, the same pattern
   `nl/rdw/drivers-licence-renewal` uses for its three eligibility gates.
 
+## Review-gate correction (GOV-1016)
+
+Re-fetching both primary sources during review found two `sourceRef` quotes
+that did not match the live page text verbatim and corrected them prior to
+merge (the underlying eligibility conditions themselves were unaffected):
+
+- `buyerRegisteredInBrpWithNlAddress`: the live page reads "U staat in de
+  Basisregistratie Personen (BRP) ... met een woonadres of briefadres in
+  Nederland" (no "ingeschreven"; "briefadres" — a correspondence address, not
+  "postadres"/mailing address as originally quoted). Field `label` and
+  `description` were reworded from "mailing address" to "correspondence
+  address" to match, and the `sourceRef` quote corrected.
+- `buyerHasValidIdDocument`: the live page reads "U heeft een geldig
+  legitimatiebewijs" (not "U hebt een geldig identiteitsbewijs" as originally
+  quoted — both terms mean "valid identity/legitimation document" in Dutch
+  administrative usage, but the quote must match the source verbatim).
+- `buyerHasDigidAppWithIdCheck`: corrected "U hebt" to "U heeft" to match the
+  live page's conjugation exactly.
+
+All other sourceRef quotes (18+ condition, seller's kentekencard/
+tenaamstellingscode condition, the 9-digit code, the EUR 13.10 fee/iDEAL-Wero
+payment line, and the JS-shell wizard-page claim) were re-verified against the
+live pages during this review and match verbatim.
+
 ## Path to a `verified` claim (next step)
 
 To advance to `status: verified`, a reviewer with a genuine Dutch DigiD
