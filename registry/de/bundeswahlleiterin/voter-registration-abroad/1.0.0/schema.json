@@ -1,0 +1,421 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "de/bundeswahlleiterin/voter-registration-abroad",
+  "version": "1.0.0",
+  "title": "Germany Voter Registration for Germans Living Abroad (Antrag auf Eintragung in das Wählerverzeichnis für im Ausland lebende Deutsche)",
+  "description": "Apply, from outside Germany, to be entered on the electoral register (Wählerverzeichnis) of the applicant's last-registered German municipality and, in the same application, request a postal ballot (Wahlschein) for a Bundestag (federal parliament) election — using Anlage 2 (zu § 18 Absatz 4 Bundeswahlordnung), the standard-case form published by the Bundeswahlleiterin (Federal Returning Officer) under the Bundeswahlgesetz (Federal Elections Act) and Bundeswahlordnung (Federal Elections Regulation). A German national resident in Germany is enrolled automatically from the municipal residence register (already modelled by de/bmi/residence-registration); a German national living abroad and not registered at any German address is not, and must file this citizen-initiated application with the Gemeindebehörde (municipal authority) of the last German address at which they were registered, no later than the 21st day before the election. This document models Anlage 2 only: the standard-case application for applicants who, within the last 25 years and after turning 14, had a domicile or otherwise habitual residence in Germany for at least three continuous months. It does not model Anlage 1 (for a returnee re-entering Germany itself), Anlage 2a (the narrower 'political familiarity' pathway for applicants who never had that qualifying German residence), the assistance-person (Hilfsperson) accessibility accommodation for applicants unable to read, write, or sign unaided, the postal-ballot documents/instructions themselves once issued, or any subnational European Parliament/Land-election variant of this process. It does not submit the application; the live bundeswahlleiterin.de source and the applicant's own responsible Gemeindebehörde are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Gemeindebehörde (municipal authority of the applicant's last registered German address), under the Bundeswahlgesetz and Bundeswahlordnung, with the application form itself published nationally by the Bundeswahlleiterin (Federal Returning Officer)",
+    "abbreviation": "Bundeswahlleiterin",
+    "url": "https://www.bundeswahlleiterin.de"
+  },
+  "process": {
+    "type": "registration",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://www.bundeswahlleiterin.de/dam/jcr/dc589523-d709-4c43-adbc-9342dda468ad/bwo_anlage-2_ausfuellbar.pdf",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Anlage 2 (zu § 18 Absatz 4 Bundeswahlordnung) — Antrag auf Eintragung in das Wählerverzeichnis und Wahlscheinantrag für im Ausland lebende Deutsche"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the fillable Anlage 2 PDF published on bundeswahlleiterin.de (fetched directly, HTTP 200, no bot-block), extracted with pdfjs-dist's getFieldObjects() to recover the PDF's own AcroForm field names/types/export values, cross-checked against the PDF's own rendered text (including the accompanying Merkblatt/explanatory notes on pages 3-4). Corroborated against bundeswahlleiterin.de's own 'Deutsche im Ausland' guidance page and bundestag.de's explainer, both fetched directly. Status remains draft, not verified — see 'Path to a verified claim' in VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "lastName",
+      "label": "Family name (Familienname)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's current surname.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Familienname', field Familienname",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "birthName",
+      "label": "Birth name, if applicable (ggf. auch Geburtsname)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'ggf. auch Geburtsname', field Geburtsname",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given names (Vornamen)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Vornamen', field Vornamen",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "lastNameAtGermanRegistration",
+      "label": "The family name I was last registered under at a German address",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the surname the applicant was last registered under with a German Meldebehörde is unchanged from lastName, or was a different name at the time.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Mein Familienname, unter dem ich zuletzt ... gemeldet war, ist unverändert / lautete damals', radio field FamiliennameBRD",
+      "validation": {
+        "enum": [
+          "unchanged",
+          "different_at_the_time"
+        ]
+      }
+    },
+    {
+      "name": "formerLastNameAtGermanRegistration",
+      "label": "Former family name at last German registration (lautete damals)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "lastNameAtGermanRegistration",
+        "equals": "different_at_the_time"
+      },
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — text field following 'lautete damals:', field FamiliennameDamalsBRD",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth (Geburtsdatum)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Geburtsdatum Tag Monat Jahr', field Geburtsdatum",
+      "description": "YYYY-MM-DD."
+    },
+    {
+      "name": "email",
+      "label": "Email address, for follow-up questions (E-Mail für Rückfragen)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'E-Mail (für Rückfragen)', field EMail",
+      "validation": {
+        "maxLength": 254,
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "currentAddressAbroad",
+      "label": "Current address abroad (Meine derzeitige Wohnung)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full current residential address outside Germany, in the destination country's own postal format. The form provides two blank lines for this; both are modelled here as one multi-line free-text field, matching this registry's existing convention for multi-line address blocks (e.g. nl/denhaag/voter-registration-abroad's residentialAddress).",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Meine derzeitige Wohnung (vollständige Wohnanschrift im Ausland)', field DerzeitigeWohnungZeile1 / DerzeitigeWohnungZeile2",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "lastGermanAddressFrom",
+      "label": "Last registered German address — resident from (vom)",
+      "type": "date",
+      "required": true,
+      "description": "Start date of the applicant's last continuous, at-least-three-month registered residence in Germany before moving abroad.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'vom ... bis zum ... (Straße, Hausnummer, Postleitzahl, Ort)', first row, field GemeldetBRDVomZeile1"
+    },
+    {
+      "name": "lastGermanAddressTo",
+      "label": "Last registered German address — resident until (bis zum)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — first row, field GemeldetBRDBisZeile1"
+    },
+    {
+      "name": "lastGermanAddress",
+      "label": "Last registered German address (Straße, Hausnummer, Postleitzahl, Ort)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The street, house number, postal code, and place of the last address at which the applicant was registered with a German Meldebehörde. This is also the address that determines the responsible Gemeindebehörde to which this application must be sent.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — first row, field GemeldetBRDAnschriftZeile1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "priorGermanAddressFrom",
+      "label": "Additional prior German address, if needed to reach 3 continuous months — resident from (vom)",
+      "type": "date",
+      "required": false,
+      "description": "Only completed when the qualifying 3-continuous-month period spans more than one registered German address.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — second row, field GemeldetBRDVomZeile2"
+    },
+    {
+      "name": "priorGermanAddressTo",
+      "label": "Additional prior German address — resident until (bis zum)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — second row, field GemeldetBRDBisZeile2"
+    },
+    {
+      "name": "priorGermanAddress",
+      "label": "Additional prior German address (Straße, Hausnummer, Postleitzahl, Ort)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — second row, field GemeldetBRDAnschriftZeile2",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "dateOfDeparture",
+      "label": "Date moved away from Germany (Datum der Abmeldung)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'und bin fortgezogen am (Datum der Abmeldung)', field DatumAbmeldung"
+    },
+    {
+      "name": "countryMovedTo",
+      "label": "Country moved to (nach (Ort, Staat))",
+      "type": "string",
+      "required": true,
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'nach (Ort, Staat)', field FortzugStaat",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Identity document held (Ich bin im Besitz eines)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — radio field BesitzPassart",
+      "validation": {
+        "enum": [
+          "national_identity_card",
+          "passport"
+        ]
+      }
+    },
+    {
+      "name": "identityDocumentNumber",
+      "label": "Identity document number (Ausweisnummer)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Ausweisnummer', field Ausweisnummer",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "identityDocumentIssueDate",
+      "label": "Identity document issue date (ausgestellt am)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'ausgestellt am', field DatumPassAusstellung"
+    },
+    {
+      "name": "identityDocumentIssuingAuthority",
+      "label": "Identity document issuing authority (ausstellende Behörde)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'von (ausstellende Behörde)', field AusstellendeBehoerde",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "priorGermanResidenceDeclaration",
+      "label": "I assure that after turning 14 I had a domicile, or otherwise habitual residence, in Germany for at least three continuous months, no more than 25 years ago",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "The core eligibility condition under § 12 Absatz 2 Satz 1 Nummer 1 Bundeswahlgesetz for Anlage 2. An applicant who cannot make this assurance is out of scope for this document and would instead need Anlage 2a (the 'political familiarity' pathway), not modelled here.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Ich versichere gegenüber der Gemeindebehörde: Ich hatte nach Vollendung meines 14. Lebensjahres ... eine Wohnung inne oder habe mich sonst gewöhnlich aufgehalten und dieser Aufenthalt liegt nicht länger als 25 Jahre zurück', checkbox WahlrechtsvoraussetzungAusland, exportValue 'Ja'"
+    },
+    {
+      "name": "germanNationalityDeclaration",
+      "label": "I assure that I am German within the meaning of Article 116 paragraph 1 of the Basic Law (Grundgesetz)",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Ich bin Deutsche(r) im Sinne des Artikels 116 Absatz 1 des Grundgesetzes', checkbox DeutscherGG, exportValue 'Ja'"
+    },
+    {
+      "name": "votingAgeStatus",
+      "label": "Voting-age status",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Whether the applicant has already turned 18, or will turn 18 on or before election day. Both keep the applicant eligible; the field records which is asserted.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Ich habe das 18. Lebensjahr vollendet' / 'Ich werde das 18. Lebensjahr bis zum Wahltag vollenden', radio field AlterWahlberechtigung",
+      "validation": {
+        "enum": [
+          "already_18",
+          "will_be_18_by_election_day"
+        ]
+      }
+    },
+    {
+      "name": "notExcludedFromVotingRights",
+      "label": "I assure that I am not excluded from the right to vote",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Corresponds to the exclusion grounds in § 13 Bundeswahlgesetz (e.g. loss of voting rights by court judgment).",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Ich bin nicht vom Wahlrecht ausgeschlossen', checkbox Wahlrechtsausschluss, exportValue 'Ja'"
+    },
+    {
+      "name": "noOtherApplicationFiled",
+      "label": "I assure that I have not filed any other application to be entered on the electoral register for this Bundestag election",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A separate form must be completed per applicant, and collective applications are not permitted; this declaration guards against duplicate registration by the same applicant.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Ich habe keinen anderen Antrag auf Eintragung in das Wählerverzeichnis für die Wahl zum Deutschen Bundestag gestellt', checkbox NurEinAntrag, exportValue 'Ja'"
+    },
+    {
+      "name": "ballotDeliveryAddressChoice",
+      "label": "Where the postal-ballot documents (Wahlunterlagen) should be sent",
+      "type": "enum",
+      "required": true,
+      "description": "Either the applicant's currentAddressAbroad, or a different address supplied in ballotDeliveryAddress.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Die Wahlunterlagen sollen an meine oben angegebene derzeitige Wohnung übersandt werden' / '... an folgende Anschrift übersandt werden', radio field VersandAnschrift",
+      "validation": {
+        "enum": [
+          "current_address_abroad",
+          "different_address"
+        ]
+      }
+    },
+    {
+      "name": "ballotDeliveryAddress",
+      "label": "Alternative address for ballot delivery (Straße, Hausnummer / Postleitzahl, Ort, Staat)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "ballotDeliveryAddressChoice",
+        "equals": "different_address"
+      },
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Die Wahlunterlagen sollen mir an folgende Anschrift übersandt werden', fields VersandAnschriftZeile1 / VersandAnschriftZeile2",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of signature (Datum, Unterschrift)",
+      "type": "date",
+      "required": true,
+      "description": "The application must be personally and handwritten signed (a wet-ink signature is required even though transmission by email, fax, or other documentable electronic means is accepted); this field records the date of that signature.",
+      "sourceRef": "bwo_anlage-2_ausfuellbar.pdf, page 1 — 'Datum, Unterschrift des Antragstellers/der Antragstellerin (Vor- und Familienname)', field AntragDatum"
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicantIdentity",
+      "title": "Applicant identity",
+      "fields": [
+        "lastName",
+        "birthName",
+        "givenNames",
+        "lastNameAtGermanRegistration",
+        "formerLastNameAtGermanRegistration",
+        "dateOfBirth",
+        "email"
+      ],
+      "next": "residenceHistory"
+    },
+    {
+      "id": "residenceHistory",
+      "title": "Current residence abroad and prior German residence",
+      "fields": [
+        "currentAddressAbroad",
+        "lastGermanAddressFrom",
+        "lastGermanAddressTo",
+        "lastGermanAddress",
+        "priorGermanAddressFrom",
+        "priorGermanAddressTo",
+        "priorGermanAddress",
+        "dateOfDeparture",
+        "countryMovedTo"
+      ],
+      "next": "identityDocument"
+    },
+    {
+      "id": "identityDocument",
+      "title": "Identity document",
+      "fields": [
+        "identityDocumentType",
+        "identityDocumentNumber",
+        "identityDocumentIssueDate",
+        "identityDocumentIssuingAuthority"
+      ],
+      "next": "eligibilityDeclaration"
+    },
+    {
+      "id": "eligibilityDeclaration",
+      "title": "Eligibility declaration (Versicherung)",
+      "fields": [
+        "priorGermanResidenceDeclaration",
+        "germanNationalityDeclaration",
+        "votingAgeStatus",
+        "notExcludedFromVotingRights",
+        "noOtherApplicationFiled"
+      ],
+      "next": "ballotDelivery"
+    },
+    {
+      "id": "ballotDelivery",
+      "title": "Ballot delivery address",
+      "fields": [
+        "ballotDeliveryAddressChoice",
+        "ballotDeliveryAddress"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and signature",
+      "fields": [
+        "declarationDate"
+      ]
+    }
+  ]
+}
