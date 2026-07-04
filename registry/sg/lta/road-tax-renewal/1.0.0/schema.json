@@ -1,0 +1,226 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/lta/road-tax-renewal",
+  "version": "1.0.0",
+  "title": "Singapore Vehicle Road Tax Renewal",
+  "description": "Renew a Singapore-registered vehicle's road tax through the Land Transport Authority's OneMotoring digital service, keeping the vehicle lawfully licensed to use the road. This is the recurring 'Registration/Tag' renewal counterpart to the one-time Title event already covered by sg/lta/vehicle-ownership-transfer: road tax is renewed every 6 or 12 months for the life of the vehicle, rather than transferred once on a sale. Models an ordinary owner-initiated renewal of an already-registered vehicle's road tax by one of LTA's four published payment channels (online, AXS Services, an existing GIRO arrangement, or an Authorised Road Tax Collection Centre), including the renewal-prerequisite declarations LTA requires before accepting payment. It does not model: first-time vehicle registration or import (a separate process); enrolling in a new GIRO arrangement (eGIRO application, a separate LTA digital service); the vehicle-inspection or insurance-purchase processes themselves, only the applicant's declaration that each prerequisite is met; or computing the road tax/surcharge/late-fee amount payable, which LTA calculates automatically from the vehicle's engine capacity and age once it is identified. It does not submit the renewal; the live OneMotoring portal is always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Land Transport Authority",
+    "abbreviation": "LTA",
+    "url": "https://onemotoring.lta.gov.sg"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://onemotoring.lta.gov.sg/content/onemotoring/home/owning/ongoing-car-costs/road-tax.html",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "OneMotoring 'Road Tax' guidance page"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live OneMotoring 'Road Tax' guidance page (onemotoring.lta.gov.sg/content/onemotoring/home/owning/ongoing-car-costs/road-tax.html), fetched directly with HTTP 200 and no bot-block. The actual transactional 'Renew Road Tax' digital service (onemotoring.lta.gov.sg/content/onemotoring/home/digitalservices/Renew_Road_Tax.html) is a client-side redirect into a Singpass-gated session with no public test/sandbox mode and no published field-by-field spec, so — like sg/lta/vehicle-ownership-transfer and gb/dvla/vehicle-tax before it — this document is transcribed from the surrounding guidance prose rather than an independently captured screen flow or a downloadable form (LTA publishes no paper road-tax-renewal form). Status remains draft, not verified."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "vehicleRegistrationNumber",
+      "label": "Vehicle Registration Number",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's Singapore registration number (VRN), used to look up the road tax amount and renewal prerequisites.",
+      "sourceRef": "Road Tax — 'You can check how much road tax to pay by entering your Vehicle Registration Number'",
+      "validation": { "minLength": 1, "maxLength": 12 }
+    },
+    {
+      "name": "isWeekendOffPeakOrRevisedOffPeakCar",
+      "label": "Is the vehicle a Weekend Car, Off-Peak Car, or Revised Off-Peak Car?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the number-plate-seal inspection prerequisite and restricts renewal to a 12-month period only.",
+      "sourceRef": "Road Tax — 'For Weekend Cars/Off-Peak Cars/Revised Off-Peak Cars and Heavy Vehicles, there may also be additional prerequisites to meet. The road tax of Weekend Cars/Off-Peak Cars/Revised Off-Peak Cars can only be renewed on a 12-monthly basis.'"
+    },
+    {
+      "name": "isHeavyVehicle",
+      "label": "Is the vehicle a heavy vehicle?",
+      "type": "boolean",
+      "required": true,
+      "description": "A vehicle is a heavy vehicle if it is a vehicle with a maximum laden weight more than 5,000kg; a bus with seating capacity more than 15 passengers; a trailer or a mobile crane; or a recovery vehicle with unladen weight more than 2,500kg. Gates the Vehicle Parking Certificate prerequisite.",
+      "sourceRef": "Road Tax — 'Your vehicle is considered a heavy vehicle if it is: A vehicle with a maximum laden weight more than 5,000kg / A bus with seating capacity more than 15 passengers / A trailer or a mobile crane / A recovery vehicle with unladen weight more than 2,500kg'"
+    },
+    {
+      "name": "renewalPeriodMonths",
+      "label": "Renewal period",
+      "type": "integer",
+      "required": true,
+      "description": "6 or 12 months. Weekend Cars, Off-Peak Cars, and Revised Off-Peak Cars (isWeekendOffPeakOrRevisedOffPeakCar) can only choose 12.",
+      "sourceRef": "Road Tax — 'You can renew road tax for 6 or 12 months.'",
+      "validation": { "enum": [6, 12] }
+    },
+    {
+      "name": "insuranceCoverageConfirmed",
+      "label": "Vehicle is insured for the full renewal period",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "The vehicle insurance must cover third-party liability for deaths and bodily injury for the entire period the road tax is being paid.",
+      "sourceRef": "Road Tax — 'Make sure your vehicle is covered by insurance for the entire period you are paying road tax. The vehicle insurance must cover third-party liability for deaths and bodily injury.'"
+    },
+    {
+      "name": "vehicleInspectionDue",
+      "label": "Is a periodic vehicle inspection currently due?",
+      "type": "boolean",
+      "required": true,
+      "description": "If due, an inspection notice is sent about 3 months before the road tax expires.",
+      "sourceRef": "Road Tax — 'If your vehicle is due for periodic inspection, you will receive an inspection notice about 3 months before your road tax expires.'"
+    },
+    {
+      "name": "vehicleInspectionPassed",
+      "label": "Vehicle has passed the required inspection",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "vehicleInspectionDue", "equals": true },
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "Road Tax — renewal prerequisites: 'Pass the required vehicle inspection, if it is due'"
+    },
+    {
+      "name": "noOutstandingFinesConfirmed",
+      "label": "No outstanding fines or warrants from LTA, HDB, URA, or Traffic Police",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "Road Tax — 'If your vehicle has outstanding fines or warrants from LTA, HDB, URA and TP, it may prevent you from renewing your road tax. To renew your road tax smoothly, ensure that your vehicle has no outstanding fines or warrants with these agencies.'"
+    },
+    {
+      "name": "numberPlateSealInspected",
+      "label": "Number plate seals inspected at an LTA-Authorised Inspection Centre",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isWeekendOffPeakOrRevisedOffPeakCar", "equals": true },
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "Road Tax — 'For Weekend Cars / Off Peak Cars / Revised Off Peak Cars — Inspect your vehicle number plate seals at an LTA-Authorised Inspection Centre.'"
+    },
+    {
+      "name": "validVehicleParkingCertificate",
+      "label": "Valid Vehicle Parking Certificate (VPC) held",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isHeavyVehicle", "equals": true },
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "Road Tax — 'For heavy vehicles — Heavy vehicles must have a valid Vehicle Parking Certificate (VPC).'"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "How do you want to renew your road tax?",
+      "type": "enum",
+      "required": true,
+      "description": "online = OneMotoring digital service; axs = AXS Services (AXS Stations or AXS m-/e-Station); giro = an existing GIRO arrangement already covering this vehicle (enrolling in a new GIRO arrangement is a separate eGIRO application, not modelled here); collection_centre = an Authorised Road Tax Collection Centre. From 1 February 2025, cash, cheque, and cashier's order are no longer accepted at Inspection Centres.",
+      "sourceRef": "Road Tax — 'There are 4 different ways to renew your road tax: Online / AXS services / GIRO / Road Tax Collection Centres'",
+      "validation": { "enum": ["online", "axs", "giro", "collection_centre"] }
+    },
+    {
+      "name": "onlinePaymentInstrument",
+      "label": "Online payment instrument",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "paymentMethod", "equals": "online" },
+      "sourceRef": "Road Tax — 'A valid credit or debit card (VISA or MasterCard only) or an Internet Banking account with DBS/POSB, OCBC/Plus!, Standard Chartered Bank or UOB (eNETS Debit).'",
+      "validation": { "enum": ["credit_or_debit_card_visa_mastercard", "internet_banking_enets_debit"] }
+    },
+    {
+      "name": "axsPaymentInstrument",
+      "label": "AXS payment instrument",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "paymentMethod", "equals": "axs" },
+      "description": "atm_card = ATM cards by DBS, POSB, HSBC, Maybank, OCBC, Standard Chartered Bank, or UOB (AXS Stations); credit_card_dbs_posb = credit cards by DBS or POSB (AXS Stations); the remaining values are AXS m-Station/e-Station-only options.",
+      "sourceRef": "Road Tax — 'At AXS Stations, you can pay by: ATM cards by DBS, POSB, HSBC, Maybank, OCBC, Standard Chartered Bank or UOB / Credit cards by DBS or POSB. For AXS m-Station & e-Station, you can pay by: eNETS Debit - Internet Banking / DBS or POSB MasterCard Debit Card / DBS Paylah! / MasterPass'",
+      "validation": { "enum": ["atm_card", "credit_card_dbs_posb", "enets_debit_internet_banking", "dbs_posb_mastercard_debit_card", "dbs_paylah", "masterpass"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "motorInsuranceCertificatePrintout",
+      "label": "Printout of the motor insurance certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "paymentMethod", "equals": "collection_centre" },
+      "belongsTo": "applicant",
+      "sourceRef": "Road Tax — 'Meet all renewal prerequisites in advance and bring along the original prerequisite documents. e.g. printout of your motor insurance certificate and vehicle inspection certificate.'"
+    },
+    {
+      "id": "vehicleInspectionCertificatePrintout",
+      "label": "Printout of the vehicle inspection certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "paymentMethod", "equals": "collection_centre" },
+          { "field": "vehicleInspectionDue", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Road Tax — 'Meet all renewal prerequisites in advance and bring along the original prerequisite documents. e.g. printout of your motor insurance certificate and vehicle inspection certificate.'"
+    },
+    {
+      "id": "roadTaxPayment",
+      "label": "Road tax payment (plus any age-based surcharge or late-renewal fee)",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Road Tax — 'Road tax surcharge for vehicles over 10 years': 10%/20%/30%/40%/50% surcharge tiers at 10/11/12/13/14+ years old; and 'Late renewal fees' tables by engine capacity and vehicle type. Amount not encoded as a fixed field value: LTA computes the base rate from engine capacity, the surcharge from vehicle age, and any late fee from days past expiry, none of which the applicant enters directly in this transaction."
+    }
+  ],
+  "steps": [
+    {
+      "id": "identify_vehicle_and_period",
+      "title": "Identify the vehicle and choose a renewal period",
+      "fields": [
+        "vehicleRegistrationNumber", "isWeekendOffPeakOrRevisedOffPeakCar",
+        "isHeavyVehicle", "renewalPeriodMonths"
+      ],
+      "next": "renewal_prerequisites"
+    },
+    {
+      "id": "renewal_prerequisites",
+      "title": "Confirm renewal prerequisites",
+      "fields": [
+        "insuranceCoverageConfirmed", "vehicleInspectionDue", "vehicleInspectionPassed",
+        "noOutstandingFinesConfirmed", "numberPlateSealInspected", "validVehicleParkingCertificate"
+      ],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Choose a payment channel and pay",
+      "fields": ["paymentMethod", "onlinePaymentInstrument", "axsPaymentInstrument"]
+    }
+  ]
+}
