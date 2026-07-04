@@ -1,0 +1,555 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/dia/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "New Zealand First-Time Adult Passport Application",
+  "description": "First application for a New Zealand passport by an adult (16 or older) who has never held one, through the Department of Internal Affairs' passport service. Models the data collected in common by both the online first-time application (dia.services.govt.nz) and the paper Form PAS310: personal details, the entitlement basis that confirms New Zealand citizenship, names at birth (to establish that entitlement), the identity referee/witness who confirms the applicant's identity, contact and delivery details, and the processing-speed/payment choice. Scoped to an applicant whose name has never changed since birth; name-change, replacement, and renewal pathways are separate processes (see nameChangedSinceBirth and the sibling nz/dia/passport-renewal-adult document). It does not submit the application; the live govt.nz / passports.govt.nz sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Internal Affairs, New Zealand Passports (Te Tari Taiwhenua)",
+    "abbreviation": "DIA",
+    "url": "https://www.passports.govt.nz/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-NZ"
+  },
+  "source": {
+    "url": "https://www.govt.nz/browse/passports-citizenship-and-identity/get-or-renew-a-new-zealand-passport/apply-for-a-new-adult-passport/",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "PAS310"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live govt.nz 'Apply for your first adult passport' and dia.services.govt.nz 'Getting started' guidance pages, plus the full text of the official Form PAS310 (31 January 2025 edition) — the paper application DIA itself directs first-time applicants without internet access to use — read directly, page by page. passports.govt.nz (the DIA's own domain) again returned HTTP 403 to automated retrieval of the live PAS310 PDF, the same gotcha recorded for the sibling nz/dia/passport-renewal-adult; unlike that document, however, a Wayback Machine capture of the exact same live PDF (21 Feb 2025 snapshot of passports.govt.nz/__data/assets/pdf_file/0018/19602/adult-new-v2.pdf, confirmed via the CDX API against the live URL) was retrieved and its full text read via pdfjs-dist, giving this document direct, verbatim field-by-field grounding rather than the renewal sibling's secondary-source corroboration. The BDM76 Identity Referee Declaration (govt.nz-hosted, read for the renewal sibling) independently corroborates PAS310's own witness-eligibility criteria word for word. Status remains 'draft' pending a second reviewer's independent field-by-field pass; see VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isAgeSixteenOrOlder",
+      "label": "Are you aged 16 or older?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "This document covers the adult passport process. Applicants under 16 need a child passport, a separate process out of scope here.",
+      "sourceRef": "govt.nz — Apply for your first adult passport: eligibility (16 or older)"
+    },
+    {
+      "name": "nameChangedSinceBirth",
+      "label": "Is the name you want in your passport different from your name at birth (e.g. due to marriage, civil union, statutory declaration, or deed poll)?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "This document models the common case of an applicant whose name has never changed. If your current name differs from your birth name, complete Form PAS310 sections 6 (Name change by marriage or civil union) and/or 7 (Name change by statutory declaration or deed poll) directly with DIA; those pathways, and the accompanying original-certificate document requirements, are out of scope here.",
+      "sourceRef": "PAS310, page 3 — sections 6 and 7 (Name change by marriage or civil union; Name change by statutory declaration or deed poll)"
+    },
+    {
+      "name": "surname",
+      "label": "Surname or family name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name you want to appear in your passport. Must be an officially registered name (e.g. by birth, marriage, civil union, statutory declaration/deed poll, or a citizenship certificate), not a nickname.",
+      "sourceRef": "PAS310, page 9 — Section 1 'Your personal details': Surname or family name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstAndMiddleNames",
+      "label": "First and middle names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 9 — Section 1 'Your personal details': First and middle names",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full date, YYYY-MM-DD.",
+      "sourceRef": "PAS310, page 9 — Section 1: Write your date of birth"
+    },
+    {
+      "name": "placeOfBirthTown",
+      "label": "Place of birth — city or town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 9 — Section 1: Write your place of birth — City or town you were born in",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Place of birth — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 9 — Section 1: Write your place of birth — Country you were born in",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender to appear on the passport",
+      "type": "enum",
+      "required": true,
+      "description": "M = Male, F = Female, X = Gender diverse. Some international travel-authorisation systems and e-Gates may not recognise X; check requirements for any country you plan to visit or transit.",
+      "sourceRef": "PAS310, page 9 — Section 1: Tick your gender — Male / Female / Gender X",
+      "validation": { "enum": ["M", "F", "X"] }
+    },
+    {
+      "name": "heightCm",
+      "label": "Height (cm)",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "PAS310, page 9 — Section 1: Write your height (centimetres)",
+      "validation": { "minimum": 50, "maximum": 251 }
+    },
+    {
+      "name": "eyeColour",
+      "label": "Eye colour",
+      "type": "string",
+      "required": true,
+      "description": "Choose the closest match, e.g. brown, blue, green, grey, hazel, black.",
+      "sourceRef": "PAS310, page 9 — Section 1: Write your eye colour",
+      "validation": { "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "citizenshipBasis",
+      "label": "What is your basis for entitlement to a New Zealand passport?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": ["born_in_nz", "born_in_niue_cook_islands_tokelau", "citizenship_by_grant_or_descent", "other_reason"],
+      "description": "born_in_nz = born in New Zealand, no supporting document required. born_in_niue_cook_islands_tokelau = born in Niue, the Cook Islands, or Tokelau — requires the original birth certificate document. citizenship_by_grant_or_descent = citizenship obtained by grant or descent — requires the citizenshipCertificateNumber; if citizenship has not yet been confirmed via a certificate, the applicant must first resolve status through the Citizenship Office (citizenship.govt.nz), a separate process out of scope here. other_reason = any other claimed entitlement, requiring supporting document evidence.",
+      "sourceRef": "PAS310, page 9 — Section 2 'Your entitlement to a New Zealand passport' (tick only one)",
+      "validation": { "enum": ["born_in_nz", "born_in_niue_cook_islands_tokelau", "citizenship_by_grant_or_descent", "other_reason"] }
+    },
+    {
+      "name": "citizenshipCertificateNumber",
+      "label": "Citizenship certificate number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "citizenshipBasis", "equals": "citizenship_by_grant_or_descent" },
+      "description": "Required only when citizenshipBasis is citizenship_by_grant_or_descent. No original document needs to be sent with the application; the certificate number is matched against Citizenship Office records.",
+      "sourceRef": "PAS310, page 9 — Section 2: 'I have obtained New Zealand citizenship by grant or descent — Write your Citizenship Certificate number'",
+      "validation": { "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "mothersNameAtBirthSurname",
+      "label": "Your mother's surname at your birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Used, together with your father's name and your mother's maiden name, to confirm entitlement against birth records. If you were legally adopted, provide your adoptive parents' names.",
+      "sourceRef": "PAS310, page 10 — Section 3 'Names at birth': Write your mother's name at your birth — Surname or family name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "mothersNameAtBirthFirstNames",
+      "label": "Your mother's first and middle names at your birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 3: Write your mother's name at your birth — First and middle names",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "mothersMaidenNameSurname",
+      "label": "Your mother's surname at her own birth (maiden name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 3: Write your mother's name at her birth (maiden name) — Surname or family name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "fathersNameAtBirthSurname",
+      "label": "Your father's surname at your birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 3: Write your father's name at your birth — Surname or family name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "fathersNameAtBirthFirstNames",
+      "label": "Your father's first and middle names at your birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 3: Write your father's name at your birth — First and middle names",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "homeAddressStreet",
+      "label": "Home address — unit/house number and street name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The place you are currently living. Not a box or bag number, or a 'care of' address.",
+      "sourceRef": "PAS310, page 10 — Section 4 'Your contact and delivery details': Write your home address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "homeAddressSuburb",
+      "label": "Home address — suburb",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 4: Write your home address — Suburb",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "homeAddressCityOrTown",
+      "label": "Home address — city or town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 4: Write your home address — City or town",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "homeAddressCountry",
+      "label": "Home address — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 4: Write your home address — Country",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "homeAddressPostcode",
+      "label": "Home address — postcode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 4: Write your home address — Postcode",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "contactPhone",
+      "label": "Contact phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "In international E.164 format, e.g. +6421234567. The source form separately collects home, work, and mobile numbers; this document collects one reachable contact number.",
+      "sourceRef": "PAS310, page 10 — Section 4: Write your contact details (Home phone / Work phone / Mobile phone)",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 10 — Section 4: Email",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "deliverToDifferentAddress",
+      "label": "Deliver the passport to an address other than your home address?",
+      "type": "boolean",
+      "required": false,
+      "description": "If false, the passport is delivered to homeAddressStreet.",
+      "sourceRef": "PAS310, page 11 — Section 4: 'Write the address you want your passport delivered to if different from your home address'"
+    },
+    {
+      "name": "deliveryStreetOrPoBox",
+      "label": "Delivery address — street address or PO Box",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliverToDifferentAddress", "equals": true },
+      "classification": "pii",
+      "description": "Required only when deliverToDifferentAddress is true. If delivery is by international courier, a street address is required — a PO Box number cannot be used.",
+      "sourceRef": "PAS310, page 11 — Section 4: Unit and/or house number / Street name, or Post Box number / Post Box holder name",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "deliverySuburb",
+      "label": "Delivery address — suburb",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 11 — Section 4: Suburb",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "deliveryCityOrTown",
+      "label": "Delivery address — city or town",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliverToDifferentAddress", "equals": true },
+      "classification": "pii",
+      "sourceRef": "PAS310, page 11 — Section 4: City or town",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "deliveryCountry",
+      "label": "Delivery address — country",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliverToDifferentAddress", "equals": true },
+      "classification": "pii",
+      "sourceRef": "PAS310, page 11 — Section 4: Country",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "deliveryPostcode",
+      "label": "Delivery address — postcode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 11 — Section 4: Postcode",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "photo",
+      "label": "Passport photo",
+      "type": "file",
+      "required": true,
+      "description": "A colour photo, less than 6 months old, meeting New Zealand passport photo standards (plain light background, neutral expression, no head covering except for religious/medical reasons). The online channel accepts one digital photo upload; the paper Form PAS310 requires 2 identical printed photos, one endorsed on the back by the identity referee/witness.",
+      "sourceRef": "PAS310, page 6 — 'Photos — getting passport quality photos'; page 1 — 'What you need to complete this application: 2 identical recent colour photos of yourself'"
+    },
+    {
+      "name": "identityRefereePassportNumber",
+      "label": "Identity referee/witness — New Zealand passport number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Personal identifier of a third party; handle as sensitive data. The referee (PAS310 calls this role 'witness'; online guidance and the BDM76 Identity Referee Declaration call it 'identity referee') must hold a currently valid New Zealand passport.",
+      "sourceRef": "PAS310, page 17 — Section 12 'Witness section': Write your New Zealand passport number",
+      "validation": { "pattern": "^[A-Za-z0-9]{6,9}$" }
+    },
+    {
+      "name": "identityRefereeYearsKnown",
+      "label": "Identity referee/witness — how many years have they known you?",
+      "type": "integer",
+      "required": true,
+      "description": "Must be 1 year or more.",
+      "sourceRef": "PAS310, page 17 — Section 12: Write how many years you have known the applicant",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "identityRefereeSurname",
+      "label": "Identity referee/witness — surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Personal identifier of a third party; handle as sensitive data. The referee must be 16 or older, not a relative/extended family member, not the applicant's spouse or partner, and not living at the applicant's address.",
+      "sourceRef": "PAS310, page 17 — Section 12: Write your name — Surname or family name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "identityRefereeFirstNames",
+      "label": "Identity referee/witness — first and middle names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 17 — Section 12: Write your name — First and middle names",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "identityRefereeDateOfBirth",
+      "label": "Identity referee/witness — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full date, YYYY-MM-DD.",
+      "sourceRef": "PAS310, page 17 — Section 12: Write your date of birth"
+    },
+    {
+      "name": "identityRefereeAddress",
+      "label": "Identity referee/witness — address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Single free-text field covering the source form's unit/street/suburb/city/postcode/state/country breakdown for this third party's address.",
+      "sourceRef": "PAS310, page 17 — Section 12: Write your address and contact details",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "identityRefereePhone",
+      "label": "Identity referee/witness — contact phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "In international E.164 format, e.g. +6421234567. The referee will be contacted and asked additional questions to verify the applicant's identity.",
+      "sourceRef": "PAS310, page 17 — Section 12: Home phone / Daytime phone",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "emergencyContactSurname",
+      "label": "Emergency contact — surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A person who can be contacted if you have an accident, become sick, or are involved in an incident while travelling. Recommended to be someone not travelling with you.",
+      "sourceRef": "PAS310, page 16 — Section 10 'Your emergency contact': Surname or family name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactFirstNames",
+      "label": "Emergency contact — first and middle names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PAS310, page 16 — Section 10: First and middle names",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact — phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "In international E.164 format, e.g. +6421234567. The source form separately collects home and daytime numbers; this document collects one reachable number.",
+      "sourceRef": "PAS310, page 16 — Section 10: Home phone / Daytime phone",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "emergencyContactAddress",
+      "label": "Emergency contact — address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Single free-text field covering the source form's unit/street/suburb/city/postcode/state/country breakdown for this third party's address.",
+      "sourceRef": "PAS310, page 16 — Section 10: address fields",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "applicantDeclarationTruthfulComplete",
+      "label": "I declare that the information I have given in this application is, to the best of my knowledge, true, complete and correct",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "It is an offence against the Passports Act 1992 to knowingly or recklessly make a false or misleading statement to obtain a passport.",
+      "sourceRef": "PAS310, page 16 — Section 11 'Your applicant declaration'"
+    },
+    {
+      "name": "applicantDeclarationDate",
+      "label": "Date signed",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "PAS310, page 16 — Section 11: Date signed"
+    },
+    {
+      "name": "processingSpeed",
+      "label": "Processing speed",
+      "type": "enum",
+      "required": true,
+      "description": "standard = standard processing. urgent = up to 3 working days, for an additional fee, subject to demand and a complete application. callout = by phone appointment only. Confirm current fees and timeframes on the live source.",
+      "sourceRef": "PAS310, page 18 — Section 13 'Application fees and payment': Tick the level of service you want",
+      "validation": { "enum": ["standard", "urgent", "callout"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "card = credit, debit, or prepaid card (e.g. Prezzy card). eftpos_in_person = EFTPOS, in person only. Cash, cheques, and money orders are not accepted. The online channel instead offers card or online banking (see the sibling nz/dia/passport-renewal-adult document).",
+      "sourceRef": "PAS310, page 18 — Section 13: Tick the method of payment you want",
+      "validation": { "enum": ["card", "eftpos_in_person"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "birthCertificateNiueCookIslandsTokelau",
+      "label": "Original birth certificate showing place of birth and parents' names",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "citizenshipBasis", "equals": "born_in_niue_cook_islands_tokelau" },
+      "belongsTo": "applicant",
+      "sourceRef": "PAS310, page 8 — checklist: 'Born in Niue, the Cook Islands or Tokelau — Your original birth certificate (showing place of birth and parents' names)'"
+    },
+    {
+      "id": "entitlementEvidence",
+      "label": "Documentary evidence supporting your claimed entitlement",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "citizenshipBasis", "equals": "other_reason" },
+      "belongsTo": "applicant",
+      "sourceRef": "PAS310, page 8 — checklist: 'Entitlement for another reason — Any documentary evidence that supports your claim'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Check you can use this document",
+      "fields": ["isAgeSixteenOrOlder", "nameChangedSinceBirth"],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Your details",
+      "fields": ["surname", "firstAndMiddleNames", "dateOfBirth", "placeOfBirthTown", "placeOfBirthCountry", "gender", "heightCm", "eyeColour"],
+      "next": "entitlement"
+    },
+    {
+      "id": "entitlement",
+      "title": "Your entitlement to a New Zealand passport",
+      "fields": ["citizenshipBasis", "citizenshipCertificateNumber"],
+      "next": "names_at_birth"
+    },
+    {
+      "id": "names_at_birth",
+      "title": "Names at birth",
+      "fields": ["mothersNameAtBirthSurname", "mothersNameAtBirthFirstNames", "mothersMaidenNameSurname", "fathersNameAtBirthSurname", "fathersNameAtBirthFirstNames"],
+      "next": "contact_and_delivery"
+    },
+    {
+      "id": "contact_and_delivery",
+      "title": "Contact and delivery details",
+      "fields": ["homeAddressStreet", "homeAddressSuburb", "homeAddressCityOrTown", "homeAddressCountry", "homeAddressPostcode", "contactPhone", "email", "deliverToDifferentAddress", "deliveryStreetOrPoBox", "deliverySuburb", "deliveryCityOrTown", "deliveryCountry", "deliveryPostcode"],
+      "next": "photo"
+    },
+    {
+      "id": "photo",
+      "title": "Photo",
+      "fields": ["photo"],
+      "next": "identity_referee"
+    },
+    {
+      "id": "identity_referee",
+      "title": "Identity referee / witness",
+      "fields": ["identityRefereePassportNumber", "identityRefereeYearsKnown", "identityRefereeSurname", "identityRefereeFirstNames", "identityRefereeDateOfBirth", "identityRefereeAddress", "identityRefereePhone"],
+      "next": "emergency_contact"
+    },
+    {
+      "id": "emergency_contact",
+      "title": "Emergency contact",
+      "fields": ["emergencyContactSurname", "emergencyContactFirstNames", "emergencyContactPhone", "emergencyContactAddress"],
+      "next": "declaration_and_payment"
+    },
+    {
+      "id": "declaration_and_payment",
+      "title": "Declaration, processing speed and payment",
+      "fields": ["applicantDeclarationTruthfulComplete", "applicantDeclarationDate", "processingSpeed", "paymentMethod"]
+    }
+  ]
+}
