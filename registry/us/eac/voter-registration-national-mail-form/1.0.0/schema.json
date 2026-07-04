@@ -1,0 +1,495 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/eac/voter-registration-national-mail-form",
+  "version": "1.0.0",
+  "title": "United States National Mail Voter Registration Form (EAC)",
+  "description": "Register to vote, report a change of name or address, or register with a political party in a U.S. State using the U.S. Election Assistance Commission's National Mail Voter Registration Form — a single federal form, prescribed under the National Voter Registration Act of 1993 (NVRA), that most States are required to accept by mail or in person. The federal portion of the form (Boxes 1-9 and Boxes A-D) is uniform nationwide; a handful of items (the acceptable ID number, whether party choice or race/ethnicity are collected, the registration deadline, and the eligibility oath) are governed by each State's own instructions, which this document models as State-dependent rather than enumerating all 50 States plus D.C. and the territories. Alabama, North Dakota, New Hampshire, Wisconsin, and Wyoming each apply this form differently or not at all (item 6). This document models the applicant inputs and the resulting eligibility branch; it does not submit the form, and the live eac.gov source and the applicant's own State instructions are always authoritative (see verification).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "level": "national"
+  },
+  "authority": {
+    "name": "U.S. Election Assistance Commission",
+    "abbreviation": "EAC",
+    "url": "https://www.eac.gov/voters/national-mail-voter-registration-form"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www.eac.gov/voters/national-mail-voter-registration-form",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "National Mail Voter Registration Form and instructions booklet, OMB Control No. 3265-0015 (https://www.eac.gov/sites/default/files/eac_assets/1/6/Federal_Voter_Registration_ENG.pdf)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-04",
+    "notes": "Authored per GOV-1112 to close the last open 'remaining voter registration' jurisdiction (US) in the National ID & Civic Documents vertical (AU/CA/FR/GB/IE/IN/NZ already published; SG confirmed automatic/NRIC-based and out of scope, GOV-1075). The federal form was chosen over a subnational approach (unlike, e.g., the SNAP catalog candidate) because the EAC prescribes one uniform form under the NVRA that (with five named State exceptions) every other State must accept — the fragmentation SNAP has does not apply here. Fields were extracted directly from the fillable form's own AcroForm field annotations (pdfjs-dist) plus the General/Application/State Instructions text layer (all 27 pages read verbatim), not a secondhand summary. Box 6 (ID number), Box 7 (party), Box 8 (race/ethnicity), the registration deadline, and the Box 9 oath vary by State; this document represents that variance structurally (idNumberType enum; optional partyChoice/raceOrEthnicGroup) rather than encoding all 50 States' instructions, consistent with how gb/dvla/international-driving-permit leaves a country-dependent lookup table as applicant-supplied choice rather than enumerated data. Status remains 'draft' pending a second independent field-by-field pass; see VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isUSCitizen",
+      "label": "Are you a citizen of the United States of America?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Top-of-form gating question. Federal law makes it illegal to falsely claim U.S. citizenship to register to vote.",
+      "sourceRef": "Form page 4 — 'Are you a citizen of the United States of America? Yes/No'"
+    },
+    {
+      "name": "willBe18ByElectionDay",
+      "label": "Will you be 18 years old on or before election day?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Top-of-form gating question. Some States permit registration prior to age 18 under State-specific rules described in that State's instructions.",
+      "sourceRef": "Form page 4 — 'Will you be 18 years old on or before election day? Yes/No'"
+    },
+    {
+      "name": "courtesyTitle",
+      "label": "Title",
+      "type": "enum",
+      "required": false,
+      "description": "Courtesy title, Box 1.",
+      "sourceRef": "Form page 4, Box 1 — Mr./Mrs./Miss/Ms.",
+      "validation": { "enum": ["Mr", "Mrs", "Miss", "Ms"] }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Do not use nicknames or initials.",
+      "sourceRef": "Form page 4, Box 1 — Last Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Do not use nicknames or initials.",
+      "sourceRef": "Form page 4, Box 1 — First Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "middleNames",
+      "label": "Middle name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box 1 — Middle Name(s)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nameSuffix",
+      "label": "Name suffix",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Form page 4, Box 1 — Jr/Sr/II/III/IV",
+      "validation": { "enum": ["Jr", "Sr", "II", "III", "IV"] }
+    },
+    {
+      "name": "homeAddressStreet",
+      "label": "Home address (street)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Legal residential address. Do not use a mailing address if different, and do not use a P.O. box or a rural route without a box number (see State instructions for route-number rules). If there is no street address, see hasNoStreetAddress/ruralLocationDescription instead.",
+      "sourceRef": "Form page 4, Box 2 — Home Address",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "homeAddressAptOrLot",
+      "label": "Home address — apt. or lot #",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form page 4, Box 2 — Apt. or Lot #",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "homeAddressCity",
+      "label": "Home address — city/town",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box 2 — City/Town",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "homeAddressState",
+      "label": "Home address — State",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter USPS State/territory abbreviation, e.g. CA, NY, TX. Determines which State's item 6/7/8/9 instructions and deadline apply. North Dakota does not have voter registration; Wyoming law does not permit mail registration; New Hampshire and Wisconsin municipal clerks accept this form only as a request for their own absentee/online registration process.",
+      "sourceRef": "Form page 4, Box 2 — State",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "homeAddressZip",
+      "label": "Home address — ZIP code",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box 2 — Zip Code",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "hasMailingAddressDifferentFromHome",
+      "label": "Do you get your mail at an address different from your home address?",
+      "type": "boolean",
+      "required": true,
+      "description": "If there is no home address in Box 2 (see hasNoStreetAddress), a mailing address is mandatory here instead of optional.",
+      "sourceRef": "Form page 4, Box 3 — 'Address Where You Get Your Mail If Different From Above'"
+    },
+    {
+      "name": "mailingAddressStreet",
+      "label": "Mailing address (street)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box 3",
+      "validation": { "maxLength": 120 },
+      "requiredWhen": { "field": "hasMailingAddressDifferentFromHome", "equals": true }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Mailing address — city/town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form page 4, Box 3 — City/Town",
+      "validation": { "maxLength": 80 },
+      "requiredWhen": { "field": "hasMailingAddressDifferentFromHome", "equals": true }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Mailing address — State",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form page 4, Box 3 — State",
+      "validation": { "pattern": "^[A-Z]{2}$" },
+      "requiredWhen": { "field": "hasMailingAddressDifferentFromHome", "equals": true }
+    },
+    {
+      "name": "mailingAddressZip",
+      "label": "Mailing address — ZIP code",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box 3 — Zip Code",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" },
+      "requiredWhen": { "field": "hasMailingAddressDifferentFromHome", "equals": true }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full date, YYYY-MM-DD. Must not be today's date.",
+      "sourceRef": "Form page 4, Box 4 — Date of Birth (Month, Day, Year)"
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone number (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "In international E.164 format, e.g. +12025551234. Requested by most States in case of questions about the application.",
+      "sourceRef": "Form page 4, Box 5 — Telephone Number (optional)",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "idNumberType",
+      "label": "ID number type provided for Box 6",
+      "type": "enum",
+      "required": true,
+      "description": "Federal law requires an identification number from each registrant. drivers_license_or_state_id = the driver's license or non-driver State ID number for the home-address State; last_4_ssn = last 4 digits of the applicant's Social Security number, used only if the applicant has no driver's license or State ID; none_assigned_by_state = the applicant has neither, in which case the State assigns a number ('NONE' is written on the paper form). See item 6 in the applicant's State instructions for State-specific rules.",
+      "sourceRef": "Form page 4, Box 6 — 'ID Number (See item 6 in the instructions for your state)'",
+      "validation": { "enum": ["drivers_license_or_state_id", "last_4_ssn", "none_assigned_by_state"] }
+    },
+    {
+      "name": "idNumber",
+      "label": "ID number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The driver's license/State ID number, or the last 4 digits of the Social Security number, per idNumberType. Format (length, alphanumeric vs. numeric) is State-specific; see item 6 in the applicant's State instructions.",
+      "sourceRef": "Form page 4, Box 6",
+      "validation": { "minLength": 1, "maxLength": 20 },
+      "requiredWhen": { "any": [
+        { "field": "idNumberType", "equals": "drivers_license_or_state_id" },
+        { "field": "idNumberType", "equals": "last_4_ssn" }
+      ] }
+    },
+    {
+      "name": "partyChoice",
+      "label": "Choice of party",
+      "type": "string",
+      "required": false,
+      "description": "Only meaningful in States that register voters by party (see item 7 in the applicant's State instructions); leave blank or write 'No Party' for no preference. Do not write 'independent' if 'no party' is meant, since it may be confused with an actual party name in some States. Some States (e.g. Alabama, Alaska, Arizona) do not use this field at all.",
+      "sourceRef": "Form page 4, Box 7 — 'Choice of Party (see item 7 in the instructions for your State)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "raceOrEthnicGroup",
+      "label": "Race or ethnic group",
+      "type": "enum",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Collected by only a few States to administer the federal Voting Rights Act (see item 8 in the applicant's State instructions); most States leave this blank.",
+      "sourceRef": "Form page 3, Application Instructions Box 8; Form page 4, Box 8 — 'Race or Ethnic Group (see item 8 in the instructions for your State)'",
+      "validation": { "enum": ["american_indian_or_alaska_native", "asian_or_pacific_islander", "black_not_hispanic_origin", "hispanic", "multi_racial", "white_not_hispanic_origin", "other"] }
+    },
+    {
+      "name": "isNameChange",
+      "label": "Is this application to report a change of name?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates Box A (previous name).",
+      "sourceRef": "Form page 4, Box A — 'If this application is for a change of name, what was your name before you changed it?'"
+    },
+    {
+      "name": "previousFullName",
+      "label": "Full name before the change (Box A)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box A",
+      "validation": { "maxLength": 200 },
+      "requiredWhen": { "field": "isNameChange", "equals": true }
+    },
+    {
+      "name": "isFirstTimeRegisteringAtThisAddress",
+      "label": "Were you registered before, but is this the first time registering from the address in Box 2?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates Box B (previous registration address).",
+      "sourceRef": "Form page 4, Box B — 'If you were registered before but this is the first time you are registering from the address in Box 2, what was your address where you were registered before?'"
+    },
+    {
+      "name": "previousRegistrationAddressStreet",
+      "label": "Previous registration address — street (or route and box number) (Box B)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box B — Street (or route and box number)",
+      "validation": { "maxLength": 120 },
+      "requiredWhen": { "field": "isFirstTimeRegisteringAtThisAddress", "equals": true }
+    },
+    {
+      "name": "previousRegistrationAddressCity",
+      "label": "Previous registration address — city/town/county (Box B)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form page 4, Box B — City/Town/County",
+      "validation": { "maxLength": 80 },
+      "requiredWhen": { "field": "isFirstTimeRegisteringAtThisAddress", "equals": true }
+    },
+    {
+      "name": "previousRegistrationAddressState",
+      "label": "Previous registration address — State (Box B)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form page 4, Box B — State",
+      "validation": { "pattern": "^[A-Z]{2}$" },
+      "requiredWhen": { "field": "isFirstTimeRegisteringAtThisAddress", "equals": true }
+    },
+    {
+      "name": "previousRegistrationAddressZip",
+      "label": "Previous registration address — ZIP code (Box B)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form page 4, Box B — Zip Code",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" },
+      "requiredWhen": { "field": "isFirstTimeRegisteringAtThisAddress", "equals": true }
+    },
+    {
+      "name": "hasNoStreetAddress",
+      "label": "Do you live in a rural area with no street number, or have no address?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates Box C, the paper form's hand-drawn location map.",
+      "sourceRef": "Form page 4, Box C — 'If you live in a rural area but do not have a street number, or if you have no address, please show on the map where you live.'"
+    },
+    {
+      "name": "ruralLocationDescription",
+      "label": "Written description of your location (Box C)",
+      "type": "string",
+      "required": false,
+      "description": "The paper form asks for a hand-drawn map (nearest crossroads/streets marked with an X for the home, dots for nearby landmarks such as schools, churches, or stores). This field captures the equivalent written description for an agent-mediated submission; the applicant (or someone helping on paper) must still draw the map on the physical form actually mailed in.",
+      "sourceRef": "Form page 4, Box C",
+      "validation": { "maxLength": 500 },
+      "requiredWhen": { "field": "hasNoStreetAddress", "equals": true }
+    },
+    {
+      "name": "identificationProofAttached",
+      "label": "Copy of identification document attached (first-time mail voter)",
+      "type": "file",
+      "required": false,
+      "description": "Federal law (HAVA) requires a first-time voter who registers by mail to show ID the first time they vote; attaching a copy in advance (a current photo ID, or a current utility bill/bank statement/government check/paycheck/government document showing name and address) can satisfy this ahead of time. Submit only a COPY, never an original.",
+      "sourceRef": "Form page 2, General Instructions — 'First Time Voters Who Register by Mail'"
+    },
+    {
+      "name": "signedByApplicant",
+      "label": "Was this application signed by the applicant themselves?",
+      "type": "boolean",
+      "required": true,
+      "description": "Answer false if the applicant was unable to sign and another person filled out and signed the form on their behalf (Box D). Answer true if the applicant signed personally (or made their own mark).",
+      "sourceRef": "Form page 4, Box D — 'If the applicant is unable to sign, who helped the applicant fill out this application?'"
+    },
+    {
+      "name": "assistantName",
+      "label": "Name of person who helped the applicant (Box D)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box D",
+      "validation": { "maxLength": 200 },
+      "requiredWhen": { "field": "signedByApplicant", "equals": false }
+    },
+    {
+      "name": "assistantAddress",
+      "label": "Address of person who helped the applicant (Box D)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form page 4, Box D",
+      "validation": { "maxLength": 200 },
+      "requiredWhen": { "field": "signedByApplicant", "equals": false }
+    },
+    {
+      "name": "assistantPhone",
+      "label": "Phone number of person who helped the applicant (optional) (Box D)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "In international E.164 format, e.g. +12025551234.",
+      "sourceRef": "Form page 4, Box D — 'Give name, address and phone number (phone number optional)'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "oathAffirmed",
+      "label": "I have reviewed my State's instructions and swear/affirm the Box 9 oath",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Confirms the applicant is a U.S. citizen, meets their State's eligibility requirements and any oath required, and that the information provided is true under penalty of perjury.",
+      "sourceRef": "Form page 4, Box 9 — oath text"
+    },
+    {
+      "name": "signatureFullName",
+      "label": "Signature of applicant (or mark)",
+      "type": "string",
+      "required": true,
+      "description": "Full name signed, or a mark if the applicant cannot write, per Box 9. If signedByApplicant is false, this is the mark/name the applicant themselves provided, with assistance recorded in Box D.",
+      "sourceRef": "Form page 4, Box 9 — 'Please sign full name (or put mark)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date signed",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form page 4, Box 9 — Date (Month, Day, Year)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_questions",
+      "title": "Citizenship and age eligibility",
+      "fields": ["isUSCitizen", "willBe18ByElectionDay"],
+      "transitions": [
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "isUSCitizen", "equals": false } },
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "willBe18ByElectionDay", "equals": false } },
+        { "to": "applicant_name_and_address" }
+      ]
+    },
+    {
+      "id": "applicant_name_and_address",
+      "title": "Name and address (Boxes 1-3)",
+      "fields": [
+        "courtesyTitle",
+        "lastName",
+        "firstName",
+        "middleNames",
+        "nameSuffix",
+        "homeAddressStreet",
+        "homeAddressAptOrLot",
+        "homeAddressCity",
+        "homeAddressState",
+        "homeAddressZip",
+        "hasMailingAddressDifferentFromHome",
+        "mailingAddressStreet",
+        "mailingAddressCity",
+        "mailingAddressState",
+        "mailingAddressZip"
+      ],
+      "transitions": [
+        { "to": null, "exitReason": "state-not-supported", "when": { "field": "homeAddressState", "equals": "ND" } },
+        { "to": null, "exitReason": "state-not-supported", "when": { "field": "homeAddressState", "equals": "WY" } },
+        { "to": null, "exitReason": "state-alternate-process-required", "when": { "field": "homeAddressState", "in": ["NH", "WI"] } },
+        { "to": "identification_and_preferences" }
+      ]
+    },
+    {
+      "id": "identification_and_preferences",
+      "title": "Date of birth, ID number, party, race (Boxes 4-8)",
+      "fields": ["dateOfBirth", "telephoneNumber", "idNumberType", "idNumber", "partyChoice", "raceOrEthnicGroup"],
+      "next": "supplementary_boxes"
+    },
+    {
+      "id": "supplementary_boxes",
+      "title": "Name change, prior address, rural map, ID proof (Boxes A-C)",
+      "fields": [
+        "isNameChange",
+        "previousFullName",
+        "isFirstTimeRegisteringAtThisAddress",
+        "previousRegistrationAddressStreet",
+        "previousRegistrationAddressCity",
+        "previousRegistrationAddressState",
+        "previousRegistrationAddressZip",
+        "hasNoStreetAddress",
+        "ruralLocationDescription",
+        "identificationProofAttached"
+      ],
+      "next": "declaration_and_signature"
+    },
+    {
+      "id": "declaration_and_signature",
+      "title": "Assistance, oath, and signature (Box D, Box 9)",
+      "fields": [
+        "signedByApplicant",
+        "assistantName",
+        "assistantAddress",
+        "assistantPhone",
+        "oathAffirmed",
+        "signatureFullName",
+        "signatureDate"
+      ]
+    }
+  ]
+}
