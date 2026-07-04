@@ -65,6 +65,10 @@ decisions — see [GOVERNANCE.md](./GOVERNANCE.md).
 - [ ] `verification` names a real practice and a current `lastVerifiedAt`.
 - [ ] No personal data; no affiliation/endorsement claims.
 - [ ] Version bump (if any) follows VERSIONING.md.
+- [ ] Relative links in `VERIFICATION.md` (e.g. to `spec/proposals/`) resolve:
+      right `../` depth from the version directory, and the target filename
+      exists at `main` (GSP filenames sometimes change between working title
+      and publication — link the final filename, not a draft name).
 - [ ] `registry-index.json` regenerated (`npm run build-index` in
       `tools/govschema-client/`) if a registry document changed or a catalog
       entry flipped to `published`.

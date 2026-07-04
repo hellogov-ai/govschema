@@ -53,6 +53,16 @@ gated on CEO sign-off. (GSP-0006 and GSP-0007, drafted from the same batch,
 were pulled forward into `spec/v0.3` and accepted — see their own paragraphs
 below.)
 
+GSP-0009 carried the pre-publication working title "repeating groups"; three
+already-published `VERIFICATION.md` records (`registry/us/uscis/permanent-
+resident-card-replacement-i90`, `travel-document-i131`,
+`adjustment-of-status-i485`, all `1.0.0`) linked it under that filename before
+the rename to `0009-composite-repeating-values.md`. Since those records are
+immutable per [VERSIONING.md](../../VERSIONING.md) §3,
+[`0009-repeating-groups.md`](./0009-repeating-groups.md) is kept in place as a
+non-normative redirect stub rather than point-patching the records
+(GOV-1095). New links to GSP-0009 should use the current filename.
+
 GSP-0011 was drafted from the GOV-265 plan (Workstream C, field↔page-element
 mapping for browser-driving agents). It was a **one-way-door** proposal — a new
 registry artifact type and file convention — gated on CEO sign-off per
