@@ -1,0 +1,461 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fr/inpi/sasu-or-eurl-formation",
+  "version": "1.0.0",
+  "title": "France Single-Shareholder Company Formation (SASU or EURL)",
+  "description": "Prepare the data to form a French single-shareholder limited-liability company — either a Société par Actions Simplifiée Unipersonnelle (SASU) or an Entreprise Unipersonnelle à Responsabilité Limitée (EURL, the single-member variant of the SARL) — and file the declaration of constitution via the Guichet unique des formalités d'entreprises operated by INPI, the sole mandatory entry point for company creation since 1 January 2023. This is the 'LLC' analogue France was missing in the Business Formation vertical alongside de/handelsregister/gmbh-formation-musterprotokoll, gb/companies-house/company-incorporation-in01, ie/cro/company-incorporation, and us/ca/sos/business-entity-llc-formation — fr/inpi/micro-entrepreneur-activity-declaration covers only the micro-entrepreneur sole-trader regime, not a true limited-liability company. Scoped to a brand-new company (not a takeover/purchase of an existing fonds de commerce) with a single natural-person founder who is also its sole managing officer (président for a SASU, gérant for an EURL) — the maximum single-founder shape common to both legal forms. Out of scope: multi-shareholder SAS/SARL, a legal-person (rather than natural-person) sole shareholder, the EIRL status (superseded for new registrations by the 2022 entrepreneur individuel reform), agricultural/liberal-profession company forms (GAEC, SCP, SEL...), and take-over of a pre-existing fonds de commerce (achat/apport/location-gérance). It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Institut National de la Propriété Industrielle, operator of the Guichet unique des formalités d'entreprises and the Registre National des Entreprises",
+    "abbreviation": "INPI",
+    "url": "https://www.inpi.fr"
+  },
+  "process": {
+    "type": "registration",
+    "language": "fr-FR"
+  },
+  "source": {
+    "url": "https://www.inpi.fr/realiser-demarches/formalites-dentreprises/formalites-de-creation",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Cerfa 13959*05 (M0 SAS/SASU) and Cerfa 11680*06 (M0 SARL/EURL) — retired paper declarations used here as a field-set proxy for the equivalent online Guichet unique declaration, per the same technique used for fr/inpi/micro-entrepreneur-activity-declaration"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-04",
+    "notes": "GOV-1143 research cycle, following up the GOV-1136 catalog gap that opened this candidate. The Guichet unique's own live declaration sits behind an authenticated INPI Connect/FranceConnect+ account this review could not reach, so — as with the sibling micro-entrepreneur schema — field-level detail is sourced from the two retired paper M0 declarations (Cerfa 13959*05 for SAS/SASU, Cerfa 11680*06 for SARL/EURL, both still hosted by greffe and demarches-administratives mirror sites and extracted in full with pdfjs-dist getTextContent()/getFieldObjects(), confirming both a genuine printed cadre structure and live AcroForm field names) cross-checked against INPI's and formalites.entreprises.gouv.fr's live guidance pages describing the unified online rubriques (type d'entreprise, identité, composition, établissements, options fiscales). The 13959 form's own cadre 9 checkbox ('SAS constituée d'un associé unique, l'associé unique en est le président') and the 11680 form's own cover-page note ('Pour les SARL constituées d'un associé unique, remplir les cadres 3 et 16') independently confirm each form natively supports the single-shareholder case this document scopes to, so no inference was needed to bridge the general SAS/SARL form to the SASU/EURL case. Universal supporting-document requirements (signed statuts, capital-deposit certificate, legal-notice publication attestation) were cross-checked across the live entreprendre.service-public.gouv.fr guidance and independently corroborated by several practitioner sources (legalstart.fr, legalplace.fr, l-expert-comptable.com). Status draft pending full field-by-field re-verification once the live Guichet unique wizard is reachable; see VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "legalForm",
+      "label": "Legal form",
+      "type": "enum",
+      "required": true,
+      "description": "sasu = Société par Actions Simplifiée Unipersonnelle, filed on the M0 SAS declaration. eurl = Entreprise Unipersonnelle à Responsabilité Limitée (the single-member SARL), filed on the M0 SARL declaration. The two forms share most cadres but diverge on the managing-officer title and the spouse-activity question (see managingOfficerIsSoleShareholder, managerSpouseWorksInBusiness).",
+      "sourceRef": "Cerfa 13959*05 cover — 'SAS constituée d'un associé unique'; Cerfa 11680*06 cover — 'SARL ... LA SOCIETE EST CONSTITUEE D'UN ASSOCIE UNIQUE'",
+      "validation": { "enum": ["sasu", "eurl"] }
+    },
+    {
+      "name": "companyName",
+      "label": "Company name (Dénomination)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'DENOMINATION'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "companyAcronym",
+      "label": "Acronym/trading initials (Sigle)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'Sigle'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "companyDurationYears",
+      "label": "Duration of the legal person, in years",
+      "type": "integer",
+      "required": true,
+      "description": "May not exceed 99 years (Code civil art. 1838).",
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'Durée de la personne morale'; Code civil art. 1838",
+      "validation": { "minimum": 1, "maximum": 99 }
+    },
+    {
+      "name": "businessPurpose",
+      "label": "Business purpose (objet social / principales activités)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05, cadre 8 — 'PRINCIPALES ACTIVITES parmi celles énumérées dans l'objet social'; Cerfa 11680*06, cadre 9 — 'PRINCIPALES ACTIVITES DE L'OBJET SOCIAL'",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "shareCapitalAmountEur",
+      "label": "Share capital, in EUR",
+      "type": "number",
+      "required": true,
+      "description": "Both SAS/SASU (Code de commerce art. L227-1) and SARL/EURL (art. L223-2) have had no statutory minimum share capital since the 2003 Loi pour l'initiative économique; the amount is freely fixed in the statuts (in practice as low as EUR 1).",
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'Capital, montant, unité monétaire'; Code de commerce art. L227-1, L223-2",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "capitalIsVariable",
+      "label": "Variable-capital clause (capital variable)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'Si capital variable, minimum'"
+    },
+    {
+      "name": "capitalVariableMinimumEur",
+      "label": "Variable-capital floor, in EUR",
+      "type": "number",
+      "required": false,
+      "requiredWhen": { "field": "capitalIsVariable", "equals": true },
+      "description": "The statutory floor below which the variable share capital may not be reduced.",
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'Si capital variable, minimum'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "registeredOfficeAddressLine",
+      "label": "Registered office address (Adresse du siège)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre — 'ADRESSE DU SIEGE (Rés., bât., app., étage, n°, voie, lieu dit)'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "registeredOfficePostalCode",
+      "label": "Registered office — postal code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre — 'Code postal'",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "registeredOfficeCommune",
+      "label": "Registered office — commune",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre — 'Commune'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "registeredOfficeArrangement",
+      "label": "Registered-office arrangement",
+      "type": "enum",
+      "required": true,
+      "description": "own_or_leased_premises = ordinary commercial or owned/leased premises (the default; no special notation on the form). legal_representative_home_provisional = the company is provisionally domiciled at the managing officer's home. domiciliation_company = the company is domiciled with a registered domiciliation-service provider (gates domiciliationCompanyIdentificationNumber/domiciliationCompanyName).",
+      "sourceRef": "Cerfa 13959*05 — 'Préciser si le siège est fixé : Au domicile du représentant légal dans le cadre de la domiciliation provisoire / Dans une entreprise de domiciliation'; Cerfa 11680*06 — 'Au domicile du gérant, ne cocher que si elle est dans le cadre de la domiciliation provisoire / Dans une entreprise de domiciliation'",
+      "validation": { "enum": ["own_or_leased_premises", "legal_representative_home_provisional", "domiciliation_company"] }
+    },
+    {
+      "name": "domiciliationCompanyIdentificationNumber",
+      "label": "Domiciliation provider's unique identification number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registeredOfficeArrangement", "equals": "domiciliation_company" },
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Dans une entreprise de domiciliation : N° unique d'identification'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "domiciliationCompanyName",
+      "label": "Domiciliation provider's name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registeredOfficeArrangement", "equals": "domiciliation_company" },
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Nom du domiciliataire'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "soleShareholderFullName",
+      "label": "Sole shareholder's name at birth",
+      "type": "string",
+      "required": true,
+      "description": "Scoped to a natural-person sole shareholder (a legal-person sole shareholder is out of scope for this document).",
+      "sourceRef": "Cerfa 13959*05, cadre 13 — 'QUALITE / Nom de naissance / Dénomination'; Cerfa 11680*06 — associé-unique identity fields",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "soleShareholderUsualName",
+      "label": "Sole shareholder's usual/married name (Nom d'usage), if different",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Nom d'usage'",
+      "validation": { "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "soleShareholderDateOfBirth",
+      "label": "Sole shareholder's date of birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Né(e) le'",
+      "classification": "pii"
+    },
+    {
+      "name": "soleShareholderPlaceOfBirth",
+      "label": "Sole shareholder's place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'à' (place of birth, printed beside 'Né(e) le')",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "soleShareholderNationality",
+      "label": "Sole shareholder's nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Nationalité'",
+      "validation": { "minLength": 1, "maxLength": 100 },
+      "classification": "pii"
+    },
+    {
+      "name": "soleShareholderResidentialAddress",
+      "label": "Sole shareholder's residential address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Domicile / Siège'",
+      "validation": { "minLength": 1, "maxLength": 300 },
+      "classification": "pii"
+    },
+    {
+      "name": "managingOfficerIsSoleShareholder",
+      "label": "Is the sole shareholder also the managing officer?",
+      "type": "boolean",
+      "required": true,
+      "description": "The managing officer is the président for a SASU or the gérant for an EURL. Both source forms model this as a fixed checkbox (SASU: 'l'associé unique en est le président'; EURL cover note: officers who are also the sole shareholder complete an additional social-status cadre), implying the common case is a single natural person acting as both. When false, officerFullName and its siblings identify a distinct managing officer.",
+      "sourceRef": "Cerfa 13959*05, cadre 9 — 'SAS constituée d'un associé unique, l'associé unique en est le président : oui'; Cerfa 11680*06 cover — 'Pour les SARL constituées d'un associé unique ... Dans le cas où le gérant est l'associé unique'"
+    },
+    {
+      "name": "officerFullName",
+      "label": "Managing officer's name at birth",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "managingOfficerIsSoleShareholder", "equals": false },
+      "sourceRef": "Cerfa 13959*05 — 'DECLARATION RELATIVE AU REPRESENTANT LEGAL'; Cerfa 11680*06, cadre 13A — 'GERANT : Nom de naissance'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "officerDateOfBirth",
+      "label": "Managing officer's date of birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "managingOfficerIsSoleShareholder", "equals": false },
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 13A — 'Né(e) le'",
+      "classification": "pii"
+    },
+    {
+      "name": "officerNationality",
+      "label": "Managing officer's nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "managingOfficerIsSoleShareholder", "equals": false },
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 13A — 'Nationalité'",
+      "validation": { "minLength": 1, "maxLength": 100 },
+      "classification": "pii"
+    },
+    {
+      "name": "officerResidentialAddress",
+      "label": "Managing officer's residential address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "managingOfficerIsSoleShareholder", "equals": false },
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 13A — 'Domicile'",
+      "validation": { "minLength": 1, "maxLength": 300 },
+      "classification": "pii"
+    },
+    {
+      "name": "managerSpouseWorksInBusiness",
+      "label": "Does the gérant have a spouse/PACS partner who regularly works in the business?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "legalForm", "equals": "eurl" },
+      "description": "This question is printed only on the SARL/EURL declaration, not on the SAS/SASU one — an EURL gérant who is also the sole shareholder is by definition a majority (in fact, sole) manager, so the 'collaborateur' status is always available to a working spouse here (unlike a minority-manager SARL, out of scope for this single-shareholder document).",
+      "sourceRef": "Cerfa 11680*06, cadre 14A — 'AVEZ-VOUS UN CONJOINT MARIE OU PACSE exerçant une activité régulière dans l'entreprise : oui / non'"
+    },
+    {
+      "name": "managerSpouseStatus",
+      "label": "Working spouse's/PACS partner's chosen status",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "managerSpouseWorksInBusiness", "equals": true },
+      "description": "salaried = SALARIE (employee); associate = ASSOCIE (a salaried associate; requires a separate TNS social-status form, out of scope here); collaborator = COLLABORATEUR (collaborating-spouse status, available because the gérant here is always a sole/majority manager).",
+      "sourceRef": "Cerfa 11680*06, cadre 14A — 'Si oui, choix d'un statut : SALARIE / ASSOCIE / COLLABORATEUR'",
+      "validation": { "enum": ["salaried", "associate", "collaborator"] }
+    },
+    {
+      "name": "activityStartDate",
+      "label": "Activity start date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'DATE DE DEBUT D'ACTIVITE'"
+    },
+    {
+      "name": "activityType",
+      "label": "Activity type",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Permanente / Saisonnière / Ambulant'",
+      "validation": { "enum": ["permanent", "seasonal", "ambulant"] }
+    },
+    {
+      "name": "financialYearEndDate",
+      "label": "Financial-year closing date (day-month)",
+      "type": "string",
+      "required": true,
+      "description": "The recurring calendar day/month the company's financial year closes each year, e.g. '12-31' for a calendar-year exercise.",
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'Date de clôture de l'exercice social'",
+      "validation": { "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$" }
+    },
+    {
+      "name": "firstFinancialYearEndDate",
+      "label": "First financial year's closing date, if different",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 1 — 'Le cas échéant, du 1er exercice'"
+    },
+    {
+      "name": "incomeTaxRegime",
+      "label": "Income tax regime election",
+      "type": "enum",
+      "required": true,
+      "description": "corporate_is = Impôt sur les Sociétés (the default for a SAS/SASU; an EURL with a natural-person sole shareholder may elect it). flow_through_partnership_regime = régime des sociétés de personnes (the default for an EURL with a natural-person sole shareholder — profits taxed directly in the shareholder's own income tax; a SAS/SASU may elect it only in the narrow circumstances printed in the form's own 'OPTIONS PARTICULIERES' cadre, out of scope to enumerate further here).",
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 15/16 — 'OPTIONS PARTICULIERES : Assujettissement à l'IS / Régime des sociétés de personnes'; 'Impôt sur les Sociétés (IS) Réel simplifié / Réel normal'",
+      "validation": { "enum": ["corporate_is", "flow_through_partnership_regime"] }
+    },
+    {
+      "name": "vatRegime",
+      "label": "VAT (TVA) regime",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06, cadre 15/16 — 'T.V.A : Franchise en base / Réel simplifié / Mini-réel / Réel normal'",
+      "validation": { "enum": ["franchise_en_base", "reel_simplifie", "mini_reel", "reel_normal"] }
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Place of declaration (Fait à)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Fait à'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of declaration",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Le'",
+      "classification": "pii"
+    }
+  ],
+  "documents": [
+    {
+      "id": "soleShareholderIdentityDocument",
+      "label": "Sole shareholder's identity document (passport or national ID card)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "https://entreprendre.service-public.gouv.fr/vosdroits/F35934 — dossier d'immatriculation pièces justificatives"
+    },
+    {
+      "id": "officerIdentityDocument",
+      "label": "Managing officer's identity document, if different from the sole shareholder",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "managingOfficerIsSoleShareholder", "equals": false },
+      "belongsTo": "applicant",
+      "sourceRef": "https://entreprendre.service-public.gouv.fr/vosdroits/F35934 — dossier d'immatriculation pièces justificatives"
+    },
+    {
+      "id": "signedArticlesOfAssociation",
+      "label": "Signed statuts (articles of association)",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "https://entreprendre.service-public.gouv.fr/vosdroits/F35934 — 'les statuts signés et datés'"
+    },
+    {
+      "id": "shareCapitalDepositCertificate",
+      "label": "Certificate of deposit of the share capital (attestation de dépôt des fonds)",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "issuingAuthority": "The bank, notary, or Caisse des Dépôts et Consignations holding the deposited share capital",
+      "sourceRef": "https://www.legalstart.fr/fiches-pratiques/demarches-creation/attestation-de-depot-des-fonds/; without it the Kbis extract cannot be issued"
+    },
+    {
+      "id": "legalNoticePublicationAttestation",
+      "label": "Attestation of publication of the notice of formation (avis de constitution) in an authorized legal-notices journal",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "https://entreprendre.service-public.gouv.fr/vosdroits/F35934 — avis de constitution published in a support d'annonces légales habilité for the registered office's département"
+    },
+    {
+      "id": "domiciliationContract",
+      "label": "Domiciliation contract with the registered domiciliation-service provider",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "registeredOfficeArrangement", "equals": "domiciliation_company" },
+      "belongsTo": "applicant",
+      "sourceRef": "Cerfa 13959*05 / 11680*06 — 'Dans une entreprise de domiciliation : N° unique d'identification / Nom du domiciliataire'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "company_basics",
+      "title": "Legal form, name, duration, and purpose",
+      "fields": ["legalForm", "companyName", "companyAcronym", "companyDurationYears", "businessPurpose"],
+      "next": "share_capital"
+    },
+    {
+      "id": "share_capital",
+      "title": "Share capital",
+      "fields": ["shareCapitalAmountEur", "capitalIsVariable", "capitalVariableMinimumEur"],
+      "next": "registered_office"
+    },
+    {
+      "id": "registered_office",
+      "title": "Registered office",
+      "fields": [
+        "registeredOfficeAddressLine", "registeredOfficePostalCode", "registeredOfficeCommune",
+        "registeredOfficeArrangement", "domiciliationCompanyIdentificationNumber", "domiciliationCompanyName"
+      ],
+      "next": "sole_shareholder"
+    },
+    {
+      "id": "sole_shareholder",
+      "title": "Sole shareholder",
+      "fields": [
+        "soleShareholderFullName", "soleShareholderUsualName", "soleShareholderDateOfBirth",
+        "soleShareholderPlaceOfBirth", "soleShareholderNationality", "soleShareholderResidentialAddress"
+      ],
+      "next": "management"
+    },
+    {
+      "id": "management",
+      "title": "Managing officer (président / gérant)",
+      "fields": [
+        "managingOfficerIsSoleShareholder", "officerFullName", "officerDateOfBirth",
+        "officerNationality", "officerResidentialAddress",
+        "managerSpouseWorksInBusiness", "managerSpouseStatus"
+      ],
+      "next": "activity_and_tax"
+    },
+    {
+      "id": "activity_and_tax",
+      "title": "Activity and tax elections",
+      "fields": [
+        "activityStartDate", "activityType", "financialYearEndDate", "firstFinancialYearEndDate",
+        "incomeTaxRegime", "vatRegime"
+      ],
+      "next": "filing"
+    },
+    {
+      "id": "filing",
+      "title": "Declaration and filing",
+      "fields": ["declarationPlace", "declarationDate"]
+    }
+  ]
+}
