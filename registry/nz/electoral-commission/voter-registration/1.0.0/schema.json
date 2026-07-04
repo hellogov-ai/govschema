@@ -1,0 +1,281 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nz/electoral-commission/voter-registration",
+  "version": "1.0.0",
+  "title": "New Zealand Enrol to Vote or Update Electoral Roll Details",
+  "description": "Enrol an eligible individual on New Zealand's electoral roll, or update an existing enrolment's name, address, phone, or email, using the data model common to both the paper Form ROE1 ('Get ready to vote — Enrol or update your details') and the online service at vote.nz/enrolling, which is available to anyone with a New Zealand driver licence, New Zealand passport, or RealMe verified identity. Models the applicant's identity and contact details, their current New Zealand home address (or, if they live overseas or have lived at their current address under one month, the supplementary questions Form ROE1 asks instead), an optional postal address, the Māori-descent/general-roll choice, and the final eligibility declaration. New Zealand enrolment is compulsory (not automatic) and citizen-initiated — unlike voter registration in some jurisdictions, no one is added to the roll without submitting this application. Does not model the separate application for someone completing this form on another person's behalf, or the unpublished-roll application for applicants whose safety would be threatened by a published address, or submit the enrolment; the live vote.nz service and the Electoral Commission are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Electoral Commission (Te Kaitiaki Take Kōwhiri)",
+    "abbreviation": "EC",
+    "url": "https://vote.nz/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-NZ"
+  },
+  "source": {
+    "url": "https://vote.nz/assets/enrolment-form.pdf",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Form ROE1 — Get ready to vote: Enrol or update your details"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live Form ROE1 PDF, fetched directly from vote.nz (HTTP 200, a genuine 469,647-byte %PDF binary, no bot-block) and extracted with pdfjs-dist getTextContent across both pages. Page 1 carries Step 1 (your details: title, surname, first names, date of birth, occupation, mobile/other phone, email), Step 2 (current NZ home address, with a branch to Step 2A if lived there under one month or Step 2B if living overseas), Step 3 (postal address, if different from home address or living overseas), Step 4 (the Māori-descent/general-roll tick-one choice), and Step 5 (declaration, signature, date). Page 2 carries the Step 2A/2B supplementary questions and an eligibility/guidance section ('Eligibility to vote': 18 or older — can enrol at 17 but not vote until 18 — a citizen or permanent resident of NZ, and has ever lived in NZ continuously for one year or more; overseas citizens eligible if in NZ within the last 3 years, overseas permanent residents if in NZ within the last 12 months; a citizenship-only exception for Australian, Cook Islander, Niuean, or Tokelauan applicants who have lived in NZ continuously for one year or more). The online channel at vote.nz/enrolling/enrol-or-update/enrol-or-update-online (fetched live, HTTP 200) states online enrolment/update is available to anyone with 'a New Zealand driver licence, New Zealand passport or RealMe verified identity'; its live screen-by-screen field labels were not independently captured because the actual online form (enrol.vote.nz) sits behind an Imperva/Incapsula bot-check that returned HTTP 403 to this tool, so sourceRef annotations cite Form ROE1 throughout, consistent with this registry's precedent for enrolment forms whose online equivalent could not be independently captured (e.g. ie/electoral-commission/voter-registration, fr/interieur/voter-registration). Also confirmed during this research cycle: Singapore's electoral roll is compiled automatically by the Elections Department from National Registration Identity Card (NRIC) records held by the Registrar of Persons, per eld.gov.sg's 'About Registers of Electors' page (fetched live) — there is no citizen-initiated registration application, so no sg schema is warranted here, matching the existing de/nl automatic-registration pattern. Status remains draft, not verified — no live transaction was performed against vote.nz."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'Title Mr Mrs Miss Ms Mx'",
+      "validation": { "enum": ["mr", "mrs", "miss", "ms", "mx"] }
+    },
+    {
+      "name": "familyName",
+      "label": "Surname or family name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'Surname or family name'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'First names'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "YYYY-MM-DD. Per the Electoral Commission's eligibility rules, you can enrol at 17 but cannot vote until you turn 18; you must also be a New Zealand citizen or permanent resident who has, at some point, lived in New Zealand continuously for one year or more.",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'Date of birth [dd/mm/yyyy]'; page 2 — 'Eligibility to vote: You must enrol if you live in NZ and are: 18 or older... You can enrol at 17 but can't vote until you're 18.'"
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'Occupation'",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "mobilePhoneNumber",
+      "label": "Mobile phone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'Mobile phone number'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "otherPhoneNumber",
+      "label": "Other phone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'Other phone number'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 1, Step 1 — 'Email address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "livingOverseas",
+      "label": "Are you living overseas?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, leave currentHomeAddress blank and complete the Step 2B overseas questions instead.",
+      "sourceRef": "Form ROE1, page 1, Step 2 — 'Living overseas? Leave STEP 2 blank and turn over to do STEP 2B instead'"
+    },
+    {
+      "name": "currentHomeAddress",
+      "label": "Current New Zealand home address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "livingOverseas", "equals": false },
+      "visibleWhen": { "field": "livingOverseas", "equals": false },
+      "classification": "pii",
+      "description": "Use the address you consider to be your home; it does not change if you sometimes live away for work or education.",
+      "sourceRef": "Form ROE1, page 1, Step 2 — 'Current NZ home address'; page 2 — 'What address should I use? Use the address you consider to be your home. Your home address does not change if you sometimes live away from home for your work or education.'",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "livedAtCurrentAddressUnderOneMonth",
+      "label": "Have you been at your current address for less than one month?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "livingOverseas", "equals": false },
+      "visibleWhen": { "field": "livingOverseas", "equals": false },
+      "description": "If true, also complete dateMovedIntoCurrentAddress and lastNZAddressLivedOneMonthOrMore (Step 2A).",
+      "sourceRef": "Form ROE1, page 1, Step 2 — 'Lived here under one month? Turn over to do STEP 2A too'; page 2, Step 2A — 'Have you been at your current address for less than one month?'"
+    },
+    {
+      "name": "dateMovedIntoCurrentAddress",
+      "label": "When did you move into your current home address?",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "livedAtCurrentAddressUnderOneMonth", "equals": true },
+      "visibleWhen": { "field": "livedAtCurrentAddressUnderOneMonth", "equals": true },
+      "sourceRef": "Form ROE1, page 2, Step 2A — 'When did you move into your current home address? [dd/mm/yyyy]'"
+    },
+    {
+      "name": "overseasCitizenOrResidentStatus",
+      "label": "Are you a New Zealand Citizen or Permanent resident?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "livingOverseas", "equals": true },
+      "visibleWhen": { "field": "livingOverseas", "equals": true },
+      "description": "Determines the recency test that applies overseas: a citizen must have been in New Zealand within the last 3 years; a permanent resident must have been in New Zealand within the last 12 months.",
+      "sourceRef": "Form ROE1, page 2, Step 2B — 'Are you a New Zealand Citizen Permanent resident'; page 2 — 'If you live overseas, you can enrol if you're a: NZ citizen who has been in NZ within the last 3 years, or NZ permanent resident and have been in NZ in the last 12 months.'",
+      "validation": { "enum": ["citizen", "permanent_resident"] }
+    },
+    {
+      "name": "lastVisitOrLiveInNZDate",
+      "label": "When did you last visit or live in New Zealand?",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "livingOverseas", "equals": true },
+      "visibleWhen": { "field": "livingOverseas", "equals": true },
+      "sourceRef": "Form ROE1, page 2, Step 2B — 'When did you last visit or live in New Zealand? [dd/mm/yyyy]'"
+    },
+    {
+      "name": "lastNZAddressLivedOneMonthOrMore",
+      "label": "What is the last address in New Zealand where you lived for one month or more?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "livedAtCurrentAddressUnderOneMonth", "equals": true },
+          { "field": "livingOverseas", "equals": true }
+        ]
+      },
+      "visibleWhen": {
+        "any": [
+          { "field": "livedAtCurrentAddressUnderOneMonth", "equals": true },
+          { "field": "livingOverseas", "equals": true }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "Form ROE1, page 2, Step 2A — 'What is the last address in New Zealand where you lived for one month or more?'; page 2, Step 2B — 'What is the last address in New Zealand where you lived for one month or more?'",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "postalAddress",
+      "label": "Postal address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Complete only if your postal address is different from your current home address, or if you're living overseas.",
+      "sourceRef": "Form ROE1, page 1, Step 3 — 'Postal address... If different from current home address or if you're living overseas'",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "rollDeclaration",
+      "label": "Māori descent and roll choice",
+      "type": "enum",
+      "required": true,
+      "description": "Tick the one statement that applies to you. Your choice affects your electorate vote (not your party vote) in parliamentary elections, and can only be changed outside the 3 months before a general election or triennial local election.",
+      "sourceRef": "Form ROE1, page 1, Step 4 — 'Please tick ONE statement that applies to you. I am of Māori descent. Please enrol me on the Māori roll. / I am of Māori descent. Please enrol me on the general roll. / I am not of Māori descent. (You will be enrolled on the general roll.)'",
+      "validation": { "enum": ["maori_descent_maori_roll", "maori_descent_general_roll", "not_maori_descent_general_roll"] }
+    },
+    {
+      "name": "declarationEligibleTruthful",
+      "label": "I declare that I am eligible to enrol at the address I provided, and that all the information I have provided is true and correct",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "It is a criminal offence to give false or misleading information on this application.",
+      "sourceRef": "Form ROE1, page 1, Step 5 — 'I declare that: I am eligible to enrol at the address I provided in this application; All the information I have provided is true and correct, and; I understand that giving false or misleading information is a criminal offence.'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD, the date the applicant signs the declaration.",
+      "sourceRef": "Form ROE1, page 1, Step 5 — 'Signature Date [dd/mm/yyyy]'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Your details",
+      "fields": ["title", "familyName", "firstNames", "dateOfBirth", "occupation"],
+      "next": "contact"
+    },
+    {
+      "id": "contact",
+      "title": "Contact details",
+      "fields": ["mobilePhoneNumber", "otherPhoneNumber", "email"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Your New Zealand address",
+      "fields": ["livingOverseas", "currentHomeAddress", "livedAtCurrentAddressUnderOneMonth"],
+      "next": "addressSupplement"
+    },
+    {
+      "id": "addressSupplement",
+      "title": "Supplementary address questions (recent movers and overseas applicants)",
+      "fields": ["dateMovedIntoCurrentAddress", "overseasCitizenOrResidentStatus", "lastVisitOrLiveInNZDate", "lastNZAddressLivedOneMonthOrMore"],
+      "next": "postal"
+    },
+    {
+      "id": "postal",
+      "title": "Your postal address",
+      "fields": ["postalAddress"],
+      "next": "roll"
+    },
+    {
+      "id": "roll",
+      "title": "Your roll",
+      "fields": ["rollDeclaration"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Sign and return",
+      "fields": ["declarationEligibleTruthful", "declarationDate"]
+    }
+  ]
+}
