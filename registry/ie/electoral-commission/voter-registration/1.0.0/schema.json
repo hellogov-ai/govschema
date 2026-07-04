@@ -1,0 +1,309 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/electoral-commission/voter-registration",
+  "version": "1.0.0",
+  "title": "Ireland Register to Vote or Update Electoral Register Details",
+  "description": "Register an eligible individual on Ireland's Register of Electors, or update an existing entry's name, address, or nationality, using the data model common to both the online service (checktheregister.ie, or voter.ie for Dublin) and the paper Form ERF1 processed by the applicant's local authority. Models the applicant's identity, PPSN, nationality (which gates the elections/referendums the applicant may vote in), current and previous address, contact details, the declaration, and — only when a PPSN is not provided or the local authority cannot match one — the witness/certification section that confirms identity in person. Pre-registration from age 16 uses the same fields; the applicant is added to the register on turning 18. Does not model the separate PV2/PV4 postal-vote or SV1 special-voters-list forms, or submit the application; the live checktheregister.ie service and the applicant's local authority are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "An Coimisiún Toghcháin (Electoral Commission), in conjunction with Ireland's local authorities",
+    "abbreviation": "EC",
+    "url": "https://www.electoralcommission.ie/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.checktheregister.ie/",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Form ERF1 — Register to vote or update details"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live Form ERF1 PDF (fetched directly from a local-authority mirror, sdcc.ie, with no bot-block) together with the Electoral Commission's 'How to Register to Vote' Easy-to-Read guide PDF and the checktheregister.ie FAQ (via web search summary; direct fetch of checktheregister.ie and electoralcommission.ie returned HTTP 403 to this tool). ERF1's own field labels (name, previous name, date of birth, PPSN, nationality, previous nationality, address, Eircode, previous address, phone, email, declaration, and the page-2 witness/certification block) were transcribed verbatim into sourceRef values; the nationality-to-eligible-elections table and the witness/certification trigger condition (no PPSN provided, or requested by the local authority) come from ERF1 page 3's own 'Information and guidance' text. The online service mirrors this same data model per the Easy-to-Read guide ('You are asked for details such as your name, address, Eircode, PPSN, date of birth, nationality and email address'), but its live screen-by-screen labels were not independently captured (checktheregister.ie blocked direct fetch), so sourceRef annotations cite the ERF1 form, consistent with this registry's precedent (gb/co/register-to-vote cites the ITR-E paper form on the same basis). Status remains draft, not verified."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form ERF1, page 1 — 'First name'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form ERF1, page 1 — 'Surname'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "previousName",
+      "label": "Previous name (if this applies)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Complete only if you were registered before but have since changed your name. Helps the local authority find and update your existing record.",
+      "sourceRef": "Form ERF1, page 1 — 'Previous name (if this applies)'; page 3 — 'Previous name'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "YYYY-MM-DD. You can complete this form to pre-register from age 16, but you must be 18 to vote — pre-registered applicants are added to the register automatically on their 18th birthday.",
+      "sourceRef": "Form ERF1, page 1 — 'Date of birth'; page 3 — 'Your date of birth is needed to confirm you are eligible to vote... pre-register from the age of 16 but you must be 18 to vote.'"
+    },
+    {
+      "name": "ppsn",
+      "label": "PPSN (Personal Public Service Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "7 digits followed by 1 or 2 letters, e.g. 1234567FA. Providing your PPSN allows a basic check against Department of Social Protection records to help confirm your identity; PPSNs are never published on the register. If you do not provide a PPSN, or your local authority cannot match it, you must complete the witness/certification section (witnessType and related fields) and have this form witnessed.",
+      "sourceRef": "Form ERF1, page 1 — 'PPSN'; page 3 — 'Personal Public Service Number (PPSN)... If you do not provide a PPSN, you will need to complete page 2 of this form where a witness confirms your identity.'",
+      "validation": { "pattern": "^[0-9]{7}[A-Za-z]{1,2}$" }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Your nationality is needed to confirm which elections you are eligible to vote in: an Irish citizen may vote in all elections and referendums; an EU citizen (of another member state) in European and local elections; a UK citizen in Dáil (general) and local elections; all other nationalities in local elections only.",
+      "sourceRef": "Form ERF1, page 3 — 'Nationality details... If you are: [Irish citizen / EU citizen / UK citizen / All other] You are eligible to vote in: [...]'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "previousNationality",
+      "label": "Previous nationality (if this applies)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Complete only if you are updating your nationality (e.g. after naturalisation). Changing nationality may affect which electoral events you can vote in; provide evidence via the previousNationalityEvidence document.",
+      "sourceRef": "Form ERF1, page 1 — 'Previous nationality (if this applies)'; page 3 — 'Previous nationality... You will need to provide evidence of the change such as a photocopy of your new passport (photo page) or certificate of naturalisation.'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Address (where you live now)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Your address affects where you will vote. To vote, you must be living full time at an address in the State.",
+      "sourceRef": "Form ERF1, page 1 — 'Address... Where you live now.'; page 3 — 'Your address is required as it affects where you will vote... you must be living full time at an address in the State.'",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "eircode",
+      "label": "Eircode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "e.g. D02 AF30. Providing your Eircode helps to accurately identify your address.",
+      "sourceRef": "Form ERF1, page 1 — 'Eircode'; page 3 — 'Providing your Eircode helps to accurately identify your address.'",
+      "validation": { "pattern": "^[A-Za-z0-9]{3} ?[A-Za-z0-9]{4}$" }
+    },
+    {
+      "name": "previousAddress",
+      "label": "Previous address (if this applies)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Complete only if you were registered before but have since changed your address.",
+      "sourceRef": "Form ERF1, page 1 — 'Previous address (if this applies)'",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "previousEircode",
+      "label": "Previous address — Eircode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form ERF1, page 1 — 'Eircode' (previous address block)",
+      "validation": { "pattern": "^[A-Za-z0-9]{3} ?[A-Za-z0-9]{4}$" }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Gives your local authority a quick and easy way to contact you about your application if necessary.",
+      "sourceRef": "Form ERF1, page 1 — 'Phone number'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form ERF1, page 1 — 'Email address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "witnessType",
+      "label": "Where is this form being witnessed or certified?",
+      "type": "enum",
+      "required": false,
+      "description": "Required only when ppsn is not provided, or when your local authority requests it because it could not match the PPSN given. Garda station or local authority: the applicant signs in the presence of a Garda Síochána member/civilian staff member, or local authority official, after their photo ID (e.g. passport or driving licence) is checked. Registered medical practitioner: used instead when the applicant cannot attend in person due to illness or disability.",
+      "sourceRef": "Form ERF1, page 2 — 'This form is being witnessed at the applicant's local Garda station. / ...local authority. / The details of this form are being certified by a registered medical practitioner, for example a GP.'",
+      "validation": { "enum": ["garda_station", "local_authority", "registered_medical_practitioner"] }
+    },
+    {
+      "name": "witnessFullName",
+      "label": "Full name of witness",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "witnessType", "in": ["garda_station", "local_authority", "registered_medical_practitioner"] },
+      "classification": "pii",
+      "description": "Required only when witnessType is set.",
+      "sourceRef": "Form ERF1, page 2 — 'Full name of witness'",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "witnessProfession",
+      "label": "Profession of witness",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form ERF1, page 2 — 'Profession of witness'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "witnessMedicalCouncilNumber",
+      "label": "Medical Council number (where applicable)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "witnessType", "equals": "registered_medical_practitioner" },
+      "sourceRef": "Form ERF1, page 2 — 'Medical Council number (where applicable)'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "witnessPhoneNumber",
+      "label": "Phone number of witness",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form ERF1, page 2 — 'Phone number of witness'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "witnessDate",
+      "label": "Date witnessed or certified",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "witnessType", "in": ["garda_station", "local_authority", "registered_medical_practitioner"] },
+      "description": "YYYY-MM-DD. Required only when witnessType is set.",
+      "sourceRef": "Form ERF1, page 2 — 'Signature of witness ... Date'"
+    },
+    {
+      "name": "declarationTruthfulComplete",
+      "label": "I believe that, to the best of my knowledge, the information I have provided is truthful and complete",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "It is a legal offence under electoral law to knowingly give false or misleading information to a local authority.",
+      "sourceRef": "Form ERF1, page 1 — 'I believe that to the best of my knowledge the information I have provided: is truthful, and complete. I understand that it is a legal offence under electoral law to knowingly give false or misleading information to a local authority.'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD, the date the applicant signs the declaration.",
+      "sourceRef": "Form ERF1, page 1 — 'Signature Date'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "previousNationalityEvidence",
+      "label": "Evidence of nationality change (photocopy of new passport photo page, or certificate of naturalisation)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "previousNationality", "notEquals": "" },
+      "belongsTo": "applicant",
+      "sourceRef": "Form ERF1, page 1 — 'If updating your nationality, please write in your previous nationality and include a photocopy of your new passport (photo page) or a copy of your certificate of naturalisation.'"
+    },
+    {
+      "id": "witnessPhotoId",
+      "label": "Applicant's photographic identification (e.g. passport or driving licence), checked by the witness",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "witnessType", "in": ["garda_station", "local_authority"] },
+      "belongsTo": "applicant",
+      "sourceRef": "Form ERF1, page 4 — 'Bring photographic identification (ID) with you. This ID could be, for example, your passport or driving licence.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Your name and date of birth",
+      "fields": ["firstName", "surname", "previousName", "dateOfBirth"],
+      "next": "nationality"
+    },
+    {
+      "id": "nationality",
+      "title": "Nationality",
+      "fields": ["nationality", "previousNationality"],
+      "next": "ppsn"
+    },
+    {
+      "id": "ppsn",
+      "title": "PPSN",
+      "fields": ["ppsn"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Your address",
+      "fields": ["addressLine1", "eircode", "previousAddress", "previousEircode"],
+      "next": "contact"
+    },
+    {
+      "id": "contact",
+      "title": "Contact details",
+      "fields": ["phoneNumber", "email"],
+      "next": "witness"
+    },
+    {
+      "id": "witness",
+      "title": "Witnessing or certification (only if no PPSN provided)",
+      "fields": ["witnessType", "witnessFullName", "witnessProfession", "witnessMedicalCouncilNumber", "witnessPhoneNumber", "witnessDate"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["declarationTruthfulComplete", "declarationDate"]
+    }
+  ]
+}
