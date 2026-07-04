@@ -145,6 +145,44 @@ registry), with no separate citizen-initiated registration process. France
 non-automatic gap to Ireland's but was not investigated this cycle — flagged
 as a candidate for a future research pass.
 
+## Review-gate correction (GOV-1045)
+
+Re-running the mock packet through a from-scratch `requiredWhen` evaluator
+during review (rather than trusting the author's own evaluator script)
+surfaced one real conditional-logic defect, fixed prior to merge:
+
+- `documents[].previousNationalityEvidence` was gated with `requiredWhen: {
+  "field": "previousNationality", "notEquals": "" }`. Under a natural
+  leaf-compare evaluation, an *absent* `previousNationality` (the
+  overwhelming common case — an applicant who is not updating their
+  nationality never submits this optional field at all) is `undefined`, and
+  `undefined !== ""` is `true` — so the document would misfire as required
+  for essentially every applicant, not just the ones actually updating their
+  nationality. This is the same absent-vs-sentinel-default bug class already
+  recorded against `fr/dgfip/income-tax-return-2042`'s `notEquals: 0`
+  (GOV-763) and still latent, unfixed, in `sg/ica/identity-card-replacement`
+  v1.0.0's identical `reasonForNameChange` pattern (flagged separately as
+  follow-up tech debt, out of scope for this PR since it would require a new
+  version on an already-published schema).
+- Fixed by dropping the `requiredWhen` (the leaf-compare grammar has no
+  field-absence operator, so there is no condition that expresses "required
+  only when this optional field was actually filled in" without this
+  misfire) and folding the trigger into the document's own `label` instead —
+  the same description-only treatment this schema's own `witnessType` field
+  already uses for the symmetric `ppsn`-absence case, so the fix is
+  consistent with the document's own established convention, not a new one.
+- Re-ran both registry validators (183/183) and the conformance packet
+  through a from-scratch evaluator across three scenarios — PPSN-provided/no
+  previous-nationality (matches the committed mock packet), no-PPSN/witness
+  branch, and previous-nationality-provided — confirming the fix does not
+  regress the witness branch and the document is no longer flagged required
+  when `previousNationality` is simply omitted.
+
+All other `sourceRef` quotes and the `requiredWhen`/`required` shape of every
+other field and document were spot-checked against Form ERF1 and the
+Easy-to-Read guide during this review and found accurate; no other defects
+were found.
+
 ## Path to a `verified` claim (next step)
 
 To advance to `status: verified`, a reviewer applies `manual-source-review-v1`
