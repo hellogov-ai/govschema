@@ -1,0 +1,62 @@
+===============================================================
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+===============================================================
+
+Schema: au/nsw/service-nsw/vehicle-registration-renewal v1.0.0
+Generated: 2026-07-04
+
+Scenario: An individual renewing a standard (non-conditional) passenger car's registration online, keeping the same term and usage type, with CTP already held and no safety inspection required.
+
+STEP TRACE: eligibility_to_renew_online -> find_vehicle -> registration_details -> safety_inspection -> payment
+
+ELIGIBILITY OUTCOME
+-------------------
+Outcome: continues_to_find_vehicle
+All five online-renewal eligibility gates are false, so the flow falls through to the vehicle-lookup step rather than exiting to an in-person service centre.
+
+COLLECTED VALUES
+----------------
+  Has the vehicle been unregistered for more than 3 months?: false
+    (field: vehicleUnregisteredOverThreeMonths, source: Eligibility — 'the vehicle has been unregistered for more than 3 months – you'll need to re-register it')
+  Did you order special number plates within the registration renewal period, and have you not yet received them?: false
+    (field: orderedSpecialPlatesNotYetReceived, source: Eligibility — 'you ordered special number plates within the registration renewal period, and you have not received the new plates yet')
+  Is the vehicle registered under the Common Expiry Date (CED) Scheme?: false
+    (field: registeredUnderCommonExpiryDateScheme, source: Eligibility — 'the vehicle is registered under the Common Expiry Date (CED) Scheme')
+  If this is a conditionally registered (non-standard) vehicle, does its renewal require an inspection?: false
+    (field: conditionalRegistrationRequiresInspection, source: Eligibility — 'the vehicle is conditionally registered and requires an inspection')
+  If this is a conditionally registered (non-standard) vehicle, does it require changes to its operating conditions?: false
+    (field: conditionalRegistrationRequiresOperatingConditionChange, source: Eligibility — 'the vehicle is conditionally registered and requires changes to the operating conditions')
+  Enter a NSW plate number or billing number: "BFG47T"
+    (field: vehicleIdentifierOrBillingNumber, source: registration-renewal.service.nsw.gov.au/find-vehicle (live, 2026-07-04) — 'Enter a NSW plate number or billing number.')
+  Is this a conditional registration (non-standard vehicle)?: false
+    (field: isConditionalRegistration, source: Note — 'When renewing a conditional registration (non-standard vehicle) online...')
+  Is the vehicle a trailer or caravan?: false
+    (field: vehicleIsTrailerOrCaravan, source: What you need — 'A compulsory third party (CTP) insurance policy, commonly called a green slip (unless the vehicle is a trailer, caravan, or has a conditional registration).')
+  Do you want to change the registration term at this renewal?: false
+    (field: wantsToChangeRegistrationTerm, source: Introduction — 'While renewing you may be able to make changes to details like your usage type and the registration term.')
+  Do you want to change the vehicle's usage type at this renewal?: false
+    (field: wantsToChangeUsageType, source: Introduction — 'While renewing you may be able to make changes to details like your usage type and the registration term.')
+  Does your renewal notice show that a safety inspection (pink slip) is required?: false
+    (field: requiresSafetyInspection, source: Light vehicles and safety inspections — inspection requirement rules)
+  How do you want to pay?: "card_online"
+    (field: paymentMethod, source: Payment and fees — 'How to pay: BPAY... In person...' (card_online inferred by analogy — see VERIFICATION.md))
+  Do you hold a NSW Pensioner Concession Card?: false
+    (field: pensionerConcessionCardHolder, source: Rebates and concessions — 'Pensioner Concession Card holders')
+  Would you like to make a voluntary contribution to offset the vehicle's carbon emissions?: false
+    (field: voluntaryCarbonOffsetContribution, source: More information — voluntary carbon-offset contribution during renewal)
+
+FIELDS NOT APPLICABLE IN THIS SCENARIO
+--------------------------------------
+  registrationTermMonths: not provided in this scenario (required=false, wantsToChangeRegistrationTerm is false)
+  ctpTermMatchesRequestedRegistrationTerm: not provided in this scenario (required=false, wantsToChangeRegistrationTerm is false)
+
+DOCUMENTS CHECKLIST
+-------------------
+  [REQUIRED] Compulsory third party (CTP) insurance policy (green slip) (supporting-evidence)
+      source: What you need — 'A compulsory third party (CTP) insurance policy, commonly called a green slip (unless the vehicle is a trailer, caravan, or has a conditional registration).'
+  [not required] Safety inspection report (pink slip) (supporting-evidence)
+      reason: requiresSafetyInspection is false.
+
+SAFETY NOTICE
+-------------
+This packet was assembled by an automated agent from a GovSchema document (au/nsw/service-nsw/vehicle-registration-renewal). GovSchema describes and verifies government processes; it does not submit them. No value in this packet has been transmitted to Transport for NSW, Service NSW, or any government system. A human (the registered operator) must review every value below and complete the actual renewal at registration-renewal.service.nsw.gov.au (or in person) themselves — this packet is illustrative mock data, not a substitute for that live process. The vehicle identifier used here (BFG47T) is fabricated; the live service confirmed a fabricated plate returns a genuine 'Registration not found' result rather than accepting mock data (see VERIFICATION.md).
