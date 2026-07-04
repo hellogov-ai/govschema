@@ -1,0 +1,178 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nl/rdw/vehicle-ownership-transfer",
+  "version": "1.0.0",
+  "title": "Netherlands Vehicle Ownership Transfer (Kenteken Overschrijven)",
+  "description": "Transfer registration of a Netherlands-registered car (auto) from a private seller to a new private-individual owner through the Netherlands Vehicle Authority's (Rijksdienst voor het Wegverkeer, RDW) online 'Voertuig overschrijven' service (voertuigoverschrijven.rdw.nl), reached via DigiD from rdw.nl. The buyer, logged in with the DigiD app with ID-check, submits the vehicle's licence plate number and the 9-digit tenaamstellingscode (registration transfer code) that the seller hands over with the vehicle's registration card, declares valid liability (WA) insurance is in place, and pays the transfer fee. This is the Dutch analogue to gb/dvla/vehicle-keeper-change-v5c, sg/lta/vehicle-ownership-transfer, and in/morth/vehicle-ownership-transfer, and is the first schema in this registry for the Netherlands (NL) in the Vehicle Registration/Tag/Title sub-area of the DMV vertical (alongside the already-published nl/rdw/drivers-licence-renewal). Models an individual-to-individual online transfer of a privately owned car only. It does not model a motorcycle/moped transfer, a transfer to or from a company/business (eenmanszaak/vennootschap) or a motor-trade dealer, a transfer where the seller only holds the older paper registration documents (which requires an in-person counter visit), export or scrappage, or the seller's own notification step. It does not submit the transfer; the live rdw.nl source is always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Netherlands Vehicle Authority",
+    "abbreviation": "RDW",
+    "url": "https://www.rdw.nl"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "nl-NL"
+  },
+  "source": {
+    "url": "https://www.rdw.nl/kopen-of-verkopen/kenteken-overschrijven-op-naam-van-een-persoon",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "RDW 'Kenteken voertuig overschrijven' (Register vehicle in your name) service page; RDW 'Tenaamstellingscode kwijt' page; voertuigoverschrijven.rdw.nl online service"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from RDW's own 'Kenteken voertuig overschrijven' service page (eligibility conditions for the buyer and the documents the seller must hold, the online steps, and the EUR 13.10 fee) and its 'Tenaamstellingscode kwijt' page (the 9-digit tenaamstellingscode's format and purpose). The actual voertuigoverschrijven.rdw.nl DigiD-gated wizard screens could not be reached or walked through end to end in this session (the landing page itself renders as a JavaScript loading shell to non-interactive fetch tooling); a mock application-packet test run (conformance/nl/rdw/vehicle-ownership-transfer/1.0.0/application-packet.json) was assembled and checked against this schema's own required/requiredWhen/validation/eligibleValues constraints instead of a live submission. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "buyerAge18OrOlder",
+      "label": "Are you 18 years old or older?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "RDW's online transfer service requires the buyer to be at least 18 (a lower minimum age of 16 applies to mopeds, out of scope for this car-only document).",
+      "sourceRef": "RDW 'Kenteken voertuig overschrijven' — 'U bent 18 jaar of ouder.'"
+    },
+    {
+      "name": "buyerRegisteredInBrpWithNlAddress",
+      "label": "Are you registered in the Basic Registration of Persons (BRP) with a residence or mailing address in the Netherlands?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "The buyer must have a residence or mailing address registered in the Netherlands' Basic Registration of Persons (Basisregistratie Personen, BRP).",
+      "sourceRef": "RDW 'Kenteken voertuig overschrijven' — 'U staat ingeschreven in de Basisregistratie Personen (BRP) met een woon- of postadres in Nederland.'"
+    },
+    {
+      "name": "buyerHasValidIdDocument",
+      "label": "Do you have a valid identity document?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "A valid identity document is required to complete the transfer.",
+      "sourceRef": "RDW 'Kenteken voertuig overschrijven' — 'U hebt een geldig identiteitsbewijs.'"
+    },
+    {
+      "name": "buyerHasDigidAppWithIdCheck",
+      "label": "Do you have the DigiD app with ID-check activated?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Logging in to the online transfer service requires the DigiD app with the ID-check feature.",
+      "sourceRef": "RDW 'Kenteken voertuig overschrijven' — 'U hebt de DigiD-app met identiteitscheck.'"
+    },
+    {
+      "name": "sellerHasValidRegistrationCardAndCode",
+      "label": "Does the seller have the valid registration card (or temporary document number) and the complete, valid tenaamstellingscode?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "The online channel requires the seller to hold the current-style registration card (kentekencard) or a temporary document number, plus the complete tenaamstellingscode. A seller who only holds the older paper registration documents (the original tenaamstellingsbewijs and overschrijvingsbewijs) cannot use the online channel; both parties must instead go to a registration office (kentekenloket), RDW inspection station, or RDW office in person, which this document does not model.",
+      "sourceRef": "RDW 'Kenteken voertuig overschrijven' — 'De verkoper heeft de geldige kentekencard (of een tijdelijk documentnummer) en de complete en geldige tenaamstellingscode.'"
+    },
+    {
+      "name": "licencePlateNumber",
+      "label": "Licence plate number (kenteken)",
+      "type": "string",
+      "required": true,
+      "description": "The Dutch licence plate (registration number) of the vehicle being transferred, as shown on the registration card.",
+      "sourceRef": "RDW 'Kenteken voertuig overschrijven' — buyer enters the vehicle's kenteken in Mijn RDW to start the transfer",
+      "validation": { "pattern": "^[A-Z0-9-]{6,8}$", "minLength": 6, "maxLength": 8 }
+    },
+    {
+      "name": "registrationTransferCode",
+      "label": "Tenaamstellingscode (registration transfer code)",
+      "type": "string",
+      "required": true,
+      "description": "The 9-digit tenaamstellingscode that accompanies the vehicle's registration card, handed over to the buyer by the seller (in 2 parts) as proof of authorization to register the vehicle in a new name. Required to complete the online transfer, cancel a registration, or export/scrap a vehicle.",
+      "sourceRef": "RDW 'Tenaamstellingscode kwijt' — 'De tenaamstellingscode bestaat uit 9 cijfers.'",
+      "validation": { "pattern": "^[0-9]{9}$", "minLength": 9, "maxLength": 9 }
+    },
+    {
+      "name": "buyerHasValidLiabilityInsuranceDeclaration",
+      "label": "Declaration: the vehicle will be covered by valid WA (third-party liability) insurance in your name from the moment of registration",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "classification": "financial",
+      "eligibleValues": [true],
+      "description": "Dutch law (Wet Aansprakelijkheidsverzekering Motorrijtuigen, WAM) requires every registered vehicle to be covered by at least third-party liability (WA) insurance from the moment it is registered in the buyer's name. RDW cross-checks registered vehicles against insurers' electronic notifications rather than collecting an insurer name on this form; an uninsured registered vehicle is fined by the Central Justice Collection Office (CJIB) even while unused, so this is modelled as a pre-transfer declaration rather than a free-text insurer field.",
+      "sourceRef": "RDW/WAM guidance — 'Voertuigen met een verzekeringsplicht moeten vanaf het moment van tenaamstelling WA-verzekerd zijn.'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "transferFee",
+      "label": "Vehicle transfer fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": { "currency": "EUR", "value": 13.10 },
+      "methods": ["ideal", "wero"],
+      "sourceRef": "RDW 'Kenteken voertuig overschrijven' — 'De kosten voor het overschrijven zijn hetzelfde via alle kanalen: EUR 13,10.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_check",
+      "title": "Check whether you and the vehicle's documents are eligible for the online channel",
+      "fields": [
+        "buyerAge18OrOlder",
+        "buyerRegisteredInBrpWithNlAddress",
+        "buyerHasValidIdDocument",
+        "buyerHasDigidAppWithIdCheck",
+        "sellerHasValidRegistrationCardAndCode"
+      ],
+      "transitions": [
+        { "to": null, "exitReason": "buyer_under_18", "when": { "field": "buyerAge18OrOlder", "equals": false } },
+        { "to": null, "exitReason": "buyer_not_registered_in_brp", "when": { "field": "buyerRegisteredInBrpWithNlAddress", "equals": false } },
+        { "to": null, "exitReason": "buyer_no_valid_id", "when": { "field": "buyerHasValidIdDocument", "equals": false } },
+        { "to": null, "exitReason": "no_digid_app_with_id_check", "when": { "field": "buyerHasDigidAppWithIdCheck", "equals": false } },
+        { "to": null, "exitReason": "seller_documents_not_eligible_for_online_channel", "when": { "field": "sellerHasValidRegistrationCardAndCode", "equals": false } },
+        { "to": "vehicle_and_code_entry" }
+      ]
+    },
+    {
+      "id": "vehicle_and_code_entry",
+      "title": "Enter the vehicle's licence plate and tenaamstellingscode",
+      "fields": ["licencePlateNumber", "registrationTransferCode"],
+      "next": "insurance_declaration"
+    },
+    {
+      "id": "insurance_declaration",
+      "title": "Declare valid liability insurance",
+      "fields": ["buyerHasValidLiabilityInsuranceDeclaration"],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Pay the transfer fee",
+      "fields": []
+    }
+  ]
+}
