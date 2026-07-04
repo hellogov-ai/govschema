@@ -1,0 +1,323 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ca/elections-canada/voter-registration",
+  "version": "1.0.0",
+  "title": "Canada Federal Voter Registration (Online Voter Registration Service, National Register of Electors)",
+  "description": "Register an eligible Canadian citizen, or update an existing registration, in the National Register of Electors maintained by Elections Canada under the Canada Elections Act, using the live Online Voter Registration Service (ereg.elections.ca). Models the direct-match registration path: date of birth, the three federal eligibility gates (Canadian citizenship, home address in Canada, Canadian Forces elector status), personal information (name, gender), and a civic (street-address) home address, followed by a review screen and CAPTCHA before submission. Two adjacent flows reached from the eligibility screen are out of scope: answering 'No' to Canadian citizenship ends in a hard ineligibility result, and answering 'No' to having a home address in Canada routes to a separate application process for Canadians living abroad (International Register of Electors, a distinct IRCC/Elections Canada service). The three non-civic home-address types the address step itself offers (rural Section/Township/Range/Meridian, rural Lot & Concession, and a free-form 'different address type') are recorded as selectable values but their own sub-field sets were not reached in this cycle and are deferred (see VERIFICATION.md). Likewise, the identity-document-upload path Elections Canada uses when a submitted registration cannot be automatically matched to an elector record (per the service's own 'check the status of your request' reference-number flow) was not reached and is out of scope. Does not submit the registration; the live ereg.elections.ca service is always authoritative, and GovSchema never files a live application on an applicant's behalf — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Elections Canada",
+    "abbreviation": "EC",
+    "url": "https://www.elections.ca"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-CA"
+  },
+  "source": {
+    "url": "https://ereg.elections.ca/en/ereg/index",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Elections Canada Online Voter Registration Service (ereg.elections.ca), version 2.3.17.0"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-04",
+    "notes": "Source-derived reference schema authored directly from a live, screen-by-screen walkthrough of the ereg.elections.ca Online Voter Registration Service using a headless browser with representative mock data (Jordan Tremblay, DOB 1990-06-15, a real Ottawa, ON postal code K1A 0A6). Every field name, requiredness, input type, and enumerated option quoted in this document (DateYear/DateMonth/DateDay, EligibilityCriteriaCitizenship, SvrCriteriaAddressInCanada, SvrCriteriaCanadianForcesMember, FirstName/MiddleName/LastName, GenderId, AddressType, PostalCode, CityId, AddressNumber, Suite, Suffix) is taken directly from the live page's own DOM (element name/id attributes, HTML5 validation attributes such as AddressNumber's pattern=\"^[0-9]{1,6}\\s*$\", and select option lists), not a written description of the service. The walkthrough was stopped at the Review Information screen (Step 5 of 6), which requires solving a CAPTCHA before Submit; no registration was ever submitted — GovSchema authors schemas from observed form structure and does not file applications with government systems (see the repository's operating boundaries). See VERIFICATION.md for the full screen-by-screen record, the three eligibility-branch checks performed (citizenship=No, home-address-in-Canada=No, Canadian-Forces-elector=Yes), and the mock-data test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "description": "The live form collects this as three separate text inputs (Year YYYY, Month MM, Day DD) on their own screen (Step 1 of 6) before any other question, since Elections Canada uses date of birth to determine whether an applicant is routed to the 18+ National Register of Electors or the 14-17 Register of Future Electors flow (the latter is out of scope for this document, which models the adult registration path only).",
+      "sourceRef": "Step 1 of 6 'Date of Birth' — form fields DateYear, DateMonth, DateDay"
+    },
+    {
+      "name": "isCanadianCitizen",
+      "label": "Are you a Canadian citizen?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "description": "The Canada Elections Act requires Canadian citizenship to register and vote in a federal election. Answering No leads directly to a Step 6 of 6 ineligibility result screen; this document does not model that terminal outcome as a data field.",
+      "sourceRef": "Step 2 of 6 'Eligibility' — form field EligibilityCriteriaCitizenship (radio, True/False)"
+    },
+    {
+      "name": "hasCanadianHomeAddress",
+      "label": "Is your home address in Canada?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "description": "Answering No routes to a distinct application process for Canadians living abroad (the International Register of Electors), a separate Elections Canada service out of scope for this document.",
+      "sourceRef": "Step 2 of 6 'Eligibility' — form field SvrCriteriaAddressInCanada (radio, True/False)"
+    },
+    {
+      "name": "isCanadianForcesElector",
+      "label": "Are you a Canadian Forces elector?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Presented on the same 'Eligibility' screen as the citizenship and home-address questions, but answering Yes or No both continue to Step 3 (Personal Information) — unlike the other two questions on this screen, this one does not itself gate continuation in the portion of the flow walked for this document. Whether a Yes answer changes the later home-address screens (e.g. a military postal/box address format) was not explored and is not modelled.",
+      "sourceRef": "Step 2 of 6 'Eligibility' — form field SvrCriteriaCanadianForcesMember (radio, True/False)"
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "validation": {
+        "maxLength": 50
+      },
+      "sourceRef": "Step 3 of 6 'Personal Information' — form field FirstName (maxlength 50)"
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "validation": {
+        "maxLength": 50
+      },
+      "sourceRef": "Step 3 of 6 'Personal Information' — form field MiddleName (maxlength 50)"
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "validation": {
+        "maxLength": 100
+      },
+      "sourceRef": "Step 3 of 6 'Personal Information' — form field LastName (maxlength 100)"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "woman",
+          "man",
+          "another_gender"
+        ]
+      },
+      "description": "Values transcribed from the live dropdown: 'Woman', 'Man', 'Another gender'.",
+      "sourceRef": "Step 3 of 6 'Personal Information' — form field GenderId (select: 1=Woman, 2=Man, 3=Another gender)"
+    },
+    {
+      "name": "homeAddressType",
+      "label": "Home address type",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "civic",
+          "section_township_range_meridian",
+          "lot_concession",
+          "non_conforming"
+        ]
+      },
+      "description": "The live form's four address-type options: an ordinary street/civic address ('civic', the common case, fully modelled by this document); a rural legal-description address using Section/Township/Range/Meridian, offered only for Alberta, British Columbia, Saskatchewan and Manitoba rural addresses; a rural Lot & Concession address, offered only for Ontario rural addresses; and 'I have a different address type' for anything else. Only the civic path's own sub-fields (homeAddressPostalCode, homeAddressCity, homeAddressStreetName, homeAddressNumber, homeAddressUnit, homeAddressSuffix) are modelled in this version; the sub-field sets specific to the two rural legal-description types were not reached in this cycle and are deferred to a future revision (see VERIFICATION.md).",
+      "sourceRef": "Step 4 of 6 'Home Address - Address Type' — form field AddressType (radio: CIVIC, STRM, LC, NonConforming)"
+    },
+    {
+      "name": "homeAddressPostalCode",
+      "label": "Postal code",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": {
+        "field": "homeAddressType",
+        "equals": "civic"
+      },
+      "validation": {
+        "pattern": "^[A-Za-z]\\d[A-Za-z]\\s?\\d[A-Za-z]\\d$",
+        "maxLength": 7
+      },
+      "description": "Canadian postal code (format A1A 1A1), used to look up the applicant's city and street from Elections Canada's own address database on the next two screens.",
+      "sourceRef": "Step 4 of 6 'Home Address - Postal code' — form field PostalCode (maxlength 7)"
+    },
+    {
+      "name": "homeAddressCity",
+      "label": "City or town",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": {
+        "field": "homeAddressType",
+        "equals": "civic"
+      },
+      "validation": {
+        "maxLength": 100
+      },
+      "description": "The live service presents this as a dropdown of the one or more cities/towns its address database associates with the entered postal code (e.g. entering K1A 0A6 offers only 'Ottawa, ON'), rather than free text; this document models the underlying value (city name and province) an agent needs to supply, not the lookup mechanic itself.",
+      "sourceRef": "Step 4 of 6 'Home Address - Choose your city' — form field CityId (select, populated from PostalCode)"
+    },
+    {
+      "name": "homeAddressStreetName",
+      "label": "Street name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": {
+        "field": "homeAddressType",
+        "equals": "civic"
+      },
+      "validation": {
+        "maxLength": 100
+      },
+      "description": "The live service presents this as a dropdown of known street names for the chosen city (optionally narrowed by street-type and direction filters), with an explicit 'My street is not here' option that reveals free-text entry instead; this document models the resulting street-name value rather than the two-stage lookup-then-fallback mechanic.",
+      "sourceRef": "Step 4 of 6 'Home Address - Choose your street' — form field StreetId (select, includes 'My street is not here' = -11)"
+    },
+    {
+      "name": "homeAddressNumber",
+      "label": "House/Building number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": {
+        "field": "homeAddressType",
+        "equals": "civic"
+      },
+      "validation": {
+        "pattern": "^[0-9]{1,6}\\s*$"
+      },
+      "description": "The live field's own HTML5 validation pattern and error message ('Invalid street number') were captured directly from the page.",
+      "sourceRef": "Step 4 of 6 'Home Address - Choose your street' — form field AddressNumber (maxlength 6, pattern ^[0-9]{1,6}\\s*$)"
+    },
+    {
+      "name": "homeAddressUnit",
+      "label": "Unit/Suite/Apt",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "visibleWhen": {
+        "field": "homeAddressType",
+        "equals": "civic"
+      },
+      "validation": {
+        "maxLength": 6
+      },
+      "sourceRef": "Step 4 of 6 'Home Address - Choose your street' — form field Suite (maxlength 6)"
+    },
+    {
+      "name": "homeAddressSuffix",
+      "label": "Civic number suffix",
+      "type": "enum",
+      "required": false,
+      "visibleWhen": {
+        "field": "homeAddressType",
+        "equals": "civic"
+      },
+      "validation": {
+        "enum": [
+          "1/4",
+          "1/2",
+          "3/4",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z"
+        ]
+      },
+      "description": "A civic-address suffix appended to the house/building number (e.g. '123A'), as opposed to a fractional civic number (e.g. '123 1/2'). Full option list transcribed from the live dropdown.",
+      "sourceRef": "Step 4 of 6 'Home Address - Choose your street' — form field Suffix (select: 1/4, 1/2, 3/4, A-Z)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "date_of_birth",
+      "title": "Date of Birth",
+      "fields": [
+        "dateOfBirth"
+      ],
+      "next": "eligibility"
+    },
+    {
+      "id": "eligibility",
+      "title": "Eligibility",
+      "fields": [
+        "isCanadianCitizen",
+        "hasCanadianHomeAddress",
+        "isCanadianForcesElector"
+      ],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": [
+        "firstName",
+        "middleName",
+        "lastName",
+        "gender"
+      ],
+      "next": "home_address"
+    },
+    {
+      "id": "home_address",
+      "title": "Home Address",
+      "fields": [
+        "homeAddressType",
+        "homeAddressPostalCode",
+        "homeAddressCity",
+        "homeAddressStreetName",
+        "homeAddressNumber",
+        "homeAddressUnit",
+        "homeAddressSuffix"
+      ]
+    }
+  ]
+}
