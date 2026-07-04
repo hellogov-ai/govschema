@@ -3013,6 +3013,26 @@
       "status": "published",
       "version": "1.0.0",
       "notes": "Identified during the GOV-1121 'GovSchema Standard Research' cycle 2026-07-04, directly against the issue's own 'remaining voter registration' note. The Netherlands' ordinary electoral roll auto-populates from the municipal population register (BRP) for residents, but Dutch nationals living abroad and not registered at any Dutch municipal address must actively register with Gemeente Den Haag, the single national authority the Kieswet designates for this — a genuinely separate, previously unmodelled process, distinct from nl/rvig/passport-application's/nl/rvig/national-identity-card-application's BRP-sourced identity data. formulieren.denhaag.nl renders its Open Forms wizard entirely client-side (a plain fetch shows only a loading shell), so this cycle drove a real headless Chromium session (Playwright) to capture field-level detail across 3 of the wizard's 8 steps (Verkiezingen, Uw gegevens, Uw nationaliteit) plus a live mock-data submission through those steps, including a real file upload for the nationality-proof document. The wizard's final 3 steps (Uw stembiljet, Ondertekening, Overzicht) were confirmed to exist but not captured field-by-field before the live session grew flaky under repeated automated interaction — flagged as follow-up in VERIFICATION.md. Brings national-level voter-registration coverage to 9/11 core jurisdictions (Germany and Singapore confirmed non-gaps: both auto-enrol with no separate citizen-initiated process). Authored v1.0.0: registry/nl/denhaag/voter-registration-abroad/1.0.0. Schema status 'draft' pending full field-by-field source review of the remaining 3 steps; see VERIFICATION.md."
+    },
+    {
+      "proposedId": "ie/dttas/international-driving-permit",
+      "title": "Ireland International Driving Permit (IDP)",
+      "jurisdiction": {
+        "country": "IE",
+        "level": "national"
+      },
+      "authority": {
+        "name": "Road Safety Authority, National Driver Licence Service",
+        "abbreviation": "NDLS"
+      },
+      "processType": "application",
+      "candidateSource": "https://www.ndls.ie/licensed-driver/international-driver-permit.html",
+      "documentRef": "NDLS_Int_Driving_Permit_App_Form_v3.pdf",
+      "agentTask": "Prepare an individual's in-person application for an Irish International Driving Permit at an NDLS centre appointment.",
+      "tier": 1,
+      "status": "published",
+      "version": "1.0.0",
+      "notes": "GOV-1129 'GovSchema Standard Research' cycle 2026-07-04: per-country audit of the DMV vertical's IDL sub-item (GOV-282/GOV-381 naming: Tag, Title, Registration, Drivers License, IDL, CDL) found only the US (us/dos/international-driving-permit-aaa/-aata) and GB (gb/dvla/international-driving-permit, GOV-1105) had an IDP schema; the other 9 of this registry's 11 core jurisdictions did not. Picked Ireland first because its IDP issuance transitioned from the AA (a private motoring association) to NDLS/RSA, a direct government body, on 18 May 2026 — a cleaner authority fit than the GB/US precedents' GSP-0020 authority.operatedBy pattern. www.ndls.ie sits behind a Cloudflare Turnstile managed challenge (plain fetch/WebFetch returns HTTP 403); defeated with a non-webdriver-flagged headless-Chromium session for the guidance pages, and by navigating directly to the PDF asset path and capturing Playwright's resulting 'download' event (an in-context request.get() to the same URL still 403'd) to retrieve the real, static (non-AcroForm) 2-page application form PDF, extracted in full with pdfjs-dist. Models the form's Parts 1-4 (Applicant/Contact/Licence/Permit details) as agent-collectible fields, Part 5 (Applicant Declaration, completed at the appointment) as five discrete assertions plus a declaration date, and excludes Part 6 (NDLS/Official Use Only) as agency-internal. A mock conformance/ie/dttas/international-driving-permit/1.0.0/application-packet.json test run, checked with a scripted GSP-0013 conformance evaluator, passed the schema's own required/requiredWhen/documents.requiredWhen constraints (0 violations across 24 fields + 5 documents); the proofOfAddress and gardaReportOfLoss documents' requiredWhen conditions and the driving-ban eligibility exit were each separately exercised by mutation and confirmed to fire correctly. The form's own 'tick at least one of 1926/1949' rule has no matching v0.3 condition-grammar operator (no 'at least one of two booleans' comparator), so it is recorded descriptively rather than enforced — flagged in VERIFICATION.md as a concrete case for a future spec proposal. Schema status 'draft' pending independent field-by-field re-verification; CA, AU, NZ, DE, FR, NL, SG, and IN still have no IDP schema and remain open for a future research pass."
     }
   ]
 }

@@ -1,0 +1,86 @@
+{
+  "banner": "DRAFT — NOT SUBMITTED — review with a human before proceeding",
+  "schema": {
+    "id": "ie/dttas/international-driving-permit",
+    "version": "1.0.0"
+  },
+  "generatedAt": "2026-07-04",
+  "scenario": "An eligible full Irish driving-licence holder applying at an NDLS centre for a first-time (not replacement) 1949 Convention IDP ahead of a trip to the United States.",
+  "stepTrace": [
+    "eligibility",
+    "applicant_details",
+    "licence_details",
+    "permit_details",
+    "fee_payment",
+    "declaration"
+  ],
+  "eligibilityOutcome": {
+    "outcome": "continues_to_applicant_details",
+    "summary": "All six eligibility fields hold their eligible value (holds a full licence; not a learner permit or non-EU/EEA licence holder; 3+ months remaining on licence; fewer than 12 penalty points; no active driving ban), so the flow falls through to applicant_details rather than exiting not-eligible."
+  },
+  "collectedValues": [
+    { "field": "holdsFullIrishOrEuEeaDrivingLicence", "value": true },
+    { "field": "isLearnerPermitHolder", "value": false },
+    { "field": "isNonEuEeaLicenceHolder", "value": false },
+    { "field": "licenceValidForAtLeastThreeMoreMonths", "value": true },
+    { "field": "hasTwelveOrMorePenaltyPoints", "value": false },
+    { "field": "hasActiveDrivingBan", "value": false },
+    { "field": "fullName", "value": "Aoife Ni Bhriain" },
+    { "field": "dateOfBirth", "value": "1990-04-12" },
+    { "field": "countryOfBirth", "value": "Ireland" },
+    { "field": "address", "value": "14 Sli na Coille, Blackrock, Co. Dublin, A94 X2C1" },
+    { "field": "contactPhoneNumber", "value": "+353 87 555 1234" },
+    { "field": "emailAddress", "value": "aoife.nibhriain@example.ie" },
+    { "field": "addressDiffersFromLicenceAddress", "value": false },
+    { "field": "drivingLicenceType", "value": "irish" },
+    { "field": "drivingLicenceNumber", "value": "NIBHR904128AB1CD" },
+    { "field": "licenceIssuingCountry", "value": "Ireland" },
+    { "field": "licenceCategoriesHeld", "value": "B" },
+    { "field": "permit1926Requested", "value": false },
+    { "field": "permit1949Requested", "value": true },
+    { "field": "countriesIntendedToVisit", "value": "United States of America" },
+    { "field": "dateOfDeparture", "value": "2026-09-01" },
+    { "field": "isReplacementForLostOrStolenIdp", "value": false },
+    { "field": "idpApplicationFeeEur", "value": 15 },
+    { "field": "paymentMethod", "value": "card" },
+    { "field": "declarationInformationTrueAndCorrect", "value": true },
+    { "field": "declarationUnderstandsTwelveMonthValidity", "value": true },
+    { "field": "declarationUnderstandsOnePermitPerYear", "value": true },
+    { "field": "declarationHoldsValidLicenceAtApplication", "value": true },
+    { "field": "declarationAcceptsIdpConditions", "value": true },
+    { "field": "declarationDate", "value": "2026-07-20" }
+  ],
+  "documents": [
+    { "id": "drivingLicence", "provided": true },
+    { "id": "passportSizedPhoto", "provided": true },
+    { "id": "proofOfAddress", "provided": false, "reason": "not required: addressDiffersFromLicenceAddress is false and drivingLicenceType is 'irish' (not 'eu_eea')" },
+    { "id": "gardaReportOfLoss", "provided": false, "reason": "not required: isReplacementForLostOrStolenIdp is false" },
+    { "id": "idpApplicationFormParts1To4", "provided": true }
+  ],
+  "conformanceCheck": {
+    "method": "scripted GSP-0013 condition-grammar evaluator (requiredWhen / eligibleValues / documents.requiredWhen), reimplemented independently of the registry client",
+    "result": "0 violations across 24 fields + 5 documents",
+    "mutationTests": [
+      {
+        "mutation": "set addressDiffersFromLicenceAddress = true",
+        "expected": "proofOfAddress document becomes required",
+        "observed": "proofOfAddress document flagged as newly-required; confirmed"
+      },
+      {
+        "mutation": "set drivingLicenceType = 'eu_eea' (with addressDiffersFromLicenceAddress left false)",
+        "expected": "proofOfAddress document becomes required (the 'any' condition's second branch)",
+        "observed": "proofOfAddress document flagged as newly-required; confirmed"
+      },
+      {
+        "mutation": "set isReplacementForLostOrStolenIdp = true",
+        "expected": "gardaReportOfLoss document becomes required",
+        "observed": "gardaReportOfLoss document flagged as newly-required; confirmed"
+      },
+      {
+        "mutation": "set hasActiveDrivingBan = true",
+        "expected": "eligibility step exits with exitReason not-eligible instead of continuing to applicant_details",
+        "observed": "transition to null with exitReason 'not-eligible' correctly selected"
+      }
+    ]
+  }
+}

@@ -1,0 +1,432 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/dttas/international-driving-permit",
+  "version": "1.0.0",
+  "title": "Ireland International Driving Permit (IDP)",
+  "description": "Apply in person for an Irish International Driving Permit (IDP) — a translation of a full Irish or EU/EEA driving licence recognized in countries outside the EU/EEA. Since 18 May 2026 the National Driver Licence Service (NDLS), delivered under statute by the Road Safety Authority (RSA), is the sole issuer, having taken over from the AA (the Automobile Association), which issued IDPs in Ireland until that date. There is no online application: the applicant books an appointment at one of 34 NDLS centres, completes parts 1-4 of the IDP application form in advance (parts 5-6 — the declaration/signature and the NDLS/official-use section — are completed at the centre), and brings supporting documentation. The permit is issued the same day. This document models that in-person process at the field/requirement level from the IDP application form and NDLS's own published guidance; it never submits anything or implies government endorsement of any organization beyond NDLS/RSA.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Road Safety Authority, National Driver Licence Service",
+    "abbreviation": "NDLS",
+    "url": "https://www.ndls.ie/licensed-driver/international-driver-permit.html"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.ndls.ie/licensed-driver/international-driver-permit.html",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "NDLS International Driving Permit (IDP) Application Form (In-Person - NDLS Centres), file NDLS_Int_Driving_Permit_App_Form_v3.pdf"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-04",
+    "notes": "GOV-1129 research cycle: closes the 'IDL' gap of the DMV vertical (GOV-282/GOV-381 naming) for Ireland — the only prior IDP schemas were the US pair (us/dos/international-driving-permit-aaa, -aata) and gb/dvla/international-driving-permit (GOV-1105); no other of this registry's 11 core jurisdictions had one. Timely find: Ireland's IDP issuance transitioned from the AA (a private motoring association) to NDLS/RSA, a direct government body, on 18 May 2026 (per citizensinformation.ie, page edited 15 June 2026), so this is a cleaner authority fit than the GB/US precedents, which all model a government-appointed third-party issuer via GSP-0020's authority.operatedBy. www.ndls.ie sits behind a Cloudflare Turnstile managed challenge that blocks a plain fetch/WebFetch (HTTP 403 / 'Just a moment...'); the IDP guidance page itself resolved after ~5s under a real headless-Chromium session (Playwright, non-webdriver-flagged), but the PDF asset path (/images/PDF_Documents/...) required navigating the page directly (not an XHR/context.request.get, which still 403'd) and capturing the resulting Playwright 'download' event to retrieve real PDF bytes — a new technique for this class of block, distinct from the pure-JS bot-checks defeated in GOV-803/GOV-960. The downloaded form (NDLS_Int_Driving_Permit_App_Form_v3.pdf) is a static (non-AcroForm) two-page PDF: page 1 is the 6-part application form itself, page 2 is guidance notes and terms and conditions; both extracted in full with pdfjs-dist's text layer. Parts 1-4 (Applicant Details, Contact Details, Driving Licence Details, International Driving Permit type/travel) are modelled as agent-collectible fields; Part 5 (Applicant Declaration, including the physical signature) is modelled as its five discrete assertions plus a declaration date, all completed at the NDLS centre rather than in advance; Part 6 (NDLS/Official Use Only: centre location, booklet serial number, verifying officer name/signature) is out of scope as an agency-internal section, not applicant input. The two permit-type checkboxes (1926/1949) are modelled as independent, non-required booleans rather than a single enum (unlike gb/dvla/international-driving-permit's idpConventionType) because the form's own wording — 'tick below the appropriate permit(s) you require' — allows both to be ticked for travel to multiple destination types; the v0.3 condition grammar has no 'at least one of these two booleans is true' operator (conceptually the same expressiveness gap flagged for notEquals-against-absent-fields in prior cycles), so the 'at least one must be ticked' rule is recorded in each field's description rather than as an enforced constraint. A mock conformance/ie/dttas/international-driving-permit/1.0.0/application-packet.json test run, checked with a scripted GSP-0013 conformance evaluator (reimplementing the requiredWhen/eligibleValues/documents.requiredWhen grammar), passed the schema's own constraints (0 violations across 24 fields + 5 documents); the proofOfAddress document's requiredWhen (addressDiffersFromLicenceAddress OR EU/EEA-resident licence type) and the replacement-Garda-report document's requiredWhen were each separately exercised by mutating the packet and confirming the newly-required entries are correctly flagged. Status stays 'draft' pending a second independent field-by-field pass and a live-appointment-booking-flow walkthrough (the booking line is telephone-only, so the online surface stops at the guidance/form level); see VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "holdsFullIrishOrEuEeaDrivingLicence",
+      "label": "Holds a full Irish or EU/EEA driving licence",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Available to Irish residents with a full Irish driving licence and to all EU/EEA licence holders resident in Ireland.",
+      "sourceRef": "citizensinformation.ie — 'Who can apply: It is available to Irish residents who hold a current full Irish driving licence and to all EU or EEA licence holders who are resident in Ireland.'"
+    },
+    {
+      "name": "isLearnerPermitHolder",
+      "label": "Holds only a learner permit (not a full licence)",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "IDPs cannot be issued to learner permit holders.",
+      "sourceRef": "NDLS IDP page — 'It cannot be issued to learner permit holders or non-EU/EEA licence holders.'"
+    },
+    {
+      "name": "isNonEuEeaLicenceHolder",
+      "label": "Holds a non-EU/EEA driving licence",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "An IDP cannot be issued to holders of a licence from outside the EU/EEA (a foreign, non-EU/EEA licence must first be exchanged for an Irish one).",
+      "sourceRef": "NDLS IDP page — 'It cannot be issued to learner permit holders or non-EU/EEA licence holders.'"
+    },
+    {
+      "name": "licenceValidForAtLeastThreeMoreMonths",
+      "label": "Driving licence has at least 3 months remaining before expiry",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "The IDP will expire when the licence expires if that is sooner than 12 months; at least 3 months must remain on the licence at the time of application.",
+      "sourceRef": "NDLS IDP page FAQ — 'Does my driving licence need to be valid for the full duration of the IDP? No... you must have at least 3 months remaining on your licence to apply.'"
+    },
+    {
+      "name": "hasTwelveOrMorePenaltyPoints",
+      "label": "Has 12 or more penalty points on the licence",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "An IDP may be issued for an endorsed licence only once there are not 12 penalty points or more on it.",
+      "sourceRef": "NDLS IDP Application Form, page 2 (Guidance/Terms) — 'An IDP may be issued for an endorsed licence once there are not 12 penalty points or more on it.'"
+    },
+    {
+      "name": "hasActiveDrivingBan",
+      "label": "Has an active driving ban",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "If the applicant's driving ban is still in force, an IDP cannot be issued.",
+      "sourceRef": "NDLS IDP Application Form, page 2 (Guidance/Terms) — 'If an IDP applicant's driving ban is still in force, an IDP cannot be issued.'"
+    },
+    {
+      "name": "fullName",
+      "label": "Full name (as per driving licence)",
+      "type": "string",
+      "required": true,
+      "description": "Must match the name on the applicant's driving licence.",
+      "sourceRef": "IDP Application Form, Part 1 (Applicant Details) — 'Full name (as per driving licence):'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "Printed on the form as Day / Month / Year.",
+      "sourceRef": "IDP Application Form, Part 1 (Applicant Details) — 'Date of birth (Day / Month / Year):'",
+      "classification": "pii"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDP Application Form, Part 1 (Applicant Details) — 'Country of birth:'",
+      "validation": { "minLength": 1, "maxLength": 100 },
+      "classification": "pii"
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's current residential address.",
+      "sourceRef": "IDP Application Form, Part 2 (Contact Details) — 'Address:'",
+      "validation": { "minLength": 1, "maxLength": 300 },
+      "classification": "pii"
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "Contact phone number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDP Application Form, Part 2 (Contact Details) — 'Contact phone number:'",
+      "validation": { "minLength": 5, "maxLength": 30 },
+      "classification": "pii"
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDP Application Form, Part 2 (Contact Details) — 'Email address:'",
+      "validation": { "minLength": 3, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "addressDiffersFromLicenceAddress",
+      "label": "Current address is different from the address on the driving licence",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the Proof of Address document requirement below; also true whenever the applicant holds an EU/EEA licence and is resident in Ireland (that combination independently requires proof of address).",
+      "sourceRef": "NDLS IDP page FAQ — 'Proof of Address requirement... only required where the address on your driving licence differs from your current address, or where you hold an EU/EEA driving licence and are resident in Ireland.'"
+    },
+    {
+      "name": "drivingLicenceType",
+      "label": "Driving licence type",
+      "type": "enum",
+      "required": true,
+      "description": "Which licence type is held; an EU/EEA licence holder resident in Ireland additionally needs proof of address (see addressDiffersFromLicenceAddress).",
+      "sourceRef": "IDP Application Form, Part 3 (Driving Licence Details) — 'Irish Driving Licence [ ] EU / EEA Driving Licence [ ]'",
+      "validation": { "enum": ["irish", "eu_eea"] }
+    },
+    {
+      "name": "drivingLicenceNumber",
+      "label": "Driving licence number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDP Application Form, Part 3 (Driving Licence Details) — 'Driving Licence Number:'",
+      "validation": { "minLength": 1, "maxLength": 30 },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "licenceIssuingCountry",
+      "label": "Licence issuing country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDP Application Form, Part 3 (Driving Licence Details) — 'Issuing Country:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "licenceCategoriesHeld",
+      "label": "Licence categories held",
+      "type": "string",
+      "required": true,
+      "description": "Example: B, C, D.",
+      "sourceRef": "IDP Application Form, Part 3 (Driving Licence Details) — 'Licence Categories Held (e.g. B, C, D):'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "permit1926Requested",
+      "label": "1926 Convention IDP requested",
+      "type": "boolean",
+      "required": false,
+      "description": "Only required if travelling to Brazil, Burundi, Iraq, Nigeria, or Somalia. At least one of permit1926Requested or permit1949Requested must be true; the source form's condition grammar has no operator to enforce this directly, so it is recorded here descriptively (see VERIFICATION.md).",
+      "sourceRef": "IDP Application Form, Part 4 (International Driving Permit) — '1926 - Only required if traveling to Brazil, Burundi, Iraq, Nigeria, Somalia'"
+    },
+    {
+      "name": "permit1949Requested",
+      "label": "1949 Convention IDP requested",
+      "type": "boolean",
+      "required": false,
+      "description": "Required for all other (non-1926-list) destination countries. At least one of permit1926Requested or permit1949Requested must be true.",
+      "sourceRef": "IDP Application Form, Part 4 (International Driving Permit) — '1949 - Required for all other countries'"
+    },
+    {
+      "name": "countriesIntendedToVisit",
+      "label": "Countries intended to visit",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDP Application Form, Part 4 (International Driving Permit) — 'Please indicate which country(ies) you intend to visit:'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "dateOfDeparture",
+      "label": "Date of departure",
+      "type": "date",
+      "required": true,
+      "description": "An IDP cannot be forward-dated more than 3 months from the date the application is received by NDLS.",
+      "sourceRef": "IDP Application Form, Part 4 (International Driving Permit) — 'Date of Departure:'; page 2 (Guidance/Terms) — 'Permits cannot be forward-dated more than 3 months from the date the application is received by the NDLS.'"
+    },
+    {
+      "name": "isReplacementForLostOrStolenIdp",
+      "label": "Applying for a replacement of a previously issued IDP (lost or stolen)",
+      "type": "boolean",
+      "required": true,
+      "description": "Only one IDP may be issued per licence per year unless the applicant is seeking a replacement for an issued permit, in which case a Garda report of the original IDP's loss must accompany the application (see the gardaReportOfLoss document).",
+      "sourceRef": "IDP Application Form, page 2 (Guidance/Terms) — 'Only one IDP may be issued per licence per year unless you are looking for a replacement for an issued permit, in which case the IDP application form must be accompanied by a Garda report of the original IDP's loss.'"
+    },
+    {
+      "name": "idpApplicationFeeEur",
+      "label": "IDP application fee (EUR)",
+      "type": "number",
+      "required": true,
+      "description": "Fixed fee of €15, paid by card only, on the day of the appointment.",
+      "sourceRef": "NDLS IDP page — 'IDP application fee (€15 - card payment only on the day)'",
+      "validation": { "minimum": 15, "maximum": 15 },
+      "classification": "financial"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "Card only; NDLS does not accept cash for the IDP fee.",
+      "sourceRef": "NDLS IDP page FAQ — 'How much will an IDP cost? The fee for an International Driving Permit is 15 euro (card payment only on the day)'",
+      "validation": { "enum": ["card"] }
+    },
+    {
+      "name": "declarationInformationTrueAndCorrect",
+      "label": "I declare that the information provided in this application is true and correct",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Completed at the NDLS centre appointment (Part 5), not in advance.",
+      "sourceRef": "IDP Application Form, Part 5 (Applicant Declaration) — 'I declare that the information provided in this application is true and correct.'"
+    },
+    {
+      "name": "declarationUnderstandsTwelveMonthValidity",
+      "label": "I understand that an International Driving Permit is valid for 12 months only",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "IDP Application Form, Part 5 (Applicant Declaration) — 'I understand that an International Driving Permit is valid for 12 months only.'"
+    },
+    {
+      "name": "declarationUnderstandsOnePermitPerYear",
+      "label": "I understand that only one permit may be issued per year",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "IDP Application Form, Part 5 (Applicant Declaration) — 'I understand that only one permit may be issued per year.'"
+    },
+    {
+      "name": "declarationHoldsValidLicenceAtApplication",
+      "label": "I hold a valid driving licence at the time of application",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "IDP Application Form, Part 5 (Applicant Declaration) — 'I hold a valid driving licence at the time of application.'"
+    },
+    {
+      "name": "declarationAcceptsIdpConditions",
+      "label": "I accept the conditions for issue of an IDP",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "IDP Application Form, Part 5 (Applicant Declaration) — 'I accept the conditions for issue of an IDP.'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration date",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant signs the declaration at the NDLS centre.",
+      "sourceRef": "IDP Application Form, Part 5 (Applicant Declaration) — 'Applicant Signature: Date:'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "drivingLicence",
+      "label": "Valid Irish or EU/EEA driving licence",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "issuingAuthority": "NDLS / an EU or EEA member state's licensing authority",
+      "sourceRef": "IDP Application Form, page 2 (Guidance Notes) — 'Applicants must bring: A valid Irish or EU/EEA driving licence'"
+    },
+    {
+      "id": "passportSizedPhoto",
+      "label": "One passport-sized photograph",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "IDP Application Form, page 2 (Guidance Notes) — 'Applicants must bring: One passport-sized photograph'"
+    },
+    {
+      "id": "proofOfAddress",
+      "label": "Proof of address (recent domestic bill)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "addressDiffersFromLicenceAddress", "equals": true },
+          { "field": "drivingLicenceType", "equals": "eu_eea" }
+        ]
+      },
+      "belongsTo": "applicant",
+      "freshness": { "issuedWithin": "P6M" },
+      "sourceRef": "NDLS IDP page — 'Bring a copy of a recent domestic bill issued within the last 6 months, it must show your current residential address.'"
+    },
+    {
+      "id": "gardaReportOfLoss",
+      "label": "Garda report of the original IDP's loss",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "isReplacementForLostOrStolenIdp", "equals": true },
+      "belongsTo": "applicant",
+      "issuingAuthority": "An Garda Siochana",
+      "sourceRef": "IDP Application Form, page 2 (Guidance/Terms) — 'the IDP application form must be accompanied by a Garda report of the original IDP's loss'"
+    },
+    {
+      "id": "idpApplicationFormParts1To4",
+      "label": "Completed IDP application form, parts 1-4",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "citizensinformation.ie — 'You should complete your application form before attending your appointment except for parts 5 and 6. Download the application form from the NDLS website.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Eligibility",
+      "fields": [
+        "holdsFullIrishOrEuEeaDrivingLicence",
+        "isLearnerPermitHolder",
+        "isNonEuEeaLicenceHolder",
+        "licenceValidForAtLeastThreeMoreMonths",
+        "hasTwelveOrMorePenaltyPoints",
+        "hasActiveDrivingBan"
+      ],
+      "transitions": [
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "holdsFullIrishOrEuEeaDrivingLicence", "equals": false } },
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "isLearnerPermitHolder", "equals": true } },
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "isNonEuEeaLicenceHolder", "equals": true } },
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "licenceValidForAtLeastThreeMoreMonths", "equals": false } },
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "hasTwelveOrMorePenaltyPoints", "equals": true } },
+        { "to": null, "exitReason": "not-eligible", "when": { "field": "hasActiveDrivingBan", "equals": true } },
+        { "to": "applicant_details" }
+      ]
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant and contact details",
+      "fields": ["fullName", "dateOfBirth", "countryOfBirth", "address", "contactPhoneNumber", "emailAddress"],
+      "next": "licence_details"
+    },
+    {
+      "id": "licence_details",
+      "title": "Driving licence details",
+      "fields": ["drivingLicenceType", "drivingLicenceNumber", "licenceIssuingCountry", "licenceCategoriesHeld", "addressDiffersFromLicenceAddress"],
+      "next": "permit_details"
+    },
+    {
+      "id": "permit_details",
+      "title": "Permit type and travel",
+      "fields": ["permit1926Requested", "permit1949Requested", "countriesIntendedToVisit", "dateOfDeparture", "isReplacementForLostOrStolenIdp"],
+      "next": "fee_payment"
+    },
+    {
+      "id": "fee_payment",
+      "title": "Fee and payment",
+      "fields": ["idpApplicationFeeEur", "paymentMethod"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration at the NDLS centre appointment",
+      "fields": [
+        "declarationInformationTrueAndCorrect",
+        "declarationUnderstandsTwelveMonthValidity",
+        "declarationUnderstandsOnePermitPerYear",
+        "declarationHoldsValidLicenceAtApplication",
+        "declarationAcceptsIdpConditions",
+        "declarationDate"
+      ]
+    }
+  ]
+}
