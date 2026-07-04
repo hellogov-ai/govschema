@@ -1,0 +1,297 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fr/interieur/voter-registration",
+  "version": "1.0.0",
+  "title": "France Registration on the Electoral Roll (Inscription sur les listes électorales)",
+  "description": "Register an eligible French citizen on the electoral roll of a commune (Répertoire Électoral Unique / REU), using the data model of the national Cerfa n°12669 form ('Demande d'inscription sur les listes électorales à l'usage des citoyens français'), which is submitted in person or by mail to the applicant's mairie and whose fields are mirrored by the online téléservice on service-public.fr. Models the applicant's civil status (including the maiden-name convention for married women), place and country of birth, the commune of registration and the applicant's situation (first-time registration, move within a commune, or change of commune — the last requiring the previous place of registration), the optional cross-border case of a citizen also registered on a consular electoral list who wants that registration cancelled, the applicant's contact address, and the declaration/signature. Does not model the separate online téléservice's own screen flow, registration as a newly naturalised citizen or at age 18 (both largely automatic per current law), voting from a French embassy/consulate abroad as a distinct process, or submit the application; the applicant's mairie (or consulate, for French citizens resident abroad) and service-public.fr are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministère de l'Intérieur (in conjunction with France's communes, which maintain the Répertoire Électoral Unique)",
+    "abbreviation": "MI",
+    "url": "https://www.elections.interieur.gouv.fr/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "fr-FR"
+  },
+  "source": {
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/R16024",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "Cerfa n°12669 — Demande d'inscription sur les listes électorales à l'usage des citoyens français"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live Cerfa n°12669 PDF (fetched directly from interieur.gouv.fr, HTTP 200, no bot-block) and corroborated against the current service-public.gouv.fr pages describing the online démarche (R16024, F1367). The PDF's own field labels (état civil, situation du demandeur, coordonnées personnelles) were transcribed verbatim into sourceRef values. The PDF instance retrieved carries edition mark 'N° 12669*01' and states a fixed 31-December registration deadline; the live service-public.gouv.fr pages (fetched separately) confirm the current, post-2019-reform rule is that registration is open year-round, up to the sixth Wednesday before an election, and reference the same form as 'Cerfa 12669*02' — so the deadline text on this PDF instance is superseded, but its field structure (état civil, situation, coordonnées) matches the live démarche description and is treated as current for this schema. Status remains draft, not verified."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "surname",
+      "label": "NOM",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "For married women, give the birth (maiden) name, not the married name.",
+      "sourceRef": "Cerfa 12669, page 1, section 1 (État civil) — 'NOM : Indiquer le nom de jeune fille pour les femmes mariées'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "maritalName",
+      "label": "NOM MARITAL (facultatif)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Married name, optional.",
+      "sourceRef": "Cerfa 12669, page 1, section 1 — 'NOM MARITAL (facultatif)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "PRÉNOM(S)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Cerfa 12669, page 1, section 1 — 'PRÉNOM(S)'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "sex",
+      "label": "SEXE",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Cerfa 12669, page 1, section 1 — 'SEXE : M  F'",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "NÉ(E) LE",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Cerfa 12669, page 1, section 1 — 'NÉ(E) LE : __ / __ / __'"
+    },
+    {
+      "name": "placeOfBirthCommune",
+      "label": "À (commune)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Commune of birth. For Paris, Lyon, and Marseille, also give the arrondissement.",
+      "sourceRef": "Cerfa 12669, page 1, section 1 — 'À (commune) : ... Pour Paris, Lyon et Marseille, indiquer aussi l'arrondissement'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "placeOfBirthDepartmentOrOverseas",
+      "label": "DÉPARTEMENT ou OUTRE-MER",
+      "type": "string",
+      "required": false,
+      "description": "Department, or overseas collectivity (Guadeloupe, Martinique, Guyane, La Réunion, Saint-Pierre-et-Miquelon, Mayotte, Wallis-et-Futuna, Polynésie française, Nouvelle-Calédonie), of birth. Required only when born outside metropolitan France's ordinary departments — left blank when placeOfBirthCountry is not France.",
+      "sourceRef": "Cerfa 12669, page 1, section 1 — 'DÉPARTEMENT : ... ou OUTRE-MER* : ...' with footnote '*OUTRE-MER : Guadeloupe, Martinique, Guyane, La Réunion, Saint-Pierre-et-Miquelon, Mayotte, Wallis-et-Futuna, Polynésie française, Nouvelle-Calédonie.'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "PAYS",
+      "type": "string",
+      "required": true,
+      "description": "Country of birth.",
+      "sourceRef": "Cerfa 12669, page 1, section 1 — 'PAYS :'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "registrationCommune",
+      "label": "Demande son inscription sur la liste électorale de la commune de",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The commune whose electoral roll the applicant is asking to be added to.",
+      "sourceRef": "Cerfa 12669, page 1, section 2 (Situation du demandeur) — 'Demande son inscription sur la liste électorale de la commune de : ...'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "registrationDepartmentOrOverseas",
+      "label": "DÉPARTEMENT ou OUTRE-MER",
+      "type": "string",
+      "required": false,
+      "description": "Department, or overseas collectivity, of the commune of registration.",
+      "sourceRef": "Cerfa 12669, page 1, section 2 — 'DÉPARTEMENT : ... ou OUTRE-MER* : ...'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicantSituation",
+      "label": "Cocher la case correspondant à votre situation",
+      "type": "enum",
+      "required": true,
+      "description": "Situation 1: first-ever registration on a French commune's electoral roll. Situation 2: registering because of a move within the same commune (or the same arrondissement, for Paris/Lyon/Marseille). Situation 3: registering because of a change of commune of registration (or change of arrondissement, for Paris/Lyon/Marseille) — requires giving the previous place of registration.",
+      "sourceRef": "Cerfa 12669, page 1, section 2 — 'Cocher la case correspondant à votre situation : – Situation 1 : première inscription sur les listes électorales d'une commune française – Situation 2 : demande d'inscription en cas de déménagement à l'intérieur d'une même commune française ou d'un même arrondissement pour Paris, Lyon et Marseille – Situation 3 : demande d'inscription en cas de changement de commune d'inscription ou en cas de changement d'arrondissement pour Paris, Lyon et Marseille'",
+      "validation": { "enum": ["first_registration", "move_within_commune", "change_of_commune"] }
+    },
+    {
+      "name": "previousRegistrationCommune",
+      "label": "Précédent lieu d'inscription — COMMUNE",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantSituation", "equals": "change_of_commune" },
+      "classification": "pii",
+      "description": "Required only when applicantSituation is change_of_commune. For Paris, Lyon, and Marseille, also give the arrondissement.",
+      "sourceRef": "Cerfa 12669, page 1, section 2 — 'Dans ce cas, indiquer impérativement le précédent lieu d'inscription : COMMUNE : ... Pour Paris, Lyon et Marseille, indiquer l'arrondissement'",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "previousRegistrationDepartmentOrOverseas",
+      "label": "Précédent lieu d'inscription — DÉPARTEMENT ou OUTRE-MER",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantSituation", "equals": "change_of_commune" },
+      "sourceRef": "Cerfa 12669, page 1, section 2 — 'DÉPARTEMENT : ... ou OUTRE-MER* : ...' (précédent lieu d'inscription block)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "alsoRegisteredOnConsularElectoralList",
+      "label": "Pour les personnes également inscrites à l'étranger sur une liste électorale consulaire et qui souhaitent que l'inscription sur la liste électorale de la nouvelle commune entraîne la radiation de cette liste électorale consulaire",
+      "type": "boolean",
+      "required": false,
+      "description": "Tick only if the applicant is also registered on a consular electoral list abroad and wants this new commune registration to cause their removal from that consular list.",
+      "sourceRef": "Cerfa 12669, page 1, section 2 — 'Pour les personnes également inscrites à l'étranger sur une liste électorale consulaire et qui souhaitent que l'inscription sur la liste électorale de la nouvelle commune entraîne la radiation de cette liste électorale consulaire, préciser :'"
+    },
+    {
+      "name": "consularPost",
+      "label": "Ambassade ou poste consulaire",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "alsoRegisteredOnConsularElectoralList", "equals": true },
+      "description": "Required only when alsoRegisteredOnConsularElectoralList is true.",
+      "sourceRef": "Cerfa 12669, page 1, section 2 — 'Ambassade ou poste consulaire : ...'",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "consularCountry",
+      "label": "Pays",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "alsoRegisteredOnConsularElectoralList", "equals": true },
+      "description": "Country of the consular electoral list. Required only when alsoRegisteredOnConsularElectoralList is true.",
+      "sourceRef": "Cerfa 12669, page 1, section 2 — 'Pays : ...' (consular block)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Adresse",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's contact address, where correspondence about the application can be sent.",
+      "sourceRef": "Cerfa 12669, page 1, section 3 (Coordonnées personnelles du demandeur) — 'Adresse : ...'",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "postalCode",
+      "label": "Code postal",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Cerfa 12669, page 1, section 3 — 'Code postal : ...'",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "addressCommune",
+      "label": "Commune",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Cerfa 12669, page 1, section 3 — 'Commune : ...'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Téléphone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Cerfa 12669, page 1, section 3 — 'Téléphone : ...'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "Courriel (fortement recommandé)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Strongly recommended: lets the mairie send an electronic acknowledgement of receipt.",
+      "sourceRef": "Cerfa 12669, page 1, section 3 — 'Courriel (fortement recommandé) : ...'; page 2 — 'La communication d'une adresse de courrier électronique est fortement recommandée afin qu'un accusé de réception sous format informatique puisse vous être adressé.'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD, the date the applicant signs the form.",
+      "sourceRef": "Cerfa 12669, page 1 — 'Date : __ / __ / __ Signature du demandeur :'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityAndNationalityProof",
+      "label": "Photocopy of a valid identity and nationality document — national ID card (both sides), or passport (photo page), or driving licence (only if accompanied by separate proof of nationality)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Cerfa 12669, page 2 — 'Une photocopie d'un titre d'identité et de nationalité en cours de validité : – carte nationale d'identité (photocopie recto verso) ; – ou passeport (photocopie de la double page où figure votre photo) ; – ou permis de conduire (valable uniquement s'il est accompagné d'un justificatif de nationalité).'"
+    },
+    {
+      "id": "proofOfResidence",
+      "label": "Proof of residence in the commune — utility bill (electricity, gas, or landline telephone) less than 3 months old in the applicant's name, or proof of 5 consecutive years' direct local tax registration, or (for applicants abroad) a certificate of registration with the Registre des Français établis hors de France plus proof of a qualifying link to the commune",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Cerfa 12669, page 2 — 'Un justificatif de domicile : ... facture d'électricité, de gaz ou de téléphone fixe ... datant de moins de 3 mois ... ou les pièces permettant de prouver que vous êtes inscrit(e), pour la cinquième fois et sans interruption, au rôle d'une des contributions directes communales ... Pour les personnes résidant à l'étranger ... un certificat d'inscription au registre des Français établis hors de France et les pièces prouvant que la commune ... est soit : votre commune de naissance ; la commune de votre dernier domicile en France ; ...'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "civilStatus",
+      "title": "État civil",
+      "fields": ["surname", "maritalName", "givenNames", "sex", "dateOfBirth", "placeOfBirthCommune", "placeOfBirthDepartmentOrOverseas", "placeOfBirthCountry"],
+      "next": "situation"
+    },
+    {
+      "id": "situation",
+      "title": "Situation du demandeur",
+      "fields": ["registrationCommune", "registrationDepartmentOrOverseas", "applicantSituation", "previousRegistrationCommune", "previousRegistrationDepartmentOrOverseas", "alsoRegisteredOnConsularElectoralList", "consularPost", "consularCountry"],
+      "next": "contact"
+    },
+    {
+      "id": "contact",
+      "title": "Coordonnées personnelles du demandeur",
+      "fields": ["addressLine1", "postalCode", "addressCommune", "phoneNumber", "email"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Date et signature",
+      "fields": ["declarationDate"]
+    }
+  ]
+}
