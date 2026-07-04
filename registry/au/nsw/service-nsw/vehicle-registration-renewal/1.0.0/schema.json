@@ -1,0 +1,285 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "au/nsw/service-nsw/vehicle-registration-renewal",
+  "version": "1.0.0",
+  "title": "New South Wales Vehicle Registration Renewal (Rego)",
+  "description": "Renew a New South Wales vehicle registration (car, motorcycle, trailer, or caravan — 'rego') online through registration-renewal.service.nsw.gov.au, on behalf of Transport for NSW (delivered via Service NSW). This document models the online-eligibility screening (vehicle not unregistered for more than 3 months, no outstanding special-plate order, not under the Common Expiry Date scheme, and — for a conditionally registered non-standard vehicle — no required inspection or operating-condition change), the live vehicle-lookup step (plate number or renewal-notice billing number), the registration-term and usage-type change option, the compulsory third party (CTP) insurance and safety-inspection ('pink slip') requirements, and the payment/concession step. It pairs with au/nsw/service-nsw/driver-licence-renewal to show the same authority's two DMV-vertical processes, and with de/kba/vehicle-registration, fr/ants/vehicle-registration-certificate, gb/dvla/vehicle-tax, ie/revenue/vehicle-registration-tax-vrt, and us/ca/dmv/vehicle-registration-renewal across the DMV vertical's vehicle-registration leg. It does not model: re-registering a vehicle unregistered for more than 3 months, the Common Expiry Date (CED) scheme, a conditional registration that requires an inspection or an operating-condition change, special-number-plate ordering, the toll-relief rebate scheme, or the actual registration-fee schedule (a Transport for NSW rate table, not applicant-supplied data). It does not renew the registration; the live service.nsw.gov.au source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AU",
+    "level": "subnational",
+    "subdivision": "AU-NSW"
+  },
+  "authority": {
+    "name": "Transport for NSW",
+    "abbreviation": "TfNSW",
+    "url": "https://www.nsw.gov.au/departments-and-agencies/transport-for-nsw"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-AU"
+  },
+  "source": {
+    "url": "https://www.service.nsw.gov.au/transaction/renew-a-vehicle-registration",
+    "retrievedAt": "2026-07-04",
+    "documentRef": "No form number — online self-service renewal via registration-renewal.service.nsw.gov.au, linked from the 'Renew a vehicle registration online' guidance page (service.nsw.gov.au)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-04",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Authored from the live service.nsw.gov.au 'Renew a vehicle registration online' guidance page (fetched directly, raw HTML, 2026-07-04), which is the only public documentation of this process: there is no downloadable paper form (this is an online-only or in-person-at-a-service-centre transaction). The 'Renew online' link was followed with a headless browser to registration-renewal.service.nsw.gov.au/find-vehicle, whose single live field ('Enter a NSW plate number or billing number') was confirmed directly, then submitted with a mock plate number (ABC123): the service returned a real-time 'Registration not found' result rather than a generic input-validation error, confirming (as with ca/on/mto/vehicle-permit-renewal's Ontario counterpart) that this is a genuine server-side eligibility/record lookup that cannot be walked further without an already-issued NSW plate or billing number. Everything beyond that first screen (registration term, CTP, safety inspection, payment) is transcribed from the guidance page's prose rather than an independently captured screen flow — the same sourcing shape used for gb/dvla/vehicle-tax. Status remains 'draft'. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-04"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "vehicleUnregisteredOverThreeMonths",
+      "label": "Has the vehicle been unregistered for more than 3 months?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Online renewal is unavailable once a vehicle has been unregistered for more than 3 months; it must instead be re-registered. If true, the flow ends and the applicant must visit a service centre to re-register the vehicle.",
+      "sourceRef": "Eligibility — 'the vehicle has been unregistered for more than 3 months – you'll need to re-register it'"
+    },
+    {
+      "name": "orderedSpecialPlatesNotYetReceived",
+      "label": "Did you order special number plates within the registration renewal period, and have you not yet received them?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "If true, the flow ends and the applicant must visit a service centre instead of renewing online.",
+      "sourceRef": "Eligibility — 'you ordered special number plates within the registration renewal period, and you have not received the new plates yet'"
+    },
+    {
+      "name": "registeredUnderCommonExpiryDateScheme",
+      "label": "Is the vehicle registered under the Common Expiry Date (CED) Scheme?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "CED-scheme vehicles (typically fleet vehicles sharing one expiry date) cannot renew online. If true, the flow ends and the applicant must visit a service centre instead.",
+      "sourceRef": "Eligibility — 'the vehicle is registered under the Common Expiry Date (CED) Scheme'"
+    },
+    {
+      "name": "conditionalRegistrationRequiresInspection",
+      "label": "If this is a conditionally registered (non-standard) vehicle, does its renewal require an inspection?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A conditionally registered vehicle needing an inspection cannot renew online. If true, the flow ends and the applicant must visit a service centre instead.",
+      "sourceRef": "Eligibility — 'the vehicle is conditionally registered and requires an inspection'"
+    },
+    {
+      "name": "conditionalRegistrationRequiresOperatingConditionChange",
+      "label": "If this is a conditionally registered (non-standard) vehicle, does it require changes to its operating conditions?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "A conditionally registered vehicle needing a change to its operating conditions cannot renew online. If true, the flow ends and the applicant must visit a service centre instead.",
+      "sourceRef": "Eligibility — 'the vehicle is conditionally registered and requires changes to the operating conditions'"
+    },
+    {
+      "name": "vehicleIdentifierOrBillingNumber",
+      "label": "Enter a NSW plate number or billing number",
+      "type": "string",
+      "required": true,
+      "description": "Either the vehicle's NSW number plate (e.g. ABC123) or the 8-digit billing number printed on the paper or digital renewal notice or Certificate of Registration. Confirmed as a single live text field at registration-renewal.service.nsw.gov.au/find-vehicle, which performs a real-time lookup against Transport for NSW's registration records — an unmatched value returns 'Registration not found', not a plain format error (see VERIFICATION.md).",
+      "sourceRef": "registration-renewal.service.nsw.gov.au/find-vehicle (live, 2026-07-04) — 'Enter a NSW plate number or billing number. Enter a plate number, for example ABC123. Or, enter the 8 digit billing number on your renewal notice or Certificate of Registration.'",
+      "validation": { "minLength": 6, "maxLength": 8 }
+    },
+    {
+      "name": "isConditionalRegistration",
+      "label": "Is this a conditional registration (non-standard vehicle)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Conditional registration bundles CTP insurance into the registration fee (no separate green slip), applies eligible concessions automatically, and cannot have its operating conditions, term, or CTP class changed during an online renewal.",
+      "sourceRef": "Note — 'When renewing a conditional registration (non-standard vehicle) online: you cannot change any details (operating conditions, term or CTP class); CTP insurance is included in the registration – you do not need a separate green slip; any eligible concessions (including drought relief) will be applied automatically.'"
+    },
+    {
+      "name": "vehicleIsTrailerOrCaravan",
+      "label": "Is the vehicle a trailer or caravan?",
+      "type": "boolean",
+      "required": true,
+      "description": "Trailers and caravans do not require a separate CTP (green slip) policy, unlike most other vehicles.",
+      "sourceRef": "What you need — 'A compulsory third party (CTP) insurance policy, commonly called a green slip (unless the vehicle is a trailer, caravan, or has a conditional registration).'"
+    },
+    {
+      "name": "wantsToChangeRegistrationTerm",
+      "label": "Do you want to change the registration term at this renewal?",
+      "type": "boolean",
+      "required": true,
+      "description": "Renewing online can keep the previous registration term or change it. Not available when isConditionalRegistration is true, since a conditional registration's term cannot be changed online.",
+      "sourceRef": "Introduction — 'While renewing you may be able to make changes to details like your usage type and the registration term.'"
+    },
+    {
+      "name": "registrationTermMonths",
+      "label": "Registration term (months)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "wantsToChangeRegistrationTerm", "equals": true },
+      "description": "A 6-month term is available for most light vehicles up to 4.5 tonnes Gross Vehicle Mass (including motorcycles and trailers); a 3-month or 6-month term is available for trailers and heavy vehicles over 4.5 tonnes Gross Vehicle Mass. A 12-month term is the standard baseline this schema treats as the implicit default when wantsToChangeRegistrationTerm is false.",
+      "sourceRef": "Registration renewal terms — 'a 6-month registration term is available for most light vehicles up to 4.5 tonnes Gross Vehicle Mass, (including motorcycles and trailers); a 3-month or 6-month registration term is available for trailers and heavy vehicles over 4.5 tonnes Gross Vehicle Mass.'",
+      "validation": { "enum": ["3", "6", "12"] }
+    },
+    {
+      "name": "ctpTermMatchesRequestedRegistrationTerm",
+      "label": "Have you bought CTP insurance for the same term as the registration term you are requesting?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "wantsToChangeRegistrationTerm", "equals": true },
+      "description": "Changing the registration term requires CTP insurance already purchased for that same term; a term change may also affect inspection requirements.",
+      "sourceRef": "Introduction — 'If you want to change the term, you must have bought compulsory third party (CTP) insurance for the same term. A change in registration term may also affect the inspection requirements.'"
+    },
+    {
+      "name": "wantsToChangeUsageType",
+      "label": "Do you want to change the vehicle's usage type at this renewal?",
+      "type": "boolean",
+      "required": true,
+      "description": "Renewing online can keep the previous usage type or change it. The source does not enumerate specific usage-type values, so this schema models only the yes/no choice to change it, not the value itself (see VERIFICATION.md).",
+      "sourceRef": "Introduction — 'While renewing you may be able to make changes to details like your usage type and the registration term.'"
+    },
+    {
+      "name": "requiresSafetyInspection",
+      "label": "Does your renewal notice show that a safety inspection (pink slip) is required?",
+      "type": "boolean",
+      "required": true,
+      "description": "Inspection reports for light vehicles are valid for only 6 months from issue and must be used to renew within that window. Most light vehicles over 5 years old require an inspection when the renewal notice states one is required and the registration period is unchanged, or when the new expiry date would be more than 12 months after the previous renewal date that itself required an inspection.",
+      "sourceRef": "Light vehicles and safety inspections — 'Inspection reports for light vehicles are only valid for 6 months from the date of issue... In most instances, light vehicles more than 5 years old require a safety inspection. You'll need an inspection if: your registration renewal notice displays that an inspection is required, and the registration period is unchanged; the new registration expiry date will be more than 12 months after the previous registration renewal date when an inspection was required...'"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "How do you want to pay?",
+      "type": "enum",
+      "required": true,
+      "description": "bpay = BPAY (takes 2-3 business days to process; registration is not renewed until Transport for NSW receives full payment); card_online = pay online with a debit/credit card during the renewal transaction itself (this option is inferred by analogy to every other online vehicle-registration/tax renewal in this registry, since the source page describes BPAY and in-person cash but does not separately name the online-renewal payment screen's own card-payment method — see VERIFICATION.md); cash_in_person = pay by cash at a service centre (some locations do not accept cash).",
+      "sourceRef": "Payment and fees — 'How to pay: BPAY... In person: If you wish to visit a service centre and pay by cash...'",
+      "validation": { "enum": ["bpay", "card_online", "cash_in_person"] }
+    },
+    {
+      "name": "pensionerConcessionCardHolder",
+      "label": "Do you hold a NSW Pensioner Concession Card?",
+      "type": "boolean",
+      "required": true,
+      "description": "A NSW Pensioner Concession Card holder is entitled to free registration for one vehicle recorded in their name as registered operator, and may be eligible for automatic registration renewal (not applicable to conditional registrations).",
+      "sourceRef": "Rebates and concessions — 'Pensioner Concession Card holders: If you hold a NSW Pensioner Concession Card you're entitled to free registration for one vehicle where you are recorded as the registered operator.'"
+    },
+    {
+      "name": "voluntaryCarbonOffsetContribution",
+      "label": "Would you like to make a voluntary contribution to offset the vehicle's carbon emissions?",
+      "type": "boolean",
+      "required": false,
+      "description": "An optional add-on offered independently of the renewal fee during the online renewal process.",
+      "sourceRef": "More information — 'During the renewal process you may be offered (independent of your renewal fee) to offset your vehicle's carbon emissions by making a voluntary contribution.'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "ctpInsurancePolicy",
+      "label": "Compulsory third party (CTP) insurance policy (green slip)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "any": [
+            { "field": "isConditionalRegistration", "equals": true },
+            { "field": "vehicleIsTrailerOrCaravan", "equals": true }
+          ]
+        }
+      },
+      "sourceRef": "What you need — 'A compulsory third party (CTP) insurance policy, commonly called a green slip (unless the vehicle is a trailer, caravan, or has a conditional registration). Most insurers will send your CTP information electronically to Transport for NSW (TfNSW).' Not required for trailers, caravans, or a conditionally registered vehicle (CTP is bundled into the registration fee in that case)."
+    },
+    {
+      "id": "safetyInspectionReport",
+      "label": "Safety inspection report (pink slip)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requiresSafetyInspection", "equals": true },
+      "freshness": { "issuedWithin": "P6M" },
+      "sourceRef": "What you need — 'If applicable, you'll also need: a safety inspection report, commonly called a pink slip'; Light vehicles and safety inspections — 'Inspection reports for light vehicles are only valid for 6 months from the date of issue.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_to_renew_online",
+      "title": "Online renewal eligibility",
+      "fields": [
+        "vehicleUnregisteredOverThreeMonths",
+        "orderedSpecialPlatesNotYetReceived",
+        "registeredUnderCommonExpiryDateScheme",
+        "conditionalRegistrationRequiresInspection",
+        "conditionalRegistrationRequiresOperatingConditionChange"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "not-eligible-unregistered-over-three-months",
+          "when": { "field": "vehicleUnregisteredOverThreeMonths", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-special-plates-not-received",
+          "when": { "field": "orderedSpecialPlatesNotYetReceived", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-common-expiry-date-scheme",
+          "when": { "field": "registeredUnderCommonExpiryDateScheme", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-conditional-registration-requires-inspection",
+          "when": { "field": "conditionalRegistrationRequiresInspection", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "not-eligible-conditional-registration-requires-operating-condition-change",
+          "when": { "field": "conditionalRegistrationRequiresOperatingConditionChange", "equals": true }
+        },
+        { "to": "find_vehicle" }
+      ]
+    },
+    {
+      "id": "find_vehicle",
+      "title": "Find the vehicle to renew",
+      "fields": ["vehicleIdentifierOrBillingNumber"],
+      "next": "registration_details"
+    },
+    {
+      "id": "registration_details",
+      "title": "Registration and CTP details",
+      "fields": [
+        "isConditionalRegistration",
+        "vehicleIsTrailerOrCaravan",
+        "wantsToChangeRegistrationTerm",
+        "registrationTermMonths",
+        "ctpTermMatchesRequestedRegistrationTerm",
+        "wantsToChangeUsageType"
+      ],
+      "next": "safety_inspection"
+    },
+    {
+      "id": "safety_inspection",
+      "title": "Safety inspection",
+      "fields": ["requiresSafetyInspection"],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Payment and concessions",
+      "fields": ["paymentMethod", "pensionerConcessionCardHolder", "voluntaryCarbonOffsetContribution"]
+    }
+  ]
+}
