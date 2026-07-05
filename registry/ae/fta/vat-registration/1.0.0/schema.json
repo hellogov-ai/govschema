@@ -1,0 +1,1492 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ae/fta/vat-registration",
+  "version": "1.0.0",
+  "title": "United Arab Emirates VAT Registration",
+  "description": "Application to register for Value Added Tax (VAT) with the UAE Federal Tax Authority (FTA), filed online through the EmaraTax digital tax services platform. Covers entity classification, trade license and business activity details, ownership, VAT registration eligibility (mandatory/voluntary threshold test), registered address and contact details, key business relationships (Manager/CEO and other partners/directors), optional bank details, import/export and customs registration details, the authorized signatory, and the final declaration. Does not model the separate Excise Tax or Corporate Tax registration processes (each a distinct EmaraTax application), the Tax Group formation sub-process, or per-branch/per-owner/per-relationship repeating detail beyond the first entry (see VERIFICATION.md). It does not submit the application; the live EmaraTax platform (eservices.tax.gov.ae) and the Federal Tax Authority are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Tax Authority",
+    "abbreviation": "FTA",
+    "url": "https://tax.gov.ae/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://tax.gov.ae/DownloadOpenTextFile?fileUrl=en/VAT_VAT_Guides/VAT_Registration/Register_taxable_person_VAT_EN.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "VAT Registration – Taxpayer User Manual, EmaraTax, Version 1.0.0.0, dated October 2022"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored field-by-field from the Federal Tax Authority's official 'VAT Registration – Taxpayer User Manual' (EmaraTax, v1.0.0.0, Oct 2022), a 58-page screenshot-driven walkthrough of the live EmaraTax VAT-registration wizard, downloaded directly from tax.gov.ae. Every field's label and its section membership were read directly off the manual's own EmaraTax UI screenshots (rendered from the PDF via pdfjs-dist + node-canvas, since the manual has only sparse caption text in its extractable text layer). Picked up as a secondary new-jurisdiction candidate from GOV-1289's research cycle (GOV-1297); opens the United Arab Emirates as the registry's 14th jurisdiction. This cycle's Brazil candidate (GOV-1295, br/receitafederal IRPF) was scouted first but found to be a 340-page topical FAQ rather than a field-by-field guide, so effort was redirected here — see GOV-1295's comment thread. Status remains 'draft' pending an independent second reviewer's field-by-field pass; see the review-gate issue."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "entityType",
+      "label": "Entity Type",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.15-16, Entity Details",
+      "description": "The legal category of the applicant business or person, selected first because it determines which subsequent input fields the EmaraTax wizard displays.",
+      "validation": {
+        "enum": [
+          "legal_person_public_joint_stock_company",
+          "legal_person_incorporated",
+          "legal_person_foreign_business",
+          "legal_person_club_or_association",
+          "legal_person_charity",
+          "legal_person_exhibitions",
+          "legal_person_federal_uae_govt_entity",
+          "legal_person_emirate_uae_govt_entity",
+          "legal_person_others",
+          "natural_person_individual",
+          "natural_person_partnership_or_heirs",
+          "natural_person_others"
+        ]
+      }
+    },
+    {
+      "name": "hasCertificateOfIncorporation",
+      "label": "Do you have a certificate of incorporation?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.15, Entity Details"
+    },
+    {
+      "name": "applyingToJoinTaxGroup",
+      "label": "Are you applying to create or join a Tax Group?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.15, Entity Details"
+    },
+    {
+      "name": "hasTradeLicenseInUae",
+      "label": "Do you have a Trade License in the UAE?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Identification Details"
+    },
+    {
+      "name": "tradeLicenseIssuingAuthority",
+      "label": "Trade License Issuing Authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTradeLicenseInUae",
+        "equals": true
+      },
+      "description": "The UAE mainland Emirate department or free-zone authority that issued the trade license (e.g. 'Dubai Academic City'). Not applicable for the entity types listed in the source note (Natural Person - Partnership or Heir; Legal Person - Foreign Business; Legal Person - Federal/Emirate UAE Govt. Entity).",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19-20, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "tradeLicenseNumber",
+      "label": "Trade License Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTradeLicenseInUae",
+        "equals": true
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "licenseIssueDate",
+      "label": "License Issue Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTradeLicenseInUae",
+        "equals": true
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details"
+    },
+    {
+      "name": "licenseExpiryDate",
+      "label": "License Expiry Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTradeLicenseInUae",
+        "equals": true
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details"
+    },
+    {
+      "name": "legalNameEnglish",
+      "label": "Legal Name in English",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "legalNameArabic",
+      "label": "Legal Name in Arabic",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "tradeNameEnglish",
+      "label": "Trade Name in English (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "tradeNameArabic",
+      "label": "Trade Name in Arabic (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "businessActivityIndustry",
+      "label": "Industry",
+      "type": "string",
+      "required": true,
+      "description": "The industry classification selected in the 'Business Activities' modal (e.g. 'Manufacturing'). The applicant may add multiple business activities; this and the following four fields model the first/primary one, per this registry's convention for repeating groups (GovSchema v0.3 has no array field type).",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.21-22, Business Activities",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "businessActivityMainGroup",
+      "label": "Main Group",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.22, Business Activities",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "businessActivitySubGroup",
+      "label": "Sub-Group",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.22, Business Activities",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "businessActivityName",
+      "label": "Activity",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.22, Business Activities",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "businessActivityCode",
+      "label": "Activity Code",
+      "type": "string",
+      "required": true,
+      "description": "The activity classification code, populated by EmaraTax once Industry/Main Group/Sub-Group/Activity are selected.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.22-23, Business Activities",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "isPrimaryBusinessActivity",
+      "label": "Is this a primary activity?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.22, Business Activities"
+    },
+    {
+      "name": "ownerType",
+      "label": "Owner Type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this owner is a legal entity or a natural person. The applicant may add multiple owners; this and the following seven fields model the first owner, per this registry's convention for repeating groups.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.24-25, Owner Details",
+      "validation": {
+        "enum": [
+          "legal_person",
+          "natural_person"
+        ]
+      }
+    },
+    {
+      "name": "ownerLegalNameEnglish",
+      "label": "Owner's Legal Name in English",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerLegalNameArabic",
+      "label": "Owner's Legal Name in Arabic",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerTradeNameEnglish",
+      "label": "Owner's Trade Name in English",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerTradeNameArabic",
+      "label": "Owner's Trade Name in Arabic",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerTradeLicenseIssuingAuthority",
+      "label": "Owner's Trade License Issuing Authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "ownerType",
+        "equals": "legal_person"
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerTradeLicenseNumber",
+      "label": "Owner's Trade License Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "ownerType",
+        "equals": "legal_person"
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "ownerTradeLicenseExpiryDate",
+      "label": "Owner's Trade License Expiry date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "ownerType",
+        "equals": "legal_person"
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details"
+    },
+    {
+      "name": "ownerShareholdingPercentage",
+      "label": "Shareholding Percentage",
+      "type": "number",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "hasBranchesInUae",
+      "label": "Do you have branches in UAE?",
+      "type": "boolean",
+      "required": true,
+      "description": "Each branch requires its own trade license details, business activities, and owners list, structurally identical to the main entity sub-forms above (p.26). Not modelled per-branch in this version — see VERIFICATION.md.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.26, Local Branch Details"
+    },
+    {
+      "name": "taxableSuppliesTrailing12MonthsAed",
+      "label": "Taxable supplies over the past 12 months (AED)",
+      "type": "number",
+      "required": true,
+      "description": "Total value, in UAE Dirhams, of the taxable supplies made in any past 12-month period, entered either directly or via the downloadable Excel template. Feeds the EmaraTax eligibility calculation (mandatory registration applies once this exceeds AED 375,000).",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.29-30, Eligibility Details / Taxable supplies and Taxable expenses",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "expectedTaxableSuppliesNext30DaysAed",
+      "label": "Taxable supplies expected in the next 30 days (AED)",
+      "type": "number",
+      "required": true,
+      "description": "Expected value, in UAE Dirhams, of taxable supplies in the 30 days following the date of submission — the forward-looking half of the mandatory-registration test (AED 375,000 threshold).",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.29-30, Eligibility Details / Taxable supplies and Taxable expenses",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxableExpensesTrailing12MonthsAed",
+      "label": "Taxable expenses over the past 12 months (AED)",
+      "type": "number",
+      "required": false,
+      "description": "Total value, in UAE Dirhams, of taxable expenses over the past 12 months, relevant to the voluntary-registration threshold test.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.29, Eligibility Details / Taxable supplies and Taxable expenses",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "thresholdExceededDate",
+      "label": "Date on which the threshold limit for the taxable supplies has exceeded/is expected to be exceeded",
+      "type": "date",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.30, VAT Registration Criteria"
+    },
+    {
+      "name": "obligationDateChangeReason",
+      "label": "Reason for change in Obligation Date (Optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.30, VAT Registration Criteria",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "requestedEffectiveRegistrationDate",
+      "label": "On what date would you like to be registered (prior to the standard effective date as per the law)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.30, VAT Registration Criteria"
+    },
+    {
+      "name": "effectiveDateChangeReason",
+      "label": "Reason for change in Effective date (Optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.30, VAT Registration Criteria",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "expectExpenseVatToExceedSuppliesVat",
+      "label": "Do you expect the VAT on your expenses to regularly exceed the VAT on your taxable supplies?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.30, VAT Registration Criteria"
+    },
+    {
+      "name": "expectToMakeExemptSupplies",
+      "label": "Do you expect to make exempt supplies?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.30, VAT Registration Criteria"
+    },
+    {
+      "name": "wishToApplyForVatExceptionFromRegistration",
+      "label": "Do you wish to apply for Exception from VAT?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.30, VAT Registration Criteria"
+    },
+    {
+      "name": "registeredAddressCountry",
+      "label": "Country",
+      "type": "string",
+      "required": true,
+      "description": "For Trade License holders, must match the trade license address; for Certificate-of-Incorporation-only entities, must match the certificate; for property owners, the Title Deed; for natural persons, their residence.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "registeredAddressBuildingNameNumber",
+      "label": "Building Name & Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "registeredAddressStreet",
+      "label": "Street",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "registeredAddressArea",
+      "label": "Area",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "registeredAddressCity",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "registeredAddressEmirate",
+      "label": "Emirates",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "enum": [
+          "abu_dhabi",
+          "dubai",
+          "sharjah",
+          "ajman",
+          "umm_al_quwain",
+          "ras_al_khaimah",
+          "fujairah"
+        ]
+      }
+    },
+    {
+      "name": "mobileCountryCode",
+      "label": "Country Code (Mobile)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "landlineCountryCode",
+      "label": "Country Code (Landline)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "landlineNumber",
+      "label": "Landline Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email ID",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "poBox",
+      "label": "P.O. Box",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.33, Contact Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "managerOrCeoDesignation",
+      "label": "Designation",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "enum": [
+          "manager",
+          "chief_executive_officer"
+        ]
+      }
+    },
+    {
+      "name": "managerOrCeoFirstNameEnglish",
+      "label": "First Name in English",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "managerOrCeoLastNameEnglish",
+      "label": "Last Name in English",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "managerOrCeoFirstNameArabic",
+      "label": "First Name in Arabic",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "managerOrCeoLastNameArabic",
+      "label": "Last Name in Arabic",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "managerOrCeoIsUaeResident",
+      "label": "Are you a Resident of UAE?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships"
+    },
+    {
+      "name": "managerOrCeoCountryOfNationality",
+      "label": "Country of Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "managerOrCeoPassportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "managerOrCeoPassportIssuingCountry",
+      "label": "Passport Issuing Country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "managerOrCeoPassportExpiryDate",
+      "label": "Passport Expiry Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships"
+    },
+    {
+      "name": "additionalRelationshipType",
+      "label": "Partner/Director (additional relationship)",
+      "type": "enum",
+      "required": false,
+      "description": "The applicant may add further Partner/Director relationships beyond the Manager/CEO above via 'Add Relationships' (p.37-38); this and the following four fields model the first additional relationship, per this registry's convention for repeating groups.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.38, Add Relationships",
+      "validation": {
+        "enum": [
+          "partner",
+          "director"
+        ]
+      }
+    },
+    {
+      "name": "additionalRelationshipFirstNameEnglish",
+      "label": "First Name in English (additional relationship)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.38, Add Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "additionalRelationshipLastNameEnglish",
+      "label": "Last Name in English (additional relationship)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.38, Add Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "additionalRelationshipIsUaeResident",
+      "label": "Is the Partner/Director a Resident in the UAE?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.38, Add Relationships"
+    },
+    {
+      "name": "additionalRelationshipCountryOfNationality",
+      "label": "Country of Nationality (additional relationship)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.38, Add Relationships",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "involvedInOtherUaeBusiness",
+      "label": "Are you (or any of the directors of the applicant) currently involved in, or in the last 5 years been involved in, any other business resident in the UAE, either individually or as a director or partner in that business?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.38, Add Relationships"
+    },
+    {
+      "name": "bankCountry",
+      "label": "Country (Bank)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.41, Bank Details (Optional)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "bankIban",
+      "label": "IBAN",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.41, Bank Details (Optional)",
+      "validation": {
+        "maxLength": 34
+      }
+    },
+    {
+      "name": "bankName",
+      "label": "Bank Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.41, Bank Details (Optional)",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "bankBranchName",
+      "label": "Branch Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.41, Bank Details (Optional)",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "bankAccountHolderName",
+      "label": "Account Holder's Name",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.41, Bank Details (Optional)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Account Number",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.41, Bank Details (Optional)",
+      "validation": {
+        "maxLength": 34
+      }
+    },
+    {
+      "name": "intendsToImportGoodsOrServices",
+      "label": "Do you intend to import goods or services?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.42, Additional Details"
+    },
+    {
+      "name": "intendsToExportGoodsOrServices",
+      "label": "Do you intend to export goods or services?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.42, Additional Details"
+    },
+    {
+      "name": "expectsImportsFromGccMemberStates",
+      "label": "Will any of these imports be from GCC member states?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.42, Additional Details"
+    },
+    {
+      "name": "gccMemberState",
+      "label": "Select GCC state",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "expectsImportsFromGccMemberStates",
+        "equals": true
+      },
+      "description": "The applicant may add multiple GCC Business Activities entries; this and the following three fields model the first entry, per this registry's convention for repeating groups.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.43, GCC Business Activities",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "gccTaxRegistrationNumber",
+      "label": "TRN (if available)",
+      "type": "string",
+      "required": false,
+      "description": "The entity's existing Tax Registration Number, or equivalent, with the respective tax authority in the GCC Member state.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.43, GCC Business Activities",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "gccValueOfImportAed",
+      "label": "Value of Import (AED per year)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "expectsImportsFromGccMemberStates",
+        "equals": true
+      },
+      "description": "Value of goods expected to be imported from this GCC state and sold in the 12 months following the date of registration. Excludes the value of any services unless directly related to moving goods.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.43-44, GCC Business Activities",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "gccValueOfExportAed",
+      "label": "Value of Export (AED per year)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.43, GCC Business Activities",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "hasCustomsRegistrationNumber",
+      "label": "Do you have a customs registration number?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.42, Additional Details"
+    },
+    {
+      "name": "customsRegistrationEmirate",
+      "label": "Emirate (Customs Registration)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCustomsRegistrationNumber",
+        "equals": true
+      },
+      "description": "The applicant may add multiple Customs Registration Numbers, one per Emirate; this and the following field model the first entry, per this registry's convention for repeating groups.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.46, Customs Registration Details",
+      "validation": {
+        "enum": [
+          "abu_dhabi",
+          "dubai",
+          "sharjah",
+          "ajman",
+          "umm_al_quwain",
+          "ras_al_khaimah",
+          "fujairah"
+        ]
+      }
+    },
+    {
+      "name": "customsRegistrationNumber",
+      "label": "Customs registration number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCustomsRegistrationNumber",
+        "equals": true
+      },
+      "description": "Issued by the relevant Customs department in the UAE; assists the FTA and Customs in identifying the registrant when importing/exporting goods. Failure to provide it may cause delays at the border.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.46-47, Customs Registration Details",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "authorizedSignatorySameAsManager",
+      "label": "Is your authorized signatory same as your manager?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory"
+    },
+    {
+      "name": "authorizedSignatoryFirstNameEnglish",
+      "label": "First Name in English (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryLastNameEnglish",
+      "label": "Last Name in English (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryDesignation",
+      "label": "Designation (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryEmail",
+      "label": "Email (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "authorizedSignatoryCountryCode",
+      "label": "Country Code (Authorized Signatory Mobile)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "authorizedSignatoryMobileNumber",
+      "label": "Mobile Number (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "authorizedSignatoryIsUaeResident",
+      "label": "Are you a Resident of UAE? (Authorized Signatory)",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory"
+    },
+    {
+      "name": "authorizedSignatoryCountryOfNationality",
+      "label": "Country of Nationality (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryPassportNumber",
+      "label": "Passport Number (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "authorizedSignatoryPassportIssuingCountry",
+      "label": "Passport Issuing Country (Authorized Signatory)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryPassportExpiryDate",
+      "label": "Passport Expiry Date (Authorized Signatory)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory"
+    },
+    {
+      "name": "declarantFirstNameEnglish",
+      "label": "First Name in English (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.53, Declaration",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "declarantLastNameEnglish",
+      "label": "Last Name in English (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.53, Declaration",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "declarantCountryCode",
+      "label": "Country Code (Declaration)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.53, Declaration",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "declarantMobileNumber",
+      "label": "Mobile Number (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.53, Declaration",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "declarantEmail",
+      "label": "Email (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.53, Declaration",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "declarationAgreed",
+      "label": "I declare that all information provided is true, accurate and complete to the best of my knowledge and belief",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.53, Declaration"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "licenseExpiryNotBeforeIssue",
+      "compare": {
+        "field": "licenseExpiryDate",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "licenseIssueDate"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "certificateOfIncorporation",
+      "label": "Certificate of Incorporation",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCertificateOfIncorporation",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.16, Entity Details ('Upload Certificate of Incorporation')"
+    },
+    {
+      "id": "tradeLicenseCopy",
+      "label": "Copy of Trade License",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasTradeLicenseInUae",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.19, Main License Details ('Upload Copy of Trade License')"
+    },
+    {
+      "id": "ownerTradeLicenseCopy",
+      "label": "Copy of Owner's Trade License",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "ownerType",
+        "equals": "legal_person"
+      },
+      "belongsTo": "other",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.25, Owner Details ('Upload copy of Trade License')"
+    },
+    {
+      "id": "turnoverDeclarationLetter",
+      "label": "Declaration letter of the monthly turnover",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": null
+      },
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.29, Eligibility Details (stamped and signed by the Authorized Signatory; monthly turnover from Jan 2017 or the entity's establishment date, whichever is later, to the date of submission)"
+    },
+    {
+      "id": "sampleSalesInvoices",
+      "label": "Sample sales invoices",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.29-30, Eligibility Details"
+    },
+    {
+      "id": "sampleExpenseInvoices",
+      "label": "Sample expense invoices",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.29-30, Eligibility Details"
+    },
+    {
+      "id": "purchaseOrdersOrContracts",
+      "label": "Purchase orders / contracts",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.29, Eligibility Details (Purchase Order stamped and signed by the Authorized Signatory of both the supplier and the buyer; must include payment terms or delivery date within the next 30 days)"
+    },
+    {
+      "id": "managerOrCeoPassportCopy",
+      "label": "Copy of the Manager/CEO's passport",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.36, Business Relationships ('Please upload copy of Passport')"
+    },
+    {
+      "id": "bankIsolationLetterCopy",
+      "label": "Copy of Bank Isolation Letter",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.41, Bank Details (Optional)"
+    },
+    {
+      "id": "customsRegistrationCopy",
+      "label": "Copy of customs registration number",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasCustomsRegistrationNumber",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.46, Customs Registration Details"
+    },
+    {
+      "id": "authorizedSignatoryPowerOfAttorneyCopy",
+      "label": "Memorandum of Association / Power of Attorney",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatorySameAsManager",
+        "equals": false
+      },
+      "belongsTo": "other",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf"
+        ]
+      },
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.50, Authorized Signatory ('Please upload Memorandum of Association/Power of Attorney documents')"
+    },
+    {
+      "id": "declarationAttestation",
+      "label": "Declaration attestation",
+      "category": "attestation",
+      "required": true,
+      "statement": "I declare that all information provided is true, accurate and complete to the best of my knowledge and belief.",
+      "sourceRef": "FTA VAT Registration – Taxpayer User Manual (EmaraTax, v1.0.0.0, Oct 2022) — p.53, Review and Declaration"
+    }
+  ],
+  "steps": [
+    {
+      "id": "entity_details",
+      "title": "Entity Details",
+      "fields": [
+        "entityType",
+        "hasCertificateOfIncorporation",
+        "applyingToJoinTaxGroup"
+      ],
+      "next": "identification_details"
+    },
+    {
+      "id": "identification_details",
+      "title": "Identification Details",
+      "fields": [
+        "hasTradeLicenseInUae",
+        "tradeLicenseIssuingAuthority",
+        "tradeLicenseNumber",
+        "licenseIssueDate",
+        "licenseExpiryDate",
+        "legalNameEnglish",
+        "legalNameArabic",
+        "tradeNameEnglish",
+        "tradeNameArabic",
+        "businessActivityIndustry",
+        "businessActivityMainGroup",
+        "businessActivitySubGroup",
+        "businessActivityName",
+        "businessActivityCode",
+        "isPrimaryBusinessActivity",
+        "ownerType",
+        "ownerLegalNameEnglish",
+        "ownerLegalNameArabic",
+        "ownerTradeNameEnglish",
+        "ownerTradeNameArabic",
+        "ownerTradeLicenseIssuingAuthority",
+        "ownerTradeLicenseNumber",
+        "ownerTradeLicenseExpiryDate",
+        "ownerShareholdingPercentage",
+        "hasBranchesInUae"
+      ],
+      "next": "eligibility_details"
+    },
+    {
+      "id": "eligibility_details",
+      "title": "Eligibility Details",
+      "fields": [
+        "taxableSuppliesTrailing12MonthsAed",
+        "expectedTaxableSuppliesNext30DaysAed",
+        "taxableExpensesTrailing12MonthsAed",
+        "thresholdExceededDate",
+        "obligationDateChangeReason",
+        "requestedEffectiveRegistrationDate",
+        "effectiveDateChangeReason",
+        "expectExpenseVatToExceedSuppliesVat",
+        "expectToMakeExemptSupplies",
+        "wishToApplyForVatExceptionFromRegistration"
+      ],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact Details",
+      "fields": [
+        "registeredAddressCountry",
+        "registeredAddressBuildingNameNumber",
+        "registeredAddressStreet",
+        "registeredAddressArea",
+        "registeredAddressCity",
+        "registeredAddressEmirate",
+        "mobileCountryCode",
+        "mobileNumber",
+        "landlineCountryCode",
+        "landlineNumber",
+        "email",
+        "poBox"
+      ],
+      "next": "business_relationships"
+    },
+    {
+      "id": "business_relationships",
+      "title": "Business Relationships",
+      "fields": [
+        "managerOrCeoDesignation",
+        "managerOrCeoFirstNameEnglish",
+        "managerOrCeoLastNameEnglish",
+        "managerOrCeoFirstNameArabic",
+        "managerOrCeoLastNameArabic",
+        "managerOrCeoIsUaeResident",
+        "managerOrCeoCountryOfNationality",
+        "managerOrCeoPassportNumber",
+        "managerOrCeoPassportIssuingCountry",
+        "managerOrCeoPassportExpiryDate",
+        "additionalRelationshipType",
+        "additionalRelationshipFirstNameEnglish",
+        "additionalRelationshipLastNameEnglish",
+        "additionalRelationshipIsUaeResident",
+        "additionalRelationshipCountryOfNationality",
+        "involvedInOtherUaeBusiness"
+      ],
+      "next": "bank_details"
+    },
+    {
+      "id": "bank_details",
+      "title": "Bank Details",
+      "fields": [
+        "bankCountry",
+        "bankIban",
+        "bankName",
+        "bankBranchName",
+        "bankAccountHolderName",
+        "bankAccountNumber"
+      ],
+      "next": "additional_details"
+    },
+    {
+      "id": "additional_details",
+      "title": "Additional Details",
+      "fields": [
+        "intendsToImportGoodsOrServices",
+        "intendsToExportGoodsOrServices",
+        "expectsImportsFromGccMemberStates",
+        "gccMemberState",
+        "gccTaxRegistrationNumber",
+        "gccValueOfImportAed",
+        "gccValueOfExportAed",
+        "hasCustomsRegistrationNumber",
+        "customsRegistrationEmirate",
+        "customsRegistrationNumber"
+      ],
+      "next": "authorized_signatory"
+    },
+    {
+      "id": "authorized_signatory",
+      "title": "Authorized Signatory",
+      "fields": [
+        "authorizedSignatorySameAsManager",
+        "authorizedSignatoryFirstNameEnglish",
+        "authorizedSignatoryLastNameEnglish",
+        "authorizedSignatoryDesignation",
+        "authorizedSignatoryEmail",
+        "authorizedSignatoryCountryCode",
+        "authorizedSignatoryMobileNumber",
+        "authorizedSignatoryIsUaeResident",
+        "authorizedSignatoryCountryOfNationality",
+        "authorizedSignatoryPassportNumber",
+        "authorizedSignatoryPassportIssuingCountry",
+        "authorizedSignatoryPassportExpiryDate"
+      ],
+      "next": "review_and_declaration"
+    },
+    {
+      "id": "review_and_declaration",
+      "title": "Review and Declaration",
+      "fields": [
+        "declarantFirstNameEnglish",
+        "declarantLastNameEnglish",
+        "declarantCountryCode",
+        "declarantMobileNumber",
+        "declarantEmail",
+        "declarationAgreed"
+      ]
+    }
+  ]
+}
