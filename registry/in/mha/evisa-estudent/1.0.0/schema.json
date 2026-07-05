@@ -1,0 +1,1385 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "in/mha/evisa-estudent",
+  "version": "1.0.0",
+  "title": "India e-Visa (e-Student)",
+  "description": "Online application for an Indian e-Student Visa (e-S V), filed by a foreign national through the Bureau of Immigration's Indian Visa Online portal (indianvisaonline.gov.in), Ministry of Home Affairs, under India's e-Visa scheme. Like this registry's in/mha/evisa-etourist, this is a destination-country e-Visa: India is the destination and the applicant is a foreign national; e-Student Visa shares the same portal, pre-application gate, and multi-part application wizard as e-Tourist, differing only in its purpose selection and course/institution-specific fields and documents. Models the e-Student Visa (e-S V) category specifically — enrollment in a formal course of study (language/knowledge-system, exchange-programme, Buddhist studies, higher education, yoga, Vedic culture, Indian music/dance, short-term courses, or AYUSH education/training/skill-development) at a recognized Indian institution, granted for one year from ETA grant with multiple entry. The e-Visa scheme's other categories (e-Tourist, e-Business, e-Medical, e-Medical Attendant, e-Family/e-SX V for e-Student dependents, e-Conference, e-Transit, e-Miscellaneous, e-Production Investment) are not modeled here; work/employment e-Visas do not exist at all under this scheme (confirmed via the Bureau of Immigration's own FAQ: 'e-Visa is not allowed for employment'). Covers the pre-application eligibility/health-screening gate, the main multi-part application form (applicant, passport, address, family, visa purpose, institution/course, previous-visit, reference, and security-screening details), the required photograph, passport-page, admission-letter, financial-support, and (where applicable) medical/paramedical-course NOC uploads, and the final fee-payment undertaking. Does not itself submit the application, process payment, or determine visa eligibility by nationality — the live indianvisaonline.gov.in portal is always authoritative; see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bureau of Immigration, Ministry of Home Affairs, Government of India (Indian Visa Online)",
+    "abbreviation": "MHA",
+    "url": "https://indianvisaonline.gov.in"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-IN"
+  },
+  "source": {
+    "url": "https://indianvisaonline.gov.in/evisa/tvoa.html",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "indianvisaonline.gov.in e-Visa scheme page (tvoa.html), its embedded 'Details of Visas' duration/entries table and category-specific document-requirement list ('For e-Student Visa'); and a live headless-browser pass over the indianvisaonline.gov.in/evisa/Registration wizard's e-Visa Application step, including its evisaServiceAllowed backend JSON model, to confirm the e-Student purpose options and institution/course field structure."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "Authored as a GOV-1224 research follow-up (GOV-1228). The shared applicant/passport/address/family/reference/security-screening field blocks are carried over verbatim from in/mha/evisa-etourist (same portal, same wizard, confirmed unchanged on this pass), with the purpose field and category-specific step replaced for the Student category. The Student purpose options (9 entries), their exact wording, and the confirmed absence of any work/employment e-Visa category were read directly from the live evisa_purpose dropdown (visaPurposeDropdown) captured during e-Tourist research (GOV-914) and re-confirmed present and unchanged on this pass. The institute/course-specific field set (institute name/address/email/phone, course name, course start month/year, course duration) is sourced from the live site's own evisaServiceAllowed backend JSON model, returned by the wizard after nationality selection, which carries these as named keys (institute_name, institute_address, institute_email, institute_phone, course_name, course_start_month, course_start_year, coursedurations) alongside every other category's fields — strong evidence of the real backend field set, though the exact input page these render on could not itself be reached, since it sits past a live CAPTCHA (the same blocker already recorded for evisa-etourist's Applicant/Family/Visa Details pages). The Student-specific document set (admission letter with course duration, financial-support letter/bank statement, and a conditional Ministry of Health & Family Welfare NOC for medical/paramedical courses) is read verbatim from tvoa.html's 'For e-Student Visa' document-requirement list. See VERIFICATION.md for the full sourcing chain and open gaps."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "description": "The passport number is captured up front, before the main application form, as part of the site's pre-application gating step.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — pre-application gating modal ('e-Visa Application Form')",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality / country of citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a dropdown of ~192 countries/territories on the live site (id `gate_nationality`, then re-selected on the main form as `nationality_id`). Modeled as free text per GovSchema convention for nationality fields rather than as a closed enum. As with e-Tourist, eligibility is nationality-dependent (e.g. Pakistan nationals are excluded from the e-Visa scheme entirely); this document cannot enforce that exclusion list itself — see VERIFICATION.md.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — pre-application gating modal ('e-Visa Application Form')",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "nameAsInPassport",
+      "label": "Name as in passport",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — pre-application gating modal ('e-Visa Application Form')",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "visitedEbolaAffectedCountriesLast21Days",
+      "label": "Have you visited the Democratic Republic of Congo, Uganda, or South Sudan in the last 21 days?",
+      "type": "boolean",
+      "required": true,
+      "description": "Ebola health-screening question shown immediately after the pre-application gate, common to every e-Visa category. completed21DaysSinceEbolaTerritoryExit and hasEbolaSymptomsOrDisease only apply when this is answered yes.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — Ebola/health-screening questions shown after the gating modal"
+    },
+    {
+      "name": "completed21DaysSinceEbolaTerritoryExit",
+      "label": "Have you completed 21 days after exit from that territory?",
+      "type": "boolean",
+      "required": false,
+      "description": "Mandatory eligibility check, asked only when visitedEbolaAffectedCountriesLast21Days is true. Answering 'No' produces a blocking message on the live site ('Apply after completion of 21 days of exit from that territory') and the application cannot proceed.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — Ebola/health-screening questions shown after the gating modal",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "requiredWhen": {
+        "field": "visitedEbolaAffectedCountriesLast21Days",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasEbolaSymptomsOrDisease",
+      "label": "Do you have any Ebola-related symptoms, or did you suffer from Ebola disease, in the last 21 days?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — Ebola/health-screening questions shown after the gating modal",
+      "requiredWhen": {
+        "field": "visitedEbolaAffectedCountriesLast21Days",
+        "equals": true
+      }
+    },
+    {
+      "name": "ebolaSymptomType",
+      "label": "Symptom",
+      "type": "enum",
+      "required": false,
+      "description": "Selected from the site's symptom dropdown, shown only when hasEbolaSymptomsOrDisease is true.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — Ebola/health-screening questions shown after the gating modal",
+      "validation": {
+        "enum": [
+          "fever",
+          "muscle_pain",
+          "headache",
+          "vomiting",
+          "diarrhea",
+          "sore_throat",
+          "rash"
+        ]
+      },
+      "requiredWhen": {
+        "field": "hasEbolaSymptomsOrDisease",
+        "equals": true
+      }
+    },
+    {
+      "name": "passportType",
+      "label": "Passport type",
+      "type": "enum",
+      "required": true,
+      "description": "The e-Visa scheme is available to ordinary-passport holders; diplomatic/official/service/special passport (and laissez-passer/other international travel document) holders must apply for a regular visa at an Indian Mission instead. The dropdown itself still presents all five passport types shown on the live site.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — 'e-Visa Application' page (Step 1)",
+      "validation": {
+        "enum": [
+          "ordinary",
+          "official",
+          "diplomatic",
+          "service",
+          "special"
+        ]
+      }
+    },
+    {
+      "name": "portOfArrival",
+      "label": "Port of arrival",
+      "type": "enum",
+      "required": true,
+      "description": "The Indian airport, seaport, or land immigration checkpost where the applicant will first enter India. Confirmed from the live site's `missioncode_id` dropdown (shared across every e-Visa category) cross-checked against tvoa.html's 'Authorized Immigration Checkposts' list, same list already confirmed for in/mha/evisa-etourist. A second, narrower dropdown (`missioncode_id_bgd`, airports only) is shown instead for some nationalities (observed for Bangladesh); this document models the general list.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — 'e-Visa Application' page (Step 1)",
+      "validation": {
+        "enum": [
+          "delhi_airport",
+          "mumbai_airport",
+          "chennai_airport",
+          "kolkata_airport",
+          "thiruvananthapuram_airport",
+          "bengaluru_airport",
+          "hyderabad_airport",
+          "cochin_airport",
+          "goa_dabolim_airport",
+          "goa_mopa_airport",
+          "ahmedabad_airport",
+          "amritsar_airport",
+          "gaya_airport",
+          "jaipur_airport",
+          "lucknow_airport",
+          "trichy_airport",
+          "varanasi_airport",
+          "calicut_airport",
+          "mangalore_airport",
+          "pune_airport",
+          "nagpur_airport",
+          "coimbatore_airport",
+          "bagdogra_airport",
+          "guwahati_airport",
+          "chandigarh_airport",
+          "visakhapatnam_airport",
+          "madurai_airport",
+          "bhubaneswar_airport",
+          "port_blair_airport",
+          "kannur_airport",
+          "surat_airport",
+          "indore_airport",
+          "vijayawada_airport",
+          "mumbai_seaport",
+          "cochin_seaport",
+          "mormugao_seaport",
+          "chennai_seaport",
+          "new_mangalore_seaport",
+          "port_blair_seaport",
+          "vishakapatnam_seaport",
+          "kattupalli_seaport",
+          "mundra_seaport",
+          "kamarajar_seaport",
+          "kolkata_seaport",
+          "nhava_sheva_seaport",
+          "kandla_seaport",
+          "vallarpadam_seaport",
+          "calicut_seaport",
+          "vizhinjam_seaport",
+          "kollam_seaport",
+          "cuddalore_seaport",
+          "nagapattinam_seaport",
+          "tuticorin_seaport",
+          "kakinada_seaport",
+          "krishnapatnam_seaport",
+          "paradeep_seaport",
+          "haldia_seaport",
+          "raxaul_landport",
+          "rupaidiha_landport",
+          "darranga_landport",
+          "jogbani_landport"
+        ]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — 'e-Visa Application' page (Step 1)"
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email ID",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — 'e-Visa Application' page (Step 1)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "emailAddressConfirmation",
+      "label": "Re-enter email ID",
+      "type": "string",
+      "required": true,
+      "description": "Must match emailAddress.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — 'e-Visa Application' page (Step 1)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "expectedDateOfArrival",
+      "label": "Expected date of arrival",
+      "type": "date",
+      "required": true,
+      "description": "Per the scheme's lead-time rule the application must be submitted at least 4 days before this date, and this date must be no more than 120 days after the application date (same rule as e-Tourist).",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — 'e-Visa Application' page (Step 1)"
+    },
+    {
+      "name": "eStudentVisaPurpose",
+      "label": "e-Student Visa course category",
+      "type": "enum",
+      "required": true,
+      "description": "Selected from the live site's combined purpose/duration dropdown (`evisa_purpose`, id `visaPurposeDropdown`), filtered here to the 9 confirmed e-Student Visa (e-S V) entries; the same dropdown also carries e-Tourist, e-Business, e-Medical, e-Family, e-Transit, e-Miscellaneous, and e-Production Investment options modeled by other schemas (or not yet modeled). All e-S V options are granted for the same duration/entries (see description below); duration and entries are system-determined and not separately editable fields. Confirmed live dropdown entries: 'FOR THOSE COMING TO PURSUE COURSES ON INDIAN LANGUAGES AND INDIAN KNOWLEDGE SYSTEM' (code 469), 'FOR THOSE COMING UNDER STUDENT EXCHANGE PROGRAMME FROM INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 431), 'FOR BUDDHIST STUDIES IN INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 421), 'FOR HIGHER EDUCATION (INCLUDING IN SOUTH ASIAN UNIVERSITY AND NALANDA UNIVERSITY) FROM INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 426), 'FOR STUDIES IN YOGA IN INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 420), 'FOR STUDIES IN VEDIC CULTURE IN INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 428), 'FOR STUDIES IN INDIAN SYSTEMS OF MUSIC AND DANCE IN INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 429), 'FOR SHORT TERM COURSES FROM INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 430), and 'FOR THOSE COMING TO PURSUE EDUCATION, TRAINING AND SKILL DEVELOPMENT IN AYUSH PRACTICES FROM INSTITUTES REGISTERED ON STUDY IN INDIA PORTAL' (code 432). Per tvoa.html's 'Details of Visas' table, the e-Student Visa (e-S V) itself grants one year (365 days) from the date of grant of ETA, multiple entry — distinct from e-Tourist's 30-day/1-year/5-year variants. No work/employment e-Visa category exists under this scheme (confirmed via the Bureau of Immigration's own FAQ: 'e-Visa is not allowed for employment').",
+      "sourceRef": "indianvisaonline.gov.in/evisa/tvoa.html ('Details of Visas' duration/entries table) and a live headless-browser pass over indianvisaonline.gov.in/evisa/Registration's evisa_purpose dropdown",
+      "validation": {
+        "enum": [
+          "indian_languages_and_knowledge_systems",
+          "student_exchange_programme",
+          "buddhist_studies",
+          "higher_education",
+          "yoga_studies",
+          "vedic_culture_studies",
+          "indian_music_and_dance_studies",
+          "short_term_courses",
+          "ayush_education_training_skill_development"
+        ]
+      }
+    },
+    {
+      "name": "documentsAndPhotoDeclaration",
+      "label": "Declaration — I have read the instructions, I have all the required documents in scanned PDF format and photograph in JPG/JPEG format",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — 'e-Visa Application' page (Step 1)",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ]
+    },
+    {
+      "name": "instituteName",
+      "label": "Name of the recognized Indian educational institution",
+      "type": "string",
+      "required": true,
+      "description": "Sourced from the live site's own evisaServiceAllowed backend JSON model (key `institute_name`), populated once an e-Student purpose is chosen. Corroborated by tvoa.html's e-Student Visa document requirement for a 'Letter of admission from a recognised Indian educational institution'. Most e-S V purposes further require the institution be registered on the Study in India portal (studyinindia.gov.in), per the purpose descriptions above; this document does not itself verify that registration.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key institute_name); indianvisaonline.gov.in/evisa/tvoa.html document-requirement list ('For e-Student Visa')",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "instituteAddress",
+      "label": "Address of the institution",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key institute_address)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "instituteEmail",
+      "label": "Email address of the institution",
+      "type": "string",
+      "required": false,
+      "description": "Present in the live site's backend field model (key `institute_email`); not independently confirmed as mandatory on the rendered input page, which sits past a live CAPTCHA — see VERIFICATION.md.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key institute_email)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "institutePhone",
+      "label": "Phone number of the institution",
+      "type": "string",
+      "required": false,
+      "description": "Present in the live site's backend field model (key `institute_phone`); not independently confirmed as mandatory — see VERIFICATION.md.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key institute_phone)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "courseName",
+      "label": "Name of the course",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key course_name)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "courseDuration",
+      "label": "Duration of the course",
+      "type": "string",
+      "required": true,
+      "description": "Free text (e.g. '2 years', '6 months'); the admission letter document must also itself state the course duration, per tvoa.html's document requirement.",
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key coursedurations); indianvisaonline.gov.in/evisa/tvoa.html document-requirement list ('For e-Student Visa')",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "courseStartMonth",
+      "label": "Course start month",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key course_start_month)",
+      "validation": {
+        "enum": [
+          "january",
+          "february",
+          "march",
+          "april",
+          "may",
+          "june",
+          "july",
+          "august",
+          "september",
+          "october",
+          "november",
+          "december"
+        ]
+      }
+    },
+    {
+      "name": "courseStartYear",
+      "label": "Course start year",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in/evisa/Registration — evisaServiceAllowed backend JSON model (key course_start_year)",
+      "validation": {
+        "minimum": 2026,
+        "maximum": 2036
+      }
+    },
+    {
+      "name": "isMedicalOrParamedicalCourse",
+      "label": "Is the course a medical or paramedical course?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the requirement for a Ministry of Health & Family Welfare No Objection Certificate (see the medicalOrParamedicalNoc document below).",
+      "sourceRef": "indianvisaonline.gov.in/evisa/tvoa.html document-requirement list ('For e-Student Visa': 'No Objection Certificate from the Ministry of Health and Family Welfare, Govt of India (Incase the applicant is joining a medical or paramedical course)')"
+    },
+    {
+      "name": "surname",
+      "label": "Surname / family name (exactly as in passport)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3), same shared wizard as in/mha/evisa-etourist",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s) (exactly as in passport)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The visa may not be granted if this does not match the name printed on the passport.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "hasChangedName",
+      "label": "Have you ever changed your name?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)"
+    },
+    {
+      "name": "nameChangeDetails",
+      "label": "Details of name change",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 500
+      },
+      "requiredWhen": {
+        "field": "hasChangedName",
+        "equals": true
+      }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Exact live-site option list was not directly confirmed during this research pass; modeled on the male/female/transgender convention used consistently across this registry's other India schemas (in/mea, in/morth, in/mha/evisa-etourist), pending live confirmation — see VERIFICATION.md.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "enum": [
+          "male",
+          "female",
+          "transgender"
+        ]
+      }
+    },
+    {
+      "name": "townCityOfBirth",
+      "label": "Town / city of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "citizenshipOrNationalIdNumber",
+      "label": "Citizenship / National ID No.",
+      "type": "string",
+      "required": true,
+      "description": "If not applicable, the form instructs applicants to type NA.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": false,
+      "description": "Rendered as a dropdown on the live site ('Select Religion', with an 'Others, please specify' option implied); the full option list was not captured during this research pass, so this is modeled as free text pending live confirmation — see VERIFICATION.md.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "visibleIdentificationMarks",
+      "label": "Visible identification marks",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "educationalQualification",
+      "label": "Educational qualification",
+      "type": "string",
+      "required": false,
+      "description": "Rendered as a dropdown on the live site ('Select Education'); the full option list was not captured during this research pass, so this is modeled as free text pending live confirmation — see VERIFICATION.md.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "nationalityAcquisition",
+      "label": "Did you acquire nationality by birth or by naturalization?",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)",
+      "validation": {
+        "enum": [
+          "by_birth",
+          "by_naturalization"
+        ]
+      }
+    },
+    {
+      "name": "livedTwoYearsInApplyingCountry",
+      "label": "Have you lived for at least two years in the country where you are applying for the visa?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' page (SampleForm.pdf p.2–3)"
+    },
+    {
+      "name": "passportPlaceOfIssue",
+      "label": "Place of issue (passport)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "passportDateOfIssue",
+      "label": "Date of issue (passport)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section"
+    },
+    {
+      "name": "passportDateOfExpiry",
+      "label": "Date of expiry (passport)",
+      "type": "date",
+      "required": true,
+      "description": "The passport must have a minimum of six months' validity remaining from the journey date.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section"
+    },
+    {
+      "name": "hasOtherValidPassportOrIdCertificate",
+      "label": "Do you hold any other valid passport / Identity Certificate (IC)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section"
+    },
+    {
+      "name": "otherPassportCountryOfIssue",
+      "label": "Country of issue (other passport/IC)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasOtherValidPassportOrIdCertificate",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherPassportOrIdCertificateNumber",
+      "label": "Passport / IC number (other)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section",
+      "validation": {
+        "maxLength": 20
+      },
+      "requiredWhen": {
+        "field": "hasOtherValidPassportOrIdCertificate",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherPassportDateOfIssue",
+      "label": "Date of issue (other passport/IC)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section",
+      "requiredWhen": {
+        "field": "hasOtherValidPassportOrIdCertificate",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherPassportPlaceOfIssue",
+      "label": "Place of issue (other passport/IC)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasOtherValidPassportOrIdCertificate",
+        "equals": true
+      }
+    },
+    {
+      "name": "otherPassportNationality",
+      "label": "Nationality mentioned in other passport/IC",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, 'Applicant Details Form' — Passport Details section",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasOtherValidPassportOrIdCertificate",
+        "equals": true
+      }
+    },
+    {
+      "name": "presentAddressHouseNoStreet",
+      "label": "Present address — house no. / street",
+      "type": "string",
+      "required": true,
+      "description": "Limited to 35 characters per line on the source form; this field represents the first address line.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 35
+      }
+    },
+    {
+      "name": "presentAddressVillageTownCity",
+      "label": "Present address — village / town / city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "presentAddressCountry",
+      "label": "Present address — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "presentAddressStateProvinceDistrict",
+      "label": "Present address — state / province / district",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "presentAddressPostalCode",
+      "label": "Present address — postal / zip code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "presentAddressPhoneNumber",
+      "label": "Present address — phone number",
+      "type": "string",
+      "required": false,
+      "description": "At least one of presentAddressPhoneNumber or presentAddressMobileNumber is mandatory ('One Contact No is Mandatory').",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "presentAddressMobileNumber",
+      "label": "Present address — mobile number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "permanentAddressSameAsPresent",
+      "label": "Permanent address same as present address?",
+      "type": "boolean",
+      "required": false,
+      "description": "Corresponds to the live site's 'Click here for same address' shortcut, which copies the present address into the permanent-address fields below.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details"
+    },
+    {
+      "name": "permanentAddressHouseNoStreet",
+      "label": "Permanent address — house no. / street (with postal / zip code)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "permanentAddressSameAsPresent",
+        "equals": false
+      }
+    },
+    {
+      "name": "permanentAddressVillageTownCity",
+      "label": "Permanent address — village / town / city",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "permanentAddressSameAsPresent",
+        "equals": false
+      }
+    },
+    {
+      "name": "permanentAddressStateProvinceDistrict",
+      "label": "Permanent address — state / province / district",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "permanentAddressSameAsPresent",
+        "equals": false
+      }
+    },
+    {
+      "name": "fatherName",
+      "label": "Father's name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Father's nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fatherPreviousNationality",
+      "label": "Father's previous nationality, if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fatherPlaceOfBirth",
+      "label": "Father's place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fatherCountryOfBirth",
+      "label": "Father's country of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherName",
+      "label": "Mother's name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "motherNationality",
+      "label": "Mother's nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherPreviousNationality",
+      "label": "Mother's previous nationality, if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherPlaceOfBirth",
+      "label": "Mother's place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherCountryOfBirth",
+      "label": "Mother's country of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Applicant's marital status",
+      "type": "enum",
+      "required": true,
+      "description": "Enum follows the same single/married/divorced/widow-widower/separated convention already used by this registry's other India schemas.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "enum": [
+          "single",
+          "married",
+          "divorced",
+          "widow_widower",
+          "separated"
+        ]
+      }
+    },
+    {
+      "name": "parentsOrGrandparentsPakistaniOrigin",
+      "label": "Were your parents / grandparents (paternal or maternal) Pakistan nationals, or do they belong to a Pakistan-held area?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details"
+    },
+    {
+      "name": "parentsOrGrandparentsPakistaniOriginDetails",
+      "label": "Details",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 3 — Present/Permanent Address and Family Details",
+      "validation": {
+        "maxLength": 500
+      },
+      "requiredWhen": {
+        "field": "parentsOrGrandparentsPakistaniOrigin",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasBeenRefusedEntryOrExtension",
+      "label": "Has permission to visit or extend stay in India previously been refused?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'"
+    },
+    {
+      "name": "refusalDetails",
+      "label": "If so, when and by whom (mention control no. and date)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'",
+      "validation": {
+        "maxLength": 500
+      },
+      "requiredWhen": {
+        "field": "hasBeenRefusedEntryOrExtension",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasVisitedIndiaBefore",
+      "label": "Have you ever visited India before?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'"
+    },
+    {
+      "name": "addressOfStayDuringLastVisit",
+      "label": "Address of stay during last visit",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'",
+      "validation": {
+        "maxLength": 300
+      },
+      "requiredWhen": {
+        "field": "hasVisitedIndiaBefore",
+        "equals": true
+      }
+    },
+    {
+      "name": "citiesPreviouslyVisitedInIndia",
+      "label": "Cities previously visited in India",
+      "type": "string",
+      "required": false,
+      "description": "Comma-separated list, per the source form.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'",
+      "validation": {
+        "maxLength": 500
+      },
+      "requiredWhen": {
+        "field": "hasVisitedIndiaBefore",
+        "equals": true
+      }
+    },
+    {
+      "name": "lastOrCurrentIndianVisaNumber",
+      "label": "Last Indian visa no. / currently valid Indian visa no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "hasVisitedIndiaBefore",
+        "equals": true
+      }
+    },
+    {
+      "name": "previousVisaType",
+      "label": "Type of visa (previous / current)",
+      "type": "string",
+      "required": false,
+      "description": "Rendered as a dropdown on the live site; the full option list was not captured during this research pass, so this is modeled as free text — see VERIFICATION.md.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasVisitedIndiaBefore",
+        "equals": true
+      }
+    },
+    {
+      "name": "previousVisaPlaceOfIssue",
+      "label": "Place of issue (previous / current visa)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'",
+      "validation": {
+        "maxLength": 100
+      },
+      "requiredWhen": {
+        "field": "hasVisitedIndiaBefore",
+        "equals": true
+      }
+    },
+    {
+      "name": "previousVisaDateOfIssue",
+      "label": "Date of issue (previous / current visa)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Previous Visa/Currently valid Visa Details'",
+      "requiredWhen": {
+        "field": "hasVisitedIndiaBefore",
+        "equals": true
+      }
+    },
+    {
+      "name": "countriesVisitedLast10Years",
+      "label": "Countries visited in the last 10 years",
+      "type": "string",
+      "required": false,
+      "description": "Comma-separated list, per the source form. The site warns that false information may result in refused entry.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Other Information' and 'SAARC Country Visit Details'",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "hasVisitedSaarcCountriesLast3Years",
+      "label": "Have you visited SAARC countries (except your own) during the last 3 years?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Other Information' and 'SAARC Country Visit Details'"
+    },
+    {
+      "name": "referenceNameIndia",
+      "label": "Reference name in India",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Reference' section",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "referenceAddressIndia",
+      "label": "Reference address in India",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Reference' section",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "referencePhoneIndia",
+      "label": "Reference phone number in India",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Reference' section",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "referenceNameHomeCountry",
+      "label": "Reference name in home country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "For a contact to be reached in an emergency; the source form requires at least one home-country reference.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Reference' section",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "referenceAddressHomeCountry",
+      "label": "Reference address in home country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Reference' section",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "referencePhoneHomeCountry",
+      "label": "Reference phone number in home country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 4 — 'Reference' section",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "everArrestedProsecutedConvicted",
+      "label": "Have you ever been arrested, prosecuted, or convicted by a Court of Law of any country?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 5 — 'Additional Question Details'"
+    },
+    {
+      "name": "everRefusedEntryOrDeported",
+      "label": "Have you ever been refused entry to, or deported from, any country including India?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 5 — 'Additional Question Details'"
+    },
+    {
+      "name": "engagedInTraffickingOrSimilarCrime",
+      "label": "Have you ever been engaged in human trafficking, drug trafficking, child abuse, crime against women, economic offense, or financial fraud?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 5 — 'Additional Question Details'"
+    },
+    {
+      "name": "engagedInCyberOrTerroristActivity",
+      "label": "Have you ever been engaged in cyber crime, terrorist activities, sabotage, espionage, genocide, political killing, or another act of violence?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 5 — 'Additional Question Details'"
+    },
+    {
+      "name": "expressedViewsGlorifyingTerroristViolence",
+      "label": "Have you ever, by any means or medium, expressed views that justify or glorify terrorist violence, or that may encourage others to terrorist acts or other serious criminal acts?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 5 — 'Additional Question Details'"
+    },
+    {
+      "name": "soughtAsylumAnyCountry",
+      "label": "Have you sought asylum (political or otherwise) in any country?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 5 — 'Additional Question Details'"
+    },
+    {
+      "name": "declarationOfCorrectness",
+      "label": "Declaration — the information furnished is correct to the best of my knowledge and belief",
+      "type": "boolean",
+      "required": true,
+      "description": "Includes acknowledgement that false information found at any stage is liable to legal action, deportation, blacklisting, or other action as the Government of India deems fit.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, page 5 — 'Additional Question Details'",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ]
+    },
+    {
+      "name": "feePaymentUndertaking",
+      "label": "Undertaking accepted before proceeding to fee payment",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirms the applicant will carry a printout of the ETA, understands biometrics (photo and fingerprints) will be mandatorily captured on arrival, and understands the transaction is non-refundable and non-cancellable once the fee is paid. The e-Visa is not submitted until the fee is paid, at least 4 days before the journey date.",
+      "sourceRef": "indianvisaonline.gov.in sample application walkthrough, final page — 'Online VISA Fee Payment'",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "photograph",
+      "label": "Recent front-facing photograph",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Upload Photograph step: JPEG format; minimum 10 KB, maximum 1 MB; minimum 350x350 pixels; recent, front-facing, full-face view, plain light or white background, no shadows or borders; must not be a crop of the passport photo page."
+    },
+    {
+      "id": "passportBioPageScan",
+      "label": "Scanned copy of passport page containing personal particulars",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Document Upload step: PDF format; minimum 10 KB, maximum 300 KB; must show name, date of birth, nationality, and expiry date matching the passportDetails fields; document must be in English or the application is liable for rejection."
+    },
+    {
+      "id": "admissionLetter",
+      "label": "Letter of admission from the recognized Indian educational institution, stating the duration of the course",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "indianvisaonline.gov.in/evisa/tvoa.html document-requirement list, 'For e-Student Visa': 'Letter of admission from a recognised Indian educational institution with duration of the course.'"
+    },
+    {
+      "id": "financialSupportProof",
+      "label": "Letter of support from parent/guardian with bank guarantee certificate, or previous 6 months' bank statement",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "indianvisaonline.gov.in/evisa/tvoa.html document-requirement list, 'For e-Student Visa': 'A letter of support from the parent/guardian accompanied by a bank guarantee certificate, or Previous 06 months of bank statement.'"
+    },
+    {
+      "id": "medicalOrParamedicalNoc",
+      "label": "No Objection Certificate from the Ministry of Health and Family Welfare, Govt of India",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "isMedicalOrParamedicalCourse",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "indianvisaonline.gov.in/evisa/tvoa.html document-requirement list, 'For e-Student Visa': 'No Objection Certificate from the Ministry of Health and Family Welfare, Govt of India (Incase the applicant is joining a medical or paramedical course).'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_gate",
+      "title": "Passport and health-screening gate",
+      "fields": [
+        "passportNumber",
+        "nationality",
+        "nameAsInPassport",
+        "visitedEbolaAffectedCountriesLast21Days",
+        "completed21DaysSinceEbolaTerritoryExit",
+        "hasEbolaSymptomsOrDisease",
+        "ebolaSymptomType"
+      ],
+      "next": "application_registration"
+    },
+    {
+      "id": "application_registration",
+      "title": "e-Visa application registration",
+      "fields": [
+        "passportType",
+        "portOfArrival",
+        "dateOfBirth",
+        "emailAddress",
+        "emailAddressConfirmation",
+        "expectedDateOfArrival",
+        "eStudentVisaPurpose",
+        "documentsAndPhotoDeclaration"
+      ],
+      "next": "student_course_details"
+    },
+    {
+      "id": "student_course_details",
+      "title": "Institution and course details",
+      "fields": [
+        "instituteName",
+        "instituteAddress",
+        "instituteEmail",
+        "institutePhone",
+        "courseName",
+        "courseDuration",
+        "courseStartMonth",
+        "courseStartYear",
+        "isMedicalOrParamedicalCourse"
+      ],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": [
+        "surname",
+        "givenNames",
+        "hasChangedName",
+        "nameChangeDetails",
+        "gender",
+        "townCityOfBirth",
+        "countryOfBirth",
+        "citizenshipOrNationalIdNumber",
+        "religion",
+        "visibleIdentificationMarks",
+        "educationalQualification",
+        "nationalityAcquisition",
+        "livedTwoYearsInApplyingCountry"
+      ],
+      "next": "passport_details"
+    },
+    {
+      "id": "passport_details",
+      "title": "Passport details",
+      "fields": [
+        "passportPlaceOfIssue",
+        "passportDateOfIssue",
+        "passportDateOfExpiry",
+        "hasOtherValidPassportOrIdCertificate",
+        "otherPassportCountryOfIssue",
+        "otherPassportOrIdCertificateNumber",
+        "otherPassportDateOfIssue",
+        "otherPassportPlaceOfIssue",
+        "otherPassportNationality"
+      ],
+      "next": "address_and_family_details"
+    },
+    {
+      "id": "address_and_family_details",
+      "title": "Address and family details",
+      "fields": [
+        "presentAddressHouseNoStreet",
+        "presentAddressVillageTownCity",
+        "presentAddressCountry",
+        "presentAddressStateProvinceDistrict",
+        "presentAddressPostalCode",
+        "presentAddressPhoneNumber",
+        "presentAddressMobileNumber",
+        "permanentAddressSameAsPresent",
+        "permanentAddressHouseNoStreet",
+        "permanentAddressVillageTownCity",
+        "permanentAddressStateProvinceDistrict",
+        "fatherName",
+        "fatherNationality",
+        "fatherPreviousNationality",
+        "fatherPlaceOfBirth",
+        "fatherCountryOfBirth",
+        "motherName",
+        "motherNationality",
+        "motherPreviousNationality",
+        "motherPlaceOfBirth",
+        "motherCountryOfBirth",
+        "maritalStatus",
+        "parentsOrGrandparentsPakistaniOrigin",
+        "parentsOrGrandparentsPakistaniOriginDetails"
+      ],
+      "next": "visa_details"
+    },
+    {
+      "id": "visa_details",
+      "title": "Visa and previous-visit details",
+      "fields": [
+        "hasBeenRefusedEntryOrExtension",
+        "refusalDetails",
+        "hasVisitedIndiaBefore",
+        "addressOfStayDuringLastVisit",
+        "citiesPreviouslyVisitedInIndia",
+        "lastOrCurrentIndianVisaNumber",
+        "previousVisaType",
+        "previousVisaPlaceOfIssue",
+        "previousVisaDateOfIssue",
+        "countriesVisitedLast10Years",
+        "hasVisitedSaarcCountriesLast3Years"
+      ],
+      "next": "references"
+    },
+    {
+      "id": "references",
+      "title": "References",
+      "fields": [
+        "referenceNameIndia",
+        "referenceAddressIndia",
+        "referencePhoneIndia",
+        "referenceNameHomeCountry",
+        "referenceAddressHomeCountry",
+        "referencePhoneHomeCountry"
+      ],
+      "next": "additional_questions"
+    },
+    {
+      "id": "additional_questions",
+      "title": "Additional question details",
+      "fields": [
+        "everArrestedProsecutedConvicted",
+        "everRefusedEntryOrDeported",
+        "engagedInTraffickingOrSimilarCrime",
+        "engagedInCyberOrTerroristActivity",
+        "expressedViewsGlorifyingTerroristViolence",
+        "soughtAsylumAnyCountry",
+        "declarationOfCorrectness"
+      ],
+      "next": "fee_payment"
+    },
+    {
+      "id": "fee_payment",
+      "title": "Fee payment",
+      "fields": [
+        "feePaymentUndertaking"
+      ]
+    }
+  ]
+}
