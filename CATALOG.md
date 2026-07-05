@@ -8,18 +8,31 @@
 
 | Vertical | Coverage | Target Gaps |
 |----------|----------|------------|
-| **Passport** | 8/13 (61%) | ZA, SG, IN, NL, GB partial |
-| **DMV** | 9/13 (69%) | ZA, SG, IE, NL, FR incomplete |
+| **Passport** | 9/13 (69%) | ZA, IN, NL, GB partial |
+| **DMV** | 10/13 (77%) | ZA, IE, NL, FR incomplete |
 | **Business Formation** | 9/13 (69%) | ZA, CA, IN, NZ, IE gaps |
-| **Taxes** | 9/13 (69%) | SG, IE, NZ, CA gaps |
-| **Visa** | 10/13 (77%) | ZA, SG, IN, GB UK-visa gaps |
-| **National ID** | 6/13 (46%) | IN, NL, AU, SG, NZ, ZA gaps |
+| **Taxes** | 10/13 (77%) | IE, NZ, CA gaps |
+| **Visa** | 10/13 (77%) | ZA, IN, GB UK-visa gaps |
+| **National ID** | 7/13 (54%) | IN, NL, AU, NZ, ZA gaps |
+
+> **Correction (2026-07-05, GOV-1223):** this table originally showed SG as
+> missing Passport, Taxes, and National ID, and incomplete on DMV. All four
+> claims were wrong — SG already had published schemas for every one of
+> these (`sg/ica/passport-application`, `sg/iras/individual-income-tax-return-formb1`,
+> `sg/ica/identity-card-replacement` + `identity-card-reregistration`,
+> `sg/lta/road-tax-renewal` + `vehicle-ownership-transfer` +
+> `sg/spf/driving-licence-application`), all merged **before** this catalog
+> was generated. See the corrected SG section under "By Jurisdiction" below.
+> The undercount suggests the Phase 1 scan under-detected schemas in this
+> jurisdiction; other jurisdictions' counts in this document have not been
+> independently re-verified this cycle and should be treated with the same
+> caution until spot-checked.
 
 ---
 
 ## By Vertical
 
-### Passport (8/13 jurisdictions)
+### Passport (9/13 jurisdictions)
 
 | Jurisdiction | Schemas | Coverage |
 |--------------|---------|----------|
@@ -34,13 +47,15 @@
 
 **Missing:**
 - ZA (South Africa DHA) — no schema yet
-- SG (Singapore ICA) — no schema yet
 - IN (India MEA) — no schema yet
 - NL (Netherlands SVB/IND) — no schema yet
 
+**Corrected 2026-07-05:** SG *does* have a schema — `sg/ica/passport-application`
+(v1.0.0, v1.1.0) — and was mis-listed as missing.
+
 ---
 
-### DMV — Vehicle Registration, Licensing, Permits (9/13 jurisdictions)
+### DMV — Vehicle Registration, Licensing, Permits (10/13 jurisdictions)
 
 | Jurisdiction | Schemas | Coverage |
 |--------------|---------|----------|
@@ -53,12 +68,21 @@
 | **IN** | 4 | Vehicle registration (new, renewal, transfer), vehicle ownership transfer |
 | **NL** | 2 | Driver licence renewal (RDW), vehicle ownership transfer |
 | **NZ** | 2 | Driver licence renewal (NZTA), motorcycle licence |
+| **SG** | 3 | LTA: road tax renewal, vehicle ownership transfer; SPF Traffic Police: driving licence application/replacement/renewal |
 | **US** | 10+ | CA (registration, title, DL, tag renewal), FL (7 schemas), plus DE/VA/NY |
 
 **Missing/Incomplete:**
 - ZA (RTMC exists, but no renewal/transfer) — needs expansion
-- SG (LTA) — no schema yet
 - GB/CA/US — CDL (commercial driver license), hazmat endorsements
+
+**Corrected 2026-07-05:** SG *does* have 3 published DMV schemas, dated
+2026-07-02 through 2026-07-04 — all merged before this catalog was
+generated. Note the agency split: in Singapore, **LTA** (Land Transport
+Authority) handles vehicle registration/road tax, while driving *licences*
+are issued by **Traffic Police (SPF)**, not LTA — a genuine jurisdictional
+difference worth remembering when scoping future SG DMV candidates.
+A real, still-open SG DMV gap: LTA has no *new/first-time* vehicle
+registration schema yet (only road-tax renewal and ownership transfer).
 
 ---
 
@@ -90,7 +114,7 @@
 
 ---
 
-### Taxes — Income Tax Return, Tax Filing (9/13 jurisdictions)
+### Taxes — Income Tax Return, Tax Filing (10/13 jurisdictions)
 
 | Jurisdiction | Schemas | Coverage |
 |--------------|---------|----------|
@@ -106,10 +130,14 @@
 
 **Missing/Incomplete:**
 - ZA (SARS ITR12 exists; needs ITR14, corporate tax) |
-- SG (no individual income tax schema yet) |
 - IE (Revenue forms missing, excepting VAT return) |
 - CA (only 2022 T1; needs more recent years, corporate, self-employment) |
 - All jurisdictions: corporate/business tax returns minimal coverage |
+
+**Corrected 2026-07-05:** SG *does* have an individual income tax schema —
+`sg/iras/individual-income-tax-return-formb1` (v1.0.0, YA2026), merged
+2026-07-02, before this catalog was generated. A genuine, still-open SG
+Taxes gap: IRAS corporate income tax has no schema yet.
 
 ---
 
@@ -136,7 +164,7 @@
 
 ---
 
-### National ID & Civic Documents (6/13 jurisdictions)
+### National ID & Civic Documents (7/13 jurisdictions)
 
 | Jurisdiction | Schemas | Coverage |
 |--------------|---------|----------|
@@ -147,14 +175,22 @@
 | **GB** | 1+ | Voter registration (electoral commission) |
 | **IE** | 1 | Voter registration (Electoral Commission) |
 | **NZ** | 2 | Voter registration + RealMe identity verification |
+| **SG** | 2 | ICA: NRIC identity card replacement, identity card re-registration |
 
 **Missing:**
 - ZA (no voter registration or national ID online systems) |
 - IN (no voter registration or Aadhar online services yet) |
 - NL (no identity card or voter registration schema) |
-- SG (no NRIC loss/damage or voter registration) |
 - US (no federalized voter registration; varies by state — only AK/CO/VT started) |
 - AU/FR/DE/GB (Steuer-ID, NRIC re-registration not covered) |
+
+**Corrected 2026-07-05:** SG *does* have NRIC loss/damage and re-registration
+schemas — `sg/ica/identity-card-replacement` and
+`sg/ica/identity-card-reregistration`, both merged 2026-07-02, before this
+catalog was generated. SG has no voter-registration schema, but this is a
+previously confirmed non-gap (GOV-1075): voting is compulsory and
+automatic/NRIC-linked in Singapore, so no citizen-initiated online
+registration process exists to model.
 
 ---
 
@@ -295,18 +331,33 @@
 **Coverage:** DMV ✓, Visa ✓, Business ✓, Taxes ✓, National ID ✓
 **Gaps:** Passport (not yet published, noted as reachable via DIB), work/student visa, beneficiary income
 
-### SG — Singapore (9 schemas, 4 verticals)
+### SG — Singapore (11 schemas, 6 verticals)
 
-| Agency | Vertical | Schemas |
-|--------|----------|---------|
-| ACRA | Business Formation | 2 (Pte Ltd, sole proprietor) |
-| ICA | Visa | Entry visa (5 schemas across visa types) |
-| IRAS | Taxes | (no published schema yet) |
-| LTA | DMV | 2 (vehicle registration, vehicle ownership transfer) |
-| SPF | National ID | (no published schema yet) |
+**Corrected 2026-07-05 (GOV-1223):** this section previously undercounted SG
+at "9 schemas, 4 verticals" and listed Passport, Taxes, and National ID as
+gaps. All three already had published schemas, all merged before this
+catalog was generated (see per-schema dates below) — the original count
+missed `sg/ica/passport-application`, `sg/ica/identity-card-replacement`,
+`sg/ica/identity-card-reregistration`, `sg/iras/individual-income-tax-return-formb1`,
+and `sg/spf/driving-licence-application` entirely.
 
-**Coverage:** Visa ✓, Business ✓, DMV ✓ (vehicle only)
-**Gaps:** Passport, tax return (IRAS), national identity (NRIC loss/damage, re-registration), driver licence (LTA maintains it but not yet published)
+| Agency | Vertical | Schemas | Merged |
+|--------|----------|---------|--------|
+| ACRA | Business Formation | 2 (Pte Ltd, sole proprietorship) | 2026-07-02, 2026-07-05 |
+| ICA | Passport | Passport application (v1.0.0, v1.1.0) | 2026-07-01 |
+| ICA | Visa | Entry visa application | 2026-07-03 |
+| ICA | National ID | 2 (identity card replacement, identity card re-registration) | 2026-07-02 |
+| IRAS | Taxes | Individual income tax return (Form B1 equivalent, myTax Portal, YA2026) | 2026-07-02 |
+| LTA | DMV | 2 (road tax renewal, vehicle ownership transfer) | 2026-07-04 |
+| SPF (Traffic Police) | DMV | Driving licence application/replacement/renewal | 2026-07-02 |
+
+**Coverage:** Passport ✓, DMV ✓, Business ✓, Taxes ✓, Visa ✓, National ID ✓ — all 6 verticals now have at least one schema.
+**Genuine remaining gaps (not previously flagged):** IRAS corporate income
+tax; LTA new/first-time vehicle registration (only renewal and ownership
+transfer exist); ICA work/student visa passes beyond the single entry-visa
+schema. Voter registration is a confirmed non-gap (GOV-1075) — Singapore
+voting is compulsory/NRIC-linked with no citizen-initiated online
+registration step.
 
 ### US — United States (60+ schemas, all verticals)
 
@@ -342,7 +393,7 @@
 | **IN** | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ | 9 |
 | **NL** | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ | 10 |
 | **NZ** | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ | 12 |
-| **SG** | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ | 9 |
+| **SG** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 11 |
 | **US** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 60+ |
 | **ZA** | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ | 5 |
 
@@ -356,24 +407,24 @@
 
 ### High-Priority (Single Schema Fills Jurisdiction Gap)
 
-1. **Passport (4 missing):**
+1. **Passport (3 missing):**
    - ZA (DHA): high-value (opens ZA/DHA vertical)
-   - SG (ICA): mid-value (completes SG)
    - IN (MEA): mid-value (completes IN passport, but complex flow)
    - NL (IND): low-value (completes NL; renewal-only form)
+   - ~~SG (ICA)~~ — corrected 2026-07-05: already published (`sg/ica/passport-application`)
 
-2. **National ID (7 missing/partial):**
+2. **National ID (5 missing/partial):**
    - IN (voter registration, Aadhar): high-value multi-schema
-   - SG (NRIC loss/damage, re-registration): low-value
    - ZA (voter registration): low-value (online services not available)
    - NL (identity card): low-value
    - US (federal voter, not state-level): federated gap
+   - ~~SG (NRIC loss/damage, re-registration)~~ — corrected 2026-07-05: already published (`sg/ica/identity-card-replacement`, `sg/ica/identity-card-reregistration`)
 
-3. **Taxes (4 missing):**
-   - SG (IRAS individual/corporate): mid-value (highest-income jurisdiction)
+3. **Taxes (3 missing):**
    - IE (corporate, sole trader): mid-value
    - CA (2023+ tax years, corporate): mid-value
    - IN (ITR-2, ITR-3, ITR-4, sole trader): high-value multi-schema
+   - SG IRAS *corporate* income tax remains genuinely open (individual is published: `sg/iras/individual-income-tax-return-formb1`) — corrected 2026-07-05
 
 4. **Business Formation (4 missing/minimal):**
    - ZA (close corporation, trust, NPO): mid-value
@@ -397,11 +448,18 @@
 
 Based on impact (closes entire jurisdiction) + sourcing feasibility:
 
-1. **SG (completes 4/6 verticals): IRAS tax, driver licence (LTA)**
-2. **IN (expands 2 verticals): Passport, work/student visa, ITR variants**
-3. **ZA (completes 1/6 verticals): DHA Passport**
-4. **NL (completes 2/6 verticals): Passport (IND), corporate tax (BD)**
-5. **NZ (completes 1/6 verticals): Passport (DIA)**
+1. **IN (expands 2 verticals): Passport, work/student visa, ITR variants**
+2. **ZA (completes 1/6 verticals): DHA Passport**
+3. **NL (completes 2/6 verticals): Passport (IND), corporate tax (BD)**
+4. **NZ (completes 1/6 verticals): Passport (DIA)**
+
+**Corrected 2026-07-05 (GOV-1223):** SG is *already* 6/6 verticals — dropped
+from this list. Its individual-tax (IRAS Form B1) and driver-licence (SPF
+Traffic Police, not LTA) schemas were both published 2026-07-02, before this
+catalog's Phase 1 audit ran, and were missed by that scan. Remaining SG
+candidates, if a future cycle wants them, are narrower expansions rather
+than jurisdiction-completing gaps: IRAS corporate tax, LTA new-vehicle
+registration, and ICA work/student visa passes.
 
 ---
 
