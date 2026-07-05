@@ -77,14 +77,14 @@ independently verified" below.
 | Front-left, '신청내용' tick-box list | `applicationPurpose` |
 | Front-left, '응시면허' / '응시차량' | `licenceClassApplying`, `testVehicleTransmission`, `usesSpeciallyManufacturedOrApprovedVehicle` |
 | Front-left, '보유면허' table (제1종 대형/보통/특수, 제2종 보통/소형/원자, 면허번호) | `hasExistingLicence`, `existingLicenceNumber`, `existingClass1Large`, `existingClass1Regular`, `existingClass1Special`, `existingClass2Regular`, `existingClass2Small`, `existingClass2Moped` |
-| Front-left, '면허조건' row (11 remaining checkbox items after de-duplicating 자동변속/특수제작ㆍ승인차 against `testVehicleTransmission`/`usesSpeciallyManufacturedOrApprovedVehicle`) | `usesProstheticHand`, `usesProstheticLeg`, `usesHandOperatedBrake`, `usesHandOperatedAccelerator`, `usesHearingAid`, `hasHearingImpairedDriverSign`, `usesConvexMirror`, `usesLeftSideAccelerator`, `usesMultiWheeledMoped`, `otherLicenceConditions` |
+| Front-left, '면허조건' row (10 remaining checkbox items after de-duplicating 자동변속/특수제작ㆍ승인차 against `testVehicleTransmission`/`usesSpeciallyManufacturedOrApprovedVehicle`) | `usesProstheticHand`, `usesProstheticLeg`, `usesHandOperatedBrake`, `usesHandOperatedAccelerator`, `usesHearingAid`, `hasHearingImpairedDriverSign`, `usesConvexMirror`, `usesLeftSideAccelerator`, `usesMultiWheeledMoped`, `otherLicenceConditions` |
 | Front-left, submission line and '행정정보 공동이용 동의서' / fingerprint-verification / info-notification consent notes | `declarationDate`, `declarationSignature`, `consentsToAdministrativeInfoSharing`, `consentsToElectronicFingerprintIdentification`, `consentsToLicenceInfoNotifications` |
 | Back-right, 질병(疾病)ㆍ신체에 관한 신고서 items 1-9 (mental-health history) | `hasDementiaHistory`, `hasSchizophreniaHistory`, `hasSchizoaffectiveDisorderHistory`, `hasBipolarDisorderHistory`, `hasRecurrentDepressiveDisorderHistory`, `hasIntellectualDisabilityHistory`, `hasEpilepsyHistory`, `hasSubstanceDependencyHistory`, `hasOtherMentalIllnessHistory` |
 | Back-right, items 10-12 (vision/colour/hearing) | `hasCentralVisualFieldScotomaOrHemianopia`, `colorPerception`, `hearingLevel` |
 | Back-right, body-diagram physical-disability section | `hasPhysicalDisabilityAffectingLimbsOrTorso`, `physicalDisabilityDetails` |
 | Back-right, false-declaration penalty note and signature line | `diseaseDeclarationTrueAndAccurate`, `diseaseDeclarationSignature` |
 | 신청인 제출서류 (front-left) items 1-5 | `identityDocument`, `applicantPhotographs`, `medicalExaminationResult`, `powerOfAttorneyAndAgentId` |
-| Fee note (front-left) | `applicationFee` |
+| Fee note (back-left) | `applicationFee` |
 
 Office-assigned fields (접수번호/접수일자 receipt number/date on both the front
 application and the 응시표 exam-ticket side; the blank 필기/기능/도로주행 test-result
