@@ -4,14 +4,14 @@
 
 ## Executive Summary
 
-**12 jurisdictions** | **206 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**12 jurisdictions** | **208 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
 | **Passport** | 12/12 (100%) | none — closed |
 | **DMV** | 12/12 (100%) | sub-process/edition expansion only (CDL beyond US-CA, IDL beyond US/IE/GB) |
 | **Business Formation** | 12/12 (100%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN) |
-| **Taxes** | 12/12 (100%) | sub-process expansion only (IN ITR-2/ITR-3, corporate tax in SG/ZA/IE) |
+| **Taxes** | 12/12 (100%) | sub-process expansion only (corporate tax in SG/ZA/IE) |
 | **Visa** | 10/12 (83%) | **NL, ZA** — both confirmed dead ends (see below), not open work |
 | **National ID & Civic Documents** | 12/12 (100%) | none — closed (SG voter-reg is a confirmed non-gap) |
 
@@ -65,7 +65,7 @@ corporation/trust/NPO formation beyond `za/cipc/private-company-incorporation`.
 Every jurisdiction has at least one individual income-tax-return schema.
 Remaining gaps are sub-process expansions:
 
-- **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), and now ITR-2 (capital gains/foreign income/multiple properties, GOV-1247) are modelled. ITR-3 (non-presumptive business/profession, full books of account) remains the sole open candidate of the ITR-1/2/3/4 set — same e-filing portal/notified-utility technique already used for ITR-1/2/4.
+- **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), ITR-2 (capital gains/foreign income/multiple properties), and now ITR-3 (non-presumptive business/profession with full books of account, GOV-1254) are all modelled — the ITR-1/2/3/4 set is now complete. ITR-3 defers full re-derivation of Schedule S/House Property/Schedule CG/OS/itemised Chapter VI-A against its own workbook, since those schedules are structurally identical to the ones already published in full in `in/incometax/individual-tax-return-itr2` (see its VERIFICATION.md for the scope rationale).
 - **Corporate/business tax:** SG IRAS corporate income tax, ZA SARS ITR14, IE corporation tax remain unmodelled (individual returns are covered in all three).
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
 
@@ -106,7 +106,7 @@ no citizen-initiated online registration step to model.
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IN** | 13 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 10 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -127,21 +127,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Genuinely open, well-sourced candidates
 
-1. **India ITR-3** (Taxes): non-presumptive-business/professional individual
-   tax return with full books of account — the most complex of the
-   ITR-1/2/3/4 set and the last one open, now that ITR-2 (GOV-1247) is
-   published. Same income-tax e-filing portal and notified-utility technique
-   already proven for ITR-1/2/4.
-2. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
+1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB.
-3. **Corporate income tax**: SG IRAS, ZA SARS ITR14, IE corporation tax —
+2. **Corporate income tax**: SG IRAS, ZA SARS ITR14, IE corporation tax —
    all have individual returns already but no corporate-return schema.
-4. **New jurisdictions beyond the current 12** — the standard is meant to be
+3. **New jurisdictions beyond the current 12** — the standard is meant to be
    global from the start (see AGENTS.md charter); no next candidate has been
    researched yet this cycle. Candidates worth scouting in a future cycle:
    Brazil, Mexico, South Korea, UAE, or an EU member beyond DE/FR/NL — Japan
    (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174).
+4. **India ITR-3's deferred shared schedules**: a future version of
+   `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
+   (salary), House Property, Schedule CG (capital gains), OS (other
+   sources), and the itemised Chapter VI-A deductions against ITR-3's own
+   workbook citations, for filers who have both business/professional income
+   and salary/house-property/capital-gains/other-source income. Deferred in
+   GOV-1254 as a documented scope decision (these schedules are structurally
+   identical to `in/incometax/individual-tax-return-itr2`'s already-published
+   ones), not a sourcing dead end.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -174,4 +178,5 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ---
 
-**Generated by:** GOV-1240 Phase 1 research | Standards Engineer
+**Generated by:** GOV-1240 Phase 1 research, updated by GOV-1254 (ITR-3
+authoring) | Standards Engineer
