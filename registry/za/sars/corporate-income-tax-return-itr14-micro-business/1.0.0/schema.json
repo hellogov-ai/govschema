@@ -1,0 +1,1717 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "za/sars/corporate-income-tax-return-itr14-micro-business",
+  "version": "1.0.0",
+  "title": "South Africa Corporate Income Tax Return (ITR14) — Micro Business pathway",
+  "description": "File a South African company income tax return (ITR14) via SARS eFiling for a company classified as a 'Micro Business' — a company with a qualifying turnover not exceeding R1 million and total assets (current and non-current) not exceeding R5 million, that is not otherwise classified as a Body Corporate/Share Block Company. The ITR14 is a dynamically customised return: the 'Information to create this income tax return' wizard first asks the filer to classify the company (dormant, share block company, body corporate, micro business, small business, or medium to large business), and SARS generates only the Annexure that classification requires. This document models Annexure C, the Micro Business pathway (guide Section 13, pp.46-70): the Form Wizard questions (§13.1) and the Company/Close Corporation Particulars, Tax Practitioner Details, Declaration, Non-Residency, Personal Service Provider gate, Crypto Assets Transactions, Balance Sheet, Income Statement, and core (non-SARS-calculated) Tax Computation adjustment sections of the return itself (§13.2). Unlike za/sars/corporate-income-tax-return-itr14-dormant, a Micro Business return requires a full Balance Sheet, Income Statement, and Tax Computation — this document is the first ZA corporate-tax schema to model those containers. It deliberately does not model the repeating Share/Membership Register, Details of Beneficial Owner(s), Schedule of Local/Foreign Capital Gains and Losses, PAYE Credits Available (per-IRP5), Partnership/Joint Ventures, Donations-to-organisation detail list, Foreign Tax Credits (s6quat(1A)) computation container, or Details of Enhanced Renewable Energy Deduction (s12BA) containers — spec v0.3 has no repeating/nested field model (SPEC.md Section 12), the same limitation recorded in za/sars/corporate-income-tax-return-itr14-dormant's and za/sars/individual-income-tax-return-itr12's VERIFICATION.md files. It also does not model the Special Economic Zone container's full mandatory sub-questionnaire (only the top-level qualifying-company gate) or the Personal Service Provider container's full decision-tree questionnaire (only the top-level gate) — see VERIFICATION.md for the full scope rationale. It does not submit the return, compute tax payable, or determine any refund/assessment amount — the live SARS eFiling platform is always authoritative, and all SARS-calculated subtotal/control-total fields (e.g. Total Assets, Gross Profit/Loss, Net Profit/Loss, and each section's Control Total) are deliberately excluded as fields, following this registry's established discipline (SPEC.md §16).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "South African Revenue Service",
+    "abbreviation": "SARS",
+    "url": "https://www.sars.gov.za/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-ZA"
+  },
+  "source": {
+    "url": "https://www.sars.gov.za/wp-content/uploads/IT-GEN-04-G01-How-to-complete-the-Income-Tax-Return-ITR14-for-Companies-External-Guide.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "IT-GEN-04-G01 (How to complete the Income Tax Return (ITR14) for Companies — External Guide), Revision 19, effective 2 March 2026"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "GOV-1275 'GovSchema Standard Research' cycle: CATALOG.md's 'Known Gaps & Opportunities' section (as updated by GOV-1268) explicitly named ZA SARS ITR14's Annexure C (Micro Business, guide pp.46-70) as 'the natural next candidate' among ITR14's four remaining company-type Annexures, being the next-smallest after Dormant. Authored from the same SARS 'How to complete the Income Tax Return (ITR14) for Companies' External Guide used for za/sars/corporate-income-tax-return-itr14-dormant (IT-GEN-04-G01, Revision 19, effective 2 March 2026, fetched directly from sars.gov.za, HTTP 200, genuine text layer extracted in full with pdfjs-dist's getTextContent, no OCR needed) — this time reading Section 13 ('ANNEXURE C — MICRO BUSINESS', §§13.1-13.2, pp.46-70) in full rather than at table-of-contents level. Scope cuts, all per the 'no repeating/nested field model' limitation (SPEC.md Section 12), mirroring the discipline already established in za/sars/corporate-income-tax-return-itr14-dormant: (1) the Share/Membership Register (§13.2.9, up to 4 sub-containers, each itself repeating up to 20 rows) and Details of Beneficial Owner(s) (§13.2.10, repeats 0-9 times) — only the top-level gating/count fields (doesCompanyHaveMembers, howManyBeneficialOwners, howManyClassesOfShares) are modelled; (2) the Schedule of Local/Foreign Capital Gains and Losses (§13.2.19, an unbounded repeating table) — only the top-level gating booleans (hadLocalCapitalGainOrLoss, hadForeignCapitalGainOrLoss) are modelled, plus the two single-field debt-reduction amounts (§13.2.20-13.2.21, not repeating); (3) PAYE Credits Available (§13.2.22, repeats per IRP5 certificate) — only the top-level gate and count (wantsPayeCredits, numberOfIrp5Certificates) are modelled; (4) Donations Allowable to approved organisations (§13.2.15-13.2.16, repeats up to 20 organisations) — only the top-level gate, count, and total-amount-donated fields are modelled, not the per-organisation name/PBO-number/amount rows; (5) Partnership/Joint Ventures (§13.2.25, repeats per partnership) — only the top-level gate and count are modelled; (6) Foreign Tax Credits: Taxable Foreign Sourced Income of Resident Companies (§13.2.23, a multi-field s6quat(1A) computation block) — deferred in full, since it is itself a nested computation container comparable in scope to the Tax Computation section, not modelled; (7) Details of Enhanced Renewable Energy Deduction — s12BA (§13.2.14) — deferred in full since it is a conditional sub-container gated on a >R0 value in enhancedRenewableEnergyDeductionS12ba, which is itself retained as a plain currency field; (8) the Special Economic Zone container's full mandatory sub-questionnaire (§13.2.8, six-plus follow-up declarations contingent on which SEZ(s) the company operates in) — only the top-level qualifying-company gate (isQualifyingSezCompany) is modelled, matching za/sars/corporate-income-tax-return-itr14-dormant's identical scope cut; (9) the Personal Service Provider container's full decision-tree questionnaire (§13.2.6, an 8-part chain of narrative eligibility tests with no further downstream currency fields beyond what is already captured in the Income Statement/Tax Computation) — only the top-level gate (isPersonalServiceProvider) is modelled. All SARS-calculated fields (Total Assets; Total Equity and Liabilities; Gross Profit/Loss subtotal; the Income Statement's two Control Totals; Net Profit/Loss subtotal; the Tax Computation's two Control Totals; Calculated Profit/Loss before CFC income; and the deprecated 'Amounts to be Included in the Determination of Taxable Income' intermediate lines) are excluded as fields, consistent with sg/iras/corporate-income-tax-return-form-cs's and this registry's established discipline of not modelling derived/computed values (SPEC.md §16) — imputedNetIncomeFromCfc is the sole exception in that subsection, since the guide describes it as filer-entered (Source Code 4276), not calculated. Two Adjustments Allowable line items are explicitly excluded even though not calculated: 'Levy exemption in terms of s10(1)(e)(i)' and 'Other income exemption (excluding levy) in terms of s10(1)(e)(ii)' — the guide states both fields 'will be disabled/greyed out' specifically for a company classified as Micro Business (they apply only to Body Corporate/Share Block companies), so including them would misrepresent this document's own scope. donationsS18aAddBack and donationsOtherAddBack are retained as plain fields despite the guide noting they are 'pre-populated with the same value and locked' from their Income Statement counterparts, matching sg/iras/corporate-income-tax-return-form-cs's precedent for IRAS-pre-filled-but-declared fields. isTaxPractitionerFiling carries forward the same inferred-gating caveat as za/sars/corporate-income-tax-return-itr14-dormant (guide §13.2.2 heading is 'TAX PRACTITIONER DETAILS (If applicable)' with no explicit Yes/No wizard question shown). reasonForDormancy does not appear in this document (a Micro Business, by definition, answered 'No' to 'Is the company dormant?'); the equivalent classification gate here is the companyClassification field (eligibleValues: ['micro_business']) plus the size-threshold fields (grossIncomeSalesTurnoverPlusOtherIncome ≤ R1,000,000, totalAssetsCurrentAndNonCurrent ≤ R5,000,000) and the isBodyCorporateSectionalTitles/isShareBlockCompany exclusion gates (both required false), following guide §13(a)'s own definition and §13.1.3(i)'s Return Type pre-population logic. A mock conformance/za/sars/corporate-income-tax-return-itr14-micro-business/1.0.0/application-packet.json test run (a small trading close corporation with modest turnover and assets well under the Micro Business thresholds) was independently checked with a from-scratch GSP-0013 condition evaluator — see VERIFICATION.md for the field/violation counts. Status remains 'draft' pending a live eFiling walkthrough, the same constraint recorded in za/sars/corporate-income-tax-return-itr14-dormant's and za/sars/individual-income-tax-return-itr12's VERIFICATION.md files."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "companyClassification",
+      "label": "Company classification",
+      "type": "enum",
+      "required": true,
+      "description": "The company's classification, determined by the ITR14's 'Information to create this income tax return' wizard. This determines which Annexure (A-E) the return generates. This document models Annexure C (Micro Business) only: a company with qualifying turnover not exceeding R1 million and total assets not exceeding R5 million, not otherwise classified as a Body Corporate/Share Block Company.",
+      "sourceRef": "IT-GEN-04-G01 §13(a), §13.1.3(i) — 'Return Type... pre-populated... with one of the following return types: Dormant / Body Corporate/Share Block Company / Micro business / Small Company / Medium to Large Company'",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        "micro_business"
+      ],
+      "validation": {
+        "enum": [
+          "dormant",
+          "share_block_company",
+          "body_corporate",
+          "micro_business",
+          "small_business",
+          "medium_to_large_business"
+        ]
+      }
+    },
+    {
+      "name": "detailsVerifiedAndConfirmed",
+      "label": "Have the banking, public officer and contact details of the company been verified and confirmed as correct?",
+      "type": "boolean",
+      "required": true,
+      "description": "If 'No', the ITR14 return cannot be requested; the legal entity information must first be updated via 'Maintain SARS Registered Details' on eFiling.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.1(a), (d)",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ]
+    },
+    {
+      "name": "publicOfficerCompliant",
+      "label": "Does the company confirm that the person appointed as public officer complies with the requirements of section 246 of the Tax Administration Act, 2011 (not removed for misconduct, not convicted of a relevant offence, tax compliant, and not disqualified from serving as director/office bearer/trustee)?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "detailsVerifiedAndConfirmed",
+        "equals": true
+      },
+      "description": "Displayed once detailsVerifiedAndConfirmed is 'Yes'. Applicable from the 2024 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.1(b)-(c)"
+    },
+    {
+      "name": "isCompanyDormant",
+      "label": "Is the company dormant?",
+      "type": "boolean",
+      "required": true,
+      "description": "A Micro Business return implies the company is not dormant.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.2(a)",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ]
+    },
+    {
+      "name": "ceasedTradingDuringPeriod",
+      "label": "Did the company cease trading during this tax period?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "isCompanyDormant",
+        "equals": false
+      },
+      "description": "Displayed for all years of assessment once the company is not dormant.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.2(b)"
+    },
+    {
+      "name": "isCooperative",
+      "label": "Is the company a co-operative as defined in section 1 of the Income Tax Act?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicable from the 2025 year of assessment onwards. Only one of the co-operative/association-of-persons/non-profit-company/collective-investment-scheme/body-corporate/share-block company-type questions may be answered 'Yes'.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(b)"
+    },
+    {
+      "name": "isAssociationOfPersons",
+      "label": "Is the company an association of persons as contemplated in paragraph (d) of the definition of 'company' in section 1?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicable from the 2025 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(c)"
+    },
+    {
+      "name": "isNonProfitCompany",
+      "label": "Is the company a non-profit company as defined in section 1 of the Companies Act?",
+      "type": "boolean",
+      "required": true,
+      "description": "Called 'Is the company a non-profit company?' for the 2024 year of assessment and prior.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(d)"
+    },
+    {
+      "name": "isCollectiveInvestmentScheme",
+      "label": "Is the company a Collective Investment Scheme registered as a company?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(e)"
+    },
+    {
+      "name": "isBodyCorporateSectionalTitles",
+      "label": "Is the company a body corporate established in terms of the Sectional Titles Act, 1986?",
+      "type": "boolean",
+      "required": true,
+      "description": "A 'Yes' here classifies the company under Annexure B (Body Corporate/Share Block), out of scope for this document — see za/sars/corporate-income-tax-return-itr14-dormant's sibling Annexure-B candidate note.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(f)",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ]
+    },
+    {
+      "name": "isShareBlockCompany",
+      "label": "Is the company a share block company as defined in the Share Blocks Control Act?",
+      "type": "boolean",
+      "required": true,
+      "description": "A 'Yes' here classifies the company under Annexure B (Body Corporate/Share Block), out of scope for this document. Called 'Is the company a share block company defined in the Share Blocks Control Act as referred to in s10(1)(e)?' for the 2024 year of assessment and prior.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(g)",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ]
+    },
+    {
+      "name": "grossIncomeSalesTurnoverPlusOtherIncome",
+      "label": "Gross income (sales/turnover plus other income) in respect of the year of assessment (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "isBodyCorporateSectionalTitles",
+            "equals": false
+          },
+          {
+            "field": "isShareBlockCompany",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Calculated as the sum of 'Sales/Turnover' under Gross Profit/Loss and all income items declared under Income Items in the Income Statement. Must not exceed R1,000,000 for a Micro Business classification.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(h)(i)"
+    },
+    {
+      "name": "totalAssetsCurrentAndNonCurrent",
+      "label": "Total assets (current and non-current) of the company in respect of the year of assessment (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "isBodyCorporateSectionalTitles",
+            "equals": false
+          },
+          {
+            "field": "isShareBlockCompany",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Must not exceed R5,000,000 for a Micro Business classification.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.3(h)(ii)"
+    },
+    {
+      "name": "doesCompanyHaveMembers",
+      "label": "Does the company have members?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "isCooperative",
+            "equals": true
+          },
+          {
+            "field": "isAssociationOfPersons",
+            "equals": true
+          },
+          {
+            "field": "isNonProfitCompany",
+            "equals": true
+          },
+          {
+            "field": "isBodyCorporateSectionalTitles",
+            "equals": true
+          }
+        ]
+      },
+      "description": "Only displayed if the company is an association of persons, a co-operative, a body corporate, or a non-profit company. If 'Yes', the Share/Membership Register container displays (out of scope for this document — see VERIFICATION.md). 'Association of persons' and 'Body Corporate'/'Co-Operative' company types must have at least 1 (or, for Body Corporate/Co-Operative, at least 2) members.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(b)"
+    },
+    {
+      "name": "howManyBeneficialOwners",
+      "label": "How many beneficial owners does the company have?",
+      "type": "integer",
+      "required": true,
+      "description": "Zero (0) is allowed where no natural person ultimately owns or exercises effective control over the company. If greater than zero, the Details of Beneficial Owner(s) container displays, repeated per owner — out of scope for this document (see VERIFICATION.md). Applicable from the 2024 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(d), §13.2.10",
+      "validation": {
+        "minimum": 0,
+        "maximum": 9
+      }
+    },
+    {
+      "name": "howManyClassesOfShares",
+      "label": "How many different classes of shares have been issued by the company?",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "isResidentInSouthAfrica",
+        "equals": true
+      },
+      "description": "If greater than zero, the Share/Membership Register's Classes of Shares sub-section displays, limited to the 3 highest Rand-value classes regardless of the number entered — out of scope for this document (see VERIFICATION.md).",
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(a)(ii)(A), §13.1.10(c)",
+      "validation": {
+        "minimum": 1,
+        "maximum": 99
+      }
+    },
+    {
+      "name": "hadLocalCapitalGainOrLoss",
+      "label": "Did the company have any transactions or events which resulted in a locally sourced capital gain or loss (including crypto assets)?",
+      "type": "boolean",
+      "required": true,
+      "description": "If 'Yes', the Schedule of Local Capital Gains and Losses in respect of the disposal of assets displays — a repeating table out of scope for this document (see VERIFICATION.md).",
+      "sourceRef": "IT-GEN-04-G01 §13.1.4(a)"
+    },
+    {
+      "name": "hadForeignCapitalGainOrLoss",
+      "label": "Did the company have any transactions or events which resulted in a foreign sourced capital gain/loss (including crypto assets)?",
+      "type": "boolean",
+      "required": true,
+      "description": "If 'Yes', the Schedule of Foreign Capital Gains and Losses in respect of the disposal of assets displays — a repeating table out of scope for this document (see VERIFICATION.md).",
+      "sourceRef": "IT-GEN-04-G01 §13.1.4(b)"
+    },
+    {
+      "name": "hadDebtReducedForNoConsideration",
+      "label": "Has any debt been reduced for no consideration which has the effect of reducing the company's assessed capital loss under paragraph 12A(4) of the Eighth Schedule?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.4(c)"
+    },
+    {
+      "name": "reductionForLocalAsset",
+      "label": "Was the reduction for a local asset?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadDebtReducedForNoConsideration",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.1.4(c)(iii)(A)"
+    },
+    {
+      "name": "reductionForForeignAsset",
+      "label": "Was the reduction for a foreign asset?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadDebtReducedForNoConsideration",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.1.4(c)(iii)(B)"
+    },
+    {
+      "name": "localDebtReductionAmount",
+      "label": "Amount of debt reduction — local assessed capital loss (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reductionForLocalAsset",
+        "equals": true
+      },
+      "description": "Source code 4254. Programmatically reduces the Local Assessed Capital Loss Carry Over, limited to the amount available.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.20(b)"
+    },
+    {
+      "name": "foreignDebtReductionAmount",
+      "label": "Amount of debt reduction — foreign assessed capital loss (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reductionForForeignAsset",
+        "equals": true
+      },
+      "description": "Source code 4255.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.21(b)"
+    },
+    {
+      "name": "relatesToVoluntaryDisclosureProgramme",
+      "label": "Does any declaration in this return relate to an application made under the SARS Voluntary Disclosure Programme?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.5(a)"
+    },
+    {
+      "name": "vdpApplicationNumber",
+      "label": "VDP application number issued by SARS",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "relatesToVoluntaryDisclosureProgramme",
+        "equals": true
+      },
+      "description": "Alphanumeric; the first three characters must be 'VDP'. No spaces or dashes. Must be for an approved VDP agreement between SARS and the company.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.3(b)-(c)",
+      "validation": {
+        "pattern": "^VDP[0-9A-Za-z]+$"
+      }
+    },
+    {
+      "name": "isQualifyingSezCompany",
+      "label": "Is the company a qualifying company as defined in section 12R (Special Economic Zones)?",
+      "type": "boolean",
+      "required": true,
+      "description": "If 'Yes', the Special Economic Zones (SEZ) section displays for completion, including which SEZ(s) the company is located in and a series of mandatory qualification-confirmation questions — out of scope for this document (see VERIFICATION.md). Introduced from the 2017 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.6(b)"
+    },
+    {
+      "name": "wantsS7fDeduction",
+      "label": "Does the company want to claim a deduction i.t.o. section 7F in respect of SARS interest repaid that was previously taxed i.t.o. section 7E?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.7(b)"
+    },
+    {
+      "name": "s7fDeductionAmount",
+      "label": "Amount of SARS interest repaid that was previously taxed i.t.o. section 7E (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsS7fDeduction",
+        "equals": true
+      },
+      "description": "Source code 4052.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.17(d)"
+    },
+    {
+      "name": "wantsS18aDonationsDeduction",
+      "label": "Does the company want to claim donations made to an approved organisation in terms of section 18A?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.8(b)"
+    },
+    {
+      "name": "howManyOrganisationsDonatedTo",
+      "label": "How many organisations did the company donate to?",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsS18aDonationsDeduction",
+            "equals": true
+          },
+          {
+            "field": "isCollectiveInvestmentScheme",
+            "equals": false
+          }
+        ]
+      },
+      "description": "The per-organisation name/PBO-number/amount detail (up to the top 20 by monetary value) is out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.8(c)(A)-(d)",
+      "validation": {
+        "minimum": 1,
+        "maximum": 99
+      }
+    },
+    {
+      "name": "totalAmountDonated",
+      "label": "Total amount donated during the year of assessment (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsS18aDonationsDeduction",
+        "equals": true
+      },
+      "description": "Source code 4011. Subject to a 10% of taxable income limit under section 18A.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.15(b), §13.2.16(b)"
+    },
+    {
+      "name": "averageValueOfParticipatoryInterests",
+      "label": "Average value of the aggregate of all participatory interests held by investors in the portfolio (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "wantsS18aDonationsDeduction",
+            "equals": true
+          },
+          {
+            "field": "isCollectiveInvestmentScheme",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.16(c)"
+    },
+    {
+      "name": "wantsPayeCredits",
+      "label": "Will the company be claiming any PAYE credits reflected on an IRP5 tax certificate?",
+      "type": "boolean",
+      "required": true,
+      "description": "For ITR14 returns from the 2019 form year onwards, PAYE credits cannot be manually captured — only pre-populated IRP5 information is accepted; additional IRP5 certificates require submission at a SARS branch.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.9(a)-(b)"
+    },
+    {
+      "name": "numberOfIrp5Certificates",
+      "label": "Number of IRP5 tax certificates",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsPayeCredits",
+        "equals": true
+      },
+      "description": "SARS pre-populates this count. The per-certificate PAYE Credits Available container (non-taxable income, gross employment income, certificate number, PAYE credit) is out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.9(c), §13.2.22"
+    },
+    {
+      "name": "wantsForeignTaxCreditsS6quat1a",
+      "label": "Will the company be claiming any Foreign Tax credits not relating to Capital Gain transactions in terms of section 6quat(1A) and/or a treaty?",
+      "type": "boolean",
+      "required": true,
+      "description": "If 'Yes', the Foreign Tax Credits: Taxable Foreign Sourced Income of Resident Companies — section 6quat(1A) computation container displays — out of scope for this document (see VERIFICATION.md).",
+      "sourceRef": "IT-GEN-04-G01 §13.1.9(d)"
+    },
+    {
+      "name": "hadForeignTaxCreditsRefunded",
+      "label": "Were any foreign tax credits refunded/discharged during the year of assessment for which a rebate was allowed during a previous year of assessment in terms of section 6quin?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.9(e)"
+    },
+    {
+      "name": "foreignTaxRefundedAllowedAsRebate",
+      "label": "Portion of the amount refunded/discharged that was previously allowed by SARS as a rebate (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadForeignTaxCreditsRefunded",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.24(c)"
+    },
+    {
+      "name": "foreignTaxRefundedAllowedAsS6quat1cDeduction",
+      "label": "Portion of the amount refunded/discharged that was previously allowed by SARS as a deduction in terms of section 6quat(1C) (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadForeignTaxCreditsRefunded",
+        "equals": true
+      },
+      "description": "Source code 4249.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.24(d)"
+    },
+    {
+      "name": "wantsS6quat1cDeduction",
+      "label": "Will the company be claiming a deduction on SA sourced trading income i.t.o. section 6quat(1C)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicable from the 2019 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.9(f)"
+    },
+    {
+      "name": "s6quat1cDeductionAmount",
+      "label": "Deduction i.t.o. section 6quat(1C) for foreign taxes paid or proved to be payable to a foreign government on any SA sourced trade income (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsS6quat1cDeduction",
+        "equals": true
+      },
+      "description": "Source code 4053.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.18(b)(i)"
+    },
+    {
+      "name": "hadRightOfRecoveryOtherThanMap",
+      "label": "Did the company have a right of recovery (other than a right of recovery i.t.o. a mutual agreement procedure, or any entitlement to carry back losses arising during any previous year of assessment)?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsS6quat1cDeduction",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.18(b)(ii)"
+    },
+    {
+      "name": "foreignTaxRefundedDuringYear",
+      "label": "Was the foreign tax amount refunded to the company during this year of assessment?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsS6quat1cDeduction",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.18(b)(iii)"
+    },
+    {
+      "name": "taxableIncomeFromSaSourcedTradeTaxedOutsideSa",
+      "label": "Taxable income from SA sourced trade income taxed outside SA, before considering section 18A/6quat(1C) deductions (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "wantsS6quat1cDeduction",
+        "equals": true
+      },
+      "description": "This income must have been declared elsewhere in the return; the related deduction/carry-over is calculated by SARS. Applicable from the 2019 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.18(b)(iv)"
+    },
+    {
+      "name": "isResidentInSouthAfrica",
+      "label": "Is the company resident in South Africa for income tax purposes?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(a)"
+    },
+    {
+      "name": "ceasedToBeResidentDuringYear",
+      "label": "Did the company cease to be a resident during the year of assessment?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "isResidentInSouthAfrica",
+        "equals": false
+      },
+      "description": "Introduced from the 2013 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(a)(iii)(A)"
+    },
+    {
+      "name": "nonResidentDueToForeignIncorporation",
+      "label": "Is the company resident outside South Africa due to foreign incorporation (and not being effectively managed in SA)?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "isResidentInSouthAfrica",
+        "equals": false
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.5(c)(i)(A)"
+    },
+    {
+      "name": "nonResidentDueToTaxTreaty",
+      "label": "Is the company resident outside South Africa by virtue of a treaty to avoid double taxation?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "isResidentInSouthAfrica",
+        "equals": false
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.5(c)(i)(B)"
+    },
+    {
+      "name": "dateCeasedToBeResident",
+      "label": "Date on which the company ceased to be a resident",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "isResidentInSouthAfrica",
+        "equals": false
+      },
+      "description": "Format CCYYMMDD.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.5(c)(ii)"
+    },
+    {
+      "name": "isPartnerInPartnership",
+      "label": "Is the company a partner in a partnership/joint venture?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(e)"
+    },
+    {
+      "name": "howManyPartnershipsJointVentures",
+      "label": "How many partnerships/joint ventures?",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "isPartnerInPartnership",
+        "equals": true
+      },
+      "description": "The repeating Partnership/Joint Ventures container (one section per partnership) is out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(e)(ii)(A), §13.2.25",
+      "validation": {
+        "minimum": 1,
+        "maximum": 99
+      }
+    },
+    {
+      "name": "isPersonalServiceProvider",
+      "label": "Is the company a Personal Service Provider as defined in the Fourth Schedule?",
+      "type": "boolean",
+      "required": true,
+      "description": "If 'Yes', the Personal Service Provider section displays — an 8-part eligibility decision-tree questionnaire out of scope for this document (see VERIFICATION.md). Section 23(k) prohibits a Personal Service Provider from deducting certain listed expenses (legal expenses, bad debts, pension/provident/benefit fund contributions, and others).",
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(f), §13.2.6"
+    },
+    {
+      "name": "isListedOnRecognisedStockExchange",
+      "label": "Is the company listed on a recognised stock exchange as referred to in paragraph 1 of the Eighth Schedule?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(g)"
+    },
+    {
+      "name": "hadCryptoAssetTransactionsExcludingCgt",
+      "label": "Did the company have transactions (including mining activities) relating to crypto assets (excluding CGT)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicable from the 2019 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.1.10(h)"
+    },
+    {
+      "name": "cryptoAssetsIncludedInIncomeStatement",
+      "label": "Were any transactions relating to crypto assets included in the income statement?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadCryptoAssetTransactionsExcludingCgt",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.7(b)"
+    },
+    {
+      "name": "grossCryptoAssetsAmountInIncomeStatement",
+      "label": "Gross crypto assets amount included in income statement (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "cryptoAssetsIncludedInIncomeStatement",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.7(b)(ii)"
+    },
+    {
+      "name": "cryptoAssetTransactionsResultedInProfit",
+      "label": "Did the transaction(s) relating to crypto assets result in a profit?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadCryptoAssetTransactionsExcludingCgt",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.7(c)"
+    },
+    {
+      "name": "cryptoAssetsProfitAmount",
+      "label": "Profit relating to crypto assets trading (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "cryptoAssetTransactionsResultedInProfit",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.7(c)(i)(A)"
+    },
+    {
+      "name": "cryptoAssetsLossAmount",
+      "label": "Loss relating to crypto assets trading (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "hadCryptoAssetTransactionsExcludingCgt",
+            "equals": true
+          },
+          {
+            "field": "cryptoAssetTransactionsResultedInProfit",
+            "equals": false
+          }
+        ]
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.7(c)(i)(B)"
+    },
+    {
+      "name": "amountOfCryptoAssetsInBalanceSheet",
+      "label": "Amount of crypto assets included as assets in the Balance Sheet (R)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadCryptoAssetTransactionsExcludingCgt",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.2.7(d)"
+    },
+    {
+      "name": "isRegisteredForCustoms",
+      "label": "Is the company registered/licensed for customs purposes?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.1.11(a)"
+    },
+    {
+      "name": "numberOfCustomsClientCodes",
+      "label": "Number of customs client codes allocated to this company",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "isRegisteredForCustoms",
+        "equals": true
+      },
+      "sourceRef": "IT-GEN-04-G01 §13.1.11(b)"
+    },
+    {
+      "name": "taxReferenceNumber",
+      "label": "Tax reference number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The company's SARS income tax reference number. Pre-populated (read-only) in the Company/Close Corporation Particulars container.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(a)(i)"
+    },
+    {
+      "name": "yearOfAssessment",
+      "label": "Year of assessment",
+      "type": "integer",
+      "required": true,
+      "description": "Pre-populated (read-only) in the Company/Close Corporation Particulars container.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(a)(ii)"
+    },
+    {
+      "name": "registeredName",
+      "label": "Registered name",
+      "type": "string",
+      "required": true,
+      "description": "Pre-populated (read-only) in the Company/Close Corporation Particulars container.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(a)(iii)"
+    },
+    {
+      "name": "tradingName",
+      "label": "Trading name",
+      "type": "string",
+      "required": false,
+      "description": "Pre-populated (read-only) in the Company/Close Corporation Particulars container.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(a)(iv)"
+    },
+    {
+      "name": "companyRegistrationNumber",
+      "label": "Company/CC registration number",
+      "type": "string",
+      "required": true,
+      "description": "Pre-populated (read-only) in the Company/Close Corporation Particulars container.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(a)(v)"
+    },
+    {
+      "name": "financialYearEnd",
+      "label": "Financial year-end",
+      "type": "date",
+      "required": true,
+      "description": "Format CCYYMMDD. Pre-populated (read-only) in the Company/Close Corporation Particulars container.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(a)(vi)"
+    },
+    {
+      "name": "isReturnForForeignBranchOrAgency",
+      "label": "Is this return in respect of a branch/permanent establishment/agency of a foreign company?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(b)(i)"
+    },
+    {
+      "name": "provinceOfMajorityIncome",
+      "label": "Where the majority of the company's taxable income/loss is derived from",
+      "type": "enum",
+      "required": true,
+      "description": "The nine South African provinces plus 'International'. Every value here is verbatim from the guide's own §13.2.1(b)(ii) list, which (unlike the equivalent Dormant-Annexure list at §11.2.1(b)(ii)) uses sequential A-J lettering with no gaps.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(b)(ii)",
+      "validation": {
+        "enum": [
+          "eastern_cape",
+          "free_state",
+          "gauteng",
+          "kwazulu_natal",
+          "limpopo",
+          "mpumalanga",
+          "northwest",
+          "northern_cape",
+          "western_cape",
+          "international"
+        ]
+      }
+    },
+    {
+      "name": "standardIndustryCode",
+      "label": "Standard Industry Code (SIC) applicable to the main activity of the company",
+      "type": "string",
+      "required": true,
+      "description": "Selected from the Standard Industry Codes booklet published at www.statssa.gov.za.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(b)(iii)"
+    },
+    {
+      "name": "profitCodeMainSource",
+      "label": "Profit code of the main source of income",
+      "type": "string",
+      "required": true,
+      "description": "Selected from SARS' main source code list. Note (§13.2.1(b)(iv)): a Body Corporate company must select source code 3018 (2003 onwards, else 3008); a Share Block company must select 3019 (2003 onwards, else 3009) — inapplicable when isBodyCorporateSectionalTitles/isShareBlockCompany are both false, as scoped by this document.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(b)(iv)"
+    },
+    {
+      "name": "profitCodeOtherDescription",
+      "label": "Description, if the profit code of the main source of income is 'other not specified'",
+      "type": "string",
+      "required": false,
+      "description": "Mandatory free-text field (maximum 56 characters) only if the selected profit code ends with '98'. Not expressible as a requiredWhen condition on profitCodeMainSource's own value under GSP-0013 (no string-suffix operator) — left optional here; a filer/agent must supply it whenever that condition holds.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.1(b)(v)",
+      "validation": {
+        "maxLength": 56
+      }
+    },
+    {
+      "name": "isTaxPractitionerFiling",
+      "label": "Return completed by a registered tax practitioner",
+      "type": "boolean",
+      "required": false,
+      "description": "Inferred gating field: guide §13.2.2 is headed 'TAX PRACTITIONER DETAILS (If applicable)' but the Annexure C wizard text does not show an explicit Yes/No question for it (unlike za/sars/individual-income-tax-return-itr12's explicit tax-practitioner-declaration question) — applicability is most likely determined by the logged-in eFiling user's practitioner-registered role rather than an in-form question. Flagged in VERIFICATION.md as needing first-party confirmation, the same caveat recorded for za/sars/corporate-income-tax-return-itr14-dormant.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.2 (section heading)"
+    },
+    {
+      "name": "taxPractitionerRegistrationNumber",
+      "label": "Tax practitioner registration number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isTaxPractitionerFiling",
+        "equals": true
+      },
+      "description": "Alphanumeric, 9 characters; the first two characters must be 'PR'.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.2(a)",
+      "validation": {
+        "pattern": "^PR[0-9A-Za-z]{7}$"
+      }
+    },
+    {
+      "name": "taxPractitionerTelNumber",
+      "label": "Tax practitioner telephone number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": {
+        "field": "isTaxPractitionerFiling",
+        "equals": true
+      },
+      "description": "Numeric field, up to 15 characters.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.2(b)",
+      "validation": {
+        "pattern": "^[0-9]{1,15}$"
+      }
+    },
+    {
+      "name": "taxPractitionerNoEmailDeclared",
+      "label": "Mark here with an 'X' if you declare that you do not have an email address",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "isTaxPractitionerFiling",
+        "equals": true
+      },
+      "description": "If marked, the Tax Practitioner Email address field is locked and greyed out.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.2(d)"
+    },
+    {
+      "name": "taxPractitionerEmailAddress",
+      "label": "Tax practitioner email address",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "isTaxPractitionerFiling",
+            "equals": true
+          },
+          {
+            "field": "taxPractitionerNoEmailDeclared",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Free text, up to 52 characters.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.2(c)"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration date",
+      "type": "date",
+      "required": true,
+      "description": "Format CCYYMMDD. The Company Representative/Public Officer's eFiling login serves as authentication for submission; if submitted at a SARS branch, the signature pad is signed instead.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.4(a)"
+    },
+    {
+      "name": "nonCurrentAssetsPropertyPlantEquipment",
+      "label": "Non-current assets — Property, plant and equipment (R)",
+      "type": "number",
+      "required": true,
+      "description": "All fields in this section are compulsory; complete zero (0) if not applicable. Use figures from the company's own (not group/consolidated) annual financial statements, in Rands with no cents.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(d)(ii)"
+    },
+    {
+      "name": "nonCurrentAssetsVehicles",
+      "label": "Non-current assets — Vehicles (R)",
+      "type": "number",
+      "required": true,
+      "description": "Introduced from the 2017 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(d)(iii)"
+    },
+    {
+      "name": "nonCurrentAssetsLongTermLoans",
+      "label": "Non-current assets — Long-term loans (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(d)(iv)"
+    },
+    {
+      "name": "currentAssetsInventoryWorkInProgress",
+      "label": "Current assets — Inventory and work in progress, net after provisions (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(d)(v)"
+    },
+    {
+      "name": "currentAssetsTradeAndOtherReceivables",
+      "label": "Current assets — Trade and other receivables, net after provisions (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(d)(vi)"
+    },
+    {
+      "name": "currentAssetsCashAndCashEquivalents",
+      "label": "Current assets — Cash and cash equivalents (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(d)(vii)"
+    },
+    {
+      "name": "otherAssets",
+      "label": "Other assets (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(d)(viii)"
+    },
+    {
+      "name": "totalEquityCapitalAndReserves",
+      "label": "Total equity (capital and reserves) (R)",
+      "type": "number",
+      "required": true,
+      "description": "A debit balance (assessed loss) is entered as a negative value (e.g. -10000); a credit balance is entered as a positive value.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(e)(i)(A), (f)-(g)"
+    },
+    {
+      "name": "nonCurrentLiabilitiesLongTermLoansAndProvisions",
+      "label": "Non-current liabilities — Long-term loans and provisions (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(e)(i)(B)"
+    },
+    {
+      "name": "currentLiabilitiesTradeAndOtherPayables",
+      "label": "Current liabilities — Trade and other payables, including accruals (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(e)(i)(C)"
+    },
+    {
+      "name": "otherEquityAndLiabilities",
+      "label": "Other equity and liabilities (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.11(e)(i)(D)"
+    },
+    {
+      "name": "salesTurnover",
+      "label": "Sales (turnover) (R)",
+      "type": "number",
+      "required": true,
+      "description": "All fields in this section are compulsory; complete zero (0) if not applicable. Use the normal accounting meaning of the terms used; if the company has no cost of sales (e.g. a property rental company), turnover and gross profit will be the same amount.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(d)(i)(A)"
+    },
+    {
+      "name": "lessCostOfSales",
+      "label": "Less: Cost of sales (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(d)(i)(B)"
+    },
+    {
+      "name": "interestExcludingSarsInterest",
+      "label": "Income items — Interest, excluding SARS interest (s7E) (R)",
+      "type": "number",
+      "required": true,
+      "description": "Introduced from the 2019 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(A)"
+    },
+    {
+      "name": "sarsInterestS7e",
+      "label": "Income items — SARS Interest (s7E) (R)",
+      "type": "number",
+      "required": true,
+      "description": "Introduced from the 2019 year of assessment onwards. SARS pre-populates based on any IT3(b) certificate(s); can be amended upward but not reduced.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(B)"
+    },
+    {
+      "name": "reitDistributionsReceived",
+      "label": "Income items — REIT distributions received (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(C)"
+    },
+    {
+      "name": "accountingProfitOnDisposalOfAssetsIncome",
+      "label": "Income items — Accounting profit on disposal of fixed assets and/or other assets (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(D)"
+    },
+    {
+      "name": "badAndDoubtfulDebtsRecovered",
+      "label": "Income items — Bad and doubtful debts recovered (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(E)"
+    },
+    {
+      "name": "dividendsDeemedIncomeS8eS8ea",
+      "label": "Income items — Dividends (local and foreign) deemed to be income (s8E and s8EA) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(F)"
+    },
+    {
+      "name": "taintedDividendsDeemedIncomeS22b",
+      "label": "Income items — Tainted dividends (local and foreign) deemed to be income (s22B) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(G)"
+    },
+    {
+      "name": "levyIncome",
+      "label": "Income items — Levy income (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(H)"
+    },
+    {
+      "name": "governmentGrantsIncome",
+      "label": "Income items — Government grants (national, provincial and local) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(I)"
+    },
+    {
+      "name": "foreignExchangeGainIncome",
+      "label": "Income items — Foreign exchange gain (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(J)"
+    },
+    {
+      "name": "otherIncomeItems",
+      "label": "Income items — Other income (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(g)(i)(K)"
+    },
+    {
+      "name": "accountingLossOnDisposalOfAssetsExpense",
+      "label": "Expense items — Accounting loss on disposal of fixed assets/other assets (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(A)"
+    },
+    {
+      "name": "badDebtsWrittenOff",
+      "label": "Expense items — Bad debts written off (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(B)"
+    },
+    {
+      "name": "depreciationExpense",
+      "label": "Expense items — Depreciation (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(C)"
+    },
+    {
+      "name": "donationsS18aExpense",
+      "label": "Expense items — Donations (s18A) (R)",
+      "type": "number",
+      "required": true,
+      "description": "Introduced from the 2015 year of assessment onwards. When completed, pre-populates and locks the matching 'Donations (s18A)' add-back field in Tax Computation.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(D)"
+    },
+    {
+      "name": "donationsOtherExpense",
+      "label": "Expense items — Donations, other (R)",
+      "type": "number",
+      "required": true,
+      "description": "Mandatory from the 2015 year of assessment onwards; complete zero if no donations were made. When completed, pre-populates and locks the matching 'Donations — Other' add-back field in Tax Computation.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(E)"
+    },
+    {
+      "name": "foreignExchangeLossExpense",
+      "label": "Expense items — Foreign exchange loss (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(F)"
+    },
+    {
+      "name": "interestPaidExpense",
+      "label": "Expense items — Interest paid (R)",
+      "type": "number",
+      "required": true,
+      "description": "Applicable from the 2024 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(G)"
+    },
+    {
+      "name": "municipalCharges",
+      "label": "Expense items — Municipal charges (electricity, water, sewerage, refuse, rates and taxes) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(H)"
+    },
+    {
+      "name": "provisionForDoubtfulDebts",
+      "label": "Expense items — Provision for doubtful debts (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(I)"
+    },
+    {
+      "name": "salariesAndWages",
+      "label": "Expense items — Salaries and wages, including directors'/members' remuneration (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(J)"
+    },
+    {
+      "name": "sarsInterestRepaidS7fExpense",
+      "label": "Expense items — SARS interest repaid (s7F) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(K)"
+    },
+    {
+      "name": "repairsMaintenanceInsurance",
+      "label": "Expense items — Repairs, maintenance, insurance, alterations and improvements (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(L)"
+    },
+    {
+      "name": "travellingExpenses",
+      "label": "Expense items — Travelling expenses (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(M)"
+    },
+    {
+      "name": "otherExpenseItems",
+      "label": "Expense items — Other expenses, excluding expenses listed above (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.12(h)(i)(N)"
+    },
+    {
+      "name": "accountingInterestPaidPayableAddBack",
+      "label": "Adjustments added back — Accounting interest paid/payable (R)",
+      "type": "number",
+      "required": true,
+      "description": "All fields in this section are compulsory; complete zero (0) if not applicable. Where accounting and tax treatment differ, the full accounting amount is reversed here and the full tax treatment amount disclosed under Adjustments Allowable.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(A)"
+    },
+    {
+      "name": "accountingLossOnDisposalAddBack",
+      "label": "Adjustments added back — Accounting loss on disposal of fixed and/or other assets (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(B)"
+    },
+    {
+      "name": "capitalExpenditureAndOrLossesAddBack",
+      "label": "Adjustments added back — Capital expenditure and/or losses (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(C)"
+    },
+    {
+      "name": "depreciationAddBack",
+      "label": "Adjustments added back — Depreciation according to financial statements (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(D)"
+    },
+    {
+      "name": "donationsS18aAddBack",
+      "label": "Adjustments added back — Donations (s18A) (R)",
+      "type": "number",
+      "required": true,
+      "description": "Introduced from the 2015 year of assessment onwards. Pre-populated from donationsS18aExpense and locked (see VERIFICATION.md); retained as a field per this registry's precedent for declared pre-filled values.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(E)"
+    },
+    {
+      "name": "donationsOtherAddBack",
+      "label": "Adjustments added back — Donations, other (R)",
+      "type": "number",
+      "required": true,
+      "description": "Introduced from the 2015 year of assessment onwards. Pre-populated from donationsOtherExpense and locked (see VERIFICATION.md).",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(F)"
+    },
+    {
+      "name": "doubtfulDebtsAddBack",
+      "label": "Adjustments added back — Doubtful debts (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(G)"
+    },
+    {
+      "name": "expensesAttributableToExemptIncome",
+      "label": "Adjustments added back — Expenses attributable to exempt income and not actually incurred in production of income (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(H)"
+    },
+    {
+      "name": "interestClaimedExceedingInterestReceivedS11g",
+      "label": "Adjustments added back — Interest claimed exceeding interest received, not linked to trading (s11G) (R)",
+      "type": "number",
+      "required": true,
+      "description": "Applicable from the 2024 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(I)"
+    },
+    {
+      "name": "nonDeductibleProvisions",
+      "label": "Adjustments added back — Non-deductible provisions (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(J)"
+    },
+    {
+      "name": "foreignExchangeLossAdjustmentS24l",
+      "label": "Adjustments added back — Foreign exchange loss adjustment (s24I, excluding s24I(4)) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(K)"
+    },
+    {
+      "name": "foreignExchangeLossAdjustmentRelatingToDebtS24l",
+      "label": "Adjustments added back — Foreign exchange loss adjustment relating to debt (s24I(4)) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(L)"
+    },
+    {
+      "name": "reversalOfPreviousYearAllowances",
+      "label": "Adjustments added back — Reversal of previous year allowances/deductions granted (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(M)"
+    },
+    {
+      "name": "sarsInterestRepaidS7fAddBack",
+      "label": "Adjustments added back — SARS interest repaid (s7F) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(N)"
+    },
+    {
+      "name": "recoupmentS8_4_nAEnhancedRenewableEnergy",
+      "label": "Adjustments added back — Recoupment i.t.o. s8(4)(nA) for Enhanced Renewable Energy assets as contemplated in s12BA (R)",
+      "type": "number",
+      "required": true,
+      "description": "Applicable from the 2024 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(O)"
+    },
+    {
+      "name": "taxableAmountsNotDeclaredInIncomeStatement",
+      "label": "Adjustments added back — Taxable amounts not declared in Income Statement, incl. recoupments (excl. s8(4)(nA) recoupment) (R)",
+      "type": "number",
+      "required": true,
+      "description": "Displayed as 'Taxable amounts not declared in Income Statement (incl. recoupments)' for the 2023 year of assessment and prior.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(P)"
+    },
+    {
+      "name": "levyIncomeAddBack",
+      "label": "Adjustments added back — Levy income (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(Q)"
+    },
+    {
+      "name": "otherAdjustmentsAddedBack",
+      "label": "Adjustments added back — Other (only items not listed above) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(e)(i)(R)"
+    },
+    {
+      "name": "accountingProfitOnDisposalAllowable",
+      "label": "Adjustments allowable — Accounting profit on disposal of fixed and/or other assets (R)",
+      "type": "number",
+      "required": true,
+      "description": "All fields in this section are compulsory; complete zero (0) if not applicable.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(A)"
+    },
+    {
+      "name": "exemptLocalDividends",
+      "label": "Adjustments allowable — Exempt local dividends (R)",
+      "type": "number",
+      "required": true,
+      "description": "Applicable from the 2016 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(B)"
+    },
+    {
+      "name": "receiptsAccrualsOfCapitalNature",
+      "label": "Adjustments allowable — Receipts and/or accruals of a capital nature (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(C)"
+    },
+    {
+      "name": "reversalOfProvisions",
+      "label": "Adjustments allowable — Reversal of provisions (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(D)"
+    },
+    {
+      "name": "exemptionS10_1_yA",
+      "label": "Adjustments allowable — Exemption i.t.o. s10(1)(yA) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(G)"
+    },
+    {
+      "name": "wearAndTearS11e",
+      "label": "Adjustments allowable — Wear and tear, s11(e) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(H)"
+    },
+    {
+      "name": "doubtfulDebtAllowanceS11j",
+      "label": "Adjustments allowable — Doubtful debt allowance, s11(j) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(I)"
+    },
+    {
+      "name": "doubtfulDebtAllowanceIfrsAppliedS11j_i",
+      "label": "Adjustments allowable — Doubtful debt allowance, IFRS applied, s11(j)(i) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(J)"
+    },
+    {
+      "name": "doubtfulDebtAllowanceIfrsNotAppliedS11j_ii",
+      "label": "Adjustments allowable — Doubtful debt allowance, IFRS not applied, s11(j)(ii) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(K)"
+    },
+    {
+      "name": "depreciableAssetAllowanceS11o",
+      "label": "Adjustments allowable — Depreciable asset allowance, s11(o) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(L)"
+    },
+    {
+      "name": "enhancedRenewableEnergyDeductionS12ba",
+      "label": "Adjustments allowable — Enhanced machinery, plant, implements, utensils and articles used in the production of renewable energy deduction, s12BA (R)",
+      "type": "number",
+      "required": true,
+      "description": "Displayed from the 2024 year of assessment onwards. If greater than zero, the Details of Enhanced Renewable Energy Deduction — s12BA container (renewable energy type, generation capacity, total cost) displays — out of scope for this document (see VERIFICATION.md).",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(M), §13.2.14"
+    },
+    {
+      "name": "plantAndMachinerySbcS12e",
+      "label": "Adjustments allowable — Plant and machinery where company qualifies as a Small Business Corporation (SBC), s12E (R)",
+      "type": "number",
+      "required": true,
+      "description": "Introduced from the 2002 year of assessment onwards; applicable from the 2019 year of assessment onwards.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(N)"
+    },
+    {
+      "name": "exemptGovernmentGrantsS12p",
+      "label": "Adjustments allowable — Exempt income received or accrued in respect of government grants, s12P (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(O)"
+    },
+    {
+      "name": "foreignExchangeGainAdjustmentS24i",
+      "label": "Adjustments allowable — Foreign exchange gain adjustment (s24I, excluding s24I(4)) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(T)"
+    },
+    {
+      "name": "foreignExchangeGainAdjustmentRelatingToDebtS24i",
+      "label": "Adjustments allowable — Foreign exchange gain adjustment relating to debt (s24I(4)) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(U)"
+    },
+    {
+      "name": "otherAdjustmentsAllowable",
+      "label": "Adjustments allowable — Other (only items not listed above) (R)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(f)(i)(P)"
+    },
+    {
+      "name": "imputedNetIncomeFromCfc",
+      "label": "Imputed net income from Controlled Foreign Company (CFC) (R)",
+      "type": "number",
+      "required": true,
+      "description": "Source code 4276. Unlike the Calculated Profit/Loss lines in this subsection (which SARS computes automatically), this line is filer-entered.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.13(h)(iv)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "annualFinancialStatements",
+      "label": "Annual Financial Statements (Income Statement, Balance Sheet, Notes to the AFS)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "IT-GEN-04-G01 §9(c) — 'For Small Businesses and Medium to Large Businesses... submission of signed off supporting Annual Financial Statement (AFS) is compulsory. For all other companies, it is optional.'"
+    },
+    {
+      "id": "declarationStatement",
+      "label": "Declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "The ITR14 return is a legal declaration to SARS and by signing you agree that the information is accurate. You are obliged to ensure that a full and accurate disclosure is made of all relevant information as required in the ITR14 return. Misrepresentation, omission or negligence in submitting a declaration or supplying false information may result in prosecution.",
+      "sourceRef": "IT-GEN-04-G01 §13.2.4(a)(iv)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "wizard_classification_and_registered_details",
+      "title": "Information to create this income tax return — classification and registered details",
+      "fields": [
+        "companyClassification",
+        "detailsVerifiedAndConfirmed",
+        "publicOfficerCompliant"
+      ],
+      "next": "wizard_company_type_and_size"
+    },
+    {
+      "id": "wizard_company_type_and_size",
+      "title": "Information to create this income tax return — Dormant and Company Type",
+      "fields": [
+        "isCompanyDormant",
+        "ceasedTradingDuringPeriod",
+        "isCooperative",
+        "isAssociationOfPersons",
+        "isNonProfitCompany",
+        "isCollectiveInvestmentScheme",
+        "isBodyCorporateSectionalTitles",
+        "isShareBlockCompany",
+        "grossIncomeSalesTurnoverPlusOtherIncome",
+        "totalAssetsCurrentAndNonCurrent",
+        "doesCompanyHaveMembers",
+        "howManyBeneficialOwners",
+        "howManyClassesOfShares"
+      ],
+      "next": "wizard_capital_gains_and_debt_reduction"
+    },
+    {
+      "id": "wizard_capital_gains_and_debt_reduction",
+      "title": "Information to create this income tax return — Capital Gain/Loss Transactions",
+      "fields": [
+        "hadLocalCapitalGainOrLoss",
+        "hadForeignCapitalGainOrLoss",
+        "hadDebtReducedForNoConsideration",
+        "reductionForLocalAsset",
+        "reductionForForeignAsset",
+        "localDebtReductionAmount",
+        "foreignDebtReductionAmount"
+      ],
+      "next": "wizard_vdp_sez_s7f_donations_credits"
+    },
+    {
+      "id": "wizard_vdp_sez_s7f_donations_credits",
+      "title": "Information to create this income tax return — VDP, SEZ, s7F, Donations, Tax Credits",
+      "fields": [
+        "relatesToVoluntaryDisclosureProgramme",
+        "vdpApplicationNumber",
+        "isQualifyingSezCompany",
+        "wantsS7fDeduction",
+        "s7fDeductionAmount",
+        "wantsS18aDonationsDeduction",
+        "howManyOrganisationsDonatedTo",
+        "totalAmountDonated",
+        "averageValueOfParticipatoryInterests",
+        "wantsPayeCredits",
+        "numberOfIrp5Certificates",
+        "wantsForeignTaxCreditsS6quat1a",
+        "hadForeignTaxCreditsRefunded",
+        "foreignTaxRefundedAllowedAsRebate",
+        "foreignTaxRefundedAllowedAsS6quat1cDeduction",
+        "wantsS6quat1cDeduction",
+        "s6quat1cDeductionAmount",
+        "hadRightOfRecoveryOtherThanMap",
+        "foreignTaxRefundedDuringYear",
+        "taxableIncomeFromSaSourcedTradeTaxedOutsideSa"
+      ],
+      "next": "wizard_company_info_and_customs"
+    },
+    {
+      "id": "wizard_company_info_and_customs",
+      "title": "Information to create this income tax return — Company Information and Customs",
+      "fields": [
+        "isResidentInSouthAfrica",
+        "ceasedToBeResidentDuringYear",
+        "nonResidentDueToForeignIncorporation",
+        "nonResidentDueToTaxTreaty",
+        "dateCeasedToBeResident",
+        "isPartnerInPartnership",
+        "howManyPartnershipsJointVentures",
+        "isPersonalServiceProvider",
+        "isListedOnRecognisedStockExchange",
+        "hadCryptoAssetTransactionsExcludingCgt",
+        "cryptoAssetsIncludedInIncomeStatement",
+        "grossCryptoAssetsAmountInIncomeStatement",
+        "cryptoAssetTransactionsResultedInProfit",
+        "cryptoAssetsProfitAmount",
+        "cryptoAssetsLossAmount",
+        "amountOfCryptoAssetsInBalanceSheet",
+        "isRegisteredForCustoms",
+        "numberOfCustomsClientCodes"
+      ],
+      "next": "company_particulars"
+    },
+    {
+      "id": "company_particulars",
+      "title": "Company/Close Corporation Particulars",
+      "fields": [
+        "taxReferenceNumber",
+        "yearOfAssessment",
+        "registeredName",
+        "tradingName",
+        "companyRegistrationNumber",
+        "financialYearEnd",
+        "isReturnForForeignBranchOrAgency",
+        "provinceOfMajorityIncome",
+        "standardIndustryCode",
+        "profitCodeMainSource",
+        "profitCodeOtherDescription"
+      ],
+      "next": "tax_practitioner_details"
+    },
+    {
+      "id": "tax_practitioner_details",
+      "title": "Tax Practitioner Details (if applicable)",
+      "fields": [
+        "isTaxPractitionerFiling",
+        "taxPractitionerRegistrationNumber",
+        "taxPractitionerTelNumber",
+        "taxPractitionerNoEmailDeclared",
+        "taxPractitionerEmailAddress"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": [
+        "declarationDate"
+      ],
+      "next": "balance_sheet"
+    },
+    {
+      "id": "balance_sheet",
+      "title": "Balance Sheet",
+      "fields": [
+        "nonCurrentAssetsPropertyPlantEquipment",
+        "nonCurrentAssetsVehicles",
+        "nonCurrentAssetsLongTermLoans",
+        "currentAssetsInventoryWorkInProgress",
+        "currentAssetsTradeAndOtherReceivables",
+        "currentAssetsCashAndCashEquivalents",
+        "otherAssets",
+        "totalEquityCapitalAndReserves",
+        "nonCurrentLiabilitiesLongTermLoansAndProvisions",
+        "currentLiabilitiesTradeAndOtherPayables",
+        "otherEquityAndLiabilities"
+      ],
+      "next": "income_statement"
+    },
+    {
+      "id": "income_statement",
+      "title": "Income Statement",
+      "fields": [
+        "salesTurnover",
+        "lessCostOfSales",
+        "interestExcludingSarsInterest",
+        "sarsInterestS7e",
+        "reitDistributionsReceived",
+        "accountingProfitOnDisposalOfAssetsIncome",
+        "badAndDoubtfulDebtsRecovered",
+        "dividendsDeemedIncomeS8eS8ea",
+        "taintedDividendsDeemedIncomeS22b",
+        "levyIncome",
+        "governmentGrantsIncome",
+        "foreignExchangeGainIncome",
+        "otherIncomeItems",
+        "accountingLossOnDisposalOfAssetsExpense",
+        "badDebtsWrittenOff",
+        "depreciationExpense",
+        "donationsS18aExpense",
+        "donationsOtherExpense",
+        "foreignExchangeLossExpense",
+        "interestPaidExpense",
+        "municipalCharges",
+        "provisionForDoubtfulDebts",
+        "salariesAndWages",
+        "sarsInterestRepaidS7fExpense",
+        "repairsMaintenanceInsurance",
+        "travellingExpenses",
+        "otherExpenseItems"
+      ],
+      "next": "tax_computation"
+    },
+    {
+      "id": "tax_computation",
+      "title": "Tax Computation",
+      "fields": [
+        "accountingInterestPaidPayableAddBack",
+        "accountingLossOnDisposalAddBack",
+        "capitalExpenditureAndOrLossesAddBack",
+        "depreciationAddBack",
+        "donationsS18aAddBack",
+        "donationsOtherAddBack",
+        "doubtfulDebtsAddBack",
+        "expensesAttributableToExemptIncome",
+        "interestClaimedExceedingInterestReceivedS11g",
+        "nonDeductibleProvisions",
+        "foreignExchangeLossAdjustmentS24l",
+        "foreignExchangeLossAdjustmentRelatingToDebtS24l",
+        "reversalOfPreviousYearAllowances",
+        "sarsInterestRepaidS7fAddBack",
+        "recoupmentS8_4_nAEnhancedRenewableEnergy",
+        "taxableAmountsNotDeclaredInIncomeStatement",
+        "levyIncomeAddBack",
+        "otherAdjustmentsAddedBack",
+        "accountingProfitOnDisposalAllowable",
+        "exemptLocalDividends",
+        "receiptsAccrualsOfCapitalNature",
+        "reversalOfProvisions",
+        "exemptionS10_1_yA",
+        "wearAndTearS11e",
+        "doubtfulDebtAllowanceS11j",
+        "doubtfulDebtAllowanceIfrsAppliedS11j_i",
+        "doubtfulDebtAllowanceIfrsNotAppliedS11j_ii",
+        "depreciableAssetAllowanceS11o",
+        "enhancedRenewableEnergyDeductionS12ba",
+        "plantAndMachinerySbcS12e",
+        "exemptGovernmentGrantsS12p",
+        "foreignExchangeGainAdjustmentS24i",
+        "foreignExchangeGainAdjustmentRelatingToDebtS24i",
+        "otherAdjustmentsAllowable",
+        "imputedNetIncomeFromCfc"
+      ]
+    }
+  ]
+}
