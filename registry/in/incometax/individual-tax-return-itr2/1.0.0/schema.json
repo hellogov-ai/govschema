@@ -1,0 +1,1382 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "in/incometax/individual-tax-return-itr2",
+  "version": "1.0.0",
+  "title": "India Individual/HUF Income Tax Return (ITR-2, Assessment Year 2026-27)",
+  "description": "Prepare and review an individual's or Hindu Undivided Family's (HUF's) Indian income tax return using ITR-2, for resident (including Resident but Not Ordinarily Resident, RNOR) and non-resident filers with no income from profits and gains of business or profession, for Assessment Year 2026-27 (Financial Year 2025-26). ITR-2 is the return used once a filer's facts exceed what ITR-1 (SAHAJ) or ITR-4 (SUGAM) can express: capital gains beyond the narrow section 112A allowance, more than two house properties, foreign assets or foreign-source income, being a director in a company or partner in a firm, holding unlisted equity shares, or being an RNOR/non-resident individual. Filing is online through the Income Tax Department's e-Filing portal (incometax.gov.in), which pre-fills known salary, TDS/TCS, and interest/dividend figures from Form 26AS and the Annual Information Statement (AIS) before the filer reviews, corrects, and completes the return — the same 'review a pre-filled return' shape already published for in/incometax/individual-tax-return-itr1-sahaj and in/incometax/individual-tax-return-itr4-sugam, whose general-information, salary, house-property, deduction, taxes-paid, bank-details, and verification sections this document reuses and extends. This document is the third of the ITR-1/2/4 set to be authored and models the notified ITR-2 form's own field set: general/identity information (including the filer-status, residential-status, director/partner/unlisted-shares/Portuguese-Civil-Code questions not present on ITR-1/ITR-4), the section 115BAC(6) new-tax-regime opt-out, seventh-proviso compliance questions, salary/pension income, up to two house properties in detail plus an aggregate figure for additional properties, other-sources income (extended with rental-of-machinery, section 56(2)(x), and lottery/online-game winnings not on ITR-1), Schedule CG capital gains at the asset-category/net-gain level (short-term and long-term, by rate bucket), Schedule VDA virtual digital asset (crypto) income, Schedule FA/TR foreign assets and foreign-tax-relief aggregates, Schedule AL assets-and-liabilities gating for total income exceeding Rs. 1 crore, the Chapter VI-A deduction schedule (including the two royalty deductions — 80QQB/80RRB), aggregate TDS/TCS/advance-tax figures, refund bank account details, and the verification block. Out of scope: business/professional-income schedules (Schedule BP, Manufacturing/Trading Account, Profit and Loss, Quantitative Details, depreciation schedules, GST turnover schedule) are not modelled because ITR-2 filers by the form's own definition have no income from business or profession — those filers use ITR-3/ITR-4 instead. Per-property, per-transaction, per-account, per-donee, and per-deductor breakdowns behind the House Property, Capital Gains, VDA, Foreign Assets, 80G/80E, and TDS1/TDS2/TCS schedules are also out of scope; see VERIFICATION.md. It does not submit the return, compute tax owed, or determine any refund/demand amount — the live e-Filing portal is always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Income Tax Department, Government of India (forms notified by the Central Board of Direct Taxes)",
+    "abbreviation": "ITD / CBDT",
+    "url": "https://www.incometax.gov.in/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.incometax.gov.in/iec/foportal/downloads",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "ITR-2 notified-form Excel utility, Assessment Year 2026-27, version 1.1 (ITR2_AY_26-27_V1.1.zip / .xlsm), published on the e-Filing portal's own Downloads page at https://www.incometax.gov.in/iec/foportal/sites/default/files/2026-06/ITR2_AY_26-27_V1.1.zip"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored directly from the Income Tax Department's own current-cycle Excel utility (AY 2026-27), fetched with no access block from the e-filing portal's static file host (incometax.gov.in). The .xlsm utility (a ZIP/OOXML container) was extracted with Python's zipfile module and its worksheet XML parsed directly (no Excel/LibreOffice/pip install available in this environment) to read cell labels and codes across its 66 sheets. Every field's sourceRef cites the specific worksheet and cell (or row range, for multi-cell table headers) of that utility, plus the form's own line code (e.g. B1, 1a, A2ie) where one exists. See VERIFICATION.md for the extraction technique, scope decisions, and mock-data test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "filerStatus",
+      "label": "Status",
+      "type": "enum",
+      "required": true,
+      "description": "ITR-2 is used by individuals and Hindu Undivided Families (HUFs) with no income from business or profession — those filers use ITR-3/ITR-4 instead.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E9 'Status (I-Individual,H-HUF)'",
+      "validation": {
+        "enum": [
+          "individual",
+          "huf"
+        ]
+      },
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "residentialStatus",
+      "label": "Residential status",
+      "type": "enum",
+      "required": true,
+      "description": "Unlike ITR-1/ITR-4 (restricted to ordinarily-resident individuals), ITR-2 is also used by a Resident but Not Ordinarily Resident (RNOR) or Non-Resident filer.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E39 'Conditions for Residential Status (Applicable for Individual only)'; residency dropdown",
+      "validation": {
+        "enum": [
+          "resident",
+          "resident_not_ordinarily_resident",
+          "non_resident"
+        ]
+      },
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "panNumber",
+      "label": "Permanent Account Number (PAN)",
+      "type": "string",
+      "required": true,
+      "description": "The filer's 10-character alphanumeric PAN, e.g. ABCDE1234F.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AK7 'PAN'",
+      "validation": {
+        "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the HUF where filerStatus is huf.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E7 'First Name'",
+      "classification": "pii"
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell O7 'Middle Name'",
+      "classification": "pii"
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": false,
+      "description": "Not applicable when filerStatus is huf.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell W7 'Last Name'",
+      "classification": "pii"
+    },
+    {
+      "name": "dateOfBirthOrFormation",
+      "label": "Date of birth (individual) / formation (HUF)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AD9 'Date of Birth/Formation (DD/MM/YYYY)'",
+      "classification": "pii"
+    },
+    {
+      "name": "aadhaarNumber",
+      "label": "Aadhaar number (12 digits)",
+      "type": "string",
+      "required": false,
+      "description": "Applicable to an individual filer only; required unless aadhaarEnrolmentId is supplied instead.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E63 'Aadhaar Number [Please enter the Aadhaar Number. Applicable to Individual only]'",
+      "validation": {
+        "pattern": "^[0-9]{12}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "aadhaarEnrolmentId",
+      "label": "Aadhaar enrolment ID (28 digits)",
+      "type": "string",
+      "required": false,
+      "description": "Only used when an Aadhaar Number has not yet been allotted.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E64 'Aadhaar Enrolment Id'",
+      "validation": {
+        "pattern": "^[0-9]{28}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "primaryEmail",
+      "label": "Primary email address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E31 'Primary Email ID of the taxpayer'",
+      "classification": "pii"
+    },
+    {
+      "name": "secondaryEmail",
+      "label": "Secondary email address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell N31 'Secondary Email ID'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryMobileNumber",
+      "label": "Primary mobile number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell W31 'Primary Mobile no of the taxpayer'",
+      "classification": "pii"
+    },
+    {
+      "name": "secondaryMobileNumber",
+      "label": "Secondary mobile number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AK31 'Secondary Mobile No'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressFlatDoorBlock",
+      "label": "Primary address — Flat/Door/Block No.",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E13 'Flat / Door / Block No'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressPremisesName",
+      "label": "Primary address — Name of Premises/Building/Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AD13 'Name of Premises / Building / Village'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressRoadStreet",
+      "label": "Primary address — Road/Street/Post Office",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E15 'Road / Street / Post Office'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressAreaLocality",
+      "label": "Primary address — Area/Locality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AD15 'Area / Locality'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressTownCityDistrict",
+      "label": "Primary address — Town/City/District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E18 'Town/City/District'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressState",
+      "label": "Primary address — State",
+      "type": "string",
+      "required": true,
+      "description": "State/UT for an Indian address (e.g. Maharashtra, Delhi).",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell W18 'State'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressCountry",
+      "label": "Primary address — Country/Region",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AE18 'Country/Region'",
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressPinCode",
+      "label": "Primary address — PIN code",
+      "type": "string",
+      "required": false,
+      "description": "6-digit Indian PIN code; used when the primary address is in India.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AO18 'Pin Code'",
+      "validation": {
+        "pattern": "^[0-9]{6}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "primaryAddressZipCode",
+      "label": "Primary address — foreign ZIP/postal code",
+      "type": "string",
+      "required": false,
+      "description": "Used when the primary address is outside India instead of an Indian PIN code.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AH20 'Zip Code'",
+      "classification": "pii"
+    },
+    {
+      "name": "secondaryAddressSameAsPrimary",
+      "label": "Is the secondary address the same as the primary address?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E21 'Is the secondary address same as primary address?'"
+    },
+    {
+      "name": "secondaryAddressFlatDoorBlock",
+      "label": "Secondary address — Flat/Door/Block No.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E23 'Flat / Door / Block No'",
+      "visibleWhen": {
+        "field": "secondaryAddressSameAsPrimary",
+        "equals": false
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "secondaryAddressTownCityDistrict",
+      "label": "Secondary address — Town/City/District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E27 'Town/City/District'",
+      "visibleWhen": {
+        "field": "secondaryAddressSameAsPrimary",
+        "equals": false
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "secondaryAddressState",
+      "label": "Secondary address — State",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell W27 'State'",
+      "visibleWhen": {
+        "field": "secondaryAddressSameAsPrimary",
+        "equals": false
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "secondaryAddressCountry",
+      "label": "Secondary address — Country/Region",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AE27 'Country/Region'",
+      "visibleWhen": {
+        "field": "secondaryAddressSameAsPrimary",
+        "equals": false
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "secondaryAddressPinCode",
+      "label": "Secondary address — PIN code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AO27 'Pin Code'",
+      "validation": {
+        "pattern": "^[0-9]{6}$"
+      },
+      "visibleWhen": {
+        "field": "secondaryAddressSameAsPrimary",
+        "equals": false
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "totalPeriodOfStayInIndiaCurrentYear",
+      "label": "Total period of stay in India during the previous year (in days)",
+      "type": "integer",
+      "required": false,
+      "description": "Used together with the 4-preceding-year figure to determine residential status for a citizen of India or Person of Indian Origin; relevant only when residentialStatus is not resident.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AH46 'Total period of stay in India during the previous year (in days)'",
+      "validation": {
+        "minimum": 0,
+        "maximum": 366
+      },
+      "visibleWhen": {
+        "field": "residentialStatus",
+        "equals": "non_resident"
+      }
+    },
+    {
+      "name": "totalPeriodOfStayInIndiaPreceding4Years",
+      "label": "Total period of stay in India during the 4 preceding years (in days)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AH47 'Total period of stay in India during the 4 preceding years (in days)'",
+      "validation": {
+        "minimum": 0
+      },
+      "visibleWhen": {
+        "field": "residentialStatus",
+        "equals": "non_resident"
+      }
+    },
+    {
+      "name": "optsOutOfNewTaxRegime115BAC6",
+      "label": "Opting out of the new (default) tax regime under section 115BAC(6)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Default is No (i.e. the new concessional regime applies) unless the filer explicitly opts out to be taxed under the old regime.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E49 'Do you wish to exercise the option u/s 115BAC(6) of Opting out of new tax regime? (default is “No”)'"
+    },
+    {
+      "name": "filingUnderSeventhProvisoOnly",
+      "label": "Filing under the seventh proviso to section 139(1) though otherwise not required to file a return?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E54 'Are you filing return of income under Seventh proviso to section 139(1) but otherwise not required to furnish return of income?'"
+    },
+    {
+      "name": "depositsExceedOneCroreInCurrentAccounts",
+      "label": "Deposited more than Rs. 1 crore (aggregate) in one or more current accounts during the year?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E55",
+      "visibleWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      }
+    },
+    {
+      "name": "foreignTravelExpenditureExceedsTwoLakh",
+      "label": "Incurred more than Rs. 2 lakh (aggregate) on foreign travel for self or another person during the year?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E56",
+      "visibleWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      }
+    },
+    {
+      "name": "electricityExpenditureExceedsOneLakh",
+      "label": "Incurred more than Rs. 1 lakh (aggregate) on electricity consumption during the year?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E57",
+      "visibleWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      }
+    },
+    {
+      "name": "meetsOtherSeventhProvisoConditions",
+      "label": "Required to file a return under any other condition prescribed under clause (iv) of the seventh proviso?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E58",
+      "visibleWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "filingUnderSeventhProvisoOnly",
+        "equals": true
+      }
+    },
+    {
+      "name": "filedUnderSection",
+      "label": "Return filed under section",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell N33/X33 'Filed u/s' dropdown",
+      "validation": {
+        "enum": [
+          "139_1_on_or_before_due_date",
+          "139_4_belated",
+          "139_5_revised",
+          "119_2_b_after_condonation_of_delay",
+          "139_8a_updated_return"
+        ]
+      }
+    },
+    {
+      "name": "isRevisedOrDefectiveReturn",
+      "label": "Is this a revised return, or filed in response to a defective-return notice?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E35 'If revised/defective/Modified, enter Receipt no'"
+    },
+    {
+      "name": "originalReturnReceiptNumber",
+      "label": "Receipt number of the original return",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E35",
+      "visibleWhen": {
+        "field": "isRevisedOrDefectiveReturn",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "isRevisedOrDefectiveReturn",
+        "equals": true
+      }
+    },
+    {
+      "name": "originalReturnFilingDate",
+      "label": "Date of filing of the original return",
+      "type": "date",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AF35 'Date of filing of Original Return (DD/MM/YYYY)'",
+      "visibleWhen": {
+        "field": "isRevisedOrDefectiveReturn",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "isRevisedOrDefectiveReturn",
+        "equals": true
+      }
+    },
+    {
+      "name": "filedByRepresentativeAssessee",
+      "label": "Is this return being filed by a representative assessee?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E68 'Whether this return is being filed by a representative assessee, (if any)?'"
+    },
+    {
+      "name": "representativeName",
+      "label": "Name of the representative assessee",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell G69 'Name of the representative assessee'",
+      "visibleWhen": {
+        "field": "filedByRepresentativeAssessee",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "filedByRepresentativeAssessee",
+        "equals": true
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "representativeEmail",
+      "label": "Email of the representative assessee",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell N70 'E-mail id of the Representative assessee'",
+      "visibleWhen": {
+        "field": "filedByRepresentativeAssessee",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "filedByRepresentativeAssessee",
+        "equals": true
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "representativeContactNumber",
+      "label": "Contact number of the representative assessee",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell N71 'Contact number of the representative assessee'",
+      "visibleWhen": {
+        "field": "filedByRepresentativeAssessee",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "filedByRepresentativeAssessee",
+        "equals": true
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "isDirectorInCompany",
+      "label": "Were you a Director in a company at any time during the previous year?",
+      "type": "boolean",
+      "required": true,
+      "description": "A director-in-company disclosure is not present on ITR-1/ITR-4; a 'Yes' here (or heldUnlistedEquitySharesDuringYear, or isPartnerInFirm) is one of the conditions that requires ITR-2 instead of ITR-1.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E76 'Whether you are Director in a company at any time during the previous year?'"
+    },
+    {
+      "name": "isPartnerInFirm",
+      "label": "Were you a Partner in a Firm at any time during the previous year?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E82 'Whether you are a Partner in a Firm?'"
+    },
+    {
+      "name": "heldUnlistedEquitySharesDuringYear",
+      "label": "Did you hold unlisted equity shares at any time during the previous year?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell E89 'Whether you have held unlisted equity shares at any time during the previous year?'"
+    },
+    {
+      "name": "governedByPortugueseCivilCode",
+      "label": "Are you governed by the Portuguese Civil Code as per section 5A?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applies to certain residents of Goa, Dadra & Nagar Haveli, and Daman & Diu; a 'Yes' requires Schedule 5A income-apportionment-between-spouses detail, which is out of scope for this document (see VERIFICATION.md).",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'PART A - General' sheet cell AF65 'Are you governed by Portuguese Civil Code as per section 5A? (If “YES” please fill Schedule 5A)'"
+    },
+    {
+      "name": "hasSalaryOrPensionIncome",
+      "label": "Do you have income from salary or pension to report?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule S' sheet cell row 7 'Gross Salary' section header",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "employerName",
+      "label": "Name of employer",
+      "type": "string",
+      "required": false,
+      "description": "The primary employer; ITR-2 permits reporting more than one employer's salary in a repeated block, but this document models a single/primary employer as an aggregate — see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule S' sheet cell D4 'Name of Employer'",
+      "visibleWhen": {
+        "field": "hasSalaryOrPensionIncome",
+        "equals": true
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "salaryAsPerSection17_1",
+      "label": "Salary as per section 17(1)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule S' sheet cell I8 'Salary as per section 17(1)' (line 1a)",
+      "visibleWhen": {
+        "field": "hasSalaryOrPensionIncome",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "hasSalaryOrPensionIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "valueOfPerquisitesSection17_2",
+      "label": "Value of perquisites as per section 17(2)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule S' sheet cell I12 'Value of perquisites as per section 17(2)' (line 1b)",
+      "visibleWhen": {
+        "field": "hasSalaryOrPensionIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "profitInLieuOfSalarySection17_3",
+      "label": "Profit in lieu of salary as per section 17(3)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule S' sheet cell I17 'Profit in lieu of salary as per section 17(3)' (line 1c)",
+      "visibleWhen": {
+        "field": "hasSalaryOrPensionIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromRetirementBenefitAccountNotifiedCountry",
+      "label": "Income from retirement benefit account maintained in a notified country (section 89A)",
+      "type": "number",
+      "required": false,
+      "description": "Relief under section 89A for a specified retirement account maintained in a notified country (e.g. USA, UK, Canada).",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule S' sheet cell I21 'Income from retirement benefit account maintained in a notified country u/s 89A' (line 1d)",
+      "visibleWhen": {
+        "field": "hasSalaryOrPensionIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "numberOfHouseProperties",
+      "label": "Number of house properties to report",
+      "type": "integer",
+      "required": true,
+      "description": "ITR-2 permits more than the two-property cap that restricts ITR-1/ITR-4; this document models up to 2 properties in detail plus an aggregate figure for any additional properties — see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell D4/D39 'Address Of Property 1A'/'1B' section headers",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "property1Type",
+      "label": "House property 1 — type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell H15 'Type of House property?'",
+      "validation": {
+        "enum": [
+          "self_occupied",
+          "let_out",
+          "deemed_let_out"
+        ]
+      },
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 0
+      },
+      "requiredWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 0
+      }
+    },
+    {
+      "name": "property1GrossRentReceived",
+      "label": "House property 1 — gross rent received/receivable/lettable value",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell row 20 'Gross Rent received or receivable or letable value' (line 1a)",
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 0
+      }
+    },
+    {
+      "name": "property1TaxPaidToLocalAuthorities",
+      "label": "House property 1 — taxes paid to local authorities",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell row 22 'Tax paid to local authorities' (line 1c)",
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 0
+      }
+    },
+    {
+      "name": "property1InterestOnBorrowedCapital",
+      "label": "House property 1 — interest payable on borrowed capital (section 24(b))",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell row 27 'Interest payable on borrowed capital' (line 1h); Section 24(b) loan schedule",
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 0
+      }
+    },
+    {
+      "name": "property2Type",
+      "label": "House property 2 — type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell H50 'Type Of House Property?' (property 1B)",
+      "validation": {
+        "enum": [
+          "self_occupied",
+          "let_out",
+          "deemed_let_out"
+        ]
+      },
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 1
+      },
+      "requiredWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 1
+      }
+    },
+    {
+      "name": "property2GrossRentReceived",
+      "label": "House property 2 — gross rent received/receivable/lettable value",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell row 55 'Gross rent received or receivable or lettable value' (property 1B, line 1a)",
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 1
+      }
+    },
+    {
+      "name": "property2TaxPaidToLocalAuthorities",
+      "label": "House property 2 — taxes paid to local authorities",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell row 57 'Tax paid to local authorities' (property 1B, line 1c)",
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 1
+      }
+    },
+    {
+      "name": "property2InterestOnBorrowedCapital",
+      "label": "House property 2 — interest payable on borrowed capital (section 24(b))",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell row 62 'Interest payable on borrowed capital' (property 1B, line 1h)",
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 1
+      }
+    },
+    {
+      "name": "additionalHousePropertiesAggregateIncome",
+      "label": "Aggregate income from house property 3 and beyond",
+      "type": "number",
+      "required": false,
+      "description": "ITR-2's own House Property schedule repeats the same per-property block (address, co-owner/tenant detail, section 24(b) loan schedule) for every additional property with no fixed cap; a third-and-beyond per-property breakdown is out of scope for this document, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'House Property' sheet cell row 75 'Income under the head “Income from house property” (Ʃ1k + 2)' aggregation line, extended to properties beyond 1B",
+      "visibleWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 2
+      },
+      "requiredWhen": {
+        "field": "numberOfHouseProperties",
+        "greaterThan": 2
+      }
+    },
+    {
+      "name": "interestFromSavingsBankAccount",
+      "label": "Interest from savings bank account",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell G10 'From Savings Bank' (line 1bi)"
+    },
+    {
+      "name": "interestFromDeposits",
+      "label": "Interest from deposits (bank/post office/cooperative society)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell G11 'From Deposit (Bank/Post Office/Co-operative)' (line 1bii)"
+    },
+    {
+      "name": "incomeFromFamilyPension",
+      "label": "Income from family pension",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell row 28 'Family Pension' (line 1e, Any other income)"
+    },
+    {
+      "name": "dividendIncome",
+      "label": "Dividend income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell J5 'Dividends, Gross (ai + aii + aiii)' (line 1a)"
+    },
+    {
+      "name": "rentalIncomeFromMachineryPlantBuildings",
+      "label": "Rental income from machinery, plants, buildings, etc. (gross)",
+      "type": "number",
+      "required": false,
+      "description": "Not present on ITR-1/ITR-4's Other Sources schedule.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell I19 'Rental income from machinery, plants, buildings, etc., Gross' (line 1c)"
+    },
+    {
+      "name": "incomeUnderSection56_2_x",
+      "label": "Income chargeable under section 56(2)(x) (property/sums received without or for inadequate consideration)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell I20 'Income of the nature referred to in section 56(2)(x) which is chargeable to tax' (line 1d)"
+    },
+    {
+      "name": "winningsFromLotteriesEtc",
+      "label": "Winnings from lotteries, crossword puzzles, races, card games, etc. (section 115BB)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell row 43 'Winnings from lotteries, crossword puzzles races, card games etc. chargeable u/s 115BB' (line 2a(i))"
+    },
+    {
+      "name": "winningsFromOnlineGames",
+      "label": "Income by way of winnings from online games (section 115BBJ)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell row 45 'Gross Winnings from online games' (line 2a(ii))"
+    },
+    {
+      "name": "otherIncomeSourceDescription",
+      "label": "Other income (source description, if 'Any Other' selected)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell row 26 'Any other income (please specify nature)' (line 1e)"
+    },
+    {
+      "name": "otherIncomeSourceAmount",
+      "label": "Other income (amount)",
+      "type": "number",
+      "required": false,
+      "description": "Populated only when a corresponding other-income description is supplied.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Sch OS' sheet cell J26 'Any other income' amount column (line 1e)"
+    },
+    {
+      "name": "hasCapitalGains",
+      "label": "Do you have capital gains to report?",
+      "type": "boolean",
+      "required": true,
+      "description": "Capital gains reporting (other than the narrow section 112A allowance ITR-1 itself exposes) is one of the core reasons a filer needs ITR-2 instead of ITR-1/ITR-4.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell row 3-4 'Schedule CG — Capital Gains' / 'A(I) Short-term Capital Gains (STCG)' section header",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "stcgOnImmovableProperty",
+      "label": "Short-term capital gains on sale of land or building (net)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell R19 line A1e, 'Short-term Capital Gains on Immovable property (1c - 1d)'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "stcgOnListedEquitySTT",
+      "label": "Short-term capital gains on listed equity shares / equity-oriented mutual fund units, STT paid (section 111A) (net)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell R43 line A2ie, 'Short-term capital gain on equity share or equity oriented MF (STT paid)'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "stcgOnOtherAssets",
+      "label": "Short-term capital gains on assets other than immovable property or STT-paid listed equity (net)",
+      "type": "number",
+      "required": false,
+      "description": "Covers item A5 of Schedule CG (e.g. debt mutual funds, unlisted shares, movable property); the schedule's own asset-by-asset consideration/cost breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell R94 line A5e, 'STCG on assets other than at A1 or A2 or A3 or A4 above'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalShortTermCapitalGains",
+      "label": "Total short-term capital gains",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell I19 line 3a(v), 'Total Short term (ai+aii+aiii+aiv)'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "ltcgOnImmovableProperty",
+      "label": "Long-term capital gains on sale of land or building (net)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell row 194 line B1g, 'Total Long-term Capital Gains on all Immovable properties'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "ltcg112AListedEquity",
+      "label": "Long-term capital gains on listed equity shares / equity-oriented mutual fund units exceeding Rs. 1.25 lakh (section 112A) (net)",
+      "type": "number",
+      "required": false,
+      "description": "Section 112A allows an annual exemption of Rs. 1.25 lakh on such gains; this field is the taxable amount after that exemption. ITR-1/ITR-4 expose only this same narrow section 112A allowance as their sole capital-gains input line; ITR-2 additionally supports all other capital-asset categories below.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell R256 line B3c, 'Long-term Capital Gains on sale of capital assets at B3 above (3a – 3b)'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "ltcgOnOtherAssetsWithIndexation",
+      "label": "Long-term capital gains on other assets, with indexation benefit (net)",
+      "type": "number",
+      "required": false,
+      "description": "Covers unlisted shares, debentures, and other long-term capital assets not eligible for the without-indexation 12.5% regime; the schedule's own per-asset consideration/cost breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell R268 line B4c, 'LTCG on unlisted shares or listed debentures (4a – 4b)'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalLongTermCapitalGains",
+      "label": "Total long-term capital gains",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell I25 line 3b(iii), 'Total Long term (bi+bii)'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "capitalGainsDeductionSection54Series",
+      "label": "Deduction claimed against capital gains under sections 54/54B/54D/54EC/54F/54G/54GA/54GB",
+      "type": "number",
+      "required": false,
+      "description": "Aggregate reinvestment-linked capital-gains exemption claimed; the schedule's own per-section, per-asset claim detail (new asset acquired, deposit into the Capital Gains Accounts Scheme, etc.) is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule CG' sheet cell row 168/192/209/226/245 'Total Deduction under section 54/54B/54EC/54F' family of lines",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromVirtualDigitalAssets",
+      "label": "Income from transfer of Virtual Digital Assets (VDA) (section 115BBH)",
+      "type": "number",
+      "required": false,
+      "description": "Crypto-assets/NFTs and similar virtual digital assets, taxed at a flat 30% rate under section 115BBH; reported on its own Schedule VDA, distinct from Schedule CG. The schedule's own per-transaction (acquisition date/transfer date/cost) breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VDA' sheet cell I11 'Total (Sum of all Positive Incomes of Capital Gain in Col. 7)'"
+    },
+    {
+      "name": "totalCapitalGains",
+      "label": "Total capital gains",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell K28 line 3e, 'Total Capital Gains (3c+3d)'",
+      "visibleWhen": {
+        "field": "hasCapitalGains",
+        "equals": true
+      }
+    },
+    {
+      "name": "hasForeignAssetsOrIncome",
+      "label": "Do you hold any foreign asset (including financial interest), or have foreign income, to report?",
+      "type": "boolean",
+      "required": false,
+      "description": "Schedule FA is not applicable to a Non-Resident filer as per residential status, so this question is only asked (and required) for resident/RNOR filers. Foreign-asset/foreign-income reporting is one of the core reasons a filer needs ITR-2 instead of ITR-1/ITR-4.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TR_FA' sheet cell D20 'NOTE: This Schedule is not Applicable for NRI (Non Resident Indians) as per Residential Status'",
+      "visibleWhen": {
+        "field": "residentialStatus",
+        "notEquals": "non_resident"
+      },
+      "requiredWhen": {
+        "field": "residentialStatus",
+        "notEquals": "non_resident"
+      },
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "foreignDepositoryAccountsAggregateValue",
+      "label": "Aggregate peak balance of foreign depository accounts held during the calendar year",
+      "type": "number",
+      "required": false,
+      "description": "Schedule FA table A1; the schedule's own per-account (country, institution, account number, peak balance, interest) breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TR_FA' sheet cell row 21-22 Schedule FA table A1, 'Details of Foreign Depository Accounts held'",
+      "visibleWhen": {
+        "field": "hasForeignAssetsOrIncome",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "hasForeignAssetsOrIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "foreignEquityAndDebtInterestAggregateValue",
+      "label": "Aggregate value of foreign equity/debt interests held during the calendar year",
+      "type": "number",
+      "required": false,
+      "description": "Schedule FA tables covering foreign equity and debt interest holdings; per-entity breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TR_FA' sheet cell Schedule FA tables covering foreign equity/debt interest, following table A1",
+      "visibleWhen": {
+        "field": "hasForeignAssetsOrIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "foreignSourceIncomeAggregateAmount",
+      "label": "Aggregate income from any source outside India",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TR_FA' sheet cell Schedule FA 'Details of Foreign Assets and Income from any source outside India' — income column",
+      "visibleWhen": {
+        "field": "hasForeignAssetsOrIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalTaxReliefClaimedForeignTax",
+      "label": "Total tax relief claimed for taxes paid outside India (sections 90/90A/91)",
+      "type": "number",
+      "required": false,
+      "description": "Schedule TR; the schedule's own per-country breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TR_FA' sheet cell H11 Schedule TR line 1, 'Total tax relief available'",
+      "visibleWhen": {
+        "field": "hasForeignAssetsOrIncome",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalIncomeExceedsOneCrore",
+      "label": "Does your total income for the year exceed Rs. 1 crore?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates Schedule AL, which is applicable only where total income exceeds Rs. 1 crore.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'AL' sheet cell E3 'Schedule AL — Assets and Liabilities at the end of the year ... (applicable in a case where total income exceeds 1 Crore)'",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "immovableAssetsAggregateCost",
+      "label": "Aggregate cost of immovable assets held at the end of the year",
+      "type": "number",
+      "required": false,
+      "description": "Schedule AL; the schedule's own per-asset (description, address) breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'AL' sheet cell O6 'Amount (cost) in Rs.' column, immovable-asset table",
+      "visibleWhen": {
+        "field": "totalIncomeExceedsOneCrore",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "totalIncomeExceedsOneCrore",
+        "equals": true
+      }
+    },
+    {
+      "name": "deduction80C",
+      "label": "Deduction u/s 80C (life insurance premium, PF, ELSS, etc.)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I6 line a"
+    },
+    {
+      "name": "deduction80CCC",
+      "label": "Deduction u/s 80CCC (payment in respect of Pension Fund)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell row 7 line b"
+    },
+    {
+      "name": "deduction80CCD1",
+      "label": "Deduction u/s 80CCD(1) (contribution to Central Government pension scheme)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell K12 line c"
+    },
+    {
+      "name": "deduction80CCD1B",
+      "label": "Deduction u/s 80CCD(1B) (additional NPS contribution)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell K17 line d"
+    },
+    {
+      "name": "deduction80CCD2",
+      "label": "Deduction u/s 80CCD(2) (employer's contribution to pension scheme)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell K27 line e"
+    },
+    {
+      "name": "deduction80D_healthInsurancePremium",
+      "label": "Deduction u/s 80D — health insurance premium",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell row 31 '(A) Health Insurance Premium', line f"
+    },
+    {
+      "name": "deduction80D_medicalExpenditure",
+      "label": "Deduction u/s 80D — medical expenditure",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell row 32 '(B) Medical expenditure', line f"
+    },
+    {
+      "name": "deduction80D_preventiveHealthCheckup",
+      "label": "Deduction u/s 80D — preventive health check-up",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell row 33 '(C) Preventive health check-up', line f"
+    },
+    {
+      "name": "deduction80DD",
+      "label": "Deduction u/s 80DD (maintenance/medical treatment of a dependent with disability)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I34 line g"
+    },
+    {
+      "name": "deduction80DDB",
+      "label": "Deduction u/s 80DDB (medical treatment of specified disease)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I35 line h"
+    },
+    {
+      "name": "deduction80E",
+      "label": "Deduction u/s 80E (interest on education loan)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I37 line i"
+    },
+    {
+      "name": "deduction80EEA",
+      "label": "Deduction u/s 80EEA (interest on loan for certain house property)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I39 line k"
+    },
+    {
+      "name": "deduction80EEB",
+      "label": "Deduction u/s 80EEB (interest on electric-vehicle loan)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I40 line l"
+    },
+    {
+      "name": "deduction80G",
+      "label": "Deduction u/s 80G (donations to certain funds/charitable institutions)",
+      "type": "number",
+      "required": false,
+      "description": "Aggregate donation-deduction amount; the schedule's own donee-by-donee breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I41 line m"
+    },
+    {
+      "name": "deduction80GG",
+      "label": "Deduction u/s 80GG (rent paid, where no HRA is received)",
+      "type": "number",
+      "required": false,
+      "description": "Claiming this deduction requires submitting Form 10BA.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I42 line n"
+    },
+    {
+      "name": "deduction80GGA",
+      "label": "Deduction u/s 80GGA (certain donations for scientific research or rural development)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I44 line o"
+    },
+    {
+      "name": "deduction80GGC",
+      "label": "Deduction u/s 80GGC (donation to a political party)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I45 line p"
+    },
+    {
+      "name": "deduction80TTA",
+      "label": "Deduction u/s 80TTA (interest on savings bank account, non-senior-citizen)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I61 line s"
+    },
+    {
+      "name": "deduction80TTB",
+      "label": "Deduction u/s 80TTB (interest on deposits, resident senior citizen)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I62 line t"
+    },
+    {
+      "name": "deduction80U",
+      "label": "Deduction u/s 80U (filer is a person with disability)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I63 line u"
+    },
+    {
+      "name": "deduction80QQB",
+      "label": "Deduction u/s 80QQB (royalty income of authors of certain books)",
+      "type": "number",
+      "required": false,
+      "description": "Allowed only if Form 10CCD is filed and the return is filed within the due date; not present on ITR-1 (present on ITR-4 SUGAM as well).",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I56 line q"
+    },
+    {
+      "name": "deduction80RRB",
+      "label": "Deduction u/s 80RRB (royalty on patents)",
+      "type": "number",
+      "required": false,
+      "description": "Allowed only if Form 10CCE is filed and the return is filed within the due date; not present on ITR-1 (present on ITR-4 SUGAM as well).",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell I58 line r"
+    },
+    {
+      "name": "deduction80CCH",
+      "label": "Deduction u/s 80CCH (contribution to the Agnipath scheme)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule VI-A' sheet cell row 65 line ua"
+    },
+    {
+      "name": "totalTDSOnSalary",
+      "label": "Total tax deducted at source on salary (Schedule TDS1, as per Form 16)",
+      "type": "number",
+      "required": false,
+      "description": "Aggregate TDS on salary across all employers during the year; the schedule's own employer-by-employer breakdown is out of scope, see VERIFICATION.md. Pre-filled from Form 26AS/AIS on the e-filing portal, and reviewed rather than manually entered.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TDS' sheet cell H14 'Details of Tax Deducted at Source from SALARY [As per FORM 16 issued by Employer(s)]', total row"
+    },
+    {
+      "name": "totalTDSOnOtherIncome",
+      "label": "Total tax deducted at source on income other than salary (Schedule TDS2)",
+      "type": "number",
+      "required": false,
+      "description": "Aggregate TDS reported on Form 16A/Form 16B/16C/16E; the schedule's own deductor-by-deductor breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TDS' sheet cell row 59 'Details of Tax Deducted at Source (TDS) on Income [As per FORM 16A issued or Form 16B/16C/16E]', total row"
+    },
+    {
+      "name": "totalTCS",
+      "label": "Total tax collected at source (Schedule TCS)",
+      "type": "number",
+      "required": false,
+      "description": "The schedule's own collector-by-collector breakdown is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'TDS' sheet cell M74 Schedule TCS total row"
+    },
+    {
+      "name": "totalAdvanceTaxPaid",
+      "label": "Total advance tax paid",
+      "type": "number",
+      "required": false,
+      "description": "Challan-by-challan detail (BSR code, deposit date, challan serial number) is out of scope, see VERIFICATION.md.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'IT' sheet cell row 4-16 'Details of payments of Advance Tax and Self-Assessment Tax', advance-tax rows"
+    },
+    {
+      "name": "totalSelfAssessmentTaxPaid",
+      "label": "Total self-assessment tax paid",
+      "type": "number",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'IT' sheet cell row 4-16 'Details of payments of Advance Tax and Self-Assessment Tax', self-assessment rows"
+    },
+    {
+      "name": "hasIndianBankAccount",
+      "label": "Do you hold a bank account in India?",
+      "type": "boolean",
+      "required": true,
+      "description": "Non-residents claiming a refund with no bank account in India may answer No.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell row 112 'Do you have a bank account in India (Non-residents claiming refund with no bank account in India may select No)?'"
+    },
+    {
+      "name": "bankAccountIFSCCode",
+      "label": "IFSC code of the bank account for refund",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell row 116/119 'IFS Code of the Bank'",
+      "visibleWhen": {
+        "field": "hasIndianBankAccount",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "hasIndianBankAccount",
+        "equals": true
+      }
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Bank account number for refund",
+      "type": "string",
+      "required": false,
+      "description": "Must be 9 digits or more, as per the bank's core banking system.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell row 116/119 'Account Number'",
+      "visibleWhen": {
+        "field": "hasIndianBankAccount",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "hasIndianBankAccount",
+        "equals": true
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "bankAccountType",
+      "label": "Bank account type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell J119 'Type of account'",
+      "validation": {
+        "enum": [
+          "savings",
+          "current"
+        ]
+      },
+      "visibleWhen": {
+        "field": "hasIndianBankAccount",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "hasIndianBankAccount",
+        "equals": true
+      }
+    },
+    {
+      "name": "bankAccountSelectedForRefund",
+      "label": "Select this account for refund credit",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Part B - TI TTI' sheet cell K119 'Select Account for refund credit'",
+      "visibleWhen": {
+        "field": "hasIndianBankAccount",
+        "equals": true
+      }
+    },
+    {
+      "name": "verificationFullName",
+      "label": "Full name (in block letters) of the person verifying the return",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule Verification' sheet cell C4 'I, (full name in block letters)'",
+      "classification": "pii"
+    },
+    {
+      "name": "verificationCapacity",
+      "label": "Capacity in which the return is verified",
+      "type": "string",
+      "required": true,
+      "description": "E.g. self, karta (for an HUF), representative assessee.",
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule Verification' sheet cell C6 'I further declare that I am making returns in my capacity as'"
+    },
+    {
+      "name": "verificationPlace",
+      "label": "Place of verification",
+      "type": "string",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule Verification' sheet cell C9 'Sign here' block, place field"
+    },
+    {
+      "name": "verificationDate",
+      "label": "Date of verification",
+      "type": "date",
+      "required": true,
+      "sourceRef": "ITR-2 Excel utility, AY 2026-27 (incometax.gov.in e-Filing portal downloads, ITR2_AY_26-27_V1.1.xlsm), 'Schedule Verification' sheet cell L9 '(Date)'"
+    }
+  ]
+}
