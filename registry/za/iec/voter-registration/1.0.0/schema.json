@@ -1,0 +1,155 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "za/iec/voter-registration",
+  "version": "1.0.0",
+  "title": "South Africa Online Voter Registration (IEC VoterPortal)",
+  "description": "Register as a voter, or update an existing registration's address, on the Electoral Commission of South Africa's (IEC) online self-registration platform at registertovote.elections.org.za, ahead of the 2026 local government elections. This is South Africa's first GovSchema entry for the National ID & Civic Documents vertical's voter-registration process, closing the last jurisdiction (of the 13 this registry covers) without one — all others already have a published voter-registration schema, or (Singapore) a documented non-applicability finding. Models the 'Register to vote in-country' pathway for an ordinary resident citizen registering for the first time or updating their registered address: identity verification by South African ID number plus a photo/scan of the ID document, contact details with one-time-PIN (OTP) confirmation, and residential-address capture. It does not model: the separate 'Apply for a special vote' or 'special vote application status' pathways offered by the same portal (distinct transactions, for voters who cannot attend their voting station on election day); registering to vote from outside South Africa (a distinct national-election-only, out-of-country process with its own eligibility window); or in-person registration at an IEC office or during a registration weekend, which uses the same underlying data but a handheld-device capture process with no public field-by-field specification. It does not submit the application; the live registertovote.elections.org.za service is always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Electoral Commission of South Africa",
+    "abbreviation": "IEC",
+    "url": "https://www.elections.org.za"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-ZA"
+  },
+  "source": {
+    "url": "https://registertovote.elections.org.za/",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "IEC 'Who can register online?' Online Voter Registration Factsheet; IEC 'How to Register to Vote' Factsheet; live registertovote.elections.org.za 'Register to vote in-country' identity-verification step"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "GOV-1208 'GovSchema Standard Research' cycle. The portal's first screen ('Online voter self-registration — Identity verification') was reached and its fields captured directly via a headless-browser walkthrough with no bot-block encountered: a 13-digit ID-number text input (placeholder 'Enter your 13-digit ID number', HTML maxlength 13), a mandatory Section-97 declaration checkbox (verbatim label transcribed from the live DOM), and a file-upload control for the ID document. A syntactically-valid mock South African ID number (correct Luhn check digit, no real citizen behind it) was submitted and rejected with 'ID number is invalid. Your ID number must be 13-digit South African ID number' / a modal 'The ID number you have entered is not valid' — confirming the platform performs a real-time Home Affairs population-register lookup, not just a format check, so the screens beyond identity verification (name/surname confirmation, contact details, OTP, address capture) could not be reached with a synthetic ID this cycle. Those screens are instead sourced from the IEC's own two directly-retrieved (HTTP 200) PDF factsheets, whose 'How to register online?' step list and 'REMEMBER' guidance are cited per-field below. Status remains draft, not verified — see 'What is NOT yet independently verified' in VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "idNumber",
+      "label": "ID number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "13-digit South African ID number, from a green barcoded ID book, smart ID card, or valid Temporary Identity Certificate.",
+      "sourceRef": "Live registertovote.elections.org.za identity-verification step — input placeholder 'Enter your 13-digit ID number' (maxlength 13); validation message 'ID number is invalid. Your ID number must be 13-digit South African ID number.'",
+      "validation": { "pattern": "^[0-9]{13}$" }
+    },
+    {
+      "name": "eligibilityDeclaration",
+      "label": "Declaration of correct details",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Under section 97 of the Electoral Act 73 of 1998, it is a criminal offence to provide false information, and an offence to register on behalf of a voter or use their details without their prior consent (impersonation under section 88).",
+      "sourceRef": "Live registertovote.elections.org.za identity-verification step — checkbox label 'I confirm that the details are correct. In terms of Section 97 of Electoral Act 73 of 1998, it is a criminal offence to provide false information. It is also an offence to register on behalf of a voter or use their details without their prior consent. This amounts to impersonation in terms of section 88 of the Electoral Act, Act 73 of 1998 and is punishable by a fine or imprisonment for a period not exceeding 5 years.'"
+    },
+    {
+      "name": "idDocumentPhoto",
+      "label": "Photo or copy of your SA ID",
+      "type": "file",
+      "required": true,
+      "description": "A photo or copy of the green barcoded ID book, smart ID card, or valid Temporary Identity Certificate, with the ID barcode clearly visible. Best uploaded from the device's camera roll/gallery rather than taken live in-app.",
+      "sourceRef": "Live registertovote.elections.org.za identity-verification step — file-upload control; IEC Online Voter Registration Factsheet, 'How to register online?' item 5, 'Upload a photo or copy of your SA ID – green ID book, smart ID or valid temporary ID'"
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the applicant's South African ID document. The live screen where this is entered or confirmed is gated behind a valid, registered ID number and was not reached this cycle — see VERIFICATION.md.",
+      "sourceRef": "IEC Online Voter Registration Factsheet, 'How to register online?' item 3, 'Enter your ID number, name and surname, contact details, and confirm OTP'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on the applicant's South African ID document. The live screen where this is entered or confirmed is gated behind a valid, registered ID number and was not reached this cycle — see VERIFICATION.md.",
+      "sourceRef": "IEC Online Voter Registration Factsheet, 'How to register online?' item 3, 'Enter your ID number, name and surname, contact details, and confirm OTP'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "cellphoneNumber",
+      "label": "Cellphone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Used to send the one-time PIN (OTP) that confirms this registration, and for the IEC to contact the applicant for electoral purposes.",
+      "sourceRef": "IEC Online Voter Registration Factsheet, 'How to register online?' item 3 ('contact details ... confirm OTP') and Privacy Notice, 'We collect your email address and phone numbers in case we need to contact you for electoral purposes.'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional contact detail; the IEC does not release it to the public.",
+      "sourceRef": "IEC Online Voter Registration Factsheet, 'How to register online?' item 3 ('contact details') and Privacy Notice, 'We collect your email address and phone numbers ... We do not release your cellphone numbers or email address to the public.'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "otpCode",
+      "label": "One-time PIN (OTP)",
+      "type": "string",
+      "required": true,
+      "description": "One-time PIN sent to the applicant's cellphone number, entered to confirm the registration.",
+      "sourceRef": "IEC Online Voter Registration Factsheet, 'How to register online?' item 3, '...and confirm OTP'",
+      "validation": { "minLength": 4, "maxLength": 8 }
+    },
+    {
+      "name": "residentialAddressDetails",
+      "label": "Residential address / description of where you live",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A full residential address, or (where no formal address exists) a description of where the applicant lives, sufficient for the IEC to confirm registration in the correct voting district and ward. Proof of address is not required, but giving false address information is a criminal offence. The live address-capture screen's exact field layout is gated behind a valid, registered ID number and was not reached this cycle — see VERIFICATION.md.",
+      "sourceRef": "IEC Online Voter Registration Factsheet, 'How to register online?' item 4, 'Capture your address details'; IEC 'How to Register to Vote' Factsheet, 'REMEMBER: You must provide sufficient details of where you live (a full residential address or a description of where you live) for the IEC to confirm that you are registering in the correct voting district. Proof of address is not needed. If you give false address information, it is a crime. You could go to jail for up to 10 years.'",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity_verification",
+      "title": "Identity verification",
+      "fields": ["idNumber", "eligibilityDeclaration", "idDocumentPhoto"],
+      "next": "personal_and_contact_details"
+    },
+    {
+      "id": "personal_and_contact_details",
+      "title": "Personal and contact details, OTP confirmation",
+      "fields": ["firstNames", "surname", "cellphoneNumber", "emailAddress", "otpCode"],
+      "next": "address_details"
+    },
+    {
+      "id": "address_details",
+      "title": "Address details",
+      "fields": ["residentialAddressDetails"]
+    }
+  ]
+}
