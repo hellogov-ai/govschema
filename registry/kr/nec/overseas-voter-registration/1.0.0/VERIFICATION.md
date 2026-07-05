@@ -121,8 +121,11 @@ over four fixtures, mirroring the technique used for the ZA SARS ITR14
 Annexures (GOV-1268/1275/1282):
 
 1. **`valid_resident_registered`** — the exact field values transcribed from
-   the official 국외부재자신고서 filled-in example (홍길동). 0 missing/invalid
-   fields, 0 unexpectedly-present hidden fields.
+   the official 국외부재자신고서 filled-in example (홍길동), with one
+   exception: the example leaves its submission-date line (`년 월 일`) blank,
+   so `declarationDate` is a synthesized illustrative value rather than a
+   transcribed one. 0 missing/invalid fields, 0 unexpectedly-present hidden
+   fields.
 2. **`valid_never_registered`** — the exact field values transcribed from
    the official 재외선거인등록신청서 filled-in example (홍길순). 0
    missing/invalid fields, 0 unexpectedly-present hidden fields.
