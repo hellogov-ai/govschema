@@ -20,6 +20,13 @@ document facts not restated on the form itself. It remains `draft`, not
 booking portal could not be walked interactively — see "What is NOT yet
 independently verified" below.
 
+**Review-gate correction (GOV-1196):** the review pass for this PR
+independently re-extracted Form DL1's text layer with `pdfjs-dist` and found
+one Section A contact-detail field, "Facsimile number" (between "Contact
+telephone number during day" and "Cellphone number"), present on the form but
+missing from the initially authored field set. Added as `facsimileNumber`
+(optional, same treatment as the other contact-detail fields) prior to merge.
+
 ## Access notes
 
 - `https://www.natis.gov.za/index.php/downloads/forms/road-traffic-related-forms`
@@ -82,7 +89,7 @@ independently verified" below.
 | Form DL1 "LIST OF POSSIBLE TRANSACTIONS" / "APPLICATION FOR:" tick-box list | `transactionType` |
 | Form DL1 Section A, "Type of identification" / "Identification number" / "Country of issue if foreign ID" | `typeOfIdentification`, `identificationNumber`, `countryOfIssueIfForeignId` |
 | Form DL1 Section A, "Nationality" / "Gender" / "Surname" / "Initials and first names" / "Date of birth" / "Official language of preference" | `nationality`, `gender`, `surname`, `initialsAndFirstNames`, `dateOfBirth`, `officialLanguagePreference` |
-| Form DL1 Section A, contact-detail fields (e-mail, home/day telephone, cellphone) | `emailAddress`, `homeTelephoneNumber`, `daytimeContactTelephoneNumber`, `cellphoneNumber` |
+| Form DL1 Section A, contact-detail fields (e-mail, home/day telephone, facsimile, cellphone) | `emailAddress`, `homeTelephoneNumber`, `daytimeContactTelephoneNumber`, `facsimileNumber`, `cellphoneNumber` |
 | Form DL1 Section A, postal-address and street-address blocks and "Address where notices must be served" | `postalAddressLine`, `postalSuburb`, `postalCityTown`, `postalCode`, `streetAddressLine`, `streetSuburb`, `streetCityTown`, `streetPostalCode`, `addressForNotices` |
 | Form DL1 Section B, "CLASS OF MOTOR VEHICLE" code table (a-h) and the prior-refusal question | `classOfMotorVehicle`, `hasBeenRefusedLearnersOrDrivingLicenceBefore`, `previousRefusalDetails` |
 | Form DL1 Section D, Declaration items (a)-(c) (disqualification/medical fitness) | `medicalFitnessDeclaration` |
@@ -97,11 +104,11 @@ independently verified" below.
   but not shown as a field on the DL1 form itself) is required at every DLTC
   nationwide, or varies by province/municipality.
 - Whether **cellphone number**, or any of the other Section A contact-detail
-  fields, is mandatory in practice at DLTC intake — the form itself carries no
-  asterisk or other required/optional marking on any contact field, so this
-  document conservatively models them as optional and models only the
-  identity/address/declaration fields the form's own structure makes
-  unambiguously required.
+  fields (including facsimile number), is mandatory in practice at DLTC
+  intake — the form itself carries no asterisk or other required/optional
+  marking on any contact field, so this document conservatively models them
+  as optional and models only the identity/address/declaration fields the
+  form's own structure makes unambiguously required.
 - The exact, current **driving-licence application/test fee** — no single
   national fee schedule was found (distinct from the separately gazetted
   motor-vehicle *licence-renewal* fee); `applicationFee` is modeled without a
