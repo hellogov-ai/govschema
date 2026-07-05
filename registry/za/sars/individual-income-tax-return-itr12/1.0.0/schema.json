@@ -1,0 +1,980 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "za/sars/individual-income-tax-return-itr12",
+  "version": "1.0.0",
+  "title": "South Africa Individual Income Tax Return (ITR12), 2026 year of assessment",
+  "description": "File a South African individual income tax return (ITR12) for the 2026 year of assessment (1 March 2025 to 28 February 2026) via SARS eFiling, the SARS MobiApp, or a telephonic SARS eBooking appointment. The ITR12 is a dynamically customised return: a taxpayer first answers a set of 'Form Wizard' Yes/No questions, and SARS generates only the return sections those answers require. This document models the taxpayer-information intake (identity, marital status, contact and address details, tax practitioner details), the 'Standard Questions on Form Wizard' (SARS's own term for the common-case customisation questions: employment status, IRP5/IT3(a) employment income, medical expenditure, retirement annuity contributions, travel/vehicle-fringe-benefit deductions, investment/trust/tax-free-investment income, rental income, partnerships, director/close-corporation membership, the Voluntary Disclosure Programme, high-value assets, s18A donations, and other income/expenses), the bank account details section, and the declaration and signature. It deliberately does not model the 'Comprehensive Questions on Form Wizard' (non-resident sourced income, foreign income, capital gains, local farming, and the many downstream income/deduction schedules those wizard answers dynamically add, e.g. rental-income or partnership detail grids) — SARS's own guide draws this same standard/comprehensive boundary, and the downstream sections are themselves repeating, per-item detail grids (e.g. up to 20 rental activities or 20 trusts) that spec v0.3's flat field model cannot represent (see SPEC.md Section 12). It does not submit the return; the live SARS eFiling/MobiApp source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "South African Revenue Service",
+    "abbreviation": "SARS",
+    "url": "https://www.sars.gov.za/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en-ZA"
+  },
+  "source": {
+    "url": "https://www.sars.gov.za/comprehensive-guide-to-the-itr12-income-tax-return-for-individuals/",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "IT-AE-36-G05 (Comprehensive Guide to the ITR12 Income Tax Return for Individuals), Revision 40, effective 29 June 2026"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-05",
+    "notes": "GOV-1201 'GovSchema Standard Research' research cycle: per GOV-1194's closing note, South Africa (opened across GOV-1174/1181/1187/1190/1194) had a DMV, Passport, Business Formation, and National ID schema published but no Taxes or Visa candidate, and that closing note specifically flagged SARS eFiling ITR12 as sourceable but not yet pursued. Opens the Taxes vertical for ZA (fifth of six focus verticals). Authored from SARS's own current 'Comprehensive Guide to the ITR12 Income Tax Return for Individuals' (IT-AE-36-G05, Revision 40, effective 29 June 2026 — retrieved directly from sars.gov.za, a genuine text-layer PDF extracted with pdfjs-dist), which is written for the 2026 year of assessment (due dates confirmed on p.7: 23 October 2026 for non-provisional taxpayers, 22 January 2027 for provisional taxpayers filing via eFiling) and documents both the Form Wizard customisation questions (Section 4) and the Taxpayer Information/Declaration/Bank Account Details sections of the return itself (Section 5). Cross-checked field names for the taxpayer-information block (surname, first name, other name, initials, ID/passport, marital status, spouse details, contact details, address) against an older archived static specimen of the return, a Provincial Treasury-hosted copy of the 2017 'LookFeel' ITR12 mock-up PDF (treasury.gov.za), which shows the same field set and character-length constraints (e.g. 13-digit ID number, 10-digit tax reference number) still described qualitatively (not by exact length) in the current guide; used only to corroborate field presence and rough sizing, not as the source of record for current-year content, since it predates the current guide by 9 years. The 10-digit tax-reference-number leading-digit convention (0, 1, 2, 3, or 9) is sourced from third-party tax-preparation guidance (TaxTim), since the SARS guide itself does not state the leading-digit rule explicitly; flagged in VERIFICATION.md as needing a first-party SARS confirmation. Not authored against the v0.3 edition axis: `edition.scheme` is a closed enum of `us-tax-year`/`gb-tax-year`/`award-year` (spec v0.3 SPEC.md Section 5.7, GSP-0005), and extending it to a `za-tax-year` scheme is a one-way-door spec change (GSP-0019, open, Founding Engineer/CEO sign-off) not made unilaterally here — this follows the same non-edition precedent already set by `fr/dgfip/income-tax-return-2042` and `de/finanzamt/income-tax-return-elster`, both of which are also annual individual income tax returns authored at a plain (non-edition) version path. The year of assessment is instead fixed in the title/description/documentRef; a future year's return would ship as a new major version. Deliberately out of scope, per the description: the 'Comprehensive Questions on Form Wizard' section (non-residents, foreign income, capital gains, local farming) and every downstream, per-item repeating income/deduction detail grid the wizard's Yes answers dynamically add (rental-income, partnership, trust, farming, and business/trade schedules) — spec v0.3 has no repeating/nested field model (SPEC.md Section 12), the same limitation the `us/irs/individual-income-tax-return-1040` VERIFICATION.md records for the Form 1040 dependents grid. A mock conformance/za/sars/individual-income-tax-return-itr12/1.0.0/application-packet.json test run (a married-in-community-of-property PAYE employee with medical and retirement-annuity contributions, filing via eFiling with her own SARS-registered bank account), independently checked with a from-scratch GSP-0013 condition evaluator, passed with 0 violations across 78 fields (50 collected, 28 correctly not-applicable) and 10 documents (7 required/applicable, 3 correctly not-applicable); confirmed the spouse-details, IRP5-certificate-count, medical/retirement-annuity-certificate, and bank-detail-change document requiredWhen gates fire correctly, and that the tax-practitioner and non-resident/comprehensive-wizard fields correctly stay out of scope. A mutation test (flipping claimSection18ADonations to true without adding the now-required numberOfPboDonationsRecipients) confirmed the evaluator correctly flags the newly-required field as a violation. Status remains 'draft' pending a live eFiling walkthrough (registration requires a South African tax reference number and OTP-verified contact details, which could not be exercised this cycle) — see VERIFICATION.md."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "incomeTaxReferenceNumber",
+      "label": "Income tax reference number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The taxpayer's 10-digit SARS income tax reference number, conventionally starting with 0, 1, 2, 3, or 9 (e.g. 0123456789). Pre-populated on the return and cannot be amended through it.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Income tax reference number' (cannot be amended)",
+      "validation": { "pattern": "^[0139][0-9]{9}$" }
+    },
+    {
+      "name": "isTaxPractitionerDeclaration",
+      "label": "Completing this return as a registered tax practitioner",
+      "type": "boolean",
+      "required": true,
+      "description": "Mark true if a registered tax practitioner is completing and submitting the return on the taxpayer's behalf. Determines whether the return carries a Taxpayer Declaration (false) or a Tax Practitioner Declaration (true) for signature, and whether the Tax Practitioner Details fields must be completed.",
+      "sourceRef": "Comprehensive Guide §4.1.1 'PERSON MAKING THE DECLARATION' — 'Mark with an \"X\" if you are completing the return as a tax practitioner'"
+    },
+    {
+      "name": "identificationType",
+      "label": "Identification type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the taxpayer is identified by South African ID number or by passport. Pre-populated from SARS registration records and cannot be amended through the return itself; changes require contacting SARS.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Identity number' / 'Passport number' (cannot be updated via the return)",
+      "validation": { "enum": ["sa_id", "passport"] }
+    },
+    {
+      "name": "idNumber",
+      "label": "Identity number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "identificationType", "equals": "sa_id" },
+      "description": "Personal identifier; handle as sensitive data. The taxpayer's 13-digit South African ID number.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Identity number'",
+      "validation": { "pattern": "^[0-9]{13}$" }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "identificationType", "equals": "passport" },
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Passport number'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "passportCountry",
+      "label": "Passport country of issue",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "identificationType", "equals": "passport" },
+      "description": "Three-letter country code of the passport's issuing country, e.g. ZAF for South Africa.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Passport Country'",
+      "validation": { "pattern": "^[A-Z]{3}$" }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport issue date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "identificationType", "equals": "passport" },
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Passport Issue Date'"
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Mandatory and editable through the return.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Surname': mandatory field",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'First name': mandatory field",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "otherName",
+      "label": "Other name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Other name': optional field",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "initials",
+      "label": "Initials",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "description": "The taxpayer's full initials.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Initials': mandatory field, 'Indicate your full initials'",
+      "validation": { "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Pre-populated from SARS registration records; cannot be amended through the return.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Date of birth' (cannot be updated via the return)"
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "The taxpayer's marital status as at 28 February (the last day of the year of assessment). Mandatory: it may affect the assessment where the taxpayer received investment or rental income, or entered into capital gain transactions.",
+      "sourceRef": "Comprehensive Guide §5.1(b) — 'Marital status': mandatory field",
+      "validation": { "enum": ["not_married", "married_in_community_of_property", "married_out_of_community_of_property"] }
+    },
+    {
+      "name": "spouseInitials",
+      "label": "Spouse's initials",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "maritalStatus", "equals": "married_in_community_of_property" },
+      "sourceRef": "Comprehensive Guide §5.1(c) — 'Spouse details': mandatory if married in community of property",
+      "validation": { "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "spouseIdNumber",
+      "label": "Spouse's identity number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "maritalStatus", "equals": "married_in_community_of_property" },
+      "description": "Personal identifier; handle as sensitive data. Required if the spouse has a South African ID number; use spousePassportNumber/spousePassportCountry instead for a foreign spouse.",
+      "sourceRef": "Comprehensive Guide §5.1(c) — 'Spouse details': mandatory if married in community of property",
+      "validation": { "pattern": "^[0-9]{13}$" }
+    },
+    {
+      "name": "spousePassportNumber",
+      "label": "Spouse's passport number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "For a foreign spouse without a South African ID number.",
+      "sourceRef": "Comprehensive Guide §5.1(c) — 'Spouse details'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "spousePassportCountry",
+      "label": "Spouse's passport country of issue",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Comprehensive Guide §5.1(c) — 'Spouse details'",
+      "validation": { "pattern": "^[A-Z]{3}$" }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "Encouraged (supports SARS's 'Go-Green' initiative and enables the notice of assessment to be emailed), not mandatory.",
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Email'",
+      "validation": { "minLength": 3, "maxLength": 254, "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }
+    },
+    {
+      "name": "noEmailAddressDeclared",
+      "label": "I declare that I do not have an email address",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Mark here with an \"X\" if you declare that you do not have an email address'"
+    },
+    {
+      "name": "cellphoneNumber",
+      "label": "Cell number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "Encouraged (SARS sends the assessment result by SMS), not mandatory.",
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Cell Number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "noCellphoneNumberDeclared",
+      "label": "I declare that I do not have a cellphone number",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Mark here with an \"X\" if you declare that you do not have a cell phone number'"
+    },
+    {
+      "name": "homeTelephoneNumber",
+      "label": "Home telephone number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Home Telephone Number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "businessTelephoneNumber",
+      "label": "Business telephone number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Business Telephone Number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "contactDetailsConfirmedCorrect",
+      "label": "Do you confirm that the email and telephone number(s) supplied are correct?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Do you confirm that the email and telephone number(s) supplied are correct?' (Select Y or N)"
+    },
+    {
+      "name": "residentialAddressSameAsPostal",
+      "label": "Residential address is the same as postal address",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details': 'mark the applicable box indicating that the addresses are the same'"
+    },
+    {
+      "name": "postalAddressLine1",
+      "label": "Postal address",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "postalSuburb",
+      "label": "Suburb (postal address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "postalCityTown",
+      "label": "City/town (postal address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "postalCode",
+      "label": "Postal code (postal address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "residentialAddressLine1",
+      "label": "Residential address",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "residentialAddressSameAsPostal", "equals": false },
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "residentialSuburb",
+      "label": "Suburb (residential address)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "residentialAddressSameAsPostal", "equals": false },
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "residentialCityTown",
+      "label": "City/town (residential address)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "residentialAddressSameAsPostal", "equals": false },
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "residentialPostalCode",
+      "label": "Postal code (residential address)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "residentialAddressSameAsPostal", "equals": false },
+      "sourceRef": "Comprehensive Guide §5.1(d) — 'Address Details'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "taxPractitionerRegistrationNumber",
+      "label": "Tax practitioner registration number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isTaxPractitionerDeclaration", "equals": true },
+      "description": "The first two characters must be 'PR' followed by 7 alphanumeric characters.",
+      "sourceRef": "Comprehensive Guide §5.1(e) — 'Tax Practitioner Registration No.'",
+      "validation": { "pattern": "^PR[0-9A-Za-z]{7}$" }
+    },
+    {
+      "name": "taxPractitionerTelephoneNumber",
+      "label": "Tax practitioner telephone number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "isTaxPractitionerDeclaration", "equals": true },
+      "sourceRef": "Comprehensive Guide §5.1(e) — 'Tax Practitioner Telephone No.'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "taxPractitionerEmailAddress",
+      "label": "Tax practitioner email address",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "If the tax practitioner has no email address, mark the corresponding 'no email address' declaration on the return instead (not separately modeled here).",
+      "sourceRef": "Comprehensive Guide §5.1(e) — 'Tax Practitioner Email Address'",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "isRsaTaxResidentFullYear",
+      "label": "I was a South African tax resident for the full year of assessment",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "This schema models the resident 'Standard Questions on Form Wizard' only. A taxpayer who is a foreign national and not an RSA tax resident, who ceased or reinstated RSA tax residency during the year, or who otherwise uses the 'Form Wizard for Non-Resident' (Comprehensive Guide §4.1.2-4.1.3, §4.3) is out of scope for this document.",
+      "sourceRef": "Comprehensive Guide §4.1.2 'RESIDENCY' / §4.1.3 'NON-RESIDENTS'"
+    },
+    {
+      "name": "wasUnemployedFullYear",
+      "label": "I was unemployed for the full year of assessment and did not receive any income",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.4(b) — 'Mark with an X if you were unemployed for the full year of assessment'"
+    },
+    {
+      "name": "madeRetirementAnnuityContributionsWhileUnemployed",
+      "label": "Made retirement annuity fund contributions while unemployed for the full year",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "wasUnemployedFullYear", "equals": true },
+      "sourceRef": "Comprehensive Guide §4.1.4(c) — 'Did you make any retirement annuity fund contributions?'"
+    },
+    {
+      "name": "wasUnemployedForPartOfYear",
+      "label": "I was unemployed for one or more periods during this year of assessment",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.4(d) — 'Were you unemployed for any period during this year of assessment?'"
+    },
+    {
+      "name": "numberOfUnemploymentPeriods",
+      "label": "Number of unemployment periods",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "wasUnemployedForPartOfYear", "equals": true },
+      "description": "Each continuous period of unemployment during the year of assessment counts as one period. Maximum of 5.",
+      "sourceRef": "Comprehensive Guide §4.1.4(d) — 'For how many periods were you unemployed?' (maximum value of 5)",
+      "validation": { "minimum": 1, "maximum": 5 }
+    },
+    {
+      "name": "receivedIrp5Income",
+      "label": "I received income reflected on an IRP5/IT3(a) certificate",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.5(a) — 'Indicate if you received income reflected on an IRP5/IT3(a) certificate'"
+    },
+    {
+      "name": "numberOfIrp5Certificates",
+      "label": "Number of IRP5/IT3(a) certificates received",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "receivedIrp5Income", "equals": true },
+      "description": "The return caters for a maximum of 15 IRP5/IT3(a) certificates captured this way.",
+      "sourceRef": "Comprehensive Guide §4.1.5(b) — 'How many certificates did you receive?' (maximum of fifteen)",
+      "validation": { "minimum": 1, "maximum": 15 }
+    },
+    {
+      "name": "paidMedicalExpensesAsMainMember",
+      "label": "I (or my employer) paid qualifying medical/disability expenses, including medical scheme contributions where I am the main member",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.5(c) — 'Mark with an \"X\" if you or your employer ... paid any qualifying disability and/or medical expenses ... where you are the main member'"
+    },
+    {
+      "name": "paidMedicalExpensesForDependentFamily",
+      "label": "I paid qualifying medical/disability expenses for a family member I am liable to support, who is not the medical scheme's main member",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.5(c) — 'Mark with an \"X\" if you paid any qualifying ... medical expenses ... for a family member for whom you are liable for family care and support'"
+    },
+    {
+      "name": "madeRetirementAnnuityContributions",
+      "label": "I (or my employer) contributed to my retirement annuity benefit (excluding pension and provident funds)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.5(d) — 'Mark with an \"X\" if you or your employer contributed to your retirement annuity benefit. This must exclude pension and provident funds'"
+    },
+    {
+      "name": "contributedToPensionOrProvidentFundNotOnCertificate",
+      "label": "I made additional pension/provident fund contributions not shown on any employee's tax certificate",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.5(d) — 'Mark with an \"X\" if you contributed to pension and/or provident fund for past or additional services not shown on any Employee Income Tax Certificate(s)'"
+    },
+    {
+      "name": "claimTravelAllowanceDeduction",
+      "label": "I want to claim a tax deduction against a travel allowance (kept a logbook)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.5(e) — 'Mark with an \"X\" if you want to claim a tax deduction for your travel allowance (not petrol/diesel allowance) if you kept a logbook'"
+    },
+    {
+      "name": "numberOfVehiclesForTravelClaim",
+      "label": "Number of vehicles used for the travel allowance claim",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "claimTravelAllowanceDeduction", "equals": true },
+      "description": "Maximum of 5; contact SARS if more.",
+      "sourceRef": "Comprehensive Guide §4.1.5(e) — 'Indicate the number of vehicles used during the year of assessment'",
+      "validation": { "minimum": 1, "maximum": 5 }
+    },
+    {
+      "name": "claimEmployerProvidedVehicleDeduction",
+      "label": "I want to claim a deduction for a vehicle provided by my employer",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.5(e) — 'Mark with an \"X\" if you want to claim a deduction for a vehicle provided by your employer?'"
+    },
+    {
+      "name": "numberOfEmployerProvidedVehicles",
+      "label": "Number of employer-provided vehicles used",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "claimEmployerProvidedVehicleDeduction", "equals": true },
+      "description": "Maximum of 12.",
+      "sourceRef": "Comprehensive Guide §4.1.5(e) — 'Insert the number of employer provided vehicles used during the year of assessment' (maximum of 12)",
+      "validation": { "minimum": 1, "maximum": 12 }
+    },
+    {
+      "name": "receivedForeignServiceRemunerationOnCertificate",
+      "label": "I received payment/remuneration for work done outside South Africa that is shown on my South African employee's tax certificate(s)",
+      "type": "boolean",
+      "required": true,
+      "description": "The s10(1)(o) foreign-employment-exemption qualifying-criteria sub-questions this answer can trigger are out of scope for this document; a 'true' answer should be treated as a signal that specialist review is needed.",
+      "sourceRef": "Comprehensive Guide §4.1.5(f) — 'Mark with an \"X\" if you received any form of payment/remuneration for work done outside RSA that is shown on your South African Employee Income Tax Certificate(s)'"
+    },
+    {
+      "name": "receivedInterestDividendsOrReit",
+      "label": "I received local/foreign interest, REIT distributions, taxable local/foreign dividends, or s8E/s8EA deemed dividend income",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.6(a) — 'Did you receive any interest (local and foreign), distributions from a Real Estate Investment Trust (REIT) ... taxable foreign dividends and/or dividends deemed to be income in terms of s8E & s8EA?'"
+    },
+    {
+      "name": "receivedExemptDividendIncome",
+      "label": "I received exempt local and/or foreign dividend income",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "receivedInterestDividendsOrReit", "equals": true },
+      "sourceRef": "Comprehensive Guide §4.1.6(a) — 'indicate \"Did you receive exempt local and/or foreign dividend income?\"'"
+    },
+    {
+      "name": "receivedTrustIncome",
+      "label": "I received or became entitled to income as a beneficiary of a trust, or income deemed to be mine under s7",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.6(b) — 'Mark with an \"X\" if you received or became entitled to any income as a beneficiary of a Trust, or income deemed to be yours under s7'"
+    },
+    {
+      "name": "numberOfTrusts",
+      "label": "Number of trusts applicable",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "receivedTrustIncome", "equals": true },
+      "description": "Maximum of 20.",
+      "sourceRef": "Comprehensive Guide §4.1.6(b) — 'Indicate the number of Trust(s) applicable?' (maximum of 20)",
+      "validation": { "minimum": 1, "maximum": 20 }
+    },
+    {
+      "name": "hadTaxFreeInvestmentTransactions",
+      "label": "I had contribution, transfer, withdrawal, or income transactions on a Tax Free Investment this year",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.6(c) — 'Were there any transactions (contributions, transfers, withdrawals, income received/accrued) on any Tax Free Investments held by you during this year of assessment?'"
+    },
+    {
+      "name": "numberOfTaxFreeInvestments",
+      "label": "Number of tax free investments",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "hadTaxFreeInvestmentTransactions", "equals": true },
+      "sourceRef": "Comprehensive Guide §4.1.6(c) — 'Indicate the number of tax free investments'",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "derivedRentalIncome",
+      "label": "I derived income from letting fixed property/properties",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.7(a) — 'Did you derive income from the letting of fixed property(ies) ...?'"
+    },
+    {
+      "name": "numberOfRentalProperties",
+      "label": "Number of separate rental activities",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "derivedRentalIncome", "equals": true },
+      "description": "Maximum of 20.",
+      "sourceRef": "Comprehensive Guide §4.1.7(a) — 'From how many separate rental properties did you derive income?' (maximum of 20)",
+      "validation": { "minimum": 1, "maximum": 20 }
+    },
+    {
+      "name": "isPartnerInBusiness",
+      "label": "I am a partner in one or more businesses",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.8(a) — 'Are you a partner in a business?'"
+    },
+    {
+      "name": "numberOfPartnershipBusinesses",
+      "label": "Number of businesses I am a partner in",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "isPartnerInBusiness", "equals": true },
+      "description": "Maximum of 20.",
+      "sourceRef": "Comprehensive Guide §4.1.8(a) — 'How many businesses are you a partner in?' (maximum 20)",
+      "validation": { "minimum": 1, "maximum": 20 }
+    },
+    {
+      "name": "isDirectorOrCloseCorporationMember",
+      "label": "I am a director of a company or a member of a close corporation",
+      "type": "boolean",
+      "required": true,
+      "description": "Selecting this adds a Statement of Local and Foreign Assets and Liabilities section to the return, out of scope for this document.",
+      "sourceRef": "Comprehensive Guide §4.1.9(b) — 'Mark with an \"X\" if you a director of a company or a member of a close corporation'"
+    },
+    {
+      "name": "relatesToVoluntaryDisclosureProgramme",
+      "label": "This return relates to an application made under the SARS Voluntary Disclosure Programme",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.10(a) — 'Mark with an \"X\" if any declaration in this return relates to an application made under the SARS Voluntary Disclosure Programme'"
+    },
+    {
+      "name": "hasAssetsExceedingR50Million",
+      "label": "I have assets which at market value are in excess of R50 million",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.11(a) — 'Mark with an \"X\" if you have assets which at market value are in excess of R50 million'"
+    },
+    {
+      "name": "claimSection18ADonations",
+      "label": "I want to claim donations made to an approved Public Benefit Organisation under s18A",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §4.1.12(a) — 'Do you want to claim donations made to an approved Public Benefit Organisation in terms of s18A?'"
+    },
+    {
+      "name": "numberOfPboDonationsRecipients",
+      "label": "Number of Public Benefit Organisations donated to",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "claimSection18ADonations", "equals": true },
+      "description": "Maximum of 99.",
+      "sourceRef": "Comprehensive Guide §4.1.12(a) — 'How many Public Benefit Organisations did you donate to?' (maximum value allowed is 99)",
+      "validation": { "minimum": 1, "maximum": 99 }
+    },
+    {
+      "name": "hasOtherIncomeOrAllowableExpenses",
+      "label": "I received other income (e.g. local business/trade/professional income) and/or incurred other allowable expenses not addressed above",
+      "type": "boolean",
+      "required": true,
+      "description": "Also select true if no IRP5/IT3(a) certificate was received but medical expenses and/or retirement annuity contributions must still be claimed. Triggers a more comprehensive set of questions, out of scope for this document.",
+      "sourceRef": "Comprehensive Guide §4.1.14(b) — 'Mark with an \"X\" if you received any other income ... and/or incur any other allowable expenses ... not addressed above'"
+    },
+    {
+      "name": "bankAccountHolderDeclaration",
+      "label": "Bank account holder declaration",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Bank Account Holder Declaration'",
+      "validation": {
+        "enum": ["uses_own_sa_bank_account", "uses_third_party_sa_bank_account", "no_sa_bank_account"]
+      }
+    },
+    {
+      "name": "reasonForNoOrThirdPartyBankAccount",
+      "label": "Reason for no local / third-party bank account",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "bankAccountHolderDeclaration", "notEquals": "uses_own_sa_bank_account" },
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Reason for No Local / 3rd Party Bank Account'",
+      "validation": {
+        "enum": [
+          "non_resident_without_local_account",
+          "insolvency_curatorship",
+          "deceased_estate",
+          "shared_account",
+          "income_below_threshold_impractical",
+          "statutory_restrictions",
+          "minor_child"
+        ]
+      }
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Bank account number",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "requiredWhen": { "field": "bankAccountHolderDeclaration", "notEquals": "no_sa_bank_account" },
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Account number'",
+      "validation": { "pattern": "^[0-9]{1,17}$" }
+    },
+    {
+      "name": "bankName",
+      "label": "Bank name",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "requiredWhen": { "field": "bankAccountHolderDeclaration", "notEquals": "no_sa_bank_account" },
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Bank Name' (selected from a drop-down list; 'Other' if not listed)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "branchNumber",
+      "label": "Branch number",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "requiredWhen": { "field": "bankAccountHolderDeclaration", "notEquals": "no_sa_bank_account" },
+      "description": "Auto-completed on the return once bankName is selected from the drop-down list, unless 'Other' is selected.",
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Branch number'",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "accountType",
+      "label": "Account type",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "bankAccountHolderDeclaration", "notEquals": "no_sa_bank_account" },
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Account type' (cheque, savings, or transmission)",
+      "validation": { "enum": ["cheque", "savings", "transmission"] }
+    },
+    {
+      "name": "accountHolderName",
+      "label": "Account holder name",
+      "type": "string",
+      "classification": "financial",
+      "required": false,
+      "requiredWhen": { "field": "bankAccountHolderDeclaration", "notEquals": "no_sa_bank_account" },
+      "description": "As registered at the bank.",
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Account holder name'",
+      "validation": { "minLength": 1, "maxLength": 140 }
+    },
+    {
+      "name": "bankDetailsAgreementStatement",
+      "label": "I declare that the bank account information provided is true and correct in every respect",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "bankAccountHolderDeclaration", "notEquals": "no_sa_bank_account" },
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "Comprehensive Guide §5.3.1(b) — 'Agreement Statement': 'Mark the corresponding statement on the return with an \"X\"'"
+    },
+    {
+      "name": "declarationTrueAndCorrect",
+      "label": "I declare that this return is a full and accurate disclosure of all relevant information",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Misrepresentation, neglect, or omission may be subject to penalties, additional assessments and interest, or criminal prosecution. The declaration text shown differs depending on whether the taxpayer or a tax practitioner signs (see isTaxPractitionerDeclaration).",
+      "sourceRef": "Comprehensive Guide §5.2(b) — 'you must ensure that you make a full and accurate disclosure of all relevant information required in the income tax return'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date signed",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Comprehensive Guide §5.2(e) — 'you must read the declaration on the return and sign accordingly'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocument",
+      "label": "Valid South African ID document (green bar-coded book or Smart ID Card) or passport",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §5.1(b) — Identity number/Passport number fields"
+    },
+    {
+      "id": "irp5Certificates",
+      "label": "IRP5/IT3(a) Employee's Tax Certificate(s)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "receivedIrp5Income", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §3.4(a) — 'IRP5/IT3(a) Employees' Tax Certificate for remuneration received or in respect of lump sums'"
+    },
+    {
+      "id": "medicalSchemeTaxCertificate",
+      "label": "Medical scheme tax certificate and proof of qualifying medical expenses not recovered from the scheme",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "paidMedicalExpensesAsMainMember", "equals": true },
+          { "field": "paidMedicalExpensesForDependentFamily", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §3.4(a) — 'The tax certificate received from your medical scheme ... Proof of qualifying medical expenses paid by you and not recovered from a medical scheme'"
+    },
+    {
+      "id": "retirementAnnuityFundCertificate",
+      "label": "Income tax certificate(s) from the financial institution for retirement annuity contributions made",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "madeRetirementAnnuityContributions", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §3.4(a) — 'The income tax certificate(s) received from the financial institution for retirement annuity contributions made'"
+    },
+    {
+      "id": "taxFreeInvestmentCertificate",
+      "label": "Tax certificate(s) from the financial institution(s) for tax free investments",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "hadTaxFreeInvestmentTransactions", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §3.4(a) — 'The tax certificate(s) received from the financial institution(s) for tax free investments'"
+    },
+    {
+      "id": "section18ADonationCertificate",
+      "label": "Section 18A donation tax certificate(s)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "claimSection18ADonations", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §3.4(a) — 'Section 18A donation tax certificate'"
+    },
+    {
+      "id": "travelLogbook",
+      "label": "Logbook of business travel",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "claimTravelAllowanceDeduction", "equals": true },
+          { "field": "claimEmployerProvidedVehicleDeduction", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §3.4(a) — 'If you received a travel allowance or a fringe benefit for an employer provided vehicle, you must have a logbook to claim the business travel deductions'"
+    },
+    {
+      "id": "proofOfResidentialAddress",
+      "label": "Proof of residential address (e.g. a utility account, less than 3 months old, in the taxpayer's name)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "bankAccountHolderDeclaration", "equals": "uses_own_sa_bank_account" },
+          { "field": "bankAccountHolderDeclaration", "equals": "uses_third_party_sa_bank_account" }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §5.3.2 — documentation required for bank detail changes; §5.3.3 — proof of residential address table"
+    },
+    {
+      "id": "bankVerificationDocument",
+      "label": "Original bank statement (or ATM/internet-generated/ABSA eStamped statement), not more than 3 months old, confirming account holder name, bank, account number and type, and branch code",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "bankAccountHolderDeclaration", "equals": "uses_own_sa_bank_account" },
+          { "field": "bankAccountHolderDeclaration", "equals": "uses_third_party_sa_bank_account" }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Comprehensive Guide §5.3.2(a) — 'An original bank statement, or ATM/Internet generated statement, or ABSA eStamped statement, not more than three months old'"
+    },
+    {
+      "id": "declarationSignature",
+      "label": "Signature of the taxpayer (or tax practitioner, if applicable), Declaration section",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I declare that this return is a full and accurate disclosure of all relevant information required in the income tax return; misrepresentation, neglect, or omission to submit a return or supplying false information may be subject to penalties and/or additional assessments (together with interest) and/or criminal prosecution.",
+      "sourceRef": "Comprehensive Guide §5.2 — 'DECLARATION AND SIGNATURE'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "taxpayer_identity",
+      "title": "Taxpayer identity",
+      "fields": [
+        "incomeTaxReferenceNumber",
+        "isTaxPractitionerDeclaration",
+        "identificationType",
+        "idNumber",
+        "passportNumber",
+        "passportCountry",
+        "passportIssueDate",
+        "surname",
+        "firstName",
+        "otherName",
+        "initials",
+        "dateOfBirth"
+      ],
+      "next": "marital_and_spouse"
+    },
+    {
+      "id": "marital_and_spouse",
+      "title": "Marital status and spouse details",
+      "fields": ["maritalStatus", "spouseInitials", "spouseIdNumber", "spousePassportNumber", "spousePassportCountry"],
+      "next": "contact_and_address"
+    },
+    {
+      "id": "contact_and_address",
+      "title": "Contact and address details",
+      "fields": [
+        "emailAddress",
+        "noEmailAddressDeclared",
+        "cellphoneNumber",
+        "noCellphoneNumberDeclared",
+        "homeTelephoneNumber",
+        "businessTelephoneNumber",
+        "contactDetailsConfirmedCorrect",
+        "residentialAddressSameAsPostal",
+        "postalAddressLine1",
+        "postalSuburb",
+        "postalCityTown",
+        "postalCode",
+        "residentialAddressLine1",
+        "residentialSuburb",
+        "residentialCityTown",
+        "residentialPostalCode"
+      ],
+      "next": "tax_practitioner"
+    },
+    {
+      "id": "tax_practitioner",
+      "title": "Tax practitioner details",
+      "fields": ["taxPractitionerRegistrationNumber", "taxPractitionerTelephoneNumber", "taxPractitionerEmailAddress"],
+      "next": "residency_and_employment"
+    },
+    {
+      "id": "residency_and_employment",
+      "title": "Residency and employment status",
+      "fields": [
+        "isRsaTaxResidentFullYear",
+        "wasUnemployedFullYear",
+        "madeRetirementAnnuityContributionsWhileUnemployed",
+        "wasUnemployedForPartOfYear",
+        "numberOfUnemploymentPeriods"
+      ],
+      "next": "irp5_income_and_deductions"
+    },
+    {
+      "id": "irp5_income_and_deductions",
+      "title": "Employment income and related deductions",
+      "fields": [
+        "receivedIrp5Income",
+        "numberOfIrp5Certificates",
+        "paidMedicalExpensesAsMainMember",
+        "paidMedicalExpensesForDependentFamily",
+        "madeRetirementAnnuityContributions",
+        "contributedToPensionOrProvidentFundNotOnCertificate",
+        "claimTravelAllowanceDeduction",
+        "numberOfVehiclesForTravelClaim",
+        "claimEmployerProvidedVehicleDeduction",
+        "numberOfEmployerProvidedVehicles",
+        "receivedForeignServiceRemunerationOnCertificate"
+      ],
+      "next": "other_income_sources"
+    },
+    {
+      "id": "other_income_sources",
+      "title": "Other income sources",
+      "fields": [
+        "receivedInterestDividendsOrReit",
+        "receivedExemptDividendIncome",
+        "receivedTrustIncome",
+        "numberOfTrusts",
+        "hadTaxFreeInvestmentTransactions",
+        "numberOfTaxFreeInvestments",
+        "derivedRentalIncome",
+        "numberOfRentalProperties",
+        "isPartnerInBusiness",
+        "numberOfPartnershipBusinesses",
+        "isDirectorOrCloseCorporationMember",
+        "relatesToVoluntaryDisclosureProgramme",
+        "hasAssetsExceedingR50Million",
+        "hasOtherIncomeOrAllowableExpenses"
+      ],
+      "next": "donations"
+    },
+    {
+      "id": "donations",
+      "title": "Donations",
+      "fields": ["claimSection18ADonations", "numberOfPboDonationsRecipients"],
+      "next": "bank_account"
+    },
+    {
+      "id": "bank_account",
+      "title": "Bank account details",
+      "fields": [
+        "bankAccountHolderDeclaration",
+        "reasonForNoOrThirdPartyBankAccount",
+        "bankAccountNumber",
+        "bankName",
+        "branchNumber",
+        "accountType",
+        "accountHolderName",
+        "bankDetailsAgreementStatement"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and signature",
+      "fields": ["declarationTrueAndCorrect", "declarationDate"]
+    }
+  ]
+}
