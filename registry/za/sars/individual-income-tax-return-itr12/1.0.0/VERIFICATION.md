@@ -37,11 +37,14 @@ interactively — see "What is NOT yet independently verified" below.
   of date and was **not** used as the source of record for any field's
   current-year presence, wording, or requiredness; those all come from the
   2026-effective Comprehensive Guide.
-- The 10-digit tax-reference-number leading-digit convention (0, 1, 2, 3, or
-  9) is sourced from third-party tax-preparation guidance (TaxTim), since the
-  SARS guide itself states only that the reference number is 10 digits and
-  does not restate the leading-digit rule. Flagged below as needing a
-  first-party SARS source.
+- The tax reference number's 10-digit length and its leading-digit
+  convention (0, 1, 2, 3, or 9) are both sourced from third-party
+  tax-preparation guidance (TaxTim); on independent re-check, the current
+  Comprehensive Guide never restates a digit count or format for the income
+  tax reference number at all (it is described only as an unamendable
+  pre-populated field, §5.1(b)) — corrected from this document's earlier
+  draft note, which had overstated that the guide itself confirms the
+  10-digit length. Flagged below as needing a first-party SARS source.
 - `www.sarsefiling.co.za` (the live eFiling portal) requires a registered
   eFiler login to reach the actual return wizard; it was not walked
   screen-by-screen this cycle (see "What is NOT yet independently verified").
