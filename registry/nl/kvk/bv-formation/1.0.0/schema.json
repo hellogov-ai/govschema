@@ -1,0 +1,708 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nl/kvk/bv-formation",
+  "version": "1.0.0",
+  "title": "Netherlands Private Limited Company Formation (Besloten Vennootschap, BV)",
+  "description": "Form a Dutch private limited company — a besloten vennootschap (BV) — by notarial deed of incorporation and registration in the Business Register (Handelsregister), on behalf of the Netherlands Chamber of Commerce (Kamer van Koophandel, KVK). This is the Dutch analogue to gb/companies-house/company-incorporation-in01, ie/cro/company-incorporation, ca/on/registration/business-incorporation, us/ca/sos/business-entity-llc-formation, au/asic/proprietary-company-registration, de/handelsregister/gmbh-formation-musterprotokoll, and fr/inpi/sasu-or-eurl-formation, distinct from nl/kvk/sole-proprietorship-registration-eenmanszaak (which covers only the one-owner eenmanszaak, not a legal entity with separate legal personality). A BV must be incorporated by a notarial deed (oprichtingsakte) before a civil-law notary (§ 2:175 Burgerlijk Wetboek Boek 2, BW2); the deed and its annexed articles of association (statuten) are then filed with KVK, which enters the BV in the Handelsregister — the BV acquires legal personality on execution of the deed (§ 2:175 lid 2 BW2), but third parties acting on its behalf before Handelsregister registration remain personally liable until the company ratifies their acts (§ 2:203 BW2). Scoped to the simplest case: a single founder who is also the BV's sole shareholder and sole managing director (bestuurder), mirroring the single-founder scope already used for de/handelsregister/gmbh-formation-musterprotokoll. Out of scope: multi-founder/multi-shareholder incorporations, a monistic board (one-tier board with executive and non-executive directors, only relevant once a BV has more than one bestuurder), a supervisory board (raad van commissarissen), non-cash (in-kind) capital contributions, a naamloze vennootschap (NV, the public-company sibling also covered by KVK Formulier 3), and the separate post-incorporation UBO (Ultimate Beneficial Owner) filing in KVK's UBO-register (KVK Formulier 30) and Belastingdienst tax registration, neither of which this document models. It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Netherlands Chamber of Commerce, via a Dutch civil-law notary",
+    "abbreviation": "KVK",
+    "url": "https://www.kvk.nl"
+  },
+  "process": {
+    "type": "registration",
+    "language": "nl-NL"
+  },
+  "source": {
+    "url": "https://www.kvk.nl/over-het-handelsregister/formulier-3-inschrijving-bv-of-nv/",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "KVK Formulier 3 ('Besloten vennootschap of naamloze vennootschap inschrijven', March 2026 edition) and KVK Formulier 11 ('Functionarissen van een rechtspersoon inschrijven', December 2025 edition); Burgerlijk Wetboek Boek 2, Titel 5, §§ 2:175, 2:178, 2:186, 2:191, 2:203"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "GOV-1157 'GovSchema Standard Research' research cycle: a catalog audit found every gap named in the issue's own notes (DE Steuer-ID, SG NRIC loss/damage + re-registration, NZ RealMe, remaining voter registration) already closed in prior cycles (GOV-651, GOV-634, GOV-641, GOV-660, and the GOV-1043/1075/1121/1150 voter-registration sequence) — those notes are stale. The real open gap, flagged by the GOV-1136 cycle that authored de/handelsregister/gmbh-formation-musterprotokoll, was that nl/kvk/sole-proprietorship-registration-eenmanszaak covers only the sole-trader form, not a true limited-liability company (Business Formation's 'LLC' analogue). Authored directly from KVK's own downloadable Formulier 3 and Formulier 11 AcroForm PDFs (both retrieved with a direct, unblocked fetch from production-site-nl.kvk.bloomreach.cloud and extracted in full — text layer plus getFieldObjects()/getAnnotations() — with pdfjs-dist), cross-checked against BW2 Titel 5's own numbered articles for the notarial-deed and legal-personality rules the KVK forms themselves do not state. Programmatically checked every AcroForm annotation's Required flag on both PDFs (131 fields on Formulier 3, 157 on Formulier 11): none set the PDF's own Required bit, the same pattern already documented for nl/kvk/sole-proprietorship-registration-eenmanszaak — this document's required/requiredWhen assignments therefore reflect the forms' own prose instructions and standard registration necessity, not a confirmed submission-time gate. A mock conformance/nl/kvk/bv-formation/1.0.0/application-packet.json test run (single-founder BV, home-address-as-visiting-address, wholesale-only, EUR 1 nominal paid-up capital under the post-Flex-BV regime), checked with a from-scratch script re-implementing the schema's own required/requiredWhen condition grammar, passed with 0 violations across 34 fields; a mutation test confirmed the continuingExistingBusiness and soleShareholderSinceDate requiredWhen gates both fire correctly. Status remains 'draft' pending independent field-by-field re-review and a live-notary/kvk.nl portal walkthrough (no such live wizard exists for this notarial process); see VERIFICATION.md for the full source table and out-of-scope list."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "registrationType",
+      "label": "Are you registering a new BV, or continuing an existing business or establishment as a BV?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "data",
+      "description": "Determines which start-date and prior-business fields apply. 'Continuing' means an existing business or establishment is taken over (e.g. by purchase) and carried on as a BV, distinct from incorporating one from scratch.",
+      "sourceRef": "Formulier 3, §1.1: 'Ik start een nieuwe bv.' / 'Ik zet een bestaande onderneming of vestiging voort als bv.'",
+      "validation": { "enum": ["new_bv", "continuing_existing_business"] }
+    },
+    {
+      "name": "startDate",
+      "label": "Start date of the BV",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "new_bv" },
+      "description": "Usually the date the BV begins helping customers, though earlier registration is sometimes necessary (e.g. to request quotes).",
+      "sourceRef": "Formulier 3, §1.1: 'Startdatum van de bv of nv:'"
+    },
+    {
+      "name": "existingBusinessName",
+      "label": "Name of the existing business or establishment being taken over",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "sourceRef": "Formulier 3, §1.1: 'De naam van de onderneming of vestiging is:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "existingBusinessLocation",
+      "label": "Location of the existing business or establishment being taken over",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "sourceRef": "Formulier 3, §1.1: 'De vestigingsplaats van de onderneming of vestiging is:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "existingBusinessKvkNumber",
+      "label": "KVK number of the existing business or establishment",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "sourceRef": "Formulier 3, §1.1: 'Het KVK-nummer is:'",
+      "validation": { "pattern": "^[0-9]{8}$", "minLength": 8, "maxLength": 8 }
+    },
+    {
+      "name": "continuationDate",
+      "label": "Date of continuation of the business or establishment",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "description": "The date on the signed takeover contract, when the BV takes over the business or establishment.",
+      "sourceRef": "Formulier 3, §1.1: 'De datum van voortzetting van de onderneming of vestiging is:'"
+    },
+    {
+      "name": "originalEstablishmentDate",
+      "label": "Original start date of the business or establishment in the Business Register",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "registrationType", "equals": "continuing_existing_business" },
+      "description": "If unknown, KVK enters it instead, so this field is never required even on the continuation path.",
+      "sourceRef": "Formulier 3, §1.1: 'De eerste startdatum van de onderneming of vestiging in het Handelsregister is... Als u de datum niet kent, vult KVK die in.'"
+    },
+    {
+      "name": "companyName",
+      "label": "Name of the BV as stated in the articles of association",
+      "type": "string",
+      "required": true,
+      "description": "Copied from the statuten (articles of association) annexed to the notarial deed of incorporation, including the mandatory 'B.V.' legal-form suffix.",
+      "sourceRef": "Formulier 3, §2.1: 'De naam van de bv of nv zoals vermeld in de statuten is:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "registeredSeat",
+      "label": "Registered seat (statutaire zetel) of the BV",
+      "type": "string",
+      "required": true,
+      "description": "The Dutch municipality that is the BV's statutory seat, copied from the articles of association. Distinct from the visiting address (businessVisitingAddress).",
+      "sourceRef": "Formulier 3, §2.1: 'De zetel van de bv of nv zoals vermeld in de statuten is:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "incorporationDeedDate",
+      "label": "Date of the deed of incorporation (akte van oprichting)",
+      "type": "date",
+      "required": true,
+      "description": "The date the notary executes the deed. The BV acquires legal personality on this date (§ 2:175 lid 2 BW2).",
+      "sourceRef": "Formulier 3, §2.1: 'Datum van de akte van oprichting is:'; § 2:175 lid 2 BW2",
+      "classification": "pii"
+    },
+    {
+      "name": "effectiveDate",
+      "label": "Date of effect, if different from the deed date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Formulier 3, §2.1: 'De datum van ingang is (als die afwijkt van de datum van de akte van oprichting):'"
+    },
+    {
+      "name": "issuedCapitalAmount",
+      "label": "Issued capital (geplaatst kapitaal) of the BV",
+      "type": "number",
+      "required": true,
+      "description": "Since the 2012 Flex-BV reform there is no statutory minimum issued-capital amount for a BV (unlike the pre-2012 requirement of EUR 18,000); the amount is fixed only by the articles of association.",
+      "sourceRef": "Formulier 3, §3.1: 'Wat is het geplaatste kapitaal van de bv?'; the pre-2012 EUR 18,000 minimum was abolished by the Wet vereenvoudiging en flexibilisering bv-recht (Flex-BV Act)",
+      "validation": { "minimum": 0.01 }
+    },
+    {
+      "name": "issuedCapitalCurrency",
+      "label": "Currency of the issued capital",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Formulier 3, §3: 'Geef daarbij aan om welke munteenheid het gaat (valuta).'",
+      "validation": { "pattern": "^[A-Z]{3}$" }
+    },
+    {
+      "name": "paidUpCapitalAmount",
+      "label": "Paid-up capital (gestort kapitaal) of the BV",
+      "type": "number",
+      "required": true,
+      "description": "Must be paid up in full before or at incorporation for a cash contribution; may be as low as one eurocent under the Flex-BV regime.",
+      "sourceRef": "Formulier 3, §3.2: 'Wat is het gestorte kapitaal van de bv?'",
+      "validation": { "minimum": 0.01 }
+    },
+    {
+      "name": "paidUpCapitalCurrency",
+      "label": "Currency of the paid-up capital",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Formulier 3, §3: 'Geef daarbij aan om welke munteenheid het gaat (valuta).'",
+      "validation": { "pattern": "^[A-Z]{3}$" }
+    },
+    {
+      "name": "primaryTradeName",
+      "label": "Trade name",
+      "type": "string",
+      "required": true,
+      "description": "The trade name (handelsnaam) the BV uses to do business, written first if there is more than one.",
+      "sourceRef": "Formulier 3, §5.1: 'Eén naam. De handelsnaam is:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "hasAdditionalTradeNames",
+      "label": "Does the BV have more than one trade name?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.1: 'Heeft de bv of nv één of meer handelsnamen?'"
+    },
+    {
+      "name": "additionalTradeNames",
+      "label": "Additional trade names",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasAdditionalTradeNames", "equals": true },
+      "sourceRef": "Formulier 3, §5.1: 'Meer namen. De handelsnamen zijn:'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "businessActivities",
+      "label": "Activities of the BV",
+      "type": "string",
+      "required": true,
+      "description": "Description of the BV's current activities, products, and services — not planned future activities. KVK uses this to assign one or more SBI (Standard Industrial Classification) codes.",
+      "sourceRef": "Formulier 3, §5.2: 'Welke activiteiten voert de bv of nv uit?'",
+      "validation": { "minLength": 1, "maxLength": 1000 }
+    },
+    {
+      "name": "mainBusinessActivity",
+      "label": "Main activity of the BV",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.3: 'Wat is de belangrijkste activiteit van de bv of nv?'",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "sellsToConsumersRetail",
+      "label": "Does the BV sell products to consumers (retail)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.4: 'Verkoopt de bv of nv producten aan andere consumenten (detailhandel)?'"
+    },
+    {
+      "name": "retailInShop",
+      "label": "Sells in a shop",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Formulier 3, §5.4: 'In een winkel.'"
+    },
+    {
+      "name": "retailAtMarket",
+      "label": "Sells at a market",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Formulier 3, §5.4: 'Op de markt.'"
+    },
+    {
+      "name": "retailViaStreetTrading",
+      "label": "Sells via street trading",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Formulier 3, §5.4: 'Via straathandel.'"
+    },
+    {
+      "name": "retailViaInternet",
+      "label": "Sells via the internet",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Formulier 3, §5.4: 'Via internet.'"
+    },
+    {
+      "name": "retailFromHome",
+      "label": "Sells from home",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Formulier 3, §5.4: 'Vanuit huis.'"
+    },
+    {
+      "name": "retailOtherChannel",
+      "label": "Sells via another channel not listed",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "sellsToConsumersRetail", "equals": true },
+      "sourceRef": "Formulier 3, §5.4: 'Anders:'"
+    },
+    {
+      "name": "retailOtherChannelDescription",
+      "label": "Description of the other sales channel",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "retailOtherChannel", "equals": true },
+      "sourceRef": "Formulier 3, §5.4: 'Anders:' free-text channel description",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "sellsWholesale",
+      "label": "Does the BV sell products to other businesses or legal entities (wholesale)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.5: 'Verkoopt de bv of nv producten aan andere ondernemingen of rechtspersonen (groothandel)?'"
+    },
+    {
+      "name": "importsGoods",
+      "label": "Does the BV import products from abroad?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.6: 'Voert de bv of nv producten in vanuit het buitenland (import)?'"
+    },
+    {
+      "name": "exportsGoods",
+      "label": "Does the BV export products abroad?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.7: 'Voert de bv of nv producten uit naar het buitenland (export)?'"
+    },
+    {
+      "name": "businessVisitingAddress",
+      "label": "Visiting address of the BV",
+      "type": "string",
+      "required": true,
+      "description": "The address of the BV's principal establishment. Cannot be a PO Box. If not the same as a director's home address, proof of the right to use the address (e.g. rental agreement, proof of ownership, or a declaration of consent) may be required.",
+      "sourceRef": "Formulier 3, §5.8: 'Wat is het bezoekadres van de bv of nv?'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "hasDifferentPostalAddress",
+      "label": "Is the postal address different from the visiting address?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.9: 'Heeft de bv of nv een ander postadres dan het bezoekadres?'"
+    },
+    {
+      "name": "businessPostalAddress",
+      "label": "Postal address of the BV",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDifferentPostalAddress", "equals": true },
+      "description": "May be a PO Box address, unlike the visiting address.",
+      "sourceRef": "Formulier 3, §5.9: 'Ja, het postadres, postbusadres of postbusnummer is:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "businessPhoneNumber1",
+      "label": "Telephone number 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Not published in the Business Register.",
+      "sourceRef": "Formulier 3, §5.10: 'Telefoonnummer 1:'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "businessPhoneNumber2",
+      "label": "Telephone number 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Formulier 3, §5.10: 'Telefoonnummer 2:'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "businessWebsiteUrl",
+      "label": "Website (URL)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Formulier 3, §5.10: 'Internetadres (website):'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "businessEmailAddress",
+      "label": "Business email address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.10: 'E-mailadres:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "employeeCount15PlusHoursPerWeek",
+      "label": "Number of people who work 15 hours or more per week",
+      "type": "integer",
+      "required": true,
+      "description": "Includes directors, employees, hired and temporary workers, and other persons (e.g. family members) working at the principal establishment.",
+      "sourceRef": "Formulier 3, §5.11: 'Aantal personen dat 15 uur of meer werkt per week:'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employeeCountUnder15HoursPerWeek",
+      "label": "Number of people who work less than 15 hours per week",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Formulier 3, §5.11: 'Aantal personen dat minder dan 15 uur werkt per week:'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "allowMarketingUseOfAddress",
+      "label": "May sellers use the BV's visiting and postal address for marketing (unsolicited advertising)?",
+      "type": "boolean",
+      "required": true,
+      "description": "If declined, KVK records on the Business Register extract that sellers may not use the BV's address for marketing purposes.",
+      "sourceRef": "Formulier 3, §6.1: 'Mogen verkopers het bezoekadres en postadres van de bv of nv in het Handelsregister gebruiken?'"
+    },
+    {
+      "name": "hiresOutEmployeesForPayment",
+      "label": "Does the BV sometimes hire out employees to other businesses or legal entities for payment?",
+      "type": "boolean",
+      "required": true,
+      "description": "Triggers a notification obligation under the Wet Waadi (Wet allocatie arbeidskrachten door intermediairs). Answer 'no' if hiring out employees is itself one of the BV's activities (e.g. a staffing agency) — that case is described under businessActivities instead.",
+      "sourceRef": "Formulier 3, §7.1: 'Leent de bv of nv soms medewerkers tegen betaling uit aan ondernemingen of rechtspersonen?'"
+    },
+    {
+      "name": "directorLastName",
+      "label": "Managing director (bestuurder) — last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "This document scopes to a single managing director, who is also the sole founder and sole shareholder.",
+      "sourceRef": "Formulier 11, §3.1: 'Achternaam:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "directorFirstNames",
+      "label": "Managing director — first name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 11, §3.1: 'Voornaam of voornamen (voluit):'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "directorCitizenServiceNumber",
+      "label": "Managing director — citizen service number (BSN)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Found on a Dutch passport, ID card, or driving licence. Left blank if the director has no BSN.",
+      "sourceRef": "Formulier 11, §3.1: 'U moet het burgerservicenummer (BSN) van de functionaris doorgeven ... Heeft de functionaris geen BSN? Dan vult u daar niets in.'",
+      "validation": { "pattern": "^[0-9]{8,9}$", "minLength": 8, "maxLength": 9 }
+    },
+    {
+      "name": "directorDateOfBirth",
+      "label": "Managing director — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 11, §3.1: 'Geboortedatum:'"
+    },
+    {
+      "name": "directorPlaceOfBirth",
+      "label": "Managing director — place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 11, §3.1: 'Geboorteplaats:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "directorCountryOfBirth",
+      "label": "Managing director — country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 11, §3.1: 'Geboorteland:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "directorGender",
+      "label": "Managing director — gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 11, §3.1: 'Geslacht: Man / Vrouw / Anders'",
+      "validation": { "enum": ["male", "female", "other"] }
+    },
+    {
+      "name": "directorHomeAddress",
+      "label": "Managing director — home address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 11, §3.1: 'Woonadres:'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "directorResidesOutsideNetherlands",
+      "label": "Does the managing director live outside the Netherlands?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the proof-of-address document requirement. A director resident in the Netherlands must instead have the correct address registered in the Basisregistratie Personen (BRP) before this form can be processed.",
+      "sourceRef": "Formulier 11, §3.1: 'Woont de functionaris in het buitenland? Dan moet u een bewijs van het woonadres toevoegen aan dit formulier.'"
+    },
+    {
+      "name": "directorIsSoleShareholder",
+      "label": "Is the managing director also the sole shareholder (enig aandeelhouder)?",
+      "type": "boolean",
+      "required": true,
+      "eligibleValues": [true],
+      "fieldRole": "eligibility",
+      "description": "This document scopes only to the single-founder case where the managing director and the sole shareholder are the same person, matching the scoping already used for de/handelsregister/gmbh-formation-musterprotokoll.",
+      "sourceRef": "Formulier 11, §3.2/3.3: 'Alleen enig aandeelhouder ... Is de bestuurder ook enig aandeelhouder?'"
+    },
+    {
+      "name": "soleShareholderSinceDate",
+      "label": "Sole shareholder since",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "directorIsSoleShareholder", "equals": true },
+      "sourceRef": "Formulier 11, §3.3: 'Ja, enig aandeelhouder vanaf:'"
+    },
+    {
+      "name": "directorAuthorityType",
+      "label": "Managing director's authority (bevoegdheid) under the articles of association",
+      "type": "enum",
+      "required": true,
+      "description": "Constrained to sole authority (alleen bevoegd): with exactly one managing director (this document's scope), joint authority (gezamenlijk bevoegd, requiring a co-signing officer) or no authority (niet bevoegd) do not apply.",
+      "sourceRef": "Formulier 11, §3.4: 'Wat is de bevoegdheid van de bestuurder volgens de statuten? Niet bevoegd. / Alleen bevoegd. / Gezamenlijk bevoegd.'",
+      "validation": { "enum": ["alleen_bevoegd"] }
+    },
+    {
+      "name": "directorHasTitle",
+      "label": "Does the managing director hold a title (e.g. director, president)?",
+      "type": "boolean",
+      "required": true,
+      "description": "A title may be described in the articles of association or set on appointment; a director or commissioner need not have one.",
+      "sourceRef": "Formulier 11, §3.5: 'Heeft de bestuurder of commissaris een titel?'"
+    },
+    {
+      "name": "directorTitle",
+      "label": "Managing director's title",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "directorHasTitle", "equals": true },
+      "sourceRef": "Formulier 11, §3.5: 'Ja, de titel is:'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "directorStartDate",
+      "label": "Date the managing director started",
+      "type": "date",
+      "required": true,
+      "description": "May be in the future.",
+      "sourceRef": "Formulier 11, §3.6: 'Op welke datum is de functionaris gestart?'"
+    },
+    {
+      "name": "signerLastNameAndInitials",
+      "label": "Signer — last name and initial(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Only a managing director of the BV or a notary may sign the registration filing. By signing, the signer declares that all information entered is correct and that they are authorised to sign on behalf of the BV.",
+      "sourceRef": "Formulier 3, §8.1: 'Achternaam en voorletter(s):'; 'Alleen één van de volgende personen mag het formulier ondertekenen: Eén van de bestuurders van de bv of nv. / Een notaris.'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "signerEmail",
+      "label": "Signer — email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 3, §8.1: 'E-mailadres:'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "signerPhoneNumber",
+      "label": "Signer — telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Formulier 3, §8.1: 'Telefoonnummer:'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "signingDate",
+      "label": "Signing date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Formulier 3, §8.1: 'Datum van ondertekenen:'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "articlesOfAssociation",
+      "label": "Copy of the BV's articles of association (statuten)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Formulier 3, Uitleg 2: 'Voeg een exemplaar van de statuten toe aan dit formulier.'"
+    },
+    {
+      "id": "notarialDeedOfIncorporation",
+      "label": "Executed notarial deed of incorporation (akte van oprichting)",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "issuingAuthority": "The executing Dutch civil-law notary",
+      "sourceRef": "§ 2:175 BW2 — a BV is incorporated by notarial deed"
+    },
+    {
+      "id": "signerIdentityDocument",
+      "label": "Signer's valid proof of identity",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["passport", "dutch_driving_licence", "european_identity_card", "dutch_foreign_nationals_document"],
+      "sourceRef": "Formulier 3, §8: 'KVK heeft een kopie van een geldig identiteitsbewijs nodig van de bestuurder die dit formulier ondertekent.'"
+    },
+    {
+      "id": "directorIdentityDocument",
+      "label": "Managing director's valid proof of identity",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["passport", "dutch_driving_licence", "european_identity_card", "dutch_foreign_nationals_document"],
+      "sourceRef": "Formulier 11, §3.6: 'KVK heeft een kopie van een geldig identiteitsbewijs van de functionaris nodig.'"
+    },
+    {
+      "id": "directorForeignAddressProof",
+      "label": "Proof of the managing director's foreign home address",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "directorResidesOutsideNetherlands", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Formulier 11, §3.1: 'Woont de functionaris in het buitenland, dan moet u een bewijs van het woonadres toevoegen aan dit formulier.'"
+    },
+    {
+      "id": "soleShareholderProof",
+      "label": "Proof that the managing director is the sole shareholder",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Formulier 11, §3.2: 'Alleen enig aandeelhouder ... U moet hiervan bewijs toevoegen aan dit formulier.'"
+    },
+    {
+      "id": "signerHandwrittenSignature",
+      "label": "Signer's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "The signer (a managing director or the notary) must sign the registration filing with a handwritten signature, not a copy or scan.",
+      "sourceRef": "Formulier 3, §8.1: 'Handtekening met pen (geen kopie of scan):'"
+    },
+    {
+      "id": "directorHandwrittenSignature",
+      "label": "Managing director's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "The managing director must sign the functionaris filing with a handwritten signature, not a copy or scan.",
+      "sourceRef": "Formulier 11, §3.6: 'Handtekening met pen van de functionaris (geen kopie of scan):'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "start_or_continue",
+      "title": "Start or continue",
+      "fields": [
+        "registrationType", "startDate",
+        "existingBusinessName", "existingBusinessLocation", "existingBusinessKvkNumber",
+        "continuationDate", "originalEstablishmentDate"
+      ],
+      "next": "company_name_and_capital"
+    },
+    {
+      "id": "company_name_and_capital",
+      "title": "Name, seat, and capital of the BV",
+      "fields": [
+        "companyName", "registeredSeat", "incorporationDeedDate", "effectiveDate",
+        "issuedCapitalAmount", "issuedCapitalCurrency", "paidUpCapitalAmount", "paidUpCapitalCurrency"
+      ],
+      "next": "business_details"
+    },
+    {
+      "id": "business_details",
+      "title": "Trade names and activities of the BV",
+      "fields": [
+        "primaryTradeName", "hasAdditionalTradeNames", "additionalTradeNames",
+        "businessActivities", "mainBusinessActivity",
+        "sellsToConsumersRetail", "retailInShop", "retailAtMarket", "retailViaStreetTrading",
+        "retailViaInternet", "retailFromHome", "retailOtherChannel", "retailOtherChannelDescription",
+        "sellsWholesale", "importsGoods", "exportsGoods"
+      ],
+      "next": "address_and_contact"
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Address, contact details, and staff",
+      "fields": [
+        "businessVisitingAddress", "hasDifferentPostalAddress", "businessPostalAddress",
+        "businessPhoneNumber1", "businessPhoneNumber2", "businessWebsiteUrl", "businessEmailAddress",
+        "employeeCount15PlusHoursPerWeek", "employeeCountUnder15HoursPerWeek"
+      ],
+      "next": "declarations"
+    },
+    {
+      "id": "declarations",
+      "title": "Advertising and hiring-out-employees declarations",
+      "fields": ["allowMarketingUseOfAddress", "hiresOutEmployeesForPayment"],
+      "next": "managing_director"
+    },
+    {
+      "id": "managing_director",
+      "title": "Managing director (bestuurder) and sole shareholder",
+      "fields": [
+        "directorLastName", "directorFirstNames", "directorCitizenServiceNumber",
+        "directorDateOfBirth", "directorPlaceOfBirth", "directorCountryOfBirth", "directorGender",
+        "directorHomeAddress", "directorResidesOutsideNetherlands",
+        "directorIsSoleShareholder", "soleShareholderSinceDate",
+        "directorAuthorityType", "directorHasTitle", "directorTitle", "directorStartDate"
+      ],
+      "next": "signing"
+    },
+    {
+      "id": "signing",
+      "title": "Signing this filing",
+      "fields": ["signerLastNameAndInitials", "signerEmail", "signerPhoneNumber", "signingDate"]
+    }
+  ]
+}
