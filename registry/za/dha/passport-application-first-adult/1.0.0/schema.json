@@ -1,0 +1,398 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "za/dha/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "South Africa Ordinary Passport Application (Form BI-73)",
+  "description": "Apply for an ordinary South African passport as an adult (16 years or older) applying for the first time, in person at a Department of Home Affairs office within South Africa, using Form BI-73 ('Application for a South African Passport or Travel Document'). It does not submit the application; the live dha.gov.za source and the applicant's local Home Affairs office are always authoritative (see VERIFICATION.md). This document models the domestic, ordinary/permanent 32-page passport pathway specifically; Form BI-73 also covers Maxi, Diplomatic, Official, Crew Member, Temporary, and Emergency passports/travel documents (each with its own supporting-document and fee requirements not modeled here) and a Child Passport/Endorsement pathway requiring parental consent (Section C of the form), out of scope for this first-time-adult document. Applying from outside South Africa, at a South African mission/consulate abroad, is a separate process with different fees, out of scope here.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Home Affairs, Republic of South Africa",
+    "abbreviation": "DHA",
+    "url": "https://www.dha.gov.za/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-ZA"
+  },
+  "source": {
+    "url": "https://www.dha.gov.za/images/PDFs/Travel%20Documents/bi-73.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "BI-73"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-05",
+    "notes": "First reference schema for South Africa (a new jurisdiction for this registry). Form BI-73 fields (Sections A, D, and E) were read directly from the official dha.gov.za-hosted PDF cited in `source.url` (confirmed live and retrievable). That government-hosted copy is a large, low-contrast scanned image; its field layout was cross-checked, page by page, against a legible full-resolution mirror of the identical current BI-73/BI-529 form pair distributed by the South African Embassy in Washington, D.C. (saembassy.org/wp-content/uploads/2023/11/DHA-73-1.pdf) and against that embassy's separate consular requirements checklist (suedafrika.org/downloads/BI-73_Passport.pdf), both of which show the same 'G.P.S. 017-9750' print code and identical section structure as the government original. Section C (parental consent for a minor) is out of scope for this first-time-adult document. The domestic 32-page ordinary-passport fee (ZAR 600) is sourced from the Department of Home Affairs' own fee-increase announcement on the government's gov.za media-statements page, effective 2026-11-01 [sic: 2022-11-01] and confirmed still current by multiple independent 2026 secondary sources; it is distinct from and lower than the fee charged at foreign missions. Two items are flagged as not independently confirmed for the domestic (non-consular) pathway specifically: (1) whether Form BI-529 (Determination of Citizenship Status) is required for every domestic first-time applicant or only those with a citizenship-status question (the consular checklist that names it as an unconditional requirement is for an abroad/mission submission, which inherently raises citizenship questions the BI-73 form itself gates behind its Section D questions) — modeled here as `requiredWhen` the applicant answers Section D's citizenship questions in a way that raises a citizenship-determination need, pending direct confirmation from a domestic Home Affairs office; (2) the exact DHA-9 fingerprint-collection procedure, sourced only from the same consular checklist as a secondary source, since it is a biometric process rather than a fillable form. Status remains 'draft' pending a full field-by-field comparison against a live domestic Home Affairs office visit or an authoritative first-party domestic checklist."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationType",
+      "label": "Application for (mark which is applicable)",
+      "type": "enum",
+      "required": true,
+      "description": "The type of document requested on Form BI-73. This schema's required-document set and fee model the ordinary_passport pathway; the other values are captured because they appear as tick-boxes on the same form, but their own supporting-document and fee requirements are out of scope here.",
+      "sourceRef": "Form BI-73 — 'APPLICATION FOR (mark which is applicable with an X)'",
+      "validation": { "enum": ["ordinary_passport", "maxi_passport", "document_for_travel_purposes", "emergency_passport_certificate", "temporary_passport", "official_passport", "diplomatic_passport", "crew_member_certificate"] }
+    },
+    {
+      "name": "deliverToPostalAddress",
+      "label": "Must the document be forwarded to my address indicated below?",
+      "type": "boolean",
+      "required": true,
+      "description": "If false, the completed passport is instead collected in person from the Home Affairs office where the application was lodged.",
+      "sourceRef": "Form BI-73 — 'The document must be forwarded to my address indicated below: YES/NO'"
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form BI-73 — Section A, 'Surname'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "forenamesInFull",
+      "label": "Forenames in full",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form BI-73 — Section A, 'Forenames in full'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "previousSurname",
+      "label": "Previous surname(s), if applicable",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Leave blank if the applicant has never used a different surname.",
+      "sourceRef": "Form BI-73 — Section A, 'Previous surname(s)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "As printed on Form BI-73: unmarried, married, widower, widow, or divorced.",
+      "sourceRef": "Form BI-73 — Section A, 'Marital status'",
+      "validation": { "enum": ["unmarried", "married", "widower", "widow", "divorced"] }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "description": "Form BI-73 offers only Male and Female tick-boxes; unlike some other jurisdictions' passport forms it has no third option.",
+      "sourceRef": "Form BI-73 — Section A, 'Gender: Male / Female'",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD.",
+      "sourceRef": "Form BI-73 — Section A, 'Date of birth'"
+    },
+    {
+      "name": "identityNumber",
+      "label": "South African identity number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The 13-digit South African ID number as printed on the applicant's ID book or smart ID card; a passport can only be issued to an applicant in possession of one (Form BI-73, Instruction 1(e)).",
+      "sourceRef": "Form BI-73 — Section A, 'Identity number'",
+      "validation": { "pattern": "^[0-9]{13}$" }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form BI-73 — Section A, 'Country of birth'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Town or city of birth.",
+      "sourceRef": "Form BI-73 — Section A, 'Place of birth'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "postalAddressLines",
+      "label": "Postal address",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Free-text postal address as it appears on the multi-line 'Postal address' box on the form.",
+      "sourceRef": "Form BI-73 — Section A, 'Postal address'",
+      "validation": { "minLength": 1, "maxLength": 240 }
+    },
+    {
+      "name": "postalCode",
+      "label": "Postal code",
+      "type": "string",
+      "required": true,
+      "description": "South African postal codes are 4 digits.",
+      "sourceRef": "Form BI-73 — Section A, 'Postal address — Code'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "homeTelephone",
+      "label": "Home telephone number and code",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +27211234567.",
+      "sourceRef": "Form BI-73 — Section A, 'Home Tel. No. and code'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "workTelephone",
+      "label": "Work telephone number and code",
+      "type": "string",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +27211234567.",
+      "sourceRef": "Form BI-73 — Section A, 'Work Tel. No. and code'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "cellNumber",
+      "label": "Cell phone number",
+      "type": "string",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. In international E.164 format, e.g. +27821234567. Used by the Home Affairs office to notify the applicant when the passport is ready.",
+      "sourceRef": "Form BI-73 — Section A, 'Cell No.'",
+      "validation": { "pattern": "^\\+[1-9][0-9]{1,14}$" }
+    },
+    {
+      "name": "acquiredOtherCitizenship",
+      "label": "Have you acquired citizenship of another country on application?",
+      "type": "boolean",
+      "required": true,
+      "description": "Section D must be completed by all applicants.",
+      "sourceRef": "Form BI-73 — Section D(a), 'Have you acquired citizenship of another country on application?'"
+    },
+    {
+      "name": "otherCitizenshipCountry",
+      "label": "Other country of citizenship",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "acquiredOtherCitizenship", "equals": true },
+      "description": "Required when acquiredOtherCitizenship is true.",
+      "sourceRef": "Form BI-73 — Section D(a) table, 'Country'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "otherCitizenshipPlaceObtained",
+      "label": "Place other citizenship was obtained",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "acquiredOtherCitizenship", "equals": true },
+      "description": "Required when acquiredOtherCitizenship is true.",
+      "sourceRef": "Form BI-73 — Section D(a) table, 'Place obtained'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "otherCitizenshipMeans",
+      "label": "Means of obtaining other citizenship",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "acquiredOtherCitizenship", "equals": true },
+      "description": "Required when acquiredOtherCitizenship is true, e.g. by marriage, naturalisation, descent, or registration.",
+      "sourceRef": "Form BI-73 — Section D(a) table, 'Means of obtaining'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "otherCitizenshipDate",
+      "label": "Date other citizenship was obtained",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "acquiredOtherCitizenship", "equals": true },
+      "description": "Required when acquiredOtherCitizenship is true.",
+      "sourceRef": "Form BI-73 — Section D(a) table, 'Date'"
+    },
+    {
+      "name": "previouslyIssuedTravelDocument",
+      "label": "Have travel facilities previously been issued to you?",
+      "type": "boolean",
+      "required": true,
+      "description": "Section D must be completed by all applicants. South African passports or other travel documents presently in the applicant's possession must be submitted with the application unless lost, stolen, or damaged.",
+      "sourceRef": "Form BI-73 — Section D(b), 'Have travel facilities previously been issued to you?'"
+    },
+    {
+      "name": "previousTravelDocumentDate",
+      "label": "Date previous travel document was issued",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "previouslyIssuedTravelDocument", "equals": true },
+      "description": "Required when previouslyIssuedTravelDocument is true.",
+      "sourceRef": "Form BI-73 — Section D(b), 'if so, when?'"
+    },
+    {
+      "name": "previousTravelDocumentNumber",
+      "label": "Previous passport / travel document number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "requiredWhen": { "field": "previouslyIssuedTravelDocument", "equals": true },
+      "description": "Personal identifier; handle as sensitive data. Required when previouslyIssuedTravelDocument is true.",
+      "sourceRef": "Form BI-73 — Section D(b), 'Passport / document number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "declarationTruthfulComplete",
+      "label": "I declare that the information furnished above is to the best of my knowledge and belief correct",
+      "type": "boolean",
+      "required": true,
+      "description": "Must be true. The applicant also concurs that if the passport is not claimed within 3 months of the date of issue, it will be destroyed and the fee forfeited.",
+      "sourceRef": "Form BI-73 — Section E, Declaration"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration date",
+      "type": "date",
+      "required": true,
+      "description": "Date the applicant signs the declaration in Section E.",
+      "sourceRef": "Form BI-73 — Section E, 'Date'"
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Declaration place",
+      "type": "string",
+      "required": true,
+      "description": "Town or city where the applicant signs the declaration in Section E.",
+      "sourceRef": "Form BI-73 — Section E, 'Place'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocumentCopy",
+      "label": "Notarized copy of South African ID book or smart ID card",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form BI-73, Instruction 1(e): a passport can only be issued to an applicant in possession of an identity number, who must submit identity documents along with the application"
+    },
+    {
+      "id": "fingerprints",
+      "label": "Full set of fingerprints (Form DHA-9)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form BI-73, Instruction 1(f): a full set of fingerprints (or thumbprint) is required from all applicants 16 years and older, in addition to the left thumbprint taken on the form itself; can be taken at a police station or by a notary public. This document is a biometric-collection process rather than a fillable form; sourced from a South African consular office's requirements checklist, not independently confirmed for the domestic pathway."
+    },
+    {
+      "id": "citizenshipDeterminationForm",
+      "label": "Determination of Citizenship Status (Form BI-529)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "acquiredOtherCitizenship", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Form BI-529 header: 'Information to be furnished in full in order to assist in determining your citizenship status.' Whether domestic Home Affairs offices require this unconditionally for every first-time application, or only when a citizenship question arises, is not independently confirmed for the domestic pathway (see VERIFICATION.md)."
+    },
+    {
+      "id": "passportPhotos",
+      "label": "Passport photographs",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form BI-73, Instruction 3(a): two recent, clear, unmounted photographs (head and shoulders) measuring 35mm x 45mm; the certifying officer endorses one and affixes the other to the application form. This document models the printed photographs submitted with the paper form, not a digital upload."
+    },
+    {
+      "id": "declarationSignature",
+      "label": "Signature of applicant",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I, ..., hereby declare that the information furnished above is to the best of my knowledge and belief correct and I concur that if I do not claim my passport within three (3) months from date of issue, my passport will be destroyed and I will forfeit my fee.",
+      "sourceRef": "Form BI-73 — Section E, Declaration"
+    },
+    {
+      "id": "applicationFee",
+      "label": "Ordinary (32-page) passport application fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "ZAR",
+        "value": 600
+      },
+      "methods": ["cash", "in-person-card-payment"],
+      "sourceRef": "Department of Home Affairs fee approval (gov.za media statement, effective 2022-11-01): domestic 32-page adult passport fee is ZAR 600, confirmed current as of 2026. This is the domestic (within-South-Africa) fee; the fee at a foreign mission/consulate is higher (ZAR 1,200) and out of scope here. Form BI-73, Instruction 2(b): fees are payable in cash upon submission of the application at a Home Affairs office."
+    }
+  ],
+  "steps": [
+    {
+      "id": "application_type_and_particulars",
+      "title": "Application type and particulars of applicant",
+      "fields": [
+        "applicationType",
+        "deliverToPostalAddress",
+        "surname",
+        "forenamesInFull",
+        "previousSurname",
+        "maritalStatus",
+        "gender",
+        "dateOfBirth",
+        "identityNumber",
+        "countryOfBirth",
+        "placeOfBirth"
+      ],
+      "next": "contact_and_address"
+    },
+    {
+      "id": "contact_and_address",
+      "title": "Postal address and contact numbers",
+      "fields": [
+        "postalAddressLines",
+        "postalCode",
+        "homeTelephone",
+        "workTelephone",
+        "cellNumber"
+      ],
+      "next": "citizenship_and_travel_history"
+    },
+    {
+      "id": "citizenship_and_travel_history",
+      "title": "Citizenship and travel-document history",
+      "fields": [
+        "acquiredOtherCitizenship",
+        "otherCitizenshipCountry",
+        "otherCitizenshipPlaceObtained",
+        "otherCitizenshipMeans",
+        "otherCitizenshipDate",
+        "previouslyIssuedTravelDocument",
+        "previousTravelDocumentDate",
+        "previousTravelDocumentNumber"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": [
+        "declarationTruthfulComplete",
+        "declarationDate",
+        "declarationPlace"
+      ]
+    }
+  ]
+}
