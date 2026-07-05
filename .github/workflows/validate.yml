@@ -15,6 +15,12 @@ jobs:
           cache: npm
           cache-dependency-path: tools/package-lock.json
       # Zero-dependency structural validation + registry hygiene (no install).
+      # Also checks registry-index.json referential integrity (GOV-1234):
+      # every entry's `path` must resolve to an existing, validating
+      # schema.json with matching id/version/edition, checked against the
+      # checkout as-is — i.e. before the "is the index stale" step below
+      # regenerates it, so a dangling entry can't hide behind a regeneration
+      # that only becomes possible once the missing file lands in a later PR.
       - name: Validate all GovSchema documents (structural)
         run: node tools/validate.mjs
       # Full JSON Schema draft 2020-12 meta-schema conformance (ajv). This

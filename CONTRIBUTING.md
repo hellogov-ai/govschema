@@ -38,6 +38,14 @@ Contributions fall into a few kinds; each has a short path.
    ```
    Commit the resulting `registry-index.json` diff. CI fails the build if it's
    stale (`.github/workflows/validate.yml`).
+
+   **Run `build-index` only against a clean checkout that matches the commit
+   you're authoring** — it scans the whole `registry/` working tree, so if
+   another schema's uncommitted WIP happens to be sitting in the same
+   checkout (e.g. a shared/dirty working tree), it will get indexed too and
+   you'll commit a reference to a file that isn't actually part of your
+   change (GOV-1233/GOV-1234). `git status` should show nothing but your own
+   change before you run it.
 6. Open a pull request using the schema PR template.
 
 ## Correcting / re-verifying a schema
@@ -70,5 +78,5 @@ decisions — see [GOVERNANCE.md](./GOVERNANCE.md).
       exists at `main` (GSP filenames sometimes change between working title
       and publication — link the final filename, not a draft name).
 - [ ] `registry-index.json` regenerated (`npm run build-index` in
-      `tools/govschema-client/`) if a registry document changed or a catalog
-      entry flipped to `published`.
+      `tools/govschema-client/`, run against a clean checkout — see above) if
+      a registry document changed or a catalog entry flipped to `published`.

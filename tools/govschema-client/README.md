@@ -57,7 +57,14 @@ const status = await client.getVerificationStatus({ id: "gb/hmpo/passport-renewa
 `listSchemas()` / `search()` read a registry index bundled with this package
 (`registry-index.json`, regenerated from `registry/` by `generate-index.mjs`
 — run `npm run build-index` after any registry change; CI checks it isn't
-stale). This gives instant, offline discovery with no network round trip.
+stale, and separately checks every entry's `path` resolves to an existing,
+validating file, see `tools/validate.mjs`). This gives instant, offline
+discovery with no network round trip.
+
+Only run `build-index` against a clean checkout matching the commit you're
+authoring — it walks the whole `registry/` tree on disk, so another schema's
+uncommitted WIP in a shared checkout gets indexed too, producing a committed
+reference to a file that isn't part of your change (see CONTRIBUTING.md).
 
 `getSchema()`, `validate()`, and `getVerificationStatus()` always read the
 live document, never the index, so they can't return stale field data even if
