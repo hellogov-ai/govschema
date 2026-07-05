@@ -1,0 +1,411 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "kr/nec/overseas-voter-registration",
+  "version": "1.0.0",
+  "title": "South Korea Overseas Absentee Voter Notification / Overseas Voter Registration (국외부재자신고서 및 재외선거인등록신청서)",
+  "description": "Notify the National Election Commission (NEC), from outside South Korea, of overseas-absentee status to vote by post in a South Korean election, or apply for entry on the permanent overseas-voter register — using the combined form gazetted as [별지 제59호의4서식] (Public Official Election Act, Articles 218-4 and 218-5). A South Korean national currently living abroad with an active resident registration (or a valid overseas-residence report) files the 국외부재자신고 (overseas absentee notification), which must be renewed for each applicable election. A national whose resident registration has been cancelled (moved abroad and deregistered), or who has never held a South Korean resident registration (e.g. born and always resident abroad), instead files the 재외선거인 등록신청 (permanent overseas-voter registration), a one-time registration that then applies to every subsequent election unless the person's status changes. Both pathways share this one form and are modelled together here, distinguished by the applicantCategory field. This document does not model the separate domestic (in-country) absentee-voting process, the internet-based registration/notification wizard at ova.nec.go.kr (which collects the same fields through a different channel), or the actual overseas voting/ballot-return procedure once registration is confirmed. It does not submit the notification/application; the live ok.nec.go.kr source and the applicant's nearest South Korean diplomatic mission are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Election Commission",
+    "abbreviation": "NEC",
+    "url": "https://ok.nec.go.kr"
+  },
+  "process": {
+    "type": "registration",
+    "language": "ko-KR"
+  },
+  "source": {
+    "url": "https://ok.nec.go.kr/common/board/Download.do?bcIdx=13837&cbIdx=1196&streFileNm=BBS_202001090915448472.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "[별지 제59호의4서식] 국외부재자신고서 및 재외선거인등록신청서 (통합) — Public Official Election Act (공직선거법) Articles 218-4 and 218-5, combined Overseas Absentee Voter Notification / Overseas Voter Registration Application form, published by the National Election Commission's Overseas Election page (ok.nec.go.kr)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "Opens South Korea's National ID & Civic Documents vertical (KR previously had Passport and DMV only). Sourced from the NEC's own Overseas Election portal (ok.nec.go.kr), which publishes the blank combined form alongside two official filled-in examples (one per pathway) — a rare and high-fidelity source (see VERIFICATION.md for both example transcriptions used as the mock conformance packet)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantCategory",
+      "label": "신분에 따른 구분 — Applicant status category",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the three status groups the applicant belongs to. This choice determines which of the form's two top checkboxes applies (per the form's own 작성요령 item 1): resident_registered files the 국외부재자신고서 (overseas absentee notification); registration_cancelled and never_registered both file the 재외선거인 등록신청서 (overseas voter registration application). It also determines which identity-block fields below are required.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '신분에 따른 구분' checkbox group: '주민등록이 있는 사람' / '주민등록이 말소된 사람' / '처음부터 주민등록이 없었던 사람'",
+      "validation": {
+        "enum": [
+          "resident_registered",
+          "registration_cancelled",
+          "never_registered"
+        ]
+      }
+    },
+    {
+      "name": "koreanName",
+      "label": "성명(한글) — Full name (Korean, Hangul)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form [별지 제59호의4서식], front — '성명' / '한글'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "englishName",
+      "label": "성명 영문(대문자) — Full name (English, uppercase, as printed in passport)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form [별지 제59호의4서식], front — '성명' / '영문(대문자)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100,
+        "pattern": "^[A-Z0-9 '.-]+$"
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "여권번호 — Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Written left-aligned, per the form's own instruction ('여권번호는 왼쪽부터 적습니다').",
+      "sourceRef": "Form [별지 제59호의4서식], front — '여권번호'",
+      "validation": {
+        "minLength": 6,
+        "maxLength": 15,
+        "pattern": "^[A-Z0-9]+$"
+      }
+    },
+    {
+      "name": "residentRegistrationNumber",
+      "label": "주민등록번호 — Resident registration number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "applicantCategory",
+        "equals": "resident_registered"
+      },
+      "sourceRef": "Form [별지 제59호의4서식], front — '신분에 따른 구분' / '주민등록이 있는 사람' row, '주민등록번호'",
+      "validation": {
+        "pattern": "^[0-9]{6}-?[0-9]{7}$"
+      }
+    },
+    {
+      "name": "residentRegisteredAddress",
+      "label": "주소(주민등록표상) — Address per resident registration record",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "applicantCategory",
+        "equals": "resident_registered"
+      },
+      "description": "The form breaks this address into 시·도 (province/metropolitan city) / 구·시·군 (district/city/county) / 읍·면 (town/township) / 대로·로·길 (street) sub-boxes; modelled here as one combined address string, consistent with this registry's existing convention for structured Korean/German address blocks (e.g. kr/koroad/driving-licence-application's address field).",
+      "sourceRef": "Form [별지 제59호의4서식], front — '주민등록이 있는 사람' row, '주소(주민등록표상)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "cancelledResidentRegistrationNumber",
+      "label": "말소된 주민등록번호 — Cancelled resident registration number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "applicantCategory",
+        "equals": "registration_cancelled"
+      },
+      "sourceRef": "Form [별지 제59호의4서식], front — '주민등록이 말소된 사람' row, '말소된 주민등록번호'",
+      "validation": {
+        "pattern": "^[0-9]{6}-?[0-9]{7}$"
+      }
+    },
+    {
+      "name": "lastKoreanAddress",
+      "label": "대한민국 최종주소지 — Last address of residence in South Korea",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "applicantCategory",
+        "equals": "registration_cancelled"
+      },
+      "sourceRef": "Form [별지 제59호의4서식], front — '주민등록이 말소된 사람' row, '대한민국 최종주소지'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "생년월일 — Date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "applicantCategory",
+        "equals": "never_registered"
+      },
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '처음부터 주민등록이 없었던 사람' row, '생년월일'"
+    },
+    {
+      "name": "gender",
+      "label": "성별 — Sex",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantCategory",
+        "equals": "never_registered"
+      },
+      "sourceRef": "Form [별지 제59호의4서식], front — '처음부터 주민등록이 없었던 사람' row, '성별' (남/여)",
+      "validation": {
+        "enum": [
+          "male",
+          "female"
+        ]
+      }
+    },
+    {
+      "name": "registrationBaseAddress",
+      "label": "등록기준지(본적지) — Family register base address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "applicantCategory",
+        "equals": "never_registered"
+      },
+      "description": "The address of record in the applicant's family relation register (가족관계등록부/호적), used in place of a resident-registration address for someone who has never held one.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '처음부터 주민등록이 없었던 사람' row, '등록기준지(본적지)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "fatherName",
+      "label": "부 성명 — Father's name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": {
+        "field": "applicantCategory",
+        "equals": "never_registered"
+      },
+      "description": "Per the form's own 작성요령 item 4, applicable only to an applicant who has never held a resident registration, and only to confirm nationality/identity and family-register base address — the form requires at least one of fatherName or motherName to be given (an 'at least one of' constraint not yet expressible in this spec's requiredWhen grammar, so it is documented here rather than machine-enforced).",
+      "sourceRef": "Form [별지 제59호의4서식], front — '부모 성명' row, '아버지 성명'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherName",
+      "label": "모 성명 — Mother's name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": {
+        "field": "applicantCategory",
+        "equals": "never_registered"
+      },
+      "description": "See fatherName — the form requires at least one of the two parent-name fields for a never_registered applicant.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '부모 성명' row, '어머니 성명'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "전화번호(가정·직장 등) — Phone number (home/office), with country and area code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form [별지 제59호의4서식], front — '연락처' / '전화번호' (국가번호-지역번호-전화번호)",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "mobilePhoneNumber",
+      "label": "휴대전화번호 — Mobile phone number, with country code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form [별지 제59호의4서식], front — '연락처' / '휴대전화번호'",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "email",
+      "label": "전자우편(E-mail) — Email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per the form's own 작성요령 item 6, NEC uses this address to send party/candidate information, overseas-voter-register confirmation, objection results, and voting period/place/what-to-bring notices; it is not filled in by the applicant unless they want that correspondence.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '연락처' / '전자우편(E-mail)'",
+      "validation": {
+        "maxLength": 254,
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "countryOfResidence",
+      "label": "거류국명 — Country of residence abroad",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form [별지 제59호의4서식], front — '국외거소' / '거류국명'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalCode",
+      "label": "우편번호 — Postal code of overseas residence",
+      "type": "string",
+      "required": false,
+      "description": "Left blank where the country of residence has no postal-code system.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '국외거소' / '우편번호'",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "overseasResidenceAddress",
+      "label": "국외거소 주소 — Overseas mailing address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The place abroad where the applicant can receive mail, written in Roman/English capital letters (local-language script may additionally be included), per the form's own instruction to write it accurately inside the dotted box. Where receiving mail directly is impractical (work, no fixed address, an inadequate local postal system, etc.), the applicant may instead nominate a South Korean diplomatic mission as their residence — see wantsEmbassyAsResidence.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '국외거소' / '주소'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "wantsEmbassyAsResidence",
+      "label": "공관을 거소로 신고할 사람 — Nominate a diplomatic mission as overseas residence",
+      "type": "boolean",
+      "required": false,
+      "description": "When checked, overseasResidenceAddress is instead filled in with only the name of the diplomatic mission (embassy/consulate), per the form's own instruction.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '국외거소' / '공관을 거소로 신고할 사람' checkbox"
+    },
+    {
+      "name": "plannedVotingEmbassy",
+      "label": "투표예정공관 — Diplomatic mission where the applicant intends to vote",
+      "type": "string",
+      "required": true,
+      "description": "The name of the embassy or consulate at which the applicant intends to cast their overseas ballot during the overseas-voting period.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '투표예정공관'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "hasForeignNationality",
+      "label": "외국국적을 가지고 있습니까? — Do you hold a foreign nationality?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicable only to dual/multiple nationals, per the form's own note ('복수 국적자만 기재'); a single-nationality South Korean applicant answers false and leaves the rest of this group blank.",
+      "sourceRef": "Form [별지 제59호의4서식], front — '외국국적 보유여부' / '외국국적을 가지고 있습니까?' (예/아니오)"
+    },
+    {
+      "name": "foreignNationalityCountry",
+      "label": "국적보유 국가명 — Country of the foreign nationality held",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasForeignNationality",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제59호의4서식], front — '외국국적 보유여부' / '국적보유 국가명'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "foreignNationalityAcquisitionReason",
+      "label": "외국국적 취득사유 — Reason the foreign nationality was acquired",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasForeignNationality",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제59호의4서식], front — '외국국적 취득사유' checkboxes (출생/혼인/입양/인지/기타)",
+      "validation": {
+        "enum": [
+          "birth",
+          "marriage",
+          "adoption",
+          "acknowledgment",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "foreignNationalityAcquisitionReasonOther",
+      "label": "기타 취득사유 — Other acquisition reason, specified",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "foreignNationalityAcquisitionReason",
+        "equals": "other"
+      },
+      "sourceRef": "Form [별지 제59호의4서식], front — '외국국적 취득사유' / '기타( )'",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "nationalityAndPersonalInfoConsent",
+      "label": "대한민국 국민 확인 및 개인신상정보 활용 동의 — Confirmation of Korean nationality and consent to personal-information use",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "description": "The applicant confirms they are a South Korean national under the Nationality Act, that they are filing the notification/application under Articles 218-4/218-5 of the Public Official Election Act, and consents to the NEC's use of family-register, resident-registration, criminal-record, and passport information to confirm their voting eligibility.",
+      "sourceRef": "Form [별지 제59호의4서식], front — declaration paragraph beginning '본인은 「국적법」에 따른 대한민국 국민임을 확인하고...'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "제출일 — Submission date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form [별지 제59호의4서식], front — submission line '년 월 일'",
+      "description": "YYYY-MM-DD."
+    }
+  ]
+}
