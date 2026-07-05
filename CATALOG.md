@@ -65,7 +65,7 @@ corporation/trust/NPO formation beyond `za/cipc/private-company-incorporation`.
 Every jurisdiction has at least one individual income-tax-return schema.
 Remaining gaps are sub-process expansions:
 
-- **India:** only ITR-1 (SAHAJ) and ITR-4 (SUGAM, presumptive business income) are modelled. ITR-2 (capital gains/foreign income/multiple properties) and ITR-3 (non-presumptive business/profession) remain open — a genuine, well-sourced multi-schema opportunity (same e-filing portal/notified-utility technique already used for ITR-1/ITR-4).
+- **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), and now ITR-2 (capital gains/foreign income/multiple properties, GOV-1247) are modelled. ITR-3 (non-presumptive business/profession, full books of account) remains the sole open candidate of the ITR-1/2/3/4 set — same e-filing portal/notified-utility technique already used for ITR-1/2/4.
 - **Corporate/business tax:** SG IRAS corporate income tax, ZA SARS ITR14, IE corporation tax remain unmodelled (individual returns are covered in all three).
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
 
@@ -127,9 +127,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Genuinely open, well-sourced candidates
 
-1. **India ITR-2 / ITR-3** (Taxes): capital-gains/foreign-income and
-   non-presumptive-business individual tax returns. Same income-tax e-filing
-   portal and notified-utility technique already proven for ITR-1/ITR-4.
+1. **India ITR-3** (Taxes): non-presumptive-business/professional individual
+   tax return with full books of account — the most complex of the
+   ITR-1/2/3/4 set and the last one open, now that ITR-2 (GOV-1247) is
+   published. Same income-tax e-filing portal and notified-utility technique
+   already proven for ITR-1/2/4.
 2. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB.
