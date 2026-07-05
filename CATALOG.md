@@ -4,14 +4,14 @@
 
 ## Executive Summary
 
-**12 jurisdictions** | **210 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**12 jurisdictions** | **211 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
 | **Passport** | 12/12 (100%) | none — closed |
 | **DMV** | 12/12 (100%) | sub-process/edition expansion only (CDL beyond US-CA, IDL beyond US/IE/GB) |
 | **Business Formation** | 12/12 (100%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN) |
-| **Taxes** | 12/12 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant-Company modelled GOV-1268; IE Form CT1, ZA's other 4 ITR14 Annexures still open) |
+| **Taxes** | 12/12 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant-Company + Micro-Business modelled GOV-1268/GOV-1275; IE Form CT1, ZA's other 3 ITR14 Annexures still open) |
 | **Visa** | 10/12 (83%) | **NL, ZA** — both confirmed dead ends (see below), not open work |
 | **National ID & Civic Documents** | 12/12 (100%) | none — closed (SG voter-reg is a confirmed non-gap) |
 
@@ -66,7 +66,7 @@ Every jurisdiction has at least one individual income-tax-return schema.
 Remaining gaps are sub-process expansions:
 
 - **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), ITR-2 (capital gains/foreign income/multiple properties), and now ITR-3 (non-presumptive business/profession with full books of account, GOV-1254) are all modelled — the ITR-1/2/3/4 set is now complete. ITR-3 defers full re-derivation of Schedule S/House Property/Schedule CG/OS/itemised Chapter VI-A against its own workbook, since those schedules are structurally identical to the ones already published in full in `in/incometax/individual-tax-return-itr2` (see its VERIFICATION.md for the scope rationale).
-- **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's Dormant Company pathway is now modelled (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268) — the smallest and most self-contained of ITR14's five company-type Annexures; it defers Annexures B-E (Body Corporate/Share Block, Micro Business, Small Business, Medium to Large Business, each a structurally larger return with Balance Sheet/Income Statement/Tax Computation containers) and several repeating containers within Annexure A itself (Share/Membership Register, Beneficial Owner details, Capital Gains schedule — see its VERIFICATION.md). IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remains unmodelled.
+- **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's Dormant Company pathway (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268) and Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`, GOV-1275) are both now modelled — the two smallest of ITR14's five company-type Annexures. Micro Business is the first ZA corporate-tax schema to model a full Balance Sheet, Income Statement, and Tax Computation (151 fields); it defers the repeating Share/Membership Register, Beneficial Owner details, Capital Gains schedule, PAYE Credits, Partnership/Joint Ventures, Donations-organisation list, the s6quat(1A) foreign-tax-credit computation block, and the Enhanced Renewable Energy Deduction detail container (see its VERIFICATION.md). Remaining ITR14 Annexures B/D/E (Body Corporate/Share Block, Small Business, Medium to Large Business) and IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remain unmodelled.
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
 
 ### Visa — Entry Visas, ETAs, Work/Student Permits (10/12 jurisdictions)
@@ -111,7 +111,7 @@ no citizen-initiated online registration step to model.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ZA** | 7 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **ZA** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is
@@ -134,21 +134,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    corporate-return schema (its individual return is covered). SG IRAS is
    modelled via `sg/iras/corporate-income-tax-return-form-cs` (GOV-1261,
    Form C-S — the simplified return for companies with revenue ≤S$5M). ZA
-   SARS ITR14 is now modelled for its Dormant Company pathway via
-   `za/sars/corporate-income-tax-return-itr14-dormant` (GOV-1268); its other
-   four company-type Annexures (Body Corporate/Share Block, Micro Business,
-   Small Business, Medium to Large Business) remain open, each a
+   SARS ITR14 is now modelled for its Dormant Company pathway
+   (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268) and its
+   Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`,
+   GOV-1275); its other three company-type Annexures (Body Corporate/Share
+   Block, Small Business, Medium to Large Business) remain open, each a
    structurally larger return with its own Balance Sheet/Income
    Statement/Tax Computation containers — the natural next candidate is
-   Micro Business (Annexure C, guide pp.46-70), the next-smallest after
-   Dormant. IE Form CT1 was scouted in a prior cycle and set aside as a poor
-   next candidate: IRAS' own guide documents Form C-S with numbered line
-   items and a worked tax-computation example across 13 pages, while
-   Revenue's own "what's new" TDM guide for CT1 is 22 pages of change-log
-   prose with no equivalent full field-by-field walkthrough located yet, and
-   the live form covers panels (Transfer Pricing, Group Relief, Section 299
-   Leases, R&D Credit, Film Tax) far more extensive than a single-session
-   schema should attempt without a comparably strong source.
+   Body Corporate/Share Block (Annexure B, guide pp.24-46), the
+   next-smallest after Micro Business (it shares most of Micro Business's
+   Balance Sheet/Income Statement/Tax Computation structure, plus a handful
+   of Body-Corporate/Share-Block-specific fields such as the s10(1)(e) levy
+   exemptions that Micro Business explicitly excludes — see
+   `za/sars/corporate-income-tax-return-itr14-micro-business`'s
+   VERIFICATION.md). IE Form CT1 was scouted in a prior cycle and set aside
+   as a poor next candidate: IRAS' own guide documents Form C-S with
+   numbered line items and a worked tax-computation example across 13
+   pages, while Revenue's own "what's new" TDM guide for CT1 is 22 pages of
+   change-log prose with no equivalent full field-by-field walkthrough
+   located yet, and the live form covers panels (Transfer Pricing, Group
+   Relief, Section 299 Leases, R&D Credit, Film Tax) far more extensive than
+   a single-session schema should attempt without a comparably strong
+   source.
 3. **New jurisdictions beyond the current 12** — the standard is meant to be
    global from the start (see AGENTS.md charter); no next candidate has been
    researched yet this cycle. Candidates worth scouting in a future cycle:
@@ -197,4 +204,5 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 **Generated by:** GOV-1240 Phase 1 research, updated by GOV-1254 (ITR-3
 authoring), updated by GOV-1261 (SG IRAS Form C-S authoring), updated by
-GOV-1268 (ZA SARS ITR14 Dormant Company authoring) | Standards Engineer
+GOV-1268 (ZA SARS ITR14 Dormant Company authoring), updated by GOV-1275 (ZA
+SARS ITR14 Micro Business authoring) | Standards Engineer
