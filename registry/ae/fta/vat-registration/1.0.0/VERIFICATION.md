@@ -163,6 +163,50 @@ step/section membership are cited in each field's `sourceRef` by page number:
   registry's convention of modelling only applicant-supplied data, not
   read-only recap views.
 
+## Review-gate findings (GOV-1338)
+
+An independent re-render of the source PDF (fresh download, not reusing the
+authoring session's screenshots) during the GOV-1338 review gate confirmed
+every previously-cited `sourceRef` and the 12-item Entity Type enum, the
+AED 375,000 mandatory-threshold quote, and the "30 days" Purchase Order term
+verbatim. It also surfaced fields visible in the source screenshots that the
+initial authoring pass had missed — all fixed in this PR before merge:
+
+- **Add Relationships (Partner/Director), p.38:** the modal also shows First/
+  Last Name in Arabic, Passport Number, Passport Issuing Country, Passport
+  Expiry Date, a Start Date, and a passport-upload slot, none of which were
+  modelled. Added `additionalRelationshipFirstNameArabic`,
+  `additionalRelationshipLastNameArabic`,
+  `additionalRelationshipPassportNumber`,
+  `additionalRelationshipPassportIssuingCountry`,
+  `additionalRelationshipPassportExpiryDate`,
+  `additionalRelationshipStartDate`, and the `additionalRelationshipPassportCopy`
+  document.
+- **Additional Details, p.42:** "Will any of these exports to GCC member
+  states?" is a distinct boolean gate alongside the modelled import-side
+  question ("Will any of these imports be from GCC member states?") — the
+  export-side question had no corresponding field. Added
+  `expectsExportsToGccMemberStates` and gated `gccValueOfExportAed`'s
+  `requiredWhen` on it (mirroring `gccValueOfImportAed`'s existing gate).
+- **Authorized Signatory, p.50:** the standalone signatory sub-form (shown
+  when different from the Manager/CEO) also has First/Last Name in Arabic and
+  a Start Date, structurally identical to the Manager/CEO block one step
+  earlier, which had already modelled its own Arabic-name pair. Added
+  `authorizedSignatoryFirstNameArabic`/`authorizedSignatoryLastNameArabic`
+  (gated with `visibleWhen`, since — unlike the rest of that sub-form — they
+  are optional even when the sub-form itself is active) and
+  `authorizedSignatoryStartDate` (gated with `requiredWhen`, alongside the
+  other passport/identity fields in that block).
+- **Declaration, p.53:** the declarant name block also has First/Last Name in
+  Arabic fields (present but empty in the rendered example). Added
+  `declarantFirstNameArabic`/`declarantLastNameArabic`.
+
+Field count moved from 100 to 112 (13 documents, up from 12). The mock
+conformance packet was updated to populate every new field and exercise the
+new `expectsExportsToGccMemberStates=false` branch; re-validated with a
+from-scratch `requiredWhen`/`visibleWhen` evaluator script (0 errors) and
+`node tools/validate.mjs` / `validate-ajv.mjs` (both pass).
+
 ## Path to a `verified` claim (next step)
 
 To advance this document to `status: verified`, a reviewer needs to:
