@@ -1,0 +1,631 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sg/acra/private-limited-company-incorporation",
+  "version": "1.0.0",
+  "title": "Singapore Private Limited Company Incorporation (Pte. Ltd.)",
+  "description": "Incorporate a Singapore private limited company (Pte. Ltd.) by registering a new business entity via Bizfile (ACRA's digital service portal), on behalf of the Accounting and Corporate Regulatory Authority. This is the Singapore analogue to gb/companies-house/company-incorporation-in01, ie/cro/company-incorporation, ca/on/registration/business-incorporation, us/ca/sos/business-entity-llc-formation, au/asic/proprietary-company-registration, de/handelsregister/gmbh-formation-musterprotokoll, fr/inpi/sasu-or-eurl-formation, and nl/kvk/bv-formation, distinct from sg/acra/sole-proprietorship-registration (which covers only the one-owner sole proprietorship, not a legal entity with separate legal personality and share capital). Scoped to the simplest case: a single founder who is also the company's sole shareholder and sole director, self-filing (not filed by a corporate service provider), incorporating either an exempt private company or a private company limited by shares — mirroring the single-founder scope already used for de/handelsregister/gmbh-formation-musterprotokoll, fr/inpi/sasu-or-eurl-formation, and nl/kvk/bv-formation. A Singapore company secretary must be appointed within six months of incorporation but is not required at the point of registration itself, so this document does not model secretary appointment. Out of scope: multi-founder/multi-shareholder incorporations, corporate position holders, nominee director/shareholder arrangements, registrable-controller declarations beyond a sole founder-controller, group or trust share allotments, public companies and companies limited by guarantee, the post-incorporation company secretary appointment, auditor appointment, and engagement of a corporate service provider. It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Accounting and Corporate Regulatory Authority",
+    "abbreviation": "ACRA",
+    "url": "https://www.acra.gov.sg"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-SG"
+  },
+  "source": {
+    "url": "https://www.acra.gov.sg/register/business/registering-different-business-structures/local-company/registering-via-bizfile/",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "No form number — online self-service registration via Bizfile (bizfile.gov.sg); ACRA how-to guide series 'Step 4.1' through 'Step 4.6: Registering a local company via Bizfile'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "GOV-1167 'GovSchema Standard Research' research cycle, continuing the GOV-1136 catalog audit that found the DE/FR/NL/SG true-limited-liability-company-formation gap: DE (GmbH, GOV-1136), FR (SASU/EURL, GOV-1143), and NL (BV, GOV-1157) are now closed; this document closes the last one, Singapore's Pte. Ltd. Authored from ACRA's own current how-to guide pages on acra.gov.sg (the 'Registering a local company' series, Steps 4.1–4.6, each independently retrieved and re-extracted as raw HTML-to-text — not just a WebFetch summary — to cross-check every quoted fact), since Bizfile itself is a Singpass-authenticated eService with no downloadable fillable form; the legacy 'bizfile-guide---incorporate-local-company.pdf' document-library link now 301-redirects to the same how-to guide page, confirming ACRA has migrated this guidance off a static PDF entirely (a stronger, first-party HTML source, not the automated-fetch-and-summary PDF-paraphrase technique sg/acra/sole-proprietorship-registration relied on). Status remains 'draft': the live, Singpass-authenticated Bizfile registration screens themselves were not independently reachable pre-authentication, so this schema's screen-by-screen field list reflects ACRA's own guide prose, not a confirmed field-by-field UI walkthrough. A mock conformance/sg/acra/private-limited-company-incorporation/1.0.0/application-packet.json test run (single-founder exempt private company, wholesale trade SSIC, SGD 1,000 issued/paid-up ordinary shares, model constitution) was checked with a from-scratch script re-implementing the schema's own required/requiredWhen condition grammar and passed with 0 violations across 47 fields (39 collected, 8 correctly not-applicable); mutation tests confirmed the founderResidencyStatus eligibility gate and all three nominee/controller exit transitions fire correctly. See VERIFICATION.md for the full source table and out-of-scope list."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "founderResidencyStatus",
+      "label": "Do you meet the local-residency requirement to be the company's sole director?",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": ["singapore_citizen", "singapore_permanent_resident", "meets_local_residency_rules"],
+      "description": "Every Singapore company must appoint at least one director who is a Singapore Citizen, Singapore Permanent Resident, or otherwise meets local residency rules (e.g. an EntrePass, Employment Pass, or similar pass holder ordinarily resident in Singapore). This document scopes to a single founder who is the company's sole director and sole shareholder, so the founder must satisfy this requirement themselves; if not, the flow ends — appointing a separate locally-resident director is out of scope here.",
+      "sourceRef": "Step 4.3: Choosing company directors & other key officers — 'Be a Singapore citizen, Singapore permanent resident, or someone who meets local residency rules'",
+      "validation": {
+        "enum": ["singapore_citizen", "singapore_permanent_resident", "meets_local_residency_rules", "none_of_the_above"]
+      }
+    },
+    {
+      "name": "proposedCompanyName",
+      "label": "Proposed company name",
+      "type": "string",
+      "required": true,
+      "description": "The company name to reserve via Bizfile's business name reservation eService before registration itself, entered without a legal suffix (e.g. 'Pte. Ltd.'). The same entity type chosen at name reservation must match companyType below.",
+      "sourceRef": "Reserving a business name via Bizfile — 'Preferred business name... without legal suffixes like Pte Ltd'; Step 4.6, Before you register — 'You must register the same entity type that you chose when you reserved your business name'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "companyType",
+      "label": "Company type",
+      "type": "enum",
+      "required": true,
+      "description": "The private company type reserved and registered. An exempt private company is limited to 20 individual shareholders with no corporate shareholder; a private company limited by shares allows up to 50 shareholders, individual or corporate. Both require share capital and fit a single-founder incorporation; unlimited private companies, and public companies (limited by shares or by guarantee), are out of scope.",
+      "sourceRef": "Step 4.1: Choosing a company type — 'Exempt private company (Pte Ltd)... Max shareholders: 20 individuals'; 'Private company limited by shares (Pte Ltd)... Max shareholders: 50 individuals or corporate entities'",
+      "validation": {
+        "enum": ["exempt_private_company", "private_company_limited_by_shares"]
+      }
+    },
+    {
+      "name": "primarySsicCode",
+      "label": "Primary business activity — SSIC code",
+      "type": "string",
+      "required": true,
+      "description": "The Singapore Standard Industrial Classification (SSIC) code that best matches the company's principal business activity, selected as the most relevant code on Bizfile.",
+      "sourceRef": "Reserving a business name via Bizfile — 'A Singapore Standard Industrial Classification code is mandatory... select the most relevant code for their primary business activity'",
+      "validation": { "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "secondarySsicCode",
+      "label": "Secondary business activity — SSIC code",
+      "type": "string",
+      "required": false,
+      "description": "An optional second SSIC code for a secondary business activity.",
+      "sourceRef": "Reserving a business name via Bizfile — 'secondary activities optional if applicable'",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "businessActivityCustomDescription",
+      "label": "Custom description of business activity",
+      "type": "string",
+      "required": false,
+      "description": "An optional free-text description of the business activity, in addition to the selected SSIC code(s).",
+      "sourceRef": "Reserving a business name via Bizfile",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "nameApplicationEmail",
+      "label": "Email address for name application updates",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Email address Bizfile uses to send updates on the business name application's outcome.",
+      "sourceRef": "Reserving a business name via Bizfile — 'Valid email address is required for updates'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nameRegistrationEserviceNumber",
+      "label": "Name registration eService number",
+      "type": "string",
+      "required": true,
+      "description": "The reference number issued when the business name application above was approved. Retrieving it at the start of the 'Register new business entity' eService auto-fills the reserved name and entity type. A reserved name remains valid for 120 days from approval.",
+      "sourceRef": "Step 4.6, Step 2: Enter your company details — 'You can use your name registration eService number to automatically fill key details'; Reserving a business name via Bizfile — 'up to 120 days'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "financialYearEndDate",
+      "label": "Financial year end (FYE)",
+      "type": "date",
+      "required": true,
+      "description": "The last day of the company's first accounting period. Any date may be chosen; common FYE dates are 31 March, 30 June, 30 September, and 31 December. The FYE determines the company's annual general meeting and annual return deadlines.",
+      "sourceRef": "Step 4.2: Choosing a company's financial year end (FYE) — 'An FYE is the last day of a company's accounting period... You can choose any date as your company's FYE'; Step 4.6, Step 2 — 'Enter your company's financial year end date and financial year period'"
+    },
+    {
+      "name": "financialYearPeriod",
+      "label": "Financial year period",
+      "type": "enum",
+      "required": true,
+      "description": "The length of the company's accounting period.",
+      "sourceRef": "Step 4.2: Choosing a company's financial year end (FYE) — 'Accounting periods can be 12 months or 52 weeks'",
+      "validation": {
+        "enum": ["twelve_months", "fifty_two_weeks"]
+      }
+    },
+    {
+      "name": "registeredOfficeAddressLine",
+      "label": "Registered office address",
+      "type": "string",
+      "required": true,
+      "description": "The official Singapore address where ACRA and others send communications and notices, and where company records and registers are kept. Does not have to be where business activities are carried out.",
+      "sourceRef": "Step 4.6, Before you register — 'Registered office address... Must be a Singapore address. Must be open and accessible to the public during normal business hours'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "registeredOfficeUnitNumber",
+      "label": "Registered office address — unit number",
+      "type": "string",
+      "required": false,
+      "description": "Optional unit number of the registered office address, e.g. '#12-34'.",
+      "sourceRef": "Step 4.6, Before you register — registered office address",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "registeredOfficePostalCode",
+      "label": "Registered office address — postal code",
+      "type": "string",
+      "required": true,
+      "description": "Singapore postal code of the registered office address (6 digits). The 6-digit format is Singapore's general postal code standard, not independently confirmed against Bizfile's own field validation; see VERIFICATION.md.",
+      "sourceRef": "Step 4.6, Before you register — registered office address",
+      "validation": { "pattern": "^[0-9]{6}$", "minLength": 6, "maxLength": 6 }
+    },
+    {
+      "name": "officeHoursConfirmed",
+      "label": "Confirm the registered office meets minimum public office hours",
+      "type": "boolean",
+      "required": true,
+      "description": "The registered office must be open to the public for at least three hours on each business day, to allow public access and delivery of legal papers. Non-compliance may lead to a fine of up to SGD 5,000.",
+      "sourceRef": "Step 4.6, Before you register — 'Office hours: Must be open to the public for at least three hours on each business day... Non-compliance may lead to a fine of up to $5,000'"
+    },
+    {
+      "name": "companyEmailAddress",
+      "label": "Company email address",
+      "type": "string",
+      "required": true,
+      "description": "A valid company email address provided during registration.",
+      "sourceRef": "Step 4.6, Before you register — 'Company email'; Step 2 — 'Provide a valid company email address'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "founderFullName",
+      "label": "Founder — full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the founder, who in this document's single-founder scope is the company's sole director and sole shareholder.",
+      "sourceRef": "Step 4.6, Step 3: Add position holders and shareholders — 'Personal details: NRIC or FIN, full name, and date of birth'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "founderNricOrFin",
+      "label": "Founder — NRIC or FIN",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The founder's National Registration Identity Card (NRIC) number (Singapore Citizens and Permanent Residents) or Foreign Identification Number (FIN). The exact character format was not independently confirmed against Bizfile's own field validation; see VERIFICATION.md.",
+      "sourceRef": "Step 4.6, Before you register — 'Personal details: NRIC or FIN, full name, and date of birth'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "founderDateOfBirth",
+      "label": "Founder — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Date of birth of the founder.",
+      "sourceRef": "Step 4.6, Before you register — 'Personal details: NRIC or FIN, full name, and date of birth'"
+    },
+    {
+      "name": "founderPositionsHeld",
+      "label": "Positions held by the founder",
+      "type": "enum",
+      "required": true,
+      "description": "The positions the founder holds. This document's single-founder scope fixes the founder as both sole director and sole shareholder; a company secretary must be appointed within six months of incorporation but cannot be the same person as a sole director, so is not modelled as a position held here.",
+      "sourceRef": "Step 4.6, Step 3 — 'Select all of the positions that the individual will hold'; Step 4.3: Choosing company directors & other key officers — 'A secretary must be appointed within six months of successful registration'; 'Not be the same person as the sole director'",
+      "validation": {
+        "enum": ["director_and_shareholder"]
+      }
+    },
+    {
+      "name": "founderResidentialAddressLine",
+      "label": "Founder — residential address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The founder's residential address, where ACRA sends official correspondence about the registration.",
+      "sourceRef": "Step 4.6, Before you register — 'Each position holder's residential address... ACRA will send all official letters to the residential address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "founderResidentialUnitNumber",
+      "label": "Founder — residential address unit number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional unit number of the founder's residential address.",
+      "sourceRef": "Step 4.6, Before you register — residential address",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "founderResidentialPostalCode",
+      "label": "Founder — residential address postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Singapore postal code of the founder's residential address (6 digits).",
+      "sourceRef": "Step 4.6, Before you register — residential address",
+      "validation": { "pattern": "^[0-9]{6}$", "minLength": 6, "maxLength": 6 }
+    },
+    {
+      "name": "founderContactAddressLine",
+      "label": "Founder — contact address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Contact address displayed in ACRA's public records. May be the same as the residential address, but cannot be a P.O. Box address and must be a place where the founder can receive messages (e.g. an office).",
+      "sourceRef": "Step 4.6, Before you register — 'Contact addresses are displayed in ACRA's public records... Must be a place where they can receive messages... Cannot be a P.O. Box address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "founderContactUnitNumber",
+      "label": "Founder — contact address unit number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional unit number of the founder's contact address.",
+      "sourceRef": "Step 4.6, Before you register — contact address",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "founderContactPostalCode",
+      "label": "Founder — contact address postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Postal code of the founder's contact address. Must be in the same country as the founder's residential address; only Singapore's 6-digit postal-code format is modelled here since founderResidentialAddressLine is scoped to a Singapore address.",
+      "sourceRef": "Step 4.6, Before you register — 'Must be in the same country as the residential address'",
+      "validation": { "pattern": "^[0-9]{6}$", "minLength": 6, "maxLength": 6 }
+    },
+    {
+      "name": "founderMobileNumber",
+      "label": "Founder — mobile number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The founder's mobile telephone number.",
+      "sourceRef": "Step 4.6, Before you register — 'Each position holder's contact details: Mobile number, Email address'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "founderContactEmail",
+      "label": "Founder — contact email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The founder's contact email address.",
+      "sourceRef": "Step 4.6, Before you register — 'Each position holder's contact details: Mobile number, Email address'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "isExemptFromNomineeRegisters",
+      "label": "Is the company exempt from maintaining the Registers of Nominee Directors and Nominee Shareholders (ROND/RONS)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Every company must declare whether it is exempt from maintaining ROND and RONS from the date of incorporation.",
+      "sourceRef": "Step 4.6, Step 4: Add nominator information — 'All companies need to state whether they are exempt from maintaining the Registers of Nominee Directors (ROND) and Nominee Shareholders (RONS)'"
+    },
+    {
+      "name": "nomineeExemptionCategory",
+      "label": "ROND/RONS exemption category",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isExemptFromNomineeRegisters", "equals": true },
+      "description": "The specific exemption category selected from Bizfile's dropdown list. The dropdown's own value set was not published in the guide pages reviewed for this document; see VERIFICATION.md.",
+      "sourceRef": "Step 4.6, Step 4 — 'Select the exemption category from the dropdown list'"
+    },
+    {
+      "name": "hasNomineeDirectorOrShareholder",
+      "label": "Does the company have a nominee director or nominee shareholder?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isExemptFromNomineeRegisters", "equals": false },
+      "description": "A nominee director or shareholder acts on behalf of another person or entity (the nominator). This document's single-founder scope has no nominee arrangements; answering true here is out of scope and ends the flow.",
+      "sourceRef": "Step 4.6, Step 4 — 'If you have nominee directors (ND) or shareholders (NS), you need to provide their details too'"
+    },
+    {
+      "name": "isExemptFromControllersRegister",
+      "label": "Is the company exempt from maintaining the Register of Registrable Controllers (RORC)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Every company must declare whether it is exempt from maintaining the RORC from the date of incorporation.",
+      "sourceRef": "Step 4.6, Step 5: Add controller details — 'All companies need to state whether they are exempt from maintaining the Register of Registrable Controllers (RORC)'"
+    },
+    {
+      "name": "controllerExemptionCategory",
+      "label": "RORC exemption category",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isExemptFromControllersRegister", "equals": true },
+      "description": "The specific exemption category selected from Bizfile's dropdown list. The dropdown's own value set was not published in the guide pages reviewed for this document; see VERIFICATION.md.",
+      "sourceRef": "Step 4.6, Step 5 — 'Select the exemption category from the dropdown list'"
+    },
+    {
+      "name": "ableToIdentifyControllers",
+      "label": "Is the company able to identify its registrable controllers?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isExemptFromControllersRegister", "equals": false },
+      "description": "A registrable controller is an individual or corporate entity with significant interest or control over the company (in this document's single-founder scope, the founder themselves). Answering false here means the company cannot identify its controllers — a declaration-and-executive-control path this document does not model — and ends the flow.",
+      "sourceRef": "Step 4.6, Step 5 — 'If you are able to identify your controllers, you need to provide their details too'"
+    },
+    {
+      "name": "controllerIsSoleFounder",
+      "label": "Is the sole registrable controller the same person as the founder?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "all": [
+        { "field": "isExemptFromControllersRegister", "equals": false },
+        { "field": "ableToIdentifyControllers", "equals": true }
+      ] },
+      "description": "In this document's single-founder scope, the founder — as sole shareholder and sole director — is trivially the company's sole registrable controller. Answering false (a distinct, additional controller) is out of scope and ends the flow.",
+      "sourceRef": "Step 4.6, Step 5 — 'Add a Registrable Controller under Individual Registrable Controllers or Corporate Registrable Controllers and provide their details'"
+    },
+    {
+      "name": "shareCapitalCurrency",
+      "label": "Share capital currency",
+      "type": "string",
+      "required": true,
+      "description": "The currency in which shares are issued. Companies may issue shares in multiple currencies as permitted by their constitution; this document models a single issuing currency.",
+      "sourceRef": "Step 4.4: Deciding on share capital & share types — 'Can I have multiple currencies for shares? Yes, companies may issue shares in multiple currencies'",
+      "validation": { "pattern": "^[A-Z]{3}$", "minLength": 3, "maxLength": 3 }
+    },
+    {
+      "name": "sharePaymentMethod",
+      "label": "Mode of payment for shares",
+      "type": "enum",
+      "required": true,
+      "description": "How the issued shares are paid for.",
+      "sourceRef": "Step 4.6, Step 6: Add share capital details — 'All in Cash... All Otherwise than in Cash... No Consideration... Partially in Cash and otherwise than in cash'",
+      "validation": {
+        "enum": ["all_cash", "all_otherwise_than_cash", "no_consideration", "partial_cash_and_otherwise"]
+      }
+    },
+    {
+      "name": "shareClass",
+      "label": "Share class",
+      "type": "enum",
+      "required": true,
+      "description": "The class of shares issued. Ordinary shares are the most common and usually carry voting rights; preference shares (including redeemable and convertible variants) typically carry fixed dividends instead. Treasury shares are shares the company has bought back from existing shareholders, so do not apply to an initial incorporation and are out of scope here.",
+      "sourceRef": "Step 4.4: Deciding on share capital & share types — 'Ordinary shares: Most common type... Preference shares... Redeemable preference shares... Convertible preference shares'",
+      "validation": {
+        "enum": ["ordinary", "preference", "redeemable_preference", "convertible_preference"]
+      }
+    },
+    {
+      "name": "numberOfSharesIssued",
+      "label": "Number of shares issued",
+      "type": "string",
+      "required": true,
+      "description": "The number of shares allotted to the founder-shareholder. The minimum is one issued share; Bizfile accepts up to 19 digits with up to 19 decimal places, so this is modelled as a numeric string rather than a bounded integer or number.",
+      "sourceRef": "Step 4.4: Deciding on share capital & share types — 'the minimum number of issued shares is one. The maximum figure may contain up to 19 digits, with up to 19 decimal places'",
+      "validation": { "pattern": "^[0-9]{1,19}(\\.[0-9]{1,19})?$", "maxLength": 39 }
+    },
+    {
+      "name": "issuedShareCapitalAmount",
+      "label": "Issued share capital",
+      "type": "number",
+      "required": true,
+      "description": "Total amount shareholders have committed to invest in the company. Both company types modelled here require share capital, with a minimum of SGD 1 to start.",
+      "sourceRef": "Step 4.4: Deciding on share capital & share types — 'If your company type requires share capital, your company needs at least $1 in share capital to start'",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "paidUpShareCapitalAmount",
+      "label": "Paid-up share capital",
+      "type": "number",
+      "required": true,
+      "description": "The amount shareholders have actually paid for their shares so far, which cannot exceed the issued share capital; shares may be fully or partially paid.",
+      "sourceRef": "Step 4.4: Deciding on share capital & share types — 'Paid-up share capital: Amount that shareholders have actually paid for their shares... The amount of paid-up shares cannot exceed the amount of issued shares'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "shareAllotmentConfirmed",
+      "label": "Confirm all issued shares are allotted to the founder",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirms that all shares recorded under Share capital details are allotted to the sole founder-shareholder identified in Position holders, via Bizfile's individual-share-allotment option. Shares held in trust and group share allotments are out of scope in this single-founder document.",
+      "sourceRef": "Step 4.6, Step 7: Allot shares — 'To allot shares to a single person or corporate entity, click \"Add individual shares\"... Select a shareholder and enter the details of their shares'"
+    },
+    {
+      "name": "constitutionType",
+      "label": "Constitution type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the company submits a customised constitution or adopts ACRA's model constitution.",
+      "sourceRef": "Step 4.6, Step 8: Submit the constitution — 'select either \"Attach customised constitution\" or \"Use model constitution\"'",
+      "validation": {
+        "enum": ["customised_upload", "model_constitution"]
+      }
+    },
+    {
+      "name": "constitutionDocument",
+      "label": "Customised constitution document",
+      "type": "file",
+      "required": false,
+      "requiredWhen": { "field": "constitutionType", "equals": "customised_upload" },
+      "description": "The company's own constitution document, uploaded when a customised constitution is chosen instead of the model constitution. Accepted file size/media type constraints were not published in the guide pages reviewed for this document; see VERIFICATION.md.",
+      "sourceRef": "Step 4.6, Step 8 — '(Customised constitution) Upload your document. Confirm that your uploaded documents are displayed correctly'"
+    },
+    {
+      "name": "modelConstitutionMode",
+      "label": "Model constitution mode",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "constitutionType", "equals": "model_constitution" },
+      "description": "Whether the company automatically adopts future changes to the Model Constitution under the Companies Act ('in force from time to time'), or is fixed to the version available at incorporation ('in force at a point in time') until it makes its own amendments.",
+      "sourceRef": "Step 4.5: Preparing or adopting a company constitution — 'In force from time to time... In force at a point in time'",
+      "validation": {
+        "enum": ["in_force_from_time_to_time", "in_force_at_point_in_time"]
+      }
+    },
+    {
+      "name": "declarationConfirmed",
+      "label": "Declaration confirmed",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirmation that the declaration was read and the declaration checkbox checked before final submission. The exact declaration wording was not published in the guide pages reviewed for this document; see VERIFICATION.md.",
+      "sourceRef": "Step 4.6, Step 9: Final review, endorsement, and payment — 'Read the declaration carefully. Then, check the declaration box and click \"Submit\"'"
+    },
+    {
+      "name": "specialUenRequested",
+      "label": "Purchase a special (easier-to-remember) Unique Entity Number?",
+      "type": "boolean",
+      "required": false,
+      "description": "Optional add-on: purchase an alternative, easier-to-remember Unique Entity Number (UEN) for an additional fee, chosen during the payment step, instead of the standard system-assigned UEN.",
+      "sourceRef": "Step 4.6, Step 9 — 'You can choose a special unique entity number (SUN) during the payment process'"
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment method",
+      "type": "enum",
+      "required": true,
+      "description": "How the SGD 300 registration fee is paid.",
+      "sourceRef": "Step 4.6, Fees and processing time — 'Fee: $300; Payment method: Credit card, debit card, or online banking'",
+      "validation": {
+        "enum": ["credit_card", "debit_card", "online_banking"]
+      }
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "paidUpNotAboveIssued",
+      "compare": {
+        "field": "paidUpShareCapitalAmount",
+        "operator": "lessThanOrEqual",
+        "compareTo": "issuedShareCapitalAmount"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "before_you_register",
+      "title": "Before you register",
+      "fields": ["founderResidencyStatus"],
+      "next": "name_reservation"
+    },
+    {
+      "id": "name_reservation",
+      "title": "Business name reservation",
+      "fields": [
+        "proposedCompanyName",
+        "companyType",
+        "primarySsicCode",
+        "secondarySsicCode",
+        "businessActivityCustomDescription",
+        "nameApplicationEmail"
+      ],
+      "next": "company_details"
+    },
+    {
+      "id": "company_details",
+      "title": "Company details",
+      "fields": [
+        "nameRegistrationEserviceNumber",
+        "financialYearEndDate",
+        "financialYearPeriod",
+        "registeredOfficeAddressLine",
+        "registeredOfficeUnitNumber",
+        "registeredOfficePostalCode",
+        "officeHoursConfirmed",
+        "companyEmailAddress"
+      ],
+      "next": "position_holder"
+    },
+    {
+      "id": "position_holder",
+      "title": "Position holders and shareholders",
+      "fields": [
+        "founderFullName",
+        "founderNricOrFin",
+        "founderDateOfBirth",
+        "founderPositionsHeld",
+        "founderResidentialAddressLine",
+        "founderResidentialUnitNumber",
+        "founderResidentialPostalCode",
+        "founderContactAddressLine",
+        "founderContactUnitNumber",
+        "founderContactPostalCode",
+        "founderMobileNumber",
+        "founderContactEmail"
+      ],
+      "next": "nominee_and_controller_declarations"
+    },
+    {
+      "id": "nominee_and_controller_declarations",
+      "title": "Nominator and controller declarations",
+      "fields": [
+        "isExemptFromNomineeRegisters",
+        "nomineeExemptionCategory",
+        "hasNomineeDirectorOrShareholder",
+        "isExemptFromControllersRegister",
+        "controllerExemptionCategory",
+        "ableToIdentifyControllers",
+        "controllerIsSoleFounder"
+      ],
+      "transitions": [
+        {
+          "to": null,
+          "exitReason": "nominee-arrangement-out-of-scope",
+          "when": { "field": "hasNomineeDirectorOrShareholder", "equals": true }
+        },
+        {
+          "to": null,
+          "exitReason": "unable-to-identify-controllers-out-of-scope",
+          "when": { "all": [
+            { "field": "isExemptFromControllersRegister", "equals": false },
+            { "field": "ableToIdentifyControllers", "equals": false }
+          ] }
+        },
+        {
+          "to": null,
+          "exitReason": "multi-controller-out-of-scope",
+          "when": { "field": "controllerIsSoleFounder", "equals": false }
+        },
+        {
+          "to": "share_capital"
+        }
+      ]
+    },
+    {
+      "id": "share_capital",
+      "title": "Share capital details",
+      "fields": [
+        "shareCapitalCurrency",
+        "sharePaymentMethod",
+        "shareClass",
+        "numberOfSharesIssued",
+        "issuedShareCapitalAmount",
+        "paidUpShareCapitalAmount"
+      ],
+      "next": "share_allotment"
+    },
+    {
+      "id": "share_allotment",
+      "title": "Allot shares",
+      "fields": ["shareAllotmentConfirmed"],
+      "next": "constitution"
+    },
+    {
+      "id": "constitution",
+      "title": "Submit the constitution",
+      "fields": ["constitutionType", "constitutionDocument", "modelConstitutionMode"],
+      "next": "declaration_and_payment"
+    },
+    {
+      "id": "declaration_and_payment",
+      "title": "Final review, endorsement, and payment",
+      "fields": ["declarationConfirmed", "specialUenRequested", "paymentMethod"]
+    }
+  ]
+}
