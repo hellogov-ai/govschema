@@ -1,0 +1,321 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "za/dha/smart-id-card-application",
+  "version": "1.0.0",
+  "title": "South Africa Smart ID Card Application",
+  "description": "Apply for a South African Smart ID Card — the national identity document required of every citizen or permanent resident 16 years or older — either as a first-time applicant (a youth applying in their own right for the first time, a pensioner or other citizen converting an existing green bar-coded ID book), or a re-issue following loss/theft/damage or a change of surname after marriage, divorce, or resuming a previous surname. Modeled on the Department of Home Affairs' eHomeAffairs online front door (account registration and the 'Identity Card & Passport/Travel Document Application Form') plus the underlying in-person Form BI-9 ('Application for an Identity Document', which cannot be downloaded and is completed and fingerprinted at a Home Affairs office or participating bank branch). It does not submit the application, upload documents, or make payments; the live dha.gov.za/ehome.dha.gov.za sources and the applicant's chosen Home Affairs office or bank branch are always authoritative (see VERIFICATION.md). Out of scope: the green bar-coded ID book itself (being phased out), the Temporary Identity Certificate, applications by naturalised citizens/permanent residents beyond the single gating document noted here, and applications lodged at a South African mission/consulate abroad (a separate, green-book-only process with its own forms BI-9/BI-529).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Home Affairs, Republic of South Africa",
+    "abbreviation": "DHA",
+    "url": "https://www.dha.gov.za/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-ZA"
+  },
+  "source": {
+    "url": "https://www.dha.gov.za/files/Brochures/SmartIDrequirements.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "DHA 'Requirements when applying for Smart ID Card' brochure; Form BI-9 ('Application for an Identity Document'); eHomeAffairs online portal (ehome.dha.gov.za)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-05",
+    "notes": "Second South African reference schema, opening the National ID & Civic Documents vertical for ZA (previously only Passport and Business Formation were published). Eligibility categories, required supporting documents, and fees were read directly from the DHA-hosted 'SmartIDrequirements.pdf' brochure (a scanned image with no text layer, read via direct PDF vision) and cross-checked against the South African Government's official gov.za identity-document service page and the Western Cape Provincial Government's 'Applying for an Identity Document' page (both .gov.za domains). The applicant-particulars field set (title, initials, full forenames, surname, ID number, date of birth, email, cellphone) was independently confirmed live against the real DOM of the eHomeAffairs account-registration form at ehome.dha.gov.za/eHomeAffairsV3/SGRegister (field ids/names/maxlengths read directly, not from a secondary description), and the 'For Whom is the Document(s)? - Identity' section fields (ID No, South African citizen Y/N, how citizenship was acquired, full forenames, surname, maiden name) plus the payment/fee flow were read directly from the DHA-hosted 'How to use eHomeAffairs' guide PDF (ehome.dha.gov.za/eHomeAffairsV3/Content/HowToGuide.pdf), which shows real screenshots of the live application, upload, and payment screens. Registering an eHomeAffairs account requires a real South African cellphone number to receive an SMS OTP, so the flow beyond account-registration Step 1 could not be walked interactively; the substantive application-form fields modeled here come from the How-To Guide's screenshots of that same live form, not from interactive submission. Status remains 'draft' pending a full field-by-field comparison against a completed live application walkthrough or a domestic Home Affairs office's own published field checklist."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationReason",
+      "label": "Reason for this application",
+      "type": "enum",
+      "required": true,
+      "description": "First-time issuance (youth applying in their own right for the first time; a pensioner or other citizen converting an existing green bar-coded ID book to a Smart ID Card) or a re-issue of an existing Smart ID Card/ID book.",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, categories A ('YOUTH WHO ARE 16 YEARS AND ABOVE'), B ('PENSIONERS WHO ARE 60 YEARS AND ABOVE'), C ('OTHER CITIZENS'); Western Cape Government 'Applying for an Identity Document' — re-issue reasons (lost/stolen/damaged, marriage, previous surname, divorce)",
+      "validation": { "enum": ["first_issue_youth", "first_issue_pensioner", "first_issue_other", "reissue_lost_stolen_damaged", "reissue_marriage_surname_change", "reissue_resume_previous_surname", "reissue_divorce_surname_change"] }
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": true,
+      "description": "As offered by the eHomeAffairs account-registration form.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, select field 'PersonTitle' (live-verified options: Mr, Miss, Mrs, Ms, Prof, Dr)",
+      "validation": { "enum": ["mr", "miss", "mrs", "ms", "prof", "dr"] }
+    },
+    {
+      "name": "initials",
+      "label": "Initial(s)",
+      "type": "string",
+      "required": true,
+      "description": "Initials of the applicant's forenames.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, field 'Initials' (live-verified maxlength 5)",
+      "validation": { "minLength": 1, "maxLength": 5 }
+    },
+    {
+      "name": "fullForenames",
+      "label": "Full forename(s)",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. As it appears on the applicant's identity document, passport, or birth certificate.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, field 'Firstname' (live-verified maxlength 50); also 'Full Forenames' on the application form itself (How-To Guide, step 6 screenshot)",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, field 'Lastname' (live-verified maxlength 50); also 'Surname' on the application form itself (How-To Guide, step 6 screenshot)",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "maidenName",
+      "label": "Maiden name",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "description": "Personal identifier; handle as sensitive data. Applicable to a currently or previously married female applicant.",
+      "sourceRef": "eHomeAffairs application form, 'Maiden Name' field (How-To Guide, step 6 screenshot)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "identityNumber",
+      "label": "South African identity number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. The 13-digit South African ID number, allocated at birth registration and printed on the applicant's birth certificate, green ID book, or existing Smart ID Card.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, field 'IdNumber' (live-verified, maxlength 13); also 'ID No' on the application form itself (How-To Guide, step 6 screenshot)",
+      "validation": { "pattern": "^[0-9]{13}$" }
+    },
+    {
+      "name": "areYouASouthAfricanCitizen",
+      "label": "Are you a South African citizen?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "eHomeAffairs application form, 'Are you a South African Citizen? Y/N' (How-To Guide, step 6 screenshot)"
+    },
+    {
+      "name": "howAreYouACitizen",
+      "label": "How are you a citizen?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "areYouASouthAfricanCitizen", "equals": true },
+      "description": "Required when areYouASouthAfricanCitizen is true.",
+      "sourceRef": "eHomeAffairs application form, 'How are you a citizen?' Birth / Descent / Naturalisation / Other (How-To Guide, step 6 screenshot)",
+      "validation": { "enum": ["birth", "descent", "naturalisation", "other"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Full date, YYYY-MM-DD.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, select fields 'DateOfBirthYear'/'DateOfBirthMonth'/'DateOfBirthDay' (live-verified)"
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "Used to verify marital status and determine whether a marriage certificate or divorce decree must accompany the application.",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, categories B/C: 'Marriage certificate, if married (for marriage verification status)'; 'Divorce decree, if divorced (for divorce verification status)'",
+      "validation": { "enum": ["unmarried", "married", "widower", "widow", "divorced"] }
+    },
+    {
+      "name": "parentsDeceased",
+      "label": "Are your parents/legal guardian deceased?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "applicationReason", "equals": "first_issue_youth" },
+      "description": "Applicable to a first-time youth applicant only. Required when applicationReason is first_issue_youth.",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, category A, item 3: 'Death certificate or certified copy if parents are deceased'"
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "description": "Used for eHomeAffairs account verification and application status notifications.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, field 'Email' (live-verified maxlength 100)",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 100 }
+    },
+    {
+      "name": "cellCountryCode",
+      "label": "Cellphone country code",
+      "type": "string",
+      "required": true,
+      "description": "Numeric country calling code without the leading '+', e.g. 27 for South Africa (the default). Used for SMS OTP verification and status notifications.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, select field 'ContactNoCountry' (live-verified; 234 countries listed, South Africa +27 default)",
+      "validation": { "pattern": "^[0-9]{1,4}$" }
+    },
+    {
+      "name": "cellNumber",
+      "label": "Cellphone number",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. Local number without the country code, e.g. 0821234567. Must be correct: eHomeAffairs sends a verification OTP (one-time PIN) by SMS to this number.",
+      "sourceRef": "eHomeAffairs Account Registration Step 1, field 'ContactNo' (live-verified maxlength 10)",
+      "validation": { "maxLength": 10 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "birthCertificate",
+      "label": "Birth certificate",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "applicationReason", "equals": "first_issue_youth" },
+      "belongsTo": "applicant",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, category A, item 1"
+    },
+    {
+      "id": "guardianOrInformantIdCopy",
+      "label": "Certified copy of a parent's, legal guardian's, or informant's identity document",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "applicationReason", "equals": "first_issue_youth" },
+      "belongsTo": "responsible-party",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, category A, item 2"
+    },
+    {
+      "id": "parentDeathCertificate",
+      "label": "Death certificate or certified copy (if parents/legal guardian are deceased)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "all": [
+        { "field": "applicationReason", "equals": "first_issue_youth" },
+        { "field": "parentsDeceased", "equals": true }
+      ] },
+      "belongsTo": "applicant",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, category A, item 3"
+    },
+    {
+      "id": "previousIdDocumentOrAffidavit",
+      "label": "Green bar-coded identity document, or an affidavit if it was lost, stolen, or damaged",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "applicationReason", "notEquals": "first_issue_youth" },
+      "belongsTo": "applicant",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, categories B/C, item 1: 'Green bar-coded identity document/affidavit in case the identity document is lost'"
+    },
+    {
+      "id": "proofOfResidence",
+      "label": "Proof of residence",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, all categories: 'Proof of residence (where it is available) or provide residential address'"
+    },
+    {
+      "id": "marriageCertificate",
+      "label": "Marriage certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "maritalStatus", "equals": "married" },
+      "belongsTo": "applicant",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, categories B/C, item 3: 'Marriage certificate, if married (for marriage verification status)'"
+    },
+    {
+      "id": "divorceDecree",
+      "label": "Divorce decree",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "maritalStatus", "equals": "divorced" },
+      "belongsTo": "applicant",
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, categories B/C, item 4: 'Divorce decree, if divorced (for divorce verification status)'"
+    },
+    {
+      "id": "naturalisationOrPermanentResidenceCertificate",
+      "label": "Naturalisation certificate or permanent residence permit/exemption certificate, and Form BI-1620",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "howAreYouACitizen", "equals": "naturalisation" },
+      "belongsTo": "applicant",
+      "sourceRef": "Western Cape Government 'Applying for an Identity Document': naturalised citizens/permanent-residence-permit holders additionally submit a naturalisation certificate or permanent residency/exemption certificate (with a copy) and complete Form BI-1620 at a Home Affairs office. This is a secondary (provincial-government) source; the underlying dha.gov.za-hosted equivalent was not independently located — see VERIFICATION.md."
+    },
+    {
+      "id": "fingerprints",
+      "label": "Fingerprints (Form BI-9 / DHA-9)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Western Cape Government 'Applying for an Identity Document': fingerprints captured in person via Form DHA-9 (or digital live capture at modernized/smartcard offices). Form BI-9 itself cannot be downloaded; the DHA supplies and completes it with the applicant in person, per the DHA brochure and the Department's consular guidance for the same form used abroad."
+    },
+    {
+      "id": "idPhotos",
+      "label": "Two identical colour ID-sized photographs",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Western Cape Government 'Applying for an Identity Document': two colour ID photographs, bearing the applicant's full name on the reverse; not required at smartcard offices that perform digital live capture."
+    },
+    {
+      "id": "applicationFee",
+      "label": "Smart ID Card application fee",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": { "field": "applicationReason", "in": ["first_issue_other", "reissue_lost_stolen_damaged", "reissue_marriage_surname_change", "reissue_resume_previous_surname", "reissue_divorce_surname_change"] },
+      "belongsTo": "applicant",
+      "amount": {
+        "currency": "ZAR",
+        "value": 140
+      },
+      "methods": ["cash", "card", "bank-transfer"],
+      "sourceRef": "DHA 'Requirements when applying for Smart ID Card' brochure, category C, item 5: 'A fee of R140.00 will be required'; first-time youth (category A) and first-time pensioner (category B) applications are free of charge. Cross-checked against the eHomeAffairs 'How to use eHomeAffairs' guide payment screenshot, which lists an example 'Re-issue of an identity document' item at R140.00, and against the Western Cape Government fee table (Replacement ID/Smart Card: R140)."
+    },
+    {
+      "id": "declarationSignature",
+      "label": "Signature of applicant on Form BI-9",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form BI-9 is completed, dated, and signed by the applicant in the presence of a Home Affairs official at the time fingerprints are captured (Form BI-9 cannot be pre-signed at home). Exact declaration wording was not independently confirmed for the domestic pathway — see VERIFICATION.md."
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicant_category_and_particulars",
+      "title": "Application reason and particulars of applicant",
+      "fields": [
+        "applicationReason",
+        "title",
+        "initials",
+        "fullForenames",
+        "surname",
+        "maidenName",
+        "identityNumber",
+        "areYouASouthAfricanCitizen",
+        "howAreYouACitizen",
+        "dateOfBirth",
+        "maritalStatus",
+        "parentsDeceased"
+      ],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact details",
+      "fields": [
+        "email",
+        "cellCountryCode",
+        "cellNumber"
+      ]
+    }
+  ]
+}
