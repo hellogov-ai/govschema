@@ -4,8 +4,17 @@
 
 ## Executive Summary
 
-**13 jurisdictions** | **213 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**13 jurisdictions** | **214 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-05, GOV-1303):** South Korea's DMV vertical closed with
+> `kr/koroad/driving-licence-application` (GOV-1291), sourced from the
+> gazetted driving-licence-test application form (law.go.kr Attached Form No.
+> 42-2, Class 1 Regular / Class 2), picked up from the standing candidate
+> backlog left by GOV-1289's new-jurisdiction research cycle. KR now has
+> 2/6 verticals modelled (Passport, DMV); Visa (`GOV-1292`), Taxes
+> (`GOV-1293`), and National ID (`GOV-1294`) candidates remain open in the
+> backlog, along with the two secondary Brazil/UAE candidates below.
+>
 > **Update (2026-07-05, GOV-1289):** South Korea (KR) opened as the registry's
 > 13th jurisdiction with `kr/mofa/passport-application-first-adult`, the first
 > schema authored against a new jurisdiction since the current 12 were
@@ -27,7 +36,7 @@
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
 | **Passport** | 13/13 (100%) | none — closed |
-| **DMV** | 12/13 (92%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **KR** not yet modelled (candidate: `GOV-1291`) |
+| **DMV** | 13/13 (100%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB) |
 | **Business Formation** | 12/13 (92%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR** not yet modelled |
 | **Taxes** | 12/13 (92%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant/Micro-Business/Body-Corporate modelled GOV-1268/GOV-1275/GOV-1282; IE Form CT1, ZA's other 2 ITR14 Annexures still open); **KR** not yet modelled (candidate: `GOV-1293`) |
 | **Visa** | 10/13 (77%) | **NL, ZA** — both confirmed dead ends (see below), not open work; **KR** not yet modelled (candidate: `GOV-1292`) |
@@ -62,14 +71,16 @@ GOV-1289) is new this cycle — the registry's first Korean schema, sourced
 from the Ministry of Foreign Affairs' current form (revised 2025-10-09) plus
 its own official filled-in example.
 
-### DMV — Vehicle Registration, Licensing, Permits (12/13 jurisdictions)
+### DMV — Vehicle Registration, Licensing, Permits (13/13 jurisdictions)
 
-Every jurisdiction except South Korea has at least one DMV-vertical schema
-(driver licensing and/or vehicle registration). Remaining gaps are
-**sub-process/edition** expansions within an already-covered vertical, plus
-one genuine new-jurisdiction gap:
+Every jurisdiction now has at least one DMV-vertical schema (driver licensing
+and/or vehicle registration). **South Korea** (`kr/koroad/driving-licence-application`,
+GOV-1291/GOV-1303) closes the DMV gap flagged in the prior cycle — sourced
+from the gazetted driving-licence-test application form (Road Traffic Act
+Enforcement Rule, Attached Form No. 42-2) via law.go.kr, no login required.
+Remaining gaps are all **sub-process/edition** expansions within an
+already-covered vertical:
 
-- **KR:** not yet modelled. GOV-1289's research found a strong, unauthenticated, field-level candidate — the gazetted driver's-licence-exam application form via law.go.kr — filed as `GOV-1291`.
 - **CDL (commercial driver licence):** only `us/ca/dmv/commercial-drivers-license-application` exists. No CDL-equivalent schema yet for GB (HGV/PCV — `gb/dvla/lorry-bus-provisional-licence` is the closest analogue), DE, FR, IE, IN, NL, NZ, SG, ZA.
 - **IDL (International Driving Permit):** covered for US (`dos/international-driving-permit-aaa`, `-aata`), IE (`dttas/international-driving-permit`), GB (`dvla/international-driving-permit`). Not modelled elsewhere.
 - **India, GOV-1240:** `in/morth/driving-licence-application` (this cycle) closes the "Issue of New Driving Licence" gap that `in/morth/learners-licence-application` (GOV-878) explicitly scoped out. India's DMV vertical now has 5 schemas (learner's licence, driving licence, vehicle registration, vehicle registration renewal, vehicle ownership transfer).
@@ -141,7 +152,7 @@ registration form with an official filled-in example), filed as `GOV-1294`.
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KR** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **KR** | 2 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

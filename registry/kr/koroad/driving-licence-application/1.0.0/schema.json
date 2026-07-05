@@ -1,0 +1,529 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "kr/koroad/driving-licence-application",
+  "version": "1.0.0",
+  "title": "South Korea Application for Driving Licence Test (Class 1 Regular / Class 2)",
+  "description": "Apply to the Korea Road Traffic Authority (KoROAD) to take the driving licence test for a Class 1 Regular (제1종보통, the standard car licence) or Class 2 (제2종) licence, using the gazetted 응시원서 (test application) form — Road Traffic Act Enforcement Rule, Attached Form No. 42-2. In South Korea the same form serves as the application, the exam ticket (응시표), and the carrier of a self-reported disease/physical-condition declaration required before sitting the written test; a separate form (No. 42) covers Class 1 Large/Special licences and is out of scope here. Passing the written test issues a probationary practice licence (연습운전면허) that is valid until the functional (in-yard) and road tests are completed; those subsequent test-day steps, and the prerequisite of not already being disqualified, are administered by KoROAD in person and are out of scope. It does not submit the application; the live safedriving.or.kr / koroad.or.kr sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Korea Road Traffic Authority",
+    "abbreviation": "KoROAD",
+    "url": "https://www.koroad.or.kr/eng"
+  },
+  "process": {
+    "type": "application",
+    "language": "ko-KR"
+  },
+  "source": {
+    "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=129740389&bylClsCd=110202",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "도로교통법 시행규칙 별지 제42호의2서식 (개정 2022. 1. 21.) — Road Traffic Act Enforcement Rule, Attached Form No. 42-2, 'Application for Motor Vehicle Driving Licence Test (Class 1 Regular / Class 2)' (amended 2022-01-21)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "Opens the DMV vertical for South Korea (KR previously had only Passport published via kr/mofa/passport-application-first-adult). Form 42-2 was retrieved directly from the National Law Information Center (law.go.kr), the Korean government's own statutes/forms portal, as a genuine text-layer PDF (not scanned) — every field, checkbox, and instructional note in this schema was read from that text layer directly, not a summary. Every field on the form's four sides (front-left 응시원서, front-right 응시표/연습면허란, back-left 영수필증/유의사항, back-right 질병·신체에 관한 신고서) was modeled except office-assigned fields (접수번호/접수일자 receipt number/date, all examiner/판정관/병원 confirmation fields, and the blank test-result score grids), consistent with prior GovSchema precedent of excluding office-use-only fields (e.g. za/rtmc/driving-licence-application). The disease/physical-condition self-declaration on the form's back side is filed together with the front application per the form's own instruction ('뒤쪽에 질병·신체에 관한 신고서가 있으므로... 함께 제출') and is modeled as applicant-facing fields, not merely referenced as a document, since it is the applicant's own self-report. The 신체검사서 (medical examination result) is instead modeled as a supporting document, since it is issued and signed by a physician/hospital, not filled by the applicant. Status remains 'draft' pending an independent second reviewer's field-by-field pass and, ideally, a live KoROAD test-centre intake walkthrough."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "koreanName",
+      "label": "성명(한글) — Name (Korean)",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form 42-2 — front-left, '성명(한글)'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nationality",
+      "label": "국적 — Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 42-2 — front-left, '국적'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "licenceCardLanguage",
+      "label": "운전면허증 발급(실물) — Physical licence card language",
+      "type": "enum",
+      "required": true,
+      "description": "The physical driving licence card can be issued in Korean text or English text, but not both.",
+      "sourceRef": "Form 42-2 — front-left, '운전면허증 발급 ... 실물 [ ]국문 [ ]영문'",
+      "validation": { "enum": ["korean", "english"] }
+    },
+    {
+      "name": "wantsMobileLicence",
+      "label": "모바일 운전면허증 희망 여부 — Also wants a mobile driving licence",
+      "type": "boolean",
+      "required": false,
+      "description": "The mobile-licence row is only selected if the applicant wants one, in addition to the physical card.",
+      "sourceRef": "Form 42-2 — front-left, '모바일은 희망하는 경우에만 선택합니다'"
+    },
+    {
+      "name": "mobileLicenceIssuanceMethod",
+      "label": "모바일 운전면허증 발급 방법 — Mobile licence issuance method",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "wantsMobileLicence", "equals": true },
+      "sourceRef": "Form 42-2 — front-left, '모바일 [ ]IC카드 발급 [ ]현장 QR 발급'",
+      "validation": { "enum": ["ic_card", "onsite_qr"] }
+    },
+    {
+      "name": "surnameEnglish",
+      "label": "성명(영문) 성 — Surname (English)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "licenceCardLanguage", "equals": "english" },
+      "description": "Only completed when applying for an English-text licence card.",
+      "sourceRef": "Form 42-2 — front-left, '성명(영문) 성' and note '성명(영문)란은 영문운전면허증 발급을 신청하는 경우에만 작성합니다'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "givenNameEnglish",
+      "label": "성명(영문) 이름 — Given name(s) (English)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "licenceCardLanguage", "equals": "english" },
+      "description": "Only completed when applying for an English-text licence card.",
+      "sourceRef": "Form 42-2 — front-left, '성명(영문) 이름' and note '성명(영문)란은 영문운전면허증 발급을 신청하는 경우에만 작성합니다'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "residentRegistrationNumber",
+      "label": "주민등록번호 — Resident registration number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "South Korea's national resident-registration ID number (13 digits). Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form 42-2 — front-left, '주민등록번호'",
+      "validation": { "pattern": "^[0-9]{6}-?[0-9]{7}$" }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "전화번호 — Phone number",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 42-2 — front-left, '전화번호'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "address",
+      "label": "주소 — Address",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form 42-2 — front-left, '주소'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "email",
+      "label": "전자우편 — Email address",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "The form's own layout carries no asterisk or other required/optional marking on this field; modeled conservatively as optional, consistent with prior GovSchema precedent for undesignated contact fields (e.g. za/rtmc/driving-licence-application).",
+      "sourceRef": "Form 42-2 — front-left, '전자우편'",
+      "validation": { "minLength": 3, "maxLength": 254, "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }
+    },
+    {
+      "name": "applicationPurpose",
+      "label": "신청내용 — Application purpose",
+      "type": "enum",
+      "required": true,
+      "description": "new = a genuine new licence-class application (this document's primary modeled pathway). integration = consolidating/combining an existing licence with a new one. aptitude_test_not_taken_or_failed = re-applying after not taking or failing the periodic aptitude (fitness) check. military_licence = conversion of a military driving licence. foreign_licence = conversion of a foreign driving licence.",
+      "sourceRef": "Form 42-2 — front-left, '신청내용 [ ]신규 [ ]통합 [ ]적성검사를 받지 않거나 불합격한 경우 [ ]군면허 [ ]외국면허'",
+      "validation": {
+        "enum": ["new", "integration", "aptitude_test_not_taken_or_failed", "military_licence", "foreign_licence"]
+      }
+    },
+    {
+      "name": "licenceClassApplying",
+      "label": "응시면허 — Licence class applying for",
+      "type": "enum",
+      "required": true,
+      "description": "This form (42-2) covers Class 1 Regular (car) and the three Class 2 sub-classes only; Class 1 Large/Special uses the separate Form 42 and is out of scope.",
+      "sourceRef": "Form 42-2 — front-left, '응시면허 제 종 면허' and the 보유면허 table's class headings (제1종보통 / 제2종보통ㆍ소형ㆍ원자)",
+      "validation": { "enum": ["class1_regular", "class2_regular", "class2_small", "class2_moped"] }
+    },
+    {
+      "name": "testVehicleTransmission",
+      "label": "응시차량 — Test vehicle transmission",
+      "type": "enum",
+      "required": true,
+      "description": "manual = the default/standard road-test vehicle. automatic = the applicant tests in and will be restricted to an automatic-transmission vehicle only; this choice becomes an automatic-transmission-only condition on the issued licence.",
+      "sourceRef": "Form 42-2 — front-left, '응시차량 [ ]자동변속 [ ]특수제작ㆍ승인차'",
+      "validation": { "enum": ["manual", "automatic"] }
+    },
+    {
+      "name": "usesSpeciallyManufacturedOrApprovedVehicle",
+      "label": "특수제작ㆍ승인차 사용 여부 — Uses a specially manufactured/approved vehicle",
+      "type": "boolean",
+      "required": false,
+      "description": "Selected when the applicant's test/licensed vehicle is a specially manufactured or approved vehicle, typically an adapted vehicle for an applicant with a disability. The same checkbox item recurs under 면허조건 (licence conditions) and is modeled once here.",
+      "sourceRef": "Form 42-2 — front-left, '응시차량 ... [ ]특수제작ㆍ승인차', repeated under '면허조건 ... 특수제작ㆍ승인차'"
+    },
+    {
+      "name": "hasExistingLicence",
+      "label": "보유면허 여부 — Already holds a driving licence",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant already holds any driving licence class, being applied for an additional or upgraded class. If true, at least one of the existingClass* fields and existingLicenceNumber should be completed.",
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table (제1종: 대형/보통/특수, 제2종: 보통/소형/원자, 면허번호)"
+    },
+    {
+      "name": "existingLicenceNumber",
+      "label": "면허번호 — Existing licence number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "hasExistingLicence", "equals": true },
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table, '면허번호'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "existingClass1Large",
+      "label": "보유면허 — 제1종대형",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table, '제1종 대형'"
+    },
+    {
+      "name": "existingClass1Regular",
+      "label": "보유면허 — 제1종보통",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table, '제1종 보통'"
+    },
+    {
+      "name": "existingClass1Special",
+      "label": "보유면허 — 제1종특수",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table, '제1종 특수'"
+    },
+    {
+      "name": "existingClass2Regular",
+      "label": "보유면허 — 제2종보통",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table, '제2종 보통'"
+    },
+    {
+      "name": "existingClass2Small",
+      "label": "보유면허 — 제2종소형",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table, '제2종 소형'"
+    },
+    {
+      "name": "existingClass2Moped",
+      "label": "보유면허 — 제2종원자(원동기장치자전거)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '보유면허' table, '제2종 원자'"
+    },
+    {
+      "name": "usesProstheticHand",
+      "label": "면허조건 — 의수",
+      "type": "boolean",
+      "required": false,
+      "description": "Declares use of a prosthetic hand, recorded as a licence condition/restriction code.",
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '의수'"
+    },
+    {
+      "name": "usesProstheticLeg",
+      "label": "면허조건 — 의족",
+      "type": "boolean",
+      "required": false,
+      "description": "Declares use of a prosthetic leg, recorded as a licence condition/restriction code.",
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '의족'"
+    },
+    {
+      "name": "usesHandOperatedBrake",
+      "label": "면허조건 — 수(手)제동",
+      "type": "boolean",
+      "required": false,
+      "description": "Declares use of a hand-operated brake, recorded as a licence condition/restriction code.",
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '수(手)제동'"
+    },
+    {
+      "name": "usesHandOperatedAccelerator",
+      "label": "면허조건 — 수(手)가속",
+      "type": "boolean",
+      "required": false,
+      "description": "Declares use of a hand-operated accelerator, recorded as a licence condition/restriction code.",
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '수(手)가속'"
+    },
+    {
+      "name": "usesHearingAid",
+      "label": "면허조건 — 보청기",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '보청기'"
+    },
+    {
+      "name": "hasHearingImpairedDriverSign",
+      "label": "면허조건 — 청각장애인표지",
+      "type": "boolean",
+      "required": false,
+      "description": "Declares that the applicant will be required to display the hearing-impaired-driver sign/sticker.",
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '청각장애인표지'"
+    },
+    {
+      "name": "usesConvexMirror",
+      "label": "면허조건 — 볼록거울",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '볼록거울'"
+    },
+    {
+      "name": "usesLeftSideAccelerator",
+      "label": "면허조건 — 왼쪽 엑셀러레이터",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '왼쪽 엑셀러레이터'"
+    },
+    {
+      "name": "usesMultiWheeledMoped",
+      "label": "면허조건 — 다륜형 원동기",
+      "type": "boolean",
+      "required": false,
+      "description": "Relevant only when licenceClassApplying is class2_moped: declares a multi-wheeled (3/4-wheel) moped rather than a standard two-wheeled moped.",
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '다륜형 원동기'"
+    },
+    {
+      "name": "otherLicenceConditions",
+      "label": "면허조건 — 그 밖의 조건",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '면허조건' row, '그 밖의 조건'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "hasDementiaHistory",
+      "label": "질병 신고 — 치매 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "description": "Self-declares whether the applicant has been treated for, or subject to legal/law-enforcement action regarding, dementia.",
+      "sourceRef": "Form 42-2 (back-right) — 질병(疾病)ㆍ신체에 관한 신고서, item 1 '치매'"
+    },
+    {
+      "name": "hasSchizophreniaHistory",
+      "label": "질병 신고 — 정신분열병 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 2 '정신분열병'"
+    },
+    {
+      "name": "hasSchizoaffectiveDisorderHistory",
+      "label": "질병 신고 — 분열형 정동장애(기분장애) 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 3 '분열형 정동장애(기분장애)'"
+    },
+    {
+      "name": "hasBipolarDisorderHistory",
+      "label": "질병 신고 — 양극성 정동장애(조울병) 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 4 '양극성 정동장애(조울병)'"
+    },
+    {
+      "name": "hasRecurrentDepressiveDisorderHistory",
+      "label": "질병 신고 — 재발성 우울장애 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 5 '재발성 우울장애'"
+    },
+    {
+      "name": "hasIntellectualDisabilityHistory",
+      "label": "질병 신고 — 정신발육지연(지적장애) 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 6 '정신발육지연(지적장애)'"
+    },
+    {
+      "name": "hasEpilepsyHistory",
+      "label": "질병 신고 — 뇌전증 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 7 '뇌전증'"
+    },
+    {
+      "name": "hasSubstanceDependencyHistory",
+      "label": "질병 신고 — 마약ㆍ대마ㆍ향정신성의약품ㆍ알코올 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 8 '마약, 대마, 향정신성의약품, 알코올'"
+    },
+    {
+      "name": "hasOtherMentalIllnessHistory",
+      "label": "질병 신고 — 그 밖의 정신질환 치료/단속 이력",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 9 '그 밖의 정신질환 등'"
+    },
+    {
+      "name": "hasCentralVisualFieldScotomaOrHemianopia",
+      "label": "질병 신고 — 중심시야 20° 내 암점 또는 반맹",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 10 '중심시야 20° 내 암점 또는 반맹'"
+    },
+    {
+      "name": "colorPerception",
+      "label": "질병 신고 — 색채식별 여부",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 11 '색채식별 여부 (적색ㆍ녹색ㆍ황색의 구별) [ ]정상 [ ]색약 [ ]색맹'",
+      "validation": { "enum": ["normal", "color_weak", "color_blind"] }
+    },
+    {
+      "name": "hearingLevel",
+      "label": "질병 신고 — 청력",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, item 12 '청력 [ ]정상 [ ]40데시벨 이상 (보청기 사용) [ ]40데시벨 미만 (보청기 사용)'",
+      "validation": { "enum": ["normal", "forty_db_or_more_with_hearing_aid", "under_forty_db_with_hearing_aid"] }
+    },
+    {
+      "name": "hasPhysicalDisabilityAffectingLimbsOrTorso",
+      "label": "질병 신고 — 다리ㆍ머리ㆍ척추 등 신체장애 여부",
+      "type": "boolean",
+      "required": true,
+      "description": "Self-declares any physical disability of the hands/arms, torso, or legs/head/spine (including one preventing sitting unassisted) for which the applicant has received hospital treatment. The form presents this as body-diagram checkboxes; this document models the presence/absence of such a disability rather than the diagram's anatomical regions individually.",
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, '귀하는 아래 신체장애 및 동등한 기능장애로 인해 병(의)원에서 치료받은 사실이 있습니까?' body-diagram section and '다리, 머리, 척추 등의 장애로 앉아 있을 수 없는 신체 장애'"
+    },
+    {
+      "name": "physicalDisabilityDetails",
+      "label": "질병 신고 — 신체장애 상세 내용",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasPhysicalDisabilityAffectingLimbsOrTorso", "equals": true },
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, body-diagram section",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "diseaseDeclarationTrueAndAccurate",
+      "label": "질병 신고 진실성 서약 — Disease/physical declaration truthfulness attestation",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "A false declaration is punishable under the Road Traffic Act and results in licence cancellation.",
+      "sourceRef": "Form 42-2 (back-right) — '만일 허위사실을 적어 운전면허를 받은 경우에는「도로교통법」제152조제3호에 따라 1년 이하의 징역이나 300만원 이하의 벌금형으로 처벌되고,「도로교통법」제93조제1항제8호에 따라 운전면허가 취소됩니다.'"
+    },
+    {
+      "name": "consentsToAdministrativeInfoSharing",
+      "label": "행정정보 공동이용 동의 — Consents to administrative information joint-use lookup",
+      "type": "boolean",
+      "required": false,
+      "description": "If the applicant does not consent, they must directly submit the underlying documents themselves (e.g. present a passport in place of passport-information lookup) instead of KoROAD retrieving the data via inter-agency data sharing.",
+      "sourceRef": "Form 42-2 — front-left, '행정정보 공동이용 동의서' and '동의하지 않는 경우에는 신청인이 직접 관련 서류를 제출... 해야 합니다'"
+    },
+    {
+      "name": "consentsToElectronicFingerprintIdentification",
+      "label": "지문정보 대조 본인확인 동의 — Consents to fingerprint-based identity verification in place of ID presentation",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '「도로교통법 시행규칙」 제57조제1항 단서에 따라 신청인이 원하는 경우에는 신분증명서 제시를 갈음하여 전자적 방법으로 지문정보를 대조하여 본인 확인을 할 수 있습니다.'"
+    },
+    {
+      "name": "consentsToLicenceInfoNotifications",
+      "label": "적성검사 등 정보 제공 동의 — Consents to receiving licence/aptitude-check notifications by email and mobile phone",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form 42-2 — front-left, '적성검사(갱신)기간 등의 운전면허 정보를 전자우편 및 휴대전화를 통해 제공하고 있습니다. 이를 원하는 경우 동의서를 제출해 주시기 바랍니다.'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "제출일 — Submission date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 42-2 — front-left, submission line '년 월 일 신청인(응시자) (서명 또는 인)'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocument",
+      "label": "Government-issued photo ID (resident registration card, or a foreign ID/passport for a foreign applicant)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 42-2 — 신청인 제출서류, item 1 '신분증명서(신분증명서는 확인 후 돌려드립니다)'"
+    },
+    {
+      "id": "applicantPhotographs",
+      "label": "Colour photographs (3.5cm x 4.5cm), taken within 6 months, plain background, head uncovered — 3 copies",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 42-2 — 신청인 제출서류, item 2 '신청일부터 6개월 내에 촬영된 컬러사진(3.5cm × 4.5cm) 3장'"
+    },
+    {
+      "id": "medicalExaminationResult",
+      "label": "Medical examination result — a physical examination report, health-checkup result notice, or physician-issued diagnosis, dated within 2 years, including a vision-acuity result (a physician's diagnosis is mandatory for an applicant blind in one eye applying for Class 1 Regular)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 42-2 — 신청인 제출서류, item 4 and 신체검사서 section"
+    },
+    {
+      "id": "powerOfAttorneyAndAgentId",
+      "label": "Power of attorney and agent's ID, only when the functional test and road test are being registered by proxy",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 42-2 — 신청인 제출서류, item 5 '위임장 및 대리인 신분증(기능시험과 주행시험을 대리 접수하는 경우만 해당합니다)'"
+    },
+    {
+      "id": "applicationFee",
+      "label": "Test-application fee (separately determined and announced by KoROAD with National Police Agency Commissioner approval; not fixed on the form itself)",
+      "category": "payment",
+      "required": true,
+      "methods": ["cash", "card"],
+      "sourceRef": "Form 42-2 — '수수료: 「도로교통법」 제139조제2항에 따라 도로교통공단이 경찰청장의 승인을 받아 결정ㆍ공고하는 금액'"
+    },
+    {
+      "id": "declarationSignature",
+      "label": "Signature of applicant (응시자), submission line",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "「도로교통법 시행규칙」 제57조제1항에 따라 위와 같이 자동차운전면허시험 응시원서를 제출합니다.",
+      "sourceRef": "Form 42-2 — front-left, submission line, '신청인(응시자) (서명 또는 인)'"
+    },
+    {
+      "id": "diseaseDeclarationSignature",
+      "label": "Signature of applicant (응시자), disease/physical declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 42-2 (back-right) — 질병ㆍ신체에 관한 신고서, '응시자 (서명 또는 인)'"
+    }
+  ]
+}
