@@ -1,0 +1,529 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "br/sp/jucesp/cnpj-registration-dbe",
+  "version": "1.0.0",
+  "title": "Brazil (São Paulo) CNPJ Registration — Documento Básico de Entrada (DBE)",
+  "description": "Register a new company's first commercial establishment (matriz) with the federal CNPJ (Cadastro Nacional da Pessoa Jurídica) taxpayer registry by completing the Documento Básico de Entrada (DBE) in Receita Federal's Coletor Nacional system, filed through the State of São Paulo's REDESIM integrator portal (VRE|REDESIM) and routed to the Junta Comercial do Estado de São Paulo (JUCESP) for business registration analysis. Covers the viability-protocol linkage carried over from the applicant's earlier REDESIM viability consultation, legal-entity identification, registered address, contact details, the legal representative and their address, company-size classification, the responsible accountant, the first partner/administrator's shareholding, and the principal CNAE economic-activity code and establishment-unit type. Scoped to a brand-new company's first establishment (Evento 101) rather than a subsequent branch/filial registration (Evento 102, a near-identical sibling event not modelled here), a single partner/administrator (not the full repeating quadro de sócios e administradores — QSA — table), a single principal CNAE code (not the repeating secondary-activity list or the eight-option Forma de Atuação checklist), and the preceding gov.br/Brasil Cidadão portal authentication and CAPTCHA steps (out of scope as a login/bot-check mechanic, not a data field, consistent with every other schema in the registry). Does not submit anything or imply government endorsement; the live VRE|REDESIM portal (vreredesim.sp.gov.br) and Receita Federal are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BR",
+    "level": "subnational",
+    "subdivision": "BR-SP"
+  },
+  "authority": {
+    "name": "Junta Comercial do Estado de São Paulo",
+    "abbreviation": "JUCESP",
+    "url": "https://www.jucesp.sp.gov.br"
+  },
+  "process": {
+    "type": "registration",
+    "language": "pt-BR"
+  },
+  "source": {
+    "url": "https://vreredesim.sp.gov.br/Documentacao/Manuais/PRD/16%20Preenchimento%20do%20Coletor%20Nacional%20-%20DBE%20de%20inscri%C3%A7%C3%A3o%20(Eventos%20101%20e%20102).pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "\"Coletor Nacional DBE — Tutorial: Preenchimento do Coletor Nacional - DBE de inscrição do primeiro e dos demais estabelecimentos (Eventos 101 e 102)\", JUCESP / VRE|REDESIM (Secretaria de Desenvolvimento Econômico do Estado de São Paulo)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-05",
+    "notes": "GOV-1342 'GovSchema Standard Research' research cycle, picked up from GOV-1296, a Business Formation candidate filed by GOV-1289's original new-jurisdiction scouting cycle and left open in the backlog. Opens Brazil as the registry's 15th jurisdiction. The live vreredesim.sp.gov.br site is unreachable from this environment (connection refused/timeout on every direct fetch), and its Documentacao/Manuais listing page is an Angular SPA the Wayback Machine only archived as an empty shell — but the specific manual GOV-1296 named ('16 Preenchimento do Coletor Nacional - DBE de inscrição (Eventos 101 e 102).pdf') is separately archived with real application/pdf content under a /PRD/ path (web.archive.org snapshot dated 2025-07-02, discovered via the CDX API filtered to mimetype:application/pdf), a 34-page screenshot-driven walkthrough of the live Coletor Nacional wizard. Every field's label, its section membership, and its required/optional status (including the 'Verificar Pendências' pendency-list panel visible in three separate screenshots) were read directly off the manual's own UI screenshots and transcribed page by page. See VERIFICATION.md for the full source table, scope notes, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "municipality",
+      "label": "Municipality of the establishment",
+      "type": "string",
+      "required": true,
+      "description": "The São Paulo-state municipality where the first establishment (matriz) is located, carried over from the applicant's earlier REDESIM viability consultation.",
+      "sourceRef": "p.9, 'Coletor Nacional → Inscrição Matriz' — 'Município' dropdown",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "legalNatureCode",
+      "label": "Legal nature (Natureza Jurídica)",
+      "type": "string",
+      "required": true,
+      "description": "The Receita Federal 'Natureza Jurídica' classification code and label for the entity type (e.g. Sociedade Empresária Limitada), carried over from the viability consultation.",
+      "sourceRef": "p.9, 'Coletor Nacional → Inscrição Matriz' — 'Natureza Jurídica' dropdown (example shown: '206-2 Sociedade Empresária Limitada')",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "viabilityProtocolNumber",
+      "label": "REDESIM viability protocol number",
+      "type": "string",
+      "required": true,
+      "description": "The protocol number issued when the applicant's viability consultation was completed on the VRE|REDESIM portal, used to link this DBE filing to that earlier step and to track this submission afterwards.",
+      "sourceRef": "p.9, 'Protocolo de Viabilidade' (example: SPP2030101915); p.11 — 'O número do Protocolo REDESIM é SPP2030101915. Guarde este número...'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "representativeCpf",
+      "label": "Representative's CPF",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The CPF (Cadastro de Pessoas Físicas, Brazil's individual taxpayer number) of the person retrieving/continuing this DBE filing session. May be a different person from the company's legal representative named later in the filing.",
+      "sourceRef": "p.10, 'CPF do Representante:' recovery field",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "actAlreadyRegisteredWithRegistryBody",
+      "label": "Has the constitutive act already been registered?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the company's constitutive/amending instrument has already been registered with its registry body (Junta Comercial). For a brand-new company's first establishment this is ordinarily 'No', which routes the DBE onward to JUCESP for registration; 'Yes' is only used to regularize a filing whose registry-body analysis already concluded.",
+      "sourceRef": "p.12 — modal: 'Seu ato constitutivo/alterador já foi registrado no respectivo órgão de registro?' (Sim/Não)",
+      "validation": {}
+    },
+    {
+      "name": "registryBodyType",
+      "label": "Type of registry body",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "actAlreadyRegisteredWithRegistryBody", "equals": true },
+      "description": "The type of body that registered the constitutive act (the manual's own example shows 'Junta Comercial'; other registry-body types accepted by the dropdown were not enumerated in the source).",
+      "sourceRef": "p.12, 'Dados do Órgão de Registro' — 'Tipo de Órgão' dropdown (example shown: Junta Comercial)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "registryNire",
+      "label": "NIRE (company registration number)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "actAlreadyRegisteredWithRegistryBody", "equals": true },
+      "description": "The Número de Identificação do Registro de Empresas issued by the Junta Comercial when the constitutive act was registered.",
+      "sourceRef": "p.12, 'Dados do Órgão de Registro' — 'NIRE'; p.12 pendency list — 'O Campo \"Data do Evento\" é de preenchimento obrigatório' section, 'Dados do Órgão de Registro' block",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "registryNumber",
+      "label": "Registration number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "actAlreadyRegisteredWithRegistryBody", "equals": true },
+      "description": "The registration number assigned by the registry body to the constitutive act.",
+      "sourceRef": "p.12, 'Dados do Órgão de Registro' — 'Número de Registro'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "registryBodyCnpj",
+      "label": "Registry body's CNPJ",
+      "type": "string",
+      "required": false,
+      "description": "The CNPJ of the registry body itself (e.g. the Junta Comercial's own taxpayer number), when known.",
+      "sourceRef": "p.12, 'Dados do Órgão de Registro' — 'CNPJ do Órgão de Registro'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "businessName",
+      "label": "Business name (firma ou denominação)",
+      "type": "string",
+      "required": true,
+      "description": "The company's legal business name, as it will appear on the CNPJ registration.",
+      "sourceRef": "p.12, 'Identificação da Pessoa Jurídica' — 'Nome Empresarial (firma ou denominação)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "shareCapital",
+      "label": "Share capital (Capital Social)",
+      "type": "number",
+      "required": true,
+      "description": "The company's declared share capital, in Brazilian reais.",
+      "sourceRef": "p.12, 'Identificação da Pessoa Jurídica' — 'Capital Social'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "tradeName",
+      "label": "Trade name (nome de fantasia)",
+      "type": "string",
+      "required": false,
+      "description": "The establishment's optional trade name, distinct from its registered business name.",
+      "sourceRef": "p.12, 'Identificação da Pessoa Jurídica' — 'Título do Estabelecimento (nome de fantasia)' (pendency list marks this optional)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Establishment postal code (CEP)",
+      "type": "string",
+      "required": true,
+      "description": "The postal code (CEP) of the establishment's registered address.",
+      "sourceRef": "p.13, 'Endereço da Pessoa Jurídica' — 'CEP'",
+      "validation": { "maxLength": 9 }
+    },
+    {
+      "name": "addressStreetType",
+      "label": "Street type (Tipo de Logradouro)",
+      "type": "string",
+      "required": true,
+      "description": "The street-type classifier of the establishment's address (e.g. Avenida, Rua); the full dropdown option list was not enumerated in the source.",
+      "sourceRef": "p.13, 'Endereço da Pessoa Jurídica' — 'Tipo de Logradouro' (example shown: AVENIDA)",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "addressStreetName",
+      "label": "Street name (Logradouro)",
+      "type": "string",
+      "required": true,
+      "description": "The street name of the establishment's registered address.",
+      "sourceRef": "p.13, 'Endereço da Pessoa Jurídica' — 'Logradouro'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "addressNumber",
+      "label": "Street number",
+      "type": "string",
+      "required": true,
+      "description": "The street number of the establishment's registered address.",
+      "sourceRef": "p.13, 'Endereço da Pessoa Jurídica' — 'Número'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "addressComplement",
+      "label": "Address complement",
+      "type": "string",
+      "required": false,
+      "description": "Optional address complement (suite, floor, block, etc.).",
+      "sourceRef": "p.13, 'Endereço da Pessoa Jurídica' — 'Complemento' (pendency list marks this optional)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressNeighborhood",
+      "label": "Neighborhood (Bairro/Distrito)",
+      "type": "string",
+      "required": true,
+      "description": "The neighborhood or district of the establishment's registered address.",
+      "sourceRef": "p.13, 'Endereço da Pessoa Jurídica' — 'Bairro/Distrito'",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "addressReference",
+      "label": "Address reference",
+      "type": "string",
+      "required": false,
+      "description": "An optional free-text landmark or reference point for the establishment's address.",
+      "sourceRef": "p.13, 'Endereço da Pessoa Jurídica' — 'Referência' (pendency list marks this optional)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "contactPhoneAreaCode",
+      "label": "Contact phone area code (DDD)",
+      "type": "string",
+      "required": true,
+      "description": "The two-digit Brazilian area code (DDD) for the establishment's primary contact phone number.",
+      "sourceRef": "p.14, 'Dados para Contato' — 'DDD' / 'Telefone 1' (pendency list: 'Telefone 1' obrigatório)",
+      "validation": { "pattern": "^[0-9]{2}$" }
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "Contact phone number",
+      "type": "string",
+      "required": true,
+      "description": "The establishment's primary contact phone number, without the area code.",
+      "sourceRef": "p.14, 'Dados para Contato' — 'Telefone 1'",
+      "validation": { "minLength": 8, "maxLength": 9 }
+    },
+    {
+      "name": "contactEmail",
+      "label": "Contact email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The establishment's contact email address.",
+      "sourceRef": "p.14, 'Dados para Contato' — 'Correio Eletrônico' (pendency list: obrigatório)",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "representativeFullName",
+      "label": "Legal representative's full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The full name of the person acting as the company's legal representative for this registration act.",
+      "sourceRef": "p.14, 'Identificação do Representante da Pessoa Jurídica para este ato de cadastro' — 'Nome do Representante da Pessoa Jurídica' (pendency list: obrigatório)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "representativeType",
+      "label": "Representative or proxy",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the person identified for this registration act is the company's representative or a proxy (preposto) acting on the representative's behalf.",
+      "sourceRef": "p.14, 'Identificação do Representante da Pessoa Jurídica para este ato de cadastro' — radio: 'Representante' / 'Preposto'",
+      "validation": { "enum": ["representante", "preposto"] }
+    },
+    {
+      "name": "representativeQualificationCode",
+      "label": "Representative's qualification",
+      "type": "string",
+      "required": true,
+      "description": "The Receita Federal qualification code and label describing the representative's role (e.g. Administrador, Sócio-Administrador); the full option list was not enumerated in the source.",
+      "sourceRef": "p.14, 'Identificação do Representante da Pessoa Jurídica para este ato de cadastro' — 'Qualificação do Representante da Pessoa Jurídica' dropdown (examples shown: '5 - Administrador', '49 - Sócio-Administrador')",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "representativeAddressPostalCode",
+      "label": "Representative's postal code (CEP)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The postal code (CEP) of the legal representative's address.",
+      "sourceRef": "p.15, 'Endereço do Representante da Pessoa Jurídica' — 'CEP'",
+      "validation": { "maxLength": 9 }
+    },
+    {
+      "name": "representativeAddressStreetName",
+      "label": "Representative's street name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The street name of the legal representative's address.",
+      "sourceRef": "p.15, 'Endereço do Representante da Pessoa Jurídica' — 'Logradouro'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "representativeAddressNumber",
+      "label": "Representative's street number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The street number of the legal representative's address.",
+      "sourceRef": "p.15, 'Endereço do Representante da Pessoa Jurídica' — 'Número'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "representativeContactPhoneAreaCode",
+      "label": "Representative's phone area code (DDD)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The two-digit Brazilian area code (DDD) for the legal representative's contact phone number.",
+      "sourceRef": "p.15, 'Endereço do Representante da Pessoa Jurídica' — 'Dados para Contato' — 'DDD' / 'Telefone'",
+      "validation": { "pattern": "^[0-9]{2}$" }
+    },
+    {
+      "name": "representativeContactPhoneNumber",
+      "label": "Representative's phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The legal representative's contact phone number, without the area code.",
+      "sourceRef": "p.15, 'Endereço do Representante da Pessoa Jurídica' — 'Dados para Contato' — 'Telefone'",
+      "validation": { "minLength": 8, "maxLength": 9 }
+    },
+    {
+      "name": "companySizeClassification",
+      "label": "Company size (Porte da Empresa)",
+      "type": "enum",
+      "required": true,
+      "description": "The company's size enquadramento, confirming the classification already carried over from the viability consultation. A Microempresa/Empresa de Pequeno Porte classification is available only when the contribuinte meets Complementary Law 123/2006's conditions.",
+      "sourceRef": "p.15, 'Porte da Empresa' — radio: 'Microempresa' / 'Empresa de Pequeno Porte' / 'Demais'",
+      "validation": { "enum": ["microempresa", "empresa_de_pequeno_porte", "demais"] }
+    },
+    {
+      "name": "accountantCpfCnpj",
+      "label": "Accountant's CPF/CNPJ",
+      "type": "string",
+      "required": true,
+      "description": "The CPF (individual accountant) or CNPJ (accounting firm) of the accountant responsible for the company.",
+      "sourceRef": "p.16, 'Contabilista' — 'CPF/CNPJ' (pendency list: 'CPF/CNPJ do Contabilista' obrigatório)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "accountantName",
+      "label": "Accountant's name",
+      "type": "string",
+      "required": true,
+      "description": "The name of the individual accountant or the accounting firm's business name.",
+      "sourceRef": "p.16, 'Contabilista' — 'Nome/Nome Empresarial'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "accountantBooksKeptAtAccountingOffice",
+      "label": "Are fiscal books kept at the accounting office?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the company's fiscal/accounting books are kept at the accountant's own office rather than at the establishment.",
+      "sourceRef": "p.16, 'Contabilista' — 'Permanência de Livros Fiscais em Escritório de Contabilidade' (Sim/Não)",
+      "validation": {}
+    },
+    {
+      "name": "partnerEventNature",
+      "label": "Nature of the partner/administrator event",
+      "type": "string",
+      "required": true,
+      "description": "The type of change being recorded for this partner/administrator; for a brand-new company's first establishment this is ordinarily an admission. The full dropdown option list was not enumerated in the source.",
+      "sourceRef": "p.17, 'Identificação do Sócio/Administrador' — 'Natureza do Evento - Obrigatório' dropdown (example shown: 'Entrada de sócio/administrador')",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "partnerName",
+      "label": "Partner/administrator's name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The full name (individual) or business name (legal entity) of this partner/administrator.",
+      "sourceRef": "p.17, 'Identificação do Sócio/Administrador' — 'Nome (pessoa física) / Nome Empresarial (pessoa jurídica)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "partnerCpfCnpj",
+      "label": "Partner/administrator's CPF/CNPJ",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The CPF (individual) or CNPJ (legal entity) of this partner/administrator.",
+      "sourceRef": "p.17, 'Identificação do Sócio/Administrador' — 'CPF/CNPJ do Sócio/Administrador'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "partnerQualificationCode",
+      "label": "Partner/administrator's qualification",
+      "type": "string",
+      "required": true,
+      "description": "The Receita Federal qualification code and label describing this partner/administrator's role (e.g. Sócio-Administrador); the full option list was not enumerated in the source.",
+      "sourceRef": "p.17, 'Identificação do Sócio/Administrador' — 'Qualificação do Sócio/Administrador' dropdown (example shown: '49 Sócio-Administrador')",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "partnerCapitalParticipationValue",
+      "label": "Partner's capital participation value",
+      "type": "number",
+      "required": true,
+      "description": "This partner/administrator's participation in the company's share capital, in Brazilian reais.",
+      "sourceRef": "p.17, 'Identificação do Sócio/Administrador' — 'Valor da Participação no Capital Social (R$)'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "primaryCnaeCode",
+      "label": "Principal CNAE economic-activity code",
+      "type": "string",
+      "required": true,
+      "description": "The CNAE (Classificação Nacional de Atividades Econômicas) code identifying the establishment's principal economic activity.",
+      "sourceRef": "p.18, 'Atividade Econômica' — 'Código CNAE Principal' (example shown: '31.01-2/00' — Fabricação de móveis com predominância de madeira)",
+      "validation": { "pattern": "^[0-9]{2}\\.[0-9]{2}-[0-9]/[0-9]{2}$" }
+    },
+    {
+      "name": "unitType",
+      "label": "Establishment unit type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this establishment is a productive unit (carries out the economic activity directly) or an auxiliary unit (e.g. a warehouse or administrative office supporting another establishment).",
+      "sourceRef": "p.18, 'Atividade Econômica' — 'Tipo de Unidade' radio: 'Unidade Produtiva' / 'Unidade Auxiliar'",
+      "validation": { "enum": ["unidade_produtiva", "unidade_auxiliar"] }
+    },
+    {
+      "name": "lowRiskConditionsAcknowledged",
+      "label": "Low-risk licensing conditions acknowledged",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirms the applicant's awareness that, under the Economic Freedom Law (Lei da Liberdade Econômica), the selected economic activity is exempt from licensing only while the low-risk conditions shown by the system continue to be met.",
+      "sourceRef": "p.30, 'Finalização do Preenchimento' — 'Manifesto ciência de que a empresa deve atender às condições acima' (Sim)",
+      "validation": {}
+    }
+  ],
+  "documents": [
+    {
+      "id": "dbeSignedDeclaration",
+      "label": "Signed Documento Básico de Entrada (DBE) with notarized signature",
+      "category": "attestation",
+      "required": true,
+      "statement": "I declare that the information transmitted in this Documento Básico de Entrada is true, and I am authorized to represent the company named above before the CNPJ and its registry body.",
+      "sourceRef": "DBE printed document — '05. IDENTIFICAÇÃO DO REPRESENTANTE DA PESSOA JURÍDICA' ('NOME', 'CPF', 'LOCAL E DATA', 'ASSINATURA (com firma reconhecida)') and '06. RECONHECIMENTO DE FIRMA'"
+    },
+    {
+      "id": "constitutiveActInstrument",
+      "label": "Constitutive act / registration instrument",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "p.21 — 'deverá emitir o Documento Básico de Entrada do CNPJ – DBE e apresentar no órgão de registro junto com os demais instrumentos de análise de constituição de empresa'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "viability_linkage",
+      "title": "Viability protocol linkage",
+      "fields": ["municipality", "legalNatureCode", "viabilityProtocolNumber", "representativeCpf"],
+      "next": "registration_status"
+    },
+    {
+      "id": "registration_status",
+      "title": "Registration status",
+      "fields": ["actAlreadyRegisteredWithRegistryBody", "registryBodyType", "registryNire", "registryNumber", "registryBodyCnpj"],
+      "next": "entity_identification"
+    },
+    {
+      "id": "entity_identification",
+      "title": "Legal entity identification",
+      "fields": ["businessName", "shareCapital", "tradeName"],
+      "next": "registered_address"
+    },
+    {
+      "id": "registered_address",
+      "title": "Registered address",
+      "fields": ["addressPostalCode", "addressStreetType", "addressStreetName", "addressNumber", "addressComplement", "addressNeighborhood", "addressReference"],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact details",
+      "fields": ["contactPhoneAreaCode", "contactPhoneNumber", "contactEmail"],
+      "next": "representative"
+    },
+    {
+      "id": "representative",
+      "title": "Legal representative",
+      "fields": [
+        "representativeFullName",
+        "representativeType",
+        "representativeQualificationCode",
+        "representativeAddressPostalCode",
+        "representativeAddressStreetName",
+        "representativeAddressNumber",
+        "representativeContactPhoneAreaCode",
+        "representativeContactPhoneNumber"
+      ],
+      "next": "company_size_and_accountant"
+    },
+    {
+      "id": "company_size_and_accountant",
+      "title": "Company size and accountant",
+      "fields": ["companySizeClassification", "accountantCpfCnpj", "accountantName", "accountantBooksKeptAtAccountingOffice"],
+      "next": "partner_administrator"
+    },
+    {
+      "id": "partner_administrator",
+      "title": "Partner/administrator",
+      "fields": ["partnerEventNature", "partnerName", "partnerCpfCnpj", "partnerQualificationCode", "partnerCapitalParticipationValue"],
+      "next": "economic_activity"
+    },
+    {
+      "id": "economic_activity",
+      "title": "Economic activity",
+      "fields": ["primaryCnaeCode", "unitType"],
+      "next": "finalization"
+    },
+    {
+      "id": "finalization",
+      "title": "Finalization",
+      "fields": ["lowRiskConditionsAcknowledged"]
+    }
+  ]
+}
