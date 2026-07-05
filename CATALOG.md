@@ -4,8 +4,22 @@
 
 ## Executive Summary
 
-**13 jurisdictions** | **216 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**13 jurisdictions** | **217 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-05, GOV-1328/GOV-1293):** South Korea's Taxes vertical
+> closed with `kr/nts/year-end-tax-settlement-income-deduction-report`,
+> sourced from the National Tax Service's own English-language "Easy Guide
+> for Foreigners' Year-end Tax Settlement" (2025 edition, nts.go.kr), which
+> reproduces the gazetted Enforcement Rule of the Income Tax Act's Attached
+> Form No. 37(1)-(3) as an official English original — the lowest
+> translation-risk KR source found so far. Picked up from the standing
+> candidate backlog left by GOV-1289's new-jurisdiction research cycle
+> (this was `GOV-1293`, the last of South Korea's five STRONG-rated
+> verticals). KR now has 5/6 verticals modelled (Passport, DMV, National ID,
+> Visa, Taxes); only Business Formation remains unmodelled, rated WEAK in
+> GOV-1289's original research (IROS/startbiz.go.kr both require
+> certificate login) and not an open candidate without new sourcing.
+>
 > **Update (2026-07-05, GOV-1292):** South Korea's Visa vertical closed with
 > `kr/moj/visa-application`, sourced from the Ministry of Justice/Korea
 > Immigration Service's gazetted Visa Application Form (사증발급신청서, 출입국관리법
@@ -63,7 +77,7 @@
 | **Passport** | 13/13 (100%) | none — closed |
 | **DMV** | 13/13 (100%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB) |
 | **Business Formation** | 12/13 (92%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR** not yet modelled |
-| **Taxes** | 12/13 (92%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant/Micro-Business/Body-Corporate modelled GOV-1268/GOV-1275/GOV-1282; IE Form CT1, ZA's other 2 ITR14 Annexures still open); **KR** not yet modelled (candidate: `GOV-1293`) |
+| **Taxes** | 13/13 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant/Micro-Business/Body-Corporate modelled GOV-1268/GOV-1275/GOV-1282; IE Form CT1, ZA's other 2 ITR14 Annexures still open) |
 | **Visa** | 11/13 (85%) | **NL, ZA** — both confirmed dead ends (see below), not open work |
 | **National ID & Civic Documents** | 13/13 (100%) | none — closed (SG voter-reg is a confirmed non-gap) |
 
@@ -122,13 +136,15 @@ the US (currently folded into `us/irs/employer-identification-number-ss4`,
 which does exist); ZA close corporation/trust/NPO formation beyond
 `za/cipc/private-company-incorporation`.
 
-### Taxes — Income Tax Return, Tax Filing (12/13 jurisdictions)
+### Taxes — Income Tax Return, Tax Filing (13/13 jurisdictions) — closed
 
-Every jurisdiction except South Korea has at least one individual
-income-tax-return schema. Remaining gaps are sub-process expansions, plus one
-genuine new-jurisdiction gap:
+Every jurisdiction now has at least one individual income-tax-return schema.
+**South Korea** (`kr/nts/year-end-tax-settlement-income-deduction-report`,
+GOV-1293/GOV-1328) is new this cycle — sourced from NTS's official
+English-language "Easy Guide for Foreigners' Year-end Tax Settlement" PDF,
+reproducing the gazetted Attached Form No. 37(1)-(3) as an English original.
+Remaining gaps are sub-process expansions:
 
-- **KR:** not yet modelled. GOV-1289's research found NTS's official English-language "Easy Guide for Foreigners' Year-end Tax Settlement" PDF as a strong candidate — filed as `GOV-1293`.
 - **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), ITR-2 (capital gains/foreign income/multiple properties), and now ITR-3 (non-presumptive business/profession with full books of account, GOV-1254) are all modelled — the ITR-1/2/3/4 set is now complete. ITR-3 defers full re-derivation of Schedule S/House Property/Schedule CG/OS/itemised Chapter VI-A against its own workbook, since those schedules are structurally identical to the ones already published in full in `in/incometax/individual-tax-return-itr2` (see its VERIFICATION.md for the scope rationale).
 - **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's Dormant Company pathway (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`, GOV-1275), and Body Corporate/Share Block Company pathway (`za/sars/corporate-income-tax-return-itr14-body-corporate`, GOV-1282) are now modelled — the three smallest of ITR14's five company-type Annexures. Body Corporate/Share Block and Micro Business both model a full Balance Sheet, Income Statement, and Tax Computation (138 and 151 fields respectively); each defers the repeating Share/Membership Register, Beneficial Owner details, Capital Gains schedule, PAYE Credits, Donations-organisation list, the s6quat(1A) foreign-tax-credit computation block, and the Enhanced Renewable Energy Deduction detail container (see each document's VERIFICATION.md). Remaining ITR14 Annexures D/E (Small Business, Medium to Large Business) and IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remain unmodelled.
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
@@ -181,7 +197,7 @@ a future second KR National ID document if needed).
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KR** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
+| **KR** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -284,4 +300,6 @@ authoring), updated by GOV-1303 (`kr/koroad/driving-licence-application`
 authoring, KR DMV vertical closed), updated by GOV-1294
 (`kr/nec/overseas-voter-registration` authoring, KR National ID vertical
 closed), updated by GOV-1292 (`kr/moj/visa-application` authoring, KR Visa
-vertical closed, GOV-1321 research cycle) | Standards Engineer
+vertical closed, GOV-1321 research cycle), updated by GOV-1328/GOV-1293
+(`kr/nts/year-end-tax-settlement-income-deduction-report` authoring, KR
+Taxes vertical closed, global Taxes vertical now 13/13) | Standards Engineer

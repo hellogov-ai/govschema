@@ -1,0 +1,84 @@
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+
+Schema: kr/nts/year-end-tax-settlement-income-deduction-report v1.0.0
+Generated: 2026-07-05
+
+Scenario:
+A Chinese-national foreign engineer ('Yuan') employed by a Korean company ('ABC Co., Ltd.') since 2023-01-01, qualifying for the Restriction of Special Taxation Act's 50% tax reduction for foreign engineers, filing the year-end tax settlement income deduction & tax credit report for a single workplace with a spouse ('Amy') and one child ('Charlie') as dependents. Wage, national pension premium, national health insurance premium, and credit card spending figures are transcribed verbatim from the NTS guide's own worked calculation example ("Case 5. A foreign engineer's year-end tax settlement", 2025 Easy Guide for Foreigners' Year-end Tax Settlement, p.151). Yuan/Amy/Charlie are the guide's own illustrative names, not real persons. Administrative values the calculation-only worked example does not state (registration numbers, business registration number, exemption expiration date, submission dates, declaration date) are synthesized illustrative values.
+
+Collected values:
+  incomeEarnerName: 'Yuan'
+  residentAlienRegistrationNumber: '830715-6123456' (synthesized)
+  placeOfWork: 'ABC Co., Ltd.'
+  businessRegistrationNumber: '123-45-67890' (synthesized)
+  householdHeadOrMember: 'head'
+  nationality: 'China'
+  nationalityCode: 'CN'
+  lengthOfServiceStartDate: '2023-01-01' (from Case 5: "Yuan started at the company on Jan. 1, 2023")
+  residencyStatus: 'resident'
+  changeOfPersonalDeductionItems: 'same_as_last_year'
+  paymentInInstallments: False
+  taxWithholdingRatio: '100'
+  numberOfPersonsEligibleForPersonalDeduction: 3 (Yuan, Amy, Charlie — all eligible for basic deduction per Case 5)
+  numberOfChildren: 1
+  filerIsWoman: False
+  filerIsSingleParent: False
+  hasDependents: True
+  primaryDependentRelationshipCode: '3' (spouse)
+  primaryDependentName: 'Amy'
+  primaryDependentCitizenOrForeigner: 'foreigner'
+  primaryDependentRegistrationNumber: '870302-6234567' (synthesized)
+  primaryDependentMeetsIncomeCriteria: True
+  primaryDependentIsBasicDeduction: True
+  primaryDependentIsElderly: False
+  primaryDependentIsDisabled: False
+  primaryDependentIsNewbornOrAdoptee: False
+  creditCardSpending: 80000000 (from Case 5: "Credit card expenses for the relevant year: 80,000,000 won")
+  traditionalMarketSpending: 0 (Case 5: "none spent in a traditional market or on public transportation")
+  publicTransportationSpending: 0
+  nationalPensionPremiumCurrentWorkplace: 7300000 (from Case 5)
+  nationalHealthInsurancePremiumCurrentWorkplace: 5000000 (from Case 5)
+  hasHousingRentalLoan: False
+  hasLongTermHousingMortgageLoan: False
+  foreignWorkerExemptionPurpose: 'restriction_of_special_taxation_act' (Case 5: "qualifies as a foreign engineer under the Restriction of Special Taxation Act")
+  technologyContractOrLaborStartDate: '2023-01-01'
+  exemptionExpirationDate: '2033-01-01' (synthesized: 10 years from first providing labor, per RSTA Article 18's exemption period)
+  taxReductionForForeignWorkerReceivedDate: '2026-01-15' (synthesized)
+  taxReductionForForeignWorkerSubmittedDate: '2026-01-20' (synthesized)
+  hasForeignSourceIncome: False
+  declarationDate: '2026-02-15' (synthesized)
+  declarationAgreed: True
+  submittedFlatTaxRateApplication: False (Case 5 computes both the basic progressive rate and the 19% flat rate; the basic-rate result is more favorable — a refund — so Yuan would not elect the flat rate)
+  hasSecondaryPreviousWorkplace: False
+  submittedPensionSavingsStatement: False
+  submittedMonthlyRentAndMortgageStatement: False
+
+Fields not applicable to this scenario (correctly gated off by requiredWhen, since
+foreignWorkerExemptionPurpose = 'restriction_of_special_taxation_act' and
+hasForeignSourceIncome/hasHousingRentalLoan/hasLongTermHousingMortgageLoan/
+hasSecondaryPreviousWorkplace = False):
+  taxReductionUnderTaxTreatyReceivedDate, taxReductionUnderTaxTreatySubmittedDate,
+  housingRentalLoanRepaymentAmount, longTermHousingMortgageLoanInterestRepayment,
+  foreignTaxPaidForeignCurrency, foreignTaxPaidWonCurrency, foreignTaxCreditCountry,
+  foreignTaxPaymentDate, foreignTaxCreditApplicationSubmissionDate, overseasPlaceOfWork,
+  overseasServicePeriodStartDate, overseasServicePeriodEndDate, overseasPosition,
+  secondaryWorkplaceName, secondaryWorkplaceBusinessRegistrationNumber,
+  secondaryWorkplaceGrossWageSalary, secondaryWorkplaceTaxDetermined,
+  submittedSecondaryWorkplaceWithholdingReceipt, primaryDependentDisabilityCode
+  (primaryDependentIsDisabled = False)
+
+Documents required for this scenario (evaluated from documents[].requiredWhen):
+  - residentAlienRegistrationCopy (always required)
+  - incomeDeductionTaxCreditEvidence (always required)
+  - foreignEngineerOrEmployeeTaxReductionApplication (foreignWorkerExemptionPurpose = restriction_of_special_taxation_act)
+
+Independent conformance run (from-scratch evaluator, evaluate_kr_nts.mjs, not reused from
+any other schema's evaluator): 0 errors against all 117 fields, 3 crossFieldValidation
+rules, and 7 documents[].requiredWhen conditions. Three deliberate mutations were run
+against the same evaluator to confirm it is not vacuously passing:
+  1. Removing declarationAgreed -> caught as MISSING REQUIRED.
+  2. Setting exemptionExpirationDate before technologyContractOrLaborStartDate ->
+     caught as CROSS-FIELD VIOLATION (exemptionExpirationNotBeforeContractStart).
+  3. Setting residencyStatus to an out-of-enum value ('maybe') -> caught as ENUM
+     VIOLATION.
+All three mutations were correctly flagged.
