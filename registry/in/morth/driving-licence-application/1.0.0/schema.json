@@ -1,0 +1,497 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "in/morth/driving-licence-application",
+  "version": "1.0.0",
+  "title": "India Driving Licence Application (New)",
+  "description": "Apply for the issue of a new (permanent) Driving Licence (DL) from an Indian Regional Transport Office (RTO), the step that converts an existing, still-valid Learner's Licence (LL) into a full Driving Licence for the same class of vehicle, after satisfying the minimum LL-holding period and passing the driving test. Nationally, the LL, the DL, and five other services (addition of class, renewal, duplicate, address change, name change) are all made on the same Central Motor Vehicles Rules, 1989 'Form 2', submitted through each state's instance of the Sarathi online portal (sarathi.parivahan.gov.in) or in person at the licensing RTO. This document models only the 'Issue of New Driving Licence' service on Form 2 — the fields and declarations for an applicant who already holds a valid LL and is applying for the corresponding DL. It does not model: Issue of New Learner's Licence (see in/morth/learners-licence-application), Addition of Class of Vehicle, Renewal of Driving Licence, Duplicate Driving Licence, or Change/Correction of Address or Name (the form's other services, which require different fields not modelled here); the driving test itself, which the form's 'FOR OFFICE USE ONLY' section records but does not collect from the applicant; or vehicle registration (a separate process on Form 20 via the VAHAN portal, out of scope of this document). It does not submit the application; the live Sarathi portal and the applicant's RTO are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Road Transport and Highways, Government of India, through the state Regional Transport Offices (RTOs), under the Central Motor Vehicles Rules, 1989",
+    "abbreviation": "MoRTH",
+    "url": "https://parivahan.gov.in"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-IN"
+  },
+  "source": {
+    "url": "https://parivahan.gov.in/sites/default/files/DownloadForm/cmvr/FORM-2.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "Form 2 [Refer Rules 10, 14, 17 and 18] — Application for Learner's Licence or Driving Licence or Addition of a New Class of Vehicle or Renewal of Driving Licence or Change of Address or Name, Central Motor Vehicles Rules, 1989"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored directly from the current Form 2 PDF hosted on parivahan.gov.in (fetched directly, HTTP 200, same canonical document already used and cross-checked for in/morth/learners-licence-application). The fee for issue of a driving licence (Rs. 200 per class) was corroborated from parivahan.gov.in's own 'Licensing Related Fees & Charges' page (fetched directly, HTTP 200), distinct from the Rs. 150 learner's-licence fee already cited in the sibling schema. The transactional Sarathi wizard itself (sarathi.parivahan.gov.in) returned an Access-Denied WAF response to direct fetch and was not used as a source; the form-field extraction is from the canonical PDF only. Status remains 'draft' pending a live-portal, state-instance field-by-field pass."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applyingForNewDrivingLicenceOnly",
+      "label": "Are you applying for the issue of a new Driving Licence?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Form 2's 'Services applying for' block lets an applicant tick any of 7 services (new LL, new DL, addition of class, renewal, duplicate, change of address, change of name). This document models only the new-Driving-Licence pathway; the other six require different existing-licence, driving-test, or evidentiary fields not modelled here.",
+      "sourceRef": "Form 2 — 'Services applying for': Issue of New Driving Licence (and 6 other checkbox options)"
+    },
+    {
+      "name": "classOfVehicleApplied",
+      "label": "Class of vehicle applied for",
+      "type": "enum",
+      "required": true,
+      "description": "The national vehicle-category codes used on Form 2, section 1 ('Applicable for New Learners Licence or New Driving Licence'). This document models a single selected class per application, the common case matching this class of the applicant's existing Learner's Licence.",
+      "sourceRef": "Form 2, Class(es) of Vehicle (COV) checkbox group and footnote definitions",
+      "validation": {
+        "enum": [
+          "mcwog", "mcwg", "lmv", "adapted_vehicle_divyang", "transport_vehicle", "e_rickshaw", "e_cart", "others"
+        ]
+      }
+    },
+    {
+      "name": "aadhaarNumber",
+      "label": "Aadhaar number (if already available)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "12-digit Aadhaar number issued by the Unique Identification Authority of India (UIDAI).",
+      "sourceRef": "Form 2 — Aadhaar Card Number (if already available)",
+      "validation": { "pattern": "^[0-9]{12}$" }
+    },
+    {
+      "name": "aadhaarApplicationNumber",
+      "label": "Aadhaar enrolment/application number (if applied for but not yet issued)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Only applicable if Aadhaar has been applied for but the Aadhaar number has not yet been issued.",
+      "sourceRef": "Form 2 — Aadhaar Card application number (if applied for)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "In capital letters, as it should appear on the licence.",
+      "sourceRef": "Form 2 — Name of Applicant: First Name",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Name of Applicant: Middle Name",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Name of Applicant: Last Name",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "relationType",
+      "label": "Son/Wife/Daughter of — relation",
+      "type": "enum",
+      "required": true,
+      "description": "Which relation the following name field names.",
+      "sourceRef": "Form 2 — 'Son/Wife/Daughter of' (tick Father/Mother/Husband/Guardian)",
+      "validation": { "enum": ["father", "mother", "husband", "guardian"] }
+    },
+    {
+      "name": "relatedPersonName",
+      "label": "Father's/Mother's/Husband's/Guardian's name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the person identified by relationType.",
+      "sourceRef": "Form 2 — 'Son/Wife/Daughter of' — First/Middle/Last Name",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "dd/mm/yyyy on the source form; represented here as YYYY-MM-DD.",
+      "sourceRef": "Form 2 — Date of Birth"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Sex/Gender (tick Male/Female/Transgender)",
+      "validation": { "enum": ["male", "female", "transgender"] }
+    },
+    {
+      "name": "identificationMark",
+      "label": "Identification mark",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Identification Mark",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "educationalQualification",
+      "label": "Educational qualification",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 2 — Educational Qualification",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "bloodGroup",
+      "label": "Blood group",
+      "type": "string",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Blood Group",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Email (optional)",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form 2 — Mobile number",
+      "validation": { "pattern": "^[0-9]{10}$" }
+    },
+    {
+      "name": "landlineNumber",
+      "label": "Landline number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Landline Number (optional)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "presentAddressLine1",
+      "label": "Present address — House/Door/Flat No., Street/Locality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Present Address: House/Door/Flat No., Street/Locality/Police Station",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "presentAddressVillageOrTown",
+      "label": "Present address — Village/Town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Present Address: Village/Town",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressDistrict",
+      "label": "Present address — District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Present Address: District",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressState",
+      "label": "Present address — State/Union Territory",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Present Address: State",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressPinCode",
+      "label": "Present address — PIN code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 2 — Present Address: Pin code",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "permanentAddressSameAsPresent",
+      "label": "Is your permanent address the same as your present address?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 2 — Permanent Address (only if different from present address)"
+    },
+    {
+      "name": "permanentAddressLine1",
+      "label": "Permanent address — House/Door/Flat No., Street/Locality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "permanentAddressSameAsPresent", "equals": false },
+      "sourceRef": "Form 2 — Permanent Address (only if different from Present Address)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "existingLearnersLicenceNumber",
+      "label": "Existing Learner's Licence number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant must already hold a valid Learner's Licence for the class of vehicle applied for before a Driving Licence can be issued.",
+      "sourceRef": "Form 2, section 6 — 'Particulars of existing Licence (Learners or Permanent)': Licence Number",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "existingLearnersLicenceClassOfVehicle",
+      "label": "Class of vehicle(s) on the existing Learner's Licence",
+      "type": "enum",
+      "required": true,
+      "description": "Modelled as a single selected class, matching classOfVehicleApplied's single-class convention; an LL endorsed for more than one class is out of scope of this document.",
+      "sourceRef": "Form 2, section 6 — 'Particulars of existing Licence (Learners or Permanent)': Class of Vehicle(s)",
+      "validation": {
+        "enum": [
+          "mcwog", "mcwg", "lmv", "adapted_vehicle_divyang", "transport_vehicle", "e_rickshaw", "e_cart", "others"
+        ]
+      }
+    },
+    {
+      "name": "existingLearnersLicenceIssuingAuthority",
+      "label": "Name of the licensing authority which issued the existing Learner's Licence",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 2, section 6 — 'Particulars of existing Licence (Learners or Permanent)': Name of the Licencing Authority which issued the Licence",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "existingLearnersLicenceValidFrom",
+      "label": "Existing Learner's Licence validity — from date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 2, section 6 — 'Particulars of existing Licence (Learners or Permanent)': Validity Period From date"
+    },
+    {
+      "name": "existingLearnersLicenceValidTo",
+      "label": "Existing Learner's Licence validity — to date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 2, section 6 — 'Particulars of existing Licence (Learners or Permanent)': Validity Period To date"
+    },
+    {
+      "name": "hasEpilepsyOrLossOfConsciousness",
+      "label": "Do you have epilepsy, or have you ever had a sudden loss of consciousness or giddiness?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "description": "Part of the Self-Declaration as to Physical Fitness (corresponds to Form 1).",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (a)"
+    },
+    {
+      "name": "canReadRegistrationMarkAt25m",
+      "label": "Can you read a vehicle registration mark from a distance of 25 metres (with glasses/contact lenses if you wear them)?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (b): visual acuity test"
+    },
+    {
+      "name": "wearsGlassesOrContactLenses",
+      "label": "Do you wear glasses or contact lenses?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (b)"
+    },
+    {
+      "name": "hasLossOfLimbOrMuscularDefect",
+      "label": "Have you lost a hand or foot, or do you have a muscular power defect in an arm or leg?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (c)"
+    },
+    {
+      "name": "hasNightBlindness",
+      "label": "Do you have night blindness?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (d)"
+    },
+    {
+      "name": "canHearOrdinarySoundSignal",
+      "label": "Can you hear an ordinary sound signal (with a hearing aid if you use one)?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (e)"
+    },
+    {
+      "name": "usesHearingAid",
+      "label": "Do you use a hearing aid?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (e)"
+    },
+    {
+      "name": "hasOtherDiseaseOrDisabilityDangerousToPublic",
+      "label": "Do you have any other disease or disability that is likely to cause danger to the public?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "sourceRef": "Form 2 — Self-Declaration as to Physical Fitness, question (f)"
+    },
+    {
+      "name": "previouslyDisqualifiedFromLicence",
+      "label": "Have you ever been disqualified from holding a driving licence?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form 2 — General declaration: 'I have/have not been disqualified from holding a Driving Licence'"
+    },
+    {
+      "name": "willingToDonateOrgans",
+      "label": "Are you willing to donate your organs/tissue in the event of death?",
+      "type": "boolean",
+      "required": true,
+      "classification": "health",
+      "description": "A voluntary declaration recorded on the licence, per the Motor Vehicles (Amendment) Act, 2019 organ-donation pledge option; answering 'no' does not affect eligibility.",
+      "sourceRef": "Form 2 — Organ donation declaration"
+    }
+  ],
+  "documents": [
+    {
+      "id": "proofOfAddressAndAge",
+      "label": "Proof of address and age",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "aadhaar_card", "electoral_roll_voter_id", "life_insurance_policy", "passport",
+        "school_certificate", "birth_certificate", "government_pay_slip",
+        "affidavit_before_executive_magistrate_or_notary", "age_certificate_by_registered_medical_practitioner", "other"
+      ],
+      "sourceRef": "Form 2, Annexure — List of Documents to be Submitted/Uploaded: Proof of Address AND Age; section 4 note: 'in case of New Learners Licence or New Driving Licence or Change of Address'"
+    },
+    {
+      "id": "medicalCertificateForm1A",
+      "label": "Medical Certificate (Form 1A)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "classOfVehicleApplied", "equals": "transport_vehicle" },
+      "belongsTo": "applicant",
+      "issuingAuthority": "Registered medical practitioner not below the rank of Civil Surgeon",
+      "sourceRef": "Form 2, Annexure — Medical Certificate (Form-1A), required when 'applying for renewal and is above 40 years of age, or applying for a Transport Licence'"
+    },
+    {
+      "id": "drivingSchoolCertificateForm5",
+      "label": "Driving Certificate issued by a Driving School or establishment (Form 5)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 2, Annexure — 'Other documents to be enclosed or uploaded if applicable: 3. Driving Certificate issued by Driving School or Establishments in Form 5' — listed without a stated trigger condition (unlike the Form-1A entry, which states its own); not gated to a specific class here since the source text does not specify one, though it is commonly relevant to a Transport Vehicle class application"
+    },
+    {
+      "id": "passportPhoto",
+      "label": "Passport-size photograph",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 2 — passport-size photograph upload, 'size not more than 50 KB'"
+    },
+    {
+      "id": "applicationFeePayment",
+      "label": "Driving licence application fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Central Motor Vehicles Rules, 1989, Rule 32 fee schedule, per parivahan.gov.in 'Licensing Related Fees & Charges': Rs. 200 per class of vehicle for issue of a driving licence, plus a Rs. 300 test-of-competence fee per class where a driving test has not already been separately paid for; amount not encoded as a fixed field value since fees are set by rule and can change over time, consistent with in/morth/learners-licence-application and other GovSchema documents' fee convention."
+    }
+  ],
+  "steps": [
+    {
+      "id": "scope",
+      "title": "Service selection",
+      "fields": ["applyingForNewDrivingLicenceOnly"],
+      "transitions": [
+        { "to": null, "exitReason": "not_eligible_different_service_requested", "when": { "field": "applyingForNewDrivingLicenceOnly", "equals": false } },
+        { "to": "applicant_details" }
+      ]
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant and vehicle class details",
+      "fields": [
+        "classOfVehicleApplied", "aadhaarNumber", "aadhaarApplicationNumber",
+        "firstName", "middleName", "lastName", "relationType", "relatedPersonName",
+        "dateOfBirth", "gender", "identificationMark",
+        "educationalQualification", "bloodGroup", "email", "mobileNumber", "landlineNumber"
+      ],
+      "next": "existing_licence_particulars"
+    },
+    {
+      "id": "existing_licence_particulars",
+      "title": "Particulars of existing Learner's Licence",
+      "fields": [
+        "existingLearnersLicenceNumber", "existingLearnersLicenceClassOfVehicle",
+        "existingLearnersLicenceIssuingAuthority", "existingLearnersLicenceValidFrom", "existingLearnersLicenceValidTo"
+      ],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Address details",
+      "fields": [
+        "presentAddressLine1", "presentAddressVillageOrTown", "presentAddressDistrict",
+        "presentAddressState", "presentAddressPinCode",
+        "permanentAddressSameAsPresent", "permanentAddressLine1"
+      ],
+      "next": "physical_fitness_declaration"
+    },
+    {
+      "id": "physical_fitness_declaration",
+      "title": "Self-declaration as to physical fitness and other declarations",
+      "fields": [
+        "hasEpilepsyOrLossOfConsciousness", "canReadRegistrationMarkAt25m", "wearsGlassesOrContactLenses",
+        "hasLossOfLimbOrMuscularDefect", "hasNightBlindness", "canHearOrdinarySoundSignal", "usesHearingAid",
+        "hasOtherDiseaseOrDisabilityDangerousToPublic", "previouslyDisqualifiedFromLicence", "willingToDonateOrgans"
+      ]
+    }
+  ]
+}
