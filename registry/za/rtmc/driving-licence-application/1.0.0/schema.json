@@ -1,0 +1,385 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "za/rtmc/driving-licence-application",
+  "version": "1.0.0",
+  "title": "South Africa Application for a Driving Licence (Form DL1)",
+  "description": "Apply, in person at a Driving Licence Testing Centre (DLTC), for a first driving licence in South Africa using Form DL1 ('Application for Driving Licence'), for Code B (light motor vehicle, e.g. a car or light delivery vehicle) — the most common first full licence. It does not submit the application; the live gov.za/natis.gov.za source and the applicant's chosen DLTC are always authoritative (see VERIFICATION.md). Form DL1 is a multi-purpose form also used for a driving licence held by virtue of a government-department licence, replacement of a foreign driving licence, replacement of a driving licence in an identity document or on a paper card, a temporary driving licence, a new licence card/duplicate, and notices of a change of particulars or of the licence document itself; only the new-driving-licence pathway is modeled here (see the `transactionType` field). Applicants must already hold a valid learner's licence (obtained separately, via Form LL1 and the K53 learner's theory test) before this application can proceed; that prerequisite process is out of scope. Vehicle classes other than Code B (motorcycles, minibuses/buses, heavy or articulated vehicles) share the same form and fields but have different minimum-age and medical requirements not modeled here. The subsequent K53 practical driving test, eye test, and fingerprinting are DLTC-administered steps that occur after this form is lodged and are out of scope.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Road Traffic Management Corporation, Republic of South Africa",
+    "abbreviation": "RTMC",
+    "url": "https://www.rtmc.co.za/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-ZA"
+  },
+  "source": {
+    "url": "https://nelsonmandelabay.gov.za/datarepository/documents/dl1application-for-driving-licence-form-dl1.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "DL1(18)(2005/11)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-05",
+    "notes": "Opens the DMV vertical for South Africa (previously 0/6 verticals for DMV; ZA now has Passport, Business Formation, and National ID published — this is the fourth). Form DL1(18)(2005/11) is not hosted for direct download on gov.za or natis.gov.za itself (natis.gov.za's own downloads page returns HTTP 403 to both direct fetch and this review's fetch tooling, and the South African Government's own service page states the form 'is available from any driving licence testing centre and on the eNatis website' without a working direct link); the copy read field-by-field here was retrieved from a municipal government mirror, nelsonmandelabay.gov.za (a Metropolitan Municipality's own domain), which carries a genuine PDF text layer (bilingual English/Afrikaans, extracted with pdfjs-dist) rather than a scanned image. That copy's content, section structure, and 'DL1(18)(2005/11)' print code were cross-checked against a second independent mirror (weq4u.co.za, a private vehicle-licencing service that republishes the identical form) and found to match verbatim. The South African Government's own gov.za service pages ('Apply for a driving licence', 'Renew driving licence') independently confirm Form DL1 is still the current, correct form for this transaction and name the prerequisite learner's-licence requirement, the required supporting documents, and the process steps not restated on the form itself. The application fee is not modeled with a fixed amount: gov.za's own guidance states only 'Contact your local licensing office for current rates,' and this review found no single national fee schedule for the driving-licence application/test fee itself (as distinct from the separate, already-gazetted motor-vehicle-licence renewal fee, which does not apply to this process) — see the `applicationFee` document entry. Two items remain unconfirmed and are flagged here rather than asserted: (1) whether a proof-of-residential-address document (named on the gov.za guidance page but not shown as a field on the DL1 form itself) is required at every DLTC nationwide or varies by province/municipality; (2) whether cellphone number is mandatory in practice at intake, since the form itself shows no asterisk or other required/optional marking on any of its contact-detail fields (this document conservatively models only the identity, address, and declaration fields the form's own structure makes unambiguous as required, and leaves the discretionary contact fields optional). Status remains 'draft' pending a live DLTC intake walkthrough or a natis.gov.za-hosted confirmation, since the online.natis.gov.za booking portal is a session-based scheduling tool (confirmed reachable only for Gauteng residents per gov.za's own guidance) that does not itself collect the DL1 field set and could not be walked screen by screen this cycle."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "transactionType",
+      "label": "Application for (mark with X)",
+      "type": "enum",
+      "required": true,
+      "description": "The transaction requested on Form DL1. This schema's required-field and document set model the new_driving_licence pathway specifically; the other values are captured because they appear as tick-boxes on the same form, but their own requirements are out of scope here.",
+      "sourceRef": "Form DL1 — 'LIST OF POSSIBLE TRANSACTIONS' / 'APPLICATION FOR:'",
+      "validation": {
+        "enum": [
+          "new_driving_licence",
+          "driving_licence_by_virtue_of_government_department_licence",
+          "replacement_of_foreign_driving_licence",
+          "replacement_of_driving_licence_in_id_document_or_paper_card",
+          "temporary_driving_licence",
+          "new_driving_licence_card_or_duplicate",
+          "notice_of_change_of_particulars",
+          "notice_of_change_of_licence_document"
+        ]
+      }
+    },
+    {
+      "name": "typeOfIdentification",
+      "label": "Type of identification (mark with X)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'Type of identification (mark with X)'",
+      "validation": {
+        "enum": ["traffic_register_number", "rsa_id", "foreign_id"]
+      }
+    },
+    {
+      "name": "identificationNumber",
+      "label": "Identification number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data. A 13-digit South African ID number when typeOfIdentification is rsa_id; a traffic register number or foreign identity-document number otherwise, each with its own length and format.",
+      "sourceRef": "Form DL1 — Section A, 'Identification number'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "countryOfIssueIfForeignId",
+      "label": "Country of issue if foreign ID",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "typeOfIdentification", "equals": "foreign_id" },
+      "sourceRef": "Form DL1 — Section A, 'Country of issue if foreign ID'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'Nationality'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender (mark with X)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'Gender (mark with X)'",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": true,
+      "description": "Personal identifier; handle as sensitive data.",
+      "sourceRef": "Form DL1 — Section A, 'Surname'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "initialsAndFirstNames",
+      "label": "Initials and first names (not more than 3)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "description": "The applicant's initials and up to three first names, as printed on Form DL1.",
+      "sourceRef": "Form DL1 — Section A, 'Initials and first names (not more than 3)'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'Date of birth' (Y/M/D)"
+    },
+    {
+      "name": "officialLanguagePreference",
+      "label": "Official language of preference on driving licence (in addition to English)",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant may choose 'none' for English only, or one additional official South African language to appear on the printed licence.",
+      "sourceRef": "Form DL1 — Section A, 'Official language of preference on driving licence (in addition to English)'",
+      "validation": {
+        "enum": ["none", "afrikaans", "ndebele", "northern_sotho", "southern_sotho", "swazi", "tsonga", "tswana", "venda", "xhosa", "zulu"]
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "E-mail address",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form DL1 — Section A, 'E-mail address'",
+      "validation": { "minLength": 3, "maxLength": 254, "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }
+    },
+    {
+      "name": "homeTelephoneNumber",
+      "label": "Telephone number at home",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form DL1 — Section A, 'Telephone number at home (code/number)'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "daytimeContactTelephoneNumber",
+      "label": "Contact telephone number during day",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form DL1 — Section A, 'Contact telephone number during day (code/number)'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "facsimileNumber",
+      "label": "Facsimile number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form DL1 — Section A, 'Facsimile number'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "cellphoneNumber",
+      "label": "Cellphone number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "Form DL1 — Section A, 'Cellphone number'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "postalAddressLine",
+      "label": "Postal address",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'Postal address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "postalSuburb",
+      "label": "Suburb (postal address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'Suburb'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "postalCityTown",
+      "label": "City/Town (postal address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'City/Town'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "postalCode",
+      "label": "Postal code",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, '(postal code/poskode)'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "streetAddressLine",
+      "label": "Street address",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A (continued), 'Street address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "streetSuburb",
+      "label": "Suburb (street address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A (continued), 'Suburb'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "streetCityTown",
+      "label": "City/Town (street address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A (continued), 'City/Town'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "streetPostalCode",
+      "label": "Postal code (street address)",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A (continued), '(postal code/poskode)'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "addressForNotices",
+      "label": "Address where notices must be served (mark with X)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form DL1 — Section A, 'Address where notices must be served (mark with X)'",
+      "validation": { "enum": ["postal_address", "street_address"] }
+    },
+    {
+      "name": "classOfMotorVehicle",
+      "label": "Class of motor vehicle (mark with a cross (X))",
+      "type": "enum",
+      "required": true,
+      "description": "Only one code may be marked per application for a new licence. Code B (light motor vehicle, Tare not exceeding 3 500 kg, or a minibus/bus/goods vehicle with GVM not exceeding 3 500 kg, not articulated) is the most common first full licence and is the pathway this schema's minimum-age and document requirements assume; the other codes appear on the same form but their own age/medical requirements are out of scope here.",
+      "sourceRef": "Form DL1 — Section B, 'CLASS OF MOTOR VEHICLE' code table (a-h)",
+      "validation": { "enum": ["A1", "A", "B", "C1", "C", "EB", "EC1", "EC"] }
+    },
+    {
+      "name": "hasBeenRefusedLearnersOrDrivingLicenceBefore",
+      "label": "Has any previous application for a learner's or driving licence been refused?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form DL1 — Section B, 'State whether any previous application for a learner's or driving licence had been refused, and if so, where, when and reasons for refusal.'"
+    },
+    {
+      "name": "previousRefusalDetails",
+      "label": "Where, when, and reasons for the previous refusal",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBeenRefusedLearnersOrDrivingLicenceBefore", "equals": true },
+      "sourceRef": "Form DL1 — Section B, 'State whether any previous application for a learner's or driving licence had been refused, and if so, where, when and reasons for refusal.'",
+      "validation": { "minLength": 1, "maxLength": 1000 }
+    },
+    {
+      "name": "medicalFitnessDeclaration",
+      "label": "I declare that I am not disqualified from holding a driving licence and am medically fit to drive",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Covers Section D declaration items (a)-(c): the applicant is not prohibited from obtaining a licence by any disqualification, suspension, or cancellation under the National Road Traffic Act, 1996; does not suffer from uncontrolled epilepsy, disabling giddiness/fainting due to hypertension or another disease, a mental illness requiring detention/supervision under the Mental Health Act, 1973, a condition causing muscular inco-ordination, uncontrolled diabetes mellitus, defective vision, or any other disease or disability likely to render the applicant incapable of safely driving; and is not addicted to a narcotic drug or the excessive use of intoxicating liquor.",
+      "sourceRef": "Form DL1 — Section D, Declaration (a)-(c)"
+    },
+    {
+      "name": "photographsSubmittedCount",
+      "label": "This application is accompanied by (none/three/four) photographs of myself",
+      "type": "enum",
+      "required": true,
+      "description": "For a new driving licence application, three or four photographs are submitted; 'none' applies only to transaction types other than a new driving licence (e.g. a notice of change not requiring a new photograph).",
+      "sourceRef": "Form DL1 — Section D, Declaration (d)",
+      "validation": { "enum": ["none", "three", "four"] }
+    },
+    {
+      "name": "declarationInformationTrueAndCorrect",
+      "label": "I declare that all particulars furnished in this form are true and correct, and that a false declaration is punishable",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "Form DL1 — Section D, Declaration (e)-(f)"
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Place",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form DL1 — Section D, 'Place'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form DL1 — Section D, 'Date' (Y/M/D)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocument",
+      "label": "South African green bar-coded ID book or smart ID card, or a valid foreign passport/ID for a foreign applicant",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form DL1 — NOTE: 'When applying for a driving licence, it is essential that the applicant produces acceptable identification'; gov.za 'Apply for a driving licence' — required documents."
+    },
+    {
+      "id": "existingLearnersLicence",
+      "label": "Valid learner's licence",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "gov.za 'Apply for a driving licence' — 'Before applying for a driving licence, you must have a learner's licence.' Obtaining a learner's licence (Form LL1 and the K53 learner's theory test) is a separate, prerequisite process, out of scope for this document."
+    },
+    {
+      "id": "applicantPhotographs",
+      "label": "Identical black-and-white photographs of the applicant",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form DL1 — Section D, Declaration (d); gov.za 'Apply for a driving licence' — 'four identical black-and-white photographs (confirm the exact quantity with the DLTC beforehand)'."
+    },
+    {
+      "id": "proofOfResidentialAddress",
+      "label": "Proof of residential address (e.g. a utility account in the applicant's name, or an affidavit/ward councillor's letter if it is not)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "gov.za 'Apply for a driving licence' — required documents list."
+    },
+    {
+      "id": "applicationFee",
+      "label": "Driving licence application/test booking fee, payable at the Driving Licence Testing Centre",
+      "category": "payment",
+      "required": true,
+      "methods": ["cash", "card"],
+      "sourceRef": "gov.za 'Apply for a driving licence' — 'Contact your local licensing office for current rates.' No single national fee schedule for this transaction was found; the fee is set and collected locally per DLTC/province."
+    },
+    {
+      "id": "declarationSignature",
+      "label": "Signature of applicant, Section D",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "(e) all the particulars furnished by me in this form are true and correct; and (f) I realise that a false declaration is punishable with a fine or one year imprisonment or both.",
+      "sourceRef": "Form DL1 — Section D, Declaration (e)-(f) and signature line."
+    }
+  ]
+}
