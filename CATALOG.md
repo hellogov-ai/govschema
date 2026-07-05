@@ -4,8 +4,20 @@
 
 ## Executive Summary
 
-**13 jurisdictions** | **215 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**13 jurisdictions** | **216 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-05, GOV-1292):** South Korea's Visa vertical closed with
+> `kr/moj/visa-application`, sourced from the Ministry of Justice/Korea
+> Immigration Service's gazetted Visa Application Form (사증발급신청서, 출입국관리법
+> 시행규칙 별지 제17호서식) — a plain, directly-downloadable bilingual PDF with a
+> real text layer (visa.go.kr), unlike the two other South Korean forms
+> authored so far, both served through JS canvas/blob-image viewers. Picked up
+> under `GOV-1321`'s standing research routine from the candidate backlog left
+> by `GOV-1289`'s new-jurisdiction research cycle. KR now has 4/6 verticals
+> modelled (Passport, DMV, National ID, Visa); only `GOV-1293` (Taxes) remains
+> open in the backlog. Global Visa coverage moves from 10/13 to 11/13
+> jurisdictions.
+>
 > **Update (2026-07-05, GOV-1294):** South Korea's National ID & Civic
 > Documents vertical closed with `kr/nec/overseas-voter-registration`,
 > sourced from the National Election Commission's combined overseas
@@ -52,7 +64,7 @@
 | **DMV** | 13/13 (100%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB) |
 | **Business Formation** | 12/13 (92%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR** not yet modelled |
 | **Taxes** | 12/13 (92%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant/Micro-Business/Body-Corporate modelled GOV-1268/GOV-1275/GOV-1282; IE Form CT1, ZA's other 2 ITR14 Annexures still open); **KR** not yet modelled (candidate: `GOV-1293`) |
-| **Visa** | 10/13 (77%) | **NL, ZA** — both confirmed dead ends (see below), not open work; **KR** not yet modelled (candidate: `GOV-1292`) |
+| **Visa** | 11/13 (85%) | **NL, ZA** — both confirmed dead ends (see below), not open work |
 | **National ID & Civic Documents** | 13/13 (100%) | none — closed (SG voter-reg is a confirmed non-gap) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
@@ -122,7 +134,7 @@ genuine new-jurisdiction gap:
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
 - **Secondary new-jurisdiction candidates (not opened yet):** Brazil's Receita Federal IRPF ("Perguntão" guide, `GOV-1295`) and the UAE's FTA VAT/Corporate Tax EmaraTax guides (`GOV-1297`) both rated STRONG in GOV-1289's research, but South Korea was prioritized as the stronger overall candidate.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (10/13 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (11/13 jurisdictions)
 
 **Two confirmed, previously-researched dead ends — not open work:**
 
@@ -133,14 +145,15 @@ genuine new-jurisdiction gap:
   2026-07-05). No online visa-application form is publicly sourceable at
   this time.
 
-Every other jurisdiction (AU, CA, DE, FR, GB, IE, IN, NZ, SG, US) has at
-least one Visa schema. Remaining sub-process gaps: India work/student/
-business visas beyond e-Tourist and e-Student (already 2 of India's likely
-several visa categories — see `in/mha/evisa-etourist`,
-`in/mha/evisa-estudent`); GB work/graduate visas (Home Office digital
-services not yet open-sourced). **KR** is not yet modelled either — GOV-1289's
-research found the official bilingual Visa Application Form (사증발급신청서) as
-a strong, unauthenticated candidate, filed as `GOV-1292`.
+Every other jurisdiction (AU, CA, DE, FR, GB, IE, IN, KR, NZ, SG, US) has at
+least one Visa schema. **South Korea** (`kr/moj/visa-application`, GOV-1292)
+is new this cycle — sourced from the Ministry of Justice/Korea Immigration
+Service's gazetted Visa Application Form (사증발급신청서), a plain
+directly-downloadable bilingual PDF, no login or CAPTCHA required. Remaining
+sub-process gaps: India work/student/business visas beyond e-Tourist and
+e-Student (already 2 of India's likely several visa categories — see
+`in/mha/evisa-etourist`, `in/mha/evisa-estudent`); GB work/graduate visas
+(Home Office digital services not yet open-sourced).
 
 ### National ID & Civic Documents (13/13 jurisdictions) — closed
 
@@ -168,7 +181,7 @@ a future second KR National ID document if needed).
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KR** | 3 | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ |
+| **KR** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -251,7 +264,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 - **Scraping:** `find registry -mindepth 3 -maxdepth 3 -type d` (one entry
   per `<agency>/<process-name>`), cross-checked against
-  `tools/govschema-client/registry-index.json` (215 entries, one per
+  `tools/govschema-client/registry-index.json` (216 entries, one per
   published version/edition).
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
@@ -270,4 +283,5 @@ opened as 13th jurisdiction, `kr/mofa/passport-application-first-adult`
 authoring), updated by GOV-1303 (`kr/koroad/driving-licence-application`
 authoring, KR DMV vertical closed), updated by GOV-1294
 (`kr/nec/overseas-voter-registration` authoring, KR National ID vertical
-closed) | Standards Engineer
+closed), updated by GOV-1292 (`kr/moj/visa-application` authoring, KR Visa
+vertical closed, GOV-1321 research cycle) | Standards Engineer
