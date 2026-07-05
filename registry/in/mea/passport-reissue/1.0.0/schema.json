@@ -1,0 +1,746 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "in/mea/passport-reissue",
+  "version": "1.0.0",
+  "title": "India Re-Issue of Ordinary Passport (Adult)",
+  "description": "Apply for re-issue of an Indian ordinary passport in lieu of an existing/expired/lost/damaged one, as an adult applicant — Case II of the Ministry of External Affairs' (MEA) Passport Application Form, and the highest-volume real-world passport transaction (every passport holder returns to this pathway roughly every 10 years, or sooner on expiry, page exhaustion, loss, damage, or a change of personal particulars). Application is submitted through the Passport Seva Online Portal and finalised at an in-person appointment at a Passport Seva Kendra (PSK), Post Office PSK (POPSK), District Passport Cell (DPC), Speed Post Centre (SPC), or Citizen Service Centre (CSC), where the old passport (or, if lost/stolen, a police report) and supporting documents are verified and biometrics/photograph captured; a paper Passport Application Form and Supplementary Form (ICR-scanned) share the same columns modelled here. This document models the reissue-specific fields (old passport details, reason for reissue, loss/damage/police-report particulars) plus the applicant-detail, family-detail, address, and service-option fields shared with in/mea/passport-application-first-adult, since both categories are recorded on the same physical/online form with 'Re-issue of Passport' selected in Column 1.2. Because an adult must have once held (or still hold) an ordinary passport to use this pathway, it also covers the common 'minor-to-major' transaction — a passport originally issued to a minor, reissued once its holder is an adult — which the source booklet calls out separately only insofar as adult Non-ECR proof (rather than automatic minor Non-ECR eligibility) becomes required at that point. It does not model: minor applicants still under 18 at the time of the reissue application (Case I(B)/Annexure D, a distinct schema); reissue of a Diplomatic or Official passport (a distinct MEA process); fresh/first-time applications (in/mea/passport-application-first-adult); renewal of a Short-Validity Passport (SVP) or the 'going abroad for studies' document variant (Table 2(II) rows B.3/B.6, narrow edge cases not modelled in this pass); every one of the 15 'change in particulars' sub-case document variants (Table 2(II) Section E, only the most common — marriage/divorce name change, spouse-name addition, and appearance change — are modelled at the document level; see VERIFICATION.md); or a single authoritative fee figure, since the fee schedule (Table 4) changes over time and is not encoded here as a fixed amount, consistent with in/mea/passport-application-first-adult. It does not submit the application; the live passportindia.gov.in Passport Seva portal and the Regional Passport Office are always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of External Affairs, Government of India (Passport Seva / Regional Passport Office), under the Passports Act, 1967",
+    "abbreviation": "MEA",
+    "url": "https://www.passportindia.gov.in"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en-IN"
+  },
+  "source": {
+    "url": "https://www.passportindia.gov.in/AppOnlineProject/pdf/ApplicationformInstructionBooklet-V3.0.pdf",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "Passport Application Form and Supplementary Form — Instructions Booklet V3.0 (Ministry of External Affairs), Table 2(II) 'Re-issue of Passport'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from two primary sources: (1) the MEA's own 'Application Form Instruction Booklet V3.0' PDF (fetched directly, HTTP 200; same source used by in/mea/passport-application-first-adult), re-extracted with pdfjs-dist and searched specifically for its 'Re-issue of Passport' content — Column 1.2's narrative list of reissue reasons, Column 1.3's 'change in particulars' cross-reference, Table 2(II)'s 16-row case table (A: exhaustion of visa pages; B: 6 sub-cases of expiry; C: damaged; D: lost/damaged-beyond-recognition/stolen; E: 15 sub-cases of change in particulars) with per-case document numbers, and Table 3's corresponding document list (docs 5, 10, 28, 29, 36, 49, 50, 51, 56, 57, etc.); and (2) a live Playwright render of the Passport Seva Online Portal's own public 'Document Advisor' tool at services2.passportindia.gov.in/psp/docAdvisor/reissuePassport — a genuine client-rendered React SPA (confirmed via curl: raw HTML is an empty '#root' div) that a static fetch cannot see. The live render (headless Chromium via Playwright, executed directly in this environment — no MCP browser tool was available, so a scratch script drove a local Chromium binary with the sysroot's libglib to satisfy its shared-library dependency) confirmed the Document Advisor's exact live question set — Type of Application (Normal/Tatkaal), Applicant Category (Minor/Adult), Employment Type (Government/PSU/Statutory Body, Retired Government Official, Others), 'Is applicant's present address different from that in the existing Passport?' (Yes/No), and 'Is applicant eligible for Non-ECR category?' (Yes/No) — which corroborates that (a) proof of present address is conditional on an address change for reissue (unlike the fresh pathway, where it is unconditional), and (b) the employment-type categories used for Table 2(II)'s document gating are Government/PSU/Statutory Body, Retired Government Official, and Others, matching the first-adult schema's existing employmentType enum. The live 'Apply For Re-Issue of Ordinary Passport' informational page (passportindia.gov.in/psp/ApplyReissue) was also rendered and confirmed the Ordinary-vs-Diplomatic/Official routing boundary modelled here as oldPassportType. The actual entry-form screens beyond the Document Advisor remain behind a Login/Register wall and were not reached — status remains 'draft' pending a live authenticated-portal field-by-field pass, consistent with the first-adult schema's own unresolved verification gap. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "previouslyHeldIndianPassport",
+      "label": "Have you ever held an Indian passport, including one that has since expired?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "'Re-issue of Passport' (Column 1.2) is only for an applicant who has previously held a passport of the category applied for. An applicant who has never held one uses a fresh/first-time application instead — see in/mea/passport-application-first-adult.",
+      "sourceRef": "Instructions Booklet V3.0, Column 1: Service Required — Column 1.2 reissue reasons all presuppose an existing/prior passport"
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Is the applicant under 18 years of age?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "A minor applicant reissuing a passport (e.g. exhausted pages, name/photo change) requires parent/legal-guardian consent (Annexure D) and a different supporting-document set — a distinct schema, not modelled here. This schema's adult scope still covers the common 'minor-to-major' transaction, where a passport originally issued to a minor is reissued once its holder turns 18 and is no longer a minor at the time of this application.",
+      "sourceRef": "Instructions Booklet V3.0, live Document Advisor (services2.passportindia.gov.in/psp/docAdvisor/reissuePassport) — 'Applicant Category*: Minor | Adult'; Annexure D"
+    },
+    {
+      "name": "oldPassportType",
+      "label": "Category of the existing/most recent passport",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": ["ordinary"],
+      "description": "This document models re-issue of an Ordinary (blue) passport only. An applicant who holds a Diplomatic (maroon) or Official (white) passport uses a distinct MEA reissue process for that category, not modelled here — even if the applicant separately holds an Ordinary passport.",
+      "sourceRef": "Live page passportindia.gov.in/psp/ApplyReissue — 'if you have/held a Diplomatic (or Official) Passport but do not have/held an Ordinary Passport ... choose the Reissue category if applying for Diplomatic (or Official) Passport'",
+      "validation": { "enum": ["ordinary", "diplomatic", "official"] }
+    },
+    {
+      "name": "reasonForReissue",
+      "label": "Reason for re-issue",
+      "type": "enum",
+      "required": true,
+      "description": "expiry = existing passport has expired or is about to expire (a reissue can be filed up to 10 years before expiry, or within 3 years after expiry, without fresh police verification; more than 3 years after expiry, post-police-verification applies). exhaustion_of_visa_pages = booklet's visa pages are used up and an additional booklet is needed. damaged = booklet is damaged (whether recognizable — passport number readable, name legible, photo intact — or damaged beyond recognition). lost_or_stolen = passport has been lost or stolen. change_of_particulars = applicant wants to change personal particulars or other details and get a booklet reflecting them (see particularsChangeType).",
+      "sourceRef": "Instructions Booklet V3.0, Column 1.2: 'If reissue, specify reason(s)'; Table 2(II) row headers A (exhaustion of visa pages), B (expiry), C (damaged), D (lost/damaged beyond recognition/stolen), E (change in particulars)",
+      "validation": { "enum": ["expiry", "exhaustion_of_visa_pages", "damaged", "lost_or_stolen", "change_of_particulars"] }
+    },
+    {
+      "name": "particularsChangeType",
+      "label": "Type of change in particulars",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "reasonForReissue", "equals": "change_of_particulars" },
+      "description": "name_change_marriage = woman changing name/surname on marriage. name_change_divorce_or_separation = divorcee/separated applicant changing name or deleting spouse's name. name_change_remarriage = re-married applicant changing name/spouse's name. minor_name_change = spelling discrepancy not amounting to a total change of name. major_name_change = a name change other than the minor/marriage/divorce cases. name_change_government_employee = name change for a serving Government/PSU/Statutory-body employee. change_of_sex, change_of_appearance, change_of_date_of_birth, change_of_place_of_birth, change_of_current_address, change_of_signature = self-explanatory. addition_of_spouse_name = adding a spouse's name where none was previously recorded. change_of_parent_name = father's/mother's name changed. ecr_deletion = removing ECR (Emigration Check Required) status from an existing passport. Cannot apply under the Tatkaal (expedited) scheme for renewal_of_short_validity_passport-adjacent cases, major_name_change, change_of_sex, change_of_signature, or change_of_parent_name, per Table 2(II).",
+      "sourceRef": "Instructions Booklet V3.0, Table 2(II) Section E, rows 1-15",
+      "validation": {
+        "enum": [
+          "name_change_marriage", "name_change_divorce_or_separation", "name_change_remarriage",
+          "minor_name_change", "major_name_change", "name_change_government_employee",
+          "change_of_sex", "change_of_appearance", "change_of_date_of_birth", "change_of_place_of_birth",
+          "change_of_current_address", "change_of_signature", "addition_of_spouse_name",
+          "change_of_parent_name", "ecr_deletion"
+        ]
+      }
+    },
+    {
+      "name": "oldPassportNumber",
+      "label": "Existing/most recent passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Passport number of the existing, expired, lost, damaged, or stolen passport being replaced.",
+      "sourceRef": "Instructions Booklet V3.0, Column 6: Identity Certificate/Passport Details — Column 6.1 ('for re-issue of passport, details of latest held/existing/lost/damaged passport must be furnished in Column 6.1')",
+      "validation": { "minLength": 6, "maxLength": 20 }
+    },
+    {
+      "name": "oldPassportDateOfIssue",
+      "label": "Date of issue of existing/most recent passport",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Instructions Booklet V3.0, Column 6.1: Passport Details"
+    },
+    {
+      "name": "oldPassportDateOfExpiry",
+      "label": "Date of expiry of existing/most recent passport",
+      "type": "date",
+      "required": false,
+      "description": "Leave blank only if the passport was lost/stolen or damaged beyond recognition and the expiry date cannot be recalled.",
+      "sourceRef": "Instructions Booklet V3.0, Column 6.1: Passport Details; Column 1.2 (10-year-before/3-year-after expiry windows)"
+    },
+    {
+      "name": "oldPassportPlaceOfIssue",
+      "label": "Passport office / Indian Mission that issued the existing/most recent passport",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Instructions Booklet V3.0, Column 6.1: Passport Details",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "policeComplaintReference",
+      "label": "Police complaint (FIR/report) reference number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "reasonForReissue", "equals": "lost_or_stolen" },
+      "classification": "sensitive-pii",
+      "description": "Reference number of the police report filed for the lost/stolen passport, per the booklet's instruction that loss must be immediately reported to the nearest Police Station.",
+      "sourceRef": "Instructions Booklet V3.0, Caution notice ('Loss of passport should be immediately reported to the nearest Police Station'); Table 3, Document No. 28: Police report in original",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "circumstancesOfLossOrDamage",
+      "label": "Circumstances of loss/damage — how and where it happened",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "reasonForReissue", "in": ["damaged", "lost_or_stolen"] },
+      "description": "Narrative statement of how and where the passport was lost, stolen, or damaged, for the sworn affidavit (Annexure F).",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 49: 'Affidavit stating how and where the Passport got lost/damaged (Annexure \"F\")'",
+      "validation": { "minLength": 1, "maxLength": 1000 }
+    },
+    {
+      "name": "oldPassportSurrenderDeclaration",
+      "label": "I will submit my old passport in original for retention/cancellation by the Passport Issuing Authority",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "reasonForReissue", "notEquals": "lost_or_stolen" },
+      "description": "Not applicable when the reason for reissue is that the passport was lost or stolen, since no original remains to surrender. Passport is government property and must be surrendered when demanded by any Passport Issuing Authority.",
+      "sourceRef": "Instructions Booklet V3.0, Caution notice ('Passport is a government property and should be surrendered when demanded ... by any Passport Issuing Authority'); Table 3, Document No. 5: Old Passport in original"
+    },
+    {
+      "name": "presentAddressSameAsOldPassport",
+      "label": "Is your present address the same as in the existing/most recent passport?",
+      "type": "boolean",
+      "required": true,
+      "description": "Unlike the fresh-application pathway (where proof of present address is always required), a reissue applicant only needs to submit proof of present address if it differs from the address already on record in the old passport.",
+      "sourceRef": "Live Document Advisor (services2.passportindia.gov.in/psp/docAdvisor/reissuePassport) — 'Is applicant's present address different from that in the existing Passport?*'; Table 2(II), e.g. row B: '1 (if address is different from old Passport)'"
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Leave blank if you do not use a surname; write your full name in Given Name instead. Some embassies (e.g. UAE, European countries) insist on a surname for visa issuance.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.1: Applicant's Given Name & Surname",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "givenName",
+      "label": "Given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full given name as it should appear on the passport, in CAPITAL LETTERS, with no initials or honorifics/titles.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.1: Applicant's Given Name & Surname",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "hasAlias",
+      "label": "Are you known by any other name (alias)?",
+      "type": "boolean",
+      "required": true,
+      "description": "For example, if your name is Rajesh Bansal and your alias is Raja, answer yes and give the alias in the Supplementary Form.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.2: Are you known by any other names (aliases)?"
+    },
+    {
+      "name": "aliasGivenName",
+      "label": "Alias given name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "hasAlias", "equals": true },
+      "description": "Given name portion of the alias, per Supplementary Form Column 1.1.",
+      "sourceRef": "Instructions Booklet V3.0, Supplementary Form Column 1.1: Alias Name1, Given Name & Surname",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "hasNameEverChanged",
+      "label": "Have you ever changed your name?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applies to any change, even marginal (e.g. Harvinder to Harjinder), and to a name/surname changed on marriage. Answer yes here even if change_of_particulars/name-related particularsChangeType above is also selected for this application.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.3: Have you ever changed your name?"
+    },
+    {
+      "name": "previousGivenName",
+      "label": "Previous given name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "hasNameEverChanged", "equals": true },
+      "description": "Given name portion of the name held before the change, per Supplementary Form Column 2.1.",
+      "sourceRef": "Instructions Booklet V3.0, Supplementary Form Column 2.1: Previous Name1, Given Name & Surname",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "DD-MM-YYYY on the source form; represented here as YYYY-MM-DD.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.4: Date of Birth"
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "If born before the partition of India (15 August 1947) at a place now in Pakistan or Bangladesh, write 'Undivided India' as the place of birth and leave District/State blank.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthCity",
+      "label": "Place of birth (village/town/city)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "placeOfBirthCountry", "equals": "India" },
+      "description": "Only required if born in India. Leave blank if born outside India.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthDistrict",
+      "label": "District of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "placeOfBirthCountry", "equals": "India" },
+      "description": "Only required if born in India.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthState",
+      "label": "State/Union Territory of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "placeOfBirthCountry", "equals": "India" },
+      "description": "Only required if born in India.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.5: Place of Birth",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Put a cross on the appropriate box.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.6; corroborated verbatim against in/mea/passport-application-first-adult's bankbazaar.com cross-check",
+      "validation": { "enum": ["male", "female", "transgender"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Put a cross on the appropriate box. Married applicants must also give a spouse name.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.7; corroborated verbatim against in/mea/passport-application-first-adult's bankbazaar.com cross-check",
+      "validation": { "enum": ["single", "married", "divorced", "widow_widower", "separated"] }
+    },
+    {
+      "name": "citizenshipBasis",
+      "label": "Citizenship of India by",
+      "type": "enum",
+      "required": true,
+      "description": "How the applicant's citizenship of India was originally acquired. Unlike the fresh-application pathway, re-issue does not restrict this to citizenship by birth — all citizenship bases already established on the existing passport may reissue via this pathway.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.8: 'Citizenship of India by' — birth, descent, registration, or naturalization",
+      "validation": { "enum": ["birth", "descent", "registration_naturalization"] }
+    },
+    {
+      "name": "panNumber",
+      "label": "PAN (if available)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Permanent Account Number issued by the Income Tax Department, if the applicant has one.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.9",
+      "validation": { "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$", "maxLength": 10 }
+    },
+    {
+      "name": "voterIdNumber",
+      "label": "Voter ID (if available)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Elector's Photo Identity Card (EPIC) number issued by the Election Commission of India, if the applicant has one.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.10",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "employmentType",
+      "label": "Employment type",
+      "type": "enum",
+      "required": true,
+      "description": "Put a cross on the appropriate box. For re-issue, Government/PSU/Statutory Body (still-serving) applicants require a No Objection Certificate and Prior Intimation Letter rather than the Identity Certificate used for fresh applications; Retired Government Official applicants require a Pension Payment Order.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.11; live Document Advisor 'Employment Type*: Government/PSU/Statutory Body | Retired Government Official | Others'; Table 2(II) rows B.4/B.5",
+      "validation": {
+        "enum": [
+          "government", "psu", "statutory_body", "retired_government_servant",
+          "self_employed", "private", "homemaker", "not_employed",
+          "retired_private_service", "student",
+          "cii_ficci_assocham_member_company_owner_partner_director", "others"
+        ]
+      }
+    },
+    {
+      "name": "employerOrganizationName",
+      "label": "Name of organization (if employed in Government/Statutory Body/PSU)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "employmentType", "in": ["government", "psu", "statutory_body"] },
+      "description": "Name of the Government office, Statutory Body, or Public Sector Undertaking employing the applicant.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.12",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "isSpouseGovernmentServant",
+      "label": "Is your spouse a government servant?",
+      "type": "boolean",
+      "required": true,
+      "description": "Affects which supporting documents are required.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.13: Is either of your parent (in case of minor)/spouse, a government servant?"
+    },
+    {
+      "name": "educationalQualification",
+      "label": "Educational qualification",
+      "type": "string",
+      "required": true,
+      "description": "Highest educational qualification, as selected on the source form. Modelled here as free text because the source booklet directs the applicant to 'put a cross in the appropriate box' without enumerating the box labels, matching in/mea/passport-application-first-adult's same unresolved gap.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.14: Educational Qualification",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "eligibleForNonECR",
+      "label": "Are you eligible for Non-ECR (Emigration Check Not Required) category?",
+      "type": "boolean",
+      "required": true,
+      "description": "Non-ECR (formerly ECNR) status is available to, among others, matriculation-and-above qualification holders, income-tax payers, professional degree holders, and persons over 50. Minors are automatically eligible while under 18, but on re-issue after turning 18 (the 'minor-to-major' transaction) documentary proof of Non-ECR eligibility must now be submitted, or the reissued passport is stamped ECR. If not eligible, the passport is issued in the ECR category. A true answer requires a supporting Non-ECR eligibility document.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.15: Are you eligible for Non-ECR Category? — 'For re-issue of passport, after they attain the age of 18 years, documents to prove their non-ECR category have to be submitted, else ECR stamping will be done'; live Document Advisor 'Is applicant eligible for Non-ECR category?*'"
+    },
+    {
+      "name": "distinguishingMark",
+      "label": "Visible distinguishing mark",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "E.g. a mole or birth mark on the forehead. Leave blank if none.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.16: Visible distinguishing mark",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "aadhaarNumber",
+      "label": "Aadhaar number (if available)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "12-digit Aadhaar number issued by the Unique Identification Authority of India (UIDAI). Furnishing it can expedite processing and it may also serve as proof of address/identity.",
+      "sourceRef": "Instructions Booklet V3.0, Column 2.17: Aadhaar Number",
+      "validation": { "pattern": "^[0-9]{12}$" }
+    },
+    {
+      "name": "fatherGivenName",
+      "label": "Father's given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 3: Family Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "motherGivenName",
+      "label": "Mother's given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 3: Family Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "legalGuardianName",
+      "label": "Legal guardian's name (if applicable)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only applicable where a legal guardian, rather than a parent, has custody. Requires an attached Court decree/order.",
+      "sourceRef": "Instructions Booklet V3.0, Column 3: Family Details — 'You need to attach Court decree/order in respect of your legal guardian'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse's name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "maritalStatus", "equals": "married" },
+      "description": "As written in the spouse's own passport, if the spouse holds one.",
+      "sourceRef": "Instructions Booklet V3.0, Column 3.4 — 'If your spouse has a passport, write his/her name in Column 3.4 as written in the passport'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressLine1",
+      "label": "Present residential address — House No. and Street Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4.2: House No. and Street Name",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "presentAddressCity",
+      "label": "Present address — City/Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4: Present Residential Address Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressState",
+      "label": "Present address — State/Union Territory",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4: Present Residential Address Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "presentAddressPinCode",
+      "label": "Present address — PIN code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 4: Present Residential Address Details",
+      "validation": { "pattern": "^[0-9]{6}$" }
+    },
+    {
+      "name": "permanentAddressSameAsPresent",
+      "label": "Is your permanent address the same as your present address?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Instructions Booklet V3.0, Column 4.3: Is permanent address same as present address?"
+    },
+    {
+      "name": "permanentAddressLine1",
+      "label": "Permanent address — House No. and Street Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "permanentAddressSameAsPresent", "equals": false },
+      "sourceRef": "Instructions Booklet V3.0, Supplementary Form Column 3: Permanent Residential Address (If it is different from present residential address)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency contact — name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 5: Emergency Contact Details",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact — phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 5: Emergency Contact Details",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "emergencyContactAddress",
+      "label": "Emergency contact — address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Instructions Booklet V3.0, Column 5: Emergency Contact Details",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "hasPendingCriminalCase",
+      "label": "Is a criminal case pending against you in any court?",
+      "type": "boolean",
+      "required": true,
+      "description": "A pending criminal case does not bar an application, but the applicant must enclose written court permission to travel abroad; a short-validity (typically one year) passport is normally issued instead.",
+      "sourceRef": "Instructions Booklet V3.0, Column 7: Other Details"
+    },
+    {
+      "name": "processingSpeed",
+      "label": "Type of application",
+      "type": "enum",
+      "required": true,
+      "description": "normal = standard processing. tatkaal = expedited scheme; a higher fee applies. Table 2(II) bars several reissue cases from Tatkaal entirely: renewal of a Short Validity Passport, major_name_change, change_of_sex, change_of_signature, and change_of_parent_name (see particularsChangeType) — not enforced as a hard validation rule here, since a data-only field cannot express a joint constraint across two enums without risking a false rejection; flagged for a future conformance-fixture check once this schema advances past structural-reference.",
+      "sourceRef": "Instructions Booklet V3.0, Column 1.4: Type of Application; Table 2(II), Tatkaal-barred rows",
+      "validation": { "enum": ["normal", "tatkaal"] }
+    },
+    {
+      "name": "passportBookletType",
+      "label": "Passport booklet size",
+      "type": "enum",
+      "required": true,
+      "description": "36-page or 60-page booklet; the 60-page booklet carries a higher fee. Selecting 60 pages is also how an applicant requests the 'Additional Booklet' remedy for exhausted visa pages (reasonForReissue = exhaustion_of_visa_pages).",
+      "sourceRef": "Instructions Booklet V3.0, Column 1.5: Type of Passport Booklet; Table 2(II) row A: Additional Booklet (Exhaustion of Visa pages)",
+      "validation": { "enum": ["36_pages", "60_pages"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "oldPassportOriginal",
+      "label": "Old passport, in original, with self-attested photocopy of first two and last two pages",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "reasonForReissue", "notEquals": "lost_or_stolen" },
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 5: Old Passport in original with self-attested photocopy of its first two and last two pages, including ECR/Non-ECR page and any observation/validity-extension page"
+    },
+    {
+      "id": "oldPassportPhotocopyIfAvailable",
+      "label": "Self-attested photocopy of first two and last two pages of old passport, if available (lost/stolen cases only, in place of the original)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 29: Self-attested photocopy of first two and last two pages, including ECR/Non-ECR page, of old Passport; Table 2(II) row D: '... 29 (if available) ...'"
+    },
+    {
+      "id": "policeReportOriginal",
+      "label": "Police report, in original",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "reasonForReissue", "equals": "lost_or_stolen" },
+      "belongsTo": "applicant",
+      "issuingAuthority": "Local police station where the loss/theft was reported",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 28: Police report in original; Table 2(II) row D"
+    },
+    {
+      "id": "lossOrDamageAffidavit",
+      "label": "Affidavit stating how and where the passport got lost/damaged (Annexure 'F')",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "reasonForReissue", "in": ["damaged", "lost_or_stolen"] },
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 49; Annexure 'F'; Table 2(II) rows C and D"
+    },
+    {
+      "id": "proofOfPresentAddress",
+      "label": "Proof of present residential address",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "presentAddressSameAsOldPassport", "equals": false },
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "water_bill", "telephone_bill", "electricity_bill", "income_tax_assessment_order",
+        "election_photo_id_card", "gas_connection_bill", "employer_certificate",
+        "spouse_passport_copy", "aadhaar_card", "rent_agreement", "bank_account_passbook"
+      ],
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 1: Proof of Present Address; Table 2(II), e.g. row B: '1 (if address is different from old Passport)' — unlike the fresh pathway, only required on a change of address"
+    },
+    {
+      "id": "proofOfNonECRCategory",
+      "label": "Documentary proof of eligibility for Non-ECR category",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "eligibleForNonECR", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 3; Column 2.15 — including the minor-to-major case, where Non-ECR proof becomes required only from the reissue after the holder turns 18"
+    },
+    {
+      "id": "noObjectionCertificate",
+      "label": "No Objection Certificate from employer (Annexure 'G')",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "employmentType", "in": ["government", "psu", "statutory_body"] },
+      "belongsTo": "applicant",
+      "issuingAuthority": "The applicant's Central/State Government department, Statutory Body, or Public Sector Undertaking employer",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 50; Annexure 'G'; Table 2(II) row B.4 (Government/Public Sector/Statutory body employees, still serving)"
+    },
+    {
+      "id": "priorIntimationLetter",
+      "label": "Prior Intimation Letter (Annexure 'H')",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "employmentType", "in": ["government", "psu", "statutory_body"] },
+      "belongsTo": "applicant",
+      "issuingAuthority": "The applicant's Central/State Government department, Statutory Body, or Public Sector Undertaking employer",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 51; Annexure 'H'; Table 2(II) row B.4"
+    },
+    {
+      "id": "pensionPaymentOrder",
+      "label": "Pension Payment Order",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "employmentType", "equals": "retired_government_servant" },
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 10; Table 2(II) row B.5 (Retired government official)"
+    },
+    {
+      "id": "marriageCertificateOrJointDeclaration",
+      "label": "Marriage certificate, or Joint Photo Declaration signed by both spouses (Annexure 'J')",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "particularsChangeType", "in": ["name_change_marriage", "addition_of_spouse_name"] },
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 14 (attested marriage certificate) and No. 56 (Annexure 'J'); Table 2(II) rows E.1 and E.13"
+    },
+    {
+      "id": "divorceDecree",
+      "label": "Divorce Order/Decree",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "particularsChangeType", "in": ["name_change_divorce_or_separation", "name_change_remarriage"] },
+      "belongsTo": "applicant",
+      "issuingAuthority": "Court granting the divorce",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 32/33/57: Divorce Order/Decree; Table 2(II) rows E.2 and E.3"
+    },
+    {
+      "id": "recentPhotograph",
+      "label": "Recent photograph showing latest appearance",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "particularsChangeType", "equals": "change_of_appearance" },
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions Booklet V3.0, Table 3, Document No. 36; Table 2(II) row E.8 — required only for DPC/SPC/CSC applications; a notarised statement is additionally required for a Sikh applicant changing from a turban photo to a clean-shaven one or vice versa"
+    },
+    {
+      "id": "courtPermissionLetter",
+      "label": "Court permission to travel abroad",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "hasPendingCriminalCase", "equals": true },
+      "belongsTo": "applicant",
+      "statement": "Written permission granted by the Court allowing the applicant to travel abroad notwithstanding the pending criminal case.",
+      "sourceRef": "Instructions Booklet V3.0, Column 7: Other Details"
+    },
+    {
+      "id": "applicationFeePayment",
+      "label": "Passport application fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "methods": ["cash", "demand_draft", "credit_card", "debit_card"],
+      "sourceRef": "Instructions Booklet V3.0, Section E: Fee List; Column 8 — payment method depends on the submission location. Fee amount varies by booklet size, validity, and Tatkaal election (Table 4) and changes over time; not encoded here as a single figure, consistent with in/mea/passport-application-first-adult."
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Eligibility for the re-issue, adult, ordinary-passport pathway",
+      "fields": ["previouslyHeldIndianPassport", "applicantIsMinor", "oldPassportType"],
+      "transitions": [
+        { "to": null, "exitReason": "not_eligible_never_held_passport_use_fresh_application", "when": { "field": "previouslyHeldIndianPassport", "equals": false } },
+        { "to": null, "exitReason": "not_eligible_minor_applicant", "when": { "field": "applicantIsMinor", "equals": true } },
+        { "to": null, "exitReason": "not_eligible_old_passport_not_ordinary", "when": { "field": "oldPassportType", "notEquals": "ordinary" } },
+        { "to": "reissue_details" }
+      ]
+    },
+    {
+      "id": "reissue_details",
+      "title": "Existing passport and reason for re-issue",
+      "fields": [
+        "reasonForReissue", "particularsChangeType", "oldPassportNumber", "oldPassportDateOfIssue",
+        "oldPassportDateOfExpiry", "oldPassportPlaceOfIssue", "policeComplaintReference",
+        "circumstancesOfLossOrDamage", "oldPassportSurrenderDeclaration", "presentAddressSameAsOldPassport"
+      ],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": [
+        "surname", "givenName", "hasAlias", "aliasGivenName", "hasNameEverChanged", "previousGivenName",
+        "dateOfBirth", "placeOfBirthCountry", "placeOfBirthCity", "placeOfBirthDistrict", "placeOfBirthState",
+        "gender", "maritalStatus", "citizenshipBasis", "panNumber", "voterIdNumber", "employmentType",
+        "employerOrganizationName", "isSpouseGovernmentServant", "educationalQualification",
+        "eligibleForNonECR", "distinguishingMark", "aadhaarNumber"
+      ],
+      "next": "family_details"
+    },
+    {
+      "id": "family_details",
+      "title": "Family details",
+      "fields": ["fatherGivenName", "motherGivenName", "legalGuardianName", "spouseName"],
+      "next": "address_and_contact"
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Address and emergency contact",
+      "fields": [
+        "presentAddressLine1", "presentAddressCity", "presentAddressState", "presentAddressPinCode",
+        "permanentAddressSameAsPresent", "permanentAddressLine1",
+        "emergencyContactName", "emergencyContactPhone", "emergencyContactAddress"
+      ],
+      "next": "service_options"
+    },
+    {
+      "id": "service_options",
+      "title": "Other details and service options",
+      "fields": ["hasPendingCriminalCase", "processingSpeed", "passportBookletType"]
+    }
+  ]
+}
