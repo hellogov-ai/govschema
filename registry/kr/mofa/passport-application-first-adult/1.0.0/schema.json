@@ -1,0 +1,303 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "kr/mofa/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "South Korea First-Time Adult Passport Application",
+  "description": "First application for a South Korean passport by an adult (18 or older) who does not currently hold a valid, unexpired Korean passport, through the Ministry of Foreign Affairs' passport service. South Korea uses a single universal paper form (여권 발급 신청서, 별지 제1호서식 — Passport Act Enforcement Rule Article 3, Attached Form No. 1) for first-time issuance, in-person reissuance, and name/photo-change reissuance alike; this document models the fields on that form as used by a first-time adult applicant with no existing passport to surrender. It is filed in person or via an authorized regional passport office/agency — the online 정부24/KB스타뱅킹 reissuance channels are confirmed (passport.go.kr) to be available only to applicants who already hold a passport, so first-time applicants cannot use them. It does not submit the application; the live passport.go.kr source is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs, Republic of Korea — Passport Policy Division",
+    "abbreviation": "MOFA",
+    "url": "https://www.passport.go.kr/"
+  },
+  "process": {
+    "type": "application",
+    "language": "ko-KR"
+  },
+  "source": {
+    "url": "https://www.passport.go.kr/home/kor/applicationForm/index.do?menuPos=42",
+    "retrievedAt": "2026-07-05",
+    "documentRef": "여권법 시행규칙 제3조 별지 제1호서식 (개정 2025.10.9) — Passport Act Enforcement Rule Article 3, Attached Form No. 1 (amended 2025-10-09)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-05",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the official current blank form (revision dated 2025-10-09) and the Ministry's own filled-in example (작성예시) for the same form, both retrieved from passport.go.kr's '신청 서식' (Application Forms) page. Both documents are served through a JavaScript canvas/blob-image viewer (StreamDocs) with no static text layer or direct download URL; every field, section label, and instructional note cited in this schema's sourceRef values was read directly from full-page renders of that viewer (Playwright + Chromium, page images read via vision), not inferred from prose summaries. Corroborated against passport.go.kr's own reissuance FAQ page, which confirms the online channel is restricted to applicants who already hold a passport — first-time applicants must use this same paper form in person. Structurally modeled after nz/dia/passport-application-first-adult (eligibility-gated first-time scope, PII/sensitive-pii classification split, single free-text address compression for third parties). Status remains 'draft' pending an independent second reviewer's field-by-field pass."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-05"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "hasExistingUnexpiredPassport",
+      "label": "Do you currently hold a still-valid (unexpired) Korean passport?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [false],
+      "description": "This document models a genuine first-time applicant with no existing passport to surrender. An applicant who already holds a valid passport (renewing early, replacing a damaged passport, or updating recorded details) uses the same physical form but must additionally surrender the existing passport and, for some reissuance reasons, may only apply in person or through the online reissuance channel — both out of scope here.",
+      "sourceRef": "여권 발급 신청서 뒤쪽 유의사항 (back-side notes), item 4: '유효기간이 남아있는 여권이 있는 상태에서 새로운 여권을 발급받으시면 유효기간이 남아있는 기존 여권을 반드시 반납해야 합니다'"
+    },
+    {
+      "name": "isEighteenOrOlder",
+      "label": "Are you 18 or older?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "This document covers the adult application. Applicants under 18 use the same form but must additionally submit a legal representative consent form (법정대리인 동의서) or guardian consent form (보호자 동의서), are limited to a passport validity of 5 years or less, and are out of scope here.",
+      "sourceRef": "여권 발급 신청서 뒤쪽 유의사항, item 10: '18세 미만인 사람은 법정대리인 동의서(또는 보호자 동의서)를 제출하셔야 하며, 유효기간 5년 이하의 여권만 발급받을 수 있습니다'"
+    },
+    {
+      "name": "passportType",
+      "label": "Passport type (여권 종류)",
+      "type": "enum",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": ["general"],
+      "description": "The form lists five passport types: general (일반, an ordinary citizen passport — the only pathway modeled here), official (관용), diplomatic (외교관), emergency (긴급), and travel certificate (여행증명서, itself either round-trip 왕복 or one-way 편도). The latter four all require separate institutional sponsorship or emergency-issuance criteria not modeled in this document.",
+      "sourceRef": "여권 발급 신청서, 여권 선택란 — 여권 종류: 일반/관용/외교관/긴급/여행증명서(왕복/편도)",
+      "validation": { "enum": ["general", "official", "diplomatic", "emergency", "travel_certificate"] }
+    },
+    {
+      "name": "passportPeriodChoice",
+      "label": "Passport validity period (여권 기간)",
+      "type": "enum",
+      "required": false,
+      "description": "ten_years = standard 10-year validity (default if left unchecked). single_use_one_year = single-use passport valid up to 1 year, permitting one departure/entry only. remaining_period = reissued passport carries over the remaining validity of a surrendered still-valid passport — does not apply to a genuine first-time applicant (see hasExistingUnexpiredPassport) and is included only for form fidelity. five_years / under_five_years = both require consulting the receiving officer before selecting.",
+      "sourceRef": "여권 발급 신청서, 여권 선택란 — 여권 기간: 10년/단수(1년)/잔여기간/담당자 문의 후 선택(5년/5년 미만)",
+      "validation": { "enum": ["ten_years", "single_use_one_year", "remaining_period", "five_years", "under_five_years"] }
+    },
+    {
+      "name": "passportPages",
+      "label": "Number of passport pages (여권 면수)",
+      "type": "enum",
+      "required": false,
+      "description": "26 or 58 pages. If left unmarked, a standard 58-page passport is issued by default.",
+      "sourceRef": "여권 발급 신청서, 여권 선택란 — 여권 면수: 26/58",
+      "validation": { "enum": ["26", "58"] }
+    },
+    {
+      "name": "photo",
+      "label": "Passport photo (사진)",
+      "type": "file",
+      "required": true,
+      "description": "Colour, front-facing, upper-body photo taken within 6 months before the application date. Plain white background, no background pattern. No tinted glasses or hats. 3.5cm (width) x 4.5cm (height). Head length (chin to crown) 3.2cm-3.6cm.",
+      "sourceRef": "여권 발급 신청서, 필수 기재란 — 사진: 신청일 전 6개월 이내 촬영한 천연색 상반신 정면 사진, 흰색 바탕의 무배경 사진, 색안경과 모자 착용 금지, 가로 3.5cm x 세로 4.5cm, 머리(턱부터 정수리까지) 길이 3.2cm-3.6cm"
+    },
+    {
+      "name": "koreanFullName",
+      "label": "Full name in Korean (한글성명)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Legal name as recorded in the family relation register (가족관계등록부), in Hangul.",
+      "sourceRef": "여권 발급 신청서, 필수 기재란 — 여권신청인: 한글성명",
+      "validation": { "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "residentRegistrationNumber",
+      "label": "Resident registration number (주민번호)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Korea's national resident registration number, format YYMMDD-SNNNNNN (13 digits: 6-digit birth date, hyphen, 7-digit gender/serial/checksum block). This is highly sensitive data equivalent to a national identity number; handle accordingly.",
+      "sourceRef": "여권 발급 신청서, 필수 기재란 — 여권신청인: 주민번호",
+      "validation": { "pattern": "^[0-9]{6}-[0-9]{7}$" }
+    },
+    {
+      "name": "applicantContactNumber",
+      "label": "Applicant's contact number (본인연락처)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Digits only, no hyphens (e.g. 01012345678). Per the form's own notice, this number is used for passport-status notification services (e.g. expiry alerts) and only a domestic Korean mobile number can receive them.",
+      "sourceRef": "여권 발급 신청서, 필수 기재란 — 여권신청인: 본인연락처 (※ '-' 없이 숫자만 기재)",
+      "validation": { "pattern": "^[0-9]{8,11}$" }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency contact — name (긴급연락처 성명)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Personal identifier of a third party; handle as sensitive data. Must be someone else's contact, not the applicant's own — needed to support the applicant if an accident occurs while travelling abroad. Left blank in the Ministry's own filled-in example, confirming this sub-block is optional.",
+      "sourceRef": "여권 발급 신청서, 필수 기재란 — 긴급연락처는 다른 사람의 연락처를 기재하십시오.(해외여행 중 사고발생시 지원을 위하여 필요): 성명",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "emergencyContactRelationship",
+      "label": "Emergency contact — relationship to applicant (관계)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "여권 발급 신청서, 필수 기재란 — 긴급연락처: 관계(신청인의)",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact — phone number (전화번호)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Digits only, no hyphens.",
+      "sourceRef": "여권 발급 신청서, 필수 기재란 — 긴급연락처: 전화번호 (※ '-' 없이 숫자만 기재)",
+      "validation": { "pattern": "^[0-9]{8,11}$" }
+    },
+    {
+      "name": "romanizedSurname",
+      "label": "Romanized surname, capital letters (로마자 성)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Required for a first-time application. Transliterated syllable-by-syllable from the Hangul name per the Ministry of Culture, Sports and Tourism's notified romanization method. Recommended, absent a special reason, to match the romanized surname already used by a family member's existing passport (e.g. a parent's). Once set, correction or change is strictly limited under the Passport Act Enforcement Decree.",
+      "sourceRef": "여권 발급 신청서, 추가 기재란 — 로마자(대문자): 성; 로마자성명 기재 유의사항 항목 1-3",
+      "validation": { "pattern": "^[A-Z-]{1,30}$" }
+    },
+    {
+      "name": "romanizedGivenName",
+      "label": "Romanized given name, capital letters (로마자 이름)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Required for a first-time application. Given-name syllables are written joined together in principle, but a hyphen between syllables is permitted.",
+      "sourceRef": "여권 발급 신청서, 추가 기재란 — 로마자(대문자): 이름; 로마자성명 기재 유의사항 항목 2",
+      "validation": { "pattern": "^[A-Z-]{1,30}$" }
+    },
+    {
+      "name": "familyRegisterAddress",
+      "label": "Registered domicile / family register address (등록기준지)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only needs to be completed if the reviewing officer specifically requests it.",
+      "sourceRef": "여권 발급 신청서, 추가 기재란 — 등록기준지: 담당공무원의 요청이 있을 경우 기재합니다",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "spouseRomanizedSurname",
+      "label": "Spouse's romanized surname (배우자의 로마자 성)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional. If provided, the passport prints it in the form 'spouse of [ROMANIZED SURNAME]'. Must be capital letters.",
+      "sourceRef": "여권 발급 신청서, 선택 기재란 — 배우자의 로마자 성(姓)",
+      "validation": { "pattern": "^[A-Z-]{1,30}$" }
+    },
+    {
+      "name": "braillePassportRequested",
+      "label": "Request a Braille passport? (점자여권)",
+      "type": "boolean",
+      "required": false,
+      "description": "Only applicable to visually impaired applicants.",
+      "sourceRef": "여권 발급 신청서, 선택 기재란 — 점자여권: 희망/희망 안 함 (※ 시각장애인일 경우만 표시)"
+    },
+    {
+      "name": "postalDeliveryRequested",
+      "label": "Request postal delivery of the passport? (우편배송서비스)",
+      "type": "boolean",
+      "required": false,
+      "description": "If true, provide a detailed delivery address in postalDeliveryAddress.",
+      "sourceRef": "여권 발급 신청서, 선택 기재란 — 우편배송 서비스: 희망/희망 안 함 (상세주소 기재)"
+    },
+    {
+      "name": "postalDeliveryAddress",
+      "label": "Postal delivery address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "postalDeliveryRequested", "equals": true },
+      "classification": "pii",
+      "description": "Required only when postalDeliveryRequested is true. The source form provides a single free-text area for this ('상세주소 기재'), not a structured address breakdown.",
+      "sourceRef": "여권 발급 신청서, 선택 기재란 — 우편배송 서비스 (상세주소 기재)",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "smsNotificationConsent",
+      "label": "Consent to text-message notification service? (문자알림서비스)",
+      "type": "boolean",
+      "required": false,
+      "description": "If agreed, a unique identifier is shared with the applicant's telecom carrier under Enforcement Decree Articles 45-46, and SMS messages about passport expiry and issuance progress are sent to a domestic mobile number.",
+      "sourceRef": "여권 발급 신청서, 선택 기재란 — 문자알림서비스: 동의/동의 안 함"
+    },
+    {
+      "name": "declarationTrueAndAccurate",
+      "label": "I have read the notes on the back, completed the above, and confirm the information given is true",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Application is made under Article 9 or Article 11 of the Passport Act. Providing false information or another person's documents is punishable under the Passport Act and related regulations.",
+      "sourceRef": "여권 발급 신청서: '뒤쪽의 유의사항을 확인하고 위의 내용을 작성하였으며, 기재한 내용이 사실임을 확인합니다. 「여권법」 제9조 또는 제11조에 따라 여권의 발급을 신청합니다.'; 유의사항 항목 8"
+    },
+    {
+      "name": "applicationDate",
+      "label": "Date signed",
+      "type": "date",
+      "required": true,
+      "description": "YYYY-MM-DD.",
+      "sourceRef": "여권 발급 신청서 — 신청인(또는 대리인) 성명 옆 날짜: 년 월 일"
+    },
+    {
+      "name": "administrativeInfoSharingConsent",
+      "label": "Consent to administrative information joint-use (행정정보 공동이용 동의)",
+      "type": "boolean",
+      "required": false,
+      "description": "If consented, the reviewing officer verifies the applicant's military-service, family-relation-register, resident-registration, immigration-control, and disability-certificate records directly via inter-agency data sharing under the E-Government Act Article 36. If not consented, the applicant (or an authorized delegate) must submit those supporting documents directly instead.",
+      "sourceRef": "여권 발급 신청서 — 행정정보 공동이용 동의서: 본인은 여권 발급 신청과 관련하여 담당 공무원이 「전자정부법」 제36조에 따른 행정정보 공동이용 등을 통하여 본인의 아래 정보를 확인하는 것에 동의합니다."
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility",
+      "title": "Check you can use this document",
+      "fields": ["hasExistingUnexpiredPassport", "isEighteenOrOlder"],
+      "next": "passport_selection"
+    },
+    {
+      "id": "passport_selection",
+      "title": "Passport type, validity period and pages",
+      "fields": ["passportType", "passportPeriodChoice", "passportPages"],
+      "next": "applicant_details"
+    },
+    {
+      "id": "applicant_details",
+      "title": "Applicant details",
+      "fields": ["photo", "koreanFullName", "residentRegistrationNumber", "applicantContactNumber", "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone"],
+      "next": "romanized_name"
+    },
+    {
+      "id": "romanized_name",
+      "title": "Romanized name",
+      "fields": ["romanizedSurname", "romanizedGivenName", "familyRegisterAddress"],
+      "next": "optional_elections"
+    },
+    {
+      "id": "optional_elections",
+      "title": "Optional elections",
+      "fields": ["spouseRomanizedSurname", "braillePassportRequested", "postalDeliveryRequested", "postalDeliveryAddress", "smsNotificationConsent"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and consent",
+      "fields": ["declarationTrueAndAccurate", "applicationDate", "administrativeInfoSharingConsent"]
+    }
+  ]
+}
