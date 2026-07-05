@@ -284,3 +284,50 @@ schema version if discrepancies are found (VERSIONING.md §3, immutability).
 Per the practice's Cadence, `nextReviewBy` is set to **2027-01-01** (6
 months), and in any case before the AY 2027-28 edition of ITR-4 is notified,
 since the source content itself changes annually.
+
+## Independent review (GOV-1237) — 4 sourceRef mis-citations found and fixed pre-merge
+
+An independent reviewer re-downloaded `ITR4_AY_26-27_V1.1.zip` directly from
+the same incometax.gov.in URL (byte-identical, 4.99 MB), re-parsed every
+worksheet with a from-scratch OOXML cell extractor implementing the same
+self-closing-cell-aware regex this document's own extraction technique
+describes, and cross-checked all 118 quoted-cell citations in this document's
+`sourceRef`s against the live workbook's actual cell contents. 114 matched
+verbatim (including the multi-line seventh-proviso/representative-assessee
+notes, the exact `E1a`/`E1b`/`E1c`/`E3a`-style line-code parentheticals, and
+the 80QQB/80RRB/80GGA cell references). Four did not, and were corrected in
+this version prior to merge (the document had not yet been published, so no
+version bump was needed per VERSIONING.md §3):
+
+- **`property1Type`** cited cell `H19` for the label "Type of house property?".
+  `H19` actually holds the dropdown's `(Select)` placeholder; the real label
+  is in merged cell `F19`. Corrected to cite `F19` as the label cell and
+  `H19` as the selection dropdown.
+- **`property2Type`** — the same error, one property over: cited `H60` for
+  the label; the label is at `F60`, `H60` is the `(Select)` placeholder.
+  Corrected the same way.
+- **`hasLongTermCapitalGains112A`** cited cell `D18` for the label "Long Term
+  capital gains u/s 112A not chargeable to Income-tax". `D18` actually holds
+  the line code `D20(a)`; the label itself is in merged cell `E18:I18`.
+  Corrected to cite `E18` as the label and `D18` as the line-code cell.
+- **`salaryInterestPaidToPartners`** cited cell `H68` (line E6) for the label
+  "Salary and interest paid to the partners". `H68` is actually a different
+  line's (unrelated) computed subtotal — "Presumptive Income under section
+  44AD and 44AE (E2+E3)" — one row up from where the salary/interest-to-
+  partners field actually lives. The real label is at `E69`, with its value
+  cell at `I69`. Corrected to cite `E69`/`I69`.
+
+All four were the same failure mode: a hand-transcribed cell reference one
+row or one column off from the label it was quoting, none of them traceable
+to the self-closing-cell extraction bug already described above (all four
+cells involved are content-bearing, not self-closing). After the fix, the
+same 118-citation cross-check run against the live workbook found zero
+remaining mismatches. Both `node tools/validate.mjs` and
+`node tools/validate-ajv.mjs` were re-run post-fix and still pass; the
+document's structural checks (duplicate field names, every field referenced
+by exactly one step, every `visibleWhen`/`requiredWhen` field reference and
+`steps[].next` resolving) were also re-run clean.
+`tools/govschema-client/registry-index.json` was independently regenerated
+and diffed against the committed version (zero diff), and
+`discovery/catalog.json`'s new candidate entry was confirmed consistent with
+the published schema.
