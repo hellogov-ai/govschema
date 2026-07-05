@@ -17,6 +17,16 @@
 // to a field defined in the sibling `schema.json`. Absence of `mapping.json`
 // is never an error and has no bearing on the sibling schema's conformance.
 //
+// It also checks (GOV-1234, full-registry runs only) that every entry in the
+// committed `tools/govschema-client/registry-index.json` resolves to a real,
+// validating `schema.json` on disk with matching id/version/edition. This is
+// a defense-in-depth check independent of the existing "is the index stale"
+// CI step (which regenerates the index and diffs it): that step can only
+// fire once the referenced file exists in the checkout being tested, so it
+// cannot catch a dangling entry committed from a shared/dirty working tree
+// where `build-index` picked up another author's uncommitted WIP schema
+// (see GOV-1233).
+//
 // This intentionally implements only the subset of JSON Schema the meta-schema
 // uses, so the registry can be validated in CI with no install step. For full
 // JSON Schema draft 2020-12 validation, run any standard validator (e.g. ajv)
@@ -29,12 +39,13 @@
 //
 // Exit code 0 if all documents pass, 1 otherwise.
 
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative, sep, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const REGISTRY = join(ROOT, "registry");
+const INDEX_PATH = join(ROOT, "tools", "govschema-client", "registry-index.json");
 
 const SEMVER =
   /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z-.]+)?(?:\+[0-9A-Za-z-.]+)?$/;
@@ -328,6 +339,61 @@ function validateMappingPath(file, doc, errs, hasEdition) {
     errs.push(`schema.version "${s.version}" does not match version directory "${versionDir}"`);
 }
 
+// Referential integrity of the committed registry-index.json (GOV-1234).
+// `validatedByPath` maps the posix-style path (relative to ROOT, as computed
+// by generate-index.mjs) of every schema.json found under registry/ to
+// whether it passed structural validation and its parsed document — i.e.
+// exactly the universe this same run of validate.mjs just checked. Every
+// index entry must resolve into that universe with matching metadata;
+// anything else is a dangling or drifted reference.
+function validateIndexReferences(validatedByPath, errs) {
+  if (!existsSync(INDEX_PATH)) {
+    errs.push(`file not found: ${relative(ROOT, INDEX_PATH)}`);
+    return;
+  }
+  let index;
+  try {
+    index = JSON.parse(readFileSync(INDEX_PATH, "utf8"));
+  } catch (e) {
+    errs.push(`invalid JSON: ${e.message}`);
+    return;
+  }
+  if (!Array.isArray(index.schemas)) {
+    errs.push("`schemas` must be an array");
+    return;
+  }
+
+  for (const [i, entry] of index.schemas.entries()) {
+    const at = `schemas[${i}] (${entry && entry.id}@${entry && entry.version})`;
+    const path = entry && entry.path;
+    if (!path || !existsSync(join(ROOT, path))) {
+      errs.push(`${at}: path does not resolve to an existing file: ${path}`);
+      continue;
+    }
+    const found = validatedByPath.get(path);
+    if (!found) {
+      errs.push(
+        `${at}: path is not a registered registry/**/schema.json: ${path} ` +
+          "(exists on disk but was not committed under registry/, or failed to parse as JSON)"
+      );
+      continue;
+    }
+    if (!found.valid)
+      errs.push(`${at}: referenced file fails structural validation: ${path}`);
+    if (found.doc.id !== entry.id)
+      errs.push(`${at}: index id does not match document id "${found.doc.id}" at ${path}`);
+    if (found.doc.version !== entry.version)
+      errs.push(
+        `${at}: index version does not match document version "${found.doc.version}" at ${path}`
+      );
+    const docEdition = (found.doc.edition && found.doc.edition.label) ?? null;
+    if (docEdition !== (entry.edition ?? null))
+      errs.push(
+        `${at}: index edition "${entry.edition ?? null}" does not match document edition "${docEdition}" at ${path}`
+      );
+  }
+}
+
 function main() {
   const args = process.argv.slice(2);
   const files = args.length
@@ -360,6 +426,10 @@ function main() {
   // dirname(schema.json) -> { fieldNames, hasEdition }, so a sibling mapping.json
   // can be checked against the schema actually on disk rather than re-deriving it.
   const schemaDirInfo = new Map();
+  // posix-style path (relative to ROOT, matching generate-index.mjs) -> { valid, doc },
+  // so registry-index.json entries can be cross-checked against what this run
+  // actually found and validated (GOV-1234).
+  const validatedByPath = new Map();
   for (const file of files) {
     const errs = [];
     let doc;
@@ -393,10 +463,28 @@ function main() {
     });
 
     const label = relative(ROOT, file);
+    validatedByPath.set(label.split(sep).join("/"), { valid: errs.length === 0, doc });
     if (errs.length) {
       console.error(`FAIL ${label}`);
       for (const e of errs) console.error(`  - ${e}`);
       failed++;
+    } else {
+      console.log(`ok   ${label}`);
+    }
+  }
+
+  // registry-index.json referential integrity (GOV-1234). Only meaningful
+  // when scanning the whole registry — the index is a global artifact, not
+  // scoped to whatever explicit paths were passed on the command line.
+  let indexFailed = 0;
+  if (!args.length) {
+    const errs = [];
+    validateIndexReferences(validatedByPath, errs);
+    const label = relative(ROOT, INDEX_PATH);
+    if (errs.length) {
+      console.error(`FAIL ${label}`);
+      for (const e of errs) console.error(`  - ${e}`);
+      indexFailed = 1;
     } else {
       console.log(`ok   ${label}`);
     }
@@ -437,9 +525,10 @@ function main() {
       (mappingFiles.length
         ? ` ${mappingFiles.length - mappingFailed}/${mappingFiles.length} mapping.json companion(s) passed.`
         : "") +
-      (strayFailed ? ` ${strayFailed} non-conforming registry file(s).` : "")
+      (strayFailed ? ` ${strayFailed} non-conforming registry file(s).` : "") +
+      (indexFailed ? " registry-index.json has dangling/drifted entries." : "")
   );
-  process.exit(failed || mappingFailed || strayFailed ? 1 : 0);
+  process.exit(failed || mappingFailed || strayFailed || indexFailed ? 1 : 0);
 }
 
 main();
