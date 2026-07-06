@@ -4,8 +4,46 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **237 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **238 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1474):** The United Arab Emirates gains a third
+> vertical, `ae/icp/emirates-id-replacement` (National ID & Civic Documents),
+> closing the global National ID & Civic Documents vertical to **15/17
+> (88%)**. Sourced from the ICP (Federal Authority for Identity, Citizenship,
+> Customs & Port Security) Smart App's own official "User Manual, English
+> Version of the Application" — both the Citizen Category and Resident
+> Category editions (v5.23) — a directly downloadable PDF (no login/CAPTCHA/
+> WAF) that is genuinely screenshot-driven, read page-by-page by decompressing
+> each page's embedded JPEG directly (zlib+DCTDecode) since the PDF's
+> custom-subsetted fonts do not yield a legible text layer. The manual's
+> worked example walks the "Replace Emirates ID" service (citizen pathway)
+> end-to-end across 5 sub-steps plus attachments/review/payment; the sibling
+> Resident Category manual's visually-identical "Renew Emirates ID" flow
+> (confirmed to share the same UI components across steps 3-5) was used to
+> corroborate one field not directly visible in the citizen capture's own
+> cut-off screenshot (the Terms and Conditions checkbox) — see the document's
+> own VERIFICATION.md for this and eight other disclosed judgment calls,
+> including why neither manual's "Issue New Emirates ID" menu item is
+> field-level sourceable (so this v1.0.0 is scoped to Replace/Renew, not
+> first-time issuance). This `GovSchema Standard Research` cycle (GOV-1474)
+> screened all four of the UAE's remaining vertical gaps before picking this
+> one: **DMV** (RTA vehicle-registration renewal) is a strong open backlog
+> candidate — a 24-page, 68-screenshot "Vehicle Renewal User Guide" was found
+> and one screenshot confirmed genuine field-level UI, but only via a
+> third-party mirror (the exact current `rta.ae` URL was not located this
+> cycle, though sibling RTA guides at a similar path are still live,
+> suggesting the source moved rather than vanished); **Passport** (ICP) is
+> weaker — only a checklist-level service page and a 231-page per-service
+> text catalog were found, with the same Smart App manual mentioning "Issue
+> new passport" only as a menu action, never an expanded field wizard;
+> **Business Formation** (DED/Basher/Invest in Dubai/MOEC) remains a
+> confirmed dead end, re-checked this cycle with no new public source found
+> (Basher requires UAE Pass login, `app.invest.dubai.ae` returns HTTP 403,
+> `ded.ae` service pages fail with an active-bot-mitigation TLS error). The
+> UAE now has 3/6 verticals (Taxes, Visa, National ID); DMV is the strongest
+> remaining open candidate, Passport is a weaker backlog candidate, and
+> Business Formation remains a dead end absent a new source.
+>
 > **Update (2026-07-06, GOV-1466):** The Philippines gains a third vertical,
 > `ph/bir/annual-income-tax-return-1701a` (Taxes) — BIR Form 1701A, the
 > annual income tax return for individuals earning income purely from
@@ -515,11 +553,11 @@
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
 | **Passport** | 14/17 (82%) | **AE, MX** not yet modelled; **PH** screened (GOV-1466) and deliberately deferred — `passport.gov.ph`'s live wizard is real and DOM-walkable, but its Schedule step consumes genuinely scarce real DFA appointment inventory, so this cycle declined to walk further; open backlog candidate, not a dead end; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
-| **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
+| **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE** screened (GOV-1474) — RTA's "Vehicle Renewal User Guide" is a strong, field-rich candidate but only confirmed via a third-party mirror, not the current `rta.ae` URL; strong open backlog candidate; **BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 15/17 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** newly modelled this cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444), opening the Philippines as the registry's 17th jurisdiction |
 | **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
 | **Visa** | 13/17 (76%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** screened (GOV-1466) — Bureau of Immigration's CGAF forms (`immigration.gov.ph`) are a genuine, unblocked, directly downloadable candidate, not picked this cycle only because Taxes closed a vertical globally; strong open backlog candidate; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
-| **National ID & Civic Documents** | 14/17 (82%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only); **PH** newly modelled this cycle (`ph/comelec/overseas-voter-registration`, GOV-1457) |
+| **National ID & Civic Documents** | 15/17 (88%) | none genuinely open (SG voter-reg is a confirmed non-gap); **BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only); **AE** newly modelled this cycle (`ae/icp/emirates-id-replacement`, GOV-1474) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
 > (generated by GOV-1221) showed Passport as 9/13 with ZA, IN, and NL listed
@@ -746,28 +784,41 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (14/17 jurisdictions)
+### National ID & Civic Documents (15/17 jurisdictions)
 
-Every jurisdiction except the United Arab Emirates, Brazil, and Mexico has at
-least one National ID and/or voter-registration schema. **The Philippines**
-gained its first National ID & Civic Documents schema this cycle
-(GOV-1457): `ph/comelec/overseas-voter-registration`, sourced from
-COMELEC's public iRehistro web tool (OVF No. 1, Registration application
+Every jurisdiction except Brazil and Mexico has at least one National ID
+and/or voter-registration schema. **The United Arab Emirates**
+(`ae/icp/emirates-id-replacement`, GOV-1474) is new this cycle — sourced from
+the ICP (Federal Authority for Identity, Citizenship, Customs & Port
+Security) Smart App's own official user manual (Citizen Category, v5.23), a
+genuinely screenshot-driven walkthrough of the "Replace Emirates ID" service,
+directly downloadable with no login/CAPTCHA/WAF. This closes the UAE's
+National ID gap this catalog's own "Known Gaps" section had explicitly
+flagged. Scoped to card replacement/renewal for an existing citizen family
+member; neither this manual nor its Resident Category sibling shows a
+genuine first-time/new Emirates ID issuance wizard field-by-field (only a
+menu-tile label in both) — see the document's own VERIFICATION.md for this
+and eight other disclosed judgment calls, including a by-analogy inference
+that folds in the Terms-and-Conditions checkbox confirmed on the sibling
+Resident Category manual's visually-identical fee-review screen. **The
+Philippines** gained its first National ID & Civic Documents schema in a
+prior cycle (GOV-1457): `ph/comelec/overseas-voter-registration`, sourced
+from COMELEC's public iRehistro web tool (OVF No. 1, Registration application
 type only — see that document's own VERIFICATION.md for the seven other
 application types left out of scope, and for why `registeredCityMunicipality`
 is modelled as an open string rather than an enum). Mexico's CURP
 national-ID candidate requires an in-person biometric appointment and was not
-sourceable this cycle (GOV-1393) — an open backlog candidate, not a dead end.
-Brazil's Carteira de Identidade Nacional (CIN) candidate remains an open but
-weak backlog candidate (GOV-1428, 2026-07-06): Decreto nº 10.977/2022
-enumerates the finished card's ~20+ printed data attributes, but that's the
-card's data schema, not an application form — the decree's actual filing
-requirements are just a CPF plus one birth/marriage certificate, too thin to
-author a field-level schema from on its own. Singapore's lack of a
+sourceable in a prior cycle (GOV-1393) — an open backlog candidate, not a
+dead end. Brazil's Carteira de Identidade Nacional (CIN) candidate remains an
+open but weak backlog candidate (GOV-1428, 2026-07-06): Decreto nº
+10.977/2022 enumerates the finished card's ~20+ printed data attributes, but
+that's the card's data schema, not an application form — the decree's actual
+filing requirements are just a CPF plus one birth/marriage certificate, too
+thin to author a field-level schema from on its own. Singapore's lack of a
 voter-registration schema is a **confirmed non-gap**
 (GOV-1075): Singapore voting is compulsory and NRIC-linked, with no
-citizen-initiated online registration step to model. **South Korea** now has
-two National ID documents: `kr/nec/overseas-voter-registration` (GOV-1294),
+citizen-initiated online registration step to model. **South Korea** has two
+National ID documents: `kr/nec/overseas-voter-registration` (GOV-1294),
 sourced from the National Election Commission's combined overseas
 absentee-voter notification / overseas voter registration form, and
 `kr/mois/resident-registration-card-reissuance` (GOV-1317), sourced from the
@@ -781,7 +832,7 @@ now closed.
 
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **AE** | 3 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| **AE** | 4 | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -988,5 +1039,8 @@ poor candidate), updated by GOV-1457 (`ph/comelec/overseas-voter-registration`
 authoring, Philippines 2nd vertical, National ID & Civic Documents, PR #248
 merged 5097780), updated by GOV-1466
 (`ph/bir/annual-income-tax-return-1701a` authoring, Philippines 3rd vertical,
-global Taxes vertical closed to 17/17 / 100%) |
+global Taxes vertical closed to 17/17 / 100%), updated by GOV-1474
+(`ae/icp/emirates-id-replacement` authoring, UAE 3rd vertical, National ID &
+Civic Documents, global National ID & Civic Documents vertical closed to
+15/17 / 88%) |
 Standards Engineer
