@@ -84,8 +84,10 @@ at `/tmp/shotter` from a prior cycle, `LD_LIBRARY_PATH` pointed at
 ## What was confirmed directly (verbatim, from the live DOM)
 
 - **Dados pessoais tab:** every field id/name/maxlength listed above;
-  `sexo`'s three coded option values (`M`/`F`/`X`); `racaCor`'s eight IBGE
-  categories with their numeric option codes; `estadoCivil`'s six categories;
+  `sexo`'s three coded option values (`M`/`F`/`X`); `racaCor`'s seven IBGE
+  categories (codes 1/2/3/4/5/8/9 — the select has an eighth, blank
+  placeholder `<option>` that is not itself a category) with their numeric
+  option codes; `estadoCivil`'s six categories;
   the "Local de nascimento" country/UF/city cascading structure, including the
   distinct free-text city field used only when the country of birth isn't
   Brazil; the "Nomes anteriores" previous-name-plus-reason-dropdown pattern
