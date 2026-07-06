@@ -1,0 +1,611 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/miami-dade/clerk/marriage-license-preapplication",
+  "version": "1.0.0",
+  "title": "Miami-Dade County Clerk of the Courts Online Marriage License Pre-Application",
+  "description": "Complete the Miami-Dade County Clerk of the Courts and Comptroller's online 'Pre-Application' for a Florida marriage license, at the Online Marriage License Bureau (miamidadeclerk.gov / www2.miamidadeclerk.gov/mlsweb/PreApplication), ahead of the in-person appointment both applicants must attend to actually receive the license. This is GovSchema's first county/municipal-level schema (the `us/fl/miami-dade/<authority>/<process>` id shape and `jurisdiction.locality` member, GSP-0021), modeling the pre-application's three-card intake: each spouse's personal, birthplace, residence, identification, prior-marriage, and premarital-course fields (collected twice, once per applicant), and a shared mailing/contact-information section. Florida law (Chapter 741, Florida Statutes) requires both parties to appear together, in person, at a Clerk's office to sign, pay the fee, and receive the actual license — this schema models only the online pre-application's own data collection, never the license's issuance, the in-person identity check, the separate appointment-scheduling step, or the ceremony-scheduling step (each a distinct www2.miamidadeclerk.gov/mlsweb endpoint from the pre-application). It does not submit the pre-application; the live www2.miamidadeclerk.gov/mlsweb/PreApplication form is always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "subdivision": "US-FL",
+    "locality": { "name": "Miami-Dade County", "slug": "miami-dade" },
+    "level": "municipal"
+  },
+  "authority": {
+    "name": "Miami-Dade County Clerk of the Courts and Comptroller",
+    "abbreviation": "Miami-Dade Clerk",
+    "url": "https://www.miamidadeclerk.gov/clerk/marriage-licenses.page"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://www2.miamidadeclerk.gov/mlsweb/PreApplication",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "Online Marriage License Bureau — 'Online Pre-Application' web form (www2.miamidadeclerk.gov/mlsweb/PreApplication); cross-referenced with the Clerk's 'Marriage Licenses' page (miamidadeclerk.gov/clerk/marriage-licenses.page) and Chapter 741, Florida Statutes (ss. 741.04, 741.0305)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "GOV-688 (Miami-Dade pilot, unblocked by GOV-667/GSP-0021). The live www2.miamidadeclerk.gov/mlsweb/PreApplication form was fetched directly (HTTP 200, no login, no bot-block) and its full server-rendered HTML read field-by-field: every input/select/radio `name` attribute, `<label>`/`<strong>` text, `placeholder`, `data-val-required`/`data-val-regex`/`data-val-length`/`data-val-range` validation attributes, and popover tooltip text were extracted directly from the DOM, not inferred. The Clerk's own 'Marriage Licenses' informational page (miamidadeclerk.gov/clerk/marriage-licenses.page) was fetched as a second live source and used for the fee schedule, ID-document list, and 3-day-waiting-period/premarital-course narrative that the pre-application form itself does not restate. Florida Statutes ss. 741.04 and 741.0305 were checked directly (leg.state.fl.us) to confirm the SSN-affidavit and premarital-course-fee-reduction statutory basis referenced in field descriptions. The pre-application form was never actually submitted (no POST performed) to avoid creating any real record, so the content of its post-submission 'Next' step (a second page — likely appointment-scheduling handoff, per the site's separate ApptApplication endpoint) was not observed; status remains draft. See VERIFICATION.md for the full list of what was and was not directly confirmed."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "spouse1FirstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "First applicant's legal first name, entered as it appears on their legal identification.",
+      "sourceRef": "Live PreApplication form — input `Spouse1FirstName`, label 'First Name', `data-val-required=\"* Required.\"`, `data-val-regex-pattern=\"^([a-zA-Z \\'\\-]+)$\"`, maxlength 50",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "spouse1MiddleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "First applicant's legal middle name, when they have one.",
+      "sourceRef": "Live PreApplication form — input `Spouse1MName`, label 'Middle Name', no `data-val-required`, `data-val-regex-pattern=\"^([a-zA-Z \\'\\-]+)$\"`, maxlength 50",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "maxLength": 50 }
+    },
+    {
+      "name": "spouse1LastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "First applicant's legal last name, entered as it appears on their legal identification.",
+      "sourceRef": "Live PreApplication form — input `Spouse1LastName`, label 'Last Name', `data-val-required=\"* Required.\"`, `require=\"require\"`, maxlength 50",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "spouse1Suffix",
+      "label": "Suffix",
+      "type": "enum",
+      "required": false,
+      "description": "Name suffix, if any.",
+      "sourceRef": "Live PreApplication form — select `Spouse1SuffixName`, label 'Suffix', options 'Select...'/Jr/Sr/II/III/IV/V/VI",
+      "validation": { "enum": ["Jr", "Sr", "II", "III", "IV", "V", "VI"] }
+    },
+    {
+      "name": "spouse1MaidenSurname",
+      "label": "Maiden Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "First applicant's surname prior to any previous marriage, if applicable.",
+      "sourceRef": "Live PreApplication form — input `Spouse1SurName`, label 'Maiden Surname', no `data-val-required`, `data-val-regex-pattern=\"^([a-zA-Z \\'\\-]+)$\"`, maxlength 40",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "maxLength": 40 }
+    },
+    {
+      "name": "spouse1DateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "First applicant's date of birth.",
+      "sourceRef": "Live PreApplication form — input `Spouse1DOB`, label 'Date of Birth', placeholder 'mm/dd/yyyy', `data-val-required=\"* Required.\"`, `data-val-regex-pattern=\"^(0?[1-9]|1[0-2])\\/(0?[1-9]|1\\d|2\\d|3[01])\\/(19|20)\\d{2}$\"`. Modelled as GovSchema's canonical `date` type; the live form itself collects mm/dd/yyyy text."
+    },
+    {
+      "name": "spouse1BirthPlace",
+      "label": "State or Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "State (if born in the US) or country of birth, chosen from the live form's closed dropdown of US states and world countries. Modelled as free text per this registry's large-geographic-dropdown convention (the closed value list is a UI convenience, not a distinct data domain).",
+      "sourceRef": "Live PreApplication form — select `Spouse1BirthPlace`, label 'State or Country of Birth', `data-val-required=\"* Required.\"`, ~250-option US-states-then-countries dropdown"
+    },
+    {
+      "name": "spouse1HasSocialSecurityNumber",
+      "label": "Do you have a U.S. Social Security Number?",
+      "type": "boolean",
+      "required": true,
+      "description": "Under s. 741.04, Florida Statutes, an applicant with a Social Security Number must provide it; an applicant without one may substitute another available identification number (see spouse1IdentificationType/spouse1IdentificationNumber).",
+      "sourceRef": "Live PreApplication form — radio group `Spouse1SSN` (Yes value `1` / No value `0`), label 'Do you have a U.S. Social Security Number?', tooltip 'If you have a SSN, it is required to provide it.', `data-val-required=\"* Required.\"`"
+    },
+    {
+      "name": "spouse1ResidenceCity",
+      "label": "Residence City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "City where the first applicant currently resides.",
+      "sourceRef": "Live PreApplication form — input `Spouse1ResCity`, label preceded by tooltip 'City where you currently reside.', `data-val-required=\"* Required.\"`, `require=\"require\"`, maxlength 40",
+      "validation": { "pattern": "^[a-zA-Z0-9 '\\-]+$", "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "spouse1ResidenceCounty",
+      "label": "Residence County",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "County where the first applicant currently resides.",
+      "sourceRef": "Live PreApplication form — input `Spouse1ResCounty`, tooltip 'County where you currently reside.', no `data-val-required`, maxlength 40",
+      "validation": { "pattern": "^[a-zA-Z0-9 '\\-]+$", "maxLength": 40 }
+    },
+    {
+      "name": "spouse1ResidenceState",
+      "label": "State or Country of Residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "State or country where the first applicant currently resides, chosen from the same closed US-states-then-countries dropdown as birthplace. Modelled as free text per this registry's large-geographic-dropdown convention. Florida residency here (rather than out-of-state/out-of-country) is one factor in whether the statutory 3-day waiting period applies at all (see spouse1TakenPremaritalClass); this pre-application form does not itself surface that determination as a separate field.",
+      "sourceRef": "Live PreApplication form — select `Spouse1ResState`, tooltip 'State or Country where you currently reside.', `data-val-required=\"* Required.\"`"
+    },
+    {
+      "name": "spouse1IdentificationType",
+      "label": "Identification Type",
+      "type": "enum",
+      "required": true,
+      "description": "Type of official document number the first applicant is providing as identification.",
+      "sourceRef": "Live PreApplication form — select `Spouse1IdentifType`, tooltip 'Select an Official Document type.', options 'Social Security Number'/'Passport Number'/'Driver License Number'/'Alien Number'/'Other'",
+      "validation": {
+        "enum": ["social_security", "passport", "drivers_license", "alien_number", "other"]
+      }
+    },
+    {
+      "name": "spouse1IdentificationNumber",
+      "label": "Identification Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The number for the identification type selected above (Social Security Number, passport number, driver license number, alien number, or another official document number).",
+      "sourceRef": "Live PreApplication form — input `Spouse1IdentifNo`, label 'Identification Number', `data-val-required=\"* Required.\"`, `data-val-regex-pattern=\"^([a-zA-Z0-9]+)$\"`, maxlength 25",
+      "validation": { "pattern": "^[a-zA-Z0-9]+$", "minLength": 1, "maxLength": 25 }
+    },
+    {
+      "name": "spouse1IdentificationNumberConfirmation",
+      "label": "Verify Identification Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Re-entry of spouse1IdentificationNumber to confirm it was typed correctly; the live form rejects a mismatch client-side.",
+      "sourceRef": "Live PreApplication form — input `Spouse1IdentifNoVer`, label 'Verify Identification Number', `data-val-equalto-other=\"*.Spouse1IdentifNo\"`, `data-val-equalto=\"Identification numbers do not match.\"`, `data-val-required=\"* Required.\"`, maxlength 25",
+      "validation": { "pattern": "^[a-zA-Z0-9]+$", "minLength": 1, "maxLength": 25 }
+    },
+    {
+      "name": "spouse1MarriageNumber",
+      "label": "Number of this Marriage",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "description": "Which marriage this is for the first applicant (1 for a first marriage, 2 or more if previously married). Defaults to 1 on the live form.",
+      "sourceRef": "Live PreApplication form — input `Spouse1MarriageNo`, label 'Number of this Marriage', default value 1, `data-val-required=\"The Marriage Number field is required.\"`, `data-val-range-min=\"1\"`, `data-val-range-max=\"99\"`",
+      "validation": { "minimum": 1, "maximum": 99 }
+    },
+    {
+      "name": "spouse1PreviousMarriageEndedType",
+      "label": "How did the Spouse's Last Marriage End",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "spouse1MarriageNumber", "greaterThanOrEqual": 2 },
+      "classification": "pii",
+      "description": "How the first applicant's most recent previous marriage ended. Only shown/required when Number of this Marriage is 2 or more.",
+      "sourceRef": "Live PreApplication form — select `Spouse1MarriageEndedType`, tooltip 'Only Required if Number of THIS MARRIAGE is 2 or more.', options Divorce(0)/Death(1)/Annul(2)",
+      "validation": { "enum": ["divorce", "death", "annul"] }
+    },
+    {
+      "name": "spouse1PreviousMarriageEndedDate",
+      "label": "Date Last Marriage Ended",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "spouse1MarriageNumber", "greaterThanOrEqual": 2 },
+      "classification": "pii",
+      "description": "Exact date the first applicant's most recent previous marriage ended in divorce, death, or annulment. Only shown/required when Number of this Marriage is 2 or more.",
+      "sourceRef": "Live PreApplication form — input `Spouse1MarriageEnded`, placeholder 'mm/dd/yyyy', in `FSMarriageendDateDiv` alongside the conditional `Spouse1MarriageEndedType` field, `data-val-regex-pattern=\"^(0?[1-9]|1[0-2])\\/(0?[1-9]|1\\d|2\\d|3[01])\\/(19|20)\\d{2}$\"`"
+    },
+    {
+      "name": "spouse1TakenPremaritalClass",
+      "label": "Have you taken a premarital Class",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the first applicant has completed a Florida-approved premarital preparation course (s. 741.0305, Florida Statutes) with a pre-registered provider. Presenting a course completion certificate (from both applicants) reduces the license fee and can waive the statutory 3-day waiting period; the certificate itself is presented in person, not uploaded through this pre-application (see the premaritalCourseCertificate document entry).",
+      "sourceRef": "Live PreApplication form — radio group `Spouse1Class`, tooltip 'Class taken with a pre-registered provider within the state of Florida.', `data-val-required=\"* Required.\"`"
+    },
+    {
+      "name": "spouse1Gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "First applicant's gender, as recorded on the marriage license application. The live form offers exactly these two options.",
+      "sourceRef": "Live PreApplication form — radio group `Spouse1Gender`, label 'Gender', options Male(M)/Female(F), `data-val-required=\"* Required.\"`",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "spouse2FirstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Second applicant's legal first name, entered as it appears on their legal identification.",
+      "sourceRef": "Live PreApplication form — input `Spouse2FirstName`, mirrors `Spouse1FirstName` in the 'Second Spouse's Info' card",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "spouse2MiddleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Second applicant's legal middle name, when they have one.",
+      "sourceRef": "Live PreApplication form — input `Spouse2MName`, mirrors `Spouse1MName`",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "maxLength": 50 }
+    },
+    {
+      "name": "spouse2LastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Second applicant's legal last name, entered as it appears on their legal identification.",
+      "sourceRef": "Live PreApplication form — input `Spouse2LastName`, mirrors `Spouse1LastName`",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "spouse2Suffix",
+      "label": "Suffix",
+      "type": "enum",
+      "required": false,
+      "description": "Name suffix, if any.",
+      "sourceRef": "Live PreApplication form — select `Spouse2SuffixName`, mirrors `Spouse1SuffixName`",
+      "validation": { "enum": ["Jr", "Sr", "II", "III", "IV", "V", "VI"] }
+    },
+    {
+      "name": "spouse2MaidenSurname",
+      "label": "Maiden Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Second applicant's surname prior to any previous marriage, if applicable.",
+      "sourceRef": "Live PreApplication form — input `Spouse2SurName`, mirrors `Spouse1SurName`",
+      "validation": { "pattern": "^[a-zA-Z '\\-]+$", "maxLength": 40 }
+    },
+    {
+      "name": "spouse2DateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Second applicant's date of birth.",
+      "sourceRef": "Live PreApplication form — input `Spouse2DOB`, mirrors `Spouse1DOB`. Modelled as GovSchema's canonical `date` type; the live form itself collects mm/dd/yyyy text."
+    },
+    {
+      "name": "spouse2BirthPlace",
+      "label": "State or Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "State (if born in the US) or country of birth, chosen from the live form's closed dropdown of US states and world countries. Modelled as free text per this registry's large-geographic-dropdown convention.",
+      "sourceRef": "Live PreApplication form — select `Spouse2BirthPlace`, mirrors `Spouse1BirthPlace`"
+    },
+    {
+      "name": "spouse2HasSocialSecurityNumber",
+      "label": "Do you have a U.S. Social Security Number?",
+      "type": "boolean",
+      "required": true,
+      "description": "Under s. 741.04, Florida Statutes, an applicant with a Social Security Number must provide it; an applicant without one may substitute another available identification number (see spouse2IdentificationType/spouse2IdentificationNumber).",
+      "sourceRef": "Live PreApplication form — radio group `Spouse2SSN`, mirrors `Spouse1SSN`"
+    },
+    {
+      "name": "spouse2ResidenceCity",
+      "label": "Residence City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "City where the second applicant currently resides.",
+      "sourceRef": "Live PreApplication form — input `Spouse2ResCity`, mirrors `Spouse1ResCity`",
+      "validation": { "pattern": "^[a-zA-Z0-9 '\\-]+$", "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "spouse2ResidenceCounty",
+      "label": "Residence County",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "County where the second applicant currently resides.",
+      "sourceRef": "Live PreApplication form — input `Spouse2ResCounty`, mirrors `Spouse1ResCounty`",
+      "validation": { "pattern": "^[a-zA-Z0-9 '\\-]+$", "maxLength": 40 }
+    },
+    {
+      "name": "spouse2ResidenceState",
+      "label": "State or Country of Residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "State or country where the second applicant currently resides, chosen from the same closed US-states-then-countries dropdown as birthplace. Modelled as free text per this registry's large-geographic-dropdown convention.",
+      "sourceRef": "Live PreApplication form — select `Spouse2ResState`, mirrors `Spouse1ResState`"
+    },
+    {
+      "name": "spouse2IdentificationType",
+      "label": "Identification Type",
+      "type": "enum",
+      "required": true,
+      "description": "Type of official document number the second applicant is providing as identification.",
+      "sourceRef": "Live PreApplication form — select `Spouse2IdentifType`, mirrors `Spouse1IdentifType`",
+      "validation": {
+        "enum": ["social_security", "passport", "drivers_license", "alien_number", "other"]
+      }
+    },
+    {
+      "name": "spouse2IdentificationNumber",
+      "label": "Identification Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The number for the identification type selected above.",
+      "sourceRef": "Live PreApplication form — input `Spouse2IdentifNo`, mirrors `Spouse1IdentifNo`",
+      "validation": { "pattern": "^[a-zA-Z0-9]+$", "minLength": 1, "maxLength": 25 }
+    },
+    {
+      "name": "spouse2IdentificationNumberConfirmation",
+      "label": "Verify Identification Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Re-entry of spouse2IdentificationNumber to confirm it was typed correctly; the live form rejects a mismatch client-side.",
+      "sourceRef": "Live PreApplication form — input `Spouse2IdentifNoVer`, mirrors `Spouse1IdentifNoVer`",
+      "validation": { "pattern": "^[a-zA-Z0-9]+$", "minLength": 1, "maxLength": 25 }
+    },
+    {
+      "name": "spouse2MarriageNumber",
+      "label": "Number of this Marriage",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "description": "Which marriage this is for the second applicant (1 for a first marriage, 2 or more if previously married). Defaults to 1 on the live form.",
+      "sourceRef": "Live PreApplication form — input `Spouse2MarriageNo`, mirrors `Spouse1MarriageNo`",
+      "validation": { "minimum": 1, "maximum": 99 }
+    },
+    {
+      "name": "spouse2PreviousMarriageEndedType",
+      "label": "How did the Spouse's Last Marriage End",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "spouse2MarriageNumber", "greaterThanOrEqual": 2 },
+      "classification": "pii",
+      "description": "How the second applicant's most recent previous marriage ended. Only shown/required when Number of this Marriage is 2 or more.",
+      "sourceRef": "Live PreApplication form — select `Spouse2MarriageEndedType`, mirrors `Spouse1MarriageEndedType`",
+      "validation": { "enum": ["divorce", "death", "annul"] }
+    },
+    {
+      "name": "spouse2PreviousMarriageEndedDate",
+      "label": "Date Last Marriage Ended",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "spouse2MarriageNumber", "greaterThanOrEqual": 2 },
+      "classification": "pii",
+      "description": "Exact date the second applicant's most recent previous marriage ended in divorce, death, or annulment. Only shown/required when Number of this Marriage is 2 or more.",
+      "sourceRef": "Live PreApplication form — input `Spouse2MarriageEnded`, mirrors `Spouse1MarriageEnded`"
+    },
+    {
+      "name": "spouse2TakenPremaritalClass",
+      "label": "Have you taken a premarital Class",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the second applicant has completed a Florida-approved premarital preparation course (s. 741.0305, Florida Statutes) with a pre-registered provider. See spouse1TakenPremaritalClass description.",
+      "sourceRef": "Live PreApplication form — radio group `Spouse2Class`, mirrors `Spouse1Class`"
+    },
+    {
+      "name": "spouse2Gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Second applicant's gender, as recorded on the marriage license application. The live form offers exactly these two options.",
+      "sourceRef": "Live PreApplication form — radio group `Spouse2Gender`, mirrors `Spouse1Gender`",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "mailingAddress",
+      "label": "Mailing Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Shared mailing address for the license/correspondence (street address).",
+      "sourceRef": "Live PreApplication form — input `LicAddress`, label 'Mailing Address', `data-val-required=\"* Required.\"`, `require=\"required\"`, `data-val-regex-pattern=\"^([a-zA-Z0-9 ,#\\'\\-]+)$\"`, maxlength 50",
+      "validation": { "pattern": "^[a-zA-Z0-9 ,#'\\-]+$", "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "mailingCity",
+      "label": "City or Town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "City or town of the shared mailing address.",
+      "sourceRef": "Live PreApplication form — input `LicCity`, label 'City or Town', `data-val-required=\"* Required.\"`, `require=\"required\"`, maxlength 40",
+      "validation": { "pattern": "^[a-zA-Z0-9 '\\-]+$", "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "mailingStateOrCountry",
+      "label": "US State or Foreign Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "State or country of the shared mailing address, chosen from the same closed US-states-then-countries dropdown used for birthplace/residence. Modelled as free text per this registry's large-geographic-dropdown convention.",
+      "sourceRef": "Live PreApplication form — select `LicState`, label 'US State or Foreign Country', `data-val-required=\"* Required.\"`"
+    },
+    {
+      "name": "mailingZipOrPostalCode",
+      "label": "Zip or Postal Code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "ZIP or postal code of the shared mailing address.",
+      "sourceRef": "Live PreApplication form — input `LicZipCode`, label 'Zip or Postal Code', `data-val-required=\"* Required.\"`, `require=\"required\"`, `data-val-regex-pattern=\"^([a-zA-Z0-9 \\-]+)$\"`, maxlength 10",
+      "validation": { "pattern": "^[a-zA-Z0-9 \\-]+$", "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "mailingPhoneNumber",
+      "label": "US Phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Shared contact phone number. Unlike the other General Information fields, the live form carries no `data-val-required` attribute on this input.",
+      "sourceRef": "Live PreApplication form — input `LicPhone`, label 'US Phone Number', no `data-val-required`, maxlength 14",
+      "validation": { "maxLength": 14 }
+    },
+    {
+      "name": "mailingEmail",
+      "label": "Email Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Shared contact email address.",
+      "sourceRef": "Live PreApplication form — input `LicEmail`, label 'Email Address', `data-val-required=\"* Required.\"`, `data-val-regex=\"Please enter a valid eMail.\"`, maxlength 50",
+      "validation": { "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$", "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "mailingEmailConfirmation",
+      "label": "Email Confirmation",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Re-entry of mailingEmail to confirm it was typed correctly; the live form rejects a mismatch client-side.",
+      "sourceRef": "Live PreApplication form — input `ConfirmEmail`, label 'Email Confirmation', `data-val-equalto-other=\"*.LicEmail\"`, `data-val-equalto=\"Emails do not match.\"`, `data-val-required=\"* Required.\"`, maxlength 50",
+      "validation": { "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$", "minLength": 1, "maxLength": 50 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "spouse1PhotoIdDocument",
+      "label": "First applicant's valid government photo identification",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["state_or_us_drivers_license", "passport", "us_military_id", "alien_registration_card", "state_id_card", "naturalization_certificate"],
+      "sourceRef": "Presented in person at the Clerk's office when both applicants appear together to finalize the license; not uploaded through this online pre-application, which has no file-upload field. Clerk 'Marriage Licenses' page — accepted ID list: State or U.S. driver's license, Passport, U.S. military ID, Alien registration card, State ID card, Naturalization certificate (original)"
+    },
+    {
+      "id": "spouse2PhotoIdDocument",
+      "label": "Second applicant's valid government photo identification",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["state_or_us_drivers_license", "passport", "us_military_id", "alien_registration_card", "state_id_card", "naturalization_certificate"],
+      "sourceRef": "Presented in person at the Clerk's office when both applicants appear together to finalize the license; not uploaded through this online pre-application, which has no file-upload field. Clerk 'Marriage Licenses' page — accepted ID list: State or U.S. driver's license, Passport, U.S. military ID, Alien registration card, State ID card, Naturalization certificate (original)"
+    },
+    {
+      "id": "premaritalCourseCertificate",
+      "label": "Premarital preparation course completion certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "spouse1TakenPremaritalClass", "equals": true },
+          { "field": "spouse2TakenPremaritalClass", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Certificate from a Florida-registered premarital course provider (s. 741.0305, Florida Statutes), presented in person; reduces the license fee to $61 and can waive the standard 3-day waiting period. Not uploaded through this online pre-application. Clerk 'Marriage Licenses' page — 'License with completed premarital course: $61' and 'Online Premarital Course Provider Directory'; s. 741.0305, Florida Statutes"
+    },
+    {
+      "id": "feePayment",
+      "label": "Marriage license fee payment",
+      "category": "payment",
+      "required": true,
+      "methods": ["cash", "cashiers_check", "money_order", "credit_card"],
+      "sourceRef": "Standard license fee is $86, reduced to $61 when both applicants present a premaritalCourseCertificate. Collected in person at the Clerk's office when the license is issued, not as part of this online pre-application. Clerk 'Marriage Licenses' page — 'Standard marriage license: $86', 'License with completed premarital course: $61', accepted payment methods 'cash, cashier's check, money orders, and major credit cards'"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "spouse1IdentificationNumberMatchesConfirmation",
+      "compare": { "field": "spouse1IdentificationNumber", "operator": "equals", "compareTo": "spouse1IdentificationNumberConfirmation" }
+    },
+    {
+      "id": "spouse2IdentificationNumberMatchesConfirmation",
+      "compare": { "field": "spouse2IdentificationNumber", "operator": "equals", "compareTo": "spouse2IdentificationNumberConfirmation" }
+    },
+    {
+      "id": "mailingEmailMatchesConfirmation",
+      "compare": { "field": "mailingEmail", "operator": "equals", "compareTo": "mailingEmailConfirmation" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "spouse1_information",
+      "title": "Spouse's Info for the Online Pre-Application (First Applicant)",
+      "fields": [
+        "spouse1FirstName",
+        "spouse1MiddleName",
+        "spouse1LastName",
+        "spouse1Suffix",
+        "spouse1MaidenSurname",
+        "spouse1DateOfBirth",
+        "spouse1BirthPlace",
+        "spouse1HasSocialSecurityNumber",
+        "spouse1ResidenceCity",
+        "spouse1ResidenceCounty",
+        "spouse1ResidenceState",
+        "spouse1IdentificationType",
+        "spouse1IdentificationNumber",
+        "spouse1IdentificationNumberConfirmation",
+        "spouse1MarriageNumber",
+        "spouse1PreviousMarriageEndedType",
+        "spouse1PreviousMarriageEndedDate",
+        "spouse1TakenPremaritalClass",
+        "spouse1Gender"
+      ],
+      "next": "spouse2_information"
+    },
+    {
+      "id": "spouse2_information",
+      "title": "Spouse's Info for the Online Pre-Application (Second Applicant)",
+      "fields": [
+        "spouse2FirstName",
+        "spouse2MiddleName",
+        "spouse2LastName",
+        "spouse2Suffix",
+        "spouse2MaidenSurname",
+        "spouse2DateOfBirth",
+        "spouse2BirthPlace",
+        "spouse2HasSocialSecurityNumber",
+        "spouse2ResidenceCity",
+        "spouse2ResidenceCounty",
+        "spouse2ResidenceState",
+        "spouse2IdentificationType",
+        "spouse2IdentificationNumber",
+        "spouse2IdentificationNumberConfirmation",
+        "spouse2MarriageNumber",
+        "spouse2PreviousMarriageEndedType",
+        "spouse2PreviousMarriageEndedDate",
+        "spouse2TakenPremaritalClass",
+        "spouse2Gender"
+      ],
+      "next": "general_information"
+    },
+    {
+      "id": "general_information",
+      "title": "General Information",
+      "fields": [
+        "mailingAddress",
+        "mailingCity",
+        "mailingStateOrCountry",
+        "mailingZipOrPostalCode",
+        "mailingPhoneNumber",
+        "mailingEmail",
+        "mailingEmailConfirmation"
+      ]
+    }
+  ]
+}
