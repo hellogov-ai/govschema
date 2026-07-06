@@ -1,0 +1,470 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mx/sat/preinscripcion-rfc-persona-moral",
+  "version": "1.0.0",
+  "title": "Mexico RFC Pre-registration for Legal Entities (Preinscripción de Personas Morales)",
+  "description": "SAT's (Servicio de Administración Tributaria) online pre-registration wizard through which a Mexican legal entity (persona moral — a company, not an individual) begins its enrollment in the Registro Federal de Contribuyentes (RFC), the federal taxpayer identifier every business must hold — the closest Mexican analogue to the US EIN application (us/irs/employer-identification-number-ss4), so this document is classified in the same Business Formation vertical. The live wizard (sat.gob.mx/aplicacion/33805/preinscribe-tu-empresa-en-el-rfc) sits behind a WAF/bot-mitigation layer that returns HTTP 403 to both a direct fetch and a real-browser-less request; this document is instead derived from SAT's own official step-by-step screenshot guide PDF ('Guía para preinscripción de personas morales', dated 01/01/2022), which walks a fabricated example applicant ('LA CAPERUCITA ROJA') through all five of the wizard's own steps. Completing this wizard only produces an 'Acuse de pre inscripción al Registro Federal de Contribuyentes' (a pre-registration receipt/folio); per the guide's own final instruction, the applicant must still attend an in-person appointment at a SAT Módulo de Servicios Tributarios, presenting the documents listed in SAT's Ficha de trámite 39/CFF, to actually conclude the RFC inscription — this document models only the online data-entry wizard, not that in-person conclusion, not any document upload (the wizard itself collects no file uploads), and not the mandatory CAPTCHA/image-verification step that gates each screen's 'Continuar' action. Several repeating structures the live wizard supports are explicitly out of scope for this v1.0.0 (see VERIFICATION.md for the full list): additional/alternate business addresses beyond the one fiscal address (domicilio fiscal), more than one phone number per address, more than one economic activity and its own income-percentage split, the activity-specific 'preguntas complementarias' sub-questionnaire for any economic activity other than the one worked example the guide shows ('Comercial, industrial o de producción'), the full SCIAN-style economic-activity catalog itself (the guide shows only a small navigable slice of it), and more than one socio/accionista (partner/shareholder) RFC relationship. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Mexico, the Secretaría de Hacienda y Crédito Público, or the Servicio de Administración Tributaria.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MX",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Servicio de Administración Tributaria",
+    "abbreviation": "SAT",
+    "url": "https://www.sat.gob.mx"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es-MX"
+  },
+  "source": {
+    "url": "https://wwwmat.sat.gob.mx/cs/Satellite?blobcol=urldata&blobkey=id&blobtable=MungoBlobs&blobwhere=1461176355970&ssbinary=true",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "Guía para preinscripción de personas morales, Servicio de Administración Tributaria (SAT), fecha 01 de enero de 2022 (13 páginas)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Source-derived reference schema closing Mexico's explicitly-flagged Business Formation vertical gap (CATALOG.md 'Known Gaps'). The live SAT preinscription wizard (sat.gob.mx/aplicacion/33805/preinscribe-tu-empresa-en-el-rfc) returns HTTP 403 to a direct fetch — independently re-confirmed this cycle (curl with a browser User-Agent still 403s, while the general sat.gob.mx portal itself returns HTTP 200, indicating a WAF/bot rule on this specific application path rather than a wholesale outage). This document was instead authored from SAT's own official screenshot-driven step-by-step guide PDF, 'Guía para preinscripción de personas morales' (13 pages, dated 01/01/2022), fetched directly from a wwwmat.sat.gob.mx blob-storage URL (HTTP 200, genuine %PDF-1.5 content, 1.9 MB). The PDF's text layer (extracted via pdfjs-dist getTextContent) contains only the guide's narrative instructional prose (21 numbered steps) — every field label, asterisk-required marker, dropdown value, and example value visible in this document comes from the guide's embedded screenshot images, which carry no text layer and were instead read via pdfjs-dist page rendering to PNG (using @napi-rs/canvas as the Node canvas backend, at up to 5x scale for legibility) followed by direct visual reading of each rendered page, not OCR. The guide walks a single fabricated example applicant, a fictitious company 'LA CAPERUCITA ROJA', through all five of the wizard's own steps end-to-end. Status remains 'draft' pending an independent second reviewer's field-by-field pass, and pending a live-browser re-walk of the wizard itself if a bot-mitigation bypass ever becomes available. See VERIFICATION.md for the extraction method, every interpretive judgment call, and the full list of what this v1.0.0 document leaves out of scope."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "companyName",
+      "label": "Denominación o razón social",
+      "type": "string",
+      "required": true,
+      "description": "The company's legal name, as it will appear on the RFC record.",
+      "sourceRef": "Guía, p.4, Paso 1. Datos de identificación — 'Denominación o razón social*'"
+    },
+    {
+      "name": "capitalRegime",
+      "label": "Régimen de capital",
+      "type": "string",
+      "required": true,
+      "description": "The company's corporate capital regime (e.g. sociedad anónima, sociedad de responsabilidad limitada, and their capital-variable variants), chosen from a closed dropdown on the live wizard. The guide's own example screenshot shows the selected value rendered as 'SOCIEDAD ANONIMA DE CAPITAL VARI', truncated by the live dropdown box's own display width in the source screenshot itself (not by this document's extraction) — the guide never shows the untruncated string or the dropdown's full option catalog, so this field is modelled as an open string rather than a closed enum. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.4, Paso 1. Datos de identificación — 'Régimen de capital*'"
+    },
+    {
+      "name": "incorporationDate",
+      "label": "Fecha constitución",
+      "type": "date",
+      "required": true,
+      "description": "The live form displays this as a dd/mm/yyyy masked text input with a date-picker icon; represent as an ISO 8601 full-date.",
+      "sourceRef": "Guía, p.4, Paso 1. Datos de identificación — 'Fecha constitución*'"
+    },
+    {
+      "name": "registrationType",
+      "label": "Tipo inscripción",
+      "type": "string",
+      "required": true,
+      "description": "The kind of RFC inscription being requested, chosen from a dropdown. The guide's example shows only the single value 'Inscripción de persona moral' selected; the dropdown's full option catalog (which may include other inscription kinds reachable from the same control) is not shown anywhere in the guide, so this is modelled as an open string rather than a closed enum. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.4, Paso 1. Datos de identificación — 'Tipo inscripción*'"
+    },
+    {
+      "name": "commercialName",
+      "label": "Nombre comercial",
+      "type": "string",
+      "required": false,
+      "description": "Trade/commercial name, if different from the legal denominación o razón social.",
+      "sourceRef": "Guía, p.4, Paso 1. Datos de identificación — 'Nombre comercial:'"
+    },
+    {
+      "name": "operationsStartDate",
+      "label": "Fecha de inicio de operaciones",
+      "type": "date",
+      "required": true,
+      "description": "The live form displays this as a dd/mm/yyyy masked text input with a date-picker icon; represent as an ISO 8601 full-date.",
+      "sourceRef": "Guía, p.4, Paso 1. Datos de identificación — 'Fecha de inicio de operaciones*'"
+    },
+    {
+      "name": "nationality",
+      "label": "Nacionalidad",
+      "type": "string",
+      "required": true,
+      "description": "The company's nationality, chosen from a dropdown. The guide's example shows only the value 'ESTADOS UNIDOS MEXICANOS' selected; the dropdown's full option catalog (e.g. whether a foreign-incorporated legal entity registering for Mexican tax purposes could select a different value here) is not shown in the guide, so this is modelled as an open string rather than a closed enum. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.4, Paso 1. Datos de identificación — 'Nacionalidad*'"
+    },
+    {
+      "name": "fiscalAddressType",
+      "label": "Tipo domicilio",
+      "type": "enum",
+      "required": true,
+      "description": "The kind of address being registered. This document scopes to only the mandatory first address (the domicilio fiscal, or registered fiscal address) that the wizard's own 'Detalle domicilio' screen renders with this field pre-filled and disabled — additional, alternate addresses (e.g. sucursales, bodegas, oficinas) that the wizard's 'Añadir' button on the preceding 'Domicilios' screen also supports are out of scope for this v1.0.0. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Tipo domicilio*: DOMICILIO FISCAL' (shown disabled/pre-filled)",
+      "validation": { "enum": ["domicilio_fiscal"] }
+    },
+    {
+      "name": "postalCode",
+      "label": "Código postal",
+      "type": "string",
+      "required": false,
+      "description": "Postal code. Not itself marked as an obligatory field on the live source, but the guide's own instructions describe it as the normal starting point: entering it and clicking outside the box auto-populates entidadFederativa/municipality/neighborhood, which remain independently editable dropdowns if the auto-filled values are wrong or if the postal code is unknown.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Código postal:' and its instructional paragraph"
+    },
+    {
+      "name": "state",
+      "label": "Entidad Federativa",
+      "type": "string",
+      "required": true,
+      "description": "The Mexican state of the fiscal address, chosen from a dropdown (auto-suggested from postalCode, independently editable). Not enumerated here; the guide does not show this dropdown's full option list, though it is presumably the same 32-entry federal-entity catalog used elsewhere in Mexican government forms (see e.g. mx/inm/forma-migratoria-multiple-electronica's destinationState). Not asserted as identical without direct confirmation against this specific wizard's own catalog endpoint — see VERIFICATION.md.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Entidad Federativa*'"
+    },
+    {
+      "name": "municipality",
+      "label": "Municipio o Demarcación Territorial",
+      "type": "string",
+      "required": true,
+      "description": "Municipality (or, in Mexico City, borough/demarcación territorial), chosen from a dropdown scoped to the selected state.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Municipio o Demarcación Territorial*'"
+    },
+    {
+      "name": "locality",
+      "label": "Localidad",
+      "type": "string",
+      "required": true,
+      "description": "Locality, chosen from a dropdown scoped to the selected municipality.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Localidad*'"
+    },
+    {
+      "name": "neighborhood",
+      "label": "Colonia",
+      "type": "string",
+      "required": true,
+      "description": "Neighborhood/colonia, chosen from a dropdown (auto-suggested from postalCode, independently editable).",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Colonia*'"
+    },
+    {
+      "name": "streetType",
+      "label": "Tipo de calle",
+      "type": "string",
+      "required": false,
+      "description": "Type of thoroughfare (the guide's example shows 'CALLE'), chosen from a dropdown.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Tipo de calle:'"
+    },
+    {
+      "name": "street",
+      "label": "Calle",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Calle*'"
+    },
+    {
+      "name": "exteriorNumber",
+      "label": "Número exterior",
+      "type": "string",
+      "required": true,
+      "description": "Street/exterior number. Modelled as a string since the guide's own example value ('MZ 11') is alphanumeric.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Número exterior*'"
+    },
+    {
+      "name": "interiorNumber",
+      "label": "Número interior",
+      "type": "string",
+      "required": false,
+      "description": "Interior/unit number, e.g. apartment or suite. Modelled as a string since the guide's own example value ('LT 41') is alphanumeric.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Número interior:'"
+    },
+    {
+      "name": "betweenStreet1",
+      "label": "Entre calle",
+      "type": "string",
+      "required": true,
+      "description": "One of the two cross streets bounding the address.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Entre calle*'"
+    },
+    {
+      "name": "betweenStreet2",
+      "label": "Y calle",
+      "type": "string",
+      "required": true,
+      "description": "The other of the two cross streets bounding the address.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Y calle*'"
+    },
+    {
+      "name": "addressFeatures",
+      "label": "Características del domicilio",
+      "type": "string",
+      "required": false,
+      "description": "Free-text physical description of the property (the guide's example: 'EDIFICIO DE LADRILLOS').",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Características del domicilio:'"
+    },
+    {
+      "name": "propertyType",
+      "label": "Tipo inmueble",
+      "type": "string",
+      "required": false,
+      "description": "Type of property/premises, chosen from a dropdown (the guide's example: 'INDUSTRIAS, FABRICAS Y TALLERE[S]', itself truncated by the source screenshot's own dropdown width).",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Tipo inmueble:'"
+    },
+    {
+      "name": "additionalReferences",
+      "label": "Referencias adicionales",
+      "type": "string",
+      "required": true,
+      "description": "Free-text landmark/reference notes to help locate the address (the guide's example: 'ENFRENTE DE LA FERRETERIA').",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Referencias adicionales*'"
+    },
+    {
+      "name": "phoneType",
+      "label": "Tipo (teléfono)",
+      "type": "string",
+      "required": false,
+      "description": "Type of the phone number entered (the guide's example: 'Fijo', i.e. landline), chosen from a dropdown. This document scopes to the single phone entry the guide's screenshot shows; the wizard's own '+'/'-' controls that let more than one phone number be added per address are out of scope. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Tipo:' (phone)"
+    },
+    {
+      "name": "phoneAreaCode",
+      "label": "Lada",
+      "type": "string",
+      "required": false,
+      "description": "Area code (the guide's example: '55', for Mexico City).",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Lada:'"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Teléfono",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Teléfono:'"
+    },
+    {
+      "name": "email",
+      "label": "Correo electrónico",
+      "type": "string",
+      "required": false,
+      "description": "Contact email for the fiscal address. Not marked with an asterisk on the live source, though the guide's own instructional paragraph for this screen ends '...captura tu correo electrónico y en su caso teléfono' (capture your email and, where applicable, phone), which reads as a softer expectation than the red-asterisk fields on the same screen. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.5, Paso 2. Datos de ubicación — 'Correo electrónico:'",
+      "validation": { "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$" }
+    },
+    {
+      "name": "legalRepresentativeRfc",
+      "label": "RFC (representante legal)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "RFC (Registro Federal de Contribuyentes key) of the legal representative filing the pre-registration on the company's behalf. The guide's own instruction: 'la información del campo RFC es obligatoria y al registrarla en automático se despliega la información de los campos subsecuentes' — entering it auto-populates legalRepresentativeCurp/GivenNames/FirstSurname/SecondSurname/DateOfBirth/State from SAT's own taxpayer record, which the live form then renders read-only (greyed out) rather than independently editable.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'RFC*'",
+      "validation": { "pattern": "^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$" }
+    },
+    {
+      "name": "legalRepresentativeCurp",
+      "label": "CURP (representante legal)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The legal representative's CURP (Clave Única de Registro de Población). Auto-populated by SAT's system once legalRepresentativeRfc is entered; rendered read-only (greyed out) on the live form, not independently editable — not itself a value the applicant types in.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'CURP:' (shown disabled)"
+    },
+    {
+      "name": "legalRepresentativeGivenNames",
+      "label": "Nombre(s) (representante legal)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Auto-populated from legalRepresentativeRfc; rendered read-only (greyed out) on the live form.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Nombre(s):' (shown disabled)"
+    },
+    {
+      "name": "legalRepresentativeFirstSurname",
+      "label": "Primer apellido (representante legal)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Auto-populated from legalRepresentativeRfc; rendered read-only (greyed out) on the live form.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Primer apellido:' (shown disabled)"
+    },
+    {
+      "name": "legalRepresentativeSecondSurname",
+      "label": "Segundo apellido (representante legal)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Auto-populated from legalRepresentativeRfc; rendered read-only (greyed out) on the live form.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Segundo apellido:' (shown disabled)"
+    },
+    {
+      "name": "legalRepresentativeDateOfBirth",
+      "label": "Fecha de nacimiento (representante legal)",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Auto-populated from legalRepresentativeRfc; rendered read-only (greyed out) on the live form.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Fecha de nacimiento:' (shown disabled)"
+    },
+    {
+      "name": "legalRepresentativeState",
+      "label": "Estado (representante legal)",
+      "type": "string",
+      "required": false,
+      "description": "Auto-populated from legalRepresentativeRfc; rendered read-only (greyed out) on the live form.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Estado:' (shown disabled)"
+    },
+    {
+      "name": "notarialDeedNumber",
+      "label": "Número de escritura",
+      "type": "string",
+      "required": false,
+      "description": "Notarial deed (escritura pública) number for the company's incorporation instrument. Part of the optional 'Documento protocolizado' section; the guide's own instruction: 'La información de la sección Documento protocolizado no es obligatoria, sin embargo, se recomienda registrarla' (not obligatory, but recommended).",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Número de escritura:'"
+    },
+    {
+      "name": "notaryRfc",
+      "label": "Clave de RFC del fedatario público",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "RFC of the notary/fedatario público who protocolized the incorporation instrument.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Clave de RFC del fedatario público:'"
+    },
+    {
+      "name": "notarialDeedDate",
+      "label": "Fecha (documento protocolizado)",
+      "type": "date",
+      "required": false,
+      "description": "Date the incorporation instrument was formalized before the notary. The live form displays this as a masked date-picker input.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Fecha:'"
+    },
+    {
+      "name": "notarialRegistryBook",
+      "label": "Libro",
+      "type": "string",
+      "required": false,
+      "description": "Public-registry book number recording the incorporation instrument.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Libro:'"
+    },
+    {
+      "name": "notarialRegistryPage",
+      "label": "Foja",
+      "type": "string",
+      "required": false,
+      "description": "Public-registry page (foja) number recording the incorporation instrument.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Foja:'"
+    },
+    {
+      "name": "publicRegistryData",
+      "label": "Datos del registro público de la propiedad y del comercio",
+      "type": "string",
+      "required": false,
+      "description": "Free-text field (multi-line on the live form) for any further identifying data from the Public Registry of Property and Commerce entry for the incorporation instrument.",
+      "sourceRef": "Guía, p.6, Paso 3. Datos de representante legal y documento protocolizado — 'Datos del registro público de la propiedad y del comercio'"
+    },
+    {
+      "name": "economicActivityQuickSearch",
+      "label": "Búsqueda rápida por palabra o parte de la palabra",
+      "type": "string",
+      "required": false,
+      "description": "Free-text keyword search used to filter SAT's own hierarchical economic-activity catalog before picking an activity, rather than browsing its category tree by hand. Not itself a value submitted with the application — a UI convenience for locating economicActivityDescription's value.",
+      "sourceRef": "Guía, p.7, Paso 4. Cuestionario — 'Búsqueda rápida por palabra o parte de la palabra'"
+    },
+    {
+      "name": "economicActivityDescription",
+      "label": "Actividad económica",
+      "type": "string",
+      "required": true,
+      "description": "The specific economic activity performed, chosen by drilling into SAT's own category tree (e.g. the guide's example path: 'Comercial, industrial o de producción' > 'Perfumería, farmacia, juguetes, artículos deportivos al por mayor' > 'Comercio al por mayor de productos farmacéuticos'). SAT's underlying activity catalog is a large, SCIAN-derived hierarchy the 13-page guide only ever shows a small navigable slice of — it is not reproduced here as a closed enum. This document scopes to a single economic activity; the live wizard's own repeating 'Actividades seleccionadas' table, which lets more than one activity be selected with its own income-percentage split per activity, is out of scope. See VERIFICATION.md.",
+      "sourceRef": "Guía, pp.7-8, Paso 4. Cuestionario, 2.- Ubica la actividad — activity tree/checklist"
+    },
+    {
+      "name": "economicActivityForm",
+      "label": "Forma en que se realiza",
+      "type": "string",
+      "required": true,
+      "description": "How the selected economic activity is carried out. The live form presents this as a checkbox group allowing more than one value to be selected at once ('Da clic en el recuadro para seleccionar una forma en que realizas tu actividad, puedes seleccionar más de una opción'); modelled as a comma-separated list of: por_cuenta_propia_como_sociedad, por_cuenta_propia_como_asociacion_en_participacion, por_cuenta_propia_como_fideicomiso, parte_de_un_fideicomiso, parte_de_una_asociacion_en_participacion, socio_o_accionista — multi-select-as-string treatment, pending GSP-0009 (composite/repeating values), following the precedent of fr/ants/driving-licence-renewal-duplicate's licence-category field and fr/france-visas/schengen-visa-application's means-of-support fields.",
+      "sourceRef": "Guía, p.8, Paso 4. Cuestionario, 3.- Indica cómo realizas tus actividades — 'Cómo realizas tu actividad' modal, 'La realizo' checklist",
+      "validation": { "pattern": "^(por_cuenta_propia_como_sociedad|por_cuenta_propia_como_asociacion_en_participacion|por_cuenta_propia_como_fideicomiso|parte_de_un_fideicomiso|parte_de_una_asociacion_en_participacion|socio_o_accionista)(,(por_cuenta_propia_como_sociedad|por_cuenta_propia_como_asociacion_en_participacion|por_cuenta_propia_como_fideicomiso|parte_de_un_fideicomiso|parte_de_una_asociacion_en_participacion|socio_o_accionista))*$" }
+    },
+    {
+      "name": "economicActivityIncomePercentage",
+      "label": "Porcentaje",
+      "type": "number",
+      "required": true,
+      "description": "Percentage of income this economic activity represents. The live wizard sums this across every selected activity and requires the total to equal 100% before allowing 'Continuar'; since this document scopes to a single economic activity (see economicActivityDescription), this value is always 100 within that scope.",
+      "sourceRef": "Guía, p.8, Paso 4. Cuestionario, 3.- Indica cómo realizas tus actividades y el porcentaje de ingresos — 'Porcentaje' column, 'Total: 100%'",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "incomeTaxCalculationMethod",
+      "label": "Para el cálculo del impuesto sobre la renta, optas por",
+      "type": "enum",
+      "required": true,
+      "description": "How the company elects to compute Income Tax (ISR) for the selected activity. This 'preguntas complementarias' question, and its two options, are shown only for the guide's one worked example activity category ('Comercial, industrial o de producción'); SAT's live wizard presents a different, activity-dependent set of complementary questions for other economic-activity categories, none of which are shown anywhere in this 13-page guide. This field and employmentSituation below therefore model only this one example category's question set — see VERIFICATION.md.",
+      "sourceRef": "Guía, p.9, Paso 4. Cuestionario, 4.- Preguntas complementarias — 'Para el cálculo del impuesto sobre la renta, optas por:'",
+      "validation": { "enum": ["coeficiente_de_utilidad", "estimulo_de_acumulacion_de_ingresos"] }
+    },
+    {
+      "name": "employmentSituation",
+      "label": "Para el desarrollo de tus actividades",
+      "type": "string",
+      "required": true,
+      "description": "Whether the company will have salaried employees or assimilated-to-salary payees. The live form presents this as a checkbox group; modelled as a comma-separated list of: tendra_trabajadores_asalariados, pagara_ingresos_asimilados_a_salarios, no_tendra_trabajadores_o_asimilados_a_salarios — multi-select-as-string treatment, pending GSP-0009. As with incomeTaxCalculationMethod, this question is shown only for the guide's one worked example activity category. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.9, Paso 4. Cuestionario, 4.- Preguntas complementarias, Información adicional — 'Para el desarrollo de tus actividades:'",
+      "validation": { "pattern": "^(tendra_trabajadores_asalariados|pagara_ingresos_asimilados_a_salarios|no_tendra_trabajadores_o_asimilados_a_salarios)(,(tendra_trabajadores_asalariados|pagara_ingresos_asimilados_a_salarios|no_tendra_trabajadores_o_asimilados_a_salarios))*$" }
+    },
+    {
+      "name": "partnerRfc",
+      "label": "RFC (socio o accionista)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "RFC of a partner/shareholder (socio o accionista) of the company. The live wizard's own instruction is imperative ('debes establecer la relación con los socios o accionistas de la empresa, capturando el RFC de cada uno de ellos') and its 'Datos capturados' table requires at least one entry, registered via a 'Registrar' button, before 'Continuar' proceeds. This document scopes to a single partner/shareholder relationship; the live wizard's own repeating structure, which lets more than one be registered one at a time, is out of scope. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.10, Paso 4. Cuestionario, 5.- Establece las siguientes relaciones — 'RFC:'",
+      "validation": { "pattern": "^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$" }
+    },
+    {
+      "name": "partnerRelationType",
+      "label": "Relación",
+      "type": "string",
+      "required": true,
+      "description": "The nature of the registered relationship. The guide's example shows only the single dropdown value 'Socio o accionista' selected; the dropdown's full option catalog (whether other relationship kinds are selectable from the same control) is not shown in the guide, so this is modelled as an open string rather than a closed enum. See VERIFICATION.md.",
+      "sourceRef": "Guía, p.10, Paso 4. Cuestionario, 5.- Establece las siguientes relaciones — 'Captura de datos' dropdown, pre-set to 'Socio o accionista'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "datos_identificacion",
+      "title": "Paso 1. Datos de identificación",
+      "fields": ["companyName", "capitalRegime", "incorporationDate", "registrationType", "commercialName", "operationsStartDate", "nationality"],
+      "next": "datos_ubicacion"
+    },
+    {
+      "id": "datos_ubicacion",
+      "title": "Paso 2. Datos de ubicación",
+      "fields": ["fiscalAddressType", "postalCode", "state", "municipality", "locality", "neighborhood", "streetType", "street", "exteriorNumber", "interiorNumber", "betweenStreet1", "betweenStreet2", "addressFeatures", "propertyType", "additionalReferences", "phoneType", "phoneAreaCode", "phoneNumber", "email"],
+      "next": "representante_legal_documento_protocolizado"
+    },
+    {
+      "id": "representante_legal_documento_protocolizado",
+      "title": "Paso 3. Datos de representante legal y documento protocolizado",
+      "fields": ["legalRepresentativeRfc", "legalRepresentativeCurp", "legalRepresentativeGivenNames", "legalRepresentativeFirstSurname", "legalRepresentativeSecondSurname", "legalRepresentativeDateOfBirth", "legalRepresentativeState", "notarialDeedNumber", "notaryRfc", "notarialDeedDate", "notarialRegistryBook", "notarialRegistryPage", "publicRegistryData"],
+      "next": "cuestionario_actividades_economicas"
+    },
+    {
+      "id": "cuestionario_actividades_economicas",
+      "title": "Paso 4. Cuestionario — Actividades económicas y preguntas complementarias",
+      "fields": ["economicActivityQuickSearch", "economicActivityDescription", "economicActivityForm", "economicActivityIncomePercentage", "incomeTaxCalculationMethod", "employmentSituation"],
+      "next": "relaciones_socios_accionistas"
+    },
+    {
+      "id": "relaciones_socios_accionistas",
+      "title": "Paso 4. Cuestionario — Relaciones (socios o accionistas)",
+      "fields": ["partnerRfc", "partnerRelationType"]
+    }
+  ]
+}
