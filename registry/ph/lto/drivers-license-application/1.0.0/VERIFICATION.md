@@ -177,13 +177,18 @@ excluded as office-/examiner-only content, not applicant input.
    conditional field *presence*, not a same-shape disjunction over a set of
    independent boolean fields), so this constraint is disclosed here rather
    than forced onto any single field.
-4. **`drivingSkillSourceName`** applies across three different
-   `drivingSkillSource` values (`driving_school`, `private_licensed_person`,
-   `tesda`) but is left ungated by a `requiredWhen`, since GovSchema v0.3's
-   condition grammar has no native "value is one of a set" operator distinct
-   from a single `equals`/`notEquals` comparison (chaining three separate
-   `requiredWhen` blocks onto one field is not supported by the spec's
-   single-condition-per-field shape).
+4. **`drivingSkillSourceName`/`drivingSkillSourceInstructorName`** — the initial
+   authoring pass claimed GovSchema v0.3 had no "value is one of a set"
+   condition operator and left `drivingSkillSourceName` entirely ungated. This
+   was incorrect: SPEC.md §8.1 defines an `in` leaf operator for exactly this
+   case, already used in other registry documents' own `requiredWhen` (e.g.
+   `nz/nzta/drivers-licence-renewal`). Corrected during independent review
+   (GOV-1522) to `requiredWhen: { "field": "drivingSkillSource", "in":
+   ["driving_school", "private_licensed_person", "tesda"] }`.
+   `drivingSkillSourceInstructorName`'s `requiredWhen` was similarly narrowed
+   to only `driving_school`, even though its own `sourceRef` states the
+   "INSTRUCTOR" blank appears under both the Driving School and TESDA
+   options; corrected to `"in": ["driving_school", "tesda"]` to match.
 5. **`existingLicenseIssueDate`/`existingLicenseExpiryDate`** are modeled as
    unconditionally optional rather than gated to a specific `typeOfApplication`
    value, since the form places them in the TOA block without a printed
