@@ -188,15 +188,22 @@ and Brazil (`GOV-1296`/`GOV-1342`).
 3. **The guardian-must-also-be-an-adult rule is not encoded as a second
    synthetic field.** The live wizard raises an error ("The tutor must be of
    legal age.") if the guardian's own `fechaNacimientoTutor` also computes to
-   under 18 at final submission — a second, independent age computation, this
-   time with no fixed comparison date encoded in this document (the live
-   check compares the guardian's `fechaNacimientoTutor` against *today*, not
-   `arrivalDate`, unlike the applicant's own age check). Introducing a second
-   synthetic boolean here felt like compounding an already-disclosed
-   modelling gap rather than resolving it cleanly; this rule is instead
-   recorded as prose in `guardianDateOfBirth`'s `description`. Confirmed live
-   by observing the error text with an empty `fechaNacimientoTutor` field
-   (which fails the age check by producing a negative/invalid age).
+   under 18 at final submission — a second, independent age check
+   (`utils.validaTutorMayorEdad()` / `utils.mayorEdad()`). Correction from an
+   earlier draft of this note: this check shares the *same*
+   `utils.calculaEdad()` helper the applicant's own `validaMenorEdad()` uses,
+   and that helper is hardcoded to compute age against `#fechaLlegada`
+   (`arrivalDate`) — its own source comment reads "respecto a la fecha de
+   llegada" — with no code path that falls back to today's date; there is no
+   date-of-comparison difference between the two checks after all. Introducing
+   a second synthetic boolean here still felt like compounding an
+   already-disclosed modelling gap rather than resolving it cleanly, so this
+   rule remains recorded as prose in `guardianDateOfBirth`'s `description`
+   rather than a second `applicantIsMinor`-style field. Confirmed live by
+   observing the error text with an empty `fechaNacimientoTutor` field (which
+   fails the age check by producing a negative/invalid age), and confirmed
+   directly against the live `jquery.inm.fmme.solicitud-1.0.0.js` source
+   during independent re-verification (GOV-1397).
 4. **Country fields modelled as ISO 3166-1 alpha-2, not the catalog's own
    opaque numeric IDs.** The live form's actual submitted payload
    (`solicitante.pais.id`, etc., per `utils.creaFmme()`) references a country
