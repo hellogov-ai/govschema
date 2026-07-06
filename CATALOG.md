@@ -4,8 +4,44 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **243 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **244 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1519):** The Philippines gains a sixth and final
+> vertical, `ph/lto/drivers-license-application` (DMV), closing **PH to 6/6
+> verticals** and the global DMV vertical to **16/17 (94%)**. Sourced from the
+> Land Transportation Office's own gazetted Form No. 21 (v3, September 2023
+> edition), "Application for Student Driver's Permit / Driver's License /
+> Conductor's License" — the exact document a prior cycle (GOV-1466) had
+> already found but explicitly flagged as weak: "only fetchable via a
+> third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated on
+> every path tried." This cycle reconfirmed that gate on both `lto.gov.ph`
+> and a second first-party candidate (`officialgazette.gov.ph`'s 2014
+> edition of the same form, also 403), then resolved it via the Wayback
+> Machine — recovering a 2024-12-11 snapshot of the exact same file at its
+> exact same first-party `lto.gov.ph` upload path, the same technique already
+> proven for `mx/semovi/alta-vehiculo-foraneo`. The PDF carries a genuine text
+> layer (no AcroForm widgets; confirmed via `pdfjs-dist`); a page-render
+> attempt lost many glyphs to an embedded-font error, so fields were instead
+> recovered via a per-glyph x/y coordinate dump grouped into text rows. Models
+> the form's Type A ("new") SP/DL/CL pathway in full, including the
+> nine-category vehicle-classification table and the five driving-condition
+> declarations; the other ten `typeOfApplication` transaction types are
+> captured as a closed enum without full field-level scoping, mirroring
+> `kr/koroad/driving-licence-application`'s precedent. A mock application
+> packet (`conformance/ph/lto/drivers-license-application/1.0.0/`) exercises
+> six requiredWhen branches. See the document's own VERIFICATION.md for seven
+> disclosed interpretive judgment calls, including that its `documents[]`
+> list is sourced only from secondary aggregator pages since the form itself
+> carries no itemized documentary checklist. This closes the Philippines to
+> 6/6 verticals — the only jurisdiction, alongside every other in this
+> registry except Brazil, with full six-vertical coverage; Brazil's DMV
+> (RENAVAM/vehicle registration) remains the global vertical's last open gap,
+> re-screened this cycle (a Brazilian-state DETRAN staff-procedures manual was
+> found genuinely downloadable but is a stale 2012 internal-norms document,
+> not an applicant-facing field-level form; the ATPV-e ownership-transfer
+> document is itself system-generated output, not a fillable public
+> application) and left open, not a dead end.
+>
 > **Update (2026-07-06, GOV-1512):** The United Arab Emirates gains a fourth
 > vertical, `ae/rta/vehicle-registration-renewal` (DMV), closing the specific
 > gap this catalog's own "Known Gaps" section had flagged as the UAE's
@@ -704,7 +740,7 @@
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
 | **Passport** | 16/17 (94%) | **AE** not yet modelled; **MX** newly modelled this cycle (`mx/sre/passport-application`, GOV-1504) — SRE's own Form OP-5, a directly downloadable non-image text-layer PDF found after a prior "in-person appointment only" screening had deferred this vertical; **PH** modelled in a prior cycle (`ph/dfa/passport-application`, GOV-1497) — the field-name inventory was extracted from the Date and Time step's hidden-input payload without solving the reCAPTCHA gate or holding a real appointment slot, so select-option lists and required markers for the four applicant-data steps are inferred, not live-confirmed; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
-| **DMV** | 15/17 (88%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE** newly modelled this cycle (`ae/rta/vehicle-registration-renewal`, GOV-1512) — RTA's own first-party "Renew Vehicle Ownership User Manual", found directly on `rta.ae` (HTTP 200, no gate), resolving the third-party-mirror-only provenance gap GOV-1474 had flagged; **BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
+| **DMV** | 16/17 (94%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB) only; **BR** not yet modelled (the sole remaining jurisdiction gap — see below); **PH** newly modelled this cycle (`ph/lto/drivers-license-application`, GOV-1519) — LTO Form No. 21, recovered via the Wayback Machine directly from `lto.gov.ph`'s own upload path, resolving the third-party-mirror-only provenance gap GOV-1466 had flagged, closing PH to 6/6 verticals; **AE** modelled in a prior cycle (`ae/rta/vehicle-registration-renewal`, GOV-1512); **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 16/17 (94%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes; KR's own Section 3/4 trust-property and foreign-corporation pathways); **AE** not yet modelled (confirmed dead end this cycle's own prior pass, GOV-1474 — Basher login-gated, `app.invest.dubai.ae` 403s, `ded.ae` bot-mitigated); **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** modelled in a prior cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444); **KR** newly modelled this cycle (`kr/nts/corporation-establishment-and-business-registration`, GOV-1483), closing South Korea to 6/6 verticals |
 | **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
 | **Visa** | 14/17 (82%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** newly modelled this cycle (`ph/bi/non-immigrant-visa-application`, GOV-1490), closing the candidate this catalog's own "Known Gaps" note had flagged as strong and open; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
@@ -772,12 +808,24 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (15/17 jurisdictions)
+### DMV — Vehicle Registration, Licensing, Permits (16/17 jurisdictions)
 
-Every jurisdiction except Brazil and the
-Philippines now has at
+Every jurisdiction except Brazil now has at
 least one DMV-vertical schema (driver licensing and/or vehicle
-registration). **The United Arab Emirates** (`ae/rta/vehicle-registration-renewal`,
+registration). **The Philippines** (`ph/lto/drivers-license-application`,
+GOV-1519) is new this cycle — sourced from the Land Transportation Office's
+own gazetted Form No. 21 (v3, September 2023 edition), "Application for
+Student Driver's Permit / Driver's License / Conductor's License", covering a
+first-time (Type A, "new") application in full. A prior cycle (GOV-1466) had
+already found this exact document but explicitly flagged it as weaker
+sourcing: "only fetchable via a third-party CDN mirror since `lto.gov.ph`
+itself is Cloudflare-gated on every path tried." This cycle reconfirmed that
+gate directly (both `lto.gov.ph` and a second first-party candidate,
+`officialgazette.gov.ph`'s 2014 edition of the same form, return HTTP 403)
+and resolved it via the Wayback Machine — recovering a 2024-12-11 snapshot of
+the exact same file at its exact same first-party `lto.gov.ph` upload path,
+the same technique already proven for `mx/semovi/alta-vehiculo-foraneo`. This
+closes the Philippines to 6/6 verticals. **The United Arab Emirates** (`ae/rta/vehicle-registration-renewal`,
 GOV-1512) is new this cycle — sourced from the Roads and Transport
 Authority's (RTA) own "Renew Vehicle Ownership User Manual" (April 2018), a
 screenshot-driven walkthrough of the live online renewal wizard for a
@@ -820,8 +868,9 @@ within an already-covered vertical:
 - **IDL (International Driving Permit):** covered for US (`dos/international-driving-permit-aaa`, `-aata`), IE (`dttas/international-driving-permit`), GB (`dvla/international-driving-permit`). Not modelled elsewhere.
 - **India, GOV-1240:** `in/morth/driving-licence-application` (this cycle) closes the "Issue of New Driving Licence" gap that `in/morth/learners-licence-application` (GOV-878) explicitly scoped out. India's DMV vertical now has 5 schemas (learner's licence, driving licence, vehicle registration, vehicle registration renewal, vehicle ownership transfer).
 - **United Arab Emirates:** only the vehicle-ownership renewal pathway is modelled (`ae/rta/vehicle-registration-renewal`, GOV-1512); first-time vehicle registration and driver-licence issuance are open sub-process candidates for a future cycle.
-- **Brazil** has no DMV schema yet — `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400); vehicle registration (RENAVAM/DETRAN) was screened this cycle (GOV-1483) — DETRAN-SP's `e-crvsp.sp.gov.br` also redirects to a gov.br SSO login with no field-level content visible pre-authentication, the same wall as `br/cnh`; not pursued further, open backlog candidate contingent on finding a non-gov.br-gated state DETRAN or a downloadable citizen guide.
+- **Brazil** has no DMV schema yet — `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400); vehicle registration (RENAVAM/DETRAN) was screened repeatedly (GOV-1483, and again this cycle, GOV-1519): DETRAN-SP's `e-crvsp.sp.gov.br` redirects to a gov.br SSO login with no field-level content visible pre-authentication, the same wall as `br/cnh`; this cycle additionally found and read a genuinely downloadable DETRAN-ES (Espírito Santo) "Manual de Procedimentos e Normas Gerais de Serviços e Licenciamento de Veículos" (HTTP 200, no gate, real text layer) but it is a stale (2012, v3.0) internal staff-procedures/documents-checklist manual, not an applicant-facing field-level form; the nationally-standardized ATPV-e (vehicle-ownership-transfer authorization) is itself a system-generated output document issued after a request, not a fillable public application form. Still an open backlog candidate, not a dead end, contingent on finding a genuine citizen-facing application form (as opposed to a staff manual or a system-generated output) from a non-gov.br-gated state DETRAN.
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
+- **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 
 ### Business Formation — Incorporation, LLC, Company Registration (16/17 jurisdictions)
 
@@ -1272,5 +1321,7 @@ Visa, global Visa vertical closed to 14/17 / 82%), updated by GOV-1497
 Passport), updated by GOV-1504 (`mx/sre/passport-application` authoring,
 Mexico 5th vertical, Passport), updated by GOV-1512
 (`ae/rta/vehicle-registration-renewal` authoring, UAE 4th vertical, DMV,
-global DMV vertical closed to 15/17 / 88%)
+global DMV vertical closed to 15/17 / 88%), updated by GOV-1519
+(`ph/lto/drivers-license-application` authoring, Philippines 6th and last
+vertical, DMV, global DMV vertical closed to 16/17 / 94%)
 Standards Engineer

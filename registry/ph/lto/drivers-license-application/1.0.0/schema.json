@@ -1,0 +1,760 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ph/lto/drivers-license-application",
+  "version": "1.0.0",
+  "title": "Philippines Application for Student Driver's Permit / Driver's License / Conductor's License (LTO Form No. 21)",
+  "description": "Apply to the Land Transportation Office (LTO) for a new Student Driver's Permit (SP), Driver's License (DL), or Conductor's License (CL), or to record most other licence transactions (renewal, additional code/category, duplicate, revision of records, and others), using the single gazetted Application for Driver's License (ADL/APL) form, LTO Form No. 21 (v3, 2023 edition). This closes the Philippines' last open vertical gap (DMV); the Philippines now has at least one published schema in all six GovSchema verticals. This v1.0.0 fully models the form's own field set for a new (Type A) SP/DL/CL application, including the applicant's licence-category selections and driving-condition declarations; it models `typeOfApplication`'s other ten transaction types as a closed enum (matching the form's own lettered list) without separately scoping each one's distinct downstream document requirements, consistent with prior GovSchema precedent (e.g. kr/koroad/driving-licence-application) of fully sourcing one primary pathway while surfacing a form's full option set. It does not submit the application; the live LTO/LTMS (Land Transportation Management System) portal is always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Land Transportation Office",
+    "abbreviation": "LTO",
+    "url": "https://lto.gov.ph/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://lto.gov.ph/wp-content/uploads/2023/09/APL-Form_v3.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "LTO Form No. 21 (v3, September 2023 edition), \"Application for Student Driver's Permit / Driver's License / Conductor's License (APL)\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Closes the Philippines' last open GovSchema vertical (DMV); the Philippines now has at least one published schema in all six verticals (Business Formation, National ID, Taxes, Visa, Passport, DMV). A prior cycle (GOV-1466) found this exact form (LTO Form No. 21) but only via a third-party CDN mirror, since lto.gov.ph itself returns HTTP 403 (Cloudflare/bot-mitigation) to a direct fetch — reconfirmed this cycle on both lto.gov.ph and a second candidate first-party host, officialgazette.gov.ph (also 403). This cycle instead retrieved the exact same lto.gov.ph-hosted file (`/wp-content/uploads/2023/09/APL-Form_v3.pdf`) through the Wayback Machine (snapshot dated 2024-12-11), the same technique already used successfully for mx/semovi/alta-vehiculo-foraneo — resolving the third-party-mirror-only provenance weakness the prior cycle flagged, since the retrieved bytes are archived directly from LTO's own upload path rather than a third-party site. The PDF carries a genuine (non-scanned) text layer; every applicant-facing field was read from per-glyph coordinate extraction (pdfjs-dist), not a summary, after a straightforward page-image render (node-canvas) lost many glyphs to an embedded-font resolution error and was abandoned in favour of the coordinate dump. See VERIFICATION.md for the full sourcing method and every disclosed interpretive judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "filingDistrictOffice",
+      "label": "District Office",
+      "type": "string",
+      "required": true,
+      "description": "The LTO District/Licensing Office where the application is being filed. The form's header carries a blank line labelled \"DISTRICT OFFICE\" directly under the LTO's own head-office address block; modeled as an applicant-facing field since the applicant selects/attends a specific district office. Flagged in VERIFICATION.md as a lower-confidence field: the header layout does not make it certain whether this line is applicant-completed or office-stamped.",
+      "sourceRef": "LTO Form No. 21 — header, \"DISTRICT OFFICE ___\"",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "licenseTypeApplied",
+      "label": "Application for: Student Driver's Permit (SP) / Driver's License (DL) / Conductor's License (CL)",
+      "type": "enum",
+      "required": true,
+      "description": "The three licence/permit products this single form covers.",
+      "sourceRef": "LTO Form No. 21 — title block \"APPLICATION FOR STUDENT DRIVER'S PERMIT / DRIVER'S LICENSE / CONDUCTOR'S LICENSE (APL)\" and \"1 STUDENT-DRIVER'S PERMIT (SP)\" / \"2 DRIVER'S LICENSE (DL)\" / \"3 CONDUCTOR'S LICENSE (CL)\"",
+      "validation": { "enum": ["student_permit", "drivers_license", "conductors_license"] }
+    },
+    {
+      "name": "typeOfApplication",
+      "label": "Type of Application (TOA)",
+      "type": "enum",
+      "required": true,
+      "description": "new = a first-time SP/DL/CL application (this document's fully-modeled pathway). The other ten transaction types share this same form but each has its own distinct downstream document requirements not separately scoped in this v1.0.0 (see description).",
+      "sourceRef": "LTO Form No. 21 — \"TYPE OF APPLICATION (TOA)\" lettered list A-K (I. Revision of Records has its own sub-list I1-I5)",
+      "validation": {
+        "enum": [
+          "new",
+          "renewal",
+          "conversion_of_foreign_dl",
+          "additional_code_or_category",
+          "change_of_dl_classification",
+          "expired_dl_with_valid_fdl",
+          "duplicate",
+          "dropping_of_category_or_removal_of_conditions",
+          "revision_of_records",
+          "enhancement_of_dl",
+          "change_of_clutch_type"
+        ]
+      }
+    },
+    {
+      "name": "revisionOfRecordsType",
+      "label": "Revision of Records — specific item (I1-I5)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "typeOfApplication", "equals": "revision_of_records" },
+      "sourceRef": "LTO Form No. 21 — \"I. REVISION OF RECORDS\": \"I1. CHANGE ADDRESS\", \"I2. CHANGE CIVIL STATUS\", \"I3. CHANGE NAME\", \"I4. CHANGE BIRTH DATE\", \"I5. Others\"",
+      "validation": { "enum": ["change_address", "change_civil_status", "change_name", "change_birth_date", "others"] }
+    },
+    {
+      "name": "revisionOfRecordsOtherDetails",
+      "label": "Revision of Records — \"Others\" details",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "revisionOfRecordsType", "equals": "others" },
+      "sourceRef": "LTO Form No. 21 — \"I5. Others ___\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "existingLicenseIssueDate",
+      "label": "Existing licence — Issue Date",
+      "type": "date",
+      "required": false,
+      "description": "Modeled as optional since it is only meaningfully completed for a renewal/additional-code/expired-DL type of application, but the form does not gate it behind a single specific TOA value.",
+      "sourceRef": "LTO Form No. 21 — \"ISSUE DATE\""
+    },
+    {
+      "name": "existingLicenseExpiryDate",
+      "label": "Existing licence — Expiry Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"EXPIRY DATE\""
+    },
+    {
+      "name": "agencyCode",
+      "label": "Agency Code",
+      "type": "string",
+      "required": false,
+      "description": "An LTO-assigned code associated with a driving school or other accredited agency facilitating the application; left blank by a self-filed applicant.",
+      "sourceRef": "LTO Form No. 21 — \"AGENCY CODE\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "lastName",
+      "label": "Name — Family Name",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"NAME (Family Name, First Name, Middle Name)\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "Name — First Name",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"NAME (Family Name, First Name, Middle Name)\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "middleName",
+      "label": "Name — Middle Name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"NAME (Family Name, First Name, Middle Name)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "presentAddress",
+      "label": "Present Address",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"PRESENT ADDRESS (No., Street, City/Municipality, Province)\"",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone Number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"TEL. NO.\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Cellphone Number",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"CP NO.\"",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "tin",
+      "label": "Tax Identification Number (TIN)",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"TIN\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"NATIONALITY\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"SEX (M/F)\"",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "birthDate",
+      "label": "Birth Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"BIRTH DATE (YYYY/MM/DD)\""
+    },
+    {
+      "name": "heightCm",
+      "label": "Height (cm)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"HEIGHT (cm)\"",
+      "validation": { "minimum": 50, "maximum": 250 }
+    },
+    {
+      "name": "weightKg",
+      "label": "Weight (kg)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"WEIGHT (kg)\"",
+      "validation": { "minimum": 1, "maximum": 400 }
+    },
+    {
+      "name": "existingLicenseNumber",
+      "label": "License Number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "description": "The applicant's existing SP/DL/CL number, if any (blank for a genuinely first-time applicant).",
+      "sourceRef": "LTO Form No. 21 — \"LICENSE NUMBER\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "civilStatus",
+      "label": "Civil Status (CS)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"CIVIL STATUS (CS): 1. SINGLE 2. MARRIED 3. WIDOWED 4. SEPARATED\"",
+      "validation": { "enum": ["single", "married", "widowed", "separated"] }
+    },
+    {
+      "name": "birthplace",
+      "label": "Birthplace",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"BIRTHPLACE (City, Municipality, Province)\"",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "fathersName",
+      "label": "Father's Name",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "description": "Completed even if the father is deceased, per the form's own instruction.",
+      "sourceRef": "LTO Form No. 21 — \"FATHER'S NAME (Family Name, First Name, Middle Name) (indicate even if deceased)\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "mothersName",
+      "label": "Mother's Name",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "description": "Completed even if the mother is deceased, per the form's own instruction.",
+      "sourceRef": "LTO Form No. 21 — \"MOTHER'S NAME (Family Name, First Name, Middle Name) (indicate even if deceased)\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse Name",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "civilStatus", "equals": "married" },
+      "sourceRef": "LTO Form No. 21 — \"SPOUSE NAME (Family Name, First Name, Middle Name) (indicate even if deceased)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "highestEducationalAttainment",
+      "label": "Highest Educational Attainment (EA)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"HIGHEST EDUCATIONAL ATTAINMENT (EA): POSTGRADUATE / COLLEGE / HIGH SCHOOL / ELEMENTARY\"",
+      "validation": { "enum": ["postgraduate", "college", "high_school", "elementary"] }
+    },
+    {
+      "name": "drivingSkillSource",
+      "label": "Driving Skill Acquired From (for DL applicants only)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "licenseTypeApplied", "equals": "drivers_license" },
+      "description": "Only completed for a Driver's License (DL) application, per the form's own heading.",
+      "sourceRef": "LTO Form No. 21 — \"DRIVING SKILL ACQUIRED FROM (FOR DL APPLICANTS ONLY): 1 DRIVING SCHOOL / 2 PRIVATE LICENSED PERSON with DL NO. / 3 TESDA\"",
+      "validation": { "enum": ["driving_school", "private_licensed_person", "tesda"] }
+    },
+    {
+      "name": "drivingSkillSourceName",
+      "label": "Driving Skill Source — Driving School / TESDA Center Name, or Private Instructor Name",
+      "type": "string",
+      "required": false,
+      "description": "Completed when drivingSkillSource is set to driving_school (school name), private_licensed_person (the private instructor's name), or tesda (TESDA center name); not gated by a single requiredWhen since it applies across three distinct drivingSkillSource values, and GovSchema v0.3 has no native \"is one of\" condition operator (see VERIFICATION.md).",
+      "sourceRef": "LTO Form No. 21 — blank lines after \"1 DRIVING SCHOOL\", \"NAME\" (under private licensed person), \"3 TESDA\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "drivingSkillSourceInstructorName",
+      "label": "Driving Skill Source — Instructor Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "drivingSkillSource", "equals": "driving_school" },
+      "sourceRef": "LTO Form No. 21 — \"INSTRUCTOR ___\" (appears under both the Driving School and TESDA options)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "privateInstructorLicenseNumber",
+      "label": "Private Licensed Person — DL Number",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "drivingSkillSource", "equals": "private_licensed_person" },
+      "sourceRef": "LTO Form No. 21 — \"2 PRIVATE LICENSED PERSON with DL NO. ___\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "employerBusinessName",
+      "label": "Employer's Business Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"EMPLOYER'S BUSINESS NAME\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employerTelephoneNumber",
+      "label": "Employer — Telephone Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"TEL. NO\" (employer row)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "employerBusinessAddress",
+      "label": "Employer's Business Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"EMPLOYER'S BUSINESS ADDRESS\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "bloodType",
+      "label": "Blood Type",
+      "type": "string",
+      "classification": "health",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"BLOOD TYPE\"",
+      "validation": { "maxLength": 5 }
+    },
+    {
+      "name": "eyeColor",
+      "label": "Eyes Color",
+      "type": "string",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"EYES COLOR\"",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "isOrganDonor",
+      "label": "Organ Donor",
+      "type": "boolean",
+      "classification": "health",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR [ ]YES [ ]NO\"",
+      "validation": {}
+    },
+    {
+      "name": "organDonorAll",
+      "label": "Organ Donor — All",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "requiredWhen": { "field": "isOrganDonor", "equals": true },
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"ALL\""
+    },
+    {
+      "name": "organDonorHeart",
+      "label": "Organ Donor — Heart",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"HEART\""
+    },
+    {
+      "name": "organDonorEyes",
+      "label": "Organ Donor — Eyes",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"EYES\""
+    },
+    {
+      "name": "organDonorLiver",
+      "label": "Organ Donor — Liver",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"LIVER\""
+    },
+    {
+      "name": "organDonorBones",
+      "label": "Organ Donor — Bones",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"BONES\""
+    },
+    {
+      "name": "organDonorKidneys",
+      "label": "Organ Donor — Kidneys",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"KIDNEYS\""
+    },
+    {
+      "name": "organDonorCornea",
+      "label": "Organ Donor — Cornea",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"CORNEA\""
+    },
+    {
+      "name": "organDonorPancreas",
+      "label": "Organ Donor — Pancreas",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"PANCREAS\""
+    },
+    {
+      "name": "organDonorLungs",
+      "label": "Organ Donor — Lungs",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"LUNGS\""
+    },
+    {
+      "name": "organDonorSkin",
+      "label": "Organ Donor — Skin",
+      "type": "boolean",
+      "classification": "health",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"ORGAN DONOR\" checkbox list, \"SKIN\""
+    },
+    {
+      "name": "emergencyContactPerson",
+      "label": "Emergency Contact Person",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"EMERGENCY CONTACT PERSON\"",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "emergencyContactNumber",
+      "label": "Emergency Contact No.",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"EMERGENCY CONTACT NO.\"",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "emergencyContactAddress",
+      "label": "Emergency Contact Address",
+      "type": "string",
+      "classification": "pii",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"EMERGENCY CONTACT ADDRESS\"",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "existingCategoryA",
+      "label": "Existing Licence Category — A (Motorcycle, L1-L3)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row A / L1-L3, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryA1",
+      "label": "Existing Licence Category — A1 (Tricycle, L4-L7)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row A1 / L4-L7, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryB",
+      "label": "Existing Licence Category — B (Light passenger vehicles, M1)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row B / M1, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryB1",
+      "label": "Existing Licence Category — B1 (Light passenger vehicles, M2)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row B1 / M2, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryB2",
+      "label": "Existing Licence Category — B2 (Light commercial vehicles, N1)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row B2 / N1, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryC",
+      "label": "Existing Licence Category — C (Heavy commercial vehicles, N2/N3)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row C / N2-N3, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryD",
+      "label": "Existing Licence Category — D (Buses/coaches/other passenger vehicles, M3)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row D / M3, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryBE",
+      "label": "Existing Licence Category — BE (Articulated passenger cars, O1/O2)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row BE / O1-O2, \"EXISTING\" column"
+    },
+    {
+      "name": "existingCategoryCE",
+      "label": "Existing Licence Category — CE (Heavy articulated vehicles, O3/O4)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row CE / O3-O4, \"EXISTING\" column"
+    },
+    {
+      "name": "appliedForCategoryA",
+      "label": "Applied-For Licence Category — A (Motorcycle, L1-L3)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row A / L1-L3, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryA1",
+      "label": "Applied-For Licence Category — A1 (Tricycle, L4-L7)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row A1 / L4-L7, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryB",
+      "label": "Applied-For Licence Category — B (Light passenger vehicles, M1)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row B / M1, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryB1",
+      "label": "Applied-For Licence Category — B1 (Light passenger vehicles, M2)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row B1 / M2, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryB2",
+      "label": "Applied-For Licence Category — B2 (Light commercial vehicles, N1)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row B2 / N1, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryC",
+      "label": "Applied-For Licence Category — C (Heavy commercial vehicles, N2/N3)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row C / N2-N3, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryD",
+      "label": "Applied-For Licence Category — D (Buses/coaches/other passenger vehicles, M3)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row D / M3, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryBE",
+      "label": "Applied-For Licence Category — BE (Articulated passenger cars, O1/O2)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row BE / O1-O2, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "appliedForCategoryCE",
+      "label": "Applied-For Licence Category — CE (Heavy articulated vehicles, O3/O4)",
+      "type": "boolean",
+      "required": false,
+      "description": "A genuine application is expected to have at least one appliedForCategory* field true; GovSchema v0.3 has no native cross-field \"at least one of N\" operator to express that constraint directly (the closest mechanism, `crossFieldValidation`, models conditional field presence, not \"at least one of N booleans is true\"), so it is disclosed here as a modeling limitation rather than forced onto any single category field (see VERIFICATION.md).",
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table, row CE / O3-O4, \"APPLIED FOR\" column"
+    },
+    {
+      "name": "licenseRestrictionType",
+      "label": "Non-Professional / Professional",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table columns \"NON PRO\" / \"PRO\"",
+      "validation": { "enum": ["non_professional", "professional"] }
+    },
+    {
+      "name": "clutchType",
+      "label": "Clutch Type",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "LTO Form No. 21 — \"DRIVER'S LICENSE VEHICLE CATEGORY\" table columns \"CLUTCH TYPE AT / MT\"",
+      "validation": { "enum": ["automatic", "manual"] }
+    },
+    {
+      "name": "conditionWearsCorrectiveLenses",
+      "label": "Condition — Wear Corrective Lenses",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"CONDITIONS\", item 1 \"WEAR CORRECTIVE LENSES\""
+    },
+    {
+      "name": "conditionUsesSpecialEquipmentForLimbs",
+      "label": "Condition — Drive Only With Special Equipment for Upper/Lower Limbs",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"CONDITIONS\", item 2 \"DRIVE ONLY W/ SPECIAL EQUIPMENT FOR UPPER LIMBS/LOWER LIMBS\""
+    },
+    {
+      "name": "conditionCustomizedVehicleOnly",
+      "label": "Condition — Drive Customized Motor Vehicle Only",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"CONDITIONS\", item 3 \"DRIVE CUSTOMIZED MOTOR VEHICLE ONLY\""
+    },
+    {
+      "name": "conditionDaylightDrivingOnly",
+      "label": "Condition — Daylight Driving Only",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"CONDITIONS\", item 4 \"DAYLIGHT DRIVING ONLY\""
+    },
+    {
+      "name": "conditionHearingAidRequired",
+      "label": "Condition — Hearing Aid is Required",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"CONDITIONS\", item 5 \"HEARING AID IS REQUIRED\""
+    },
+    {
+      "name": "nameChangedFromPreviousLicense",
+      "label": "Name differs from name on previous license",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "LTO Form No. 21 — \"FILL THIS UP ONLY IF YOUR NAME ABOVE IS DIFFERENT FROM YOUR NAME IN PREVIOUS LICENSE\""
+    },
+    {
+      "name": "previousName",
+      "label": "Previous Name (as on prior license)",
+      "type": "string",
+      "classification": "pii",
+      "required": false,
+      "requiredWhen": { "field": "nameChangedFromPreviousLicense", "equals": true },
+      "sourceRef": "LTO Form No. 21 — \"PREVIOUS NAME (Family Name, First Name, Middle Name)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "declarationTrueAndCorrect",
+      "label": "Certification that the information given is true and correct",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "A false declaration exposes the applicant to perjury liability, per the form's own certification statement.",
+      "sourceRef": "LTO Form No. 21 — \"THIS IS TO CERTIFY UNDER PENALTY OF PERJURY THAT THE INFORMATION I HAVE GIVEN IS TRUE AND CORRECT\""
+    },
+    {
+      "name": "consentsToLtoDisclosure",
+      "label": "Consent to LTO disclosure of personal information to authorized government agencies",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "sourceRef": "LTO Form No. 21 — \"BY SIGNING THIS FORM, I VOLUNTARILY AUTHORIZE LTO TO ALLOW DISCLOSURE OF THE ABOVE PERSONAL INFORMATION TO ANY AUTHORIZED GOVERNMENT AGENCY\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "psaBirthCertificate",
+      "label": "PSA (Philippine Statistics Authority) or Local Civil Registry-authenticated birth certificate",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Not itemized on LTO Form No. 21 itself; corroborated from LTO-affiliated informational guidance describing current documentary requirements for a new SP/DL application (see VERIFICATION.md — this is a secondary, non-primary source and flagged as a lower-confidence item)"
+    },
+    {
+      "id": "governmentIssuedId",
+      "label": "Valid government-issued photo ID (original and photocopy), e.g. PhilSys National ID, passport, or UMID",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Not itemized on LTO Form No. 21 itself; corroborated from LTO-affiliated informational guidance (see VERIFICATION.md — secondary source, flagged as a lower-confidence item)"
+    },
+    {
+      "id": "medicalCertificate",
+      "label": "Medical certificate issued by an LTO-accredited clinic, electronically transmitted to LTO, valid for a limited period from issuance",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Not itemized on LTO Form No. 21 itself; the form's own BLOOD TYPE/EYES COLOR/HEIGHT/WEIGHT fields corroborate that a physical exam underlies the application, and secondary LTO-affiliated informational guidance names an accredited-clinic medical certificate as a requirement (see VERIFICATION.md — secondary source, flagged as a lower-confidence item)"
+    },
+    {
+      "id": "parentGuardianConsent",
+      "label": "Parent/guardian consent letter and government-issued ID, for an applicant under 18",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Not itemized on LTO Form No. 21 itself; corroborated from LTO-affiliated informational guidance (see VERIFICATION.md — secondary source, flagged as a lower-confidence item)"
+    },
+    {
+      "id": "applicationFee",
+      "label": "Application/licensing fee, amount set by LTO's own fee schedule (not stated on the form itself)",
+      "category": "payment",
+      "required": true,
+      "methods": ["cash"],
+      "sourceRef": "Not stated on LTO Form No. 21 itself; no authoritative primary LTO fee-schedule page was retrieved this cycle (see VERIFICATION.md)"
+    },
+    {
+      "id": "declarationSignature",
+      "label": "Signature of applicant, certification and disclosure-consent statement",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "THIS IS TO CERTIFY UNDER PENALTY OF PERJURY THAT THE INFORMATION I HAVE GIVEN IS TRUE AND CORRECT. BY SIGNING THIS FORM, I VOLUNTARILY AUTHORIZE LTO TO ALLOW DISCLOSURE OF THE ABOVE PERSONAL INFORMATION TO ANY AUTHORIZED GOVERNMENT AGENCY.",
+      "sourceRef": "LTO Form No. 21 — signature line, \"PRINT NAME AND SIGNATURE\""
+    }
+  ]
+}

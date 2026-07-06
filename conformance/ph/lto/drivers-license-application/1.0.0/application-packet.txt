@@ -1,0 +1,91 @@
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+
+Schema: ph/lto/drivers-license-application v1.0.0
+Generated: 2026-07-06
+
+Scenario:
+A first-time (Type A, 'new') Driver's License (DL) application filed by an adult applicant, category B (light passenger vehicle, non-professional, automatic transmission), driving skill acquired from a driving school. All values are fabricated illustrative test data, not a real person's information.
+
+Collected values:
+  filingDistrictOffice: 'LTO District Office - Quezon City'
+  licenseTypeApplied: 'drivers_license'
+  typeOfApplication: 'new'
+  lastName: 'Santos'
+  firstName: 'Maria'
+  middleName: 'Reyes'
+  presentAddress: '123 Rizal Street, Barangay San Isidro, Quezon City, Metro Manila'
+  mobileNumber: '09171234567'
+  tin: '123-456-789-000'
+  nationality: 'Filipino'
+  sex: 'F'
+  birthDate: '1998-04-12'
+  heightCm: 160
+  weightKg: 55
+  civilStatus: 'single'
+  birthplace: 'Quezon City, Metro Manila'
+  fathersName: 'Santos, Juan, Dela Cruz'
+  mothersName: 'Santos, Elena, Reyes'
+  highestEducationalAttainment: 'college'
+  drivingSkillSource: 'driving_school'
+  drivingSkillSourceName: 'ABC Driving School'
+  drivingSkillSourceInstructorName: 'Pedro Garcia'
+  bloodType: 'O+'
+  eyeColor: 'Brown'
+  isOrganDonor: True
+  organDonorAll: True
+  emergencyContactPerson: 'Juan Dela Cruz Santos'
+  emergencyContactNumber: '09179876543'
+  emergencyContactAddress: '123 Rizal Street, Barangay San Isidro, Quezon City, Metro Manila'
+  appliedForCategoryB: True
+  licenseRestrictionType: 'non_professional'
+  clutchType: 'automatic'
+  conditionWearsCorrectiveLenses: False
+  nameChangedFromPreviousLicense: False
+  declarationTrueAndCorrect: True
+  consentsToLtoDisclosure: True
+
+Not applicable in this scenario (requiredWhen evaluates false, correctly omitted):
+  revisionOfRecordsType, revisionOfRecordsOtherDetails (typeOfApplication != 'revision_of_records')
+  spouseName (civilStatus != 'married')
+  privateInstructorLicenseNumber (drivingSkillSource != 'private_licensed_person')
+  previousName (nameChangedFromPreviousLicense = False)
+  existingLicenseNumber, existingCategory* (blank/false — genuinely first-time applicant, no existing licence)
+
+Documents required for this scenario:
+  - psaBirthCertificate (always required)
+  - governmentIssuedId (always required)
+  - medicalCertificate (always required)
+  - applicationFee (always required)
+  - declarationSignature (always required)
+  Not required: parentGuardianConsent (applicant's birthDate of 1998-04-12 makes them an adult
+  as of the applicationDate this packet implies; the schema does not itself compute age from
+  birthDate — GovSchema has no date-arithmetic operator — so this is a hand-evaluated, not
+  schema-enforced, exclusion, consistent with mx/inm/forma-migratoria-multiple-electronica's
+  precedent for the same limitation)
+
+Hand-evaluated variants (Phase 4 mock-data conformance check; see VERIFICATION.md for full
+detail):
+  1. New DL, driving-school pathway, single, category B (this packet) -> spouseName,
+     privateInstructorLicenseNumber, previousName, revisionOfRecordsType all correctly
+     not applicable.
+  2. New Student Driver's Permit (licenseTypeApplied=student_permit) -> drivingSkillSource
+     and its dependents correctly not applicable (requiredWhen gates on
+     licenseTypeApplied='drivers_license' only); appliedForCategory* still applies.
+  3. Married applicant (civilStatus=married) -> spouseName becomes required; all other
+     fields unaffected.
+  4. Private-instructor pathway (drivingSkillSource=private_licensed_person) ->
+     privateInstructorLicenseNumber becomes required; drivingSkillSourceName still applies
+     (instructor's own name) but drivingSkillSourceInstructorName's LTO-form line is shared
+     across the driving-school and TESDA options only, so it is left blank here per this
+     document's own scope note.
+  5. typeOfApplication=revision_of_records, revisionOfRecordsType=change_name ->
+     revisionOfRecordsType becomes required; nameChangedFromPreviousLicense=true would
+     additionally require previousName in the same filing.
+  6. isOrganDonor=false -> all nine organDonor* fields correctly not applicable (none carry
+     a requiredWhen individually keyed to isOrganDonor besides organDonorAll, disclosed in
+     VERIFICATION.md as a modeling simplification).
+
+This packet (scenario 1) was checked against tools/validate.mjs and tools/validate-ajv.mjs
+for the schema document itself; the six scenarios above were each hand-traced against the
+schema's requiredWhen conditions (no automated conformance-runner exists yet, per
+conformance/README.md's own "Out of scope" note).
