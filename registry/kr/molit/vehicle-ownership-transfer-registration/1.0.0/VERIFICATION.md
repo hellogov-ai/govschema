@@ -171,33 +171,41 @@ Two candidates were scouted per the cycle's priority order:
 ## Interpretive judgment calls flagged for an independent reviewer
 
 1. **`vehicleRegistrationCertificate` is sourced from secondary pages, not
-   the primary form.** The primary form's own two pages (front declaration,
+   the primary form. — RESOLVED at the GOV-1403 review gate: the original
+   `required: true` claim did not check out and has been corrected to
+   `required: false`.** The primary form's own two pages (front declaration,
    back 제출서류/확인사항 lists) never mention 자동차등록증 as something the
-   applicant submits. gov.kr's civil-service listing and the Seongnam/
-   Gangnam-gu pages independently list it as a required document (with an
-   exception when the transferor, rather than the transferee, is the
-   applicant). The most likely explanation is that the certificate is the
-   physical document being amended and is presented at the counter as the
-   object of the transaction, not enumerated as a supporting "attachment" —
-   but this is inference, not something any source states outright. Modelled
-   here as `required: true` with the transferor-applies exception described
-   in prose rather than gated on a field, since this document has no field
-   distinguishing "the transferee is applying" from "the transferor is
-   applying" beyond the free-text `applicantName`. A reviewer should
-   double-check this against the live Car365 wizard's own document-upload
-   step if that ever becomes reachable without a certificate login.
+   applicant submits (only the office's own internal 자동차등록원부 ledger
+   record, in 확인사항 item 4 — a distinct document). The review gate
+   independently re-fetched all three cited secondary sources directly and
+   found none of them actually establish this as an unconditionally required
+   applicant submission: Seongnam's own service page lists it under
+   기본서류 but explicitly annotates it **'미제출 가능'** (submission may be
+   omitted); car365's official 구비서류 table requires it only in the
+   specific sub-case where the registration number/plate itself is being
+   changed (등록번호를 변경하는 경우 — visit-only, not available online); and
+   neither the Ministry of the Interior and Safety's gov.kr civil-service
+   listing nor Gangnam-gu's service page list it as a required document at
+   all. The original claim of a "transferor-applies exception" stated by the
+   secondary sources was also not found in any of them. Corrected to
+   `required: false` in schema.json, with the `handling` and `sourceRef`
+   text rewritten to reflect what the sources actually say.
 2. **`auctionSaleDecisionDocument` and `certifiedJudgmentCopy`'s mapping onto
-   `registrationReason: courtCommission`.** The primary form's attachment
-   list states each document's own triggering condition (Article 26(3)
-   authority-ordered auction; judgment-based ownership transfer) but never
-   explicitly cross-references either condition to one of the five
-   `등록원인` checkbox values. `촉탁` (literally "commission" or "official
-   request") was chosen as the best-fit mapping for both, since both describe
-   an authority formally directing the registration act rather than a
-   private-party sale/gift/inheritance — but a reviewer fluent in Korean
-   administrative-law usage of `촉탁` in this specific registry context
-   should confirm this is the intended reading, rather than, say, `기타`
-   (other) being the form's own intended bucket for one or both cases.
+   `registrationReason: courtCommission`. — CONFIRMED at the GOV-1403 review
+   gate.** The primary form's attachment list states each document's own
+   triggering condition (Article 26(3) authority-ordered auction;
+   judgment-based ownership transfer) but never explicitly cross-references
+   either condition to one of the five `등록원인` checkbox values. `촉탁`
+   (literally "commission" or "official request") was chosen as the best-fit
+   mapping for both, since both describe an authority formally directing the
+   registration act rather than a private-party sale/gift/inheritance. The
+   review gate independently re-fetched car365's own 구비서류 table and
+   Gangnam-gu's district service page and found both use the literal term
+   `이전등록촉탁서` ("transfer-registration commission document") specifically
+   in their court/authority-directed transaction categories (car365's 공매
+   and 법원경락(경매) categories; Gangnam-gu's 법원경매 category) — direct
+   corroboration that `촉탁` is the registry's own term of art for
+   court/authority-commissioned registrations, not `기타`. No change made.
 3. **`applicationFiledByAgent` is a synthetic gating field, not a form
    checkbox**, introduced only to drive the `agentPowerOfAttorneyAndId`
    document's `requiredWhen`, mirroring the precedent set by
@@ -298,12 +306,12 @@ requiredWhen walk above is this cycle's substitute for that).
 To advance this document to `status: verified`, a reviewer needs to
 independently re-download the same law.go.kr form (confirming no newer
 gazetted revision has superseded [별지 제14호서식]'s 2018-12-19 version),
-re-check every `sourceRef` against the extracted text directly, resolve
-judgment calls 1 and 2 above ideally by walking the live Car365 wizard with
-an authenticated Korean digital certificate to see its own document-upload
-step's exact requirement set and registrationReason-to-document mapping, and
-confirm the two-tier fee amount and downstream tax/plate-fee figures are
-still current.
+re-check every `sourceRef` against the extracted text directly, ideally
+resolve judgment call 2 (now corroborated, see above) by walking the live
+Car365 wizard with an authenticated Korean digital certificate to see its
+own registrationReason-to-document mapping first-hand, and confirm the
+two-tier fee amount and downstream tax/plate-fee figures are still current.
+Judgment call 1 was resolved at the GOV-1403 review gate (`required: false`).
 
 ## Re-verification
 
