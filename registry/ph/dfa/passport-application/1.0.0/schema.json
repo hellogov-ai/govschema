@@ -1,0 +1,513 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ph/dfa/passport-application",
+  "version": "1.0.0",
+  "title": "Philippines Passport Application (Online Appointment System)",
+  "description": "Application for a Philippine passport — first-time (new) issuance, renewal, or replacement of a lost or damaged passport — for an applicant who is 18 or older, filed through the Department of Foreign Affairs' Office of Consular Affairs (DFA-OCA) Online Passport Appointment System (passport.gov.ph). Unlike some jurisdictions in this registry, the Philippines uses a single online wizard for every scenario rather than a separate form per scenario; the applicant's request category (new, renewal, or lost/damaged) is itself a field on the form (applicationType), so this document models that single wizard rather than splitting first-time/renewal/lost into separate schemas, consistent with how br/pf/passport-application models Brazil's equivalent unified wizard. Completing the wizard reserves a specific DFA site, date, and time slot and then collects the applicant's Personal, Family, Application, and Contact Information before payment; this document models only the four applicant-data steps (Personal Information, Family Information, Application Information, Contact Information) — it does not model the Site Location or Date and Time steps, since those select an appointment slot rather than collect passport-application data, nor does it submit the application; passport.gov.ph is always authoritative. Scoped to an adult applicant (18 or older); the minor-applicant path on the same wizard additionally requires a parent/guardian consent block not modelled here (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Foreign Affairs – Office of Consular Affairs",
+    "abbreviation": "DFA-OCA",
+    "url": "https://www.dfa.gov.ph/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://passport.gov.ph/appointment",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "DFA Online Passport Appointment System — Individual Appointment wizard (Personal Information / Family Information / Application Information / Contact Information steps)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Source-derived reference schema authored against the live, unauthenticated DFA Online Passport Appointment System via headless-browser DOM extraction: every applicant-data field's id and name were read directly from the live wizard, which serves the full set of downstream-step field names as hidden inputs from the Date and Time step onward (the same 'whole-wizard-in-one-load' shape documented for br/pf/passport-application, though here the Personal/Family/Application/Contact Information steps themselves render only after a reCAPTCHA challenge on the Date and Time step is solved). This document deliberately stops short of solving that reCAPTCHA or completing a real appointment reservation — doing so would consume genuinely scarce real DFA appointment inventory for schema-authoring purposes, the exact concern the prior GOV-1466/GOV-1490 research cycles raised when screening and deferring this vertical. Consequently, field labels, select-option lists, and required/optional markers for the four applicant-data steps are not independently confirmed against a live render and are instead inferred from field-name semantics and corroborating DFA-affiliated public documentation (requirements pages, consular post mirrors); see VERIFICATION.md for the full, itemized disclosure. Status remains 'draft' pending an independent second reviewer's field-by-field pass and, ideally, a future confirmation pass that does not require holding a real appointment slot."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Last Name (LastName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Information — First Name (FirstName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Middle Name (MiddleName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "suffix",
+      "label": "Suffix",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "E.g. Jr., Sr., II, III. No fixed option list was confirmed live; modelled as free text.",
+      "sourceRef": "Personal Information — Suffix (Suffix)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The live DOM field is named Gender; modelled as sex for naming consistency with ph/bi/non-immigrant-visa-application's equivalent field. Option list not independently confirmed live (see VERIFICATION.md).",
+      "sourceRef": "Personal Information — Gender (Gender)",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Birthday (Birthday.Day / Birthday.Month / Birthday.Year)",
+      "description": "The live form splits this into separate day/month/year inputs; represented here as a single ISO 8601 date."
+    },
+    {
+      "name": "civilStatus",
+      "label": "Civil Status",
+      "type": "enum",
+      "required": true,
+      "description": "Option list reused from ph/bi/non-immigrant-visa-application's civilStatus enum (same jurisdiction, same Civil Status vocabulary on the closest independently-verified Philippine government form); not independently confirmed against this form's live dropdown (see VERIFICATION.md).",
+      "sourceRef": "Personal Information — Civil Status (CivilStatus)",
+      "validation": { "enum": ["single", "married", "widowed", "separated", "annulled", "divorced"] }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Country of Birth (BirthCountry)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthProvince",
+      "label": "Place of Birth — Province",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Philippine province of birth. Left optional since applicability to a foreign-born applicant was not independently confirmed.",
+      "sourceRef": "Personal Information — Place of Birth Province (POBProvince)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthMunicipalityCity",
+      "label": "Place of Birth — Municipality/City",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Place of Birth Municipality/City (POBMunicipality)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "citizenshipBasis",
+      "label": "Basis of Citizenship",
+      "type": "enum",
+      "required": true,
+      "description": "The live DOM field is named BirthRight. Values corroborated via multiple DFA consular-post pages describing BIRTH (most Filipinos born in the Philippines), ELECTION (citizenship elected upon reaching adulthood, applicable to persons born before 17 Jan 1973 to a Filipino mother), RA 9225 (Citizenship Retention and Re-acquisition Act of 2003, dual citizenship), and naturalization — not independently confirmed against this form's live dropdown text (see VERIFICATION.md).",
+      "sourceRef": "Personal Information — Basis of Citizenship (BirthRight)",
+      "validation": { "enum": ["birth", "election", "ra_9225", "naturalization"] }
+    },
+    {
+      "name": "companionName",
+      "label": "Companion Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name of a person accompanying the applicant to the appointment. Purpose not independently confirmed live; likely relevant to a Person-With-Disability/senior-citizen assistance companion given the appointment site's separate PWD/senior-citizen site notices (see VERIFICATION.md).",
+      "sourceRef": "Personal Information — Companion Name (CompanionName)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "companionRelationship",
+      "label": "Companion Relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Personal Information — Companion Relationship (CompanionRelationship)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "companionContactNumber",
+      "label": "Companion Contact Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Companion Contact (CompanionContact)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "E-mail Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The system's own reminder recommends a Google or Yahoo account to avoid technical incompatibilities.",
+      "sourceRef": "Personal Information — E-mail Address (EmailAddress)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Mobile Number (MobileNumber)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "landlineNumber",
+      "label": "Landline/Phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Information — Phone Number (PhoneNumber)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "fatherLastName",
+      "label": "Father's Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Father's Last Name (FatherLastName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherFirstName",
+      "label": "Father's First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Father's First Name (FatherFirstName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherMiddleName",
+      "label": "Father's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Father's Middle Name (FatherMiddleName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherSuffix",
+      "label": "Father's Suffix",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Father's Suffix (FatherSuffix)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "fatherCitizenship",
+      "label": "Father's Citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Father's Citizenship (FatherCitizenship)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherLastName",
+      "label": "Mother's Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Mother's maiden last name, per standard Philippine civil-registry naming convention.",
+      "sourceRef": "Family Information — Mother's Last Name (MotherLastName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherFirstName",
+      "label": "Mother's First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Mother's First Name (MotherFirstName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherMiddleName",
+      "label": "Mother's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Mother's Middle Name (MotherMiddleName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherSuffix",
+      "label": "Mother's Suffix",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Mother's Suffix (MotherSuffix)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "motherCitizenship",
+      "label": "Mother's Citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Mother's Citizenship (MotherCitizenship)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseLastName",
+      "label": "Spouse's Last Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "civilStatus", "equals": "married" },
+      "classification": "pii",
+      "sourceRef": "Family Information — Spouse's Last Name (SpouseLastName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseFirstName",
+      "label": "Spouse's First Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "civilStatus", "equals": "married" },
+      "classification": "pii",
+      "sourceRef": "Family Information — Spouse's First Name (SpouseFirstName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseMiddleName",
+      "label": "Spouse's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Spouse's Middle Name (SpouseMiddleName)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseSuffix",
+      "label": "Spouse's Suffix",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Spouse's Suffix (SpouseSuffix)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "spouseCitizenship",
+      "label": "Spouse's Citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Family Information — Spouse's Citizenship (SpouseCitizenship)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicationType",
+      "label": "Type of Application",
+      "type": "enum",
+      "required": true,
+      "description": "Corroborated via DFA-affiliated requirements pages (Basic Requirements for Adult New/Renewal/Lost Applications). A damaged or mutilated passport is filed under the same 'lost' category and processed with new-application requirements plus a notarized Affidavit of Loss/Mutilation, per DFA's own published guidance — not modelled as a separate value.",
+      "sourceRef": "Application Information — Type of Application (ApplicationType)",
+      "validation": { "enum": ["new", "renewal", "lost"] }
+    },
+    {
+      "name": "previousPassportNumber",
+      "label": "Previous Passport Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "in": ["renewal", "lost"] },
+      "classification": "pii",
+      "sourceRef": "Application Information — Passport Number (PassportNumber)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "previousPassportDateIssued",
+      "label": "Previous Passport — Date Issued",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "in": ["renewal", "lost"] },
+      "sourceRef": "Application Information — Date Issued (DateIssued.Month / DateIssued.Day / DateIssued.Year)",
+      "description": "The live form splits this into separate month/day/year inputs; represented here as a single ISO 8601 date."
+    },
+    {
+      "name": "previousPassportPlaceOfIssuance",
+      "label": "Previous Passport — Place Issued",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "in": ["renewal", "lost"] },
+      "sourceRef": "Application Information — Place Issued (PlaceIssued)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "citizenship",
+      "label": "Citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Country of citizenship, typically Filipino.",
+      "sourceRef": "Application Information — Citizenship (Citizenship)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "citizenshipRemarks",
+      "label": "Citizenship Remarks",
+      "type": "string",
+      "required": false,
+      "description": "Free-text elaboration, e.g. detail supporting a non-birth citizenshipBasis.",
+      "sourceRef": "Application Information — Citizenship Remarks (CitizenshipRemarks)",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "hasForeignPassport",
+      "label": "Do you hold a foreign passport?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Application Information — Has Foreign Passport (HasForeignPassport)",
+      "description": "Relevant to dual citizens (e.g. citizenshipBasis of ra_9225 or naturalization)."
+    },
+    {
+      "name": "foreignPassportCountry",
+      "label": "Foreign Passport — Issuing Country",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasForeignPassport", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Application Information — Foreign Country (ForeignCountry)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency Contact Person",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The system's own reminder requires this to be a reachable person, other than the applicant, residing in the Philippines.",
+      "sourceRef": "Contact Information — Emergency Contact Person (EmergencyContactPerson)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "emergencyContactNumber",
+      "label": "Emergency Contact Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Contact Information — Emergency Contact Number (EmergencyContactNumber)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "residentialAddress",
+      "label": "Complete Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Contact Information — Complete Address (CompleteAddress)",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "residentialCity",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Contact Information — City (City)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "residentialProvince",
+      "label": "Province",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Contact Information — Province (Province)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Contact Information — Occupation (Occupation)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "officeAddress",
+      "label": "Office Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Contact Information — Office Address (OfficeAddress)",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "officeContactNumber",
+      "label": "Office Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Contact Information — Office Number (OfficeNumber)",
+      "validation": { "maxLength": 30 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": ["lastName", "firstName", "middleName", "suffix", "sex", "dateOfBirth", "civilStatus", "countryOfBirth", "placeOfBirthProvince", "placeOfBirthMunicipalityCity", "citizenshipBasis", "companionName", "companionRelationship", "companionContactNumber", "email", "mobileNumber", "landlineNumber"],
+      "next": "family_information"
+    },
+    {
+      "id": "family_information",
+      "title": "Family Information",
+      "fields": ["fatherLastName", "fatherFirstName", "fatherMiddleName", "fatherSuffix", "fatherCitizenship", "motherLastName", "motherFirstName", "motherMiddleName", "motherSuffix", "motherCitizenship", "spouseLastName", "spouseFirstName", "spouseMiddleName", "spouseSuffix", "spouseCitizenship"],
+      "next": "application_information"
+    },
+    {
+      "id": "application_information",
+      "title": "Application Information",
+      "fields": ["applicationType", "previousPassportNumber", "previousPassportDateIssued", "previousPassportPlaceOfIssuance", "citizenship", "citizenshipRemarks", "hasForeignPassport", "foreignPassportCountry"],
+      "next": "contact_information"
+    },
+    {
+      "id": "contact_information",
+      "title": "Contact Information",
+      "fields": ["emergencyContactName", "emergencyContactNumber", "residentialAddress", "residentialCity", "residentialProvince", "occupation", "officeAddress", "officeContactNumber"]
+    }
+  ]
+}
