@@ -1,0 +1,939 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "us/fl/miami-dade/pa/homestead-exemption",
+  "version": "1.0.0",
+  "title": "Miami-Dade County Homestead Exemption Application",
+  "description": "Apply for Florida's homestead exemption and related tax exemptions/discounts on a primary residence located in Miami-Dade County, filed with the Miami-Dade County Property Appraiser (the county authority the office itself abbreviates 'PA' throughout its own site, e.g. miamidadepa.gov/pa/...). It models the state-prescribed DR-501 'Original Application for Homestead and Related Tax Exemptions' (Florida Department of Revenue, Rule 12D-16.002, F.A.C.), the exact form the Miami-Dade Property Appraiser hosts and requires: property/deed information, applicant and optional co-applicant/spouse identity and ownership fields, the proof-of-permanent-residency indicators the appraiser weighs (driver license, vehicle tag, voter registration, declaration of domicile, employer, IRS return address, dependents' school, bank/utility mail), the checklist of related exemptions/discounts (senior, widowed, blind, total-and-permanent-disability, first-responder, and the veteran/surviving-spouse set) a homeowner may request on the same form, and the statutory false-statement attestation. It is the first county/municipal-level (`jurisdiction.locality`) document published in the registry, piloting GSP-0021's new locality layer with `us/fl/miami-dade/pa/homestead-exemption`. It does NOT model: the Property Appraiser's own gated online e-file portal (apps.miamidadepa.gov, which requires an account and is not readable unauthenticated — see VERIFICATION.md); the separate follow-on applications each footnoted exemption/discount actually requires to be granted (e.g. DR-501SC household-income sworn statement, DR-416/DR-416B physician certification, DR-501DV veteran's-discount return) beyond declaring the checkbox and the supporting document it triggers; the Save Our Homes Portability transfer application (DR-501T), which the source explicitly describes as 'a separate application'; the late-filed-application extenuating-circumstances petition Miami-Dade publishes as its own supplemental form; or the $15 Value Adjustment Board late-petition fee. It does not submit the application; the live miamidadepa.gov and floridarevenue.com sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "US",
+    "subdivision": "US-FL",
+    "locality": { "name": "Miami-Dade County", "slug": "miami-dade" },
+    "level": "municipal"
+  },
+  "authority": {
+    "name": "Property Appraiser of Miami-Dade County",
+    "abbreviation": "Miami-Dade PA",
+    "url": "https://www.miamidadepa.gov/pa/exemptions.asp"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-US"
+  },
+  "source": {
+    "url": "https://floridarevenue.com/property/documents/dr501.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "DR-501, R. 01/26, 'Original Application for Homestead and Related Tax Exemptions' (Florida Administrative Code Rule 12D-16.002); Miami-Dade County Property Appraiser homestead-exemption program pages"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored from the live Florida Department of Revenue DR-501 PDF (both the generic floridarevenue.com copy and the Miami-Dade Property Appraiser's own re-hosted copy at miamidadepa.gov/resources-pa/library/forms/dr501.pdf, confirmed byte-for-byte identical in form content), plus the Property Appraiser's own miamidadepa.gov exemption/e-file pages, all fetched live 2026-07-06, no block encountered. Status remains 'draft'. See VERIFICATION.md for the full list of pages consulted and honesty flags, including the choice of 'pa' as the authority slug and the gated-online-portal fallback to the DR-501 paper form."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxYear",
+      "label": "Tax year",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — 'County ___ Tax Year ___'",
+      "validation": { "minimum": 2000, "maximum": 2100 }
+    },
+    {
+      "name": "applicationAction",
+      "label": "I am applying for homestead exemption",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — 'I am applying for homestead exemption: New or Change'",
+      "validation": { "enum": ["new", "change"] }
+    },
+    {
+      "name": "homesteadAddressLine1",
+      "label": "Homestead address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Homestead address'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "homesteadAddressCity",
+      "label": "Homestead address — city",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Homestead address'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "homesteadAddressState",
+      "label": "Homestead address — state",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Modeled as a free two-letter state field even though every homestead-eligible property is necessarily in Florida, consistent with the form printing a blank address block rather than a fixed 'FL' literal.",
+      "sourceRef": "DR-501 page 1 — 'Homestead address'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "homesteadAddressPostalCode",
+      "label": "Homestead address — ZIP code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Homestead address'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "mailingAddressLine1",
+      "label": "Mailing address, if different",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Mailing address, if different'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "mailingAddressCity",
+      "label": "Mailing address — city",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Mailing address, if different'",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "mailingAddressState",
+      "label": "Mailing address — state",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Mailing address, if different'",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "mailingAddressPostalCode",
+      "label": "Mailing address — ZIP code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Mailing address, if different'",
+      "validation": { "pattern": "^[0-9]{5}(-[0-9]{4})?$" }
+    },
+    {
+      "name": "parcelIdentificationNumberOrLegalDescription",
+      "label": "Parcel identification number or legal description",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — 'Parcel identification number or legal description'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "deedType",
+      "label": "Type of deed",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Type of deed ___'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "deedDate",
+      "label": "Date of deed",
+      "type": "date",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Date of deed'"
+    },
+    {
+      "name": "deedRecordedBook",
+      "label": "Recorded — book",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Recorded: Book Page Date or Instrument number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "deedRecordedPage",
+      "label": "Recorded — page",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Recorded: Book Page Date or Instrument number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "deedRecordedDate",
+      "label": "Recorded — date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Recorded: Book Page Date or Instrument number'"
+    },
+    {
+      "name": "deedInstrumentNumber",
+      "label": "Recorded — instrument number",
+      "type": "string",
+      "required": false,
+      "description": "Alternative to the book/page/date fields; the form offers 'or Instrument number' as the other way to cite the recording.",
+      "sourceRef": "DR-501 page 1 — 'Recorded: Book Page Date or Instrument number ___'",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "isPropertyInTrust",
+      "label": "Is the property in a trust?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — 'Is the property in a trust? Yes No'"
+    },
+    {
+      "name": "trustName",
+      "label": "Name of trust on the property deed",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isPropertyInTrust", "equals": true },
+      "sourceRef": "DR-501 page 1 — 'Name of trust on the property deed ___'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "applicantFullName",
+      "label": "Applicant — name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — Applicant/Co-applicant Information table, 'Name'",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "applicantPhoneNumber",
+      "label": "Applicant — phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — Applicant/Co-applicant Information table, 'Phone number'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "applicantSocialSecurityNumber",
+      "label": "Applicant — Social Security number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Disclosure is mandatory by statute, not merely conventional: 'Disclosure of your social security number is mandatory. It is required by section 196.011(1)(b), Florida Statutes.'",
+      "sourceRef": "DR-501 page 1 — '*Social Security #' and the mandatory-disclosure footnote",
+      "validation": { "pattern": "^[0-9]{3}-?[0-9]{2}-?[0-9]{4}$" }
+    },
+    {
+      "name": "applicantDateOfBirth",
+      "label": "Applicant — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "DR-501 page 1 — Applicant/Co-applicant Information table, 'Date of birth'"
+    },
+    {
+      "name": "applicantIsUSCitizen",
+      "label": "Applicant — are you a US citizen?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — 'Are you a US Citizen? Yes No'"
+    },
+    {
+      "name": "applicantImmigrationOrAlienCardType",
+      "label": "Applicant — Immigration # or Resident Alien Card #, which one",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsUSCitizen", "equals": false },
+      "sourceRef": "DR-501 page 1 — 'If not a US Citizen, provide Immigration # or Resident Alien Card #'",
+      "validation": { "enum": ["immigration_number", "resident_alien_card"] }
+    },
+    {
+      "name": "applicantImmigrationOrAlienCardNumber",
+      "label": "Applicant — Immigration # or Resident Alien Card #",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "applicantIsUSCitizen", "equals": false },
+      "sourceRef": "DR-501 page 1 — 'If not a US Citizen, provide Immigration # or Resident Alien Card #'",
+      "validation": { "minLength": 1, "maxLength": 40 }
+    },
+    {
+      "name": "applicantOwnershipPercentage",
+      "label": "Applicant — % of ownership",
+      "type": "number",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — '% of ownership'",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "applicantHomesteadEstablishedDate",
+      "label": "Applicant — date homestead was established",
+      "type": "date",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — 'Date homestead was established'"
+    },
+    {
+      "name": "applicantMaritalStatus",
+      "label": "Applicant — marital status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "DR-501 page 1 — 'Marital status of Applicant: Single Married Divorced Widowed Other, Explain'",
+      "validation": { "enum": ["single", "married", "divorced", "widowed", "other"] }
+    },
+    {
+      "name": "applicantMaritalStatusOtherExplanation",
+      "label": "Applicant — marital status, explain 'Other'",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantMaritalStatus", "equals": "other" },
+      "sourceRef": "DR-501 page 1 — 'Marital status of Applicant ... Other, Explain ___'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "applicantClaimsResidencyOrHomesteadElsewhere",
+      "label": "Applicant — do you currently claim residency or homestead in another county or state?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Florida homestead exemption requires the property to be the applicant's sole permanent residence; a current residency/homestead claim elsewhere is the source's own printed eligibility probe.",
+      "sourceRef": "DR-501 page 1 — 'Do you currently claim residency or homestead in another county or state? Applicant? Yes No'"
+    },
+    {
+      "name": "coApplicantFullName",
+      "label": "Co-applicant/spouse — name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — Applicant/Co-applicant Information table, 'Name' (Co-applicant/Spouse column)",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "coApplicantPhoneNumber",
+      "label": "Co-applicant/spouse — phone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — Applicant/Co-applicant Information table, 'Phone number' (Co-applicant/Spouse column)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "coApplicantSocialSecurityNumber",
+      "label": "Co-applicant/spouse — Social Security number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "DR-501 page 1 — '*Social Security #' (Co-applicant/Spouse column)",
+      "validation": { "pattern": "^[0-9]{3}-?[0-9]{2}-?[0-9]{4}$" }
+    },
+    {
+      "name": "coApplicantDateOfBirth",
+      "label": "Co-applicant/spouse — date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "DR-501 page 1 — Applicant/Co-applicant Information table, 'Date of birth' (Co-applicant/Spouse column)"
+    },
+    {
+      "name": "coApplicantIsUSCitizen",
+      "label": "Co-applicant/spouse — are you a US citizen?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Are you a US Citizen? Yes No' (Co-applicant/Spouse column)"
+    },
+    {
+      "name": "coApplicantImmigrationOrAlienCardType",
+      "label": "Co-applicant/spouse — Immigration # or Resident Alien Card #, which one",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "coApplicantIsUSCitizen", "equals": false },
+      "sourceRef": "DR-501 page 1 — 'If not a US Citizen, provide Immigration # or Resident Alien Card #' (Co-applicant/Spouse column)",
+      "validation": { "enum": ["immigration_number", "resident_alien_card"] }
+    },
+    {
+      "name": "coApplicantImmigrationOrAlienCardNumber",
+      "label": "Co-applicant/spouse — Immigration # or Resident Alien Card #",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "coApplicantIsUSCitizen", "equals": false },
+      "sourceRef": "DR-501 page 1 — 'If not a US Citizen, provide Immigration # or Resident Alien Card #' (Co-applicant/Spouse column)",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "coApplicantOwnershipPercentage",
+      "label": "Co-applicant/spouse — % of ownership",
+      "type": "number",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — '% of ownership' (Co-applicant/Spouse column)",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "coApplicantHomesteadEstablishedDate",
+      "label": "Co-applicant/spouse — date homestead was established",
+      "type": "date",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Date homestead was established' (Co-applicant/Spouse column)"
+    },
+    {
+      "name": "coApplicantMaritalStatus",
+      "label": "Co-applicant — marital status",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Marital status of Co-applicant: Single Married Divorced Widowed Other, Explain'",
+      "validation": { "enum": ["single", "married", "divorced", "widowed", "other"] }
+    },
+    {
+      "name": "coApplicantMaritalStatusOtherExplanation",
+      "label": "Co-applicant — marital status, explain 'Other'",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "coApplicantMaritalStatus", "equals": "other" },
+      "sourceRef": "DR-501 page 1 — 'Marital status of Co-applicant ... Other, Explain ___'",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "coApplicantRelationshipToApplicant",
+      "label": "Co-applicant relationship to applicant",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Co-applicant relationship to Applicant (Example: Spouse, parent, sibling)'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "coApplicantClaimsResidencyOrHomesteadElsewhere",
+      "label": "Co-applicant — do you currently claim residency or homestead in another county or state?",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "sourceRef": "DR-501 page 1 — 'Do you currently claim residency or homestead in another county or state? Co-applicant? Yes No'"
+    },
+    {
+      "name": "ownersNotResidingOnPropertyNameAndAddress",
+      "label": "Name and address of any owners not residing on the property",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 1 — 'Name and address of any owners not residing on the property'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "currentOrPreviousHomesteadAddress",
+      "label": "Address of current or previous homestead",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "any": [
+          { "field": "applicantClaimsResidencyOrHomesteadElsewhere", "equals": true },
+          { "field": "coApplicantClaimsResidencyOrHomesteadElsewhere", "equals": true }
+        ]
+      },
+      "sourceRef": "DR-501 page 1 — 'Address of current or previous homestead:'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "currentOrPreviousHomesteadEstablishedDate",
+      "label": "Date current or previous homestead was established",
+      "type": "date",
+      "required": false,
+      "description": "The source marks this 'if applicable' rather than strictly required even when a prior/other homestead claim is disclosed, so it is not gated by requiredWhen (see VERIFICATION.md).",
+      "sourceRef": "DR-501 page 1 — 'Date current or previous homestead was established and ended, if applicable:'"
+    },
+    {
+      "name": "currentOrPreviousHomesteadEndedDate",
+      "label": "Date current or previous homestead ended",
+      "type": "date",
+      "required": false,
+      "sourceRef": "DR-501 page 1 — 'Date current or previous homestead was established and ended, if applicable:'"
+    },
+    {
+      "name": "proofPreviousResidencyOutsideFloridaTerminationDate",
+      "label": "Previous residency outside Florida — date terminated",
+      "type": "date",
+      "required": false,
+      "description": "Part of the source's 'Proof of Residence' table, which the form itself frames as non-exhaustive supporting evidence: 'Please provide as much information as possible. Your county property appraiser will make the final determination.' Modeled here for the applicant only; see VERIFICATION.md for the co-applicant-column narrowing.",
+      "sourceRef": "DR-501 page 2 — 'Previous residency outside Florida and date terminated'"
+    },
+    {
+      "name": "proofFloridaDriverLicenseOrIdNumber",
+      "label": "Florida driver license or ID card number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 2 — 'FL driver license or ID card number'",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "proofFloridaVehicleTagNumber",
+      "label": "Florida vehicle tag number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Florida vehicle tag number'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "proofFloridaVoterRegistrationNumber",
+      "label": "Florida voter registration number (if US citizen)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Florida voter registration number (if US citizen)'",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "proofDeclarationOfDomicileRecordedDate",
+      "label": "Declaration of domicile — recorded date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Declaration of domicile, enter date Recorded date'"
+    },
+    {
+      "name": "proofCurrentEmployer",
+      "label": "Current employer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Current employer'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "proofAddressOnLastIRSReturn",
+      "label": "Address on your last IRS return",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DR-501 page 2 — 'Address on your last IRS return'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "proofSchoolLocationOfDependentChildren",
+      "label": "School location of dependent children",
+      "type": "string",
+      "required": false,
+      "description": "Modeled as one shared field rather than split applicant/co-applicant columns — a dependent child's school does not logically differ per parent (see VERIFICATION.md).",
+      "sourceRef": "DR-501 page 2 — 'School location of dependent children'",
+      "validation": { "maxLength": 120 }
+    },
+    {
+      "name": "proofBankStatementSentToHomesteadAddress",
+      "label": "Bank statement and checking account sent to homestead address",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Bank statement and checking account sent to homestead address Yes No'"
+    },
+    {
+      "name": "proofUtilityPaymentAtHomesteadAddress",
+      "label": "Proof of payment of utilities at homestead address",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Proof of payment of utilities at homestead address Yes No'"
+    },
+    {
+      "name": "requestingSeniorExemptionLimitedIncome",
+      "label": "Age 65 and older with limited income (local ordinance)",
+      "type": "boolean",
+      "required": false,
+      "description": "By local ordinance only. Requires an additional application (DR-501SC household income statement).",
+      "sourceRef": "DR-501 page 2 — 'Age 65 and older with limited income (amount determined by ordinance)¹'"
+    },
+    {
+      "name": "requestingSeniorExemptionLimitedIncome25YearResidency",
+      "label": "Age 65 and older with limited income and 25+ years permanent residency (local ordinance)",
+      "type": "boolean",
+      "required": false,
+      "description": "By local ordinance only. Requires an additional application (DR-501SC household income statement).",
+      "sourceRef": "DR-501 page 2 — 'Age 65 and older with limited income and permanent residency for 25 years or more¹'"
+    },
+    {
+      "name": "requestingWidowedExemption",
+      "label": "$5,000 widowed exemption",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — '$5,000 widowed'"
+    },
+    {
+      "name": "requestingBlindExemption",
+      "label": "$5,000 blind exemption",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — '$5,000 blind'"
+    },
+    {
+      "name": "requestingTotallyPermanentlyDisabledExemption",
+      "label": "$5,000 totally and permanently disabled exemption",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — '$5,000 totally and permanently disabled'"
+    },
+    {
+      "name": "requestingQuadriplegicExemption",
+      "label": "Total and permanent disability — quadriplegic (all-taxes exemption)",
+      "type": "boolean",
+      "required": false,
+      "description": "Requires an additional application per the form's own footnote 1.",
+      "sourceRef": "DR-501 page 2 — 'Total and permanent disability – quadriplegic¹'"
+    },
+    {
+      "name": "requestingLimitedIncomeDisabilityExemption",
+      "label": "Certain total and permanent disabilities — limited income, and hemiplegic/paraplegic/wheelchair-required/legally blind (all-taxes exemption)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Certain total and permanent disabilities - limited income and hemiplegic, paraplegic, wheelchair required, or legally blind'"
+    },
+    {
+      "name": "requestingFirstResponderDisabledExemption",
+      "label": "First responder totally and permanently disabled in the line of duty, or surviving spouse",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'First responder totally and permanently disabled in the line of duty or surviving spouse'"
+    },
+    {
+      "name": "requestingFirstResponderSurvivingSpouseExemption",
+      "label": "Surviving spouse of first responder who died in the line of duty",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Surviving spouse of first responder who died in the line of duty'"
+    },
+    {
+      "name": "requestingDisabledVeteranAge65Discount",
+      "label": "Disabled veteran discount, age 65 or older (carries over to surviving spouse)",
+      "type": "boolean",
+      "required": false,
+      "description": "Requires an additional application (DR-501DV) per the form's own footnote 1.",
+      "sourceRef": "DR-501 page 2 — 'Disabled veteran discount, 65 or older which carries over to the surviving spouse¹'"
+    },
+    {
+      "name": "requestingVeteranDisabled10PercentExemption",
+      "label": "Veteran disabled 10% or more",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Veteran disabled 10% or more'"
+    },
+    {
+      "name": "requestingDisabledVeteranWheelchairExemption",
+      "label": "Disabled veteran confined to wheelchair, service-connected (all-taxes exemption)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Disabled veteran confined to wheelchair, service-connected'"
+    },
+    {
+      "name": "requestingServiceConnectedDisabledVeteranExemption",
+      "label": "Service-connected totally and permanently disabled veteran, or veteran's surviving spouse (all-taxes exemption)",
+      "type": "boolean",
+      "required": false,
+      "description": "May qualify for a prorated refund of the previous year's taxes if the parcel was acquired between January 1 and November 1 of the previous year and proof of the disability as of January 1 of that tax year is provided.",
+      "sourceRef": "DR-501 page 2 — 'Service-connected totally and permanently disabled veteran or veteran's surviving spouse. Applicants for this exemption qualify for a prorated refund of previous year's taxes if in the previous year they acquired this parcel between January 1 and November 1 and provide proof of the disability as of January 1 of that tax year.'"
+    },
+    {
+      "name": "requestingSurvivingSpouseOfVeteranKilledOnDutyExemption",
+      "label": "Surviving spouse of veteran who died while on active duty (all-taxes exemption)",
+      "type": "boolean",
+      "required": false,
+      "description": "May qualify for a prorated refund of the previous year's taxes if the parcel was acquired between January 1 and November 1 of the previous year and an official letter is provided.",
+      "sourceRef": "DR-501 page 2 — 'Surviving spouse of veteran who died while on active duty. Applicants for this exemption qualify for a prorated refund of previous year's taxes if in the previous year they acquired this parcel between January 1 and November 1 and provide an official letter.'"
+    },
+    {
+      "name": "sameExemptionPreviousParcelNumber",
+      "label": "Previous parcel number (if you received the same exemption on another parcel last year)",
+      "type": "string",
+      "required": false,
+      "description": "Only relevant if the applicant separately received the same service-connected-veteran or surviving-spouse exemption on a different parcel in the previous year; not gated by requiredWhen because that predicate is a fact about a prior filing, not one this schema otherwise captures (see VERIFICATION.md).",
+      "sourceRef": "DR-501 page 2 — 'If you received the same exemption on another parcel in the previous year, enter the previous parcel information in the space provided. Parcel number ___'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "sameExemptionPreviousParcelCounty",
+      "label": "Previous parcel — county",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'If you received the same exemption on another parcel in the previous year, enter the previous parcel information in the space provided. ... County ___'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "otherBenefitRequestedExplanation",
+      "label": "Other benefit requested, specify",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DR-501 page 2 — 'Other, specify: ___'",
+      "validation": { "maxLength": 200 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "proofOfPermanentResidencyDocument",
+      "label": "Proof of permanent Florida residency",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "florida_drivers_license_or_id_card",
+        "florida_vehicle_registration",
+        "florida_voter_registration_card",
+        "declaration_of_domicile",
+        "irs_return_or_w2",
+        "bank_statement",
+        "utility_bill"
+      ],
+      "sourceRef": "DR-501 page 2, 'Proof of Residence' table header, 'Please provide as much information as possible. Your county property appraiser will make the final determination.'; Miami-Dade Property Appraiser online-filing page, 'Acceptable Proof of Residency' list (valid FL driver's license/ID, FL vehicle registration, FL voter registration, current W-2 or prior-year IRS return, bank statements, utility payment documentation, recorded Declaration of Domicile)"
+    },
+    {
+      "id": "deathCertificateOfSpouseDocument",
+      "label": "Death certificate of spouse",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingWidowedExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Widowed $5,000 ... Death certificate of spouse'"
+    },
+    {
+      "id": "blindDisabilityCertificationDocument",
+      "label": "Certification of blindness (Florida physician, DVA, or SSA)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingBlindExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Blind $5,000 ... Florida physician, DVA, or SSA'"
+    },
+    {
+      "id": "totallyPermanentlyDisabledCertificationDocument",
+      "label": "Certification of total and permanent disability (Florida physician, DVA, or SSA)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingTotallyPermanentlyDisabledExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Totally and Permanently Disabled $5,000 ... Florida physician, DVA, or SSA'"
+    },
+    {
+      "id": "quadriplegicCertificationDocument",
+      "label": "Certification of quadriplegic disability (2 Florida physicians or DVA)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingQuadriplegicExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Quadriplegic ... 2 Florida physicians or DVA'"
+    },
+    {
+      "id": "limitedIncomeDisabilityCertificationDocument",
+      "label": "DR-416/DR-416B or two Florida physician letters, plus DVA letter and DR-501A household income (limited-income disability exemption)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingLimitedIncomeDisabilityExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Hemiplegic, paraplegic, wheelchair required for mobility, or legally blind / Limited income ... DR-416, DR-416B, or letters from 2 FL physicians (For the legally blind, one can be an optometrist.) Letter from DVA, and DR-501A, household income'"
+    },
+    {
+      "id": "firstResponderDisabilityDocumentation",
+      "label": "Proof of disability, employer certificate, physician's certificate, and SSA (first responder totally and permanently disabled)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingFirstResponderDisabledExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'First responder totally and permanently disabled in the line of duty or surviving spouse ... Proof of Disability, employer certificate, physician's certificate and SSA (or additional physician certificate)'"
+    },
+    {
+      "id": "firstResponderSurvivingSpouseLetterDocument",
+      "label": "Letter attesting to the first responder's death in the line of duty",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingFirstResponderSurvivingSpouseExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Surviving spouse of first responder who died in the line of duty ... Letter attesting to the first responder's death in the line of duty'"
+    },
+    {
+      "id": "disabledVeteranAge65DiscountDocument",
+      "label": "Proof of age, DR-501DV, and proof of disability (DVA or US government)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingDisabledVeteranAge65Discount", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Disabled veteran discount, age 65 and older ... Proof of age, DR-501DV / Proof of disability, DVA, or US government'"
+    },
+    {
+      "id": "veteranDisabled10PercentProofDocument",
+      "label": "Proof of disability (DVA or US government)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingVeteranDisabled10PercentExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Veteran, disabled 10% or more by misfortune or during wartime service ... Proof of disability, DVA, or US government'"
+    },
+    {
+      "id": "veteranWheelchairDisabilityProofDocument",
+      "label": "Proof of disability (DVA or US government) — wheelchair-confined, service-connected veteran",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingDisabledVeteranWheelchairExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Veteran confined to wheelchair, service-connected, totally disabled ... Proof of disability, DVA, or US government'"
+    },
+    {
+      "id": "serviceConnectedVeteranDisabilityProofDocument",
+      "label": "Proof of disability (DVA or US government) — service-connected totally and permanently disabled veteran or surviving spouse",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingServiceConnectedDisabledVeteranExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Service-connected, totally and permanently disabled veteran or surviving spouse ... Proof of disability, DVA, or US government'"
+    },
+    {
+      "id": "survivingSpouseVeteranActiveDutyLetterDocument",
+      "label": "US Government or DVA letter attesting to the veteran's death while on active duty",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "requestingSurvivingSpouseOfVeteranKilledOnDutyExemption", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Surviving spouse of veteran who died while on active duty ... US Government or DVA letter attesting to the veteran's death while on active duty'"
+    },
+    {
+      "id": "seniorExemptionIncomeDocument",
+      "label": "Proof of age and DR-501SC household-income sworn statement",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "requestingSeniorExemptionLimitedIncome", "equals": true },
+          { "field": "requestingSeniorExemptionLimitedIncome25YearResidency", "equals": true }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "DR-501 page 5 — 'Local option, age 65 and older ... Proof of age, DR-501SC, household income'"
+    },
+    {
+      "id": "falseStatementAttestation",
+      "label": "False-statement penalty acknowledgment and signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I understand that under section 196.131(2), F.S., any person who knowingly and willfully gives false information to claim homestead exemption is guilty of a misdemeanor of the first degree, punishable by imprisonment up to one year, a fine up to $5,000, or both. I have read, or have had someone read to me, the contents of this form. I certify all information on this form and any attachments are true, correct, and in effect on January 1 of this year.",
+      "sourceRef": "DR-501 page 3 — statutory warning and certification statement, paired with 'Signature, applicant'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "property_information",
+      "title": "Property information",
+      "fields": [
+        "taxYear",
+        "applicationAction",
+        "homesteadAddressLine1",
+        "homesteadAddressCity",
+        "homesteadAddressState",
+        "homesteadAddressPostalCode",
+        "mailingAddressLine1",
+        "mailingAddressCity",
+        "mailingAddressState",
+        "mailingAddressPostalCode",
+        "parcelIdentificationNumberOrLegalDescription",
+        "deedType",
+        "deedDate",
+        "deedRecordedBook",
+        "deedRecordedPage",
+        "deedRecordedDate",
+        "deedInstrumentNumber",
+        "isPropertyInTrust",
+        "trustName"
+      ],
+      "next": "applicant_information"
+    },
+    {
+      "id": "applicant_information",
+      "title": "Applicant information",
+      "fields": [
+        "applicantFullName",
+        "applicantPhoneNumber",
+        "applicantSocialSecurityNumber",
+        "applicantDateOfBirth",
+        "applicantIsUSCitizen",
+        "applicantImmigrationOrAlienCardType",
+        "applicantImmigrationOrAlienCardNumber",
+        "applicantOwnershipPercentage",
+        "applicantHomesteadEstablishedDate",
+        "applicantMaritalStatus",
+        "applicantMaritalStatusOtherExplanation",
+        "applicantClaimsResidencyOrHomesteadElsewhere"
+      ],
+      "next": "co_applicant_information"
+    },
+    {
+      "id": "co_applicant_information",
+      "title": "Co-applicant / spouse information",
+      "fields": [
+        "coApplicantFullName",
+        "coApplicantPhoneNumber",
+        "coApplicantSocialSecurityNumber",
+        "coApplicantDateOfBirth",
+        "coApplicantIsUSCitizen",
+        "coApplicantImmigrationOrAlienCardType",
+        "coApplicantImmigrationOrAlienCardNumber",
+        "coApplicantOwnershipPercentage",
+        "coApplicantHomesteadEstablishedDate",
+        "coApplicantMaritalStatus",
+        "coApplicantMaritalStatusOtherExplanation",
+        "coApplicantRelationshipToApplicant",
+        "coApplicantClaimsResidencyOrHomesteadElsewhere"
+      ],
+      "next": "residency_history"
+    },
+    {
+      "id": "residency_history",
+      "title": "Ownership and residency history",
+      "fields": [
+        "ownersNotResidingOnPropertyNameAndAddress",
+        "currentOrPreviousHomesteadAddress",
+        "currentOrPreviousHomesteadEstablishedDate",
+        "currentOrPreviousHomesteadEndedDate"
+      ],
+      "next": "proof_of_residence"
+    },
+    {
+      "id": "proof_of_residence",
+      "title": "Proof of residence",
+      "fields": [
+        "proofPreviousResidencyOutsideFloridaTerminationDate",
+        "proofFloridaDriverLicenseOrIdNumber",
+        "proofFloridaVehicleTagNumber",
+        "proofFloridaVoterRegistrationNumber",
+        "proofDeclarationOfDomicileRecordedDate",
+        "proofCurrentEmployer",
+        "proofAddressOnLastIRSReturn",
+        "proofSchoolLocationOfDependentChildren",
+        "proofBankStatementSentToHomesteadAddress",
+        "proofUtilityPaymentAtHomesteadAddress"
+      ],
+      "next": "additional_benefits"
+    },
+    {
+      "id": "additional_benefits",
+      "title": "Additional exemptions and benefits",
+      "fields": [
+        "requestingSeniorExemptionLimitedIncome",
+        "requestingSeniorExemptionLimitedIncome25YearResidency",
+        "requestingWidowedExemption",
+        "requestingBlindExemption",
+        "requestingTotallyPermanentlyDisabledExemption",
+        "requestingQuadriplegicExemption",
+        "requestingLimitedIncomeDisabilityExemption",
+        "requestingFirstResponderDisabledExemption",
+        "requestingFirstResponderSurvivingSpouseExemption",
+        "requestingDisabledVeteranAge65Discount",
+        "requestingVeteranDisabled10PercentExemption",
+        "requestingDisabledVeteranWheelchairExemption",
+        "requestingServiceConnectedDisabledVeteranExemption",
+        "requestingSurvivingSpouseOfVeteranKilledOnDutyExemption",
+        "sameExemptionPreviousParcelNumber",
+        "sameExemptionPreviousParcelCounty",
+        "otherBenefitRequestedExplanation"
+      ]
+    }
+  ]
+}
