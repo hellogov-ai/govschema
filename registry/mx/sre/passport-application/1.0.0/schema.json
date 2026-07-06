@@ -1,0 +1,497 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mx/sre/passport-application",
+  "version": "1.0.0",
+  "title": "Mexico Ordinary Passport Application at Consular Offices (Form OP-5)",
+  "description": "Application for a Mexican ordinary passport (pasaporte ordinario mexicano) — first-time issuance (primera vez), renewal/exchange of a passport issued within Mexican national territory (canje), or replacement for loss, theft, or damage (reposición) — filed by an adult (18 or older) Mexican national at a Secretaría de Relaciones Exteriores (SRE) consular office abroad, using the SRE's own Form OP-5, 'Solicitud de pasaporte ordinario mexicano en las Oficinas Consulares.' This form is one page of official SRE Acuerdo-published, freely-reproducible content (no login/CAPTCHA/WAF gate; directly downloadable from both sre.gob.mx and gob.mx) and models the applicant-facing data on it: personal/biographic data, birthplace, passport type and requested validity, foreign (consular-jurisdiction) address, physical description (filiación) as recorded on the document, an emergency contact, and a data-disclosure consent choice. In the current SRE process an appointment is first booked online at citas.sre.gob.mx (which independently collects CURP, full name, date and place of birth, and contact details to create an account before a site/date/time can be selected); this document does not model that booking/account-creation flow's own logistics (site, date, time, session/CSRF plumbing), consistent with how this registry excludes office/appointment-slot selection elsewhere (e.g. ph/dfa/passport-application, kr/mofa/passport-application-first-adult) — it models only the OP-5 form's own applicant-data fields. Scoped to an adult applicant; Form OP-5 also covers minors and legally incapacitated persons (trámites B and D in the form's own instructions), which require an additional parent/guardian/legal-representative block not modelled here (see VERIFICATION.md). Physical actions performed in the presence of consular staff — wet-ink signature, fingerprint capture (índice izquierdo/derecho), and the office's own internal 'Campos de control' processing checklist (Recepción/Revisión/Digitalización/Entrega, etc.) — are also out of scope, consistent with this registry's treatment of biometric capture and office-internal workflow tracking as not application data.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MX",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Secretaría de Relaciones Exteriores",
+    "abbreviation": "SRE",
+    "url": "https://www.gob.mx/sre"
+  },
+  "process": {
+    "type": "application",
+    "language": "es-MX"
+  },
+  "source": {
+    "url": "https://www.gob.mx/cms/uploads/attachment/file/220463/OP-5_Consulares.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "Form OP-5 — Solicitud de pasaporte ordinario mexicano en las Oficinas Consulares"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Source-derived reference schema authored against Form OP-5's genuine PDF text layer (not a scanned image), fetched directly and without a login/CAPTCHA/WAF gate from two independent official mirrors: gob.mx's own CMS attachment host and sre.gob.mx's legacy imgpasaportes path (both returned HTTP 200 on 2026-07-06, corroborating the form's current validity). Every numbered field's label, position, and (where checkbox-based) exact option set was recovered via pdfjs-dist text-extraction with per-glyph coordinates, cross-referencing each option's column x-position against its section header to disambiguate the form's dense multi-column 'Filiación' (physical-description) grid — see VERIFICATION.md. A prior research cycle (GOV-1435/GOV-1428, recorded in this repo's CATALOG.md) had screened Mexico's passport vertical and deferred it as 'in-person appointment only' without locating this specific downloadable OP-5 form; this cycle picked the candidate back up and found it tractable, the same shape as the ph/dfa/passport-application precedent. Because Form OP-5 is filled in by hand and co-signed by consular staff rather than submitted through a live web wizard, no live-DOM required-field asterisk convention could be observed; required/requiredWhen markers are asserted from the form's own explicit textual qualifiers (e.g. 'sólo para renovación', 'dato opcional') and structural necessity, not a rendered asterisk. Status remains draft pending an independent second reviewer's field-by-field pass and a future mock-data test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "curp",
+      "label": "CURP",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Clave Única de Registro de Población. The form's own printed instructions (page 2 of the sre.gob.mx mirror) frame this as conditional — 'deberá requisitarse correctamente, en caso de contar con la misma' (must be filled in correctly, if the applicant has one) — e.g. a Mexican national born and residing abroad may never have been issued one. Not independently confirmed as unconditionally required; modelled as optional per the form's own qualifying language. The current online appointment system (citas.sre.gob.mx) separately requires a CURP to create a booking account, but that is that system's own account-creation logic, not this form's own field, so is not used to override this document's required marker (see VERIFICATION.md).",
+      "sourceRef": "Field 2. CURP",
+      "validation": {
+        "pattern": "^[A-Z][AEIOU][A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[HM](AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QO|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[A-Z0-9][0-9]$"
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "Nombre(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 3. Nombre(s)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "lastNamePaternal",
+      "label": "Primer apellido",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Paternal surname, per standard Mexican civil-registry two-surname naming convention.",
+      "sourceRef": "Field 4. Primer apellido",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "lastNameMaternal",
+      "label": "Segundo apellido",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Maternal surname. Left optional since not every applicant's civil-registry record carries a second surname (e.g. some foreign-born or naturalized applicants).",
+      "sourceRef": "Field 5. Segundo apellido",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sex",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 6. Sexo — Hombre / Mujer",
+      "validation": { "enum": ["hombre", "mujer"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Fecha de nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 7. Fecha de nacimiento (DD / MM / AAAA)",
+      "description": "The source form splits this into separate day/month/year boxes; represented here as a single ISO 8601 date."
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "País de nacimiento",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 8. País de nacimiento",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "stateOfBirth",
+      "label": "Estado",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Mexican state of birth. Left optional since it is only applicable when countryOfBirth is Mexico; the form does not itself render a conditional-visibility rule that could be captured as requiredWhen against a free-text country field.",
+      "sourceRef": "Field 9. Estado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "municipalityOfBirth",
+      "label": "Municipio",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 10. Municipio",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "localityOfBirth",
+      "label": "Población",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 11. Población",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseName",
+      "label": "Nombre del cónyuge",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "civilStatus", "equals": "casado" },
+      "classification": "pii",
+      "sourceRef": "Field 12. Nombre del cónyuge",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "applicationType",
+      "label": "Tipo de pasaporte — trámite",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's request category. A damaged passport is filed under the same reposición category as a lost or stolen one, per this form's own three-way trámite grouping (consistent with the analogous 'lost' bucket in ph/dfa/passport-application).",
+      "sourceRef": "Field 13 area — 'Tipo de pasaporte': Primera vez / Canje / Reposición",
+      "validation": { "enum": ["primera_vez", "canje", "reposicion"] }
+    },
+    {
+      "name": "requestedValidityYears",
+      "label": "Tipo de pasaporte — vigencia",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Field 13 area — 'Tipo de pasaporte': 1 año / 3 años / 6 años",
+      "validation": { "enum": [1, 3, 6] }
+    },
+    {
+      "name": "previousPassportNumber",
+      "label": "No. de pasaporte",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "canje" },
+      "classification": "pii",
+      "description": "The form's own label explicitly scopes this to renewal ('sólo para renovación'/canje) — modelled as required only in that case, even though a reposición (loss/theft/damage) applicant might also know their previous passport number, since the source does not ask for it in that branch.",
+      "sourceRef": "Field 13. No. de pasaporte (sólo para renovación)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "civilStatus",
+      "label": "Estado civil",
+      "type": "enum",
+      "required": true,
+      "description": "The source form's own checkbox set shows only two options (Soltero(a)/Casado(a)); no viudo(a)/divorciado(a) option was found in the extracted text layer at any position on the page (see VERIFICATION.md). Modelled verbatim as observed, not expanded by assumption.",
+      "sourceRef": "Field 14. Estado civil — Soltero(a) / Casado(a)",
+      "validation": { "enum": ["soltero", "casado"] }
+    },
+    {
+      "name": "educationLevel",
+      "label": "Grado máximo de estudios",
+      "type": "string",
+      "required": false,
+      "description": "Highest level of schooling completed. The form provides a write-in line, not a fixed checkbox list.",
+      "sourceRef": "Field 15. Grado máximo de estudios",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "occupation",
+      "label": "Ocupación",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 16. Ocupación",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "foreignAddressStreet",
+      "label": "Domicilio (número y calle)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street address in the country where the applicant resides (the consular jurisdiction), grouped on the form under the heading 'Domicilio en el extranjero'.",
+      "sourceRef": "Field 17. Domicilio (número y calle)",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "foreignAddressCity",
+      "label": "Ciudad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 18. Ciudad",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "foreignAddressLocality",
+      "label": "Población",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 19. Población",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "foreignAddressStateAndCountry",
+      "label": "Estado y país",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 20. Estado y país",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "foreignAddressPostalCode",
+      "label": "Código postal",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 21. Código postal",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Teléfono",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 22. Teléfono",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "Correo electrónico",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The form's own label marks this explicitly 'dato opcional' (optional data).",
+      "sourceRef": "Field 23. Correo electrónico (dato opcional)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "complexionSkinTone",
+      "label": "Tez",
+      "type": "enum",
+      "required": true,
+      "description": "Skin-tone category as printed on the issued passport's own filiación (physical-description) block.",
+      "sourceRef": "Field 24, Filiación — Tez",
+      "validation": { "enum": ["amarilla", "blanca", "morena_clara", "morena_obscura", "negra", "rosada", "otra"] }
+    },
+    {
+      "name": "build",
+      "label": "Complexión",
+      "type": "enum",
+      "required": true,
+      "description": "Only three options (Delgada/Media/Robusta) were found at this column's x-position in the source's text layer — no 'Otro' option renders in this column, unlike the other four Filiación columns (see VERIFICATION.md).",
+      "sourceRef": "Field 24, Filiación — Complexión",
+      "validation": { "enum": ["delgada", "media", "robusta"] }
+    },
+    {
+      "name": "hairColor",
+      "label": "Color de cabello",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Field 24, Filiación — Color de cabello",
+      "validation": { "enum": ["negro", "castano_obscuro", "castano_claro", "entrecano", "cano", "rubio", "otro"] }
+    },
+    {
+      "name": "hairLength",
+      "label": "Tamaño de cabello",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Field 24, Filiación — Tamaño de cabello",
+      "validation": { "enum": ["corto", "mediano", "largo", "otro"] }
+    },
+    {
+      "name": "hairType",
+      "label": "Tipo de cabello",
+      "type": "enum",
+      "required": true,
+      "description": "A distinct sub-field from hairLength, printed directly below it in the same column of the source's Filiación grid (confirmed via per-glyph x/y coordinates, not simple reading order — see VERIFICATION.md).",
+      "sourceRef": "Field 24, Filiación — Tipo de cabello",
+      "validation": { "enum": ["calvo_rapado", "ondulado", "lacio", "rizado"] }
+    },
+    {
+      "name": "eyeColor",
+      "label": "Color de ojos",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Field 24, Filiación — Color de ojos",
+      "validation": { "enum": ["azules", "cafe_claro", "cafe_obscuro", "grises", "negros", "verdes", "otro"] }
+    },
+    {
+      "name": "heightMeters",
+      "label": "Estatura",
+      "type": "number",
+      "required": true,
+      "classification": "pii",
+      "description": "The source's own write-in line is labelled 'Metros: _____', i.e. the unit is meters (e.g. 1.75), not centimeters. No minimum/maximum bound is published on the form; none is asserted here.",
+      "sourceRef": "Field 24, Filiación — Estatura (Metros)"
+    },
+    {
+      "name": "weightKilos",
+      "label": "Peso",
+      "type": "number",
+      "required": true,
+      "classification": "pii",
+      "description": "The source's own write-in line is labelled 'Kilos: _______'. No minimum/maximum bound is published on the form; none is asserted here.",
+      "sourceRef": "Field 24, Filiación — Peso (Kilos)"
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Nombre completo",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 25. Proporcione los datos de un familiar o amigo — Nombre completo",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "emergencyContactRelationship",
+      "label": "Parentesco",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 25 — Parentesco",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactCountry",
+      "label": "País",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 25 — País",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactStateProvince",
+      "label": "Estado / Provincia",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 25 — Estado / Provincia",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactLocalityOrMunicipality",
+      "label": "Población / Municipio",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 25 — Población / Municipio",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactCity",
+      "label": "Ciudad",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 25 — Ciudad",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "emergencyContactAddress",
+      "label": "Domicilio (número y calle)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 25 — Domicilio (número y calle)",
+      "validation": { "maxLength": 250 }
+    },
+    {
+      "name": "emergencyContactPostalCode",
+      "label": "Código postal",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Field 25 — Código postal",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Teléfono",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 25 — Teléfono",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "consentToDataDisclosure",
+      "label": "¿Otorga su consentimiento para la difusión o distribución de sus datos?",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant must mark sí or no to this consent choice under the Ley Federal de Transparencia y Acceso a la Información Pública Gubernamental (arts. 18-19); true means sí (consents), false means no (does not consent). This is a genuine yes/no data-disclosure election, not a mandatory attestation, so it is modelled as a field rather than a documents[] attestation entry.",
+      "sourceRef": "Data-disclosure consent clause — 'manifiesto que sí ☐ no ☐ otorgo mi consentimiento para su difusión o distribución...'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "proofOfMexicanNationality",
+      "label": "Documento que acredita la nacionalidad mexicana",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["acta_de_nacimiento", "pasaporte", "declaratoria_de_nacionalidad", "otro"],
+      "handling": "recorded-by-consular-staff-in-uso-exclusivo-sre-checkbox-block-modelled-as-applicant-document-requirement-not-a-staff-only-field",
+      "sourceRef": "Nacionalidad block (Uso exclusivo SRE) — Acta de nacimiento / Pasaporte / Declaratoria de nacionalidad / Otro"
+    },
+    {
+      "id": "proofOfIdentity",
+      "label": "Identificación que presenta",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["pasaporte", "ife", "mcas", "credencial_del_inapam", "cartilla_del_smn_liberada", "cedula_profesional", "otro"],
+      "handling": "mcas-is-matricula-consular-de-alta-seguridad-the-high-security-consular-id-card-mexican-consulates-issue-to-nationals-abroad-ife-is-the-instituto-federal-electoral-voter-card-predecessor-of-ine-recorded-by-consular-staff-in-uso-exclusivo-sre-checkbox-block",
+      "sourceRef": "Field 9 / Identificación block (Uso exclusivo SRE) — Pasaporte / Credencial del INAPAM / IFE / Cartilla del SMN liberada / MCAS / Cédula profesional / Otro"
+    },
+    {
+      "id": "photograph",
+      "label": "Fotografía",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "color-front-facing-uncovered-face-white-background-4.5x3.5cm-form-itself-is-free-of-charge",
+      "sourceRef": "Fotografía — 'A color, de frente, rostro descubierto, fondo blanco 4.5 x 3.5 cm.'"
+    },
+    {
+      "id": "swornTruthfulnessAndNationalityDeclaration",
+      "label": "Declaración bajo protesta de decir verdad",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Manifiesto bajo protesta de decir verdad y conociendo las penas en que incurren quienes faltan a ella en los términos de lo dispuesto por el Artículo 247 fracción I del Código Penal Federal, que soy de nacionalidad mexicana, que los datos asentados son verídicos y que los documentos presentados son auténticos.",
+      "sourceRef": "Declaration clause, form footer"
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_data",
+      "title": "Datos personales",
+      "fields": ["curp", "firstName", "lastNamePaternal", "lastNameMaternal", "sex", "dateOfBirth", "countryOfBirth", "stateOfBirth", "municipalityOfBirth", "localityOfBirth", "spouseName", "civilStatus", "educationLevel", "occupation"],
+      "next": "application_details"
+    },
+    {
+      "id": "application_details",
+      "title": "Tipo de pasaporte",
+      "fields": ["applicationType", "requestedValidityYears", "previousPassportNumber"],
+      "next": "contact_information"
+    },
+    {
+      "id": "contact_information",
+      "title": "Domicilio en el extranjero",
+      "fields": ["foreignAddressStreet", "foreignAddressCity", "foreignAddressLocality", "foreignAddressStateAndCountry", "foreignAddressPostalCode", "phoneNumber", "email"],
+      "next": "filiacion"
+    },
+    {
+      "id": "filiacion",
+      "title": "Filiación",
+      "fields": ["complexionSkinTone", "build", "hairColor", "hairLength", "hairType", "eyeColor", "heightMeters", "weightKilos"],
+      "next": "emergency_contact"
+    },
+    {
+      "id": "emergency_contact",
+      "title": "Datos de un familiar o amigo",
+      "fields": ["emergencyContactName", "emergencyContactRelationship", "emergencyContactCountry", "emergencyContactStateProvince", "emergencyContactLocalityOrMunicipality", "emergencyContactCity", "emergencyContactAddress", "emergencyContactPostalCode", "emergencyContactPhone", "consentToDataDisclosure"]
+    }
+  ]
+}
