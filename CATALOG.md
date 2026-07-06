@@ -4,8 +4,37 @@
 
 ## Executive Summary
 
-**15 jurisdictions** | **224 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**16 jurisdictions** | **225 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1393):** **Mexico** opens as the registry's
+> **16th jurisdiction** with `mx/inm/forma-migratoria-multiple-electronica`,
+> the Forma Migratoria Múltiple (FMM) — the mandatory entry/exit record every
+> non-resident visitor must present on arrival — sourced from the Instituto
+> Nacional de Migración's (INM) own live, unauthenticated online wizard.
+> Opens in the Visa vertical, matching the "open with the strongest single
+> vertical first" pattern used for South Korea (`GOV-1289`), the UAE
+> (`GOV-1297`/`GOV-1335`), and Brazil (`GOV-1296`/`GOV-1342`). This cycle
+> scouted four Mexican verticals before picking FMM: SRE passport (in-person
+> appointment booking only, no field-level online form), SAT RFC tax/business
+> registration (the official "Ficha 43/CFF" PDF is a document-requirements
+> checklist rather than a field-by-field form, and the live SAT
+> preinscription wizard returned HTTP 403 to a direct fetch — untested via a
+> real browser this cycle, a candidate for a future cycle), and CURP national
+> ID (in-person biometric appointment only) — all three found too weak or
+> gated for this cycle and left as open backlog candidates, not dead ends.
+> The live wizard's own client-side script hardcodes and disables its
+> means-of-entry selector to "By land" on the URL this cycle sourced, so the
+> "by air" pathway defined in the same underlying catalog is never reachable
+> through it; `mx/inm/forma-migratoria-multiple-electronica` v1.0.0 is
+> deliberately scoped to land entry only, and models the conditional
+> parent/guardian section required for a minor applicant via a synthetic
+> `applicantIsMinor` field (GovSchema's flat field model has no
+> date-arithmetic operator to derive age from a birth date directly) — see
+> the document's own VERIFICATION.md for this and several other disclosed
+> interpretive judgment calls flagged for an independent reviewer. Mexico's
+> other four verticals (Passport, DMV, Business Formation/Tax, National ID)
+> remain open backlog candidates for a future cycle.
+>
 > **Update (2026-07-06, GOV-1387):** South Africa's SARS ITR14 corporate
 > income tax return closes its fifth and final company-type Annexure,
 > `za/sars/corporate-income-tax-return-itr14-medium-large-business`
@@ -230,12 +259,12 @@
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
-| **Passport** | 14/15 (93%) | **AE** not yet modelled; **BR** newly modelled this cycle (`br/pf/passport-application`) |
-| **DMV** | 13/15 (87%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR** not yet modelled |
-| **Business Formation** | 13/15 (87%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE** not yet modelled; **BR** newly modelled this cycle (`br/sp/jucesp/cnpj-registration-dbe`) |
-| **Taxes** | 14/15 (93%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** not yet modelled (GOV-1295 Receita Federal IRPF candidate too fragmentary so far) |
-| **Visa** | 11/15 (73%) | **NL, ZA** — both confirmed dead ends (see below), not open work; **AE, BR** not yet modelled |
-| **National ID & Civic Documents** | 13/15 (87%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR** not yet modelled |
+| **Passport** | 14/16 (88%) | **AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
+| **DMV** | 13/16 (81%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR, MX** not yet modelled |
+| **Business Formation** | 13/16 (81%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`) |
+| **Taxes** | 14/16 (88%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR, MX** not yet modelled (BR's GOV-1295 Receita Federal IRPF candidate too fragmentary so far; MX's SAT RFC candidate is a document checklist, not a field-level form, and its live wizard 403s to a direct fetch) |
+| **Visa** | 12/16 (75%) | **NL, ZA** — both confirmed dead ends (see below), not open work; **AE** not yet modelled; **MX** newly modelled this cycle (`mx/inm/forma-migratoria-multiple-electronica`), opening Mexico as the registry's 16th jurisdiction |
+| **National ID & Civic Documents** | 13/16 (81%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
 > (generated by GOV-1221) showed Passport as 9/13 with ZA, IN, and NL listed
@@ -338,7 +367,7 @@ expansions:
 - **UAE Corporate Tax registration:** now modelled (`ae/fta/corporate-tax-registration`, GOV-1371) for the Legal Person registration pathway; Natural Person registration's own field set was not sourced this cycle (see its VERIFICATION.md).
 - **Secondary new-jurisdiction candidate (not opened yet):** Brazil's Receita Federal IRPF (`GOV-1295`) remains open in backlog pending either a stronger source or a narrower single-schedule scope — see its comment thread.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (11/14 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (12/16 jurisdictions)
 
 **Two confirmed, previously-researched dead ends — not open work:**
 
@@ -349,23 +378,34 @@ expansions:
   2026-07-05). No online visa-application form is publicly sourceable at
   this time.
 
-Every other jurisdiction (AU, CA, DE, FR, GB, IE, IN, KR, NZ, SG, US) has at
-least one Visa schema. **South Korea** (`kr/moj/visa-application`, GOV-1292)
-was new in the previous cycle — sourced from the Ministry of Justice/Korea
-Immigration Service's gazetted Visa Application Form (사증발급신청서), a plain
-directly-downloadable bilingual PDF, no login or CAPTCHA required. **United
-Arab Emirates** has no Visa schema yet — not researched this cycle. Remaining
-sub-process gaps: India work/student/business visas beyond e-Tourist and
-e-Student (already 2 of India's likely several visa categories — see
-`in/mha/evisa-etourist`, `in/mha/evisa-estudent`); GB work/graduate visas
-(Home Office digital services not yet open-sourced).
+Every other jurisdiction (AU, CA, DE, FR, GB, IE, IN, KR, MX, NZ, SG, US) has
+at least one Visa schema. **Mexico** (`mx/inm/forma-migratoria-multiple-electronica`,
+GOV-1393) is new this cycle — sourced from the Instituto Nacional de
+Migración's own live, unauthenticated FMM (Forma Migratoria Múltiple) online
+wizard, opening Mexico as the registry's 16th jurisdiction. Scoped to land
+entry only: the wizard's own client-side script hardcodes and disables its
+means-of-entry selector to "By land" on the URL this cycle sourced, so the
+"by air" pathway defined in the same underlying catalog is never reachable
+through it (see the document's own VERIFICATION.md). **South Korea**
+(`kr/moj/visa-application`, GOV-1292) was new in a prior cycle — sourced from
+the Ministry of Justice/Korea Immigration Service's gazetted Visa
+Application Form (사증발급신청서), a plain directly-downloadable bilingual PDF,
+no login or CAPTCHA required. **United Arab Emirates** has no Visa schema
+yet — not researched this cycle. Remaining sub-process gaps: India
+work/student/business visas beyond e-Tourist and e-Student (already 2 of
+India's likely several visa categories — see `in/mha/evisa-etourist`,
+`in/mha/evisa-estudent`); GB work/graduate visas (Home Office digital
+services not yet open-sourced); Mexico's own air/sea entry pathways (see
+above).
 
-### National ID & Civic Documents (13/14 jurisdictions)
+### National ID & Civic Documents (13/16 jurisdictions)
 
-Every jurisdiction except the United Arab Emirates has at least one National
-ID and/or voter-registration schema; UAE was not researched for this vertical
-this cycle. Singapore's lack of a voter-registration schema is a **confirmed
-non-gap** (GOV-1075): Singapore voting is compulsory and NRIC-linked, with no
+Every jurisdiction except the United Arab Emirates, Brazil, and Mexico has at
+least one National ID and/or voter-registration schema. Mexico's CURP
+national-ID candidate requires an in-person biometric appointment and was not
+sourceable this cycle (GOV-1393) — an open backlog candidate, not a dead end.
+Singapore's lack of a voter-registration schema is a **confirmed non-gap**
+(GOV-1075): Singapore voting is compulsory and NRIC-linked, with no
 citizen-initiated online registration step to model. **South Korea** now has
 two National ID documents: `kr/nec/overseas-voter-registration` (GOV-1294),
 sourced from the National Election Commission's combined overseas
@@ -391,6 +431,7 @@ now closed.
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 6 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **MX** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -444,10 +485,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    panels (Transfer Pricing, Group Relief, Section 299 Leases, R&D Credit,
    Film Tax) far more extensive than a single-session schema should attempt
    without a comparably strong source.
-3. **New jurisdictions beyond the current 15** — the standard is meant to be
-   global from the start (see AGENTS.md charter). South Korea, the UAE, and
-   Brazil have each been opened in recent cycles (GOV-1289, GOV-1297,
-   GOV-1296). Candidates worth scouting in a future cycle: Mexico, or an EU
+3. **New jurisdictions beyond the current 16** — the standard is meant to be
+   global from the start (see AGENTS.md charter). South Korea, the UAE,
+   Brazil, and Mexico have each been opened in recent cycles (GOV-1289,
+   GOV-1297, GOV-1296, GOV-1393). Mexico's own Passport (SRE, in-person
+   appointment only), DMV, Business Formation/Tax (SAT RFC — document
+   checklist only, live wizard 403s to a direct fetch), and National ID
+   (CURP — in-person biometric only) verticals remain open backlog
+   candidates for a future cycle, none a confirmed dead end. Candidates worth
+   scouting for a genuinely new (17th) jurisdiction in a future cycle: an EU
    member beyond DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked
    dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
@@ -486,8 +532,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
 - **Jurisdiction:** ISO 3166-1 alpha-2 code (AE, AU, BR, CA, DE, FR, GB, IE,
-  IN, KR, NL, NZ, SG, US, ZA) — 15 jurisdictions tracked as of
-  GOV-1296/GOV-1342 (2026-07-05), up from the prior revision's 14.
+  IN, KR, MX, NL, NZ, SG, US, ZA) — 16 jurisdictions tracked as of GOV-1393
+  (2026-07-06), up from the prior revision's 15.
 
 ---
 
@@ -510,4 +556,6 @@ Emirates opened as 14th jurisdiction), updated by GOV-1296/GOV-1342
 jurisdiction), updated by GOV-1378 (`za/sars/corporate-income-tax-return-itr14-small-business`
 authoring, ZA ITR14 4th of 5 Annexures), updated by GOV-1387
 (`za/sars/corporate-income-tax-return-itr14-medium-large-business`
-authoring, ZA SARS ITR14 corporate-tax gap closed, 5th and last Annexure) | Standards Engineer
+authoring, ZA SARS ITR14 corporate-tax gap closed, 5th and last Annexure),
+updated by GOV-1393 (`mx/inm/forma-migratoria-multiple-electronica`
+authoring, Mexico opened as 16th jurisdiction) | Standards Engineer
