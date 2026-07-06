@@ -1,0 +1,423 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mx/inm/forma-migratoria-multiple-electronica",
+  "version": "1.0.0",
+  "title": "Mexico Multiple Immigration Form (FMM) — Electronic, Land Entry",
+  "description": "Mexico's Forma Migratoria Múltiple (FMM), the mandatory entry/exit record every visitor without permanent-resident status must present on arrival for tourism, business, or other short-term purposes, completed in advance through the National Immigration Institute's (Instituto Nacional de Migración, INM) own live, unauthenticated online wizard. Filling out the wizard produces a folio/record the traveler pays a separate fee against (via a distinct INM payment portal) and presents, together with their travel document, at the port of entry; this document models only the online data-entry wizard itself — not the fee payment, not the physical inspection at the border, and not the PDF the wizard can generate once a folio is confirmed. The live wizard offers only one reachable entry mode: this document is scoped to a land ('Terrestre'/'By land') entry, which is the only means-of-entry option this specific wizard's own client-side script allows a user to reach (see VERIFICATION.md); it also covers the ordinary adult pathway plus the conditional parent/guardian information block required whenever the applicant is a minor. The wizard's own mandatory CAPTCHA/verification-code step, which gates the final save action, is out of scope — this document never submits the form. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Mexico or the Instituto Nacional de Migración.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MX",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Instituto Nacional de Migración",
+    "abbreviation": "INM",
+    "url": "https://www.inm.gob.mx"
+  },
+  "process": {
+    "type": "application",
+    "language": "es-MX"
+  },
+  "source": {
+    "url": "https://www.inm.gob.mx/fmme/publico/en/solicitud.html",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "Forma Migratoria Múltiple (FMM) — electronic online wizard, Instituto Nacional de Migración"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Source-derived reference schema opening Mexico as the registry's 16th jurisdiction. Authored against the live, unauthenticated INM FMM wizard (both the English UI at .../en/solicitud.html and the Spanish default at .../publico/solicitud.html — note the Spanish page has no /es/ path segment, unlike English/Japanese/Chinese/Korean, which do; .../publico/es/solicitud.html 404s) via headless-browser DOM extraction plus direct inspection of the wizard's own client-side validation source (jquery.inm.fmme.solicitud-1.0.0.js and jquery.inm.common.validator-3.1.4.js, both served unminified from inm.gob.mx) and its field-option catalog endpoint (/fmme/resources/solicitud/meta-resources/catalogos, an XML document despite its JSON-like path segment). Reading the validator source directly — not just the rendered DOM — was necessary because this wizard's required/hidden/pattern rules are applied entirely by a custom JS validation object, not native HTML `required`/`pattern` attributes (every native attribute on every field is unset). A full end-to-end dry run (fill every field with fabricated data, trigger every confirmation-mismatch case, trigger the minor/guardian branch, reach the client-side-valid review state) was completed without ever submitting past the CAPTCHA gate. Status remains 'draft' pending an independent second reviewer's field-by-field pass. See VERIFICATION.md for the extraction method, the land-only entry-mode scope decision, and other interpretive judgment calls flagged for that review."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "meansOfEntry",
+      "label": "Means of entry",
+      "type": "enum",
+      "required": true,
+      "description": "How the applicant will enter Mexico. This document models only the land ('Terrestre') pathway: on the live wizard this field is pre-selected to 'By land' and its native HTML `<select>` is disabled the moment the applicant accepts the terms checkbox under the page's single 'By Land' accordion panel — the wizard's own client-side script (`viaInternacion = \"terrestre\"`, hardcoded) never lets a user reach the alternative 'By air' ('Aéreo') value through this URL, even though that value, and the associated airline-name/flight-number fields, still exist in the underlying catalog and DOM. See VERIFICATION.md.",
+      "sourceRef": "Datos de ingreso — Vía de internación* (English: Entry Information — Means of entry*)",
+      "validation": { "enum": ["land"] }
+    },
+    {
+      "name": "pointOfEntry",
+      "label": "Point of entry",
+      "type": "enum",
+      "required": true,
+      "description": "The specific land border crossing point. Official Spanish names as published in INM's own point-of-entry catalog for land entry (60 values); the English UI renders these same Spanish place names untranslated, since they are proper nouns.",
+      "sourceRef": "Datos de ingreso — Punto de internación* (English: Entry Information — Point of entry*)",
+      "validation": { "enum": ["Agua Prieta", "Algodones", "B & M (Matamoros I)", "Benito Juárez I (Reynosa Hidalgo)", "Benito Juárez II (Reynosa Hidalgo)", "Boquillas Del Carmen", "Camargo", "Carmen Xhan", "Chalán Díaz Ordaz", "Ciudad Acuña", "Ciudad Hidalgo - Suchiate I", "Ciudad Hidalgo - Suchiate II", "Colombia", "Conexión peatonal aeroportuario Tijuana - San Diego", "Córdova", "El Berrendo", "El Ceibo", "El Chaparral", "Frontera Corozal", "La Unión", "Las Champas", "Las Flores (Nuevo Progreso)", "Libertad (Paso Del Norte)", "Mesa De Otay", "Mexicali I", "Mexicali II", "Miguel Alemán", "Naco", "Nogales Dos", "Nogales Tres", "Nogales Uno", "Nuevo Amanecer (Reynosa III-Pharr)", "Nuevo Laredo I (Miguel Alemán)", "Nuevo Laredo II (Juárez - Lincoln)", "Nuevo Laredo III (Comercio Mundial)", "Ojinaga", "Porfirio Parra", "Porvenir", "Presa Falcón", "Presa La Amistad", "Puente Internacional \"Anzaldúas\" Reynosa- Mission", "Puente Internacional I Puerta De México", "Puente Internacional II Coahuila 2000", "Puente Internacional Revolución (Río Bravo-Donna)", "Puerta México (Matamoros II)", "Puerto Palomas", "Punto de Internación Puerta Este en la Puerta México de Tijuana", "Reforma", "San Jerónimo", "San Luis Río Colorado I", "San Luis Río Colorado II", "Sonoyta", "Subteniente López", "Sásabe", "Talismán", "Tecate", "Tlc", "Unión Juárez", "Zaragoza", "Zaragoza (Matamoros III)"] }
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Date of arrival to Mexico",
+      "type": "date",
+      "required": true,
+      "description": "The live form displays this as a masked dd/mm/yyyy text input; represent as an ISO 8601 full-date. The live wizard's own client-side validation rejects an arrival date earlier than today or later than 29 days from today (i.e. the wizard may only be completed up to 30 days before arrival, inclusive of today).",
+      "sourceRef": "Datos de ingreso — Fecha de llegada a México*"
+    },
+    {
+      "name": "departureDate",
+      "label": "Date of departure",
+      "type": "date",
+      "required": true,
+      "description": "The live form displays this as a masked dd/mm/yyyy text input; represent as an ISO 8601 full-date. Must not be earlier than arrivalDate, and the live wizard's own client-side validation additionally rejects a departure date more than 179 days after arrivalDate (i.e. a maximum 180-day stay counting the arrival day) — only the first (chronological ordering) half of this rule is expressed in this document's crossFieldValidation; the 180-day cap has no offset-arithmetic operator in the GovSchema Condition grammar and is recorded here as prose instead.",
+      "sourceRef": "Datos de ingreso — Fecha de salida*"
+    },
+    {
+      "name": "givenNames",
+      "label": "Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As shown on the travel document used to enter Mexico. The live form applies an ICAO-style name pattern (letters plus space/hyphen/apostrophe/period/comma separators, no digits) and converts to upper case.",
+      "sourceRef": "Datos personales — Nombre(s)*",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As shown on the travel document used to enter Mexico. Same ICAO-style name pattern as givenNames.",
+      "sourceRef": "Datos personales — Apellido(s)*",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Datos personales — Sexo* (Hombre/Mujer)",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The live form displays this as a masked dd/mm/yyyy text input; represent as an ISO 8601 full-date. The live wizard's own client-side validation rejects a birth date more than ~110 years (40,177 days) before today, or later than today. The wizard also derives the applicant's age at arrivalDate from this field to (a) decide whether the guardian section (see applicantIsMinor) is required, and (b) remove 'Business' from reasonOfTrip's options when the applicant will be under 2 years old at arrival — neither derivation is itself a field on the live form; see applicantIsMinor and reasonOfTrip.",
+      "sourceRef": "Datos personales — Fecha de nacimiento*"
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality (Country)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "ISO 3166-1 alpha-2 country code. Drawn from INM's own closed country catalog (243 entries — the same catalog used for countryOfBirth/documentIssuingCountry/countryOfResidence, minus Mexico, which this specific field's option list excludes since the FMM is only completed by non-Mexican-national visitors). Not enumerated here given its size; see VERIFICATION.md for how the live catalog's opaque internal numeric IDs relate to this ISO code.",
+      "sourceRef": "Datos personales — Nacionalidad (País)*",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "ISO 3166-1 alpha-2 country code. Drawn from INM's full 244-entry country catalog (includes Mexico, unlike nationality — a person born in Mexico can hold only a foreign nationality and still use this form). Not enumerated here given its size; see VERIFICATION.md.",
+      "sourceRef": "Datos personales — País de nacimiento*",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "documentType",
+      "label": "Type of document",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Documento de identificación — Tipo de documento* (Pasaporte/Tarjeta pasaporte)",
+      "validation": { "enum": ["passport", "passport_card"] }
+    },
+    {
+      "name": "documentNumber",
+      "label": "Document number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Documento de identificación — Número de documento*",
+      "validation": { "maxLength": 15, "pattern": "^[A-Z0-9-]+$" }
+    },
+    {
+      "name": "documentNumberConfirmation",
+      "label": "Document number (Confirmation)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Must exactly match documentNumber. The live form disables copy/paste into this field to force the applicant to retype it.",
+      "sourceRef": "Documento de identificación — Número de documento (Confirmación)*",
+      "validation": { "maxLength": 15, "pattern": "^[A-Z0-9-]+$" }
+    },
+    {
+      "name": "documentIssuingCountry",
+      "label": "Country of issue",
+      "type": "string",
+      "required": true,
+      "description": "ISO 3166-1 alpha-2 country code. Same 244-entry country catalog as countryOfBirth. Not enumerated here given its size; see VERIFICATION.md.",
+      "sourceRef": "Documento de identificación — País de expedición*",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "documentIssueDate",
+      "label": "Date of issue",
+      "type": "date",
+      "required": true,
+      "description": "The live form displays this as a masked dd/mm/yyyy text input; represent as an ISO 8601 full-date. The live wizard's own client-side validation rejects an issue date earlier than dateOfBirth.",
+      "sourceRef": "Documento de identificación — Fecha de expedición*"
+    },
+    {
+      "name": "documentIssueDateConfirmation",
+      "label": "Date of issue (Confirmation)",
+      "type": "date",
+      "required": true,
+      "description": "Must exactly match documentIssueDate. The live form disables copy/paste into this field.",
+      "sourceRef": "Documento de identificación — Fecha de expedición (Confirmación)*"
+    },
+    {
+      "name": "documentExpiryDate",
+      "label": "Expiration date",
+      "type": "date",
+      "required": true,
+      "description": "The live form displays this as a masked dd/mm/yyyy text input; represent as an ISO 8601 full-date. The live wizard's own client-side validation rejects an expiry date earlier than today, and additionally requires it to be at least 179 days after arrivalDate (i.e. the travel document must remain valid through the maximum possible 180-day stay) — the latter offset rule is recorded here as prose only; see departureDate for the same offset-arithmetic limitation.",
+      "sourceRef": "Documento de identificación — Fecha de expiración*"
+    },
+    {
+      "name": "documentExpiryDateConfirmation",
+      "label": "Expiration date (Confirmation)",
+      "type": "date",
+      "required": true,
+      "description": "Must exactly match documentExpiryDate. The live form disables copy/paste into this field.",
+      "sourceRef": "Documento de identificación — Fecha de expiración (Confirmación)*"
+    },
+    {
+      "name": "countryOfResidence",
+      "label": "Country of residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "ISO 3166-1 alpha-2 country code. Same 244-entry country catalog as countryOfBirth. Not enumerated here given its size; see VERIFICATION.md.",
+      "sourceRef": "Lugar de residencia — País de residencia*",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "residenceAddress",
+      "label": "Address of residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Free text; the live form restricts this to upper-case letters, digits, and a small punctuation set ( . , \" ' and hyphen), and converts to upper case.",
+      "sourceRef": "Lugar de residencia — Dirección de residencia*",
+      "validation": { "maxLength": 40, "pattern": "^[-A-Z0-9.,\"' ]*$" }
+    },
+    {
+      "name": "reasonOfTrip",
+      "label": "Reason of trip",
+      "type": "enum",
+      "required": true,
+      "description": "Top-level reason category. The live catalog also defines a fourth top-level value, 'Crew' ('Tripulación'), but the wizard's own script removes it from this field's option list whenever means of entry is land (utils.filtraCatalogosPorClave / motivoEstanciaSinTripulacion) — since this document is scoped to land entry, 'crew' is never a reachable value here and is omitted. The wizard additionally removes 'Business' from the option list whenever the applicant will be under 2 years old at arrivalDate; this document does not encode that narrower, age-conditional exclusion (see dateOfBirth), since GovSchema's flat field/Condition model has no mechanism for conditionally shrinking an enum's value set based on another field.",
+      "sourceRef": "Información de viaje — Motivo de viaje* (Turismo/Negocios/Otro, Tripulación excluded for land entry)",
+      "validation": { "enum": ["tourism", "business", "other"] }
+    },
+    {
+      "name": "reasonOfTripSpecify",
+      "label": "Specify",
+      "type": "enum",
+      "required": true,
+      "description": "The specific sub-reason. On the live form the option list populates dynamically based on reasonOfTrip (9 business sub-reasons, 5 other sub-reasons, 1 tourism sub-reason — 'crew' sub-reasons are excluded here for the same land-entry reason as reasonOfTrip); this field is unconditionally required regardless of which reasonOfTrip value is chosen, since every reachable top-level reason has at least one sub-reason. 'resident' has no official English translation on the live source (the English UI falls back to the Spanish label 'Residente'); 'artist_and_sportsman' preserves the live source's own English translation text verbatim, including its own apparent spelling ('Sportman' rather than 'Sportsman').",
+      "sourceRef": "Información de viaje — Especifique motivo*",
+      "validation": { "enum": ["recreational_activities", "conferences", "congresses", "consultants", "conventions", "exhibitions", "fairs", "investors", "merchants", "personnel_transfer", "resident", "artist_and_sportsman", "health", "religious_ministers", "study"] }
+    },
+    {
+      "name": "destinationState",
+      "label": "State",
+      "type": "enum",
+      "required": true,
+      "description": "The Mexican state of destination. Official Spanish state names as published in INM's own catalog (32 entries, including Ciudad de México and Estado de México as distinct entries); the English UI renders these same Spanish names untranslated.",
+      "sourceRef": "Información de viaje — Estado*",
+      "validation": { "enum": ["Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", "Ciudad de México", "Coahuila", "Colima", "Durango", "Estado de México", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"] }
+    },
+    {
+      "name": "addressInMexico",
+      "label": "Address in Mexico",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Free text (e.g. hotel name, street, and number). Same upper-case letters/digits/limited-punctuation restriction as residenceAddress.",
+      "sourceRef": "Información de viaje — Domicilio en México* (placeholder: 'Hotel name, street and number')",
+      "validation": { "maxLength": 40, "pattern": "^[-A-Z0-9.,\"' ]*$" }
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Applicant is under 18 years old at arrival",
+      "type": "boolean",
+      "required": true,
+      "description": "Derived field, not itself present on the live form: the wizard computes the applicant's age from dateOfBirth as of arrivalDate and shows/requires the guardian section below whenever that computed age is under 18. GovSchema's flat field/Condition model has no built-in date-arithmetic operator, so this document introduces this boolean as the explicit gate the live computation performs, following the same pattern the spec's own worked example uses for a plain yes/no gate (SPEC.md §6.7's isLLC). Set it to true only when the applicant will genuinely be under 18 on arrivalDate. See VERIFICATION.md.",
+      "sourceRef": "Derived from Datos personales — Fecha de nacimiento* (not itself a form field; the wizard's utils.validaMenorEdad() function performs this computation client-side)"
+    },
+    {
+      "name": "guardianGivenNames",
+      "label": "Guardian name(s)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Name(s) of the accompanying father, mother, or legal guardian. Required only when applicantIsMinor is true.",
+      "sourceRef": "Información del padre, madre o tutor — Nombre(s)",
+      "visibleWhen": { "field": "applicantIsMinor", "equals": true },
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "guardianSurname",
+      "label": "Guardian surname(s)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Required only when applicantIsMinor is true.",
+      "sourceRef": "Información del padre, madre o tutor — Apellido(s)",
+      "visibleWhen": { "field": "applicantIsMinor", "equals": true },
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "guardianGender",
+      "label": "Guardian gender",
+      "type": "enum",
+      "description": "Required only when applicantIsMinor is true.",
+      "sourceRef": "Información del padre, madre o tutor — Sexo",
+      "visibleWhen": { "field": "applicantIsMinor", "equals": true },
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "guardianDateOfBirth",
+      "label": "Guardian date of birth",
+      "type": "date",
+      "classification": "sensitive-pii",
+      "description": "Required only when applicantIsMinor is true. The live wizard separately requires the guardian to be an adult (its own age computation on this same field, mirroring dateOfBirth/applicantIsMinor); not re-derived as a second synthetic field here — see VERIFICATION.md.",
+      "sourceRef": "Información del padre, madre o tutor — Fecha de nacimiento",
+      "visibleWhen": { "field": "applicantIsMinor", "equals": true },
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true }
+    },
+    {
+      "name": "guardianNationality",
+      "label": "Guardian nationality (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "ISO 3166-1 alpha-2 country code, same 244-entry catalog as countryOfBirth. Required only when applicantIsMinor is true.",
+      "sourceRef": "Información del padre, madre o tutor — Nacionalidad (País)",
+      "visibleWhen": { "field": "applicantIsMinor", "equals": true },
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "guardianCountryOfBirth",
+      "label": "Guardian country of birth",
+      "type": "string",
+      "classification": "pii",
+      "description": "ISO 3166-1 alpha-2 country code, same 244-entry catalog as countryOfBirth. Required only when applicantIsMinor is true.",
+      "sourceRef": "Información del padre, madre o tutor — País de nacimiento",
+      "visibleWhen": { "field": "applicantIsMinor", "equals": true },
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Used to send the folio/confirmation and, on final submission, a verification code. The live form converts input to lower case.",
+      "sourceRef": "Correo electrónico — Correo electrónico*",
+      "validation": { "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$" }
+    },
+    {
+      "name": "emailConfirmation",
+      "label": "Email (Confirmation)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must exactly match email. The live form disables copy/paste into this field.",
+      "sourceRef": "Correo electrónico — Correo electrónico (Confirmación)*",
+      "validation": { "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$" }
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "documentNumberMatchesConfirmation",
+      "compare": { "field": "documentNumberConfirmation", "operator": "equals", "compareTo": "documentNumber" }
+    },
+    {
+      "id": "documentIssueDateMatchesConfirmation",
+      "compare": { "field": "documentIssueDateConfirmation", "operator": "equals", "compareTo": "documentIssueDate" }
+    },
+    {
+      "id": "documentExpiryDateMatchesConfirmation",
+      "compare": { "field": "documentExpiryDateConfirmation", "operator": "equals", "compareTo": "documentExpiryDate" }
+    },
+    {
+      "id": "emailMatchesConfirmation",
+      "compare": { "field": "emailConfirmation", "operator": "equals", "compareTo": "email" }
+    },
+    {
+      "id": "departureNotBeforeArrival",
+      "compare": { "field": "departureDate", "operator": "greaterThanOrEqual", "compareTo": "arrivalDate" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "entry_information",
+      "title": "Entry Information",
+      "fields": ["meansOfEntry", "pointOfEntry", "arrivalDate", "departureDate"],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": ["givenNames", "surname", "gender", "dateOfBirth", "nationality", "countryOfBirth"],
+      "next": "identification_document"
+    },
+    {
+      "id": "identification_document",
+      "title": "Identification Document",
+      "fields": ["documentType", "documentNumber", "documentNumberConfirmation", "documentIssuingCountry", "documentIssueDate", "documentIssueDateConfirmation", "documentExpiryDate", "documentExpiryDateConfirmation"],
+      "next": "place_of_residence"
+    },
+    {
+      "id": "place_of_residence",
+      "title": "Place of Residence",
+      "fields": ["countryOfResidence", "residenceAddress"],
+      "next": "trip_information"
+    },
+    {
+      "id": "trip_information",
+      "title": "Trip Information",
+      "fields": ["reasonOfTrip", "reasonOfTripSpecify", "destinationState", "addressInMexico"],
+      "next": "guardian_information"
+    },
+    {
+      "id": "guardian_information",
+      "title": "Guardian Information",
+      "fields": ["applicantIsMinor", "guardianGivenNames", "guardianSurname", "guardianGender", "guardianDateOfBirth", "guardianNationality", "guardianCountryOfBirth"],
+      "next": "email"
+    },
+    {
+      "id": "email",
+      "title": "Email",
+      "fields": ["email", "emailConfirmation"]
+    }
+  ]
+}
