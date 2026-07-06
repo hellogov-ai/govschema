@@ -4,8 +4,44 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **236 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **237 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1466):** The Philippines gains a third vertical,
+> `ph/bir/annual-income-tax-return-1701a` (Taxes) — BIR Form 1701A, the
+> annual income tax return for individuals earning income purely from
+> business/profession, covering either the Optional Standard Deduction/
+> graduated-rates method or the 8% flat-rate method. This closes the
+> **global Taxes vertical to 17/17 jurisdictions (100%)**. Sourced from a
+> genuine, directly downloadable, unblocked (no login/CAPTCHA/WAF) text-layer
+> PDF on BIR's own CDN (`bir-cdn.bir.gov.ph`); the form carries no
+> AcroForm/Widget field annotations, so digit-box counts (TIN, RDO Code,
+> Number of Attachments) were confirmed via high-resolution Chromium renders
+> rather than form-field metadata. This `GovSchema Standard Research` cycle
+> (GOV-1466) screened all four of the Philippines' remaining vertical gaps
+> before picking this one: **Passport** (`passport.gov.ph`, a live
+> unauthenticated appointment wizard using the same DOM-walk technique
+> already proven for `ph/comelec/overseas-voter-registration`) was set aside
+> after its own live AJAX timeslot-availability endpoint returned genuinely
+> scarce real inventory (e.g. "Available Slots: 1") for actual DFA
+> appointment sites — walking further into the wizard to observe its
+> personal-information fields would have required selecting and holding one
+> of those real, limited slots, an unacceptable side effect on a live
+> citizen-facing government booking system this cycle declined to cause; left
+> as an open backlog candidate, not a dead end. **DMV** (`lto.gov.ph` LTO Form
+> No. 21, Application for Driver's License) is a real text-layer PDF but only
+> reachable via a third-party CDN mirror since `lto.gov.ph` itself is
+> Cloudflare-gated on every path tried — a weaker provenance chain, left as an
+> open backlog candidate. **Visa** (`immigration.gov.ph` Bureau of
+> Immigration CGAF forms) is an equally strong, unblocked, directly
+> downloadable PDF candidate, not picked this cycle only because closing
+> Taxes closed a vertical globally to 100%; left as a strong open backlog
+> candidate. See `ph/bir/annual-income-tax-return-1701a`'s own
+> VERIFICATION.md for the full sourcing method and every disclosed
+> interpretive judgment call (including Part III, Details of Payment, a
+> repeating table deferred pending GSP-0009). The Philippines now has 3/6
+> verticals (Business Formation, National ID, Taxes); Passport, DMV, and Visa
+> remain open backlog candidates for a future cycle.
+>
 > **Update (2026-07-06, GOV-1457):** The Philippines gains its second
 > vertical, `ph/comelec/overseas-voter-registration` (National ID & Civic
 > Documents), sourced from the Commission on Elections' (COMELEC) own public,
@@ -478,11 +514,11 @@
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
-| **Passport** | 14/17 (82%) | **AE, MX, PH** not yet modelled (**PH** new this cycle, not screened); **BR** modelled in a prior cycle (`br/pf/passport-application`) |
-| **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR, PH** not yet modelled (**PH** new this cycle, not screened); **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
+| **Passport** | 14/17 (82%) | **AE, MX** not yet modelled; **PH** screened (GOV-1466) and deliberately deferred — `passport.gov.ph`'s live wizard is real and DOM-walkable, but its Schedule step consumes genuinely scarce real DFA appointment inventory, so this cycle declined to walk further; open backlog candidate, not a dead end; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
+| **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 15/17 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** newly modelled this cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444), opening the Philippines as the registry's 17th jurisdiction |
-| **Taxes** | 16/17 (94%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** not yet modelled (new this cycle, not screened) |
-| **Visa** | 13/17 (76%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** not yet modelled (new this cycle, not screened); **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
+| **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
+| **Visa** | 13/17 (76%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** screened (GOV-1466) — Bureau of Immigration's CGAF forms (`immigration.gov.ph`) are a genuine, unblocked, directly downloadable candidate, not picked this cycle only because Taxes closed a vertical globally; strong open backlog candidate; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
 | **National ID & Civic Documents** | 14/17 (82%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only); **PH** newly modelled this cycle (`ph/comelec/overseas-voter-registration`, GOV-1457) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
@@ -621,12 +657,21 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (16/17 jurisdictions)
+### Taxes — Income Tax Return, Tax Filing (17/17 jurisdictions — 100%)
 
-Every jurisdiction except the Philippines (new this cycle — see Business
-Formation above) now has at least one Taxes-vertical schema; BIR's own
-Income Tax Return forms (e.g. 1701/1702 series) are an open backlog
-candidate for a future cycle. **Mexico**
+Every jurisdiction now has at least one Taxes-vertical schema. **The
+Philippines** (`ph/bir/annual-income-tax-return-1701a`, GOV-1466) is new
+this cycle and closes the global Taxes vertical to 100% — sourced from BIR
+Form 1701A (January 2018 ENCS, with rates), the annual income tax return for
+individuals earning income purely from business/profession, covering either
+the Optional Standard Deduction/graduated-rates method or the 8% flat-rate
+method. A genuine, directly downloadable, unblocked text-layer PDF on BIR's
+own CDN; the sibling BIR Form 1700 (compensation-only filers) and BIR Form
+1701 (mixed income, or income above the 8%-option's ₱3M threshold) are
+equally strong, confirmed-fetchable open backlog candidates for a future
+cycle. Part III (Details of Payment, a repeating table across 4
+payment-mode rows) is deliberately out of scope for this v1.0.0, pending
+GSP-0009 (see the document's own VERIFICATION.md). **Mexico**
 (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428, PR #239 pending
 merge) is new this cycle — sourced from SAT's own official 65-page "Guía de
 llenado" PDF (fiscal-year-2025 edition) for the Régimen de Sueldos y
@@ -749,7 +794,7 @@ now closed.
 | **MX** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PH** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **PH** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -939,5 +984,9 @@ updated by GOV-1435 (`mx/semovi/alta-vehiculo-foraneo` authoring, Mexico DMV
 gap closed, 4th MX schema, PR #241 merged 1f43204), updated by GOV-1444
 (`ph/bir/tin-application-corporations-partnerships` authoring, Philippines
 opened as 17th jurisdiction; IE Form CT1 re-examined and re-confirmed a
-poor candidate) |
+poor candidate), updated by GOV-1457 (`ph/comelec/overseas-voter-registration`
+authoring, Philippines 2nd vertical, National ID & Civic Documents, PR #248
+merged 5097780), updated by GOV-1466
+(`ph/bir/annual-income-tax-return-1701a` authoring, Philippines 3rd vertical,
+global Taxes vertical closed to 17/17 / 100%) |
 Standards Engineer
