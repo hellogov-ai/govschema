@@ -1,0 +1,385 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mx/semovi/alta-vehiculo-foraneo",
+  "version": "1.0.0",
+  "title": "Mexico City (CDMX) Out-of-State Private Vehicle Registration (Alta de Vehículo Foráneo)",
+  "description": "Mexico City's Secretaría de Movilidad (SEMOVI) online 'Ventanilla de Control Vehicular' (VCV) wizard through which the owner of a private vehicle currently plated in another Mexican federal entity, and never previously registered in the CDMX vehicle registry (padrón vehicular), applies to register it in Mexico City for the first time ('Alta de vehículo foráneo (Particular)') and obtain new CDMX plates. This is CDMX's own subnational vehicle-registration authority — vehicle registration in Mexico is administered by each state/CDMX, not federally — modelled the same way this registry classifies br/sp/jucesp/cnpj-registration-dbe (a state-level business registry feeding a nationally-relevant registration). The live wizard (tramites.cdmx.gob.mx/ventanillavehicular/public/) requires prior authentication with a 'Llave CDMX' citizen account and is not reachable by a direct fetch from this environment (connection timeout); this document is instead derived from SEMOVI's own official citizen manual PDF for this exact procedure ('Segundo manual: Perfil ciudadano'), a 17-page, purely narrative/screenshot guide with no text layer on its embedded screenshots, retrieved via a Wayback Machine mirror. Per the manual's own scope statement, this specific online process does not apply to hybrid vehicles or motorcycles, and covers only the 'foráneo' (out-of-state, no prior CDMX registration) pathway, not a brand-new-from-dealer vehicle or any other CDMX vehicular-control procedure (tracking an in-progress application, correcting a rejected one, paying the resulting fee/tenencia line, or scheduling plate pickup) — this document models only the initial data-entry/document-upload wizard that produces a folio. Several fields the manual's own narrative text describes as existing (e.g. further owner-address fields beyond 'calle', the full 'tarjeta de circulación' vehicle-attribute set beyond VIN/clave vehicular/brand/line/version, and the data collected about a third party who is not the owner picking up the plates) are never shown in any of the manual's screenshots and are therefore out of scope for this v1.0.0 rather than guessed at — see VERIFICATION.md for the complete list of judgment calls and scope cuts. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Mexico, the Government of Mexico City, or the Secretaría de Movilidad.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MX",
+    "level": "subnational",
+    "subdivision": "MX-CMX"
+  },
+  "authority": {
+    "name": "Secretaría de Movilidad de la Ciudad de México",
+    "abbreviation": "SEMOVI",
+    "url": "https://www.semovi.cdmx.gob.mx"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es-MX"
+  },
+  "source": {
+    "url": "https://tramites.cdmx.gob.mx/ventanillavehicular/public/assets/manual_ciudadano-VCV-alta.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "\"Ventanilla de Control Vehicular: Alta de Vehículo — Segundo manual: Perfil ciudadano\", Secretaría de Movilidad de la Ciudad de México (SEMOVI), 17 páginas"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Source-derived reference schema closing Mexico's explicitly-flagged DMV vertical gap (CATALOG.md 'Known Gaps'). The live tramites.cdmx.gob.mx host times out on a direct fetch from this environment (confirmed a network-layer timeout, not a 403/WAF response); this document was instead authored from SEMOVI's own official citizen manual PDF for this exact procedure, fetched via a Wayback Machine mirror (snapshot dated 2023-04-24, HTTP 200, genuine %PDF-1.4 content, 3,193,813 bytes). The PDF's text layer (extracted via pdfjs-dist getTextContent, pinned to 3.11.174) contains only the manual's narrative instructional prose across its 17 pages — every field label, option, and required/optional cue in this document comes from the manual's embedded screenshot images, which carry no text layer and were instead read via pdfjs-dist page rendering to PNG (using the 'canvas' (node-canvas/Cairo) package as the Node canvas backend after @napi-rs/canvas segfaulted natively on this pdfjs-dist version's page.render() call in this environment — a reusable technique note for a future cycle) at up to 8x scale for legibility, followed by direct visual reading of each rendered page, not OCR. Status remains 'draft' pending an independent second reviewer's field-by-field pass, and pending a login-gated live-wizard re-walk if a Llave CDMX test account ever becomes available. See VERIFICATION.md for the extraction method, every interpretive judgment call, and the full list of what this v1.0.0 document leaves out of scope."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "ownerPersonType",
+      "label": "Soy persona",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the vehicle's owner (the applicant) is a natural person (física) or a legal entity (moral). The live wizard enables different fields/documents for each; the manual's own screenshot shows only the 'Física' branch in any detail — see VERIFICATION.md.",
+      "sourceRef": "Manual, p.7, Imagen 7 — 'Soy persona: ● Física ○ Moral'",
+      "validation": { "enum": ["fisica", "moral"] }
+    },
+    {
+      "name": "ownerCurp",
+      "label": "Ingresa tu CURP",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The individual owner's CURP (Clave Única de Registro de Población). Shown only on the 'Física' branch of the 'Datos del propietario' screen.",
+      "sourceRef": "Manual, p.7, Imagen 7 — 'Ingresa tu CURP *' (persona física)",
+      "requiredWhen": { "field": "ownerPersonType", "equals": "fisica" },
+      "validation": { "pattern": "^[A-Z][AEIOU][A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[HM](AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QO|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[A-Z0-9][0-9]$" }
+    },
+    {
+      "name": "ownerPhoneNumber",
+      "label": "Número de teléfono celular",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The owner's mobile phone number.",
+      "sourceRef": "Manual, p.7, Imagen 7 — 'Número de teléfono celular *'",
+      "requiredWhen": { "field": "ownerPersonType", "equals": "fisica" },
+      "validation": { "pattern": "^[0-9]{10}$" }
+    },
+    {
+      "name": "ownerStreet",
+      "label": "Ingresa tu calle",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The owner's street address. The manual's own screenshot of this screen is visibly cropped immediately below this field's input box, before any further address fields (e.g. colonia, postal code, exterior/interior number, alcaldía) that a Mexican address form of this kind would ordinarily also collect — this document does not assert or invent any such further owner-address field beyond this one, since none is shown. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.7, Imagen 7 — 'Ingresa tu calle *'",
+      "requiredWhen": { "field": "ownerPersonType", "equals": "fisica" }
+    },
+    {
+      "name": "vehicleVin",
+      "label": "Ingresa tu número de VIN",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's VIN (vehicle identification number), validated by the live wizard directly against SEMOVI's own vehicle registry (padrón vehicular); the applicant cannot proceed if the VIN is not recognized as valid there.",
+      "sourceRef": "Manual, p.7, Imagen 8 — 'Ingresa tu número de VIN*'; p.7 narrative — 'Estos campos serán validados en el padrón vehicular de la SEMOVI, en particular el VIN...se validará que sea un VIN real'",
+      "validation": { "pattern": "^[A-HJ-NPR-Z0-9]{17}$" }
+    },
+    {
+      "name": "previousLicensePlate",
+      "label": "Último número de placa que hayas tenido",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's most recent (out-of-state) license plate number. The manual's own screenshot shows this rendered as a pre-filled, greyed-out (read-only) box on the 'Datos del vehículo' screen, with the narrative noting it is 'precargada con la información que ingresaste al inicio' (pre-loaded from information entered at the start) — the manual never shows the earlier screen where this originating value is actually entered (it is not shown as part of the cropped 'Datos del propietario' screenshot, nor anywhere else in the guide), so this document cannot confirm where in the flow the applicant actually types this value. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.7, Imagen 8 — 'Último número de placa que hayas tenido' (shown pre-filled/greyed, 'No importa que sea de otra entidad')"
+    },
+    {
+      "name": "vehicularKey",
+      "label": "Clave vehicular",
+      "type": "string",
+      "required": true,
+      "description": "SEMOVI's own 'clave vehicular' code identifying the vehicle's make/model/trim combination in the padrón vehicular. Entering a valid value auto-populates vehicleBrand, vehicleLine, and vehicleVersion; the live wizard validates this against the padrón the same way it validates the VIN.",
+      "sourceRef": "Manual, p.7, Imagen 8 — 'Clave vehicular *'; p.7 narrative — 'con la cual se cargan los campos: Marca, Línea y Versión del vehículo'"
+    },
+    {
+      "name": "vehicleBrand",
+      "label": "Marca",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's make/brand. Auto-populated once a valid vehicularKey is entered; not shown in the manual as an independently-editable input.",
+      "sourceRef": "Manual, p.7, narrative — 'con la cual se cargan los campos: Marca, Línea y Versión del vehículo'"
+    },
+    {
+      "name": "vehicleLine",
+      "label": "Línea",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's model line. Auto-populated once a valid vehicularKey is entered; not shown in the manual as an independently-editable input.",
+      "sourceRef": "Manual, p.7, narrative — 'con la cual se cargan los campos: Marca, Línea y Versión del vehículo'"
+    },
+    {
+      "name": "vehicleVersion",
+      "label": "Versión",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's trim/version. Auto-populated once a valid vehicularKey is entered; not shown in the manual as an independently-editable input.",
+      "sourceRef": "Manual, p.7, narrative — 'con la cual se cargan los campos: Marca, Línea y Versión del vehículo'"
+    },
+    {
+      "name": "previousPlateState",
+      "label": "Entidad de la placa anterior",
+      "type": "string",
+      "required": true,
+      "description": "The Mexican federal entity (state) that issued the vehicle's current/most recent plates. Rendered as a 'Seleccionar' dropdown on the live wizard; the manual's own screenshot never expands it to show its full option list, so this is modelled as an open string rather than a closed enum — not asserted identical to another schema's federal-entity catalog (e.g. mx/inm/forma-migratoria-multiple-electronica's destinationState) without direct confirmation. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.7, Imagen 8 — 'Entidad de la placa anterior *'"
+    },
+    {
+      "name": "vehicleOrigin",
+      "label": "Origen del vehículo (nacional o importado)",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the vehicle is nationally manufactured/sold or was imported. Inferred from the manual's own narrative ('si seleccionaste que el vehículo es importado el sistema te pedirá cargar el pedimento de importación...Si tu vehículo es nacional, estos campos no serán visibles') describing this exact effect, but the manual never shows a screenshot of the selector control itself anywhere in the 'Datos del vehículo' section — its exact label, widget type, and full option set are not directly confirmed, only its two functional outcomes. Flagged as a lower-confidence, narrative-only field. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.9, narrative preceding Imagen 13 — 'si seleccionaste que el vehículo es importado...Si tu vehículo es nacional, estos campos no serán visibles'",
+      "validation": { "enum": ["nacional", "importado"] }
+    },
+    {
+      "name": "hasDischargeDocument",
+      "label": "¿Cuentas con el comprobante de baja? (CDMX u otra entidad)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant holds a 'comprobante de baja' (deregistration certificate) for the vehicle's previous-state plates. Answering 'No' routes to a 'baja FUM' (Formato Único de Movimiento discharge request) sub-flow instead, which the wizard generates a downloadable form for at the end of the process.",
+      "sourceRef": "Manual, p.7-8, Imagen 9/Imagen 10 — '¿Cuentas con el comprobante de baja? (CDMX u otra entidad) ✓ Sí ✗ No'"
+    },
+    {
+      "name": "vehicleCommercialBrand",
+      "label": "Selecciona la marca comercial de tu vehículo",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's commercial brand, chosen from a dropdown, requested only on the 'no discharge document' branch (in addition to the vehicleBrand auto-populated from vehicularKey on the 'Datos del vehículo' screen). The manual's own screenshot never expands this dropdown's option list, so it is modelled as an open string. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.8, Imagen 10 — 'Selecciona la marca comercial de tu vehículo: Seleccionar'",
+      "requiredWhen": { "field": "hasDischargeDocument", "equals": false }
+    },
+    {
+      "name": "hasCirculationCard",
+      "label": "¿Cuentas con tu tarjeta de circulación? (CDMX u otra entidad)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant holds the vehicle's tarjeta de circulación (circulation card), asked only on the 'no discharge document' branch.",
+      "sourceRef": "Manual, p.8, Imagen 10 — '¿Cuentas con tu tarjeta de circulación? (CDMX u otra entidad) ✓ Sí ✗ No'",
+      "requiredWhen": { "field": "hasDischargeDocument", "equals": false }
+    },
+    {
+      "name": "hasBothPreviousPlates",
+      "label": "¿Cuentas con tus dos placas anteriores? (CDMX u otra entidad)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant holds both of the vehicle's previous physical plates, asked only on the 'no discharge document' branch.",
+      "sourceRef": "Manual, p.8, Imagen 10 — '¿Cuentas con tus dos placas anteriores? (CDMX u otra entidad) ✓ Sí ✗ No'",
+      "requiredWhen": { "field": "hasDischargeDocument", "equals": false }
+    },
+    {
+      "name": "ownershipProofCase",
+      "label": "Selecciona tu caso",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the two ownership-proof pathways applies: an invoice/re-invoice already in the applicant's own name, or one in someone else's name (requiring additional sale/endorsement documents and the seller's identification).",
+      "sourceRef": "Manual, p.8-9, Imagen 11/Imagen 12 — 'Selecciona tu caso: a) Tengo una factura o refactura física a mi nombre / b) Tengo una factura que no está a mi nombre'",
+      "validation": { "enum": ["factura_a_mi_nombre", "factura_no_a_mi_nombre"] }
+    },
+    {
+      "name": "invoiceDocumentType",
+      "label": "Adjunta tu factura de origen y las refacturas correspondientes — Seleccionar tipo de documento",
+      "type": "string",
+      "required": true,
+      "description": "The specific kind of ownership document being attached (e.g. original invoice vs. re-invoice), chosen from a dropdown shown identically on both ownershipProofCase branches. The manual's own screenshot never expands this dropdown's option list, so it is modelled as an open string. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.8-9, Imagen 11/Imagen 12 — 'Adjunta tu factura de origen y las refacturas correspondientes *' / 'Seleccionar tipo de documento'"
+    },
+    {
+      "name": "invoiceIssueDate",
+      "label": "Fecha de expedición",
+      "type": "date",
+      "required": true,
+      "description": "Issue date of the invoice/re-invoice. The live form displays this as a dd/mm/aaaa masked text input; represent as an ISO 8601 full-date.",
+      "sourceRef": "Manual, p.8-9, Imagen 11/Imagen 12 — 'Fecha de expedición: dd/mm/aaaa'"
+    },
+    {
+      "name": "invoiceFolio",
+      "label": "Folio",
+      "type": "string",
+      "required": true,
+      "description": "Folio number of the invoice/re-invoice.",
+      "sourceRef": "Manual, p.8-9, Imagen 11/Imagen 12 — 'Folio'"
+    },
+    {
+      "name": "saleDocumentType",
+      "label": "Adjunta los comprobantes de compraventa y/o endosos — Seleccionar tipo de documento",
+      "type": "string",
+      "required": false,
+      "description": "The specific kind of sale/endorsement proof document being attached, chosen from a dropdown. Requested only when the invoice is not in the applicant's own name. The manual's own screenshot never expands this dropdown's option list, so it is modelled as an open string. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.9, Imagen 12 — 'Adjunta los comprobantes de compraventa y/o endosos *' / 'Seleccionar tipo de documento'",
+      "requiredWhen": { "field": "ownershipProofCase", "equals": "factura_no_a_mi_nombre" }
+    },
+    {
+      "name": "sellerIdDocumentType",
+      "label": "Adjunta copia de identificación de los vendedores correspondientes — Seleccionar tipo de documento",
+      "type": "string",
+      "required": false,
+      "description": "The specific kind of seller identification document being attached, chosen from a dropdown. Requested only when the invoice is not in the applicant's own name. The manual's own screenshot never expands this dropdown's option list, so it is modelled as an open string. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.9, Imagen 12 — 'Adjunta copia de identificación de los vendedores correspondientes *' / 'Seleccionar tipo de documento'",
+      "requiredWhen": { "field": "ownershipProofCase", "equals": "factura_no_a_mi_nombre" }
+    },
+    {
+      "name": "importDocumentType",
+      "label": "Adjuntar documento que acredite la importación legal del vehículo — Seleccionar tipo de documento",
+      "type": "string",
+      "required": false,
+      "description": "The specific kind of import-legality document being attached (e.g. pedimento de importación), chosen from a dropdown. Requested only for an imported vehicle. The manual's own screenshot never expands this dropdown's option list, so it is modelled as an open string. See VERIFICATION.md.",
+      "sourceRef": "Manual, p.9, Imagen 13 — 'Adjuntar documento que acredite la importación legal del vehículo *' / 'Seleccionar tipo de documento'",
+      "requiredWhen": { "field": "vehicleOrigin", "equals": "importado" }
+    },
+    {
+      "name": "importDate",
+      "label": "Fecha de importación",
+      "type": "date",
+      "required": false,
+      "description": "Date the vehicle was imported. The live form displays this as a dd/mm/aaaa masked text input; represent as an ISO 8601 full-date. Requested only for an imported vehicle.",
+      "sourceRef": "Manual, p.9, Imagen 13 — 'Fecha de importación: dd/mm/aaaa'",
+      "requiredWhen": { "field": "vehicleOrigin", "equals": "importado" }
+    },
+    {
+      "name": "importPedimentoFolio",
+      "label": "Número o folio de pedimento",
+      "type": "string",
+      "required": false,
+      "description": "Folio number of the customs import declaration (pedimento). Requested only for an imported vehicle.",
+      "sourceRef": "Manual, p.9, Imagen 13 — 'Número o folio de pedimento'",
+      "requiredWhen": { "field": "vehicleOrigin", "equals": "importado" }
+    },
+    {
+      "name": "aditamentosPickupBy",
+      "label": "¿Quién recogerá los elementos de circulación en el módulo?",
+      "type": "enum",
+      "required": true,
+      "description": "Who will attend SEMOVI's module in person to collect the new plates and circulation card ('aditamentos para circular'): the vehicle's owner, or a third party. Selecting a third party requires attaching that person's own information; the manual never shows what that information consists of (name, ID copy, authorization letter, etc.) in any screenshot, so this document does not model the third-party data/document requirement itself — see VERIFICATION.md and 'What is out of scope' there.",
+      "sourceRef": "Manual, p.10, Imagen 14 — '¿Quién recogerá los elementos de circulación en el módulo? ● El propietario del vehículo ○ Alguien más'",
+      "validation": { "enum": ["propietario", "alguien_mas"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "dischargeDocumentFile",
+      "label": "Comprobante de baja",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "hasDischargeDocument", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Manual, p.7-8, Imagen 9 — 'Documento PDF' / 'Selecciona un archivo'"
+    },
+    {
+      "id": "policeReportFile",
+      "label": "Acta de denuncia (robo) o acta circunstanciada (extravío)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          { "field": "hasDischargeDocument", "equals": false },
+          { "any": [
+            { "field": "hasCirculationCard", "equals": false },
+            { "field": "hasBothPreviousPlates", "equals": false }
+          ] }
+        ]
+      },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Manual, p.8, Imagen 10 — 'Adjunta tu acta de denuncia ante MP en caso de robo o una acta circunstanciada en caso de extravío'"
+    },
+    {
+      "id": "invoiceFile",
+      "label": "Factura de origen y refacturas correspondientes",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Manual, p.8-9, Imagen 11/Imagen 12 — 'Adjunta tu factura de origen y las refacturas correspondientes *' / 'Adjuntar PDF'"
+    },
+    {
+      "id": "saleDocumentFile",
+      "label": "Comprobantes de compraventa y/o endosos",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "ownershipProofCase", "equals": "factura_no_a_mi_nombre" },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Manual, p.9, Imagen 12 — 'Adjunta los comprobantes de compraventa y/o endosos *' / 'Adjuntar PDF'"
+    },
+    {
+      "id": "sellerIdFile",
+      "label": "Copia de identificación del vendedor",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "ownershipProofCase", "equals": "factura_no_a_mi_nombre" },
+      "belongsTo": "other",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Manual, p.9, Imagen 12 — 'Adjunta copia de identificación de los vendedores correspondientes *' / 'Adjuntar PDF'"
+    },
+    {
+      "id": "importDocumentFile",
+      "label": "Pedimento de importación",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "vehicleOrigin", "equals": "importado" },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Manual, p.9, Imagen 13 — 'Adjuntar documento que acredite la importación legal del vehículo *' / 'Adjuntar PDF'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "datos_propietario",
+      "title": "Datos del propietario",
+      "fields": ["ownerPersonType", "ownerCurp", "ownerPhoneNumber", "ownerStreet"],
+      "next": "datos_vehiculo"
+    },
+    {
+      "id": "datos_vehiculo",
+      "title": "Datos del vehículo",
+      "fields": ["vehicleVin", "previousLicensePlate", "vehicularKey", "vehicleBrand", "vehicleLine", "vehicleVersion", "previousPlateState", "vehicleOrigin"],
+      "next": "comprobante_baja"
+    },
+    {
+      "id": "comprobante_baja",
+      "title": "Comprobante de baja (o baja FUM)",
+      "fields": ["hasDischargeDocument", "vehicleCommercialBrand", "hasCirculationCard", "hasBothPreviousPlates"],
+      "next": "comprobante_propiedad"
+    },
+    {
+      "id": "comprobante_propiedad",
+      "title": "Comprobante de propiedad del vehículo",
+      "fields": ["ownershipProofCase", "invoiceDocumentType", "invoiceIssueDate", "invoiceFolio", "saleDocumentType", "sellerIdDocumentType"],
+      "next": "pedimento_importacion"
+    },
+    {
+      "id": "pedimento_importacion",
+      "title": "Pedimento de importación (si el vehículo es importado)",
+      "fields": ["importDocumentType", "importDate", "importPedimentoFolio"],
+      "next": "recoleccion_aditamentos"
+    },
+    {
+      "id": "recoleccion_aditamentos",
+      "title": "Recolección de aditamentos",
+      "fields": ["aditamentosPickupBy"]
+    }
+  ]
+}
