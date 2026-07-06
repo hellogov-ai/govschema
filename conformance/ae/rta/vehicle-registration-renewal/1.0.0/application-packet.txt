@@ -1,0 +1,32 @@
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+
+Schema: ae/rta/vehicle-registration-renewal v1.0.0
+Generated: 2026-07-06
+
+Scenario:
+Mock renewal application: a Dubai-registered private vehicle (plate C 34966 DUBAI) renewed by its owner (Ahmed Al Mansoori), opting into the paid plate-design change extra (bilingual front / bordered-standard back style) and choosing courier delivery of the new registration card to a Dubai address, with a re-entered confirmation email. All values are fabricated illustrative data (not a real plate number, address, phone, or email), constructed to exercise the courier_to_door branch's full field set. Two sibling scenarios (RTA office collection, kiosk collection) were also run during authoring and independently checked against the schema's requiredWhen/validation rules — see VERIFICATION.md's "Mock test run" section for all three — but only this courier scenario is committed here.
+
+Collected values:
+  plateNumber: 'C 34966 DUBAI'
+  termsAndConditionsAccepted: True
+  changePlateNumber: False
+  changePlateDesign: True
+  plateStyleFront: 'bilingual_stacked'
+  plateStyleBack: 'bordered_standard'
+  deliveryMethod: 'courier_to_door'
+  deliveryDate: '2026-08-01'
+  contactName: 'Ahmed Al Mansoori'
+  emirate: 'dubai'
+  area: 'Al Barsha'
+  addressLine1: 'Villa 12, Al Barsha South 3'
+  addressLine2: 'Near Mall of the Emirates'
+  mobileNumber: '0509558138'
+  landlineNumber: '042345678'
+  poBoxNumber: '12345'
+  email: 'ahmed.almansoori@example.com'
+  confirmEmail: 'ahmed.almansoori@example.com'
+
+Documents referenced (application-packet.json data covers fields[] only; documents[] below is a payment obligation, not applicant-supplied data):
+  - renewalFeePayment (payment): required in this scenario, amount computed by RTA from the vehicle record plus the changePlateDesign extra (400 AED) and courier delivery fee (20 AED), not entered by the applicant.
+
+Result: all required fields present given deliveryMethod=courier_to_door (deliveryDate, contactName, emirate, area, addressLine1, addressLine2 all required and provided; collectionOfficeLocation/collectionDate/kioskLocation correctly not required and omitted). plateStyleFront/plateStyleBack correctly required because changePlateDesign=true, and both enum values are valid. termsAndConditionsAccepted satisfies its eligibility gate (eligibleValues: [true]). email/confirmEmail both match the pattern validation and are equal. Reached the terminal `pay` step. This is a structural conformance exercise only — no data was submitted to any live system; the live wizard requires an authenticated RTA account and a real Dubai-registered vehicle, which this cycle deliberately did not attempt to obtain or use.

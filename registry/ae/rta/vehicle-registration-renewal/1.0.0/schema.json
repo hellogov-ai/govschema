@@ -1,0 +1,289 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ae/rta/vehicle-registration-renewal",
+  "version": "1.0.0",
+  "title": "Dubai Vehicle Registration Renewal (Renew Vehicle Ownership)",
+  "description": "Renew the annual vehicle-ownership registration of a private vehicle already registered in the Emirate of Dubai, through the Roads and Transport Authority's (RTA) own online 'Renew Vehicle Ownership' digital service. Every vehicle registered in Dubai must renew this registration within 12 months (plus a 30-day grace period) of its last renewal, per Federal Traffic Law. This is the DMV Registration/Tag-renewal counterpart to a first-time private-vehicle registration (e.g. mx/semovi/alta-vehiculo-foraneo) — it renews an already-registered vehicle rather than registering one for the first time, and covers only a light/private passenger vehicle owned by an individual (not a commercial fleet, trade-licensed, or government vehicle). Models the applicant-facing steps of the live wizard: agreeing to the online-service terms, opting into the paid plate-number/plate-design change extras, choosing how the physical registration card is delivered (courier, RTA office collection, or kiosk collection) and the delivery/collection details each method requires, and paying the renewal fee. It does not model: logging into the RTA account or selecting the vehicle from the 'My Vehicles' list (a pre-existing authenticated session, not renewal-transaction data); the vehicle's own insurance/technical-inspection/mortgage-redemption status, all of which RTA displays read-only from its own records and checks automatically before allowing the transaction to proceed, rather than asking the applicant to declare them; the separate plate-selection ('Buy Plate'/'Request Plate') RTA service a customer would use before opting into changePlateNumber; or the RTA-generated output documents (payment receipt, interim vehicle registration notice) produced after payment. See VERIFICATION.md for the full list of disclosed interpretive judgment calls, several concerning fields with no legible on-screen label in the source screenshots.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AE",
+    "level": "subnational",
+    "subdivision": "AE-DU"
+  },
+  "authority": {
+    "name": "Roads and Transport Authority",
+    "abbreviation": "RTA",
+    "url": "https://www.rta.ae"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.rta.ae/links/lic-services/links/Renew-Vehicle-Ownership.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "RTA 'Renew Vehicle Ownership User Manual', April 2018"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Source-derived reference schema authored from RTA's own screenshot-driven 'Renew Vehicle Ownership User Manual' (April 2018), fetched directly from rta.ae with HTTP 200, no login/CAPTCHA/WAF gate. Each page was rendered to a high-resolution PNG via pdfjs-dist + node-canvas and read visually, since the manual's own PDF text layer carries only narrative step captions ('Click the Confirm button'), not the field labels themselves — those are legible only inside the embedded UI screenshots. A prior cycle (GOV-1474) found an equivalent, more detailed 'Vehicle Renewal User Guide Version 1.0' only via a third-party mirror (professionallawyer.me), not the current rta.ae URL; this cycle located the shorter, official, first-party April-2018 manual directly on rta.ae itself, a stronger provenance chain, and used it as the primary source instead. Status remains draft, not verified, pending an independent second reviewer's pass — see VERIFICATION.md for several fields whose on-screen labels are not legible in the source screenshots at any resolution and were inferred from context."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "plateNumber",
+      "label": "Vehicle plate number",
+      "type": "string",
+      "required": true,
+      "description": "Identifies which of the applicant's Dubai-registered vehicles (selected from the 'My Vehicles' list) this renewal applies to.",
+      "sourceRef": "Step 5 — 'Click \"My Vehicles\" section to open its list.' / Step 6 — 'Go to the required vehicle, and then click the Vehicle Renewal button.'",
+      "validation": { "minLength": 1, "maxLength": 15 }
+    },
+    {
+      "name": "termsAndConditionsAccepted",
+      "label": "I agree on the Terms & Conditions to use this Online Service",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Must be checked before the renewal wizard's 5-step process can start.",
+      "sourceRef": "Step 6 — 'In the main page, select the I agree on the Terms & Conditions to use this Online Service check box.'"
+    },
+    {
+      "name": "changePlateNumber",
+      "label": "Would you like to change your plate number?",
+      "type": "boolean",
+      "required": true,
+      "description": "An optional paid extra: attaches a previously saved/reserved selection plate to this vehicle instead of keeping its current plate number, at an additional registration-fee cost. Obtaining the selection plate itself is a separate RTA service ('Buy Plate'/'Request Plate', visible on the Licensing Services dashboard) not modelled by this document — see VERIFICATION.md.",
+      "sourceRef": "Step 7 — 'Optional extras — Would you like to change your plate number? By choosing to save your selection plate we will add an additional amount to your registration fee cost.'"
+    },
+    {
+      "name": "changePlateDesign",
+      "label": "Would you like to change your plate design?",
+      "type": "boolean",
+      "required": true,
+      "description": "An optional paid extra (an additional 400 AED) to change the vehicle's plate design/style.",
+      "sourceRef": "Step 7 — 'Would you like to change your plate design? By choosing to save your selection plate we will add an additional 400 AED to your registration fee cost.'"
+    },
+    {
+      "name": "plateStyleFront",
+      "label": "Front plate style",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "changePlateDesign", "equals": true },
+      "description": "The style of the vehicle's front plate. Option labels are not legible as text in the source (each option is an unlabelled plate-graphic thumbnail); values are this document's own descriptive naming of the three visually distinct thumbnails shown (a black-bordered single-line style, an unbordered bilingual Arabic/English stacked style, and a third, physically larger 'Luxury plate size' option) — see VERIFICATION.md.",
+      "sourceRef": "Step 7 — 'Select plate style — Front: Select the style you would like for the front plate of your vehicle' (3 radio options, one captioned '(Luxury plate size)')",
+      "validation": { "enum": ["bordered_standard", "bilingual_stacked", "luxury_size"] }
+    },
+    {
+      "name": "plateStyleBack",
+      "label": "Back plate style",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "changePlateDesign", "equals": true },
+      "description": "The style of the vehicle's back plate. Same visual-inference caveat as plateStyleFront; only 2 options are shown for the back plate (no 'Luxury plate size' option observed) — see VERIFICATION.md.",
+      "sourceRef": "Step 7 — 'Select plate style — Back: Select the style you would like for the back plate of your vehicle' (2 radio options)",
+      "validation": { "enum": ["bordered_standard", "bilingual_stacked"] }
+    },
+    {
+      "name": "deliveryMethod",
+      "label": "How would you like to receive your Registration card?",
+      "type": "enum",
+      "required": true,
+      "description": "courier_to_door = Courier Delivery to your door (20 AED per package, 7-10 days); rta_office_collection = Collection from an RTA office (no fee, ~7 days); kiosk_collection = Collection from a kiosk (no fee, 7-10 days depending on kiosk).",
+      "sourceRef": "Step 9 — '2. Choose delivery method — Choose how you would like to receive your Registration card below.'",
+      "validation": { "enum": ["courier_to_door", "rta_office_collection", "kiosk_collection"] }
+    },
+    {
+      "name": "deliveryDate",
+      "label": "Delivery Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "courier_to_door" },
+      "sourceRef": "Step 10 — 'Courier delivery to your door — Choose your delivery date — Delivery Date*'"
+    },
+    {
+      "name": "contactName",
+      "label": "Contact Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "courier_to_door" },
+      "sourceRef": "Step 10 — 'Delivery Address — Contact Name*' (fields marked with (*) are mandatory)",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "emirate",
+      "label": "Emirate",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "courier_to_door" },
+      "description": "The delivery address's emirate. The dropdown's own rendered option list is not visible in the source screenshot (placeholder text 'Emirate:*' only); the 7 values below are the United Arab Emirates' fixed, externally stable set of emirates, not an assumed application-specific catalog — see VERIFICATION.md.",
+      "sourceRef": "Step 10 — 'Delivery Address — Emirate:*' (dropdown, fields marked with (*) are mandatory)",
+      "validation": {
+        "enum": ["abu_dhabi", "dubai", "sharjah", "ajman", "umm_al_quwain", "ras_al_khaimah", "fujairah"]
+      }
+    },
+    {
+      "name": "area",
+      "label": "Area",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "courier_to_door" },
+      "description": "The delivery address's area within the selected emirate. Modelled as an open string since the source's own per-emirate area pick-list contents are not enumerated in the manual.",
+      "sourceRef": "Step 10 — 'Delivery Address — Area:*' (dropdown, fields marked with (*) are mandatory)",
+      "validation": { "minLength": 1, "maxLength": 120 }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Address Line 1",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "courier_to_door" },
+      "sourceRef": "Step 10 — 'Delivery Address — Address Line 1*' (fields marked with (*) are mandatory)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "addressLine2",
+      "label": "Address Line 2",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "courier_to_door" },
+      "description": "Marked mandatory ('Address Line 2 *') in the source alongside Address Line 1, unlike most registries' equivalent optional second address line.",
+      "sourceRef": "Step 10 — 'Delivery Address — Address Line 2*' (fields marked with (*) are mandatory)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "collectionOfficeLocation",
+      "label": "RTA office to collect from",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "rta_office_collection" },
+      "description": "Modelled as an open string since the source's own RTA-office pick list (shown with one example value, 'Delivery Center - Deira Licensing') is not enumerated in full in the manual.",
+      "sourceRef": "Step 11 — 'Collection from an RTA office — Select the RTA office you will collect your Registration card from' (pick list)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "collectionDate",
+      "label": "Collection date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "rta_office_collection" },
+      "sourceRef": "Step 11 — 'Collection from an RTA office — Choose your delivery date'"
+    },
+    {
+      "name": "kioskLocation",
+      "label": "Kiosk to collect from",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deliveryMethod", "equals": "kiosk_collection" },
+      "description": "Modelled as an open string since the source's own kiosk pick list (shown with one example value, 'kiosk Deira Customer Service Center') is not enumerated in full in the manual. No date-selection control is shown for this delivery method (unlike courier/RTA-office collection) — see VERIFICATION.md.",
+      "sourceRef": "Step 12 — 'Collection from kiosk — Select the Kiosks location you will collect your Registration card from' (pick list)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile number",
+      "type": "string",
+      "required": true,
+      "description": "Delivery/collection contact mobile number, collected under 'Delivery Contact Information' on all three delivery-method screens. No text label is legible for this field in the source screenshots at any resolution tried; inferred from the sample value's UAE mobile-number format (05 + 8 digits) — see VERIFICATION.md.",
+      "sourceRef": "Steps 10-12 — 'Delivery Contact Information' (unlabelled in source; sample value '0509558138')",
+      "validation": { "pattern": "^05[0-9]{8}$" }
+    },
+    {
+      "name": "landlineNumber",
+      "label": "Landline number",
+      "type": "string",
+      "required": false,
+      "description": "Optional secondary contact number. No text label is legible for this field in the source; inferred from the sample value's UAE landline format (area code + 7 digits) — see VERIFICATION.md.",
+      "sourceRef": "Steps 10-12 — 'Delivery Contact Information' (unlabelled in source; sample value '026565656')",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "poBoxNumber",
+      "label": "P.O. Box number",
+      "type": "string",
+      "required": false,
+      "description": "A third, short numeric field in the same 'Delivery Contact Information' row. No text label is legible for this field in the source; this document's best inference, given UAE addresses' common reliance on a P.O. Box rather than street delivery, is a P.O. Box number — flagged as the weakest-sourced field in this document, see VERIFICATION.md.",
+      "sourceRef": "Steps 10-12 — 'Delivery Contact Information' (unlabelled in source; sample value '5454')",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "description": "Delivery/collection contact email. The source shows two adjacent, identically formatted email fields side by side (a type-and-retype confirmation pattern, corroborated independently by a third-party summary of this same manual found during research) rather than one — see confirmEmail and VERIFICATION.md.",
+      "sourceRef": "Steps 10-12 — 'Delivery Contact Information' (unlabelled in source; sample value repeated in two adjacent fields)",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 254 }
+    },
+    {
+      "name": "confirmEmail",
+      "label": "Confirm email address",
+      "type": "string",
+      "required": true,
+      "description": "Re-entry of email, matched against it before the delivery/collection contact step can be confirmed.",
+      "sourceRef": "Steps 10-12 — 'Delivery Contact Information' (unlabelled in source; sample value repeated in two adjacent fields)",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 254 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "renewalFeePayment",
+      "label": "Vehicle registration renewal fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Step 7 'Fee Summary' (Total Service Fees Due + Total Fines Due = Total amount due excluding delivery) and Step 13 'Fees Summary' (adds delivery fee, e.g. 20 AED for courier). Amount not encoded as a fixed field value: RTA computes the service fee, any outstanding traffic fines, the optional-extras cost (changePlateNumber/changePlateDesign), and the delivery-method fee automatically from the vehicle's own record, none of which the applicant enters directly in this transaction."
+    }
+  ],
+  "steps": [
+    {
+      "id": "select_vehicle_and_accept_terms",
+      "title": "Select the vehicle and accept the online-service terms",
+      "fields": ["plateNumber", "termsAndConditionsAccepted"],
+      "next": "optional_extras"
+    },
+    {
+      "id": "optional_extras",
+      "title": "Review vehicle/fee details and choose optional plate extras",
+      "fields": ["changePlateNumber", "changePlateDesign", "plateStyleFront", "plateStyleBack"],
+      "next": "choose_delivery_method"
+    },
+    {
+      "id": "choose_delivery_method",
+      "title": "Choose how to receive the registration card",
+      "fields": ["deliveryMethod"],
+      "next": "delivery_or_collection_details"
+    },
+    {
+      "id": "delivery_or_collection_details",
+      "title": "Provide delivery or collection details",
+      "fields": [
+        "deliveryDate", "contactName", "emirate", "area", "addressLine1", "addressLine2",
+        "collectionOfficeLocation", "collectionDate", "kioskLocation",
+        "mobileNumber", "landlineNumber", "poBoxNumber", "email", "confirmEmail"
+      ],
+      "next": "pay"
+    },
+    {
+      "id": "pay",
+      "title": "Confirm and pay the renewal fee"
+    }
+  ]
+}
