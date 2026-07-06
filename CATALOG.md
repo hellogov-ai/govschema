@@ -4,8 +4,37 @@
 
 ## Executive Summary
 
-**16 jurisdictions** | **230 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**16 jurisdictions** | **231 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1435, PR #241 merged 1f43204):** Mexico gains a
+> fourth vertical, `mx/semovi/alta-vehiculo-foraneo`, closing the MX DMV gap
+> this catalog's own "Known Gaps" section had explicitly flagged as a strong
+> open candidate since GOV-1428's cycle. Sourced from the Secretaría de
+> Movilidad de la Ciudad de México's (SEMOVI) own 17-page citizen manual PDF
+> for its "Ventanilla de Control Vehicular" (VCV) online portal — a
+> screenshot/narrative-only source (no text layer), fetched via a Wayback
+> Machine mirror since the live `tramites.cdmx.gob.mx` host times out
+> directly from this environment's network (a connection-layer timeout,
+> reconfirmed independently at the GOV-1438 review gate, not a WAF/403
+> block). The manual's actual scope turned out narrower than "any first-time
+> registration": it specifically covers **foráneo** registration — a private
+> vehicle already plated in another Mexican state, being registered in CDMX
+> for the first time — not a brand-new-from-dealer vehicle, so the schema is
+> named and scoped precisely to that pathway rather than overclaiming.
+> Modelled as a **subnational** schema (`MX-CMX`), mirroring the
+> `br/sp/jucesp` precedent, since SEMOVI is Mexico City's own mobility
+> secretariat and vehicle registration in Mexico is state/CDMX-administered
+> rather than federal. 26 fields plus 6 document-upload requirements across a
+> 6-step flow; ten interpretive judgment calls (the out-of-scope persona
+> moral/legal-entity owner branch, a visibly cropped owner-address
+> screenshot, four dropdowns modelled as open strings since their option
+> lists are never shown in the source, among others) are disclosed in the
+> document's own VERIFICATION.md, all independently reviewed and confirmed
+> reasonable at the GOV-1438 review gate with no fixes needed. Mexico now has
+> 4/6 verticals (Business Formation, Visa, Taxes, DMV); Passport (SRE,
+> in-person appointment only) and National ID (CURP, in-person biometric
+> only) remain open-but-weak backlog candidates for a future cycle.
+>
 > **Update (2026-07-06, GOV-1428, PR #239 merged 127817d):** Mexico gains a
 > third vertical, `mx/sat/declaracion-anual-sueldos-salarios`, closing the
 > MX Taxes-vertical gap this catalog's own "Known Gaps" section explicitly
@@ -373,7 +402,7 @@
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
 | **Passport** | 14/16 (88%) | **AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
-| **DMV** | 13/16 (81%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR, MX** not yet modelled |
+| **DMV** | 14/16 (88%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR** not yet modelled; **MX** newly modelled this cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 14/16 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** newly modelled this cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414) |
 | **Taxes** | 16/16 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** newly modelled this cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428), distinct from the RFC pre-registration wizard already modelled under Business Formation |
 | **Visa** | 13/16 (81%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
@@ -417,10 +446,20 @@ field rather than needing separate forms per scenario. **United Arab
 Emirates** has no Passport schema yet — no candidate was sourced for it this
 cycle (see the Taxes entry below for the UAE document that was authored).
 
-### DMV — Vehicle Registration, Licensing, Permits (13/14 jurisdictions)
+### DMV — Vehicle Registration, Licensing, Permits (14/16 jurisdictions)
 
-Every jurisdiction now has at least one DMV-vertical schema (driver licensing
-and/or vehicle registration). **South Korea** (`kr/koroad/driving-licence-application`,
+Every jurisdiction except the United Arab Emirates and Brazil now has at
+least one DMV-vertical schema (driver licensing and/or vehicle
+registration). **Mexico** (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) is
+new this cycle — sourced from the Secretaría de Movilidad de la Ciudad de
+México's (SEMOVI) own citizen manual for its "Ventanilla de Control
+Vehicular" online portal, covering first-time CDMX registration of a private
+vehicle already plated in another Mexican state (foráneo). Modelled as a
+subnational (`MX-CMX`) schema, mirroring the `br/sp/jucesp` precedent, since
+SEMOVI is CDMX's own mobility secretariat rather than a federal agency; the
+live gov.mx host times out directly from this environment, so this was
+sourced via a Wayback Machine mirror of the manual PDF (reconfirmed
+independently at the GOV-1438 review gate). **South Korea** (`kr/koroad/driving-licence-application`,
 GOV-1291/GOV-1303) closes the DMV gap flagged in the prior cycle — sourced
 from the gazetted driving-licence-test application form (Road Traffic Act
 Enforcement Rule, Attached Form No. 42-2) via law.go.kr, no login required.
@@ -440,6 +479,8 @@ within an already-covered vertical:
 - **IDL (International Driving Permit):** covered for US (`dos/international-driving-permit-aaa`, `-aata`), IE (`dttas/international-driving-permit`), GB (`dvla/international-driving-permit`). Not modelled elsewhere.
 - **India, GOV-1240:** `in/morth/driving-licence-application` (this cycle) closes the "Issue of New Driving Licence" gap that `in/morth/learners-licence-application` (GOV-878) explicitly scoped out. India's DMV vertical now has 5 schemas (learner's licence, driving licence, vehicle registration, vehicle registration renewal, vehicle ownership transfer).
 - **United Arab Emirates** has no DMV schema yet — not researched this cycle (Taxes was the sourced vertical for the new UAE jurisdiction; see below).
+- **Brazil** has no DMV schema yet — `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400); vehicle registration (RENAVAM/DETRAN) not yet researched.
+- **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 
 ### Business Formation — Incorporation, LLC, Company Registration (14/16 jurisdictions)
 
@@ -596,7 +637,7 @@ now closed.
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 7 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
-| **MX** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **MX** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
