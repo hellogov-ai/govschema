@@ -218,21 +218,27 @@ number. Notable, directly-confirmed structural changes from the superseded
    Authorized Signatory modal (p.21). The corresponding required document
    (`authorizedSignatoryAuthorizationEvidence`, required per p.11's
    "Proof of Authorization of Authorised Signatories") is retained, since
-   it is directly evidenced by the required-documents list, but no
-   dedicated upload-slot screenshot for it was found in this 24-page guide
-   (unlike Passport/Certificate-of-Incorporation, which do have visible
-   upload slots) — its file-format/size constraints are therefore asserted
-   generically (`application/pdf`) rather than confirmed. A future reviewer
-   should confirm both the absence of a Source-of-Authorization field and
-   this document's actual upload constraints against a live render.
+   it is directly evidenced by the required-documents list. No dedicated
+   upload-slot screenshot for it was found in this 24-page guide (unlike
+   Passport/Certificate-of-Incorporation, which do have visible upload
+   slots), so its file-format/size constraints use p.11's own general note
+   for the Required Documents list ("Accepted file types are PDF, DOC and
+   DOCX. The individual file size limit is 15 MB.") — this is directly
+   confirmed on the same rendered page cited for the document itself
+   (GOV-1374 review-gate finding), not a generic default. A future reviewer
+   should still confirm the absence of a Source-of-Authorization field
+   against a live render.
 6. **`decreeLawDocument` and `cabinetDecisionDocument` constraints:**
    both documents are directly evidenced as required by the p.11
    required-documents list, but neither has a dedicated upload-slot
    screenshot rendered anywhere in this guide (only named in the
    Instructions and Guidelines page's bulleted list). Their file-format/size
-   constraints are asserted generically (`application/pdf`, no explicit
-   size limit) rather than confirmed against an actual upload UI. A future
-   reviewer should confirm against a live render.
+   constraints likewise use p.11's own general note ("Accepted file types
+   are PDF, DOC and DOCX. The individual file size limit is 15 MB."),
+   directly confirmed on the same page rather than asserted generically
+   (GOV-1374 review-gate finding). A future reviewer should still confirm
+   against a live render in case either document has its own dedicated
+   upload widget with different constraints.
 
 ## What is out of scope for v1.0.0
 
