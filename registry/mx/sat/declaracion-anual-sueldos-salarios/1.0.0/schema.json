@@ -1,0 +1,1098 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mx/sat/declaracion-anual-sueldos-salarios",
+  "version": "1.0.0",
+  "title": "Mexico Individual Annual Income Tax Return — Salaries and Wages Regime (Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios)",
+  "description": "Annual individual income tax return (Declaración Anual) filed through SAT's (Servicio de Administración Tributaria) Declaraciones y Pagos online service, scoped to filers under the Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios (salaries/wages and assimilated-to-salary income). Covers the declaration's configuration (fiscal year, declaration type, period), the Ingresos section (salary income by withholding agent, assimilated-to-salary income, retirement-insurance income, and the aggregate income/exemption/withholding totals the system computes), the Deducciones personales section (the personal-deduction CFDI record and the system-computed deductible totals/cap), the Determinación section (the ISR computation chain and the informational-data questions on other exempt income, other informative data, and reportable tax schemes), and the Pago section (balance due/in favor handling, refund CLABE, compensations, instalment payment, and the e.firma requirement triggered by a large refund). Does not model: the SAT portal login/authentication step (RFC + Contraseña + captcha, or e.firma) that precedes the wizard, since it is a separate, already-authenticated prerequisite; the detailed field sets for Indemnización, Jubilación en parcialidades, and Jubilación pago único income (the guide names these three tabs but, unlike Asimilados a salarios and Ingresos del seguro de retiro, does not walk a worked example of their own input fields — only their downstream effect on the aggregate Ingresos no acumulables and ISR de ingresos no acumulables fields is modelled); repeating per-withholding-agent income records and repeating per-CFDI personal-deduction records beyond one bounded instance each (GovSchema v0.3 has no native repeating-group field type, GSP-0009); the per-record sub-dialog for registering source declarations when applying a saldo a favor compensation (its own field labels are not itemized in the source beyond a generic description); the read-only Vista previa/Revisar/Enviar declaración review-and-submit screens and the Acuse de recibo receipt output; and every other SAT income regime (Actividad Empresarial y Servicios Profesionales, Plataformas Tecnológicas Digitales, Arrendamiento, Decreto Plan México, etc.), each of which SAT publishes as its own sibling guide. See VERIFICATION.md for the full list of interpretive judgment calls. The live Declaraciones y Pagos tool itself (sat.gob.mx/declaracion) is always authoritative; this document does not submit anything.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MX",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Servicio de Administración Tributaria",
+    "abbreviation": "SAT",
+    "url": "https://www.sat.gob.mx/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://www.sat.gob.mx/minisitio/DeclaracionAnual/Personas/documentos/GuiaLlenado_SueldosSalarios.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "SAT ‘Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios’ (ejercicio fiscal 2025)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-03-01",
+    "notes": "Source-derived reference schema authored field-by-field from SAT's own official 'Guía de llenado' PDF (65 pages, fiscal-year-2025 edition) for the Sueldos y Salarios e Ingresos Asimilados a Salarios regime, downloaded directly from sat.gob.mx with no login required for the guide itself. Unlike the sibling mx/sat/preinscripcion-rfc-persona-moral document (whose source guide's embedded screenshots carried no extractable text layer), this guide's own body text and figure captions form a genuine text layer, extracted directly via pdfjs-dist (pinned 3.11.174) rather than requiring visual page-image reading. The live Declaraciones y Pagos tool (sat.gob.mx/declaracion) itself returned HTTP 403 to a direct fetch, and is in any case a personalized, RFC+Contraseña/e.firma-gated tool by design (an annual return only makes sense for an authenticated taxpayer with SAT-held third-party income data), so the guide is the correct source shape here, not a workaround for a bot-mitigation gate as with the RFC preinscripción wizard. This closes the MX Taxes-vertical gap this catalog's own 'Known Gaps' section explicitly flagged as needing 'a distinct income-tax-return/filing candidate' distinct from mx/sat/preinscripcion-rfc-persona-moral (which is classified under Business Formation). Scoped to the salaries/wages regime only; SAT publishes separate sibling guides for other income regimes (business/professional services, digital platforms, leasing, etc.) as open candidates for future cycles. See the document's own VERIFICATION.md for the full list of disclosed interpretive judgment calls."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxYear",
+      "label": "Ejercicio",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.8, III.C Configuración de la declaración",
+      "validation": {
+        "minimum": 2020,
+        "maximum": 2100
+      }
+    },
+    {
+      "name": "declarationType",
+      "label": "Tipo de declaración",
+      "type": "enum",
+      "required": true,
+      "description": "Normal for a first-time annual return for the fiscal year, or Complementaria to correct/replace a previously-filed one. The guide names these two top-level options but does not itemize Complementaria's own sub-reason catalog (e.g. correction type), if any.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.8, III.C Configuración de la declaración",
+      "validation": {
+        "enum": [
+          "normal",
+          "complementaria"
+        ]
+      }
+    },
+    {
+      "name": "period",
+      "label": "Periodo",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown selected alongside Ejercicio and Tipo de declaración; the guide names the field but does not render its option list on screen, so no enum is asserted.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.8, III.C Configuración de la declaración",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "hasForeignIncomeOrPendingCredit",
+      "label": "¿Obtuviste ingresos y pagaste impuestos en el extranjero o tienes impuesto pendiente de acreditar?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.9, III.C Configuración de la declaración"
+    },
+    {
+      "name": "acceptsSalaryIncomePrecarga",
+      "label": "¿Aceptas y reconoces la información precargada?",
+      "type": "boolean",
+      "required": false,
+      "description": "Shown only when the system has pre-loaded third-party-reported (CFDI de nómina) salary income for review; not shown when no precarga exists.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.14, IV.1.a Ingreso anual"
+    },
+    {
+      "name": "withholdingAgentRfc",
+      "label": "RFC del retenedor",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "RFC of the employer/withholding agent, captured when manually adding a salary-income record. Bounded to a single record for v1.0.0 — the live wizard supports adding one record per employer/retenedor in the fiscal year; see VERIFICATION.md.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.17, IV.1.a Ingreso anual (Agregar)",
+      "validation": {
+        "pattern": "^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$"
+      }
+    },
+    {
+      "name": "withholdingAgentName",
+      "label": "Nombre, denominación o razón social",
+      "type": "string",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.17, IV.1.a Ingreso anual (Agregar)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "salaryIncomeFromWithholdingAgent",
+      "label": "Ingresos por salarios",
+      "type": "number",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.17, IV.1.a Ingreso anual (Agregar)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "exemptIncomeFromWithholdingAgent",
+      "label": "Ingresos exentos",
+      "type": "number",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.17, IV.1.a Ingreso anual (Agregar)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declaresAsimiladosASalarios",
+      "label": "Ingresos por Asimilados a salarios",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the filer received income taxed as 'Asimilados a salarios' during the fiscal year. Modelled as a gating flag inferred from the wizard's own 'Asimilados a salarios' tab (p.16/19); the guide does not render the full 'Ingresos a declarar' checkbox list from the Configuración step on screen, so this flag is an interpretive stand-in for that checkbox — see VERIFICATION.md.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.16, 19, IV.1 Ingresos (tab selection)"
+    },
+    {
+      "name": "isFishingForestryCooperativeMember",
+      "label": "¿Eres integrante de una sociedad cooperativa de producción dedicada exclusivamente a actividades pesqueras o silvícolas que cuente con concesión o permiso del Gobierno Federal?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaresAsimiladosASalarios",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.20, IV.1 Ingresos, Asimilados a salarios"
+    },
+    {
+      "name": "assimilatedIncome",
+      "label": "Ingresos asimilados",
+      "type": "number",
+      "required": false,
+      "description": "Editable only when no third-party precarga exists for this income; otherwise shows the precargado amount, which can still be modified.",
+      "requiredWhen": {
+        "field": "declaresAsimiladosASalarios",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.20, IV.1 Ingresos, Asimilados a salarios",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "assimilatedIncomeTaxWithheld",
+      "label": "Impuesto retenido (Asimilados a salarios)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaresAsimiladosASalarios",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.20, IV.1 Ingresos, Asimilados a salarios",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "exemptIncomeFishingForestryCooperative",
+      "label": "Ingresos exentos por ser integrante de una sociedad cooperativa de producción dedicada exclusivamente a actividades pesqueras o silvícolas",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "isFishingForestryCooperativeMember",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.21, IV.1 Ingresos, Asimilados a salarios",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declaresIngresosSeguroRetiro",
+      "label": "Ingresos del seguro de retiro",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the filer received retirement-insurance income during the fiscal year. Same interpretive-flag caveat as declaresAsimiladosASalarios — see VERIFICATION.md.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.16, 19, IV.1 Ingresos (tab selection)"
+    },
+    {
+      "name": "retirementInsuranceIncome",
+      "label": "Ingresos (seguro de retiro)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaresIngresosSeguroRetiro",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.21, IV.1 Ingresos, Ingresos del seguro de retiro",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "retirementInsuranceExemptIncome",
+      "label": "Ingresos exentos (seguro de retiro)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaresIngresosSeguroRetiro",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.21, IV.1 Ingresos, Ingresos del seguro de retiro",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "retirementInsuranceYearsOfService",
+      "label": "Número de años de servicio",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaresIngresosSeguroRetiro",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.21, IV.1 Ingresos, Ingresos del seguro de retiro",
+      "validation": {
+        "minimum": 0,
+        "maximum": 80
+      }
+    },
+    {
+      "name": "retirementInsuranceTaxWithheld",
+      "label": "Impuesto retenido (seguro de retiro)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaresIngresosSeguroRetiro",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.21, IV.1 Ingresos, Ingresos del seguro de retiro",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declaresIndemnizacionOrJubilacion",
+      "label": "Ingresos por Indemnización, Jubilación en parcialidades o Jubilación pago único",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the filer received any of these three income types. The guide names all three tabs (p.16/19) but, unlike Asimilados a salarios and Ingresos del seguro de retiro, does not walk a worked example itemizing their own input fields — only their downstream effect on the aggregate Ingresos no acumulables (p.25) and ISR de sueldos y salarios por ingresos no acumulables (p.45) fields is modelled here. Each sub-type's own detailed fields are out of scope for v1.0.0 — see VERIFICATION.md.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.16, 19, 25, 45, IV.1 Ingresos (tab selection)"
+    },
+    {
+      "name": "annualIncome",
+      "label": "Ingreso anual",
+      "type": "number",
+      "required": true,
+      "description": "System-aggregated total of the filer's salary/assimilated income for the fiscal year, built from the retenedor records above (precargado and/or manually added).",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.12-13, 22, IV.1.a Ingreso anual",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "exemptIncome",
+      "label": "Ingresos exentos",
+      "type": "number",
+      "required": true,
+      "description": "System-calculated per the exemption limits in the Ley del Impuesto sobre la Renta.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.23, IV.1.b Ingresos exentos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accruableIncome",
+      "label": "Ingresos acumulables",
+      "type": "number",
+      "required": true,
+      "description": "System-calculated.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.24, IV.1.c Ingresos acumulables",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonAccruableIncome",
+      "label": "Ingresos no acumulables",
+      "type": "number",
+      "required": false,
+      "description": "Result of reducing the annual income from indemnización/jubilación pago único by the corresponding exempt income and the último salario mensual ordinario (USMO); system-calculated.",
+      "requiredWhen": {
+        "field": "declaresIndemnizacionOrJubilacion",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.25, IV.1.d Ingresos no acumulables",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentSubsidy",
+      "label": "Subsidio para el empleo",
+      "type": "number",
+      "required": false,
+      "description": "Shown when the withholding agent(s) calculated an employment subsidy during the fiscal year.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.26, IV.1.e Subsidio para el empleo",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeTaxWithheld",
+      "label": "Impuesto retenido",
+      "type": "number",
+      "required": true,
+      "description": "System-calculated total ISR withheld for the fiscal year.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.26, IV.1.f Impuesto retenido",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "personalDeductionType",
+      "label": "Tipo de Deducción",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown of personal-deduction categories; the guide names honorarios médicos/dentales y gastos hospitalarios, gastos funerales, and colegiaturas as examples (plus the 2025-new 'Sin clasificación' bucket for non-conforming CFDI) but does not render the dropdown's full option list on screen, so no closed enum is asserted.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.27-28, 33, IV.2 Deducciones personales",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "deductionIssuerRfc",
+      "label": "RFC del emisor",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Captured when manually adding a personal-deduction CFDI record. Bounded to a single record for v1.0.0 — see VERIFICATION.md for the repeating-structure scope cut.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.34, IV.2 Deducciones personales (Agregar)",
+      "validation": {
+        "pattern": "^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$"
+      }
+    },
+    {
+      "name": "deductionIssuerName",
+      "label": "Nombre, denominación o razón social",
+      "type": "string",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.34, IV.2 Deducciones personales (Agregar)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "deductionIssueDate",
+      "label": "Fecha de emisión",
+      "type": "date",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.34, IV.2 Deducciones personales (Agregar)"
+    },
+    {
+      "name": "deductionPaymentMethod",
+      "label": "Forma de pago",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; option list not rendered on screen in the guide, so no enum is asserted.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.34, IV.2 Deducciones personales (Agregar)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "deductionDescription",
+      "label": "Descripción",
+      "type": "string",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.34, IV.2 Deducciones personales (Agregar)",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "deductionTotalAmount",
+      "label": "Importe total",
+      "type": "number",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.34, IV.2 Deducciones personales (Agregar)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "deductionDeductibleAmount",
+      "label": "Monto deducible",
+      "type": "number",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.34, IV.2 Deducciones personales (Agregar)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "deductionRecoveredExpenseAmount",
+      "label": "Cantidad recuperada de los gastos efectuados",
+      "type": "number",
+      "required": false,
+      "description": "Only enabled for capture in some cases (e.g. reimbursed medical expenses); left blank otherwise.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.30, 34, IV.2 Deducciones personales",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "acceptsDeductionPrecarga",
+      "label": "¿Aceptas y reconoces la información precargada de tus deducciones personales?",
+      "type": "boolean",
+      "required": false,
+      "description": "Shown per pre-loaded CFDI deduction record; not shown for a manually-added record with no precarga.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.28, 34, IV.2 Deducciones personales"
+    },
+    {
+      "name": "totalDeductibleAmount",
+      "label": "Monto total deducible",
+      "type": "number",
+      "required": true,
+      "description": "System-calculated total of the personal deductions taken for the fiscal year.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.27, IV.2 Deducciones personales",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "maxDeductibleLimitAmount",
+      "label": "Monto total por deducir",
+      "type": "number",
+      "required": true,
+      "description": "System-calculated cap: the lesser of $206,368.00 MXN or 15% of the filer's total income (including exempt income), per fiscal year 2025 figures published in the guide.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.27, IV.2 Deducciones personales",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxableBase",
+      "label": "Base gravable",
+      "type": "number",
+      "required": true,
+      "description": "Ingresos acumulables minus Deducciones personales; system-calculated.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.44, IV.3.a Determinación del ISR",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "isrPerAnnualTariff",
+      "label": "ISR conforme a la tarifa anual",
+      "type": "number",
+      "required": true,
+      "description": "Result of applying the annual ISR tariff (Art. 152, Ley del Impuesto sobre la Renta, as updated in Anexo 8 of the Resolución Miscelánea Fiscal for 2025) to the taxable base; system-calculated.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.44, IV.3.a Determinación del ISR",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "isrNonAccruableIncomeTax",
+      "label": "ISR de sueldos y salarios por ingresos no acumulables",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaresIndemnizacionOrJubilacion",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.45, IV.3.a Determinación del ISR",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "provisionalPaymentsTotal",
+      "label": "Pagos provisionales",
+      "type": "number",
+      "required": true,
+      "description": "Total provisional payments made during the fiscal year; system-calculated.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.46, IV.3.a Determinación del ISR",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "balanceInFavorAmount",
+      "label": "Impuesto a favor del ejercicio",
+      "type": "number",
+      "required": false,
+      "description": "Populated only when the annual computation yields a favorable balance; mutually exclusive in practice with balanceDueAmount.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.47, IV.3.a Determinación del ISR",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "balanceInFavorAction",
+      "label": "¿Qué deseas hacer con tu saldo a favor?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "balanceInFavorAmount",
+        "greaterThan": 0
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.47, IV.3.a Determinación del ISR",
+      "validation": {
+        "enum": [
+          "devolucion",
+          "compensacion"
+        ]
+      }
+    },
+    {
+      "name": "refundClabe",
+      "label": "CLABE interbancaria",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "description": "18-digit standardized banking code (Clave Bancaria Estandarizada); either selected from a list of the filer's known accounts or captured fresh.",
+      "requiredWhen": {
+        "field": "balanceInFavorAction",
+        "equals": "devolucion"
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.48, IV.3.a Determinación del ISR",
+      "validation": {
+        "pattern": "^[0-9]{18}$"
+      }
+    },
+    {
+      "name": "refundBankAccountHolderConfirmed",
+      "label": "Confirmación de titularidad de la cuenta",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "balanceInFavorAction",
+        "equals": "devolucion"
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.49, IV.3.a Determinación del ISR"
+    },
+    {
+      "name": "balanceDueAmount",
+      "label": "Impuesto a cargo del ejercicio",
+      "type": "number",
+      "required": false,
+      "description": "Populated only when the annual computation yields tax due; mutually exclusive in practice with balanceInFavorAmount.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.50, IV.3.a Determinación del ISR",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reportsOtherExemptIncome",
+      "label": "¿Informas otros ingresos exentos? (Préstamos, donativos y/o premios, etc. que en lo individual o en su conjunto, excedan de $600,000.00)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.51, IV.3.b Datos informativos"
+    },
+    {
+      "name": "loansAmount",
+      "label": "Préstamos",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reportsOtherExemptIncome",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.51, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "donationsReceivedAmount",
+      "label": "Donativos",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reportsOtherExemptIncome",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.51, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "prizesAmount",
+      "label": "Premios",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reportsOtherExemptIncome",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.51, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "travelAllowancesCollectedAmount",
+      "label": "Viáticos cobrados",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reportsOtherExemptIncome",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.51, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "homeSaleAmount",
+      "label": "Enajenación de casa habitación",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reportsOtherExemptIncome",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.51, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inheritanceOrLegacyAmount",
+      "label": "Herencias o legados",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "reportsOtherExemptIncome",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.51, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "hasOtherInformativeData",
+      "label": "¿Tienes otros datos informativos que declarar?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.52, IV.3.b Datos informativos"
+    },
+    {
+      "name": "governmentSupportIncomeAmount",
+      "label": "Ingresos obtenidos por apoyos gubernamentales",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasOtherInformativeData",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.52, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "earthquake2017SupportIncomeAmount",
+      "label": "Ingresos obtenidos por apoyos gubernamentales con motivo de los sismos del 7 y 19 de septiembre de 2017",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasOtherInformativeData",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.52, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "debtForgivenessHousingAmount",
+      "label": "Monto de la condonación o remisión de deuda de créditos otorgados para adquisición de casa habitación",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasOtherInformativeData",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.52, IV.3.b Datos informativos",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "hasReportableTaxSchemes",
+      "label": "¿Tiene esquemas fiscales reportables que informar?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.53, IV.3.b Datos informativos"
+    },
+    {
+      "name": "reportableTaxSchemeType",
+      "label": "Tipo de esquema reportable",
+      "type": "string",
+      "required": false,
+      "description": "Dropdown; option list not rendered on screen in the guide, so no enum is asserted.",
+      "requiredWhen": {
+        "field": "hasReportableTaxSchemes",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.54, IV.3.b Datos informativos",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "reportableTaxSchemeId",
+      "label": "Número de identificación del esquema reportable",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasReportableTaxSchemes",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.54, IV.3.b Datos informativos",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "totalContributionsAmount",
+      "label": "Total de contribuciones",
+      "type": "number",
+      "required": false,
+      "description": "A cargo más Parte actualizada más Recargos (when the latter two are enabled); system-calculated.",
+      "requiredWhen": {
+        "field": "balanceDueAmount",
+        "greaterThan": 0
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.56, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "updatedPortionAmount",
+      "label": "Parte actualizada",
+      "type": "number",
+      "required": false,
+      "description": "Enabled automatically, together with Recargos, when the declaration is filed after the legal deadline; the guide does not name a specific applicant-facing toggle field for 'late filing', so no requiredWhen gate is modelled — see VERIFICATION.md.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.55-56, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "surchargesAmount",
+      "label": "Recargos",
+      "type": "number",
+      "required": false,
+      "description": "Enabled automatically, together with Parte actualizada, when the declaration is filed after the legal deadline; see updatedPortionAmount.",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.55-56, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "appliesOffsetOrTaxIncentive",
+      "label": "¿Desea aplicar alguna compensación o estímulo fiscal?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "balanceDueAmount",
+        "greaterThan": 0
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.56, IV.4 Pago"
+    },
+    {
+      "name": "offsetDetailAmount",
+      "label": "Compensaciones",
+      "type": "number",
+      "required": false,
+      "description": "Aggregate total of the saldo(s) a favor / pago(s) de lo indebido being applied; the guide describes a per-record 'Agregar' sub-dialog for registering the source declaration(s) but does not itemize that sub-dialog's own field labels beyond a generic description, so only this aggregate is modelled — see VERIFICATION.md.",
+      "requiredWhen": {
+        "field": "appliesOffsetOrTaxIncentive",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.57, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalApplicationsAmount",
+      "label": "Total de aplicaciones",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "appliesOffsetOrTaxIncentive",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.57, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "amountDue",
+      "label": "Cantidad a cargo",
+      "type": "number",
+      "required": false,
+      "description": "System-calculated, after any compensation/estímulo fiscal applied above.",
+      "requiredWhen": {
+        "field": "balanceDueAmount",
+        "greaterThan": 0
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.58, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "paysInInstallments",
+      "label": "¿Opta por pagar en parcialidades?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "amountDue",
+        "greaterThan": 0
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.59, IV.4 Pago"
+    },
+    {
+      "name": "numberOfInstallments",
+      "label": "Número de parcialidades",
+      "type": "integer",
+      "required": false,
+      "description": "Up to six instalments.",
+      "requiredWhen": {
+        "field": "paysInInstallments",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.60, IV.4 Pago",
+      "validation": {
+        "minimum": 1,
+        "maximum": 6
+      }
+    },
+    {
+      "name": "firstInstallmentAmount",
+      "label": "Importe de la primera parcialidad",
+      "type": "number",
+      "required": false,
+      "description": "System-calculated.",
+      "requiredWhen": {
+        "field": "paysInInstallments",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.60, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "remainingInstallmentsAmount",
+      "label": "Importe sin la primera parcialidad",
+      "type": "number",
+      "required": false,
+      "description": "System-calculated.",
+      "requiredWhen": {
+        "field": "paysInInstallments",
+        "equals": true
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.60, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "amountToPay",
+      "label": "Cantidad a pagar",
+      "type": "number",
+      "required": false,
+      "description": "Cantidad a cargo minus Importe sin la primera parcialidad; system-calculated.",
+      "requiredWhen": {
+        "field": "amountDue",
+        "greaterThan": 0
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.61, IV.4 Pago",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "efirmaPrivateKeyPassword",
+      "label": "Contraseña de la clave privada (e.firma)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Required to submit the return only when the resulting saldo a favor is MXN $10,001 or more, in which case an e.firma (advanced electronic signature) is mandatory alongside the .cer/.key files (see the sibling documents[] entries).",
+      "requiredWhen": {
+        "field": "balanceInFavorAmount",
+        "greaterThanOrEqual": 10001
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.55, IV.4 Pago"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "totalDeductibleWithinLimit",
+      "compare": {
+        "field": "totalDeductibleAmount",
+        "operator": "lessThanOrEqual",
+        "compareTo": "maxDeductibleLimitAmount"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "efirmaCertificateFile",
+      "label": "Certificado de e.firma (.cer)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "balanceInFavorAmount",
+        "greaterThanOrEqual": 10001
+      },
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/x-x509-ca-cert"
+        ]
+      },
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.55, IV.4 Pago (mandatory e.firma when the saldo a favor is MXN $10,001 or more)"
+    },
+    {
+      "id": "efirmaPrivateKeyFile",
+      "label": "Clave privada de e.firma (.key)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "balanceInFavorAmount",
+        "greaterThanOrEqual": 10001
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "SAT 'Guía de llenado — Declaración Anual, Régimen de Sueldos y Salarios e Ingresos Asimilados a Salarios' (ejercicio fiscal 2025) — p.55, IV.4 Pago (mandatory e.firma when the saldo a favor is MXN $10,001 or more)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "configuracion_declaracion",
+      "title": "Configuración de la declaración",
+      "fields": [
+        "taxYear",
+        "declarationType",
+        "period",
+        "hasForeignIncomeOrPendingCredit"
+      ],
+      "next": "ingresos"
+    },
+    {
+      "id": "ingresos",
+      "title": "Ingresos",
+      "fields": [
+        "acceptsSalaryIncomePrecarga",
+        "withholdingAgentRfc",
+        "withholdingAgentName",
+        "salaryIncomeFromWithholdingAgent",
+        "exemptIncomeFromWithholdingAgent",
+        "declaresAsimiladosASalarios",
+        "isFishingForestryCooperativeMember",
+        "assimilatedIncome",
+        "assimilatedIncomeTaxWithheld",
+        "exemptIncomeFishingForestryCooperative",
+        "declaresIngresosSeguroRetiro",
+        "retirementInsuranceIncome",
+        "retirementInsuranceExemptIncome",
+        "retirementInsuranceYearsOfService",
+        "retirementInsuranceTaxWithheld",
+        "declaresIndemnizacionOrJubilacion",
+        "annualIncome",
+        "exemptIncome",
+        "accruableIncome",
+        "nonAccruableIncome",
+        "employmentSubsidy",
+        "incomeTaxWithheld"
+      ],
+      "next": "deducciones_personales"
+    },
+    {
+      "id": "deducciones_personales",
+      "title": "Deducciones personales",
+      "fields": [
+        "personalDeductionType",
+        "deductionIssuerRfc",
+        "deductionIssuerName",
+        "deductionIssueDate",
+        "deductionPaymentMethod",
+        "deductionDescription",
+        "deductionTotalAmount",
+        "deductionDeductibleAmount",
+        "deductionRecoveredExpenseAmount",
+        "acceptsDeductionPrecarga",
+        "totalDeductibleAmount",
+        "maxDeductibleLimitAmount"
+      ],
+      "next": "determinacion"
+    },
+    {
+      "id": "determinacion",
+      "title": "Determinación",
+      "fields": [
+        "taxableBase",
+        "isrPerAnnualTariff",
+        "isrNonAccruableIncomeTax",
+        "provisionalPaymentsTotal",
+        "balanceInFavorAmount",
+        "balanceInFavorAction",
+        "refundClabe",
+        "refundBankAccountHolderConfirmed",
+        "balanceDueAmount",
+        "reportsOtherExemptIncome",
+        "loansAmount",
+        "donationsReceivedAmount",
+        "prizesAmount",
+        "travelAllowancesCollectedAmount",
+        "homeSaleAmount",
+        "inheritanceOrLegacyAmount",
+        "hasOtherInformativeData",
+        "governmentSupportIncomeAmount",
+        "earthquake2017SupportIncomeAmount",
+        "debtForgivenessHousingAmount",
+        "hasReportableTaxSchemes",
+        "reportableTaxSchemeType",
+        "reportableTaxSchemeId"
+      ],
+      "next": "pago"
+    },
+    {
+      "id": "pago",
+      "title": "Pago",
+      "fields": [
+        "totalContributionsAmount",
+        "updatedPortionAmount",
+        "surchargesAmount",
+        "appliesOffsetOrTaxIncentive",
+        "offsetDetailAmount",
+        "totalApplicationsAmount",
+        "amountDue",
+        "paysInInstallments",
+        "numberOfInstallments",
+        "firstInstallmentAmount",
+        "remainingInstallmentsAmount",
+        "amountToPay",
+        "efirmaPrivateKeyPassword"
+      ],
+      "next": "vista_previa_envio"
+    },
+    {
+      "id": "vista_previa_envio",
+      "title": "Vista previa y envío de la declaración",
+      "fields": [],
+      "next": "acuse_recibo"
+    },
+    {
+      "id": "acuse_recibo",
+      "title": "Acuse de recibo de la declaración",
+      "fields": []
+    }
+  ]
+}
