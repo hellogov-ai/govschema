@@ -4,8 +4,30 @@
 
 ## Executive Summary
 
-**16 jurisdictions** | **225 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**16 jurisdictions** | **226 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1400):** South Korea gains its first Vehicle
+> Registration (as opposed to driver-licensing) DMV schema,
+> `kr/molit/vehicle-ownership-transfer-registration` — transfer-of-ownership
+> registration (이전등록) after a sale, gift, court-commissioned act, or
+> inheritance, sourced directly from the gazetted application form (Motor
+> Vehicle Registration Enforcement Rule, Attached Form No. 14) via law.go.kr,
+> with a genuine text layer extracted (no OCR, no login). South Korea's DMV
+> vertical previously covered only driver licensing
+> (`kr/koroad/driving-licence-application`); this closes the vehicle
+> registration/tag/title gap flagged in prior cycles. The registration-office
+> vehicle-registration-certificate requirement and the exact mapping of two
+> attachment documents onto the form's five registration-reason checkboxes
+> are corroborated only by secondary administrative sources (gov.kr, and two
+> district vehicle-registration-office pages), not stated verbatim on the
+> primary form itself — both flagged as interpretive judgment calls for an
+> independent reviewer. This cycle also scouted Brazil's first driving
+> licence ("primeira habilitação") as an alternative candidate and found it
+> gov.br-SSO-gated from the first step with no federal, unauthenticated,
+> field-level source — left as a backlog candidate only if a future cycle
+> finds a genuinely public state-DETRAN source. See the document's own
+> VERIFICATION.md for the full sourcing table and every judgment call.
+>
 > **Update (2026-07-06, GOV-1393):** **Mexico** opens as the registry's
 > **16th jurisdiction** with `mx/inm/forma-migratoria-multiple-electronica`,
 > the Forma Migratoria Múltiple (FMM) — the mandatory entry/exit record every
@@ -311,8 +333,17 @@ and/or vehicle registration). **South Korea** (`kr/koroad/driving-licence-applic
 GOV-1291/GOV-1303) closes the DMV gap flagged in the prior cycle — sourced
 from the gazetted driving-licence-test application form (Road Traffic Act
 Enforcement Rule, Attached Form No. 42-2) via law.go.kr, no login required.
-Remaining gaps are all **sub-process/edition** expansions within an
-already-covered vertical:
+**South Korea** now also has a vehicle-registration schema alongside its
+driving-licence one: `kr/molit/vehicle-ownership-transfer-registration`
+(GOV-1400) models transfer-of-ownership registration (이전등록) after a
+sale, gift, court-commissioned act, or inheritance — sourced from the
+gazetted Transfer Registration Application form (Motor Vehicle Registration
+Enforcement Rule, Attached Form No. 14) via law.go.kr, cross-checked against
+the Car365 (car365.go.kr) portal's own guidance and several district
+vehicle-registration-office pages; the portal's own online submission
+channel requires a Korean digital-certificate login and was not walked
+interactively. Remaining gaps are all **sub-process/edition** expansions
+within an already-covered vertical:
 
 - **CDL (commercial driver licence):** only `us/ca/dmv/commercial-drivers-license-application` exists. No CDL-equivalent schema yet for GB (HGV/PCV — `gb/dvla/lorry-bus-provisional-licence` is the closest analogue), DE, FR, IE, IN, NL, NZ, SG, ZA.
 - **IDL (International Driving Permit):** covered for US (`dos/international-driving-permit-aaa`, `-aata`), IE (`dttas/international-driving-permit`), GB (`dvla/international-driving-permit`). Not modelled elsewhere.
@@ -430,7 +461,7 @@ now closed.
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KR** | 6 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **KR** | 7 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **MX** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -520,6 +551,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   CFR text or state form. Not a dead end for CDL coverage generally
   (state-level CDL schemas outside California remain open), but this
   specific candidate/research should not be resumed as-is.
+- **BR CNH `primeira habilitação` (first driving licence)** — GOV-1400.
+  Federal layer is `gov.br`-SSO-gated from the very first step (the
+  "CNH do Brasil" app's own `Requerimento`), and every state DETRAN portal
+  checked (SP, RJ, PE) equally requires a `gov.br` login for scheduling; no
+  federal, unauthenticated, field-level RENACH form source was found (SENATRAN's
+  own resolutions describe the card's security/biometric specs, not the
+  application form's fields). Not a hard dead end — untested is whether any
+  individual state DETRAN publishes the RENACH form's own field list outside
+  its authenticated portal; a candidate for a future cycle only if one does.
 
 ---
 
