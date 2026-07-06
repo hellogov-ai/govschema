@@ -4,8 +4,32 @@
 
 ## Executive Summary
 
-**16 jurisdictions** | **226 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**16 jurisdictions** | **227 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1407):** Brazil gains its third vertical,
+> `br/rfb/individual-income-tax-return-irpf` (DIRPF, the annual individual
+> income tax return), closing Brazil's Taxes-vertical gap. A prior cycle
+> (`GOV-1295`) had tried to source this from Receita Federal's 340-page
+> topical FAQ and left it in backlog as too fragmentary to source
+> field-by-field. This cycle found the right source instead: RFB's own
+> technical file-layout specification for the DIRPF declaration file (the
+> "Leiaute DIRPF", 2023 edition) — a byte-exact field-by-field record
+> specification, genuinely richer than most wizard-derived sources already
+> in this registry. Scoped to a bounded core (67 fields): declarant
+> identification and filing-type (HEADER/Reg 16), taxable income from
+> legal-entity employers (Reg 21), income from individuals/foreign
+> sources/carnê-leão (Reg 22), exempt (Reg 23) and exclusively-taxed
+> (Reg 24) income, one bounded dependent (Reg 25), one bounded deductible
+> payment (Reg 26), and donations to political parties (Reg 34). Rural
+> activity, capital gains (GCAP), variable income/day-trade, RRA, the
+> asset/liability schedule (Bens e Direitos), and all espólio/saída-exit-only
+> records are explicitly out of scope — see the document's own
+> VERIFICATION.md for the full scope-cut rationale and an honest caveat
+> that RFB has not published a newer Leiaute DIRPF edition since 2023.
+> There is no live wizard to walk (RFB's actual filing happens through its
+> own desktop/app software, not a public web form), so `status` remains
+> `draft`.
+>
 > **Update (2026-07-06, GOV-1400):** South Korea gains its first Vehicle
 > Registration (as opposed to driver-licensing) DMV schema,
 > `kr/molit/vehicle-ownership-transfer-registration` — transfer-of-ownership
@@ -284,7 +308,7 @@
 | **Passport** | 14/16 (88%) | **AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
 | **DMV** | 13/16 (81%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR, MX** not yet modelled |
 | **Business Formation** | 13/16 (81%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`) |
-| **Taxes** | 14/16 (88%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR, MX** not yet modelled (BR's GOV-1295 Receita Federal IRPF candidate too fragmentary so far; MX's SAT RFC candidate is a document checklist, not a field-level form, and its live wizard 403s to a direct fetch) |
+| **Taxes** | 15/16 (94%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** now modelled (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** not yet modelled (MX's SAT RFC candidate is a document checklist, not a field-level form, and its live wizard 403s to a direct fetch) |
 | **Visa** | 12/16 (75%) | **NL, ZA** — both confirmed dead ends (see below), not open work; **AE** not yet modelled; **MX** newly modelled this cycle (`mx/inm/forma-migratoria-multiple-electronica`), opening Mexico as the registry's 16th jurisdiction |
 | **National ID & Civic Documents** | 13/16 (81%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only) |
 
@@ -373,30 +397,32 @@ ZA close corporation/trust/NPO formation beyond
 registration (Evento 102) and multi-partner QSA expansion beyond the single
 founder modelled here.
 
-### Taxes — Income Tax Return, Tax Filing (14/14 jurisdictions) — closed
+### Taxes — Income Tax Return, Tax Filing (15/16 jurisdictions)
 
-Every jurisdiction now has at least one Taxes-vertical schema.
+Every jurisdiction except Mexico now has at least one Taxes-vertical schema.
 **South Korea** (`kr/nts/year-end-tax-settlement-income-deduction-report`,
-GOV-1293/GOV-1328) was new in the previous cycle — sourced from NTS's official
+GOV-1293/GOV-1328) was new in a previous cycle — sourced from NTS's official
 English-language "Easy Guide for Foreigners' Year-end Tax Settlement" PDF,
 reproducing the gazetted Attached Form No. 37(1)-(3) as an English original.
 **United Arab Emirates** now has two Taxes-vertical documents:
 `ae/fta/vat-registration` (GOV-1297/GOV-1335, opened UAE as the registry's
-14th jurisdiction) and `ae/fta/corporate-tax-registration` (GOV-1371, new
-this cycle) — both sourced from the FTA's own EmaraTax screenshot-driven
-user manuals. The UAE has no personal income tax, so these two registrations
-are its closest Taxes-vertical analogues. This cycle first attempted a
-Brazil candidate (`GOV-1295`, Receita Federal IRPF), but its named
-source turned out to be a 340-page topical FAQ rather than a field-by-field
-guide, too fragmentary to source safely — left open in backlog with findings
-rather than authored against (see `GOV-1295`). Remaining gaps are sub-process
-expansions:
+14th jurisdiction) and `ae/fta/corporate-tax-registration` (GOV-1371) — both
+sourced from the FTA's own EmaraTax screenshot-driven user manuals. The UAE
+has no personal income tax, so these two registrations are its closest
+Taxes-vertical analogues. **Brazil** now has `br/rfb/individual-income-tax-return-irpf`
+(GOV-1407, the DIRPF annual individual income tax return) — a prior cycle
+(`GOV-1295`) had named Receita Federal's 340-page topical FAQ as its source,
+found it too fragmentary to source field-by-field, and left the gap open in
+backlog; GOV-1407 instead located RFB's official byte-exact DIRPF
+file-layout specification and authored a bounded 67-field core against it
+(see the document's own VERIFICATION.md for the full scope). Mexico's
+Taxes-vertical gap remains open. Remaining gaps are sub-process expansions:
 
 - **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), ITR-2 (capital gains/foreign income/multiple properties), and now ITR-3 (non-presumptive business/profession with full books of account, GOV-1254) are all modelled — the ITR-1/2/3/4 set is now complete. ITR-3 defers full re-derivation of Schedule S/House Property/Schedule CG/OS/itemised Chapter VI-A against its own workbook, since those schedules are structurally identical to the ones already published in full in `in/incometax/individual-tax-return-itr2` (see its VERIFICATION.md for the scope rationale).
 - **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's full five-Annexure company-type set is now modelled: Dormant Company pathway (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`, GOV-1275), Body Corporate/Share Block Company pathway (`za/sars/corporate-income-tax-return-itr14-body-corporate`, GOV-1282), Small Business pathway (`za/sars/corporate-income-tax-return-itr14-small-business`, GOV-1378), and Medium to Large Business pathway (`za/sars/corporate-income-tax-return-itr14-medium-large-business`, GOV-1387). Body Corporate/Share Block and Micro Business both model a full Balance Sheet, Income Statement, and Tax Computation (138 and 151 fields respectively); Small Business is structurally much larger (283 fields, guide §14 spanning 44 pages) — it adds Small Business Corporation eligibility, Contributed Tax Capital, Urban Development Zone, Company Structure, Multinational Entity group details, Reportable Arrangement, Dividends Declared, and a 33-field Additional Assessment Information section absent from the smaller siblings; Medium to Large Business (Annexure E) is larger still (417 fields, guide §15 spanning 55 pages, the largest of the five) — it adds International, Foreign Exchange Gains/Losses, Foreign Dividends, Controlled Foreign Company, Double Taxation, STC Credits, Headquarter Company, Subsidiary Details, and Corporate Rules sections with no counterpart in any of the other four, plus a Balance Sheet (64 fields) and Income Statement (89 fields) splitting many lines by Local/Foreign and Connected/Non-Connected. All five defer the repeating Share/Membership Register, Beneficial Owner details, Capital Gains schedule, PAYE Credits, Donations-organisation list, the s6quat(1A) foreign-tax-credit computation block, and the Enhanced Renewable Energy Deduction detail container; Small Business and Medium to Large Business additionally defer, as a whole and explicitly disclosed, the same class of large itemised Tax Computation sub-blocks (~83-84-item Special Allowances Not Claimed plus related reversal/recoupment blocks) each comparable in scope to a repeating container, and Medium to Large Business further defers its wholly new, unbounded per-jurisdiction Transfer Pricing Received/Receivable, Paid/Payable, and Supporting Information containers (see each document's VERIFICATION.md). IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remains the only open corporate-tax gap among jurisdictions already in the registry.
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
 - **UAE Corporate Tax registration:** now modelled (`ae/fta/corporate-tax-registration`, GOV-1371) for the Legal Person registration pathway; Natural Person registration's own field set was not sourced this cycle (see its VERIFICATION.md).
-- **Secondary new-jurisdiction candidate (not opened yet):** Brazil's Receita Federal IRPF (`GOV-1295`) remains open in backlog pending either a stronger source or a narrower single-schedule scope — see its comment thread.
+- **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 
 ### Visa — Entry Visas, ETAs, Work/Student Permits (12/16 jurisdictions)
 
@@ -454,7 +480,7 @@ now closed.
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BR** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **BR** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -567,7 +593,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 - **Scraping:** `find registry -mindepth 3 -maxdepth 3 -type d` (one entry
   per `<agency>/<process-name>`), cross-checked against
-  `tools/govschema-client/registry-index.json` (222 entries, one per
+  `tools/govschema-client/registry-index.json` (227 entries, one per
   published version/edition).
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
@@ -598,4 +624,6 @@ authoring, ZA ITR14 4th of 5 Annexures), updated by GOV-1387
 (`za/sars/corporate-income-tax-return-itr14-medium-large-business`
 authoring, ZA SARS ITR14 corporate-tax gap closed, 5th and last Annexure),
 updated by GOV-1393 (`mx/inm/forma-migratoria-multiple-electronica`
-authoring, Mexico opened as 16th jurisdiction) | Standards Engineer
+authoring, Mexico opened as 16th jurisdiction), updated by GOV-1407
+(`br/rfb/individual-income-tax-return-irpf` authoring, Brazil Taxes-vertical
+gap closed, 3rd BR schema) | Standards Engineer

@@ -1,0 +1,903 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "br/rfb/individual-income-tax-return-irpf",
+  "version": "1.0.0",
+  "title": "Brazil Individual Income Tax Return (DIRPF — Declaração de Ajuste Anual do Imposto sobre a Renda da Pessoa Física)",
+  "description": "File Brazil's annual individual income tax return (DIRPF) with the Secretaria Especial da Receita Federal do Brasil (RFB). The DIRPF is submitted as a structured data file produced by RFB's own desktop 'Programa Gerador da Declaração' (PGD) or its 'Meu Imposto de Renda' web/app equivalent — there is no third-party-fillable public web wizard. This document is derived field-by-field from RFB's official technical file-layout specification for that data file (the 'Leiaute DIRPF'), which defines every record type in the file with byte-exact field name, content description, start/end byte position, length, decimal places, and type code (C=character, N=numeric, A=alpha). The DIRPF file has roughly 89 defined record types; this document models a coherent, well-bounded core: declarant identification and filing-type fields (HEADER and Reg 16 — CPF, name, date of birth, filing type Completa/Simplificada, retificadora flag, address, contact, and the top-level declarationType eligibility gate that scopes this document to the ordinary annual-adjustment declaration and excludes espólio/saída-definitiva filings), the four core income record types most taxpayers file (Reg 21 taxable income from legal-entity employers, Reg 22 taxable income from individuals/foreign sources/carnê-leão, Reg 23 exempt/non-taxable income, Reg 24 exclusively-taxed income), one bounded dependent entry (Reg 25), one bounded deductible-payment entry (Reg 26, e.g. medical/education expenses), and donations to political parties/candidates (Reg 34). It deliberately does not model: rural activity (Anexo da Atividade Rural, Regs 50-57), capital gains/GCAP (Regs 60-75), variable income/day-trade (Regs 40-43), Rendimentos Recebidos Acumuladamente/RRA (Regs 45-48), foreign-exchange-specific declarations, estate/espólio-only records (Regs 30, 38, 39, 58, 59) and the Saída Definitiva (Reg 39) exit-declaration flow, the 'Declaração de Bens e Direitos' asset/liability schedule (Regs 27-28), and any RFB/PGD-calculated total/control fields (e.g. the Reg 17-20 'TOTAIS CALCULADOS' records, VR_BASECALCULO, and every HEADER VR_TOTAL*/VR_SOMA* field) — this registry's established discipline is to never model authority-calculated subtotal/control-total fields as filer-entered fields. Repeating record types that occur more than once per real filing (Reg 25 dependents, Reg 26 payments) are modelled as a single bounded entry per the same limitation every prior large tax schema in this registry has hit: spec v0.3 has no repeating/nested field model (SPEC.md Section 12). This document does not submit a declaration, compute tax payable, or determine any refund/assessment amount, and no data described by this document should ever be submitted to RFB except through RFB's own PGD/Meu Imposto de Renda software by the actual taxpayer.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Secretaria Especial da Receita Federal do Brasil",
+    "abbreviation": "RFB",
+    "url": "https://www.gov.br/receitafederal/pt-br"
+  },
+  "process": {
+    "type": "filing",
+    "language": "pt-BR"
+  },
+  "source": {
+    "url": "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/dirpf/leiaute-dirpf-2023.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "Leiaute dos Registros que Compõem a Declaração de Ajuste Anual do Imposto sobre a Renda da Pessoa Física (Leiaute DIRPF), 2023 edition"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "GOV-1407 'GovSchema Standard Research' cycle: a prior cycle (GOV-1295) attempted to source Brazil's IRPF from a 340-page topical FAQ and left it in backlog as too fragmentary to source field-by-field. This cycle instead located RFB's official technical file-layout specification for the DIRPF declaration file (the 'Leiaute DIRPF'), which lists every record type with byte-exact field definitions — genuinely a field-by-field specification. The PDF's text layer was extracted in full with pdfjs-dist's getTextContent (137 pages, no OCR needed) and independently confirmed genuine (not the FAQ) before authoring began. Every field in this document was read directly from the extracted layout text for the HEADER, Reg 16 (IDENTIFICAÇÃO DO DECLARANTE), Reg 21 (RENDIMENTOS TRIBUTÁVEIS RECEBIDOS DE PESSOAS JURÍDICAS), Reg 22 (REND. TRIB. RECEBIDOS DE PESSOAS FÍSICAS, EXTERIOR E CARNÊ-LEÃO), Reg 23 (RENDIMENTOS ISENTOS E NÃO TRIBUTÁVEIS), Reg 24 (RENDIMENTOS SUJEITOS A TRIBUTAÇÂO EXCLUSIVA), Reg 25 (DEPENDENTES), Reg 26 (RELAÇÃO DE PAGAMENTOS EFETUADOS), and Reg 34 (DOAÇÕES A PARTIDOS) records. See VERIFICATION.md for the field-by-field provenance table, the full scope-cut rationale, the honest 2023-vintage sourcing caveat (RFB has not published a newer Leiaute DIRPF PDF since; later filing years such as the crypto-asset disclosure lines already present as Reg 23 code 'isento' detail records (Regs 83-87) and elsewhere may have gained additional record fields not captured by this 2023 edition), and the interpretive judgment calls flagged for an independent reviewer. A mock conformance/br/rfb/individual-income-tax-return-irpf/1.0.0/application-packet.json test run was independently checked against this document's own requiredWhen conditions — see VERIFICATION.md for the field/violation counts. Status remains 'draft': there is no live wizard to walk (RFB's actual filing is via a desktop/app program, not a web wizard, and this registry never submits mock data to a real government system)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "declarationType",
+      "label": "Tipo de declaração (declaration type)",
+      "type": "enum",
+      "required": true,
+      "description": "The DIRPF file's top-level declaration type. This document models only the ordinary annual-adjustment declaration ('A' — Ajuste). 'E' (Espólio — estate/probate final return) and 'S' (Saída — definitive-exit-from-Brazil return) each carry their own additional mandatory records (Reg 30/38/58/59 for espólio; Reg 39 for saída) that are out of scope for this document — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16 (IDENTIFICAÇÃO DO DECLARANTE), field IN_TIPODECLARACAO",
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        "ajuste"
+      ],
+      "validation": {
+        "enum": [
+          "ajuste",
+          "espolio",
+          "saida_definitiva"
+        ]
+      }
+    },
+    {
+      "name": "cpf",
+      "label": "CPF do contribuinte (taxpayer's CPF)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The taxpayer's 11-digit CPF (Cadastro de Pessoas Físicas) taxpayer identification number.",
+      "sourceRef": "Leiaute DIRPF 2023 — HEADER, field NR_CPF (also REG 16, field NR_CPF)",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "fullName",
+      "label": "Nome do contribuinte (taxpayer's full name)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — HEADER, field NM_NOME (also REG 16, field NM_NOME)",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Data de nascimento (date of birth)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — HEADER, field DT_NASCIM",
+      "description": "Format DDMMAAAA in the underlying file; modelled here as an ISO date."
+    },
+    {
+      "name": "isRectifying",
+      "label": "Declaração retificadora? (is this a rectifying/amended return?)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — HEADER, field IN_RETIFICADORA (0 = Original, 1 = Retificadora)"
+    },
+    {
+      "name": "originalDeclarationReceiptNumber",
+      "label": "Número do recibo da declaração original (original declaration's receipt number)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isRectifying",
+        "equals": true
+      },
+      "description": "The receipt number RFB issued for the declaration being rectified.",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NR_CONTROLE_ORIGINAL",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "filingType",
+      "label": "Declaração completa ou simplificada? (Complete or Simplified return)",
+      "type": "enum",
+      "required": true,
+      "description": "Completa (itemised deductions) or Simplificada (standard 20% discount, no itemised deductions). This choice does not gate which income records exist in the file — Reg 21-26/34 are recorded either way — but it does determine whether RFB's own itemised-deduction totals (out of scope Reg 17-20 'TOTAIS CALCULADOS' records) are computed from the itemised amounts or from the standard discount.",
+      "sourceRef": "Leiaute DIRPF 2023 — HEADER, field IN_COMPLETA (S = Sim/Completa, N = Não/Simplificada)",
+      "validation": {
+        "enum": [
+          "completa",
+          "simplificada"
+        ]
+      }
+    },
+    {
+      "name": "hasSpouseIncludedInDeclaration",
+      "label": "Cônjuge incluído nesta declaração? (spouse included in this declaration?)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field IN_CONJUGE (S-Sim; N-Não)"
+    },
+    {
+      "name": "spouseCpf",
+      "label": "CPF do cônjuge (spouse's CPF)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasSpouseIncludedInDeclaration",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NR_CPF_CONJUGE",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "streetType",
+      "label": "Tipo de logradouro (street type, e.g. Rua/Avenida)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field TIP_LOGRA",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "streetAddress",
+      "label": "Endereço — logradouro (street address)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NM_LOGRA",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "addressNumber",
+      "label": "Endereço — número (address number)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NR_NUMERO",
+      "validation": {
+        "maxLength": 6
+      }
+    },
+    {
+      "name": "addressComplement",
+      "label": "Endereço — complemento (address complement)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NM_COMPLEM",
+      "validation": {
+        "maxLength": 21
+      }
+    },
+    {
+      "name": "neighborhood",
+      "label": "Endereço — bairro (neighborhood)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NM_BAIRRO",
+      "validation": {
+        "maxLength": 19
+      }
+    },
+    {
+      "name": "postalCode",
+      "label": "CEP (postal code)",
+      "type": "string",
+      "required": true,
+      "description": "Brazilian CEP for a domestic address, or the equivalent foreign postal/ZIP code when stateOfResidence is 'EX' (exterior).",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NR_CEP",
+      "validation": {
+        "maxLength": 9
+      }
+    },
+    {
+      "name": "municipalityCode",
+      "label": "Código do município (municipality code)",
+      "type": "string",
+      "required": true,
+      "description": "RFB/IBGE municipality code. Declarations from abroad record the fixed code 9707 (Brasília).",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field CD_MUNICIP",
+      "validation": {
+        "pattern": "^[0-9]{1,4}$"
+      }
+    },
+    {
+      "name": "municipalityName",
+      "label": "Nome do município (municipality name)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NM_MUNICIP",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "stateOfResidence",
+      "label": "UF do endereço (state of residence)",
+      "type": "enum",
+      "required": true,
+      "description": "The two-letter Brazilian state (UF) abbreviation for the taxpayer's address, or 'EX' for an address abroad.",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field SG_UF (Exterior – EX; Brasil – sigla correspondente à Unidade Federativa)",
+      "validation": {
+        "enum": [
+          "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+          "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+          "RS", "RO", "RR", "SC", "SP", "SE", "TO", "EX"
+        ]
+      }
+    },
+    {
+      "name": "countryCode",
+      "label": "Código do país (country code)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "stateOfResidence",
+        "equals": "EX"
+      },
+      "description": "RFB's own numeric country code table; only applicable to a foreign address. The full code table is not part of the layout specification and is not reproduced here.",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field CD_PAIS",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NM_EMAIL",
+      "validation": {
+        "maxLength": 90
+      }
+    },
+    {
+      "name": "voterRegistrationNumber",
+      "label": "Número do título de eleitor (voter registration number)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NR_TITELEITOR",
+      "validation": {
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "occupationCode",
+      "label": "Código de ocupação (occupation code)",
+      "type": "string",
+      "required": true,
+      "description": "RFB's own occupation code table; selected from the PGD's dropdown list. The full code table is not part of the layout specification and is not reproduced here.",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field CD_OCUP",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "occupationNatureCode",
+      "label": "Código de natureza da ocupação (occupation nature code)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field CD_NATUR",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "professionalRegistrationNumber",
+      "label": "Número do registro profissional (professional registration number)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NR_REGISTRO_PROFISSIONAL",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "numberOfInstallments",
+      "label": "Quantidade de quotas (number of tax-due installments)",
+      "type": "integer",
+      "required": true,
+      "description": "How many monthly installments (quotas) the taxpayer elects to pay any tax due in, when applicable. The layout field is a single digit (0-9); RFB rules separately cap the real-world maximum number of installments.",
+      "sourceRef": "Leiaute DIRPF 2023 — REG 16, field NR_QUOTAS",
+      "validation": {
+        "minimum": 0,
+        "maximum": 9
+      }
+    },
+    {
+      "name": "hadTaxableIncomeFromLegalEntityEmployer",
+      "label": "Recebeu rendimentos tributáveis de pessoa jurídica? (received taxable income from a legal-entity employer?)",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the taxpayer reports at least one Reg 21 (RENDIMENTOS TRIBUTÁVEIS RECEBIDOS DE PESSOAS JURÍDICAS) entry — e.g. a salaried employment relationship. The real record repeats once per paying legal entity (employer); this document models a single, primary employer entry only — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21 (RENDIMENTOS TRIBUTÁVEIS RECEBIDOS DE PESSOAS JURÍDICAS), inferred gating field (the layout defines the record's fields, not a wizard question; the PGD/Meu Imposto de Renda program itself presents this as an add/remove-row list rather than a single yes/no question)"
+    },
+    {
+      "name": "employerCnpj",
+      "label": "CNPJ da fonte pagadora (paying legal entity's CNPJ)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadTaxableIncomeFromLegalEntityEmployer",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21, field NR_PAGADOR",
+      "validation": {
+        "pattern": "^[0-9]{14}$"
+      }
+    },
+    {
+      "name": "employerName",
+      "label": "Nome da fonte pagadora (paying legal entity's name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadTaxableIncomeFromLegalEntityEmployer",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21, field NM_PAGADOR",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "grossSalaryReceivedAmount",
+      "label": "Valor do rendimento recebido (R$) (gross taxable income received)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadTaxableIncomeFromLegalEntityEmployer",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21, field VR_RENDTO"
+    },
+    {
+      "name": "officialSocialSecurityContributionAmount",
+      "label": "Valor da contribuição previdenciária oficial (R$) (official social-security contribution withheld)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadTaxableIncomeFromLegalEntityEmployer",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21, field VR_CONTRIB"
+    },
+    {
+      "name": "thirteenthSalaryAmount",
+      "label": "Valor do décimo terceiro salário (R$) (13th-month salary)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadTaxableIncomeFromLegalEntityEmployer",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21, field VR_DECTERC"
+    },
+    {
+      "name": "incomeTaxWithheldAmount",
+      "label": "Valor do imposto retido na fonte (R$) (income tax withheld at source)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadTaxableIncomeFromLegalEntityEmployer",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21, field VR_IMPOSTO"
+    },
+    {
+      "name": "thirteenthSalaryIncomeTaxWithheldAmount",
+      "label": "Valor do imposto retido na fonte sobre o 13º salário (R$) (income tax withheld on 13th-month salary)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadTaxableIncomeFromLegalEntityEmployer",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 21, field VR_IRRF13SALARIO"
+    },
+    {
+      "name": "hadIncomeFromIndividualsForeignOrCarneLeao",
+      "label": "Recebeu rendimentos de pessoa física, do exterior ou sujeitos ao carnê-leão? (received income from individuals, abroad, or subject to carnê-leão?)",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the taxpayer reports at least one Reg 22 (REND. TRIB. RECEBIDOS DE PESSOAS FÍSICAS, EXTERIOR E CARNÊ-LEÃO) entry — e.g. rent received from an individual tenant, or self-employment income subject to the monthly carnê-leão advance-tax mechanism. The real record repeats once per calendar month; this document models a single, consolidated entry — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22 (REND. TRIB. RECEBIDOS DE PESSOAS FÍSICAS, EXTERIOR E CARNÊ-LEÃO), inferred gating field"
+    },
+    {
+      "name": "carneLeaoReferenceMonth",
+      "label": "Mês de ocorrência (reference month)",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field NR_MES",
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "carneLeaoIncomeReceivedAmount",
+      "label": "Valor dos rendimentos recebidos (R$) (income received)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_RENDTO"
+    },
+    {
+      "name": "rentalIncomeReceivedAmount",
+      "label": "Valor dos rendimentos recebidos de aluguéis (R$) (rental income received)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_ALUGUEIS"
+    },
+    {
+      "name": "otherIncomeFromIndividualsAmount",
+      "label": "Valor dos rendimentos recebidos — outros (R$) (other income received)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR-OUTROS"
+    },
+    {
+      "name": "foreignIncomeReceivedAmount",
+      "label": "Valor do rendimento recebido no exterior (R$) (income received abroad)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_EXTER"
+    },
+    {
+      "name": "cashBookDeductionAmount",
+      "label": "Valor da dedução — livro-caixa (R$) (cash-book deduction)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "description": "Deductible book-keeping expenses of a self-employed professional, per the 'livro-caixa' regime.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_LIVCAIX"
+    },
+    {
+      "name": "alimonyDeductionAmount",
+      "label": "Valor da dedução com pensão alimentícia (R$) (alimony/child-support deduction)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_ALIMENT"
+    },
+    {
+      "name": "dependentDeductionAmount",
+      "label": "Valor da dedução com dependente (R$) (per-dependent deduction)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_DEDUC"
+    },
+    {
+      "name": "socialSecurityContributionPaidAmount",
+      "label": "Valor pago à previdência (R$) (social-security contribution paid)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_PREVID"
+    },
+    {
+      "name": "carneLeaoTaxPaidAmount",
+      "label": "Valor do imposto pago — carnê-leão (R$) (carnê-leão tax paid)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadIncomeFromIndividualsForeignOrCarneLeao",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 22, field VR_IMPOSTO"
+    },
+    {
+      "name": "hadExemptOrNonTaxableIncome",
+      "label": "Recebeu rendimentos isentos e não tributáveis? (received exempt/non-taxable income?)",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the taxpayer reports at least one Reg 23 (RENDIMENTOS ISENTOS E NÃO TRIBUTÁVEIS) entry (e.g. savings-account interest, FGTS withdrawals, capital gain on the sale of a single residential property below the exemption threshold). The real record repeats once per exempt-income type code; this document models a single entry — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 23 (RENDIMENTOS ISENTOS E NÃO TRIBUTÁVEIS), inferred gating field"
+    },
+    {
+      "name": "exemptIncomeCode",
+      "label": "Código do rendimento isento e não tributável (exempt-income type code)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadExemptOrNonTaxableIncome",
+        "equals": true
+      },
+      "description": "RFB's own exempt-income type code, selected from the PGD's dropdown list (e.g. codes for savings-account interest, FGTS, or the sale of a single residential property). The full code table is not part of the layout specification and is not reproduced here.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 23, field NR_COD_ISENTO",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "exemptIncomeAmount",
+      "label": "Valor do rendimento isento (R$) (exempt income amount)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadExemptOrNonTaxableIncome",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 23, field VR_VALOR"
+    },
+    {
+      "name": "hadExclusivelyTaxedIncome",
+      "label": "Recebeu rendimentos sujeitos à tributação exclusiva? (received income subject to exclusive/definitive taxation?)",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the taxpayer reports at least one Reg 24 (RENDIMENTOS SUJEITOS A TRIBUTAÇÂO EXCLUSIVA) entry (e.g. a 13th-month-salary-only taxation line, or other income taxed exclusively at source and not included in the annual-adjustment tax base). The real record repeats once per income-type code; this document models a single entry — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 24 (RENDIMENTOS SUJEITOS A TRIBUTAÇÂO EXCLUSIVA), inferred gating field"
+    },
+    {
+      "name": "exclusiveTaxIncomeCode",
+      "label": "Código do rendimento de tributação exclusiva (exclusive-taxation income type code)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadExclusivelyTaxedIncome",
+        "equals": true
+      },
+      "description": "RFB's own exclusive-taxation income type code, selected from the PGD's dropdown list. The full code table is not part of the layout specification and is not reproduced here.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 24, field NR_COD_EXCLUSIVO",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "exclusiveTaxIncomeAmount",
+      "label": "Valor do rendimento (R$) (exclusively-taxed income amount)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "hadExclusivelyTaxedIncome",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 24, field VR_VALOR"
+    },
+    {
+      "name": "hasDependents",
+      "label": "Possui dependentes? (has dependents?)",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the taxpayer reports at least one Reg 25 (DEPENDENTES) entry. The real record repeats once per dependent; this document models a single, primary dependent entry only — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 25 (DEPENDENTES), inferred gating field"
+    },
+    {
+      "name": "dependentRelationshipCode",
+      "label": "Código da relação de dependência (dependent relationship code)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDependents",
+        "equals": true
+      },
+      "description": "RFB's own dependent-relationship code (e.g. child, spouse, parent), selected from the PGD's dropdown list. The full code table is not part of the layout specification and is not reproduced here.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 25, field CD_DEPEND",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "dependentName",
+      "label": "Nome do dependente (dependent's name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDependents",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 25, field NM_DEPEND",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "dependentDateOfBirth",
+      "label": "Data de nascimento do dependente (dependent's date of birth)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDependents",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 25, field DT_NASCIM"
+    },
+    {
+      "name": "dependentCpf",
+      "label": "CPF do dependente (dependent's CPF)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDependents",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 25, field NI_DEPEND",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "madeDeductiblePayments",
+      "label": "Efetuou pagamentos dedutíveis (ex.: saúde, educação)? (made deductible payments, e.g. medical/education expenses?)",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the taxpayer reports at least one Reg 26 (RELAÇÃO DE PAGAMENTOS EFETUADOS) entry. The real record repeats once per payment; this document models a single, primary payment entry only — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26 (RELAÇÃO DE PAGAMENTOS EFETUADOS), inferred gating field"
+    },
+    {
+      "name": "paymentCode",
+      "label": "Código de pagamento (payment type code)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "madeDeductiblePayments",
+        "equals": true
+      },
+      "description": "RFB's own two-digit payment-type code, selected from the PGD's dropdown list — the layout document's own footnote references codes including 01 (previdência oficial) and 09/10/11/12/13/14/21/26 (medical/health-related expenses) as examples, but the full code table is not part of the layout specification and is not reproduced here.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26, field CD_PAGTO",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "paymentBeneficiaryTaxId",
+      "label": "CNPJ/CPF do beneficiário (beneficiary's CNPJ/CPF)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "madeDeductiblePayments",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "The CPF (individual, e.g. a domestic employee or independent professional) or CNPJ (legal entity, e.g. a clinic or school) of the person or organisation paid.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26, field NR_BENEF",
+      "validation": {
+        "maxLength": 14
+      }
+    },
+    {
+      "name": "paymentBeneficiaryName",
+      "label": "Nome do beneficiário (beneficiary's name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "madeDeductiblePayments",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26, field NM_BENEF",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "paymentAmount",
+      "label": "Valor do pagamento (R$) (payment amount)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "madeDeductiblePayments",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26, field VR_PAGTO"
+    },
+    {
+      "name": "paymentNonDeductibleOrReimbursedAmount",
+      "label": "Valor da parcela não dedutível ou reembolsada (R$) (non-deductible or reimbursed portion)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "madeDeductiblePayments",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26, field VR_REDUC"
+    },
+    {
+      "name": "paymentBeneficiaryType",
+      "label": "Tipo de beneficiário (beneficiary relationship type)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "madeDeductiblePayments",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26, field IN_TIPO_PGTO (T-Titular, D-Dependente, A-Alimentando)",
+      "validation": {
+        "enum": [
+          "titular",
+          "dependente",
+          "alimentando"
+        ]
+      }
+    },
+    {
+      "name": "paymentDescription",
+      "label": "Descrição do pagamento (payment description)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "madeDeductiblePayments",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 26, field NM_DESCRICAO",
+      "validation": {
+        "maxLength": 512
+      }
+    },
+    {
+      "name": "donatedToPoliticalParty",
+      "label": "Efetuou doação a partido político ou candidato? (donated to a political party or candidate?)",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates whether the taxpayer reports at least one Reg 34 (DOAÇÕES A PARTIDOS) entry. The real record repeats once per party/candidate donated to; this document models a single, primary donation entry only — see VERIFICATION.md.",
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 34 (DOAÇÕES A PARTIDOS), inferred gating field"
+    },
+    {
+      "name": "politicalPartyCnpj",
+      "label": "CNPJ do partido ou candidato (party or candidate's CNPJ)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "donatedToPoliticalParty",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 34, field NR_PARTIDO",
+      "validation": {
+        "pattern": "^[0-9]{14}$"
+      }
+    },
+    {
+      "name": "politicalPartyName",
+      "label": "Nome do partido ou candidato (party or candidate's name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "donatedToPoliticalParty",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 34, field NM_PARTIDO",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "donationAmount",
+      "label": "Valor da doação (R$) (donation amount)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "donatedToPoliticalParty",
+        "equals": true
+      },
+      "sourceRef": "Leiaute DIRPF 2023 — Reg 34, field VR_DOACAO"
+    }
+  ],
+  "steps": [
+    {
+      "id": "declarant_identification",
+      "title": "Declarant identification and filing type",
+      "fields": [
+        "declarationType", "cpf", "fullName", "dateOfBirth", "isRectifying",
+        "originalDeclarationReceiptNumber", "filingType", "hasSpouseIncludedInDeclaration",
+        "spouseCpf", "streetType", "streetAddress", "addressNumber", "addressComplement",
+        "neighborhood", "postalCode", "municipalityCode", "municipalityName",
+        "stateOfResidence", "countryCode", "email", "voterRegistrationNumber",
+        "occupationCode", "occupationNatureCode", "professionalRegistrationNumber",
+        "numberOfInstallments"
+      ],
+      "next": "employer_income"
+    },
+    {
+      "id": "employer_income",
+      "title": "Taxable income received from legal-entity employers (Reg 21)",
+      "fields": [
+        "hadTaxableIncomeFromLegalEntityEmployer", "employerCnpj", "employerName",
+        "grossSalaryReceivedAmount", "officialSocialSecurityContributionAmount",
+        "thirteenthSalaryAmount", "incomeTaxWithheldAmount",
+        "thirteenthSalaryIncomeTaxWithheldAmount"
+      ],
+      "next": "individual_foreign_carne_leao_income"
+    },
+    {
+      "id": "individual_foreign_carne_leao_income",
+      "title": "Taxable income from individuals, abroad, or carnê-leão (Reg 22)",
+      "fields": [
+        "hadIncomeFromIndividualsForeignOrCarneLeao", "carneLeaoReferenceMonth",
+        "carneLeaoIncomeReceivedAmount", "rentalIncomeReceivedAmount",
+        "otherIncomeFromIndividualsAmount", "foreignIncomeReceivedAmount",
+        "cashBookDeductionAmount", "alimonyDeductionAmount", "dependentDeductionAmount",
+        "socialSecurityContributionPaidAmount", "carneLeaoTaxPaidAmount"
+      ],
+      "next": "exempt_income"
+    },
+    {
+      "id": "exempt_income",
+      "title": "Exempt and non-taxable income (Reg 23)",
+      "fields": ["hadExemptOrNonTaxableIncome", "exemptIncomeCode", "exemptIncomeAmount"],
+      "next": "exclusive_tax_income"
+    },
+    {
+      "id": "exclusive_tax_income",
+      "title": "Income subject to exclusive/definitive taxation (Reg 24)",
+      "fields": ["hadExclusivelyTaxedIncome", "exclusiveTaxIncomeCode", "exclusiveTaxIncomeAmount"],
+      "next": "dependents"
+    },
+    {
+      "id": "dependents",
+      "title": "Dependents (Reg 25)",
+      "fields": ["hasDependents", "dependentRelationshipCode", "dependentName", "dependentDateOfBirth", "dependentCpf"],
+      "next": "payments"
+    },
+    {
+      "id": "payments",
+      "title": "Deductible payments made (Reg 26)",
+      "fields": [
+        "madeDeductiblePayments", "paymentCode", "paymentBeneficiaryTaxId",
+        "paymentBeneficiaryName", "paymentAmount", "paymentNonDeductibleOrReimbursedAmount",
+        "paymentBeneficiaryType", "paymentDescription"
+      ],
+      "next": "political_donations"
+    },
+    {
+      "id": "political_donations",
+      "title": "Donations to political parties/candidates (Reg 34)",
+      "fields": ["donatedToPoliticalParty", "politicalPartyCnpj", "politicalPartyName", "donationAmount"]
+    }
+  ]
+}

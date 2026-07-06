@@ -1,0 +1,98 @@
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+
+Schema: br/rfb/individual-income-tax-return-irpf v1.0.0
+Generated: 2026-07-06
+
+Scenario:
+Maria Oliveira Silva (fictitious taxpayer) — a salaried employee resident in
+São Paulo (SP), filing an ordinary annual-adjustment DIRPF ('Ajuste') as a
+Declaração Completa for a single legal-entity employer, with one dependent
+child, a modest deductible dental-expense payment, and R$1,200 in exempt
+savings-account interest income. No rectifying declaration, no spouse
+included, no carnê-leão/individual/foreign income, no exclusively-taxed
+income, and no donation to a political party. All CPF/CNPJ numbers, names,
+and addresses are fabricated placeholders and do not correspond to a real
+person, company, or filing — this is never to be submitted to a real RFB
+system (RFB's own PGD/Meu Imposto de Renda software is the only legitimate
+filing channel).
+
+Collected values:
+  declarationType: 'ajuste'
+  cpf: '12345678900'
+  fullName: 'Maria Oliveira Silva'
+  dateOfBirth: '1985-03-14'
+  isRectifying: False
+  filingType: 'completa'
+  hasSpouseIncludedInDeclaration: False
+  streetType: 'Rua'
+  streetAddress: 'das Acácias'
+  addressNumber: '245'
+  addressComplement: 'Apto 12'
+  neighborhood: 'Jardim Primavera'
+  postalCode: '01310100'
+  municipalityCode: '7107'
+  municipalityName: 'São Paulo'
+  stateOfResidence: 'SP'
+  email: 'maria.oliveira@example.com'
+  voterRegistrationNumber: '123456789012'
+  occupationCode: '890'
+  occupationNatureCode: '11'
+  numberOfInstallments: 1
+  hadTaxableIncomeFromLegalEntityEmployer: True
+  employerCnpj: '12345678000199'
+  employerName: 'Comércio e Serviços ABC Ltda'
+  grossSalaryReceivedAmount: 96000.00
+  officialSocialSecurityContributionAmount: 8640.00
+  thirteenthSalaryAmount: 8000.00
+  incomeTaxWithheldAmount: 6200.00
+  thirteenthSalaryIncomeTaxWithheldAmount: 350.00
+  hadIncomeFromIndividualsForeignOrCarneLeao: False
+  hadExemptOrNonTaxableIncome: True
+  exemptIncomeCode: '09'
+  exemptIncomeAmount: 1200.00
+  hadExclusivelyTaxedIncome: False
+  hasDependents: True
+  dependentRelationshipCode: '03'
+  dependentName: 'Pedro Oliveira Silva'
+  dependentDateOfBirth: '2014-06-20'
+  dependentCpf: '98765432100'
+  madeDeductiblePayments: True
+  paymentCode: '13'
+  paymentBeneficiaryTaxId: '45678912000134'
+  paymentBeneficiaryName: 'Clínica Odontológica Sorriso Ltda'
+  paymentAmount: 850.00
+  paymentNonDeductibleOrReimbursedAmount: 0
+  paymentBeneficiaryType: 'titular'
+  paymentDescription: 'Tratamento odontológico'
+  donatedToPoliticalParty: False
+
+Not applicable in this scenario (requiredWhen evaluates false, or an
+always-optional field this filer had no value for):
+  originalDeclarationReceiptNumber (isRectifying = False)
+  spouseCpf (hasSpouseIncludedInDeclaration = False)
+  countryCode (stateOfResidence = 'SP', not 'EX')
+  professionalRegistrationNumber (always-optional; not a licensed professional)
+  carneLeaoReferenceMonth, carneLeaoIncomeReceivedAmount,
+    rentalIncomeReceivedAmount, otherIncomeFromIndividualsAmount,
+    foreignIncomeReceivedAmount, cashBookDeductionAmount,
+    alimonyDeductionAmount, dependentDeductionAmount,
+    socialSecurityContributionPaidAmount, carneLeaoTaxPaidAmount
+    (hadIncomeFromIndividualsForeignOrCarneLeao = False)
+  exclusiveTaxIncomeCode, exclusiveTaxIncomeAmount
+    (hadExclusivelyTaxedIncome = False)
+  politicalPartyCnpj, politicalPartyName, donationAmount
+    (donatedToPoliticalParty = False)
+
+Independent verification: a from-scratch GSP-0013 condition evaluator
+re-derived every field's effective requiredness from its `required`/
+`requiredWhen` member and checked exact 1:1 coverage against this packet's
+collectedValues/notApplicableFields: totalFields 67, collectedCount 48,
+notApplicableCount 19, errors 0. Three mutation tests confirmed the
+evaluator is not trivially passing every input: (1) stripping employerCnpj/
+employerName/grossSalaryReceivedAmount while
+hadTaxableIncomeFromLegalEntityEmployer remained True correctly raised 3
+violations; (2) flipping donatedToPoliticalParty to True without adding
+politicalPartyCnpj/politicalPartyName/donationAmount correctly raised 3
+violations; (3) flipping isRectifying to True without adding
+originalDeclarationReceiptNumber correctly raised 1 violation. See
+VERIFICATION.md for detail.
