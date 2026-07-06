@@ -52,8 +52,11 @@ see "What is NOT yet independently verified" below.
   — 주민등록법 시행령 [별지 제32호서식] <개정 2016. 12. 30.> 주민등록증재발급신청서
 - **By-law listing page:**
   <https://www.law.go.kr/LSW/lsBylInfoPLinkR.do?bylBrNo=00&lsNm=%EC%A3%BC%EB%AF%BC%EB%93%B1%EB%A1%9D%EB%B2%95+%EC%8B%9C%ED%96%89%EB%A0%B9&bylCls=BF&bylNo=0032>
-- **Retrieved / reviewed:** 2026-07-06
-- **Reviewer:** GovSchema Engineering (initial authoring source-review)
+- **Retrieved / reviewed:** 2026-07-06 (initial authoring); independently
+  re-retrieved and re-extracted 2026-07-06 for the GOV-1358 review gate
+- **Reviewer:** GovSchema Engineering (initial authoring source-review);
+  GovSchema Engineering, Standards Engineer (GOV-1358 independent review
+  gate)
 
 ## What was confirmed against the source
 
@@ -82,19 +85,11 @@ accompanying both date lines are a physical signing-event detail, not a
 data field, and are not modelled — consistent with `kr/moj/visa-application`'s
 precedent for the same kind of line.
 
-Two interpretive judgment calls, made explicit here for a future reviewer:
+One interpretive judgment call remains open for a future reviewer (a second,
+originally flagged here, was resolved by the GOV-1358 review-gate pass —
+see "Resolved during review" below):
 
-1. **`방문 재발급 신청인` scope.** The form's second name/RRN/address/contact
-   block, combined with 첨부서류 item 3's requirement for disability-proof
-   material plus the applicant's own ID, is modelled here as the *severely
-   disabled applicant's own* confirmation block for a home/counter-visit
-   issuance accommodation — not a distinct proxy/representative's block.
-   `isVisitIssuanceForSeverelyDisabled` gates it. No source text explicitly
-   labels this a "home-visit" service by that name; this is the most
-   literal reading of "방문 재발급" (visit reissuance) consistent with item
-   3's attachment requirement, but an independent reviewer should confirm
-   this against MOIS guidance before promoting to `verified`.
-2. **Fee logic granularity.** 유의사항 item 7 narrows the `damaged` and
+1. **Fee logic granularity.** 유의사항 item 7 narrows the `damaged` and
    `appearanceChange` fee triggers to exclude natural wear and
    disaster/accident causes respectively, and a checked fee-exemption
    category may waive the fee entirely. Neither narrowing is separately
@@ -103,6 +98,29 @@ Two interpretive judgment calls, made explicit here for a future reviewer:
    mirrors `sg/ica/identity-card-replacement`'s precedent of not encoding a
    fee amount/condition more precisely than the source form's own checkbox
    structure supports.
+
+## Resolved during review
+
+- **`방문 재발급 신청인` scope (GOV-1358 review gate, 2026-07-06).** The
+  original authoring pass modelled the `방문 재발급 신청인` block as *the
+  severely disabled applicant's own* confirmation block, explicitly framed
+  as "not a distinct proxy/representative's block," and flagged that framing
+  as an unconfirmed judgment call. Independent re-review of the source PDF's
+  back-page 유의사항 (usage notes) found item 2 states directly: "중증
+  장애인에 대한 주민등록증 방문 발급 신청은 해당 중증 장애인이나
+  법정대리인 또는 보호자(중증장애인의 세대주, 배우자 및 직계혈족)가 할 수
+  있습니다" ("The application for home-visit issuance ... for a severely
+  disabled person may be made by the severely disabled person themselves,
+  their legal representative, or a guardian — the severely disabled
+  person's household head, spouse, or lineal blood relative"). This
+  contradicts the original "not a distinct proxy" framing: the block's
+  name/RRN/address/contact fields may in practice belong to a legal
+  representative or guardian, not the disabled applicant. No field
+  structure change was needed — `visitReissuanceApplicantName` et al. were
+  already generic, unattributed fields — but `isVisitIssuanceForSeverelyDisabled`'s
+  `description` and `sourceRef` were corrected to cite 유의사항 item 2 and
+  state the block may belong to a legal representative or guardian, not
+  only the disabled applicant. Fixed pre-merge in `schema.json`.
 
 ## Mock-data conformance run
 
@@ -150,9 +168,6 @@ pickup scenario) as the committed demoable packet, per this registry's
   has not been performed; this document is sourced entirely from the
   gazetted blank form (no official filled-in worked example was found for
   this specific form).
-- The `방문 재발급 신청인` scope judgment call (see above) is a reasonable
-  but not source-explicit reading and should be confirmed against MOIS's
-  own operational guidance before promoting to `verified`.
 - The fee-exemption category list's actual waiver effect (whether checking
   a category always fully waives the KRW 5,000 fee, or only waives it
   conditional on the reissue reason) is not stated on the form itself and
