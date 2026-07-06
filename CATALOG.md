@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **240 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **241 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-06, GOV-1497):** The Philippines gains a fifth vertical,
+> `ph/dfa/passport-application` (Passport) — the Department of Foreign
+> Affairs' Office of Consular Affairs (DFA-OCA) Online Passport Appointment
+> System (`passport.gov.ph`), covering new, renewal, and lost/damaged
+> applications for an adult applicant through a single unified wizard (like
+> `br/pf/passport-application`, one `applicationType` field distinguishes the
+> scenario rather than three separate forms). Prior cycles (GOV-1466,
+> GOV-1490) had explicitly deferred this vertical because "the live wizard
+> consumes genuinely scarce real DFA appointment inventory" — this cycle
+> resolved that concern by extracting the full field-name inventory (48
+> fields across Personal/Family/Application/Contact Information) from the
+> hidden-input payload the Date and Time step already serves before any
+> slot is selected, and deliberately stopped there: it did not solve the
+> reCAPTCHA gate, submit a booking, or hold any site/date/time combination
+> beyond the seconds needed to confirm a site had an open date during a
+> 43-site availability sweep (most sites, including every Metro Manila
+> office checked, were fully booked for months — corroborating the prior
+> cycles' concern rather than dissolving it). Consequently, select-option
+> lists (`sex`, `civilStatus`, `citizenshipBasis`, `applicationType`) and
+> `required`/`requiredWhen` markers for the four applicant-data steps are
+> inferred from field-name semantics, same-jurisdiction precedent
+> (`ph/bi/non-immigrant-visa-application`), and corroborating DFA-affiliated
+> public documentation — not independently confirmed against a live render.
+> See this document's own VERIFICATION.md for the full itemized disclosure.
+> This closes the Philippines to 5/6 verticals (Business Formation, National
+> ID, Taxes, Visa, Passport); DMV remains the last open backlog candidate,
+> previously screened (GOV-1466) and found weaker (LTO Form No. 21 is only
+> fetchable via a third-party mirror since `lto.gov.ph` is Cloudflare-gated).
 
 > **Update (2026-07-06, GOV-1490):** The Philippines gains a fourth vertical,
 > `ph/bi/non-immigrant-visa-application` (Visa) — the Bureau of Immigration's
@@ -607,7 +636,7 @@
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
-| **Passport** | 14/17 (82%) | **AE, MX** not yet modelled; **PH** screened (GOV-1466) and deliberately deferred — `passport.gov.ph`'s live wizard is real and DOM-walkable, but its Schedule step consumes genuinely scarce real DFA appointment inventory, so this cycle declined to walk further; open backlog candidate, not a dead end; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
+| **Passport** | 15/17 (88%) | **AE, MX** not yet modelled; **PH** newly modelled this cycle (`ph/dfa/passport-application`, GOV-1497) — the field-name inventory was extracted from the Date and Time step's hidden-input payload without solving the reCAPTCHA gate or holding a real appointment slot, so select-option lists and required markers for the four applicant-data steps are inferred, not live-confirmed; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
 | **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE** screened (GOV-1474) — RTA's "Vehicle Renewal User Guide" is a strong, field-rich candidate but only confirmed via a third-party mirror, not the current `rta.ae` URL; strong open backlog candidate; **BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 16/17 (94%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes; KR's own Section 3/4 trust-property and foreign-corporation pathways); **AE** not yet modelled (confirmed dead end this cycle's own prior pass, GOV-1474 — Basher login-gated, `app.invest.dubai.ae` 403s, `ded.ae` bot-mitigated); **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** modelled in a prior cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444); **KR** newly modelled this cycle (`kr/nts/corporation-establishment-and-business-registration`, GOV-1483), closing South Korea to 6/6 verticals |
 | **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
@@ -630,9 +659,9 @@
 
 ## By Vertical
 
-### Passport (14/17 jurisdictions)
+### Passport (15/17 jurisdictions)
 
-AU, BR, CA, DE, FR, GB, IE, IN, KR, NL, NZ, SG, US, ZA all have at least one
+AU, BR, CA, DE, FR, GB, IE, IN, KR, NL, NZ, PH, SG, US, ZA all have at least one
 published Passport schema. India (`in/mea/passport-application-first-adult`,
 `in/mea/passport-reissue`), the Netherlands (`nl/rvig/passport-application`),
 New Zealand (`nz/dia/passport-application-first-adult`,
@@ -651,14 +680,25 @@ lost/stolen/retained replacement all through one `previousPassportStatus`
 field rather than needing separate forms per scenario. **United Arab
 Emirates** has no Passport schema yet — no candidate was sourced for it this
 cycle (see the Taxes entry below for the UAE document that was authored).
-**The Philippines**, new this cycle (see Business Formation below), also has
-no Passport schema yet — not screened this cycle, an open backlog candidate
-(DFA e-passport appointment system) for a future one.
+**The Philippines** (`ph/dfa/passport-application`, GOV-1497) is new this
+cycle: the Department of Foreign Affairs' Online Passport Appointment System
+(`passport.gov.ph`), modelled — like Brazil's SINPA — as a single wizard
+covering new/renewal/lost through one `applicationType` field. Two prior
+cycles (GOV-1466, GOV-1490) had explicitly deferred this vertical because
+progressing through the wizard's Date and Time step holds a real, scarce
+DFA appointment slot; this cycle resolved that by extracting the complete
+field-name inventory from the hidden-input payload the Date and Time step
+already serves before any slot is selected, and deliberately did not solve
+the downstream reCAPTCHA gate or hold a booking — so, unlike Brazil's
+schema, this document's select-option lists and required/requiredWhen
+markers for the four applicant-data steps are inferred (from field-name
+semantics, same-jurisdiction precedent, and corroborating DFA-affiliated
+documentation), not read from a live render. See its own VERIFICATION.md.
 
 ### DMV — Vehicle Registration, Licensing, Permits (14/17 jurisdictions)
 
-Every jurisdiction except the United Arab Emirates, Brazil, and (new this
-cycle) the Philippines now has at
+Every jurisdiction except the United Arab Emirates, Brazil, and the
+Philippines now has at
 least one DMV-vertical schema (driver licensing and/or vehicle
 registration). **Mexico** (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) is
 new this cycle — sourced from the Secretaría de Movilidad de la Ciudad de
@@ -934,7 +974,7 @@ now closed.
 | **MX** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PH** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **PH** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
