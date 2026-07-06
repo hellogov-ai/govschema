@@ -1,0 +1,702 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ph/bir/tin-application-corporations-partnerships",
+  "version": "1.0.0",
+  "title": "Philippines BIR Application for Registration — Corporations, Partnerships, GAIs, LGUs, Cooperatives and Associations (BIR Form No. 1903)",
+  "description": "The Philippines' Bureau of Internal Revenue (BIR) 'Application for Registration' (BIR Form No. 1903, October 2025 ENCS edition) — the form a corporation, partnership (taxable or non-taxable), government agency/instrumentality (GAI), local government unit (LGU), cooperative, or association uses to register with the BIR and obtain its Taxpayer Identification Number (TIN) and Certificate of Registration before commencing business in the Philippines. This is the closest Philippine analogue to the US IRS Form SS-4 (Employer Identification Number application, already modelled in this registry as us/irs/employer-identification-number-ss4) and to mx/sat/preinscripcion-rfc-persona-moral, and is classified under Business Formation the same way. This document opens the Philippines as the registry's 17th jurisdiction. The form is a genuine downloadable PDF with a real (non-image) text layer published directly on BIR's own content-delivery network, current as of its October 2025 revision. It is filed on paper/PDF at a BIR Revenue District Office (RDO); since 2023 BIR has also offered its Online Registration and Update System (ORUS, orus.bir.gov.ph) for much of the same registration, but ORUS requires an account/login and was not walked interactively this cycle — this document models the gazetted form's own fields, not ORUS's live wizard. Scoped to the form's primary 'Head Office' registration pathway (a corporation, partnership, cooperative, GAI, LGU, or association registering for the first time) rather than the same form's Branch Office or Facility registration variants; the Tax Types panel (explicitly marked on the form itself as 'To be filled out by BIR', not applicant input); the Authority-to-Print-Invoices panel; or the incentive/investment-promotion (e.g. PEZA, BOI) registration-accreditation panel — see this document's own VERIFICATION.md for the complete scope and every interpretive judgment call. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of the Republic of the Philippines or the Bureau of Internal Revenue.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bureau of Internal Revenue",
+    "abbreviation": "BIR",
+    "url": "https://www.bir.gov.ph"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-PH"
+  },
+  "source": {
+    "url": "https://bir-cdn.bir.gov.ph/BIR/pdf/1903%20October%202025%20ENCS%20-%20Final.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "BIR Form No. 1903 (October 2025 ENCS), 'Application for Registration for Corporations, Partnerships (Taxable/Non-Taxable), Including GAIs, LGUs, Cooperatives and Associations', Bureau of Internal Revenue (BIR), Republic of the Philippines"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Opens the Philippines as the registry's 17th jurisdiction. Sourced directly from BIR's own content-delivery network (bir-cdn.bir.gov.ph), a genuine, directly-downloadable, current (October 2025 ENCS) 4-page PDF with a real text layer — extracted with pdfjs-dist getTextContent (pinned to 3.11.174) and cross-checked by rendering each page to PNG at 3x scale and visually comparing the checkbox/field layout against the extracted text; no login, CAPTCHA, or OCR was needed for either the form itself or its own published 'Documentary Requirements' page. Status remains 'draft' pending an independent second reviewer's field-by-field pass and, ideally, a future cycle's live walk of BIR's ORUS online counterpart (orus.bir.gov.ph) if a test account becomes available. See VERIFICATION.md for the extraction method, every interpretive judgment call, and the full list of what this v1.0.0 leaves out of scope."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "registeringOfficeType",
+      "label": "Registering Office",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the form's three registration pathways is being filed. Only the 'Head Office' pathway (a corporation/partnership/cooperative/GAI/LGU/association registering for the first time) is modelled in full by this v1.0.0 document; the Branch Office and Facility pathways' own additional fields (Part V, Facility Details) are out of scope — see VERIFICATION.md.",
+      "sourceRef": "Form p.1, header — 'Head Office ☐ Branch Office ☐ Facility ☐'",
+      "validation": { "enum": ["head_office", "branch_office", "facility"] }
+    },
+    {
+      "name": "existingTin",
+      "label": "Taxpayer Identification Number (TIN)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's existing TIN, if one has already been issued (e.g. a branch registering under its head office's TIN). Left blank for a brand-new Head Office registration, where the TIN box is instead shown as BIR-to-be-issued.",
+      "sourceRef": "Form p.1, Item 3 — 'Taxpayer Identification Number (TIN)'"
+    },
+    {
+      "name": "taxpayerType",
+      "label": "Taxpayer Type",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's legal-entity type, determining which downstream fields and documentary requirements apply. Only a subset of these types (Domestic Corporation and General/Limited Partnership) is exercised end-to-end by this document's own worked judgment calls; the Documentary Requirements this document models (see documents[]) are drawn from the form's own general Head Office requirements plus its Non-Resident Foreign Corporation (NRFC)-specific alternate list is explicitly excluded — see VERIFICATION.md.",
+      "sourceRef": "Form p.1, Item 5 — 'Taxpayer Type' (19 checkbox options)",
+      "validation": { "enum": [
+        "one_person_corporation", "domestic_corporation", "domestic_corporation_digital_service_provider",
+        "non_stock_non_profit_organization", "joint_venture", "general_professional_partnership",
+        "general_partnership", "limited_partnership", "cooperative",
+        "government_owned_and_controlled_corporation", "national_government_agency", "local_government_unit",
+        "resident_foreign_corporation", "regional_operating_headquarter", "regional_or_area_headquarter",
+        "non_resident_foreign_corporation", "non_resident_foreign_corporation_digital_service_provider",
+        "non_resident_foreign_partnership", "foreign_embassy_and_international_organization"
+      ] }
+    },
+    {
+      "name": "registeredName",
+      "label": "Registered Name",
+      "type": "string",
+      "required": true,
+      "description": "Exact legal name, copied verbatim from the applicant's SEC Certificate of Registration/Charter/Cooperative Development Authority (CDA) Certificate/HLURB Certificate, as instructed by the form itself.",
+      "sourceRef": "Form p.1, Item 6 — 'Registered Name (Copy exact name appearing in SEC Certificate of Registration/Charter/Cooperative Development Authority/HLURB)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "dateOfIncorporation",
+      "label": "Date of Incorporation/Organization/Cooperation",
+      "type": "date",
+      "required": true,
+      "description": "Date the entity was incorporated, organized, or (for a cooperative) formed, per its SEC/CDA/charter document.",
+      "sourceRef": "Form p.1, Item 7 — 'Date of Incorporation/Organization/Cooperation (MM/DD/YYYY)'"
+    },
+    {
+      "name": "accountingPeriodType",
+      "label": "Taxable Year/Accounting Period",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the entity's accounting period follows the calendar year (Jan 1 - Dec 31) or a fiscal year of its own choosing.",
+      "sourceRef": "Form p.1, Item 8 — 'Taxable Year/Accounting Period: ☐ Calendar Year ☐ Fiscal Year'",
+      "validation": { "enum": ["calendar_year", "fiscal_year"] }
+    },
+    {
+      "name": "fiscalYearStartMonth",
+      "label": "Accounting Start Month",
+      "type": "string",
+      "required": false,
+      "description": "The month the entity's fiscal year begins. Shown only 'For Fiscal Year Only' per the form's own label.",
+      "sourceRef": "Form p.1, Item 9 — 'Accounting Start Month (For Fiscal Year Only)'",
+      "requiredWhen": { "field": "accountingPeriodType", "equals": "fiscal_year" }
+    },
+    {
+      "name": "taxEffectivityDate",
+      "label": "Effectivity Date",
+      "type": "date",
+      "required": false,
+      "description": "An 'Effectivity Date' field grouped with Item 9 on the same row of the form. The form does not further caption what this date is effective for (e.g. the registration itself, or a change in accounting period) beyond its column heading; modelled here as a distinct optional field rather than assumed identical to dateOfIncorporation or fiscalYearStartMonth. See VERIFICATION.md.",
+      "sourceRef": "Form p.1, Item 9 row — 'Effectivity Date (MM/DD/YYYY)'"
+    },
+    {
+      "name": "businessAddressUnitFloorBuildingNo",
+      "label": "Unit/Room/Floor/Building No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Unit, room, floor, or building number component of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Unit/Room/Floor/Building No.'"
+    },
+    {
+      "name": "businessAddressBuildingNameTower",
+      "label": "Building Name/Tower",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Building or tower name component of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Building Name/Tower'"
+    },
+    {
+      "name": "businessAddressLotBlockPhaseHouseNo",
+      "label": "Lot/Block/Phase/House No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Lot, block, phase, or house number component of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Lot/Block/Phase/House No.'"
+    },
+    {
+      "name": "businessAddressStreetName",
+      "label": "Street Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street name component of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Street Name'"
+    },
+    {
+      "name": "businessAddressSubdivisionVillageZone",
+      "label": "Subdivision/Village/Zone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Subdivision, village, or zone component of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Subdivision/Village/Zone'"
+    },
+    {
+      "name": "businessAddressBarangay",
+      "label": "Barangay",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Barangay (the smallest Philippine administrative division) of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Barangay'"
+    },
+    {
+      "name": "businessAddressTownDistrict",
+      "label": "Town/District",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Town or district component of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Town/District'"
+    },
+    {
+      "name": "businessAddressMunicipalityCity",
+      "label": "Municipality/City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Municipality or city of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Municipality/City'"
+    },
+    {
+      "name": "businessAddressProvince",
+      "label": "Province",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Province of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'Province'"
+    },
+    {
+      "name": "businessAddressZipCode",
+      "label": "ZIP Code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "ZIP/postal code of the registered business address.",
+      "sourceRef": "Form p.1, Item 10 — 'ZIP Code'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "foreignAddress",
+      "label": "Foreign Address, if applicable",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A foreign (outside-the-Philippines) address, for entities such as a Non-Resident Foreign Corporation whose principal address is abroad. The form shows this as a single free-text field, unlike the ten-component businessAddress block.",
+      "sourceRef": "Form p.1, Item 11 — 'Foreign Address, if applicable'"
+    },
+    {
+      "name": "purposeOfTinApplication",
+      "label": "Purpose of TIN Application",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's stated reason for applying for a TIN (e.g. new business registration). The form renders this as a blank text box with no printed option list, so it is modelled as an open string rather than a fabricated enum. See VERIFICATION.md.",
+      "sourceRef": "Form p.1, Item 13 — 'Purpose of TIN Application'"
+    },
+    {
+      "name": "contactType",
+      "label": "Preferred Contact Type",
+      "type": "enum",
+      "required": true,
+      "description": "Which single contact number type (landline, fax, or mobile) the number entered in contactNumber represents. The form provides one contact-number line with three type checkboxes above it, rather than three separate number fields.",
+      "sourceRef": "Form p.1, Item 14 — 'Preferred Contact Type: ☐ Landline Number ☐ Fax Number ☐ Mobile Number'",
+      "validation": { "enum": ["landline", "fax", "mobile"] }
+    },
+    {
+      "name": "contactNumber",
+      "label": "Contact Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The contact number itself, of the type selected in contactType.",
+      "sourceRef": "Form p.1, Item 14 — contact number entry line beneath the Preferred Contact Type checkboxes"
+    },
+    {
+      "name": "officialEmail",
+      "label": "Official Email Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The entity's official email address. Marked 'required' directly on the form, unlike the contact-number fields.",
+      "sourceRef": "Form p.1, Item 14 — 'Official Email Address (required)'",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "annualGrossSalesBracket",
+      "label": "How much is your expected Annual Gross Sales (GS)?",
+      "type": "enum",
+      "required": true,
+      "description": "Taxpayer-classification bracket by expected annual gross sales, per the form's own printed peso thresholds: Micro (below PHP 3,000,000), Small (PHP 3,000,000 to below PHP 20,000,000), Medium (PHP 20,000,000 to below PHP 1,000,000,000), Large (PHP 1,000,000,000 and above).",
+      "sourceRef": "Form p.1, Item 15 — 'How much is your expected Annual Gross Sales (GS)?'",
+      "validation": { "enum": ["micro", "small", "medium", "large"] }
+    },
+    {
+      "name": "representativeLastName",
+      "label": "Relationship Name (If Individual) — Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's last name, if the representative is an individual. Part III (items 16-22) as a whole is only completed when the taxpayer is using an authorized representative; the form has no separate yes/no toggle for this — it is left entirely blank otherwise. See VERIFICATION.md.",
+      "sourceRef": "Form p.1, Item 16 — 'If Individual (Last Name)'"
+    },
+    {
+      "name": "representativeFirstName",
+      "label": "Relationship Name (If Individual) — First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's first name, if an individual.",
+      "sourceRef": "Form p.1, Item 16 — '(First Name)'"
+    },
+    {
+      "name": "representativeMiddleName",
+      "label": "Relationship Name (If Individual) — Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's middle name, if an individual.",
+      "sourceRef": "Form p.1, Item 16 — '(Middle Name)'"
+    },
+    {
+      "name": "representativeSuffix",
+      "label": "Relationship Name (If Individual) — Suffix",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's name suffix (e.g. Jr., III), if an individual.",
+      "sourceRef": "Form p.1, Item 16 — '(Suffix)'"
+    },
+    {
+      "name": "representativeNickname",
+      "label": "Relationship Name (If Individual) — Nickname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's nickname, if an individual.",
+      "sourceRef": "Form p.1, Item 16 — '(Nickname)'"
+    },
+    {
+      "name": "representativeRegisteredName",
+      "label": "Registered Name (If Non-Individual)",
+      "type": "string",
+      "required": false,
+      "description": "Authorized representative's registered name, if the representative is itself a non-individual entity (e.g. a tax agent firm) rather than a person.",
+      "sourceRef": "Form p.1, Item 16 — 'Registered Name' (If Non-Individual) / 'Represented by:'"
+    },
+    {
+      "name": "representativeRelationshipType",
+      "label": "Relationship Type",
+      "type": "enum",
+      "required": false,
+      "description": "The authorized representative's relationship to the taxpayer.",
+      "sourceRef": "Form p.1, Item 17 — 'Relationship Type: ☐ Stockholder ☐ Member ☐ Tax Agent ☐ Employee ☐ Agent'",
+      "validation": { "enum": ["stockholder", "member", "tax_agent", "employee", "agent"] }
+    },
+    {
+      "name": "representativeTin",
+      "label": "TIN of Authorized Representative",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Authorized representative's own TIN.",
+      "sourceRef": "Form p.1, Item 18 — 'TIN of Authorized Representative'"
+    },
+    {
+      "name": "representativeRelationshipDate",
+      "label": "Relationship Date",
+      "type": "date",
+      "required": false,
+      "description": "Date the represented relationship (e.g. appointment as tax agent, or start of employment) began.",
+      "sourceRef": "Form p.1, Item 19 — 'Relationship Date (MM/DD/YYYY)'"
+    },
+    {
+      "name": "representativeAddressType",
+      "label": "Address Type",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the address given for the authorized representative is a residence or a place of business.",
+      "sourceRef": "Form p.1, Item 20 — 'Address Type: ☐ Residence ☐ Place of Business'",
+      "validation": { "enum": ["residence", "place_of_business"] }
+    },
+    {
+      "name": "representativeAddress",
+      "label": "Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's address. The form shows the same ten-component address block used for businessAddress (Unit/Room/Floor/Building No., Building Name/Tower, Lot/Block/Phase/House No., Street Name, Subdivision/Village/Zone, Barangay, Town/District, Municipality/City, Province, ZIP Code) again here; this v1.0.0 models it as a single combined string field rather than repeating all ten component fields a second time, to keep the schema tractable. A future version could break this out identically to businessAddress's own component fields. See VERIFICATION.md.",
+      "sourceRef": "Form p.1, Item 21 — repeated ten-component address block"
+    },
+    {
+      "name": "representativeContactType",
+      "label": "Preferred Contact Type",
+      "type": "enum",
+      "required": false,
+      "description": "Which contact number type the representative's contactNumber represents.",
+      "sourceRef": "Form p.1, Item 22 — 'Preferred Contact Type: ☐ Landline Number ☐ Fax Number ☐ Mobile Number'",
+      "validation": { "enum": ["landline", "fax", "mobile"] }
+    },
+    {
+      "name": "representativeContactNumber",
+      "label": "Contact Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's contact number, of the type selected in representativeContactType.",
+      "sourceRef": "Form p.1, Item 22 — contact number entry line"
+    },
+    {
+      "name": "representativeEmail",
+      "label": "Email Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Authorized representative's email address. Marked 'required' on the form whenever Part III itself is being completed.",
+      "sourceRef": "Form p.1, Item 22 — 'Email Address (required)'"
+    },
+    {
+      "name": "singleBusinessNumber",
+      "label": "Single Business Number/Philippine Business Number",
+      "type": "string",
+      "required": false,
+      "description": "The entity's Single Business Number/Philippine Business Number (SBN/PBN), a separate unified-business-identifier scheme, if already assigned.",
+      "sourceRef": "Form p.1, Item 23 — 'Single Business Number/Philippine Business Number'"
+    },
+    {
+      "name": "primaryIndustryTradeName",
+      "label": "Primary Industry — Trade/Business Name",
+      "type": "string",
+      "required": true,
+      "description": "Trade or business name under which the entity's primary industry/line of business operates.",
+      "sourceRef": "Form p.1-2, Item 24 — 'Primary' row, 'Trade/Business Name'"
+    },
+    {
+      "name": "primaryIndustryRegulatoryBody",
+      "label": "Primary Industry — Regulatory Body",
+      "type": "string",
+      "required": false,
+      "description": "Government regulatory body overseeing the entity's primary industry, if applicable (e.g. an industry requiring a specific regulator's licence).",
+      "sourceRef": "Form p.1, Item 24 — 'Primary' row, 'Regulatory Body'"
+    },
+    {
+      "name": "primaryIndustryRegistrationNumber",
+      "label": "Primary Industry — Business Registration Number",
+      "type": "string",
+      "required": false,
+      "description": "Registration number issued by the primary industry's own regulatory body, if applicable.",
+      "sourceRef": "Form p.2, Item 24 continuation — 'Primary' row, 'Business Registration Number'"
+    },
+    {
+      "name": "primaryIndustryRegistrationDate",
+      "label": "Primary Industry — Business Registration Date",
+      "type": "date",
+      "required": false,
+      "description": "Date of the primary industry's own regulatory-body registration, if applicable.",
+      "sourceRef": "Form p.2, Item 24 continuation — 'Primary' row, 'Business Registration Date (MM/DD/YYYY)'"
+    },
+    {
+      "name": "primaryIndustryLineOfBusiness",
+      "label": "Primary Industry — Line of Business",
+      "type": "string",
+      "required": true,
+      "description": "Description of the entity's primary line of business.",
+      "sourceRef": "Form p.2, Item 24 continuation — 'Primary' row, 'Line of Business'"
+    },
+    {
+      "name": "secondaryIndustryTradeName",
+      "label": "Secondary Industry — Trade/Business Name",
+      "type": "string",
+      "required": false,
+      "description": "Trade or business name under which a secondary industry/line of business operates, if the entity has one. The form supports only one secondary industry row plus an 'attach additional sheet/s if necessary' note for further ones beyond that; additional sheets are out of scope for this v1.0.0 pending GSP-0009 (composite/repeating values). See VERIFICATION.md.",
+      "sourceRef": "Form p.1-2, Item 24 — 'Secondary' row, 'Trade/Business Name'"
+    },
+    {
+      "name": "secondaryIndustryRegulatoryBody",
+      "label": "Secondary Industry — Regulatory Body",
+      "type": "string",
+      "required": false,
+      "description": "Government regulatory body overseeing the entity's secondary industry, if applicable.",
+      "sourceRef": "Form p.1, Item 24 — 'Secondary' row, 'Regulatory Body'"
+    },
+    {
+      "name": "secondaryIndustryRegistrationNumber",
+      "label": "Secondary Industry — Business Registration Number",
+      "type": "string",
+      "required": false,
+      "description": "Registration number issued by the secondary industry's own regulatory body, if applicable.",
+      "sourceRef": "Form p.2, Item 24 continuation — 'Secondary' row, 'Business Registration Number'"
+    },
+    {
+      "name": "secondaryIndustryRegistrationDate",
+      "label": "Secondary Industry — Business Registration Date",
+      "type": "date",
+      "required": false,
+      "description": "Date of the secondary industry's own regulatory-body registration, if applicable.",
+      "sourceRef": "Form p.2, Item 24 continuation — 'Secondary' row, 'Business Registration Date (MM/DD/YYYY)'"
+    },
+    {
+      "name": "secondaryIndustryLineOfBusiness",
+      "label": "Secondary Industry — Line of Business",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary line of business, if it has one.",
+      "sourceRef": "Form p.2, Item 24 continuation — 'Secondary' row, 'Line of Business'"
+    },
+    {
+      "name": "stockholderName",
+      "label": "Stockholder's/Partner's/Member's Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name of one stockholder, partner, or member (if individual: last, first, middle name, suffix; if non-individual: registered name). The form's own table shows five repeatable rows plus an 'attach additional sheet/s if necessary' note; this v1.0.0 bounds the structure to a single representative instance, pending GSP-0009 (composite/repeating values), consistent with this registry's established convention for repeating structures. See VERIFICATION.md.",
+      "sourceRef": "Form p.3, Item 31 — 'Stockholder's/Partner's/Member's Name (Attach additional sheet/s, if necessary)', row 1"
+    },
+    {
+      "name": "stockholderTin",
+      "label": "Stockholder's/Partner's/Member's TIN",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "TIN of the stockholder/partner/member named in stockholderName.",
+      "sourceRef": "Form p.3, Item 31 — 'TIN', row 1"
+    },
+    {
+      "name": "taxAgentTin",
+      "label": "Withholding Agent/Accredited Tax Agent — TIN",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "TIN of the withholding agent or accredited tax agent handling this filing, if different from the taxpayer itself. Part IX (items 32-37) as a whole is only completed when such an agent exists and differs from the taxpayer, per the form's own '(if different from taxpayer)' note.",
+      "sourceRef": "Form p.3, Item 32 — 'Taxpayer Identification Number (TIN)'"
+    },
+    {
+      "name": "taxAgentName",
+      "label": "Withholding Agent/Accredited Tax Agent — Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name of the withholding agent/accredited tax agent (if individual: last, first, middle, suffix; if non-individual: registered name), if different from the taxpayer.",
+      "sourceRef": "Form p.3, Item 34 — 'Withholding Agent/Accredited Tax Agent's Name'"
+    },
+    {
+      "name": "taxAgentRegisteredAddress",
+      "label": "Withholding Agent/Accredited Tax Agent — Registered Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Registered address of the withholding agent/accredited tax agent. Unlike businessAddress/representativeAddress, the form describes this item's own components inline as a single compound caption rather than separate boxes, so it is modelled as one free-text field.",
+      "sourceRef": "Form p.3, Item 35 — 'Registered Address (Sub-street, Building/Street, Barangay, City/Municipality, Province)'"
+    },
+    {
+      "name": "taxAgentZipCode",
+      "label": "Withholding Agent/Accredited Tax Agent — ZIP Code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "ZIP/postal code of the withholding agent/accredited tax agent's registered address.",
+      "sourceRef": "Form p.3, Item 35A — 'ZIP Code'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "taxAgentContactNumber",
+      "label": "Withholding Agent/Accredited Tax Agent — Contact Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Landline/mobile contact number of the withholding agent/accredited tax agent.",
+      "sourceRef": "Form p.3, Item 36 — 'Contact Number (Landline/Mobile No.)'"
+    },
+    {
+      "name": "taxAgentEmail",
+      "label": "Withholding Agent/Accredited Tax Agent — Email Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Email address of the withholding agent/accredited tax agent.",
+      "sourceRef": "Form p.3, Item 37 — 'Email Address'"
+    },
+    {
+      "name": "signatoryTitlePosition",
+      "label": "Title/Position of Signatory",
+      "type": "string",
+      "required": true,
+      "description": "Title or position of the person signing the declaration on the taxpayer's behalf (e.g. President, Vice President, Principal Officer, Accredited Tax Agent, Authorized Representative).",
+      "sourceRef": "Form p.3, Declaration block — 'Title/Position of Signatory'"
+    },
+    {
+      "name": "signatoryTin",
+      "label": "TIN of Signatory",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "TIN of the person signing the declaration.",
+      "sourceRef": "Form p.3, Declaration block — 'TIN of Signatory'"
+    },
+    {
+      "name": "taxAgentAccreditationNumber",
+      "label": "Tax Agent Accreditation No./Attorney's Roll No.",
+      "type": "string",
+      "required": false,
+      "description": "BIR tax-agent accreditation number or attorney's roll number of the signatory, if the declaration is signed by an accredited tax agent rather than a company officer.",
+      "sourceRef": "Form p.3, Declaration block — 'Tax Agent Accreditation No./Attorney's Roll No. (if applicable)'"
+    },
+    {
+      "name": "declarationAccepted",
+      "label": "Declaration",
+      "type": "boolean",
+      "required": true,
+      "description": "Attestation, under penalty of perjury, that the application was made in good faith and is true and correct, and consent to processing of personal information under the Data Privacy Act of 2012 (R.A. No. 10173).",
+      "sourceRef": "Form p.3, Declaration block — 'I/We declare, under the penalties of perjury that this application has been made in good faith...pursuant to the provisions of the National Internal Revenue Code...Further, I/we give my/our consent to the processing of my information as contemplated under the *Data Privacy Act of 2012 (R.A. No. 10173)'",
+      "validation": { "enum": [true] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "entityRegistrationCertificateFile",
+      "label": "SEC Certificate of Incorporation/Certificate of Recording/CDA Certificate/HLURB Certificate/DOLE Certificate",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Form p.4, Documentary Requirements §1 — 'SEC Certificate of Incorporation/Digital Certificate of Incorporation; (1 photocopy) or Certificate of Recording (in case of Partnership)/Digital Certificate; (1 photocopy) or License to Do Business in the Philippines (in case of Foreign Corporation)/Digital Certificate; (1 photocopy) or Cooperative Development Authority (CDA) Certificate of Registration; (1 photocopy) or Certificate of Registration issued by Housing and Land Use Regulatory Board (HLURB); (1 photocopy) or Certificate of Registration issued by Department of Labor and Employment (DOLE); (1 photocopy)'"
+    },
+    {
+      "id": "representativeAuthorizationFile",
+      "label": "Board Resolution/Secretary's Certificate authorizing representative",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Form p.4, Documentary Requirements §2.1 (Additional documents, if applicable) — 'If transacting through a Representative: Apostilled Board Resolution/Secretary's Certificate (or equivalent) indicating the purpose and name of authorized representative; (1 certified true copy, original for presentation)'"
+    },
+    {
+      "id": "representativeIdFile",
+      "label": "Government-issued ID of authorized representative",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "other",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg", "image/png"] },
+      "sourceRef": "Form p.4, Documentary Requirements §2.2 — 'Any government-issued ID of one of the signatories and authorized representatives; (1 photocopy)'"
+    },
+    {
+      "id": "invoiceSampleFile",
+      "label": "BIR Printed Invoice (BPI) or final clear sample of own invoices",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg", "image/png"] },
+      "sourceRef": "Form p.4, Documentary Requirements §3 — 'BIR Printed Invoice (BPI) (Available for sale at the New Business Registrant Counter); or Final clear sample of OWN Invoices. (1 original) (Sample layout is also available at the New Business Registrant Counter)'"
+    },
+    {
+      "id": "dstPaymentProofFile",
+      "label": "Proof of payment of P30.00 loose Documentary Stamp Tax (DST)",
+      "category": "payment",
+      "required": false,
+      "belongsTo": "applicant",
+      "amount": { "currency": "PHP", "value": 30 },
+      "methods": ["over-the-counter-aab", "bir-collection-officer"],
+      "sourceRef": "Form p.4, Fees To Be Paid — 'Payment of P30.00 Loose Stamp/s (DST) to be affixed on the Certificate of Registration. Note: If the P30.00 loose DST was already paid, the proof of payment (1 photocopy) shall be submitted.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "taxpayer_information",
+      "title": "Part I — Taxpayer Information",
+      "fields": [
+        "registeringOfficeType", "existingTin", "taxpayerType", "registeredName", "dateOfIncorporation",
+        "accountingPeriodType", "fiscalYearStartMonth", "taxEffectivityDate",
+        "businessAddressUnitFloorBuildingNo", "businessAddressBuildingNameTower", "businessAddressLotBlockPhaseHouseNo",
+        "businessAddressStreetName", "businessAddressSubdivisionVillageZone", "businessAddressBarangay",
+        "businessAddressTownDistrict", "businessAddressMunicipalityCity", "businessAddressProvince", "businessAddressZipCode",
+        "foreignAddress", "purposeOfTinApplication", "contactType", "contactNumber", "officialEmail"
+      ],
+      "next": "taxpayer_classification"
+    },
+    {
+      "id": "taxpayer_classification",
+      "title": "Part II — Taxpayer Classification",
+      "fields": ["annualGrossSalesBracket"],
+      "next": "authorized_representative"
+    },
+    {
+      "id": "authorized_representative",
+      "title": "Part III — Authorized Representative",
+      "fields": [
+        "representativeLastName", "representativeFirstName", "representativeMiddleName", "representativeSuffix",
+        "representativeNickname", "representativeRegisteredName", "representativeRelationshipType", "representativeTin",
+        "representativeRelationshipDate", "representativeAddressType", "representativeAddress",
+        "representativeContactType", "representativeContactNumber", "representativeEmail"
+      ],
+      "next": "business_information"
+    },
+    {
+      "id": "business_information",
+      "title": "Part IV — Business Information",
+      "fields": [
+        "singleBusinessNumber", "primaryIndustryTradeName", "primaryIndustryRegulatoryBody",
+        "primaryIndustryRegistrationNumber", "primaryIndustryRegistrationDate", "primaryIndustryLineOfBusiness",
+        "secondaryIndustryTradeName", "secondaryIndustryRegulatoryBody", "secondaryIndustryRegistrationNumber",
+        "secondaryIndustryRegistrationDate", "secondaryIndustryLineOfBusiness"
+      ],
+      "next": "stockholders"
+    },
+    {
+      "id": "stockholders",
+      "title": "Part VIII — Stockholder/Partner/Member",
+      "fields": ["stockholderName", "stockholderTin"],
+      "next": "withholding_tax_agent"
+    },
+    {
+      "id": "withholding_tax_agent",
+      "title": "Part IX — Withholding Agent/Accredited Tax Agent Information",
+      "fields": [
+        "taxAgentTin", "taxAgentName", "taxAgentRegisteredAddress", "taxAgentZipCode",
+        "taxAgentContactNumber", "taxAgentEmail"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["signatoryTitlePosition", "signatoryTin", "taxAgentAccreditationNumber", "declarationAccepted"]
+    }
+  ]
+}
