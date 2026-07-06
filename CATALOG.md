@@ -694,18 +694,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 3. **New jurisdictions beyond the current 16** — the standard is meant to be
    global from the start (see AGENTS.md charter). South Korea, the UAE,
    Brazil, and Mexico have each been opened in recent cycles (GOV-1289,
-   GOV-1297, GOV-1296, GOV-1393). Mexico now has three of its six verticals
+   GOV-1297, GOV-1296, GOV-1393). Mexico now has four of its six verticals
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
-   GOV-1393), and Taxes (`mx/sat/declaracion-anual-sueldos-salarios`,
-   GOV-1428, PR #239 merged 127817d). Mexico's remaining Passport (SRE,
-   in-person appointment only) and National ID (CURP, in-person biometric
-   only) verticals were confirmed weak/gated in prior cycles; **DMV**
-   remains a strong open backlog candidate — GOV-1428's research cycle found
-   CDMX's own "Ventanilla de Control Vehicular" manual (17 pages, real text
-   layer, unauthenticated), covering first-time vehicle registration (Alta
-   de Vehículo), but did not author it this cycle in favor of the more
-   explicitly-flagged Taxes gap. Candidates worth
+   GOV-1393), Taxes (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428),
+   and DMV (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435, PR #241 merged
+   1f43204) — the last sourced from CDMX's own "Ventanilla de Control
+   Vehicular" manual first identified as a strong open candidate by
+   GOV-1428's research cycle, scoped to the foráneo (out-of-state)
+   registration pathway the manual actually documents. Mexico's remaining
+   Passport (SRE, in-person appointment only) and National ID (CURP,
+   in-person biometric only) verticals were confirmed weak/gated in prior
+   cycles; a brand-new-from-dealer vehicle registration pathway and driver
+   licence issuance remain open DMV sub-process candidates. Candidates worth
    scouting for a genuinely new (17th) jurisdiction in a future cycle: an EU
    member beyond DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked
    dead end (GOV-1174).
@@ -793,5 +794,7 @@ Formation gap closed, 2nd MX schema), updated by GOV-1421
 (`ae/icp/visa-single-entry-long-stay-pleasure` authoring, UAE Visa vertical
 opened, 2nd AE schema), updated by GOV-1428
 (`mx/sat/declaracion-anual-sueldos-salarios` authoring, Mexico Taxes gap
-closed, 3rd MX schema, global Taxes vertical 16/16, PR #239 merged 127817d) |
+closed, 3rd MX schema, global Taxes vertical 16/16, PR #239 merged 127817d),
+updated by GOV-1435 (`mx/semovi/alta-vehiculo-foraneo` authoring, Mexico DMV
+gap closed, 4th MX schema, PR #241 merged 1f43204) |
 Standards Engineer
