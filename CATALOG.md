@@ -4,8 +4,45 @@
 
 ## Executive Summary
 
-**16 jurisdictions** | **227 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**16 jurisdictions** | **228 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1414):** Mexico gains its second vertical,
+> `mx/sat/preinscripcion-rfc-persona-moral`, closing the Business Formation
+> gap CATALOG.md's own "Known Gaps" section had explicitly flagged for
+> Mexico. RFC (Registro Federal de Contribuyentes) is Mexico's federal
+> taxpayer/business identifier — the closest Mexican analogue to the US EIN
+> (`us/irs/employer-identification-number-ss4`, already classified under
+> Business Formation in this registry), so this document is classified the
+> same way. The live SAT preinscription wizard
+> (sat.gob.mx/aplicacion/33805/preinscribe-tu-empresa-en-el-rfc) is
+> WAF/bot-mitigation-gated — reconfirmed this cycle (still HTTP 403 to a
+> browser-User-Agent `curl`, while the general `sat.gob.mx` portal itself
+> returns HTTP 200) — so this document was instead authored from SAT's own
+> official screenshot-driven step-by-step guide PDF ("Guía para
+> preinscripción de personas morales", dated 01/01/2022), read via
+> `pdfjs-dist` page-rendering to PNG (the guide's embedded screenshots carry
+> no text layer) followed by direct visual reading of each rendered page.
+> This corrects a prior cycle's (GOV-1393) characterization of the SAT RFC
+> candidate as merely "a document checklist, not a field-level form" — that
+> characterization was based on a different SAT publication (the Ficha
+> 43/CFF document-requirements checklist); the actual step-by-step guide PDF
+> found this cycle is a genuine field-by-field screenshot walkthrough of the
+> live wizard's own five steps, in the same sourcing shape already used
+> successfully for `ae/fta/vat-registration` and
+> `ae/fta/corporate-tax-registration`. Six repeating structures the live
+> wizard supports (additional/alternate business addresses beyond the one
+> fiscal address, more than one phone number per address, more than one
+> economic activity with its own income-percentage split, the full
+> SCIAN-style economic-activity catalog itself, the activity-specific
+> "preguntas complementarias" sub-questionnaire beyond the guide's one worked
+> example, and more than one socio/accionista RFC relationship) are
+> explicitly out of scope for this v1.0.0, since GovSchema v0.3 has no native
+> array/repeating field type (GSP-0009) — see the document's own
+> VERIFICATION.md for these and several other disclosed interpretive
+> judgment calls flagged for an independent reviewer. Mexico's remaining
+> four verticals (Passport, DMV, Taxes, National ID) remain open backlog
+> candidates for a future cycle.
+>
 > **Update (2026-07-06, GOV-1407):** Brazil gains its third vertical,
 > `br/rfb/individual-income-tax-return-irpf` (DIRPF, the annual individual
 > income tax return), closing Brazil's Taxes-vertical gap. A prior cycle
@@ -307,8 +344,8 @@
 |----------|----------|------------|
 | **Passport** | 14/16 (88%) | **AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
 | **DMV** | 13/16 (81%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR, MX** not yet modelled |
-| **Business Formation** | 13/16 (81%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`) |
-| **Taxes** | 15/16 (94%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** now modelled (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** not yet modelled (MX's SAT RFC candidate is a document checklist, not a field-level form, and its live wizard 403s to a direct fetch) |
+| **Business Formation** | 14/16 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** newly modelled this cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414) |
+| **Taxes** | 15/16 (94%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** now modelled (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** not yet modelled (SAT's own RFC pre-registration wizard was used for the Business Formation vertical instead — GOV-1414 — mirroring how `us/irs/employer-identification-number-ss4` sits under Business Formation, not Taxes, in this registry; MX's Taxes vertical still needs a distinct income-tax-return/filing candidate) |
 | **Visa** | 12/16 (75%) | **NL, ZA** — both confirmed dead ends (see below), not open work; **AE** not yet modelled; **MX** newly modelled this cycle (`mx/inm/forma-migratoria-multiple-electronica`), opening Mexico as the registry's 16th jurisdiction |
 | **National ID & Civic Documents** | 13/16 (81%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only) |
 
@@ -374,11 +411,28 @@ within an already-covered vertical:
 - **India, GOV-1240:** `in/morth/driving-licence-application` (this cycle) closes the "Issue of New Driving Licence" gap that `in/morth/learners-licence-application` (GOV-878) explicitly scoped out. India's DMV vertical now has 5 schemas (learner's licence, driving licence, vehicle registration, vehicle registration renewal, vehicle ownership transfer).
 - **United Arab Emirates** has no DMV schema yet — not researched this cycle (Taxes was the sourced vertical for the new UAE jurisdiction; see below).
 
-### Business Formation — Incorporation, LLC, Company Registration (13/15 jurisdictions)
+### Business Formation — Incorporation, LLC, Company Registration (14/16 jurisdictions)
 
 Every jurisdiction except South Korea and the United Arab Emirates has at
-least one Business Formation schema. **Brazil** (`br/sp/jucesp/cnpj-registration-dbe`,
-GOV-1296/GOV-1342) is new this cycle — sourced from the Junta Comercial do
+least one Business Formation schema. **Mexico** (`mx/sat/preinscripcion-rfc-persona-moral`,
+GOV-1414) is new this cycle — sourced from SAT's (Servicio de Administración
+Tributaria) own official screenshot-driven step-by-step guide PDF for its RFC
+(Registro Federal de Contribuyentes) pre-registration wizard for legal
+entities (personas morales); the live wizard itself is WAF/bot-mitigation-
+gated (HTTP 403 to a direct fetch, reconfirmed this cycle). RFC is Mexico's
+federal taxpayer/business identifier, the closest Mexican analogue to the US
+EIN, so it is classified under Business Formation the same way
+`us/irs/employer-identification-number-ss4` is. This corrects a prior
+cycle's (GOV-1393) characterization of the SAT RFC candidate as merely "a
+document checklist" — that referred to a different SAT publication (Ficha
+43/CFF); the guide PDF found this cycle is a genuine field-by-field
+screenshot walkthrough. Six repeating structures (additional business
+addresses, multiple phone numbers, multiple economic activities, the full
+economic-activity catalog, per-activity complementary questions beyond one
+worked example, and multiple socios/accionistas) are explicitly out of scope
+for v1.0.0, pending GSP-0009 (composite/repeating values) — see the
+document's own VERIFICATION.md. **Brazil** (`br/sp/jucesp/cnpj-registration-dbe`,
+GOV-1296/GOV-1342) was new in a prior cycle — sourced from the Junta Comercial do
 Estado de São Paulo (JUCESP)/VRE|REDESIM integrator's own screenshot-driven
 "Coletor Nacional – DBE de inscrição" tutorial, modelling the CNPJ
 registration (Documento Básico de Entrada) step for a company's first
@@ -388,14 +442,15 @@ federal. GOV-1289's research rated KR's Business Formation vertical **WEAK**
 (IROS/startbiz.go.kr both require certificate login) — not an open candidate
 without new sourcing. UAE's Business Formation vertical was likewise rated
 WEAK/login-gated in that same research cycle and was not revisited this
-cycle. Remaining gaps in the other 13 are sub-process expansions: sole
+cycle. Remaining gaps in the other 14 are sub-process expansions: sole
 trader/partnership/LLP forms in CA, NZ, IE, and India (only SPICe+ company
 incorporation modelled so far); a standalone EIN schema for the US (currently
 folded into `us/irs/employer-identification-number-ss4`, which does exist);
 ZA close corporation/trust/NPO formation beyond
 `za/cipc/private-company-incorporation`; Brazil's own branch/filial
 registration (Evento 102) and multi-partner QSA expansion beyond the single
-founder modelled here.
+founder modelled here; Mexico's own repeating-structure follow-ups noted
+above.
 
 ### Taxes — Income Tax Return, Tax Filing (15/16 jurisdictions)
 
@@ -416,7 +471,11 @@ found it too fragmentary to source field-by-field, and left the gap open in
 backlog; GOV-1407 instead located RFB's official byte-exact DIRPF
 file-layout specification and authored a bounded 67-field core against it
 (see the document's own VERIFICATION.md for the full scope). Mexico's
-Taxes-vertical gap remains open. Remaining gaps are sub-process expansions:
+Taxes-vertical gap remains open — SAT's own RFC pre-registration wizard was
+sourced this cycle (GOV-1414) but is classified under Business Formation
+instead (mirroring `us/irs/employer-identification-number-ss4`'s
+classification), so it does not close this gap; MX's Taxes vertical still
+needs a distinct income-tax-return/filing candidate. Remaining gaps are sub-process expansions:
 
 - **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), ITR-2 (capital gains/foreign income/multiple properties), and now ITR-3 (non-presumptive business/profession with full books of account, GOV-1254) are all modelled — the ITR-1/2/3/4 set is now complete. ITR-3 defers full re-derivation of Schedule S/House Property/Schedule CG/OS/itemised Chapter VI-A against its own workbook, since those schedules are structurally identical to the ones already published in full in `in/incometax/individual-tax-return-itr2` (see its VERIFICATION.md for the scope rationale).
 - **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's full five-Annexure company-type set is now modelled: Dormant Company pathway (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`, GOV-1275), Body Corporate/Share Block Company pathway (`za/sars/corporate-income-tax-return-itr14-body-corporate`, GOV-1282), Small Business pathway (`za/sars/corporate-income-tax-return-itr14-small-business`, GOV-1378), and Medium to Large Business pathway (`za/sars/corporate-income-tax-return-itr14-medium-large-business`, GOV-1387). Body Corporate/Share Block and Micro Business both model a full Balance Sheet, Income Statement, and Tax Computation (138 and 151 fields respectively); Small Business is structurally much larger (283 fields, guide §14 spanning 44 pages) — it adds Small Business Corporation eligibility, Contributed Tax Capital, Urban Development Zone, Company Structure, Multinational Entity group details, Reportable Arrangement, Dividends Declared, and a 33-field Additional Assessment Information section absent from the smaller siblings; Medium to Large Business (Annexure E) is larger still (417 fields, guide §15 spanning 55 pages, the largest of the five) — it adds International, Foreign Exchange Gains/Losses, Foreign Dividends, Controlled Foreign Company, Double Taxation, STC Credits, Headquarter Company, Subsidiary Details, and Corporate Rules sections with no counterpart in any of the other four, plus a Balance Sheet (64 fields) and Income Statement (89 fields) splitting many lines by Local/Foreign and Connected/Non-Connected. All five defer the repeating Share/Membership Register, Beneficial Owner details, Capital Gains schedule, PAYE Credits, Donations-organisation list, the s6quat(1A) foreign-tax-credit computation block, and the Enhanced Renewable Energy Deduction detail container; Small Business and Medium to Large Business additionally defer, as a whole and explicitly disclosed, the same class of large itemised Tax Computation sub-blocks (~83-84-item Special Allowances Not Claimed plus related reversal/recoupment blocks) each comparable in scope to a repeating container, and Medium to Large Business further defers its wholly new, unbounded per-jurisdiction Transfer Pricing Received/Receivable, Paid/Payable, and Supporting Information containers (see each document's VERIFICATION.md). IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remains the only open corporate-tax gap among jurisdictions already in the registry.
@@ -488,7 +547,7 @@ now closed.
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 7 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
-| **MX** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **MX** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -545,11 +604,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 3. **New jurisdictions beyond the current 16** — the standard is meant to be
    global from the start (see AGENTS.md charter). South Korea, the UAE,
    Brazil, and Mexico have each been opened in recent cycles (GOV-1289,
-   GOV-1297, GOV-1296, GOV-1393). Mexico's own Passport (SRE, in-person
-   appointment only), DMV, Business Formation/Tax (SAT RFC — document
-   checklist only, live wizard 403s to a direct fetch), and National ID
-   (CURP — in-person biometric only) verticals remain open backlog
-   candidates for a future cycle, none a confirmed dead end. Candidates worth
+   GOV-1297, GOV-1296, GOV-1393). Mexico's Business Formation vertical is now
+   closed (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414, sourced from
+   SAT's own screenshot-driven preinscription guide — see the Business
+   Formation section above). Mexico's remaining Passport (SRE, in-person
+   appointment only), DMV, Taxes (needs a distinct income-tax-return/filing
+   candidate — SAT's RFC wizard was used for Business Formation instead), and
+   National ID (CURP — in-person biometric only) verticals remain open
+   backlog candidates for a future cycle, none a confirmed dead end. Candidates worth
    scouting for a genuinely new (17th) jurisdiction in a future cycle: an EU
    member beyond DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked
    dead end (GOV-1174).
@@ -593,7 +655,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 - **Scraping:** `find registry -mindepth 3 -maxdepth 3 -type d` (one entry
   per `<agency>/<process-name>`), cross-checked against
-  `tools/govschema-client/registry-index.json` (227 entries, one per
+  `tools/govschema-client/registry-index.json` (228 entries, one per
   published version/edition).
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
@@ -626,4 +688,6 @@ authoring, ZA SARS ITR14 corporate-tax gap closed, 5th and last Annexure),
 updated by GOV-1393 (`mx/inm/forma-migratoria-multiple-electronica`
 authoring, Mexico opened as 16th jurisdiction), updated by GOV-1407
 (`br/rfb/individual-income-tax-return-irpf` authoring, Brazil Taxes-vertical
-gap closed, 3rd BR schema) | Standards Engineer
+gap closed, 3rd BR schema), updated by GOV-1414
+(`mx/sat/preinscripcion-rfc-persona-moral` authoring, Mexico Business
+Formation gap closed, 2nd MX schema) | Standards Engineer
