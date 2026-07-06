@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **239 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **240 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-06, GOV-1490):** The Philippines gains a fourth vertical,
+> `ph/bi/non-immigrant-visa-application` (Visa) — the Bureau of Immigration's
+> own Consolidated General Application Form (CGAF) for Non-Immigrant Visa,
+> Special Work Permit, and Provisional Work Permit (`BOC04.QF.002 Rev. Lev. 0`,
+> effective 05 AUG 2024), covering conversion, extension, inclusion, and
+> permit applications for a foreign national already present in the
+> Philippines. Sourced directly from a genuine, directly downloadable,
+> unblocked (no login/CAPTCHA/WAF) text-layer PDF on `immigration.gov.ph`'s
+> own BI Forms page — this is the exact candidate the prior cycle's own
+> catalog note (GOV-1466) had flagged as "a genuine, unblocked, directly
+> downloadable candidate" left unpicked. This closes the Philippines to 4/6
+> verticals (Business Formation, National ID, Taxes, Visa); Passport and DMV
+> remain open backlog candidates, both previously screened (GOV-1466) and
+> found weaker (Passport's live wizard consumes genuinely scarce real DFA
+> appointment inventory; DMV's LTO Form No. 21 is only fetchable via a
+> third-party mirror since `lto.gov.ph` is Cloudflare-gated). This document
+> deliberately does not model the type-specific documentary checklists that
+> vary per underlying visa/permit category (e.g. Conversion to Student Visa,
+> Pre-arranged Employee Visa Commercial/Non-Commercial, SWP/PWP) — those are
+> separate BI-published checklists this form itself does not enumerate — nor
+> the physical ACR I-Card claim-stub's own representative/claimant sub-block,
+> a downstream card-collection step distinct from filing the application; see
+> the document's own VERIFICATION.md for these and five other disclosed
+> judgment calls.
 
 > **Update (2026-07-06, GOV-1483):** South Korea gains a sixth and final
 > vertical, `kr/nts/corporation-establishment-and-business-registration`
@@ -586,7 +611,7 @@
 | **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE** screened (GOV-1474) — RTA's "Vehicle Renewal User Guide" is a strong, field-rich candidate but only confirmed via a third-party mirror, not the current `rta.ae` URL; strong open backlog candidate; **BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 16/17 (94%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes; KR's own Section 3/4 trust-property and foreign-corporation pathways); **AE** not yet modelled (confirmed dead end this cycle's own prior pass, GOV-1474 — Basher login-gated, `app.invest.dubai.ae` 403s, `ded.ae` bot-mitigated); **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** modelled in a prior cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444); **KR** newly modelled this cycle (`kr/nts/corporation-establishment-and-business-registration`, GOV-1483), closing South Korea to 6/6 verticals |
 | **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
-| **Visa** | 13/17 (76%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** screened (GOV-1466) — Bureau of Immigration's CGAF forms (`immigration.gov.ph`) are a genuine, unblocked, directly downloadable candidate, not picked this cycle only because Taxes closed a vertical globally; strong open backlog candidate; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
+| **Visa** | 14/17 (82%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** newly modelled this cycle (`ph/bi/non-immigrant-visa-application`, GOV-1490), closing the candidate this catalog's own "Known Gaps" note had flagged as strong and open; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
 | **National ID & Civic Documents** | 15/17 (88%) | none genuinely open (SG voter-reg is a confirmed non-gap); **BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only); **AE** newly modelled this cycle (`ae/icp/emirates-id-replacement`, GOV-1474) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
@@ -789,7 +814,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (13/17 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (14/17 jurisdictions)
 
 **Three confirmed, previously-researched dead ends — not open work:**
 
@@ -804,10 +829,16 @@ file-layout specification and authored a bounded 67-field core against it
   both nationality-gated (AU/CA/US applicants only) and WAF-defended, with
   no official PDF form available as an alternative (GOV-1428, 2026-07-06).
 
-Every other jurisdiction (AE, AU, CA, DE, FR, GB, IE, IN, KR, MX, NZ, SG, US)
-has at least one Visa schema. **The Philippines** (new this cycle — see
-Business Formation above) has no Visa schema yet; not screened this cycle,
-an open backlog candidate. **United Arab Emirates**
+Every other jurisdiction (AE, AU, CA, DE, FR, GB, IE, IN, KR, MX, NZ, PH, SG,
+US) has at least one Visa schema. **The Philippines**
+(`ph/bi/non-immigrant-visa-application`, GOV-1490) is new this cycle —
+sourced from the Bureau of Immigration's own Consolidated General Application
+Form (CGAF) for Non-Immigrant Visa, Special Work Permit, and Provisional Work
+Permit, a directly downloadable, unblocked (no login/CAPTCHA/WAF) text-layer
+PDF from `immigration.gov.ph`'s own BI Forms page; this closes the PH Visa
+gap this catalog had explicitly flagged as a strong open candidate since
+GOV-1466, and gives the Philippines its 4th vertical (Business Formation,
+National ID, Taxes, Visa). **United Arab Emirates**
 (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421) was new in a prior
 cycle — sourced from ICP's own official "Smart Services User Guide –
 Individuals Services" (V0.1, Jan 2022), a 49-page screenshot-driven
@@ -1100,5 +1131,10 @@ merged 5097780), updated by GOV-1466
 global Taxes vertical closed to 17/17 / 100%), updated by GOV-1474
 (`ae/icp/emirates-id-replacement` authoring, UAE 3rd vertical, National ID &
 Civic Documents, global National ID & Civic Documents vertical closed to
-15/17 / 88%) |
+15/17 / 88%), updated by GOV-1483
+(`kr/nts/corporation-establishment-and-business-registration` authoring, KR
+6th and last vertical, Business Formation, global Business Formation vertical
+16/17 / 94%), updated by GOV-1490
+(`ph/bi/non-immigrant-visa-application` authoring, Philippines 4th vertical,
+Visa, global Visa vertical closed to 14/17 / 82%) |
 Standards Engineer
