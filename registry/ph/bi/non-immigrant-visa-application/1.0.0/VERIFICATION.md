@@ -253,6 +253,38 @@ ACR I-Card section empty — the applicant does not yet hold one, consistent
 with a first conversion request). Result: **PASS**, 68 fields modelled, 30
 populated in the mock, 6 documents, 7 flow steps.
 
+## Review-gate correction (2026-07-06, GOV-1493)
+
+Independent re-derivation via a fresh pdfjs-dist text-layer extraction with
+`y`/`x` coordinates (not just visual row-clustering) found that the
+originally-authored field set mis-sourced Section IV's single Contact
+Number(s)/E-mail block and, separately, dropped the equivalent block that
+does exist on the Character References sub-section:
+
+- **Removed** `petitionerIndividualContactLandline`,
+  `petitionerIndividualContactMobile`, `petitionerIndividualEmail`. Their
+  `sourceRef`s claimed a Contact Number(s) (Landline/Mobile)/E-mail block
+  tied to the Petitioner's "Spouse Name" row. Coordinate-level extraction of
+  page 2 shows only **one** Contact Number(s)/E-mail block in Section IV,
+  positioned beside "Registered Address in the Philippines" — already
+  correctly captured as `petitionerCompanyContactLandline` /
+  `petitionerCompanyContactMobile` / `petitionerCompanyEmail`. The
+  "Individual" trio duplicated that same block under fabricated coordinates.
+- **Added** `characterReferenceContactLandline`,
+  `characterReferenceContactMobile`, `characterReferenceEmail`. The
+  "Character References in the Philippines" block (page 2, above Section IV)
+  is laid out in two columns: address fields on the left (already modelled)
+  and a genuine Contact Number(s) (Landline/Mobile)/E-mail Address block on
+  the right (at the same `y` range as the address fields) — present on the
+  source form but absent from the original field set.
+
+Net field count is unchanged at 68 (3 removed, 3 added). `fields[]` names,
+`steps[].fields` references, and the affected `sourceRef`s were corrected in
+`schema.json`; no other section showed a discrepancy against this coordinate-
+level re-extraction. This is the same class of raw-order-vs-visual-layout
+artifact disclosed in judgment call #1 above, just affecting a second,
+previously-uncaught field grouping.
+
 ## Re-verification
 
 Per the practice's **Cadence**, `nextReviewBy` is set to **2027-01-01** (~6
