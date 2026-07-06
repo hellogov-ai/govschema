@@ -1,0 +1,65 @@
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+
+Schema: kr/mois/resident-registration-card-reissuance v1.0.0
+Generated: 2026-07-06
+
+Scenario:
+A South Korean national who lost his resident registration card and is applying for reissuance at his local Eup/Myeon office, picking the card up in person, with no visit-issuance accommodation and no fee-exemption category claimed. All values are fabricated illustrative test data, not a real applicant's information, constructed to exercise the schema's most common branch: reissueReason=lost (previousIdCard document correctly NOT required, per the form's own exception; reissuanceFee correctly required), receiptMethod=visitApplicationAgency (registeredMail address fields correctly not applicable), isVisitIssuanceForSeverelyDisabled=false (visit-reissuance block correctly not applicable), and no fee-exemption category checked (consentToAdministrativeInfoVerification/consentDate correctly not applicable).
+
+Collected values:
+  applicantNameKorean: '김민준'
+  applicantResidentRegistrationNumber: '900101-1234567'
+  applicantAddress: '서울특별시 강남구'
+  applicantContact: '010-1234-5678'
+  reissueReason: 'lost'
+  applicationConfirmationIssuance: 'issued'
+  receiptMethod: 'visitApplicationAgency'
+  smsReceiptNotification: 'doNotApply'
+  applicationDate: '2026-07-06'
+  isVisitIssuanceForSeverelyDisabled: False
+
+Not applicable in this scenario (visibleWhen/requiredWhen evaluate false):
+  reissueReasonOtherText (reissueReason != 'other')
+  previousIdCardSurrenderedBeforeDeparture (reissueReason not in [permanentReturn, overseasNationalRegistration])
+  registeredMailSameAsRegisteredAddress, registeredMailPostalCode, registeredMailAddress
+    (receiptMethod != 'registeredMail')
+  visitReissuanceApplicantName, visitReissuanceApplicantResidentRegistrationNumber,
+  visitReissuanceApplicantAddress, visitReissuanceApplicantContact
+    (isVisitIssuanceForSeverelyDisabled = False)
+  consentToAdministrativeInfoVerification, consentDate, and all 8 fee-exemption
+  category fields (basicLivingSecurityRecipient, personOfIndependenceMerit,
+  personOfNationalMerit, agentOrangeAftereffectPatient, warVeteran,
+  may18DemocracyMovementMeritPerson, specialMissionPerformer,
+  singleParentFamilyProtectionRecipient) — none claimed in this scenario
+
+Documents required for this scenario (evaluated from documents[].requiredWhen):
+  - photo (always required)
+  - reissuanceFee (reissueReason = 'lost', KRW 5,000)
+  Not required: previousIdCard (reissueReason = 'lost' is an explicit exception),
+  disabilityProofDocument / visitReissuanceApplicantIdDocument
+  (isVisitIssuanceForSeverelyDisabled = False)
+
+Independent conformance run (from-scratch evaluator, gsp0013_eval_mois.mjs, not reused
+from any other schema's evaluator, supporting equals/notEquals/in/greaterThan(OrEqual)/
+lessThan(OrEqual) plus all/any/not composition) was run against 7 fixtures:
+  1. Lost card, counter pickup, no fee exemption (this packet) -> 0 violations.
+  2. Name change, registered mail to a different address -> previousIdCard correctly
+     required, reissuanceFee correctly NOT required, registeredMailPostalCode/Address
+     correctly required -> 0 violations.
+  3. Permanent return, previous card already surrendered before departure ->
+     previousIdCard correctly NOT required -> 0 violations.
+  4. Permanent return, previous card NOT surrendered -> previousIdCard correctly
+     required -> 0 violations.
+  5. Home/counter-visit issuance for a severely disabled applicant with a
+     fee-exemption category claimed -> all visit-applicant fields, both
+     visit-specific documents, and the exemption/consent fields correctly
+     required and satisfied -> 0 violations.
+  6. reissueReason='other' with reissueReasonOtherText omitted (deliberate mutation) ->
+     correctly flagged MISSING required field: reissueReasonOtherText (plus the
+     correctly-still-required previousIdCard document, since 'other' is not one of
+     the old-card exceptions).
+  7. isVisitIssuanceForSeverelyDisabled=true with the visit block and its two
+     documents omitted (deliberate mutation) -> correctly flagged all 4 missing
+     required fields and 2 missing required documents.
+Fixtures 1-5 also passed tools/validate.mjs and tools/validate-ajv.mjs for the
+schema document itself.

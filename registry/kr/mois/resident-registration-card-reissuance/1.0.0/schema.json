@@ -1,0 +1,591 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "kr/mois/resident-registration-card-reissuance",
+  "version": "1.0.0",
+  "title": "South Korea Resident Registration Card Reissuance Application (주민등록증 재발급신청서)",
+  "description": "Apply to reissue a South Korean resident registration card (주민등록증) under Articles 27 and 27-2 of the Resident Registration Act and Articles 40(1) and 40-2(2) of its Enforcement Decree, using the form gazetted as [별지 제32호서식]. Initial issuance of the card is automatic at age 17 (not modelled here); this schema covers the citizen-facing reissuance process for a lost, damaged, or otherwise outdated card, filed at the applicant's local 읍ㆍ면사무소 (Eup/Myeon office) or 동 주민센터 (Dong community centre). It models the reissuance-reason selection, the previous-card/photo attachment rules (including the source form's own exceptions to needing the old card), the card-receipt method and confirmation-document choices, the separate home/counter-visit reissuance pathway for a severely disabled applicant, and the fee-exemption consent block on the form's reverse side. It does not model initial (first-time, age-17) issuance, the separate resident-registration notification-service enrolment referenced on the form ([별지 제14호의2서식], filed independently), or the actual counter/home-visit issuance event once the application is accepted. It does not submit the application; the local registration office and the National Law Information Center source (law.go.kr) are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of the Interior and Safety",
+    "abbreviation": "MOIS",
+    "url": "https://www.mois.go.kr/eng/a01/engMain.do"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "ko-KR"
+  },
+  "source": {
+    "url": "https://www.law.go.kr/flDownload.do?gubun=&flSeq=29752997&bylClsCd=110202",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "주민등록법 시행령 [별지 제32호서식] <개정 2016. 12. 30.> 주민등록증재발급신청서 — Resident Registration Act Enforcement Decree, Attached Form No. 32, 'Resident Registration Card Reissuance Application', published by the National Law Information Center (law.go.kr)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Adds a second South Korean National ID & Civic Documents schema alongside kr/nec/overseas-voter-registration. Sourced directly from law.go.kr's own form-download endpoint (a real, directly-downloadable two-page PDF with a genuine text layer, extracted with pdfjs-dist — no login, CAPTCHA, or OCR needed). See VERIFICATION.md for the full field-by-field sourcing table and the reasoning behind the previous-card and fee-document conditional logic. GOV-1358 review-gate pass (2026-07-06) independently re-extracted the PDF and corrected the isVisitIssuanceForSeverelyDisabled description/sourceRef: the source's back-page 유의사항 item 2 states the '방문 재발급 신청인' block may be filed by a legal representative or guardian, not only the disabled applicant themselves — see VERIFICATION.md's 'Resolved during review' section."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantNameKorean",
+      "label": "성명(한글) — Applicant's full name (Korean, Hangul)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form [별지 제32호서식], front, 신청인 block — '성명(한글)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "applicantResidentRegistrationNumber",
+      "label": "주민등록번호 — Applicant's resident registration number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form [별지 제32호서식], front, 신청인 block — '주민등록번호'",
+      "validation": {
+        "pattern": "^[0-9]{6}-?[0-9]{7}$"
+      }
+    },
+    {
+      "name": "applicantAddress",
+      "label": "주소 (시ㆍ도, 시ㆍ군ㆍ구) — Applicant's address (province/metropolitan city and district/city/county only)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own instruction limits this to the province/metropolitan-city and district/city/county level only — the detailed street address is explicitly not required ('시ㆍ도, 시ㆍ군ㆍ구까지만 작성 — 상세 주소는 작성하지 않아도 됩니다').",
+      "sourceRef": "Form [별지 제32호서식], front, 신청인 block — '주소' / '(시ㆍ도)' / '(시ㆍ군ㆍ구)' and adjoining note",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "applicantContact",
+      "label": "연락처 — Applicant's contact number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form [별지 제32호서식], front, 신청인 block — '연락처'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "reissueReason",
+      "label": "재발급 사유 — Reason for reissuance",
+      "type": "enum",
+      "required": true,
+      "description": "The form presents these as a checkbox grid ('[ ]에는 해당하는 곳에 √표를 합니다'), but each describes a distinct, mutually exclusive triggering event for a single reissuance application; this schema models the one primary reason selected.",
+      "sourceRef": "Form [별지 제32호서식], front, 재발급 사유 checkbox grid",
+      "validation": {
+        "enum": [
+          "lost",
+          "damaged",
+          "nameChange",
+          "residentRegistrationNumberChange",
+          "addressChangeColumnFull",
+          "permanentReturn",
+          "appearanceChange",
+          "unclaimedDestroyed",
+          "cancelledRegistrantReturn",
+          "overseasNationalRegistration",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "reissueReasonOtherText",
+      "label": "그 밖의 사유 — Other reason (free text)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "reissueReason",
+        "equals": "other"
+      },
+      "sourceRef": "Form [별지 제32호서식], front, 재발급 사유 checkbox grid — '[ ] 그 밖의 사유'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "previousIdCardSurrenderedBeforeDeparture",
+      "label": "출국 전 구 주민등록증 반납 여부 — Whether the previous card was already surrendered before moving abroad",
+      "type": "boolean",
+      "required": false,
+      "description": "Only meaningful for the permanentReturn and overseasNationalRegistration reasons: the attached-documents note excuses the old card only when it was already returned to the authorities before the applicant moved abroad.",
+      "visibleWhen": {
+        "field": "reissueReason",
+        "in": [
+          "permanentReturn",
+          "overseasNationalRegistration"
+        ]
+      },
+      "sourceRef": "Form [별지 제32호서식], front, 첨부서류 item 2, sub-items 나 and 다"
+    },
+    {
+      "name": "applicationConfirmationIssuance",
+      "label": "주민등록증 발급신청 확인서 — Application confirmation document",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant wants a confirmation-of-application document issued while the new card is being processed.",
+      "sourceRef": "Form [별지 제32호서식], front — '주민등록증 발급신청 확인서 [ ] 교부 [ ] 미교부'",
+      "validation": {
+        "enum": [
+          "issued",
+          "notIssued"
+        ]
+      }
+    },
+    {
+      "name": "receiptMethod",
+      "label": "주민등록증 수령 방법 — Card receipt method",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form [별지 제32호서식], front — '주민등록증 수령 방법 [ ]신청 기관 방문 [ ]주민등록기관 방문 [ ]등기우편'",
+      "validation": {
+        "enum": [
+          "visitApplicationAgency",
+          "visitRegistrationAgency",
+          "registeredMail"
+        ]
+      }
+    },
+    {
+      "name": "smsReceiptNotification",
+      "label": "주민등록증 수령 안내 단문 메시지(SMS) 서비스 — SMS notification for card receipt",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form [별지 제32호서식], front — '주민등록증 수령 안내 단문 메시지(SMS) 서비스 [ ] 신청 [ ] 미신청'",
+      "validation": {
+        "enum": [
+          "apply",
+          "doNotApply"
+        ]
+      }
+    },
+    {
+      "name": "registeredMailSameAsRegisteredAddress",
+      "label": "등기우편 수령 주소 — 주민등록 주소와 같음 — Registered-mail address same as resident-registration address",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "receiptMethod",
+        "equals": "registeredMail"
+      },
+      "sourceRef": "Form [별지 제32호서식], front — '등기우편 수령 주소' / '[ ] 주민등록 주소와 같음'",
+      "requiredWhen": {
+        "field": "receiptMethod",
+        "equals": "registeredMail"
+      }
+    },
+    {
+      "name": "registeredMailPostalCode",
+      "label": "우편번호 — Postal code for registered-mail receipt",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "receiptMethod",
+            "equals": "registeredMail"
+          },
+          {
+            "field": "registeredMailSameAsRegisteredAddress",
+            "equals": false
+          }
+        ]
+      },
+      "sourceRef": "Form [별지 제32호서식], front — '※ 주민등록 주소가 아닌 경우: (우 )'",
+      "validation": {
+        "pattern": "^[0-9]{5}$"
+      }
+    },
+    {
+      "name": "registeredMailAddress",
+      "label": "등기우편 수령 주소 — Registered-mail receipt address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "receiptMethod",
+            "equals": "registeredMail"
+          },
+          {
+            "field": "registeredMailSameAsRegisteredAddress",
+            "equals": false
+          }
+        ]
+      },
+      "sourceRef": "Form [별지 제32호서식], front — '등기우편 수령 주소'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "applicationDate",
+      "label": "신청일 — Application date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form [별지 제32호서식], front, main declaration — '년 월 일' preceding the applicant's signature/seal",
+      "description": "The physical signature/seal accompanying this date is a signing-event detail, not a data field, and is not modelled here."
+    },
+    {
+      "name": "isVisitIssuanceForSeverelyDisabled",
+      "label": "방문 재발급 신청 여부 — Whether applying via the home/counter-visit reissuance pathway for a severely disabled applicant",
+      "type": "boolean",
+      "required": true,
+      "description": "This pathway accommodates a severely disabled applicant unable to attend a routine counter visit; when true, the '방문 재발급 신청인' block's fields and the two supporting documents below apply. Per the form's own 유의사항 (usage notes) item 2, that block may be filled in by the severely disabled applicant themselves, or filed on their behalf by their legal representative or guardian (household head, spouse, or lineal blood relative) — it is not necessarily the disabled applicant's own information.",
+      "sourceRef": "Form [별지 제32호서식], front, '방문 재발급 신청인' block; 첨부서류 item 3; back, 유의사항 item 2"
+    },
+    {
+      "name": "visitReissuanceApplicantName",
+      "label": "방문 재발급 신청인 성명(한글) — Visit-reissuance applicant name (Korean)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "isVisitIssuanceForSeverelyDisabled",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제32호서식], front, '방문 재발급 신청인' block — '성명(한글)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "visitReissuanceApplicantResidentRegistrationNumber",
+      "label": "방문 재발급 신청인 주민등록번호 — Visit-reissuance applicant resident registration number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "isVisitIssuanceForSeverelyDisabled",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제32호서식], front, '방문 재발급 신청인' block — '주민등록번호'",
+      "validation": {
+        "pattern": "^[0-9]{6}-?[0-9]{7}$"
+      }
+    },
+    {
+      "name": "visitReissuanceApplicantAddress",
+      "label": "방문 재발급 신청인 주소 (시ㆍ도, 시ㆍ군ㆍ구) — Visit-reissuance applicant address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "isVisitIssuanceForSeverelyDisabled",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제32호서식], front, '방문 재발급 신청인' block — '주소' / '(시ㆍ도)' / '(시ㆍ군ㆍ구)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "visitReissuanceApplicantContact",
+      "label": "방문 재발급 신청인 연락처 — Visit-reissuance applicant contact number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "isVisitIssuanceForSeverelyDisabled",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제32호서식], front, '방문 재발급 신청인' block — '연락처'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "consentToAdministrativeInfoVerification",
+      "label": "행정정보 공동이용 등에 대한 동의 — Consent to fee-exemption verification via the Administrative Information Joint-Use System",
+      "type": "boolean",
+      "required": false,
+      "description": "Signed only when the applicant is claiming one of the fee-exemption categories below and wants the responsible official to verify it electronically rather than submitting proof documents directly.",
+      "visibleWhen": {
+        "any": [
+          {
+            "field": "basicLivingSecurityRecipient",
+            "equals": true
+          },
+          {
+            "field": "personOfIndependenceMerit",
+            "equals": true
+          },
+          {
+            "field": "personOfNationalMerit",
+            "equals": true
+          },
+          {
+            "field": "agentOrangeAftereffectPatient",
+            "equals": true
+          },
+          {
+            "field": "warVeteran",
+            "equals": true
+          },
+          {
+            "field": "may18DemocracyMovementMeritPerson",
+            "equals": true
+          },
+          {
+            "field": "specialMissionPerformer",
+            "equals": true
+          },
+          {
+            "field": "singleParentFamilyProtectionRecipient",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Form [별지 제32호서식], back — '신청인은 ... 수수료 면제 대상 여부를 확인하는데 동의합니다.'"
+    },
+    {
+      "name": "basicLivingSecurityRecipient",
+      "label": "「국민기초생활보장법」에 따른 수급자 — National Basic Living Security Act recipient",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "personOfIndependenceMerit",
+      "label": "독립유공자 — Person of merit for independence",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "personOfNationalMerit",
+      "label": "국가유공자 — Person of national merit",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "agentOrangeAftereffectPatient",
+      "label": "고엽제후유의증환자 — Agent Orange after-effects patient",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "warVeteran",
+      "label": "참전군인 — War veteran",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "may18DemocracyMovementMeritPerson",
+      "label": "5ㆍ18민주유공자 — May 18 Democracy Movement merit person",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "specialMissionPerformer",
+      "label": "특수임무수행자 — Special mission performer",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "singleParentFamilyProtectionRecipient",
+      "label": "한부모가족 보호대상자 — Single-parent family protection recipient",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption checkbox row"
+    },
+    {
+      "name": "consentDate",
+      "label": "동의일 — Fee-exemption consent date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "basicLivingSecurityRecipient",
+            "equals": true
+          },
+          {
+            "field": "personOfIndependenceMerit",
+            "equals": true
+          },
+          {
+            "field": "personOfNationalMerit",
+            "equals": true
+          },
+          {
+            "field": "agentOrangeAftereffectPatient",
+            "equals": true
+          },
+          {
+            "field": "warVeteran",
+            "equals": true
+          },
+          {
+            "field": "may18DemocracyMovementMeritPerson",
+            "equals": true
+          },
+          {
+            "field": "specialMissionPerformer",
+            "equals": true
+          },
+          {
+            "field": "singleParentFamilyProtectionRecipient",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Form [별지 제32호서식], back, fee-exemption consent block — '년 월 일' preceding the applicant's signature/seal",
+      "description": "The physical signature/seal accompanying this date is a signing-event detail, not a data field, and is not modelled here."
+    }
+  ],
+  "documents": [
+    {
+      "id": "photo",
+      "label": "여권용 사진 — ID photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": {
+        "issuedWithin": "P6M"
+      },
+      "handling": "Bare-headed, upper-body photo showing the ears and eyebrows, 3cm x 4cm or 3.5cm x 4.5cm, one copy.",
+      "sourceRef": "Form [별지 제32호서식], front, 첨부서류 item 1"
+    },
+    {
+      "id": "previousIdCard",
+      "label": "종전의 주민등록증 — Previous resident registration card",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": {
+        "not": {
+          "any": [
+            {
+              "field": "reissueReason",
+              "equals": "lost"
+            },
+            {
+              "field": "reissueReason",
+              "equals": "unclaimedDestroyed"
+            },
+            {
+              "all": [
+                {
+                  "field": "reissueReason",
+                  "equals": "permanentReturn"
+                },
+                {
+                  "field": "previousIdCardSurrenderedBeforeDeparture",
+                  "equals": true
+                }
+              ]
+            },
+            {
+              "all": [
+                {
+                  "field": "reissueReason",
+                  "equals": "overseasNationalRegistration"
+                },
+                {
+                  "field": "previousIdCardSurrenderedBeforeDeparture",
+                  "equals": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "sourceRef": "Form [별지 제32호서식], front, 첨부서류 item 2 and its four exception sub-items (가–마): not required when lost; when unclaimed/destroyed by the agency; or when already surrendered before moving abroad (permanent-return or overseas-national-registration reasons)"
+    },
+    {
+      "id": "disabilityProofDocument",
+      "label": "중증 장애인 소명 자료 — Proof of severe disability",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": {
+        "field": "isVisitIssuanceForSeverelyDisabled",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제32호서식], front, 첨부서류 item 3"
+    },
+    {
+      "id": "visitReissuanceApplicantIdDocument",
+      "label": "신청인의 신분증 (주민등록증, 여권, 운전면허증 등) — Visit-reissuance applicant's own ID (resident registration card, passport, driver's licence, etc.)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": {
+        "field": "isVisitIssuanceForSeverelyDisabled",
+        "equals": true
+      },
+      "sourceRef": "Form [별지 제32호서식], front, 첨부서류 item 3"
+    },
+    {
+      "id": "reissuanceFee",
+      "label": "수수료 — Reissuance fee",
+      "category": "payment",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "reissueReason",
+            "equals": "lost"
+          },
+          {
+            "field": "reissueReason",
+            "equals": "damaged"
+          },
+          {
+            "field": "reissueReason",
+            "equals": "appearanceChange"
+          },
+          {
+            "field": "reissueReason",
+            "equals": "unclaimedDestroyed"
+          }
+        ]
+      },
+      "amount": {
+        "currency": "KRW",
+        "value": 5000
+      },
+      "sourceRef": "Form [별지 제32호서식], front, 첨부서류 column — '수수료 5,000원'; back, 유의사항 item 7 (fee-charging cases). Item 7 further narrows the damaged/appearanceChange cases to exclude natural wear and disaster/accident-caused changes respectively, and a fee-exemption category checked and consented to above (see basicLivingSecurityRecipient et al.) may waive this fee — neither narrowing is separately encoded here; the issuing office makes the final determination."
+    }
+  ]
+}

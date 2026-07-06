@@ -1,11 +1,28 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-05** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-06** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**15 jurisdictions** | **219 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**15 jurisdictions** | **220 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1355/GOV-1317):** South Korea gains a second
+> National ID & Civic Documents schema,
+> `kr/mois/resident-registration-card-reissuance`, sourced from the
+> Ministry of the Interior and Safety's gazetted form (주민등록법 시행령
+> [별지 제32호서식], law.go.kr) — a genuine text-layer PDF, directly
+> downloadable with no login or CAPTCHA. This was the second of two
+> candidates GOV-1289's original South Korea scouting cycle found for this
+> vertical (the first, `kr/nec/overseas-voter-registration`, was authored
+> under GOV-1294); picked up from the standing candidate backlog left open
+> by GOV-1294 as `GOV-1317` under this cycle's `GovSchema Standard Research`
+> routine (`GOV-1355`). Models the reissuance-reason selection, the source
+> form's own exceptions to needing the previous card, the receipt-method and
+> confirmation-document choices, a distinct home/counter-visit reissuance
+> pathway for a severely disabled applicant, and the reverse-side
+> fee-exemption consent block — see VERIFICATION.md for two explicit
+> interpretive judgment calls flagged for a future independent reviewer.
+>
 > **Update (2026-07-05, GOV-1342/GOV-1296):** **Brazil** opens as the
 > registry's **15th jurisdiction** with `br/sp/jucesp/cnpj-registration-dbe`,
 > sourced from the Junta Comercial do Estado de São Paulo (JUCESP)/VRE|REDESIM
@@ -243,13 +260,14 @@ Every jurisdiction except the United Arab Emirates has at least one National
 ID and/or voter-registration schema; UAE was not researched for this vertical
 this cycle. Singapore's lack of a voter-registration schema is a **confirmed
 non-gap** (GOV-1075): Singapore voting is compulsory and NRIC-linked, with no
-citizen-initiated online registration step to model. **South Korea**
-(`kr/nec/overseas-voter-registration`, GOV-1294) was new in the previous
-cycle — sourced from the National Election Commission's combined overseas
-absentee-voter notification / overseas voter registration form, one of two
-strong candidates GOV-1289's research found for KR's National ID vertical
-(the other, a Resident Registration Card reissuance form, remains a
-candidate for a future second KR National ID document if needed).
+citizen-initiated online registration step to model. **South Korea** now has
+two National ID documents: `kr/nec/overseas-voter-registration` (GOV-1294),
+sourced from the National Election Commission's combined overseas
+absentee-voter notification / overseas voter registration form, and
+`kr/mois/resident-registration-card-reissuance` (GOV-1317), sourced from the
+Ministry of the Interior and Safety's gazetted card-reissuance form — the two
+strong candidates GOV-1289's original research found for this vertical, both
+now closed.
 
 ---
 
@@ -266,7 +284,7 @@ candidate for a future second KR National ID document if needed).
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KR** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **KR** | 6 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
