@@ -4,8 +4,32 @@
 
 ## Executive Summary
 
-**15 jurisdictions** | **221 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**15 jurisdictions** | **222 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1371):** The United Arab Emirates gains a second
+> Taxes-vertical document, `ae/fta/corporate-tax-registration`, sourced from
+> the Federal Tax Authority's own official "Corporate Tax Registration –
+> Taxpayer User Manual" (EmaraTax, v4.0.0.0, 17 May 2023) — a 41-page
+> screenshot-driven walkthrough of the live EmaraTax CT-registration wizard,
+> the same sourcing shape already used successfully for
+> `ae/fta/vat-registration`. This closes the sibling-document gap that cycle
+> explicitly flagged in its own `description` and in this catalog's "Known
+> Gaps" section. Before authoring this, this cycle's `GovSchema Standard
+> Research` routine scouted two genuinely new-vertical UAE candidates
+> (Business Formation via DED/Invest in Dubai/Basher; National ID via ICP
+> Emirates ID issuance) and Brazil's National ID candidate
+> (Carteira de Identidade Nacional, CIN) — all three confirmed login-gated
+> (UAE Pass/Emirates ID or gov.br SSO) via live checks this cycle, so effort
+> was redirected to the already-precedented, plainly-downloadable EmaraTax
+> manual instead. Models the Legal Person registration pathway in full;
+> Natural Person registration's own (simpler) field set was not sourced this
+> cycle — see the document's own VERIFICATION.md for four disclosed
+> interpretive judgment calls flagged for an independent reviewer. Brazil's
+> CIN remains an open National ID candidate for a future cycle if a
+> non-login-gated source (e.g. the governing federal decree's own field list,
+> already read this cycle from planalto.gov.br) proves sufficient on its
+> own.
+>
 > **Update (2026-07-06, GOV-1364):** Brazil gains its second vertical,
 > `br/pf/passport-application`, sourced directly from the Federal Police's
 > (Polícia Federal) own live SINPA (Sistema Nacional de Passaportes) online
@@ -243,13 +267,13 @@ Every jurisdiction now has at least one Taxes-vertical schema.
 GOV-1293/GOV-1328) was new in the previous cycle — sourced from NTS's official
 English-language "Easy Guide for Foreigners' Year-end Tax Settlement" PDF,
 reproducing the gazetted Attached Form No. 37(1)-(3) as an English original.
-**United Arab Emirates** (`ae/fta/vat-registration`, GOV-1297/GOV-1335) is new
-this cycle — opening UAE as the registry's 14th jurisdiction. The UAE has no
-personal income tax, so VAT registration (Federal Tax Authority, via the
-EmaraTax platform) is modelled as its closest Taxes-vertical analogue, sourced
-from the FTA's own "VAT Registration – Taxpayer User Manual" (a
-screenshot-driven walkthrough of the live EmaraTax wizard). This cycle first
-attempted a Brazil candidate (`GOV-1295`, Receita Federal IRPF), but its named
+**United Arab Emirates** now has two Taxes-vertical documents:
+`ae/fta/vat-registration` (GOV-1297/GOV-1335, opened UAE as the registry's
+14th jurisdiction) and `ae/fta/corporate-tax-registration` (GOV-1371, new
+this cycle) — both sourced from the FTA's own EmaraTax screenshot-driven
+user manuals. The UAE has no personal income tax, so these two registrations
+are its closest Taxes-vertical analogues. This cycle first attempted a
+Brazil candidate (`GOV-1295`, Receita Federal IRPF), but its named
 source turned out to be a 340-page topical FAQ rather than a field-by-field
 guide, too fragmentary to source safely — left open in backlog with findings
 rather than authored against (see `GOV-1295`). Remaining gaps are sub-process
@@ -258,7 +282,7 @@ expansions:
 - **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), ITR-2 (capital gains/foreign income/multiple properties), and now ITR-3 (non-presumptive business/profession with full books of account, GOV-1254) are all modelled — the ITR-1/2/3/4 set is now complete. ITR-3 defers full re-derivation of Schedule S/House Property/Schedule CG/OS/itemised Chapter VI-A against its own workbook, since those schedules are structurally identical to the ones already published in full in `in/incometax/individual-tax-return-itr2` (see its VERIFICATION.md for the scope rationale).
 - **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's Dormant Company pathway (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`, GOV-1275), and Body Corporate/Share Block Company pathway (`za/sars/corporate-income-tax-return-itr14-body-corporate`, GOV-1282) are now modelled — the three smallest of ITR14's five company-type Annexures. Body Corporate/Share Block and Micro Business both model a full Balance Sheet, Income Statement, and Tax Computation (138 and 151 fields respectively); each defers the repeating Share/Membership Register, Beneficial Owner details, Capital Gains schedule, PAYE Credits, Donations-organisation list, the s6quat(1A) foreign-tax-credit computation block, and the Enhanced Renewable Energy Deduction detail container (see each document's VERIFICATION.md). Remaining ITR14 Annexures D/E (Small Business, Medium to Large Business) and IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remain unmodelled.
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
-- **UAE Corporate Tax registration:** the FTA's EmaraTax platform also publishes a separate Corporate Tax Self-Registration user manual (a distinct application from VAT Registration modelled here) — a candidate for a future sibling document, not modelled this cycle.
+- **UAE Corporate Tax registration:** now modelled (`ae/fta/corporate-tax-registration`, GOV-1371) for the Legal Person registration pathway; Natural Person registration's own field set was not sourced this cycle (see its VERIFICATION.md).
 - **Secondary new-jurisdiction candidate (not opened yet):** Brazil's Receita Federal IRPF (`GOV-1295`) remains open in backlog pending either a stronger source or a narrower single-schedule scope — see its comment thread.
 
 ### Visa — Entry Visas, ETAs, Work/Student Permits (11/14 jurisdictions)
@@ -304,7 +328,7 @@ now closed.
 
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **AE** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **AE** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -397,7 +421,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 - **Scraping:** `find registry -mindepth 3 -maxdepth 3 -type d` (one entry
   per `<agency>/<process-name>`), cross-checked against
-  `tools/govschema-client/registry-index.json` (219 entries, one per
+  `tools/govschema-client/registry-index.json` (222 entries, one per
   published version/edition).
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
