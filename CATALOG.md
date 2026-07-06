@@ -27,7 +27,7 @@
 > TSE electoral register remains suspended through 2026-11-03 (confirmed
 > dead end by GOV-1400, not re-attempted), and Mexico's INE credencial para
 > votar requires an in-person biometric appointment (not attempted, left as
-> an open backlog candidate). Six interpretive judgment calls are disclosed
+> an open backlog candidate). Eight interpretive judgment calls are disclosed
 > in the document's own VERIFICATION.md, including: this v1.0.0 models only
 > OVF1's "Registration" application type (iRehistro's DOM does not expose
 > the same form's other seven application types — Certification,
