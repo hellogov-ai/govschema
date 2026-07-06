@@ -4,8 +4,47 @@
 
 ## Executive Summary
 
-**16 jurisdictions** | **231 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **232 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1444):** The Philippines opens as the registry's
+> 17th jurisdiction via `ph/bir/tin-application-corporations-partnerships`
+> (Business Formation), sourced from the Bureau of Internal Revenue's own
+> BIR Form No. 1903 ("Application for Registration...for Corporations,
+> Partnerships (Taxable/Non-Taxable), Including GAIs, LGUs, Cooperatives and
+> Associations", October 2025 ENCS edition) — a genuine, directly
+> downloadable, current PDF with a real (non-image) text layer, published
+> directly on BIR's own CDN with no login, CAPTCHA, or WAF gate, the
+> strongest single sourcing shape found this cycle. This is the registry's
+> closest Philippine analogue to `us/irs/employer-identification-number-ss4`
+> and `mx/sat/preinscripcion-rfc-persona-moral`, classified under Business
+> Formation the same way. This `GovSchema Standard Research` cycle
+> (GOV-1444) first took a fresh look at IE Form CT1 per this catalog's own
+> "Known Gaps" note — Revenue.ie's year-specific Tax and Duty Manuals
+> (fetched and read directly, e.g. Part 38-02-01I for the 2024 CT1) turned
+> out to still be change-log/"what's new" prose over ROS panels, not a full
+> field-by-field walkthrough, and the base manual (Part 38-02-01) confirms
+> field-level help lives only inside the login-gated ROS online-filing
+> system itself with no downloadable specimen paper form found — this
+> re-confirms the prior cycle's assessment and IE CT1 remains a poor
+> candidate, not attempted. Colombia's DIAN RUT (Formulario 001, Registro
+> Único Tributario) was also found and fetched directly as a genuine,
+> current, official PDF and was a real contender, but was not picked over
+> BIR Form 1903 since almost all its ~173 numbered items reference external
+> code tables not reproduced in the form itself and it has substantially
+> more unbounded repeating structures (up to 5 legal representatives, 5
+> socios, 3 revisor fiscal/contador blocks, 3 establishments) — left as a
+> viable backlog candidate for a future cycle (Colombia is not yet in this
+> registry). Scoped to the form's Head Office registration pathway for a
+> corporation/partnership/cooperative/GAI/LGU/association registering for
+> the first time; the Branch Office/Facility pathways, the BIR-internal Tax
+> Types panel, the Authority-to-Print-Invoices panel, and the PEZA/BOI
+> incentive-registration panel are explicitly out of scope for this v1.0.0
+> — twelve interpretive judgment calls in total are disclosed in the
+> document's own VERIFICATION.md. The Philippines' other five verticals
+> (DMV, Visa, Taxes, Passport, National ID) are open backlog candidates for
+> a future cycle; none was screened in depth this cycle beyond this one
+> strong Business Formation source.
+>
 > **Update (2026-07-06, GOV-1435, PR #241 merged 1f43204):** Mexico gains a
 > fourth vertical, `mx/semovi/alta-vehiculo-foraneo`, closing the MX DMV gap
 > this catalog's own "Known Gaps" section had explicitly flagged as a strong
@@ -401,12 +440,12 @@
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
-| **Passport** | 14/16 (88%) | **AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
-| **DMV** | 14/16 (88%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR** not yet modelled; **MX** newly modelled this cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
-| **Business Formation** | 14/16 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** newly modelled this cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414) |
-| **Taxes** | 16/16 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** newly modelled this cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428), distinct from the RFC pre-registration wizard already modelled under Business Formation |
-| **Visa** | 13/16 (81%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
-| **National ID & Civic Documents** | 13/16 (81%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only) |
+| **Passport** | 14/17 (82%) | **AE, MX, PH** not yet modelled (**PH** new this cycle, not screened); **BR** modelled in a prior cycle (`br/pf/passport-application`) |
+| **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR, PH** not yet modelled (**PH** new this cycle, not screened); **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
+| **Business Formation** | 15/17 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** newly modelled this cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444), opening the Philippines as the registry's 17th jurisdiction |
+| **Taxes** | 16/17 (94%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** not yet modelled (new this cycle, not screened) |
+| **Visa** | 13/17 (76%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** not yet modelled (new this cycle, not screened); **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
+| **National ID & Civic Documents** | 13/17 (76%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX, PH** not yet modelled (MX's CURP candidate is in-person/biometric-only; **PH** new this cycle, not screened) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
 > (generated by GOV-1221) showed Passport as 9/13 with ZA, IN, and NL listed
@@ -424,7 +463,7 @@
 
 ## By Vertical
 
-### Passport (14/15 jurisdictions)
+### Passport (14/17 jurisdictions)
 
 AU, BR, CA, DE, FR, GB, IE, IN, KR, NL, NZ, SG, US, ZA all have at least one
 published Passport schema. India (`in/mea/passport-application-first-adult`,
@@ -445,10 +484,14 @@ lost/stolen/retained replacement all through one `previousPassportStatus`
 field rather than needing separate forms per scenario. **United Arab
 Emirates** has no Passport schema yet — no candidate was sourced for it this
 cycle (see the Taxes entry below for the UAE document that was authored).
+**The Philippines**, new this cycle (see Business Formation below), also has
+no Passport schema yet — not screened this cycle, an open backlog candidate
+(DFA e-passport appointment system) for a future one.
 
-### DMV — Vehicle Registration, Licensing, Permits (14/16 jurisdictions)
+### DMV — Vehicle Registration, Licensing, Permits (14/17 jurisdictions)
 
-Every jurisdiction except the United Arab Emirates and Brazil now has at
+Every jurisdiction except the United Arab Emirates, Brazil, and (new this
+cycle) the Philippines now has at
 least one DMV-vertical schema (driver licensing and/or vehicle
 registration). **Mexico** (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) is
 new this cycle — sourced from the Secretaría de Movilidad de la Ciudad de
@@ -482,10 +525,24 @@ within an already-covered vertical:
 - **Brazil** has no DMV schema yet — `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400); vehicle registration (RENAVAM/DETRAN) not yet researched.
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 
-### Business Formation — Incorporation, LLC, Company Registration (14/16 jurisdictions)
+### Business Formation — Incorporation, LLC, Company Registration (15/17 jurisdictions)
 
 Every jurisdiction except South Korea and the United Arab Emirates has at
-least one Business Formation schema. **Mexico** (`mx/sat/preinscripcion-rfc-persona-moral`,
+least one Business Formation schema. **The Philippines** (`ph/bir/tin-application-corporations-partnerships`,
+GOV-1444) is new this cycle — sourced from the Bureau of Internal Revenue's
+own BIR Form No. 1903 ("Application for Registration...for Corporations,
+Partnerships (Taxable/Non-Taxable), Including GAIs, LGUs, Cooperatives and
+Associations", October 2025 ENCS edition), a genuine, directly downloadable,
+current PDF with a real text layer — no login, CAPTCHA, or WAF gate. This
+opens the Philippines as the registry's 17th jurisdiction; the closest
+Philippine analogue to `us/irs/employer-identification-number-ss4` and
+`mx/sat/preinscripcion-rfc-persona-moral`, so classified under Business
+Formation the same way. Scoped to the form's Head Office registration
+pathway; the Branch Office/Facility pathways, the BIR-internal Tax Types
+panel, the Authority-to-Print-Invoices panel, and the PEZA/BOI
+incentive-registration panel are out of scope for this v1.0.0 (see the
+document's own VERIFICATION.md for all twelve disclosed judgment calls).
+**Mexico** (`mx/sat/preinscripcion-rfc-persona-moral`,
 GOV-1414) is new this cycle — sourced from SAT's (Servicio de Administración
 Tributaria) own official screenshot-driven step-by-step guide PDF for its RFC
 (Registro Federal de Contribuyentes) pre-registration wizard for legal
@@ -513,7 +570,7 @@ federal. GOV-1289's research rated KR's Business Formation vertical **WEAK**
 (IROS/startbiz.go.kr both require certificate login) — not an open candidate
 without new sourcing. UAE's Business Formation vertical was likewise rated
 WEAK/login-gated in that same research cycle and was not revisited this
-cycle. Remaining gaps in the other 14 are sub-process expansions: sole
+cycle. Remaining gaps in the other 15 are sub-process expansions: sole
 trader/partnership/LLP forms in CA, NZ, IE, and India (only SPICe+ company
 incorporation modelled so far); a standalone EIN schema for the US (currently
 folded into `us/irs/employer-identification-number-ss4`, which does exist);
@@ -521,11 +578,17 @@ ZA close corporation/trust/NPO formation beyond
 `za/cipc/private-company-incorporation`; Brazil's own branch/filial
 registration (Evento 102) and multi-partner QSA expansion beyond the single
 founder modelled here; Mexico's own repeating-structure follow-ups noted
-above.
+above; the Philippines' own Branch Office/Facility registration variants,
+PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
+panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
+v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (16/16 jurisdictions)
+### Taxes — Income Tax Return, Tax Filing (16/17 jurisdictions)
 
-Every jurisdiction now has at least one Taxes-vertical schema. **Mexico**
+Every jurisdiction except the Philippines (new this cycle — see Business
+Formation above) now has at least one Taxes-vertical schema; BIR's own
+Income Tax Return forms (e.g. 1701/1702 series) are an open backlog
+candidate for a future cycle. **Mexico**
 (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428, PR #239 pending
 merge) is new this cycle — sourced from SAT's own official 65-page "Guía de
 llenado" PDF (fiscal-year-2025 edition) for the Régimen de Sueldos y
@@ -559,7 +622,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (13/16 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (13/17 jurisdictions)
 
 **Three confirmed, previously-researched dead ends — not open work:**
 
@@ -575,7 +638,9 @@ file-layout specification and authored a bounded 67-field core against it
   no official PDF form available as an alternative (GOV-1428, 2026-07-06).
 
 Every other jurisdiction (AE, AU, CA, DE, FR, GB, IE, IN, KR, MX, NZ, SG, US)
-has at least one Visa schema. **United Arab Emirates**
+has at least one Visa schema. **The Philippines** (new this cycle — see
+Business Formation above) has no Visa schema yet; not screened this cycle,
+an open backlog candidate. **United Arab Emirates**
 (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421) was new in a prior
 cycle — sourced from ICP's own official "Smart Services User Guide –
 Individuals Services" (V0.1, Jan 2022), a 49-page screenshot-driven
@@ -598,9 +663,10 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (13/16 jurisdictions)
+### National ID & Civic Documents (13/17 jurisdictions)
 
-Every jurisdiction except the United Arab Emirates, Brazil, and Mexico has at
+Every jurisdiction except the United Arab Emirates, Brazil, Mexico, and (new
+this cycle) the Philippines has at
 least one National ID and/or voter-registration schema. Mexico's CURP
 national-ID candidate requires an in-person biometric appointment and was not
 sourceable this cycle (GOV-1393) — an open backlog candidate, not a dead end.
@@ -640,6 +706,7 @@ now closed.
 | **MX** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **PH** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -662,7 +729,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB.
 2. **Corporate income tax**: IE corporation tax (Form CT1) still has no
-   corporate-return schema (its individual return is covered). SG IRAS is
+   corporate-return schema (its individual return is covered) — re-examined
+   fresh in GOV-1444 (2026-07-06): Revenue.ie's year-specific Tax and Duty
+   Manuals (e.g. Part 38-02-01I for the 2024 CT1, and the base Part 38-02-01
+   manual, both fetched and read directly this cycle) are still change-log/
+   "what's new" prose over ROS panels, not a full field-by-field walkthrough,
+   and the base manual confirms field-level help lives only inside the
+   login-gated ROS online-filing system itself ("Help notes are available by
+   using the 'form help' icon on the ROS form CT1") with no downloadable
+   specimen/blank paper CT1 form found as an alternative. Re-confirmed a poor
+   candidate; do not re-attempt without a genuinely new source (e.g. a leaked
+   or third-party-republished blank CT1 form with real line numbers, which
+   was not found this cycle). SG IRAS is
    modelled via `sg/iras/corporate-income-tax-return-form-cs` (GOV-1261,
    Form C-S — the simplified return for companies with revenue ≤S$5M). ZA
    SARS ITR14 is now modelled in full across all five company-type
@@ -691,10 +769,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    panels (Transfer Pricing, Group Relief, Section 299 Leases, R&D Credit,
    Film Tax) far more extensive than a single-session schema should attempt
    without a comparably strong source.
-3. **New jurisdictions beyond the current 16** — the standard is meant to be
+3. **New jurisdictions beyond the current 17** — the standard is meant to be
    global from the start (see AGENTS.md charter). South Korea, the UAE,
-   Brazil, and Mexico have each been opened in recent cycles (GOV-1289,
-   GOV-1297, GOV-1296, GOV-1393). Mexico now has four of its six verticals
+   Brazil, Mexico, and (this cycle) the Philippines have each been opened in
+   recent cycles (GOV-1289, GOV-1297, GOV-1296, GOV-1393, GOV-1444). Mexico
+   now has four of its six verticals
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
    GOV-1393), Taxes (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428),
@@ -706,10 +785,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Passport (SRE, in-person appointment only) and National ID (CURP,
    in-person biometric only) verticals were confirmed weak/gated in prior
    cycles; a brand-new-from-dealer vehicle registration pathway and driver
-   licence issuance remain open DMV sub-process candidates. Candidates worth
-   scouting for a genuinely new (17th) jurisdiction in a future cycle: an EU
-   member beyond DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked
-   dead end (GOV-1174).
+   licence issuance remain open DMV sub-process candidates. **The
+   Philippines** (GOV-1444) opens with one vertical — Business Formation
+   (`ph/bir/tin-application-corporations-partnerships`, sourced from BIR
+   Form No. 1903, a genuine text-layer PDF with no login/CAPTCHA/WAF gate,
+   the strongest single source examined this cycle); its other five
+   verticals (Passport — DFA e-passport appointment system; DMV — LTO
+   driver's licence/vehicle registration; Visa; Taxes — BIR's own 1701/1702
+   income-tax-return forms; National ID — PhilSys/national ID, believed
+   biometric-appointment-gated but not yet confirmed) are open, unscreened
+   backlog candidates for a future cycle. Also considered and not picked
+   this cycle: **Colombia**'s DIAN RUT (Formulario 001) — a genuine,
+   current, official PDF, but weaker than BIR Form 1903 on this registry's
+   own bar (its ~173 items lean heavily on external code tables not
+   reproduced in the form, and it has substantially more unbounded
+   repeating structures) — left as a viable backlog candidate for a future
+   Colombia-opening cycle (Colombia is not yet in this registry); see
+   `ph/bir/tin-application-corporations-partnerships`'s own VERIFICATION.md
+   for the full comparison. Candidates worth scouting for an 18th
+   jurisdiction in a future cycle: Indonesia (OSS/NIB business
+   registration, not screened in detail this cycle), an EU member beyond
+   DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end
+   (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
@@ -755,13 +852,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 - **Scraping:** `find registry -mindepth 3 -maxdepth 3 -type d` (one entry
   per `<agency>/<process-name>`), cross-checked against
-  `tools/govschema-client/registry-index.json` (228 entries, one per
+  `tools/govschema-client/registry-index.json` (232 entries, one per
   published version/edition).
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
 - **Jurisdiction:** ISO 3166-1 alpha-2 code (AE, AU, BR, CA, DE, FR, GB, IE,
-  IN, KR, MX, NL, NZ, SG, US, ZA) — 16 jurisdictions tracked as of GOV-1393
-  (2026-07-06), up from the prior revision's 15.
+  IN, KR, MX, NL, NZ, PH, SG, US, ZA) — 17 jurisdictions tracked as of
+  GOV-1444 (2026-07-06), up from the prior revision's 16.
 
 ---
 
@@ -796,5 +893,8 @@ opened, 2nd AE schema), updated by GOV-1428
 (`mx/sat/declaracion-anual-sueldos-salarios` authoring, Mexico Taxes gap
 closed, 3rd MX schema, global Taxes vertical 16/16, PR #239 merged 127817d),
 updated by GOV-1435 (`mx/semovi/alta-vehiculo-foraneo` authoring, Mexico DMV
-gap closed, 4th MX schema, PR #241 merged 1f43204) |
+gap closed, 4th MX schema, PR #241 merged 1f43204), updated by GOV-1444
+(`ph/bir/tin-application-corporations-partnerships` authoring, Philippines
+opened as 17th jurisdiction; IE Form CT1 re-examined and re-confirmed a
+poor candidate) |
 Standards Engineer
