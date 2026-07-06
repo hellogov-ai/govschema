@@ -4,8 +4,46 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **244 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **245 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1526):** Brazil gains a fourth vertical,
+> `br/mg/detran/comunicacao-de-venda-de-veiculo` (DMV), closing the
+> **global DMV vertical to 17/17 jurisdictions (100%)** — the last vertical
+> gap standing at less than full coverage. Sourced from the Departamento
+> Estadual de Trânsito de Minas Gerais's (DETRAN-MG) own "Requerimento de
+> Comunicação de Venda" (dated 2026-01-29), a directly downloadable,
+> current, genuine text-layer PDF (no login/CAPTCHA/WAF), the seller-side
+> notice of vehicle sale required under art. 134 of the Código de Trânsito
+> Brasileiro to record the buyer against the vehicle in DETRAN-MG's registry
+> and release the seller from ongoing civil/criminal liability. A prior
+> cycle (GOV-1519) had explicitly re-screened Brazil's DMV gap and left it
+> open, not a dead end, after rejecting a stale 2012 DETRAN-ES
+> staff-procedures manual and the system-generated (non-applicant-fillable)
+> ATPV-e ownership-transfer output; this cycle re-confirmed both of those
+> rejections directly (via PDF metadata and a fresh text extraction) and
+> instead found DETRAN-MG's own dedicated, current form via a broader
+> per-state DETRAN search — cross-checked against an older (2022) edition
+> of the same form for field-set stability, and against DETRAN-MG's own
+> explanatory "Cartilha" booklet for legal/procedural context. DETRAN-MG's
+> live online filing channel (`protocolo.detran.mg.gov.br`) redirects to an
+> authenticated-citizen-login gate on every path tried, consistent with
+> every other Brazilian DETRAN online channel screened in prior cycles, so
+> this document is sourced from the static PDF, not a live wizard walk.
+> Modelled as a subnational (`BR-MG`) schema, mirroring the `br/sp/jucesp`
+> and `mx/semovi` precedent, since vehicle registration in Brazil is
+> administered per state DETRAN, not federally. This document deliberately
+> scopes to the seller's sale-notification filing only — the buyer's
+> separate notarized CRV/ATPV-e transfer paperwork remains unsourced (the
+> ATPV-e is system-generated, and no legible CRV reverse-side specimen was
+> found), and the buyer's own follow-on in-person registration step is a
+> distinct, non-form-based procedure — see the document's own
+> VERIFICATION.md for this and four other disclosed judgment calls, plus a
+> mock sale-notification packet independently checked against every field's
+> validation rule. This gives Brazil 4/6 verticals (Business Formation,
+> Passport, Taxes, DMV); Visa remains a confirmed dead end (GOV-1428) and
+> National ID (Carteira de Identidade Nacional) remains an open-but-weak
+> backlog candidate.
+>
 > **Update (2026-07-06, GOV-1519):** The Philippines gains a sixth and final
 > vertical, `ph/lto/drivers-license-application` (DMV), closing **PH to 6/6
 > verticals** and the global DMV vertical to **16/17 (94%)**. Sourced from the
@@ -808,11 +846,27 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (16/17 jurisdictions)
+### DMV — Vehicle Registration, Licensing, Permits (17/17 jurisdictions — 100%)
 
-Every jurisdiction except Brazil now has at
-least one DMV-vertical schema (driver licensing and/or vehicle
-registration). **The Philippines** (`ph/lto/drivers-license-application`,
+Every jurisdiction now has at least one
+DMV-vertical schema (driver licensing and/or vehicle registration/transfer).
+**Brazil** (`br/mg/detran/comunicacao-de-venda-de-veiculo`, GOV-1526) is new
+this cycle and closes the vertical to 17/17 — DETRAN-MG's (Minas Gerais) own
+"Requerimento de Comunicação de Venda," the seller-side notice of vehicle
+sale required under art. 134 of the Código de Trânsito Brasileiro, filed
+with the state vehicle registry to record the buyer and release the seller
+from ongoing liability. A prior cycle (GOV-1519) had re-screened Brazil's
+DMV gap and found only a stale 2012 DETRAN-ES staff-procedures manual and
+the system-generated (non-applicant-fillable) ATPV-e — this cycle instead
+found DETRAN-MG's dedicated, current (PDF dated 2026-01-29), directly
+downloadable, real-text-layer form, distinct from both prior dead ends;
+modelled as a subnational (`BR-MG`) schema, mirroring the `br/sp/jucesp` and
+`mx/semovi` precedent, since vehicle registration in Brazil is administered
+per state DETRAN. This document deliberately covers only the seller's
+sale-notification filing, not the buyer's separate notarized CRV/ATPV-e
+transfer paperwork (still not independently field-sourceable) or their
+follow-on in-person registration step — see its own VERIFICATION.md.
+**The Philippines** (`ph/lto/drivers-license-application`,
 GOV-1519) is new this cycle — sourced from the Land Transportation Office's
 own gazetted Form No. 21 (v3, September 2023 edition), "Application for
 Student Driver's Permit / Driver's License / Conductor's License", covering a
@@ -868,7 +922,7 @@ within an already-covered vertical:
 - **IDL (International Driving Permit):** covered for US (`dos/international-driving-permit-aaa`, `-aata`), IE (`dttas/international-driving-permit`), GB (`dvla/international-driving-permit`). Not modelled elsewhere.
 - **India, GOV-1240:** `in/morth/driving-licence-application` (this cycle) closes the "Issue of New Driving Licence" gap that `in/morth/learners-licence-application` (GOV-878) explicitly scoped out. India's DMV vertical now has 5 schemas (learner's licence, driving licence, vehicle registration, vehicle registration renewal, vehicle ownership transfer).
 - **United Arab Emirates:** only the vehicle-ownership renewal pathway is modelled (`ae/rta/vehicle-registration-renewal`, GOV-1512); first-time vehicle registration and driver-licence issuance are open sub-process candidates for a future cycle.
-- **Brazil** has no DMV schema yet — `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400); vehicle registration (RENAVAM/DETRAN) was screened repeatedly (GOV-1483, and again this cycle, GOV-1519): DETRAN-SP's `e-crvsp.sp.gov.br` redirects to a gov.br SSO login with no field-level content visible pre-authentication, the same wall as `br/cnh`; this cycle additionally found and read a genuinely downloadable DETRAN-ES (Espírito Santo) "Manual de Procedimentos e Normas Gerais de Serviços e Licenciamento de Veículos" (HTTP 200, no gate, real text layer) but it is a stale (2012, v3.0) internal staff-procedures/documents-checklist manual, not an applicant-facing field-level form; the nationally-standardized ATPV-e (vehicle-ownership-transfer authorization) is itself a system-generated output document issued after a request, not a fillable public application form. Still an open backlog candidate, not a dead end, contingent on finding a genuine citizen-facing application form (as opposed to a staff manual or a system-generated output) from a non-gov.br-gated state DETRAN.
+- **Brazil:** only the seller-side sale-notification filing is modelled (`br/mg/detran/comunicacao-de-venda-de-veiculo`, GOV-1526, Minas Gerais); `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400), and the buyer-side CRV/ATPV-e ownership-transfer paperwork and full first-time/new-vehicle registration remain open sub-process candidates for a future cycle, contingent on finding a genuine citizen-facing application form for either (as opposed to a staff manual or a system-generated output) from a non-gov.br-gated state DETRAN.
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 
@@ -1103,7 +1157,7 @@ now closed.
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 5 | ✗ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BR** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1114,7 +1168,7 @@ now closed.
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PH** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -1323,5 +1377,7 @@ Mexico 5th vertical, Passport), updated by GOV-1512
 (`ae/rta/vehicle-registration-renewal` authoring, UAE 4th vertical, DMV,
 global DMV vertical closed to 15/17 / 88%), updated by GOV-1519
 (`ph/lto/drivers-license-application` authoring, Philippines 6th and last
-vertical, DMV, global DMV vertical closed to 16/17 / 94%)
+vertical, DMV, global DMV vertical closed to 16/17 / 94%), updated by
+GOV-1526 (`br/mg/detran/comunicacao-de-venda-de-veiculo` authoring, Brazil
+4th vertical, DMV, global DMV vertical closed to 17/17 / 100%)
 Standards Engineer
