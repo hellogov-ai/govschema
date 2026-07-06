@@ -1,0 +1,372 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ae/icp/emirates-id-replacement",
+  "version": "1.0.0",
+  "title": "United Arab Emirates Emirates ID Replacement (Citizen)",
+  "description": "Application to replace a UAE citizen's Emirates ID card (lost, damaged, or expired) for a family member of the applicant's own family book, filed through the ICP (Federal Authority for Identity, Citizenship, Customs & Port Security) Smart App's 'Emirates ID Services – Citizens – ID for Citizen – Replace Emirates ID' service. Covers the beneficiary's basic/beneficiary information, passport details, delivery-address selection, contact-detail (phone/email) confirmation, and the required supporting-document upload, sourced from the app's own official Citizen Category user manual. This opens the United Arab Emirates' 3rd vertical (National ID & Civic Documents), alongside the existing Taxes-vertical (ae/fta/vat-registration, ae/fta/corporate-tax-registration) and Visa-vertical (ae/icp/visa-single-entry-long-stay-pleasure) documents. Does not model the preceding 'Select Family Member' selection screen (a navigation step, not applicant input — the beneficiary's Unified Number is captured directly once selected), the read-only 'Review Application' recap step, the third-party/in-app card-payment screen (card type/number/expiry/CVN), the fee-schedule line items themselves (source-computed, not applicant input), or a genuine first-time/new Emirates ID issuance flow — neither the citizen nor the resident category manual shows 'Issue New Emirates ID' expanded past its menu label, so this schema is deliberately scoped to the confirmed Replace pathway only, not first-time issuance (see VERIFICATION.md). It does not submit the application; the live ICP Smart App and the Federal Authority for Identity, Citizenship, Customs & Port Security are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Authority for Identity, Citizenship, Customs & Port Security",
+    "abbreviation": "ICP",
+    "url": "https://icp.gov.ae/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://icp.gov.ae/ica_files/smart_app/pdf/5.23_user_manual_english_version_of_the_application_citizen_category.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "ICP Smart App User Manual – English Version of the Application, Citizen Category, v5.23"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer); independently re-verified by Review Engineer (GOV-1477)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored field-by-field from ICP's own official Smart App user manual (Citizen Category, v5.23), a 72-page screenshot-driven walkthrough downloaded directly from icp.gov.ae, no login required for the guide/PDF itself. The manual's worked example walks the 'Replace Emirates ID' service end-to-end (pp.13-25 of the reconstructed page sequence); every field's label and section membership were read directly off the manual's own rendered app screenshots (the PDF's extractable text layer is sparse/non-recoverable due to custom-subsetted fonts, so each unique page's embedded JPEG was decompressed directly via zlib+DCTDecode and read visually). This document opens the United Arab Emirates' 3rd vertical (National ID & Civic Documents). Independent review-gate re-verification (GOV-1477) re-fetched both manuals, confirmed each rendered page carries two stacked embedded screenshots (the manual's own scrollable-screen split) rather than one, and found the initial authoring pass had only read the first of each pair — recovering 8 missing fields across 4 steps (familyBookIssuanceDate, replacementReason, changeIdentityPersonalPhoto, passportIssueCountry, uaeMobileNumber, secondMobileNumber, residencePhoneNumber, residenceEmail) and directly confirming termsAndConditionsAccepted in the citizen manual's own capture (retiring its prior by-analogy sourcing from the resident manual). Two further fields are confirmed to exist (a profession-type dropdown after secondNameEnglish, value 'PRODUCER'; an Arabic-script field after passportIssueDate) but their exact labels fell in the exact crop seam between each page's two screenshots and could not be recovered even after magnified re-extraction — deliberately not modelled; see VERIFICATION.md. Status remains 'draft' per this registry's convention pending live-app execution testing; see the review-gate issue."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "preferredLanguage",
+      "label": "Preferred Language",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; only the selected value ('ARABIC') is visible in the manual's screenshot, not the full option list, so no enum is asserted.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.15, Step 1/5 Basic Information",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "uaeUnifiedNumber",
+      "label": "UAE Unified No",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The beneficiary's national Unified Number. Shown in a greyed/locked-style input, pre-filled from the family member selected on the preceding (unmodelled) 'Select Family Member' screen rather than freely typed — modelled here as the beneficiary-identifying input this schema instance is about.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.15, Step 1/5 Basic Information",
+      "validation": {
+        "pattern": "^[0-9]{6,15}$"
+      }
+    },
+    {
+      "name": "applicantClass",
+      "label": "Applicant Class",
+      "type": "string",
+      "required": true,
+      "description": "Shown in a greyed/locked-style input fixed to 'UAE Citizen' in this manual's worked example. The sibling resident-category manual's analogous field is editable (e.g. 'Expat') and gates a conditional 'Applicant Class Details' follow-up field (e.g. 'New Residency') not applicable to the citizen pathway — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.15, Step 1/5 Basic Information",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "familyBookIssuanceDate",
+      "label": "Family Book Issuance Date",
+      "type": "date",
+      "required": true,
+      "description": "Found on independent review below the fold of the Basic Information screen (the manual's own rendered page splits this single scrollable screen across two embedded screenshots; the initial authoring pass only read the first) — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.15, Step 1/5 Basic Information (below-the-fold continuation)"
+    },
+    {
+      "name": "replacementReason",
+      "label": "Replacement Reason",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; only the selected value ('Lost / Stolen') is visible in the manual's screenshot, not the full option list, so no enum is asserted. Found on independent review below the fold of the Basic Information screen — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.15, Step 1/5 Basic Information (below-the-fold continuation)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "firstNameEnglish",
+      "label": "First Name English",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.16, Step 2/5 Beneficiary Information",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "firstNameArabic",
+      "label": "First Name Arabic",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.16, Step 2/5 Beneficiary Information",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "secondNameEnglish",
+      "label": "Second Name English",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Independent review confirmed this step continues below the fold onto a second embedded screenshot (the initial authoring pass only read the first): it shows one further dropdown field (selected value 'PRODUCER', contextually a profession/occupation-type field) whose own label fell exactly in the crop seam between the manual's two split screenshots and could not be recovered even after magnified re-extraction, followed by the confirmed 'Change Identity Personal Photo?' field below. The unlabelled profession-type field is deliberately NOT modelled pending label confirmation (see VERIFICATION.md); any further name fields (e.g. a Second Name Arabic, Third/Family Name pair analogous to the English/Arabic pairing already confirmed for First Name) remain unconfirmed and unmodelled too.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.16, Step 2/5 Beneficiary Information",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "changeIdentityPersonalPhoto",
+      "label": "Change Identity Personal Photo?",
+      "type": "boolean",
+      "required": true,
+      "description": "Yes/No toggle, shown defaulted to 'No' in the manual's worked example. Found on independent review below the fold of the Beneficiary Information screen (see VERIFICATION.md); selecting 'Yes' may reveal a photo-upload sub-field not captured in this source.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.16, Step 2/5 Beneficiary Information (below-the-fold continuation)"
+    },
+    {
+      "name": "passportType",
+      "label": "Passport Type",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; only the selected value ('ORDINARY PASSPORT') is visible in the manual's screenshot, so no enum is asserted.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.17, Step 3/5 Passport Information",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.17, Step 3/5 Passport Information",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport Issue Date",
+      "type": "date",
+      "required": true,
+      "description": "Independent review confirmed this step continues below the fold onto a second embedded screenshot (the initial authoring pass only read the first): it shows one further field (an Arabic-script value) whose own label fell exactly in the crop seam between the manual's two split screenshots and could not be recovered even after magnified re-extraction, followed by the confirmed Passport Issue Country field below. The unlabelled field is deliberately NOT modelled pending label confirmation (see VERIFICATION.md). An expected Passport Expiry Date field (present in the sibling ae/icp/visa-single-entry-long-stay-pleasure document's own Passport Information panel) is still not confirmed visible in either embedded screenshot and remains unmodelled.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.17, Step 3/5 Passport Information"
+    },
+    {
+      "name": "passportIssueCountry",
+      "label": "Passport Issue Country",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; only the selected value ('UNITED ARAB EMIRATES') is visible in the manual's screenshot, so no enum is asserted. Found on independent review below the fold of the Passport Information screen — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.17, Step 3/5 Passport Information (below-the-fold continuation)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "deliveryMethod",
+      "label": "Delivery Method",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; only the selected value ('Deliver to specific address') is visible in the manual's screenshot, so no enum is asserted. Selecting this value is what surfaces the Delivery Company and Delivery Emirates fields below as a follow-on sub-form; other values of this dropdown may show a different/shorter sub-form not captured in this source.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.18, Step 4/5 Delivery Address Information",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "deliveryCompany",
+      "label": "Delivery Company",
+      "type": "string",
+      "required": true,
+      "description": "Shown in a greyed/locked-style input fixed to 'Tawzea' (the UAE's national postal/last-mile delivery operator) in this manual's worked example.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.18, Step 4/5 Delivery Address Information",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "deliveryEmirate",
+      "label": "Delivery Emirates",
+      "type": "enum",
+      "required": true,
+      "description": "Only the selected value ('ABU DHABI') is visible in this manual's screenshot, not an expanded dropdown; the 7-member enum is reused by analogy from the sibling ae/fta/vat-registration and ae/icp/visa-single-entry-long-stay-pleasure documents' own confirmed 'Emirates' list (a small, fixed, universally known real-world list), not independently re-confirmed against this manual — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.18, Step 4/5 Delivery Address Information",
+      "validation": {
+        "enum": [
+          "abu_dhabi",
+          "dubai",
+          "sharjah",
+          "ajman",
+          "umm_al_quwain",
+          "ras_al_khaimah",
+          "fujairah"
+        ]
+      }
+    },
+    {
+      "name": "uaeMobileNumber",
+      "label": "UAE Mobile Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Country code ('00971') plus local mobile number, shown pre-filled in the manual's worked example. Found on independent review below the fold of the Delivery Address Information screen — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.18, Step 4/5 Delivery Address Information (below-the-fold continuation)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondMobileNumber",
+      "label": "Second Mobile Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Country code ('00971') plus an optional secondary mobile number; shown blank/unfilled (placeholder only) in the manual's worked example, with no asterisk, unlike the required UAE Mobile Number field above it. Found on independent review below the fold of the Delivery Address Information screen — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.18, Step 4/5 Delivery Address Information (below-the-fold continuation)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "residencePhoneNumber",
+      "label": "UAE Phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "An editable contact-confirmation field on the Residence Information screen, shown pre-filled from the applicant's profile in the manual's worked example — distinct from the read-only address-card summary above it on the same screen (also labelled 'UAE Phone number', sourced from the same profile record but not itself an input). Found on independent review below the fold of the Residence Information screen — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.19, Step 5/5 Residence Information (below-the-fold continuation)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "residenceEmail",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "An editable contact-confirmation field on the Residence Information screen, shown pre-filled from the applicant's profile in the manual's worked example. Found on independent review below the fold of the Residence Information screen — see VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.19, Step 5/5 Residence Information (below-the-fold continuation)",
+      "validation": {
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "termsAndConditionsAccepted",
+      "label": "Agree To The Terms And Conditions",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "description": "Independent review confirmed this checkbox is directly visible in this manual's own Replace ID capture, on the fee-summary screen's below-the-fold continuation (the initial authoring pass only read the first of the two embedded screenshots for this screen and treated the field as absent from the citizen capture, inferring it instead by analogy from the sibling resident-category manual's 'Renew Emirates ID' fee-review screen — that analogy is retired now that direct confirmation exists). See VERIFICATION.md.",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.22, fee-summary screen (below-the-fold continuation)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "supportingDocuments",
+      "label": "Supporting documents",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "ICP Smart App User Manual – Citizen Category (v5.23) — p.20, Step 2 (Attachments), Required tab, item 1 'Supporting documents'. The manual's own Attachments step shows exactly one generic upload item here, with no further itemization — contrast with the sibling resident-category manual's analogous 'Renew Emirates ID' Attachments step, which shows an itemized checklist (Passport Copy, Original Entry Permission, Emirates ID Card - Front, plus at least one further item cut off in the source); those items are residency-specific and deliberately not folded into this citizen-scoped document, unlike the shared-UI termsAndConditionsAccepted field. A reviewer with live-app access should confirm whether the citizen flow's real document requirement is genuinely this generic — see VERIFICATION.md."
+    }
+  ],
+  "steps": [
+    {
+      "id": "basic_information",
+      "title": "Basic Information",
+      "fields": [
+        "preferredLanguage",
+        "uaeUnifiedNumber",
+        "applicantClass",
+        "familyBookIssuanceDate",
+        "replacementReason"
+      ],
+      "next": "beneficiary_information"
+    },
+    {
+      "id": "beneficiary_information",
+      "title": "Beneficiary Information",
+      "fields": [
+        "firstNameEnglish",
+        "firstNameArabic",
+        "secondNameEnglish",
+        "changeIdentityPersonalPhoto"
+      ],
+      "next": "passport_information"
+    },
+    {
+      "id": "passport_information",
+      "title": "Passport Information",
+      "fields": [
+        "passportType",
+        "passportNumber",
+        "passportIssueDate",
+        "passportIssueCountry"
+      ],
+      "next": "delivery_address_information"
+    },
+    {
+      "id": "delivery_address_information",
+      "title": "Delivery Address Information",
+      "fields": [
+        "deliveryMethod",
+        "deliveryCompany",
+        "deliveryEmirate",
+        "uaeMobileNumber",
+        "secondMobileNumber"
+      ],
+      "next": "residence_information"
+    },
+    {
+      "id": "residence_information",
+      "title": "Residence Information",
+      "fields": [
+        "residencePhoneNumber",
+        "residenceEmail"
+      ],
+      "next": "attachments"
+    },
+    {
+      "id": "attachments",
+      "title": "Attachments",
+      "fields": [],
+      "next": "review_application"
+    },
+    {
+      "id": "review_application",
+      "title": "Review Application",
+      "fields": [],
+      "next": "fees_and_payment"
+    },
+    {
+      "id": "fees_and_payment",
+      "title": "Fees and Payment",
+      "fields": [
+        "termsAndConditionsAccepted"
+      ]
+    }
+  ]
+}
