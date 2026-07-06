@@ -34,6 +34,55 @@ named, archived 2025-07-02, distinct from a same-named-but-different-path
 2022 snapshot that turned out to be an HTML redirect stub, not the real PDF.
 This document opens **Brazil as the registry's 15th jurisdiction**.
 
+## Post-review fixes (GOV-1345)
+
+An independent review gate (GOV-1345, re-review
+on [PR #228](https://github.com/hellogov-ai/govschema/pull/228)) re-downloaded
+the Wayback snapshot and decoded the embedded screenshot images directly
+(the field labels live in images, not the PDF's extractable text layer — a
+finer-grained pass than this document's own initial page-by-page read) and
+found three real field-level gaps, all now fixed in this revision:
+
+1. **`addressReference` was misclassified as optional.** The pendency-list
+   screenshot explicitly reads *"O Campo 'Referência' é de preenchimento
+   obrigatório"* (obligatory, red icon) — not optional as this document's
+   first revision claimed. Fixed: `required: true`, `minLength: 1`.
+2. **Four required fields were missing from the representative-address
+   block.** The blank "Endereço do Representante da Pessoa Jurídica" form
+   shows 7 inputs (CEP, Tipo de Logradouro, Logradouro, Bairro/Distrito,
+   Município, UF, Número, Complemento); the first revision modelled only 3
+   (CEP, Logradouro, Número). The pendency list confirms the other four as
+   obligatory. Fixed: added `representativeAddressStreetType`,
+   `representativeAddressNeighborhood`, `representativeAddressMunicipality`,
+   and `representativeAddressStateCode`, all `required: true`. Per the
+   reviewer's note, the representative's personal address is not
+   jurisdiction-locked to São Paulo the way the establishment's address is
+   (REDESIM itself is a per-state integrator, but the individual named as
+   representative can reside anywhere in Brazil), so `Município`/`UF` are
+   genuine free-input fields here, not safely inferrable/omittable.
+3. **A missing top-level `registrationEventDate` field.** The reviewer
+   flagged a pendency-list line — *"Na opção Datas dos Eventos: O Campo
+   'Data do Evento' é de preenchimento obrigatório"* — that didn't clearly
+   map to any modelled field, and asked whether it was the same as the
+   separate "Data do Evento" widget visible inside the Sócio/Administrador
+   panel (p.17). Re-checking p.11's FCPJ sidebar menu and p.12's pendency
+   list together resolves this: **"Datas dos Eventos" is its own top-level
+   FCPJ menu section**, distinct from the per-partner "Data do Evento" shown
+   later inside the QSA panel — the general pendency list (p.12) flags only
+   the former as obligatory; the QSA-specific pendency list (p.16-17) flags
+   only `Natureza do Evento` as obligatory for the partner, never a
+   partner-level date. This document had not modelled the FCPJ-level field
+   at all. Fixed: added `registrationEventDate` (type `date`, required) to
+   the `entity_identification` step, representing the date of the requested
+   registration event (Evento 101). The partner-panel's own "Data do Evento"
+   remains unmodelled, since the QSA-specific pendency list never marks it
+   obligatory — a deliberate scope decision now recorded here rather than an
+   open question.
+
+Field count: 42 → 47. The mock conformance packet and its from-scratch
+checker script were re-run against the updated schema (see **Test run**
+below for the current numbers).
+
 ## Sources examined
 
 - **Document `(id, version)`:** `br/sp/jucesp/cnpj-registration-dbe` / `1.0.0`
@@ -73,11 +122,12 @@ This document opens **Brazil as the registry's 15th jurisdiction**.
 | p.10, CPF recovery field | `representativeCpf` |
 | p.12, "Seu ato constitutivo/alterador já foi registrado..." modal | `actAlreadyRegisteredWithRegistryBody` |
 | p.12, "Dados do Órgão de Registro" | `registryBodyType`, `registryNire`, `registryNumber`, `registryBodyCnpj` |
+| p.11, FCPJ menu "Datas dos Eventos" | `registrationEventDate` |
 | p.12, "Identificação da Pessoa Jurídica" | `businessName`, `shareCapital`, `tradeName` |
 | p.13, "Endereço da Pessoa Jurídica" | `addressPostalCode`, `addressStreetType`, `addressStreetName`, `addressNumber`, `addressComplement`, `addressNeighborhood`, `addressReference` |
 | p.14, "Dados para Contato" | `contactPhoneAreaCode`, `contactPhoneNumber`, `contactEmail` |
 | p.14, "Identificação do Representante da Pessoa Jurídica" | `representativeFullName`, `representativeType`, `representativeQualificationCode` |
-| p.15, "Endereço do Representante da Pessoa Jurídica" | `representativeAddressPostalCode`, `representativeAddressStreetName`, `representativeAddressNumber`, `representativeContactPhoneAreaCode`, `representativeContactPhoneNumber` |
+| p.15, "Endereço do Representante da Pessoa Jurídica" | `representativeAddressPostalCode`, `representativeAddressStreetType`, `representativeAddressStreetName`, `representativeAddressNeighborhood`, `representativeAddressMunicipality`, `representativeAddressStateCode`, `representativeAddressNumber`, `representativeContactPhoneAreaCode`, `representativeContactPhoneNumber` |
 | p.15, "Porte da Empresa" | `companySizeClassification` |
 | p.16, "Contabilista" | `accountantCpfCnpj`, `accountantName`, `accountantBooksKeptAtAccountingOffice` |
 | p.17, "Identificação do Sócio/Administrador" | `partnerEventNature`, `partnerName`, `partnerCpfCnpj`, `partnerQualificationCode`, `partnerCapitalParticipationValue` |
@@ -170,10 +220,10 @@ furniture-manufacturing company incorporating its first establishment, whose
 constitutive act has not yet been registered with the Junta Comercial) was
 checked with a from-scratch script (`/tmp/conformance-check-br.mjs`,
 re-implementing this document's own `required`/`requiredWhen` `Condition`
-grammar per GSP-0013). Result: **0 violations** across 42 fields (38
-collected, 4 correctly not-applicable/absent: the three
-`actAlreadyRegisteredWithRegistryBody`-gated registry fields plus the always-
-optional `registryBodyCnpj`). Mutation tests confirmed: (1) switching
+grammar per GSP-0013). Result (re-run after the GOV-1345 fixes above): **0
+violations** across 47 fields (43 collected, 4 correctly not-applicable/absent:
+the three `actAlreadyRegisteredWithRegistryBody`-gated registry fields plus
+the always-optional `registryBodyCnpj`). Mutation tests confirmed: (1) switching
 `actAlreadyRegisteredWithRegistryBody` to `true` with no registry details
 given correctly flags `registryBodyType`, `registryNire`, and
 `registryNumber` as missing; (2) supplying those three fields alongside
