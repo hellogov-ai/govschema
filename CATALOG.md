@@ -4,8 +4,38 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **238 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **239 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1483):** South Korea gains a sixth and final
+> vertical, `kr/nts/corporation-establishment-and-business-registration`
+> (Business Formation), closing **KR to 6/6 verticals** and the global
+> Business Formation vertical to **16/17 (94%)**. Sourced from the National
+> Tax Service's own gazetted Attached Form No. 73 of the Enforcement Rule of
+> the Corporate Tax Act (법인세법 시행규칙 [별지 제73호서식], amended
+> 2025-03-21) via `law.go.kr` — a directly downloadable, current, genuine
+> text-layer PDF, no login/CAPTCHA/WAF, mirroring the sourcing shape already
+> proven for `kr/koroad/driving-licence-application`. This
+> `GovSchema Standard Research` cycle (GOV-1483) began with the task brief's
+> own named "remaining voter registration" candidate, which resolves to
+> Brazil and Mexico. **Brazil's TSE Título Net** self-service system is a
+> genuine, fully-online first-time voter registration (alistamento
+> eleitoral) — confirmed via a live, unauthenticated Playwright walk — but
+> is nationwide-closed from **2026-05-07 to 2026-11-03** under art. 91 of
+> the Lei das Eleições (Lei no. 9.504/1997), which bars any registration/
+> transfer request within 150 days of an election (Brazil holds municipal
+> elections in October 2026); a hard, dated, legally-mandated block, not a
+> dead end, and not sourceable again until it reopens. Brazil's other
+> standing gap, **DMV** (RENAVAM/vehicle registration), was also screened:
+> DETRAN-SP's `e-crvsp.sp.gov.br` portal requires gov.br SSO login on every
+> path tried, the same wall that already made `br/cnh` a confirmed dead end
+> (GOV-1400); not pursued further. This cycle pivoted to South Korea's
+> Business Formation gap, the only vertical it still lacked. See
+> `kr/nts/corporation-establishment-and-business-registration`'s own
+> VERIFICATION.md for the full sourcing method, the Brazil research trail,
+> and every interpretive judgment call (this form's dense "법인성격"/
+> Corporation Character classification matrix in particular, scoped to a
+> domestic for-profit corporation for v1.0.0).
+>
 > **Update (2026-07-06, GOV-1474):** The United Arab Emirates gains a third
 > vertical, `ae/icp/emirates-id-replacement` (National ID & Civic Documents),
 > closing the global National ID & Civic Documents vertical to **15/17
@@ -554,7 +584,7 @@
 |----------|----------|------------|
 | **Passport** | 14/17 (82%) | **AE, MX** not yet modelled; **PH** screened (GOV-1466) and deliberately deferred — `passport.gov.ph`'s live wizard is real and DOM-walkable, but its Schedule step consumes genuinely scarce real DFA appointment inventory, so this cycle declined to walk further; open backlog candidate, not a dead end; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
 | **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE** screened (GOV-1474) — RTA's "Vehicle Renewal User Guide" is a strong, field-rich candidate but only confirmed via a third-party mirror, not the current `rta.ae` URL; strong open backlog candidate; **BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
-| **Business Formation** | 15/17 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** newly modelled this cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444), opening the Philippines as the registry's 17th jurisdiction |
+| **Business Formation** | 16/17 (94%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes; KR's own Section 3/4 trust-property and foreign-corporation pathways); **AE** not yet modelled (confirmed dead end this cycle's own prior pass, GOV-1474 — Basher login-gated, `app.invest.dubai.ae` 403s, `ded.ae` bot-mitigated); **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** modelled in a prior cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444); **KR** newly modelled this cycle (`kr/nts/corporation-establishment-and-business-registration`, GOV-1483), closing South Korea to 6/6 verticals |
 | **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
 | **Visa** | 13/17 (76%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** screened (GOV-1466) — Bureau of Immigration's CGAF forms (`immigration.gov.ph`) are a genuine, unblocked, directly downloadable candidate, not picked this cycle only because Taxes closed a vertical globally; strong open backlog candidate; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
 | **National ID & Civic Documents** | 15/17 (88%) | none genuinely open (SG voter-reg is a confirmed non-gap); **BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only); **AE** newly modelled this cycle (`ae/icp/emirates-id-replacement`, GOV-1474) |
@@ -634,13 +664,29 @@ within an already-covered vertical:
 - **IDL (International Driving Permit):** covered for US (`dos/international-driving-permit-aaa`, `-aata`), IE (`dttas/international-driving-permit`), GB (`dvla/international-driving-permit`). Not modelled elsewhere.
 - **India, GOV-1240:** `in/morth/driving-licence-application` (this cycle) closes the "Issue of New Driving Licence" gap that `in/morth/learners-licence-application` (GOV-878) explicitly scoped out. India's DMV vertical now has 5 schemas (learner's licence, driving licence, vehicle registration, vehicle registration renewal, vehicle ownership transfer).
 - **United Arab Emirates** has no DMV schema yet — not researched this cycle (Taxes was the sourced vertical for the new UAE jurisdiction; see below).
-- **Brazil** has no DMV schema yet — `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400); vehicle registration (RENAVAM/DETRAN) not yet researched.
+- **Brazil** has no DMV schema yet — `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400); vehicle registration (RENAVAM/DETRAN) was screened this cycle (GOV-1483) — DETRAN-SP's `e-crvsp.sp.gov.br` also redirects to a gov.br SSO login with no field-level content visible pre-authentication, the same wall as `br/cnh`; not pursued further, open backlog candidate contingent on finding a non-gov.br-gated state DETRAN or a downloadable citizen guide.
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 
-### Business Formation — Incorporation, LLC, Company Registration (15/17 jurisdictions)
+### Business Formation — Incorporation, LLC, Company Registration (16/17 jurisdictions)
 
-Every jurisdiction except South Korea and the United Arab Emirates has at
-least one Business Formation schema. **The Philippines** (`ph/bir/tin-application-corporations-partnerships`,
+Every jurisdiction except the United Arab Emirates has at
+least one Business Formation schema. **South Korea**
+(`kr/nts/corporation-establishment-and-business-registration`, GOV-1483) is
+new this cycle — sourced from the National Tax Service's own gazetted
+"Corporation Establishment Report and Business Registration Application"
+(법인설립신고 및 사업자등록신청서), Attached Form No. 73 of the Enforcement
+Rule of the Corporate Tax Act, amended 2025-03-21, fetched directly from
+`law.go.kr` with no login/CAPTCHA/WAF. This closes South Korea to 6/6
+verticals. Scoped to a domestic, for-profit, general corporation; the
+form's own Section 3 (corporate-taxed trust property trustee), Section 4
+(foreign-corporation content and manager-in-charge), division-established-
+corporation registration numbers, and public-interest-corporation/foreign-
+invested-corporation sub-fields are out of scope for this v1.0.0 — see the
+document's own VERIFICATION.md for all twelve disclosed judgment calls, and
+for this cycle's Brazil voter-registration/DMV research trail (the task
+brief's own starting candidate, screened and found temporarily blocked/
+gov.br-SSO-gated respectively before this cycle pivoted to South Korea).
+**The Philippines** (`ph/bir/tin-application-corporations-partnerships`,
 GOV-1444) is new this cycle — sourced from the Bureau of Internal Revenue's
 own BIR Form No. 1903 ("Application for Registration...for Corporations,
 Partnerships (Taxable/Non-Taxable), Including GAIs, LGUs, Cooperatives and
@@ -814,7 +860,19 @@ open but weak backlog candidate (GOV-1428, 2026-07-06): Decreto nº
 10.977/2022 enumerates the finished card's ~20+ printed data attributes, but
 that's the card's data schema, not an application form — the decree's actual
 filing requirements are just a CPF plus one birth/marriage certificate, too
-thin to author a field-level schema from on its own. Singapore's lack of a
+thin to author a field-level schema from on its own. **Brazil's voter-registration
+candidate was newly screened this cycle (GOV-1483):** TSE's Título Net
+(Autoatendimento Eleitoral) self-service system is a genuine, fully-online
+first-time voter registration (alistamento eleitoral) — confirmed via a
+live, unauthenticated Playwright walk — but is nationwide-closed from
+2026-05-07 to 2026-11-03 under art. 91 of the Lei das Eleições (Lei no.
+9.504/1997), the 150-day pre-election blackout ahead of Brazil's October
+2026 municipal elections. This is a hard, dated, legally-mandated block, not
+a dead end — the strongest remaining National ID & Civic Documents candidate
+for Brazil once it reopens 2026-11-03; see
+`kr/nts/corporation-establishment-and-business-registration`'s own
+VERIFICATION.md ("Candidates rejected or deferred this cycle") for the full
+citation trail. Singapore's lack of a
 voter-registration schema is a **confirmed non-gap**
 (GOV-1075): Singapore voting is compulsory and NRIC-linked, with no
 citizen-initiated online registration step to model. **South Korea** has two
@@ -841,7 +899,7 @@ now closed.
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KR** | 7 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
