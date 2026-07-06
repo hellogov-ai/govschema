@@ -1,0 +1,540 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "br/pf/passport-application",
+  "version": "1.0.0",
+  "title": "Brazil Passport Application (SINPA)",
+  "description": "Application for a Brazilian passport — first-time issuance, renewal, or replacement of a lost, stolen, retained, or expired passport — for an applicant who will be 18 or older, filed through the Federal Police's (Polícia Federal) own online passport-request system, SINPA (Sistema Nacional de Passaportes). Unlike most jurisdictions in this registry, Brazil uses a single unified online wizard for every request scenario rather than separate forms per scenario; the applicant's prior-passport situation (never had one, holds a valid one, lost, stolen, retained, or expired) is itself a field on the form (previousPassportStatus), so this document models that single wizard rather than splitting first-time/renewal/lost into separate schemas. Completing the wizard produces a protocol number and a personalized document checklist; the applicant then pays the federal fee (GRU), books an in-person biometric appointment, and attends with original documents. This document models only the online data-entry wizard (the four tabs: Dados pessoais, Documentos, Dados complementares, Revisar dados) — it does not submit the request, generate the GRU payment slip, or book the appointment. Applicants under 18 use the same wizard but the form additionally requires the CPF of a responsible party, a travel-authorization election, and the nationality of both parents — none of which is modeled here (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Polícia Federal — Divisão de Passaporte, Coordenação-Geral de Polícia de Imigração",
+    "abbreviation": "DPF",
+    "url": "https://www.gov.br/pf/pt-br/assuntos/passaporte"
+  },
+  "process": {
+    "type": "application",
+    "language": "pt-BR"
+  },
+  "source": {
+    "url": "https://servicos.pf.gov.br/sinpa/inicializacaoSolicitacao.do?dispatch=inicializarSolicitacaoPassaporte",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "SINPA (Sistema Nacional de Passaportes) — \"Nova solicitação de passaporte\" online wizard, Divisão de Passaporte, Polícia Federal"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-06",
+    "notes": "Source-derived reference schema authored directly against the live, unauthenticated SINPA wizard (no login/CAPTCHA gate) via a headless-browser DOM extraction: every field's id, name, HTML input type, maxlength, and (for select elements) the full underlying option value/text pairs were read directly from the live page, not inferred from a rendered screenshot or third-party description. See VERIFICATION.md for the extraction method and field-by-field source list. Status remains 'draft' pending an independent second reviewer's field-by-field pass."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "fullName",
+      "label": "Nome completo",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full legal name. The review step warns that, per the ICAO international standard, surnames may be abbreviated when printed on the physical passport.",
+      "sourceRef": "Dados pessoais — Nome completo*",
+      "validation": { "minLength": 1, "maxLength": 80 }
+    },
+    {
+      "name": "sex",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Sex as recorded for the passport.",
+      "sourceRef": "Dados pessoais — Sexo* (Masculino/Feminino/Não Especificado)",
+      "validation": { "enum": ["male", "female", "unspecified"] }
+    },
+    {
+      "name": "parent1Name",
+      "label": "Filiação 1",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Full name of the applicant's first parent, as recorded in the civil registry document (birth or marriage certificate). Left blank only if the civil registry document itself does not record this parent.",
+      "sourceRef": "Dados pessoais — Filiação 1: Nome da filiação 1",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "parent1Sex",
+      "label": "Sexo da filiação 1",
+      "type": "enum",
+      "required": false,
+      "description": "Sex of the first parent named in parent1Name.",
+      "sourceRef": "Dados pessoais — Filiação 1: Sexo",
+      "validation": { "enum": ["male", "female", "unspecified"] }
+    },
+    {
+      "name": "parent2Name",
+      "label": "Filiação 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Full name of the applicant's second parent, as recorded in the civil registry document. Left blank only if the civil registry document itself does not record this parent.",
+      "sourceRef": "Dados pessoais — Filiação 2: Nome da filiação 2",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "parent2Sex",
+      "label": "Sexo da filiação 2",
+      "type": "enum",
+      "required": false,
+      "description": "Sex of the second parent named in parent2Name.",
+      "sourceRef": "Dados pessoais — Filiação 2: Sexo",
+      "validation": { "enum": ["male", "female", "unspecified"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Data de nascimento",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The live form displays this as a DD/MM/AAAA masked text input; represent as an ISO 8601 full-date. This document is scoped to applicants who will be 18 or older: the same wizard, for a minor applicant, additionally requires a responsible party's CPF, a travel-authorization election, and both parents' nationality, none of which is modeled in this v1.0.0 document (see VERIFICATION.md).",
+      "sourceRef": "Dados pessoais — Data de nascimento*"
+    },
+    {
+      "name": "isEmancipatedMinor",
+      "label": "Emancipado",
+      "type": "boolean",
+      "required": false,
+      "description": "Check if the applicant is a legally emancipated minor (emancipação, under Brazilian civil law). Present on the wizard regardless of computed age; out-of-scope minor-only fields elsewhere on the form are not modeled here.",
+      "sourceRef": "Dados pessoais — checkbox: Caso o requerente seja menor emancipado, marque esta opção"
+    },
+    {
+      "name": "isInternationalAdoption",
+      "label": "Adoção Internacional",
+      "type": "boolean",
+      "required": false,
+      "description": "Check if the applicant is in the process of international adoption.",
+      "sourceRef": "Dados pessoais — checkbox: Caso o requerente esteja no processo de adoção internacional, marque esta opção"
+    },
+    {
+      "name": "raceOrColor",
+      "label": "Raça ou cor",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Self-declared race/color, following the IBGE (Brazilian Institute of Geography and Statistics) census categories.",
+      "sourceRef": "Dados pessoais — Raça ou cor* (Amarela/Branca/Indígena/Parda/Preta/Outras/Não desejo declarar)",
+      "validation": { "enum": ["yellow", "white", "indigenous", "mixed", "black", "other", "prefer_not_to_declare"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Estado civil",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Dados pessoais — Estado civil (Solteiro(a)/Casado(a)/Viúvo(a)/Separado(a) Judicialmente/Divorciado(a)/União Estável)",
+      "validation": { "enum": ["single", "married", "widowed", "legally_separated", "divorced", "stable_union"] }
+    },
+    {
+      "name": "nationality",
+      "label": "Nacionalidade",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Chosen from a closed country dropdown (over 190 countries plus APATRIDA/stateless), defaulting to BRASIL. The form's own note instructs Brazilians with multiple nationalities to select Brasil.",
+      "sourceRef": "Dados pessoais — Nacionalidade* (para brasileiros com múltipla nacionalidade, selecionar Brasil)",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Local de nascimento — País",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Country of birth, chosen from the same closed country dropdown as nationality.",
+      "sourceRef": "Dados pessoais — Local de nascimento: País*",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "stateOfBirth",
+      "label": "Local de nascimento — UF",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "countryOfBirth", "equals": "BRASIL" },
+      "description": "Brazilian state of birth. Required only when countryOfBirth is Brazil.",
+      "sourceRef": "Dados pessoais — Local de nascimento: UF*",
+      "validation": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"] }
+    },
+    {
+      "name": "cityOfBirth",
+      "label": "Local de nascimento — Cidade",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "countryOfBirth", "equals": "BRASIL" },
+      "classification": "pii",
+      "description": "City of birth within the selected Brazilian state, chosen from a state-dependent city dropdown (with a free-text fallback for a city not listed). Required only when countryOfBirth is Brazil.",
+      "sourceRef": "Dados pessoais — Local de nascimento: Cidade*",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "cityOfBirthAbroad",
+      "label": "Nome da cidade (nascimento no exterior)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "countryOfBirth", "notEquals": "BRASIL" },
+      "classification": "pii",
+      "description": "Free-text city of birth, used when countryOfBirth is not Brazil (the city dropdown only populates for Brazilian states).",
+      "sourceRef": "Dados pessoais — Local de nascimento: Nome da cidade* (exibido quando o país de nascimento não é Brasil)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "previousName",
+      "label": "Nome anterior",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A previous legal name, if the applicant's name has changed. Leave blank if the applicant has never used a different legal name. If provided, previousNameChangeReason should also be provided (the source form pairs a free-text name with a reason dropdown and an 'Adicionar' button, letting more than one previous name be listed one at a time; this document models a single previous-name entry).",
+      "sourceRef": "Dados pessoais — Nomes anteriores: Nome anterior",
+      "validation": { "maxLength": 80 }
+    },
+    {
+      "name": "previousNameChangeReason",
+      "label": "Motivo da mudança",
+      "type": "enum",
+      "required": false,
+      "description": "Reason for the previous name change named in previousName.",
+      "sourceRef": "Dados pessoais — Nomes anteriores: Motivo da mudança (Alteração por Mudança de Estado Civil/Alteração por Decisão Judicial/Alteração por Outros Motivos)",
+      "validation": { "enum": ["marital_status_change", "judicial_decision", "other_reason"] }
+    },
+    {
+      "name": "idDocumentNumber",
+      "label": "Documento de Identificação — Número",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Number of the applicant's national identity document (RG or equivalent).",
+      "sourceRef": "Documentos — Documento de Identificação: Número",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "idDocumentIssueDate",
+      "label": "Documento de Identificação — Data de emissão",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Documentos — Documento de Identificação: Data de emissão",
+      "description": "The live form displays this as a DD/MM/AAAA masked text input; represent as an ISO 8601 full-date."
+    },
+    {
+      "name": "idDocumentIssuingAgency",
+      "label": "Documento de Identificação — Órgão emissor",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Documentos — Documento de Identificação: Órgão emissor",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "idDocumentIssuingState",
+      "label": "Documento de Identificação — UF de expedição",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Documentos — Documento de Identificação: UF de expedição",
+      "validation": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"] }
+    },
+    {
+      "name": "cpf",
+      "label": "CPF",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Brazil's individual taxpayer registry number (Cadastro de Pessoas Físicas), masked on the form as ___.___.___-__.",
+      "sourceRef": "Documentos — CPF: CPF",
+      "validation": { "pattern": "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$" }
+    },
+    {
+      "name": "birthCertificateIsNewModel",
+      "label": "Certidão modelo novo?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the birth or marriage certificate follows Brazil's unified post-2010 certificate model, which carries a matrícula (registration) number. If true, birthCertificateRegistrationNumber becomes the certificate's identifying reference.",
+      "sourceRef": "Documentos — Certidão: checkbox Certidão modelo novo?"
+    },
+    {
+      "name": "birthCertificateRegistrationNumber",
+      "label": "Certidão — Matrícula",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "birthCertificateIsNewModel", "equals": true },
+      "classification": "pii",
+      "description": "The unified certificate's matrícula number. Only entered (the source form disables this field otherwise) when birthCertificateIsNewModel is true.",
+      "sourceRef": "Documentos — Certidão: Matrícula",
+      "validation": { "maxLength": 32 }
+    },
+    {
+      "name": "certificateType",
+      "label": "Certidão — Tipo",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Documentos — Certidão: Tipo (Certidão de Nascimento/Certidão de Casamento)",
+      "validation": { "enum": ["birth_certificate", "marriage_certificate"] }
+    },
+    {
+      "name": "certificateNumber",
+      "label": "Certidão — Número",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Documentos — Certidão: Número",
+      "validation": { "maxLength": 8 }
+    },
+    {
+      "name": "certificateBook",
+      "label": "Certidão — Livro",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Documentos — Certidão: Livro",
+      "validation": { "maxLength": 4 }
+    },
+    {
+      "name": "certificatePage",
+      "label": "Certidão — Folha",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Documentos — Certidão: Folha",
+      "validation": { "maxLength": 5 }
+    },
+    {
+      "name": "certificateRegistryOffice",
+      "label": "Certidão — Cartório",
+      "type": "string",
+      "required": false,
+      "description": "The notary/registry office (cartório) that issued the birth or marriage certificate.",
+      "sourceRef": "Documentos — Certidão: Cartório",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "certificateIssuingState",
+      "label": "Certidão — UF de expedição",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Documentos — Certidão: UF de expedição",
+      "validation": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"] }
+    },
+    {
+      "name": "certificateIssuingCity",
+      "label": "Certidão — Cidade expedição",
+      "type": "string",
+      "required": false,
+      "description": "City where the certificate was issued, chosen from a state-dependent city dropdown (with a free-text fallback for a city not listed).",
+      "sourceRef": "Documentos — Certidão: Cidade expedição / Nome da cidade",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "previousPassportStatus",
+      "label": "Passaporte Anterior — Situação",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's prior-passport situation. This single field is what distinguishes a first-time application from a renewal, replacement of a lost/stolen document, or a document retained by an authority — Brazil's online wizard handles every scenario through one form rather than a separate form per scenario.",
+      "sourceRef": "Documentos — Passaporte Anterior: Situação* (Nunca teve Passaporte Comum, de Emergência, para Estrangeiro ou Laissez-Passer brasileiro / Passaporte anterior válido (obrigatória a apresentação) / Extraviado / Está retido/apreendido pela Polícia Federal / Está retido pelo MRE / Roubado ou furtado / Passaporte anterior vencido (recomenda-se apresentação para cancelamento físico do documento))",
+      "validation": { "enum": ["never_had", "valid_previous_passport", "lost", "held_by_federal_police", "held_by_foreign_ministry", "stolen", "expired_previous_passport"] }
+    },
+    {
+      "name": "previousPassportSeries",
+      "label": "Passaporte Anterior — Série",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previousPassportStatus", "notEquals": "never_had" },
+      "classification": "pii",
+      "description": "The two-letter series of the previous passport (e.g. for passport CP999999, the series is CP). Required whenever the applicant has held a previous passport.",
+      "sourceRef": "Documentos — Passaporte Anterior: Série (Exemplo: Para o passaporte CP999999 a série é CP e o número é 999999.)",
+      "validation": { "maxLength": 2 }
+    },
+    {
+      "name": "previousPassportNumber",
+      "label": "Passaporte Anterior — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previousPassportStatus", "notEquals": "never_had" },
+      "classification": "pii",
+      "description": "The numeric part of the previous passport (e.g. for passport CP999999, the number is 999999). Required whenever the applicant has held a previous passport.",
+      "sourceRef": "Documentos — Passaporte Anterior: Número (Exemplo: Para o passaporte CP999999 a série é CP e o número é 999999.)",
+      "validation": { "maxLength": 6 }
+    },
+    {
+      "name": "occupation",
+      "label": "Profissão",
+      "type": "string",
+      "required": true,
+      "description": "Chosen from Brazil's official CBO (Classificação Brasileira de Ocupações) occupation list, a closed dropdown of several thousand entries on the source form. If the applicant's occupation is not listed, otherOccupation is used instead.",
+      "sourceRef": "Dados complementares — Profissão*",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "otherOccupation",
+      "label": "Outra profissão",
+      "type": "string",
+      "required": false,
+      "description": "Free-text occupation, completed only when the applicant's occupation is not in the closed CBO list.",
+      "sourceRef": "Dados complementares — Outra profissão",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Dados complementares — E-mail*",
+      "validation": { "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "maxLength": 50 }
+    },
+    {
+      "name": "emailConfirmation",
+      "label": "Confirmação do E-mail",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must exactly match email.",
+      "sourceRef": "Dados complementares — Confirmação do E-mail*",
+      "validation": { "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "maxLength": 50 }
+    },
+    {
+      "name": "countryOfResidence",
+      "label": "Endereço do requerente — País",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Country of current residence, chosen from the same closed country dropdown as nationality, defaulting to BRASIL.",
+      "sourceRef": "Dados complementares — Endereço do requerente: País*",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "postalCode",
+      "label": "CEP",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Brazilian postal code (Código de Endereçamento Postal), masked on the form as _____-___. The live form auto-loads the matching address when a valid CEP is entered and the field loses focus.",
+      "sourceRef": "Dados complementares — Endereço do requerente: CEP*",
+      "validation": { "pattern": "^\\d{5}-\\d{3}$" }
+    },
+    {
+      "name": "stateOfResidence",
+      "label": "Endereço do requerente — UF",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "countryOfResidence", "equals": "BRASIL" },
+      "description": "Required only when countryOfResidence is Brazil.",
+      "sourceRef": "Dados complementares — Endereço do requerente: UF*",
+      "validation": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"] }
+    },
+    {
+      "name": "cityOfResidence",
+      "label": "Endereço do requerente — Cidade",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "countryOfResidence", "equals": "BRASIL" },
+      "classification": "pii",
+      "description": "Chosen from a state-dependent city dropdown. Required only when countryOfResidence is Brazil.",
+      "sourceRef": "Dados complementares — Endereço do requerente: Cidade*",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "cityOfResidenceAbroad",
+      "label": "Nome da cidade (residência no exterior)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "countryOfResidence", "notEquals": "BRASIL" },
+      "classification": "pii",
+      "description": "Free-text city of residence, used when countryOfResidence is not Brazil.",
+      "sourceRef": "Dados complementares — Endereço do requerente: Nome da cidade (exibido quando o país de residência não é Brasil)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "streetAddress",
+      "label": "Logradouro",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Dados complementares — Endereço do requerente: Logradouro*",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "neighborhood",
+      "label": "Distrito/Bairro",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Dados complementares — Endereço do requerente: Distrito/Bairro*",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "areaCode",
+      "label": "DDD",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Brazilian telephone area code (2 digits), paired with phoneNumber.",
+      "sourceRef": "Dados complementares — Endereço do requerente: DDD",
+      "validation": { "maxLength": 2 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Telefone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Dados complementares — Endereço do requerente: Telefone",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "declarationInformationCorrect",
+      "label": "Declaração de veracidade",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Declaration that the information above is correct, and acknowledgement that any error in the data will delay issuance of the travel document.",
+      "sourceRef": "Revisar dados — 'Declaro que as informações acima estão corretas e que estou ciente de que qualquer erro nos dados implicará em atraso na emissão do meu documento de viagem.'"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "emailMatchesConfirmation",
+      "compare": { "field": "email", "operator": "equals", "compareTo": "emailConfirmation" }
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_data",
+      "title": "Dados pessoais",
+      "fields": ["fullName", "sex", "parent1Name", "parent1Sex", "parent2Name", "parent2Sex", "dateOfBirth", "isEmancipatedMinor", "isInternationalAdoption", "raceOrColor", "maritalStatus", "nationality", "countryOfBirth", "stateOfBirth", "cityOfBirth", "cityOfBirthAbroad", "previousName", "previousNameChangeReason"],
+      "next": "documents"
+    },
+    {
+      "id": "documents",
+      "title": "Documentos",
+      "fields": ["idDocumentNumber", "idDocumentIssueDate", "idDocumentIssuingAgency", "idDocumentIssuingState", "cpf", "birthCertificateIsNewModel", "birthCertificateRegistrationNumber", "certificateType", "certificateNumber", "certificateBook", "certificatePage", "certificateRegistryOffice", "certificateIssuingState", "certificateIssuingCity", "previousPassportStatus", "previousPassportSeries", "previousPassportNumber"],
+      "next": "complementary_data"
+    },
+    {
+      "id": "complementary_data",
+      "title": "Dados complementares",
+      "fields": ["occupation", "otherOccupation", "email", "emailConfirmation", "countryOfResidence", "postalCode", "stateOfResidence", "cityOfResidence", "cityOfResidenceAbroad", "streetAddress", "neighborhood", "areaCode", "phoneNumber"],
+      "next": "review_and_declare"
+    },
+    {
+      "id": "review_and_declare",
+      "title": "Revisar dados",
+      "fields": ["declarationInformationCorrect"]
+    }
+  ]
+}

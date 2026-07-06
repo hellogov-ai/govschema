@@ -4,8 +4,30 @@
 
 ## Executive Summary
 
-**15 jurisdictions** | **220 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**15 jurisdictions** | **221 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1364):** Brazil gains its second vertical,
+> `br/pf/passport-application`, sourced directly from the Federal Police's
+> (Polícia Federal) own live SINPA (Sistema Nacional de Passaportes) online
+> passport-request wizard — a genuinely live, unauthenticated, four-tab HTML
+> form (no login, no CAPTCHA, no IP block), read field-by-field straight from
+> the page DOM via headless-browser extraction rather than any PDF/image
+> technique. Brazil had only one schema (`br/sp/jucesp/cnpj-registration-dbe`,
+> Business Formation) since opening as the registry's 15th jurisdiction under
+> `GOV-1342`; this cycle's `GovSchema Standard Research` routine scouted its
+> three other unresearched verticals (Passport, DMV, Visa; National ID was not
+> reached this cycle) and found Passport strongly sourceable. The single
+> SINPA wizard covers first-time issuance, renewal, and lost/stolen/retained
+> replacement all through one `previousPassportStatus` field, rather than
+> Brazil needing separate forms per scenario — modeled as one schema instead
+> of the first-time/renewal split used elsewhere in this registry. Scoped to
+> applicants who will be 18 or older; the wizard's minor-applicant fields
+> (responsible-party CPF, travel authorization, parents' nationality) are
+> deliberately out of scope for v1.0.0 (see VERIFICATION.md). Brazil's
+> Receita Federal IRPF candidate (`GOV-1295`) remains open in the backlog,
+> too fragmentary to source safely; DMV, Visa, and National ID remain
+> unresearched candidates for a future cycle.
+>
 > **Update (2026-07-06, GOV-1355/GOV-1317):** South Korea gains a second
 > National ID & Civic Documents schema,
 > `kr/mois/resident-registration-card-reissuance`, sourced from the
@@ -131,7 +153,7 @@
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
-| **Passport** | 13/15 (87%) | **AE, BR** not yet modelled (no Passport candidate sourced this cycle) |
+| **Passport** | 14/15 (93%) | **AE** not yet modelled; **BR** newly modelled this cycle (`br/pf/passport-application`) |
 | **DMV** | 13/15 (87%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR** not yet modelled |
 | **Business Formation** | 13/15 (87%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE** not yet modelled; **BR** newly modelled this cycle (`br/sp/jucesp/cnpj-registration-dbe`) |
 | **Taxes** | 14/15 (93%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant/Micro-Business/Body-Corporate modelled GOV-1268/GOV-1275/GOV-1282; IE Form CT1, ZA's other 2 ITR14 Annexures still open); **BR** not yet modelled (GOV-1295 Receita Federal IRPF candidate too fragmentary so far) |
@@ -154,20 +176,27 @@
 
 ## By Vertical
 
-### Passport (13/14 jurisdictions)
+### Passport (14/15 jurisdictions)
 
-AU, CA, DE, FR, GB, IE, IN, KR, NL, NZ, SG, US, ZA all have at least one
+AU, BR, CA, DE, FR, GB, IE, IN, KR, NL, NZ, SG, US, ZA all have at least one
 published Passport schema. India (`in/mea/passport-application-first-adult`,
 `in/mea/passport-reissue`), the Netherlands (`nl/rvig/passport-application`),
 New Zealand (`nz/dia/passport-application-first-adult`,
 `nz/dia/passport-renewal-adult`), and South Africa
 (`za/dha/passport-application-first-adult`) were previously miscatalogued
 here as gaps; all four already existed. **South Korea** (`kr/mofa/passport-application-first-adult`,
-GOV-1289) is new this cycle — the registry's first Korean schema, sourced
+GOV-1289) opened the registry's first Korean schema, sourced
 from the Ministry of Foreign Affairs' current form (revised 2025-10-09) plus
-its own official filled-in example. **United Arab Emirates** has no Passport
-schema yet — no candidate was sourced for it this cycle (see the Taxes
-entry below for the UAE document that was authored).
+its own official filled-in example. **Brazil** (`br/pf/passport-application`,
+GOV-1364) is new this cycle — sourced directly from the Federal Police's own
+live SINPA online wizard (no login/CAPTCHA gate), the strongest sourcing
+shape yet used in this registry since it is the actual page DOM rather than a
+rendered image or PDF of it. Uniquely among this registry's Passport schemas,
+Brazil's single wizard covers first-time issuance, renewal, and
+lost/stolen/retained replacement all through one `previousPassportStatus`
+field rather than needing separate forms per scenario. **United Arab
+Emirates** has no Passport schema yet — no candidate was sourced for it this
+cycle (see the Taxes entry below for the UAE document that was authored).
 
 ### DMV — Vehicle Registration, Licensing, Permits (13/14 jurisdictions)
 
@@ -277,7 +306,7 @@ now closed.
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BR** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **BR** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
