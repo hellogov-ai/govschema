@@ -4,9 +4,9 @@
 
 ## Executive Summary
 
-**16 jurisdictions** | **230 published schema documents** (per `tools/govschema-client/registry-index.json`, pending merge of GOV-1428's PR #239) covering 6 verticals across government services globally.
+**16 jurisdictions** | **230 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
-> **Update (2026-07-06, GOV-1428, PR #239 pending merge):** Mexico gains a
+> **Update (2026-07-06, GOV-1428, PR #239 merged 127817d):** Mexico gains a
 > third vertical, `mx/sat/declaracion-anual-sueldos-salarios`, closing the
 > MX Taxes-vertical gap this catalog's own "Known Gaps" section explicitly
 > flagged as distinct from `mx/sat/preinscripcion-rfc-persona-moral`
@@ -375,7 +375,7 @@
 | **Passport** | 14/16 (88%) | **AE, MX** not yet modelled; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
 | **DMV** | 13/16 (81%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR, MX** not yet modelled |
 | **Business Formation** | 14/16 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** newly modelled this cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414) |
-| **Taxes** | 16/16 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** newly modelled this cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428, PR #239 pending merge), distinct from the RFC pre-registration wizard already modelled under Business Formation |
+| **Taxes** | 16/16 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** newly modelled this cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428), distinct from the RFC pre-registration wizard already modelled under Business Formation |
 | **Visa** | 13/16 (81%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
 | **National ID & Civic Documents** | 13/16 (81%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only) |
 
@@ -657,7 +657,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
    GOV-1393), and Taxes (`mx/sat/declaracion-anual-sueldos-salarios`,
-   GOV-1428, PR #239 pending merge). Mexico's remaining Passport (SRE,
+   GOV-1428, PR #239 merged 127817d). Mexico's remaining Passport (SRE,
    in-person appointment only) and National ID (CURP, in-person biometric
    only) verticals were confirmed weak/gated in prior cycles; **DMV**
    remains a strong open backlog candidate — GOV-1428's research cycle found
@@ -752,5 +752,5 @@ Formation gap closed, 2nd MX schema), updated by GOV-1421
 (`ae/icp/visa-single-entry-long-stay-pleasure` authoring, UAE Visa vertical
 opened, 2nd AE schema), updated by GOV-1428
 (`mx/sat/declaracion-anual-sueldos-salarios` authoring, Mexico Taxes gap
-closed, 3rd MX schema, global Taxes vertical 16/16, PR #239 pending merge) |
+closed, 3rd MX schema, global Taxes vertical 16/16, PR #239 merged 127817d) |
 Standards Engineer
