@@ -279,3 +279,39 @@ Per the practice's **Cadence**, `nextReviewBy` is set to **2027-01-06** (6
 months). Re-check the source on or before that date and on any
 `source.url` change — in particular, check whether RFB has published a
 newer Leiaute DIRPF edition superseding the 2023 one used here.
+
+## Independent review (GOV-1411) — 2 sourceRef mis-citations found and fixed pre-merge
+
+An independent reviewer re-fetched the same PDF directly from RFB's
+`gov.br` URL (byte-identical, 1,845,128 bytes), re-extracted its full text
+layer with `pdfjs-dist` (confirming 137 pages), and cross-checked every
+`sourceRef` field-code citation in this document against the extracted
+text. All 67 field codes were confirmed genuinely present in the source
+(none fabricated), and the full record-level layouts for HEADER, REG 16,
+and Reg 21/22/23/24/25/26/34 were independently re-transcribed and matched
+byte-for-byte against this document's field descriptions, byte lengths, and
+`requiredWhen`-gated grouping. Two `sourceRef`s cited the wrong record:
+
+- **`hasSpouseIncludedInDeclaration`** cited "HEADER, field IN_CONJUGE".
+  `IN_CONJUGE` appears exactly once in the 137-page document, as field 46 of
+  **REG 16** (IDENTIFICAÇÃO DO DECLARANTE), not HEADER. Corrected the
+  `sourceRef` to cite REG 16.
+- **`professionalRegistrationNumber`** cited "HEADER, field
+  NR_REGISTRO_PROFISSIONAL". This field also appears exactly once, as field
+  43 of **REG 16**, not HEADER. Corrected the same way.
+
+Both fields' underlying data (field name, description, and semantics) were
+correct — only the record attribution in the citation was wrong, likely
+because HEADER and REG 16 both carry many similarly-named fields (e.g. both
+have their own `NR_CPF`, `NM_NOME`, `IN_COMPLETA`, `IN_RETIFICADORA`) and
+it's easy to conflate the two multi-page records. The other five
+`sourceRef`s citing HEADER (`cpf`, `fullName`, `dateOfBirth`, `isRectifying`,
+`filingType`) were independently confirmed correct — each field genuinely
+exists in the HEADER record with matching values/semantics, not just in
+REG 16. After the fix, `node tools/validate.mjs` was re-run (227/227
+documents, 3/3 mapping.json companions, still passing) and the mock
+conformance packet was independently re-checked with a from-scratch
+requiredWhen evaluator: 67 total fields, 48 collected, 19 not applicable, 0
+errors — matching the author's original claim.
+`tools/govschema-client/registry-index.json` was independently regenerated
+and diffed against the committed version (zero diff).
