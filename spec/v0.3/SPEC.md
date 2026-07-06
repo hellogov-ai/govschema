@@ -234,6 +234,21 @@ us/ca/dmv/vehicle-registration-renewal
 us/dos/passport-renewal-ds82
 ```
 
+> **County/municipal forms (v0.3+, [GSP-0021]).** A document scoped to a
+> specific county, city, or other sub-state/sub-province body carries an
+> additional locality layer **between** the subdivision and authority
+> segments — no pattern change, the existing regex already permits this shape:
+>
+> ```
+> us/fl/miami-dade/<authority>/<process>
+> us/fl/miami-dade/tax-collector/homestead-exemption
+> ```
+>
+> The locality segment MUST equal `jurisdiction.locality.slug` (§5.4, §13 rule
+> 2), and its presence requires `jurisdiction.level: municipal`. A document
+> with no `jurisdiction.locality` member carries no locality segment, and
+> keeps the unchanged `<country>[/<subdivision>]/<authority>/<process>` shape.
+
 The `id` is **the single source of truth linking a document to its location.** A
 document MUST be stored at:
 
@@ -292,12 +307,40 @@ to a higher MAJOR.
 - `country` — REQUIRED. ISO 3166-1 alpha-2, **uppercase** (`^[A-Z]{2}$`).
 - `subdivision` — OPTIONAL. ISO 3166-2 subdivision code, the full hyphenated form
   (`^[A-Z]{2}-[A-Z0-9]{1,3}$`, e.g. `US-CA`). Absent means national scope.
+- `locality` — OPTIONAL, per [GSP-0021](../proposals/0021-municipal-county-jurisdictions.md).
+  Present only when the process is scoped to a specific county, city, or other
+  sub-state/sub-province body rather than the whole subdivision — ISO 3166-2
+  (`subdivision`) has no codified layer below state/province, so this fills
+  that gap:
+
+  ```json
+  "jurisdiction": {
+    "country": "US",
+    "subdivision": "US-FL",
+    "locality": { "name": "Miami-Dade County", "slug": "miami-dade" },
+    "level": "municipal"
+  }
+  ```
+
+  - `name` — REQUIRED, the body's official or commonly-used name (e.g.
+    `"Miami-Dade County"`).
+  - `slug` — REQUIRED, a stable lowercase identifier
+    (`^[a-z0-9][a-z0-9-]*$`) that MUST equal the `id` path's locality token
+    (§5.2, §13 rule 2).
+
+  `locality` REQUIRES `level: municipal` — a document naming a specific
+  county/city but tagging itself `national` or `subnational` is inconsistent.
+  The reverse is not required: `level: municipal` without `locality` stays
+  valid (a municipal-scoped document may predate this GSP or describe its
+  level generically without naming a specific body).
 - `level` — REQUIRED. One of `national`, `subnational`, `municipal`, `supranational`.
 
 The `country` (and `subdivision`, when present) MUST be consistent with the country
 (and subdivision) tokens in `id` (§13 rule 2). Note `id` uses lowercase path tokens
 while `jurisdiction` uses uppercase ISO codes; e.g. `id` `us/ca/...` ↔ `country`
-`US`, `subdivision` `US-CA`.
+`US`, `subdivision` `US-CA`. When `locality` is present, the `id` path segment
+immediately after the subdivision token MUST equal `locality.slug` (§5.2, §13
+rule 2).
 
 ### 5.5 Authority (`authority`)
 
@@ -970,7 +1013,10 @@ A conforming document MUST additionally satisfy:
    member, excluding the `<edition>` directory as well. (§5.2, §5.7)
 2. **id / jurisdiction consistency** — the country token in `id` MUST equal
    `jurisdiction.country` lowercased; when a subdivision token is present in `id` it
-   MUST be consistent with `jurisdiction.subdivision`. (§5.2, §5.4)
+   MUST be consistent with `jurisdiction.subdivision`. When `jurisdiction.locality`
+   is present, the `id` path segment immediately after the subdivision token MUST
+   equal `jurisdiction.locality.slug`, and `jurisdiction.level` MUST be `municipal`.
+   (§5.2, §5.4, [GSP-0021])
 3. **Field name uniqueness** — `name`s MUST be unique among all fields. (§6.1)
 4. **Flow reference integrity** — every step `fields` entry MUST resolve to a
    defined field `name`; every `next` MUST name an existing step; every
@@ -1217,3 +1263,4 @@ invalidate the sibling schema.
 [GSP-0016]: ../proposals/0016-conformance-fixtures.md
 [GSP-0017]: ../proposals/0017-agent-conformance-safety-boundary.md
 [GSP-0018]: ../proposals/0018-field-eligibility-value-semantics.md
+[GSP-0021]: ../proposals/0021-municipal-county-jurisdictions.md

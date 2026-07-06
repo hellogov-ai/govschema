@@ -64,6 +64,7 @@ const FIELD_TYPES = ["string", "number", "integer", "boolean", "date", "enum", "
 // spec/v0.2/govschema.schema.json ($defs/edition).
 const EDITION_SCHEMES = ["us-tax-year", "gb-tax-year", "award-year"];
 const EDITION_LABEL_RE = /^[a-z0-9][a-z0-9-]*$/;
+const LOCALITY_SLUG_RE = /^[a-z0-9][a-z0-9-]*$/;
 
 // Whether a govschemaVersion (e.g. "0.2.0") is at least the given (major, minor).
 function meetsMinor(version, major, minor) {
@@ -136,6 +137,13 @@ function validateDocument(doc, errs) {
       errs.push(`jurisdiction.level must be one of ${LEVELS.join(", ")}: ${j.level}`);
     if (j.subdivision != null && !SUBDIVISION_RE.test(j.subdivision))
       errs.push(`jurisdiction.subdivision must be ISO 3166-2: ${j.subdivision}`);
+    if (j.locality != null) {
+      if (!j.locality.name) errs.push("jurisdiction.locality.name is required");
+      if (!LOCALITY_SLUG_RE.test(j.locality.slug || ""))
+        errs.push(`jurisdiction.locality.slug must match ${LOCALITY_SLUG_RE}: ${j.locality.slug}`);
+      if (j.level !== "municipal")
+        errs.push(`jurisdiction.locality requires jurisdiction.level "municipal": got ${j.level}`);
+    }
   }
 
   if (doc.authority && !doc.authority.name)

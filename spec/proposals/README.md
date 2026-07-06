@@ -32,7 +32,7 @@ proposal becomes normative only when it is accepted and folded into them.
 | 0018 | [Field-level eligibility value semantics (`eligibleValues`)](./0018-field-eligibility-value-semantics.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-01 (GOV-393) |
 | 0019 | [Generalize `edition.scheme` beyond `us-tax-year`/`gb-tax-year`](./0019-generalize-edition-scheme-calendar-tax-year.md) | Proposed — not yet reviewed, ⚠ one-way-door, Founding Engineer/CEO flag |
 | 0020 | [Treaty-authorized third-party issuers in `authority`](./0020-treaty-authorized-third-party-issuers.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-02 (GOV-582) |
-| 0021 | [Municipal & county jurisdictions (`jurisdiction.locality`)](./0021-municipal-county-jurisdictions.md) | Proposed — ⚠ one-way-door id-grammar surface, CEO sign-off requested (GOV-667) |
+| 0021 | [Municipal & county jurisdictions (`jurisdiction.locality`)](./0021-municipal-county-jurisdictions.md) | Folded into `spec/v0.3` — CEO sign-off recorded 2026-07-06 (GOV-667) |
 
 GOV-373 shipped the `spec/v0.3` meta-schema and prose fold-in for the five GSPs
 above whose acceptance record explicitly deferred that step (GSP-0006, GSP-0007,

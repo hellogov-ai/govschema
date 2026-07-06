@@ -66,11 +66,35 @@
           "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$",
           "description": "ISO 3166-2 subdivision code, when the process is subnational. Example: US-CA"
         },
+        "locality": {
+          "type": "object",
+          "required": ["name", "slug"],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The county/municipal body's official or commonly-used name. Example: Miami-Dade County"
+            },
+            "slug": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$",
+              "description": "Stable lowercase identifier for the locality, MUST equal the id path's locality token (§5.2, §13 rule 2). Example: miami-dade"
+            }
+          },
+          "description": "OPTIONAL, present only when the process is scoped to a specific county, city, or other sub-state/sub-province body rather than the whole subdivision. Requires level: municipal. GSP-0021."
+        },
         "level": {
           "type": "string",
           "enum": ["national", "subnational", "municipal", "supranational"]
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["locality"] },
+          "then": { "properties": { "level": { "const": "municipal" } } }
+        }
+      ]
     },
     "authority": {
       "type": "object",
