@@ -15,7 +15,97 @@ official Smart App user manual (Citizen Category, v5.23), retrieved as a PDF
 and read page-by-page via direct decompression of each page's embedded JPEG
 screenshot (zlib + DCTDecode) — the PDF's text layer uses custom-subsetted
 fonts and does not recover legibly. It remains `draft`, not `verified`,
-pending an independent second reviewer's field-by-field pass.
+pending live-app execution testing (per this registry's `structural-reference`
+maturity convention — see the `ae/icp/visa-single-entry-long-stay-pleasure`
+sibling, whose own `status`/`maturity` remained `draft`/`structural-reference`
+after its review gate too).
+
+## Independent review-gate re-verification (GOV-1477, 2026-07-06)
+
+An independent reviewer re-fetched both the citizen- and resident-category
+v5.23 manuals directly from `icp.gov.ae` (both downloaded cleanly, confirming
+no login/CAPTCHA/WAF gate — same access profile as the original authoring
+pass) and re-extracted every embedded screenshot using the same
+zlib+DCTDecode technique, additionally parsing the PDF's page-tree and
+content-stream `Do` (XObject paint) operators to programmatically map each
+embedded image to its exact page and on-page pixel position, rather than
+relying on manual visual sequencing.
+
+**Finding: every wizard-step page in the citizen manual embeds *two* stacked
+screenshots, not one — the initial authoring pass only read the first.**
+Cross-referencing each page's `/XObject` resource dictionary against its
+content stream's placement matrices (`cm`) showed that pages 15–19 and 22 each
+place two images with contiguous (touching, zero-gap) vertical bounding boxes
+— i.e. the manual's own screen-capture tooling split one continuous
+scrollable-screen capture into two separate embedded JPEGs per PDF page, not
+two visually distinct screens. The original authoring pass extracted and read
+only the first (top) image of each such pair, which is why the below-the-fold
+content flagged as "not confirmed" in the original judgment calls 2 and 6
+below was in fact directly recoverable from the same source, just not
+inspected.
+
+Re-reading the second (bottom) image of each pair recovered **8 additional
+confirmed fields**, now added to the schema:
+
+- **Basic Information (p.15):** `familyBookIssuanceDate` (date, required,
+  worked-example value "21/06/1995") and `replacementReason` (dropdown,
+  required, worked-example value "Lost / Stolen").
+- **Beneficiary Information (p.16):** `changeIdentityPersonalPhoto` (Yes/No
+  toggle, required, defaulted "No" in the worked example).
+- **Passport Information (p.17):** `passportIssueCountry` (dropdown,
+  required, worked-example value "UNITED ARAB EMIRATES").
+- **Delivery Address Information (p.18):** `uaeMobileNumber` (required,
+  pre-filled "00971"+"544099705" in the worked example) and
+  `secondMobileNumber` (optional, blank/unfilled in the worked example — the
+  only field of the eight without a visible required-asterisk).
+- **Residence Information (p.19):** `residencePhoneNumber` and
+  `residenceEmail` (both required) — this step was previously modelled with
+  an **empty `fields` list**, on the belief that the screen showed only a
+  read-only address-summary card. The second image shows the same screen
+  also contains a genuinely editable confirmation sub-form (pre-filled "UAE
+  Phone number" and "Email") below that card. The step's `fields` array in
+  `steps[]` is updated accordingly.
+
+**`termsAndConditionsAccepted` is now directly confirmed in the citizen
+manual's own capture**, on the fee-summary screen's second (below-the-fold)
+image — an "Agree To The Terms And Conditions" checkbox, exactly where
+judgment call 2 (below) predicted it would be if the screenshot weren't cut
+off. This retires the by-analogy inference from the resident-category
+manual: `sourceRef` now points to the citizen manual directly, and the
+`label` is corrected from "I Agree To The Terms And Conditions" (the resident
+manual's wording, previously carried over by analogy) to "Agree To The Terms
+And Conditions" (the citizen manual's own, verbatim wording — confirmed to
+lack the leading "I").
+
+**Two further fields are confirmed to exist but are deliberately NOT
+modelled, pending label confirmation:**
+
+1. A dropdown field between `secondNameEnglish` and
+   `changeIdentityPersonalPhoto` on the Beneficiary Information screen,
+   worked-example value "PRODUCER" (contextually a profession/occupation-type
+   field).
+2. A field between `passportIssueDate` and `passportIssueCountry` on the
+   Passport Information screen, worked-example value an Arabic-script string
+   (contextually plausible as a passport issue-place field, but not
+   confirmed).
+
+In both cases the field's own label row falls in the **exact pixel seam**
+between the manual's two stacked screenshots (confirmed by cropping and
+re-rendering the boundary region at native resolution: the first image ends
+mid-field, immediately after the *previous* field's input box, and the second
+begins with only the dropdown/input control itself, no label above it) —
+there is no crop offset that recovers it from this source. Rather than invent
+a label, this document leaves both fields unmodelled. A future reviewer
+should either find a differently-paginated render of the same manual (e.g. a
+version where the scroll-capture boundary falls elsewhere), or confirm the
+label directly against the live Smart App.
+
+**Also checked and found accurate, no changes:** the Attachments step's
+single generic "Supporting documents" upload item (p.20) — its own screenshot
+has substantial blank space below the item with no second embedded image,
+confirming the screen is genuinely single-item and was not itself
+truncated. No newer manual revision superseding v5.23 was found at the
+`icp.gov.ae` source URL or via web search.
 
 ## Why this document exists
 
@@ -176,20 +266,19 @@ preceding Department → Module → Service selection screens) → the 5-sub-ste
    simply un-screenshotted in both manuals, or whether first-time issuance
    in the UAE is handled through an entirely separate, non-app channel (e.g.
    at birth/naturalization registration).
-2. **`termsAndConditionsAccepted` folded in from the sibling resident
-   manual, not directly visible in this document's own citizen capture.**
-   The citizen Replace ID fee-review screenshot (p.22) is cut off
-   immediately before where a Terms-and-Conditions checkbox would sit. The
-   resident-category manual's analogous "Renew Emirates ID" fee-review
-   screen — confirmed to share the same UI components as steps 3-5 of the
-   citizen flow (in one case even showing the same example Request
-   Number) — explicitly shows a labelled "I Agree To The Terms And
-   Conditions" checkbox at this position. This document treats that as
-   strong indirect evidence the same control exists in the citizen flow
-   too, the same kind of by-analogy inference already used in the sibling
-   visa document for its `insideUaeEmirate` enum. A reviewer should confirm
-   this directly against the live app or a citizen-category screenshot that
-   captures this exact screen without being cut off.
+2. ~~`termsAndConditionsAccepted` folded in from the sibling resident
+   manual, not directly visible in this document's own citizen capture.~~
+   **Superseded by the GOV-1477 review-gate pass:** the citizen manual's
+   fee-summary screen (p.22) is itself a two-image scrollable capture, and
+   its second (below-the-fold) image directly shows an "Agree To The Terms
+   And Conditions" checkbox. The field is now sourced directly from the
+   citizen manual; the by-analogy inference from the resident manual
+   described below is retired (kept here for history: the resident-category
+   manual's analogous "Renew Emirates ID" fee-review screen — confirmed to
+   share the same UI components as steps 3-5 of the citizen flow, in one
+   case even showing the same example Request Number — is what the original
+   authoring pass reasoned from, the same kind of by-analogy inference used
+   in the sibling visa document for its `insideUaeEmirate` enum).
 3. **Resident-manual's itemized document checklist deliberately NOT folded
    in.** Unlike the Terms-and-Conditions checkbox (a generic UI control
    reasonably assumed shared across services), the resident manual's
@@ -215,14 +304,23 @@ preceding Department → Module → Service selection screens) → the 5-sub-ste
    `ae/fta/vat-registration`'s and
    `ae/icp/visa-single-entry-long-stay-pleasure`'s own confirmed "Emirates"
    dropdowns.
-6. **Below-the-fold fields not modelled.** Every wizard screenshot in this
-   manual is a single un-scrolled mobile viewport. Beneficiary Information
-   (p.16) and Passport Information (p.17) both visibly cut off right after
-   their last modelled field, strongly suggesting additional fields exist
-   below the fold in the live app (e.g. a Second Name Arabic / Third or
-   Family Name pair, a Passport Expiry Date). This document models only the
-   confirmed-visible minimum, not a completed guess at the full field set —
-   see the individual field `description`s for each specific cutoff.
+6. ~~Below-the-fold fields not modelled (every wizard screenshot in this
+   manual is a single un-scrolled mobile viewport).~~ **Superseded by the
+   GOV-1477 review-gate pass:** each wizard page in fact embeds two stacked
+   screenshots covering the full scroll, not one — the original authoring
+   pass only read the first. Re-reading the second recovered 8 fields (see
+   the "Independent review-gate re-verification" section above):
+   `familyBookIssuanceDate`, `replacementReason`,
+   `changeIdentityPersonalPhoto`, `passportIssueCountry`,
+   `uaeMobileNumber`, `secondMobileNumber`, `residencePhoneNumber`,
+   `residenceEmail`. Two further fields (a profession-type dropdown after
+   `secondNameEnglish`; an Arabic-script field after `passportIssueDate`)
+   are confirmed to exist but remain unmodelled because their exact labels
+   fall in the crop seam between the two screenshots and are not
+   recoverable from this source — a genuinely unresolved gap, not merely an
+   unconfirmed guess. A Second Name Arabic / Third-or-Family-Name pair and a
+   Passport Expiry Date remain unconfirmed and unmodelled too (no further
+   embedded image exists on either page to check).
 7. **Payment/card-entry fields excluded.** The Fees Payment screen (p.23:
    Card Type, Card Number, Expiration Month/Year, CVN) is excluded the same
    way the sibling visa document excludes the Amwal-hosted payment-gateway
@@ -246,18 +344,27 @@ preceding Department → Module → Service selection screens) → the 5-sub-ste
 
 ## Path to a `verified` claim (next step)
 
-To advance this document to `status: verified`, a reviewer needs to:
+Items 1, 2, and most of item 3 below were completed by the GOV-1477
+review-gate pass (see above). To advance this document further, a future
+reviewer needs to:
 
-1. Independently re-fetch both manuals and re-render/re-read each cited
-   page, confirming every field `sourceRef` against the actual screenshot.
-2. Confirm ICP has not since published a newer manual revision superseding
-   v5.23.
-3. If feasible, obtain access to the live Smart App to: confirm or replace
-   the `string`-typed dropdown fields with real `enum` option lists;
-   determine whether any fields exist below the fold on the Beneficiary
-   Information and Passport Information screens; directly confirm the
-   `termsAndConditionsAccepted` checkbox's presence in the citizen (not just
-   resident) flow; and confirm the true citizen-flow document checklist.
+1. ~~Independently re-fetch both manuals and re-render/re-read each cited
+   page, confirming every field `sourceRef` against the actual
+   screenshot.~~ Done (GOV-1477).
+2. ~~Confirm ICP has not since published a newer manual revision superseding
+   v5.23.~~ Done (GOV-1477) — none found.
+3. Obtain access to the live Smart App to: confirm or replace the
+   `string`-typed dropdown fields with real `enum` option lists; recover the
+   exact labels of the two still-unmodelled fields (the profession-type
+   dropdown after `secondNameEnglish` and the Arabic-script field after
+   `passportIssueDate`); confirm whether a Second Name Arabic /
+   Third-or-Family-Name pair and a Passport Expiry Date exist beyond what
+   either embedded screenshot shows; and confirm the true citizen-flow
+   document checklist (see judgment call 3).
+4. Per this registry's `structural-reference` maturity convention, advancing
+   `maturity.criteria.verifiedSchema`/`agentReadySchema` beyond a second
+   reviewer's field-by-field pass requires live-app execution testing, not
+   just source re-verification.
 
 ## Re-verification
 
