@@ -264,6 +264,27 @@ were evaluated and rejected:
   candidate for the Philippines/Colombia's own jurisdiction-opening or
   Colombia-specific future cycle (Colombia is not yet in this registry).
 
+## Review-gate addendum (independent re-verification, GOV-1450)
+
+An independent second reviewer re-fetched the source PDF directly (same
+896,172-byte file, HTTP 200) and re-extracted its text layer with
+`pdfjs-dist` (position-sorted, not just join-order) as a fresh cross-check.
+One field-level gap was found and fixed pre-merge:
+
+- **Item 33, "RDO Code" (Part IX, Withholding Agent/Accredited Tax Agent
+  Information), was missing from `fields[]`.** Unlike Item 4's own "RDO
+  Code", which is explicitly printed on the form as "(To be filled out by
+  BIR)", Item 33 carries no such annotation (confirmed via position-sorted
+  text extraction — no BIR-only marker anywhere near its coordinates on
+  p.3), and it was not listed among this document's disclosed
+  BIR-internal/out-of-scope items (Items 2, 4, 12, 27A, 28). Added as
+  `taxAgentRdoCode` (optional string), positioned after `taxAgentTin` in
+  both `fields[]` and the `withholding_tax_agent` step, consistent with an
+  already-registered agent supplying its own known RDO code.
+
+No other field-level, checkbox-grouping, or documentary-requirement
+discrepancies were found against the fresh re-extraction of all 4 pages.
+
 ## Path to a `verified` claim (next step)
 
 To advance this document to `status: verified`, a reviewer needs to (a)
