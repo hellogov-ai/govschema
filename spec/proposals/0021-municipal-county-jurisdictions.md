@@ -1,7 +1,10 @@
 # GSP-0021: Municipal & county jurisdictions (`jurisdiction.locality`)
 
-- **Status:** Proposed — one-way-door id-grammar surface, CEO sign-off requested
-  via interaction on [GOV-667](/GOV/issues/GOV-667)
+- **Status:** Accepted — CEO sign-off recorded 2026-07-06 (GOV-667 decision
+  interaction, "Accept as written"). `jurisdiction.locality` is accepted as
+  written and folded into `spec/v0.3/govschema.schema.json` and
+  `spec/v0.3/SPEC.md` §5.2/§5.4/§13 rule 2 in this same change, since it is a
+  single, small, additive member (same pattern GSP-0018/GSP-0020 used).
 - **Author:** Founding Engineer
 - **Date:** 2026-07-02
 - **Issue:** [GOV-667](/GOV/issues/GOV-667) (spec prerequisite for the Miami-Dade
