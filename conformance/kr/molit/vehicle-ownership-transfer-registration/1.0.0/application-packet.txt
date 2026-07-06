@@ -1,0 +1,65 @@
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+
+Schema: kr/molit/vehicle-ownership-transfer-registration v1.0.0
+Generated: 2026-07-06
+
+Scenario:
+A private used-car sale in Seongnam, filed by the buyer (transferee) directly, with no agent and no acquisition-tax exemption claimed. All values are fabricated illustrative test data, not a real party's information, constructed to exercise the schema's most common branch: registrationReason=sale, applicationFiledByAgent=false, no acquisition-tax exemption category checked.
+
+Collected values:
+  formerOwnerName: '박지훈'
+  formerOwnerRegistrationNumber: '800315-1234567'
+  formerOwnerAddress: '경기도 성남시 분당구'
+  newOwnerName: '이서연'
+  newOwnerRegistrationNumber: '920624-2345678'
+  newOwnerAddress: '경기도 성남시 수정구'
+  newOwnerEmail: 'seoyeon.lee@example.com'
+  newOwnerPhoneNumber: '010-2345-6789'
+  vehicleRegistrationNumber: '123가4567'
+  odometerReadingKm: 48210
+  registrationReason: 'sale'
+  applicantName: '이서연'
+  applicantDateOfBirth: '1992-06-24'
+  applicationDate: '2026-07-06'
+  applicationFiledByAgent: False
+  consentToAdministrativeInfoJointUse: True
+  acquisitionTaxExemptionDisabledPerson: False
+  acquisitionTaxExemptionNationalMeritPerson: False
+  acquisitionTaxExemptionMay18DemocracyMovement: False
+  acquisitionTaxExemptionAgentOrangePatient: False
+
+Not applicable in this scenario (visibleWhen/requiredWhen evaluate false):
+  newVehicleRegistrationNumber (optional, no new plate issued in this scenario)
+  giftDeed (registrationReason != 'gift')
+  auctionSaleDecisionDocument, certifiedJudgmentCopy (registrationReason != 'courtCommission')
+  agentPowerOfAttorneyAndId (applicationFiledByAgent = False)
+
+Documents required for this scenario (evaluated from documents[].requiredWhen):
+  - vehicleTransferCertificate (registrationReason = 'sale')
+  - transferorIdentityVerificationDocument (registrationReason = 'sale')
+  - vehicleRegistrationCertificate (always required)
+  - registrationFee (always required, KRW 1,000 — same-province filing assumed)
+  Not required: giftDeed, auctionSaleDecisionDocument, certifiedJudgmentCopy,
+  agentPowerOfAttorneyAndId
+
+Hand-evaluated variants (Phase 4 mock-data conformance check; see VERIFICATION.md
+for full detail):
+  1. Sale, buyer-filed, no agent (this packet) -> vehicleTransferCertificate and
+     transferorIdentityVerificationDocument correctly required; giftDeed/
+     auctionSaleDecisionDocument/certifiedJudgmentCopy/agentPowerOfAttorneyAndId
+     correctly not required.
+  2. Gift -> giftDeed correctly required; vehicleTransferCertificate and
+     transferorIdentityVerificationDocument correctly not required.
+  3. Court-commissioned (auction) -> auctionSaleDecisionDocument and
+     certifiedJudgmentCopy correctly required together (both share
+     registrationReason='courtCommission' per this document's judgment call 2 —
+     an acknowledged over-inclusion versus a real single-cause case).
+  4. Inheritance -> none of the five reason-specific documents required; only
+     vehicleRegistrationCertificate and registrationFee apply.
+  5. Agent-filed sale -> applicationFiledByAgent=true correctly adds
+     agentPowerOfAttorneyAndId to scenario 1's required-document set.
+
+vehicleRegistrationCertificate and registrationFee confirmed required in all
+five scenarios (both are unconditional required:true entries). This packet
+(scenario 1) was checked against tools/validate.mjs and tools/validate-ajv.mjs
+for the schema document itself.
