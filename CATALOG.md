@@ -4,8 +4,37 @@
 
 ## Executive Summary
 
-**15 jurisdictions** | **223 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**15 jurisdictions** | **224 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1387):** South Africa's SARS ITR14 corporate
+> income tax return closes its fifth and final company-type Annexure,
+> `za/sars/corporate-income-tax-return-itr14-medium-large-business`
+> (Annexure E, guide §15, pp.115-169, 417 fields) — sourced from the same
+> "How to complete the Income Tax Return (ITR14) for Companies" External
+> Guide (IT-GEN-04-G01, Revision 19, effective 2 March 2026) used for the
+> four smaller Annexures already modelled (Dormant, Micro Business, Body
+> Corporate/Share Block, Small Business). Annexure E is the largest and most
+> complex of the five (55 guide pages vs. 10-44 for the four siblings): it
+> adds nine sections with no counterpart in any sibling — International,
+> Foreign Exchange Gains/Losses, Foreign Dividends, Controlled Foreign
+> Company, Double Taxation, STC Credits, Headquarter Company, Subsidiary
+> Details, and Corporate Rules — plus four SIC-code-gated industry-specific
+> sections (Mining and Quarrying, Construction, Wholesale and Retail Trade,
+> Financial and Insurance Activities), and a Balance Sheet (64 fields)/
+> Income Statement (89 fields) that split many lines by Local/Foreign and
+> Connected/Non-Connected far more granularly than any sibling's. It
+> deliberately defers, as a whole and explicitly disclosed, the same class
+> of large itemised "pop-up selection box" Tax Computation sub-blocks the
+> Small Business sibling deferred (Special Allowances Not Claimed and three
+> related reversal/recoupment blocks), plus the wholly new Transfer Pricing
+> Received/Receivable, Paid/Payable, and Supporting Information containers
+> (unbounded per-jurisdiction repeating matrices) — see its own
+> VERIFICATION.md for the full scope rationale and several interpretive
+> judgment calls flagged for a future independent reviewer. This closes
+> ITR14 Annexure E and, with it, the full five-Annexure ZA SARS ITR14
+> company-type set (A-E: Dormant, Body Corporate/Share Block, Micro
+> Business, Small Business, Medium to Large Business).
+>
 > **Update (2026-07-06, GOV-1378):** South Africa's SARS ITR14 corporate
 > income tax return gains its fourth of five company-type Annexures,
 > `za/sars/corporate-income-tax-return-itr14-small-business` (Annexure D,
@@ -26,9 +55,9 @@
 > three smaller reversal/recoupment blocks) that are each comparable in
 > scope/complexity to a repeating container — see its own VERIFICATION.md
 > for the full scope rationale and several interpretive judgment calls
-> flagged for a future independent reviewer. This closes ITR14 Annexure D;
-> only Annexure E (Medium to Large Business) now remains as the sole
-> unmodelled ITR14 company-type Annexure.
+> flagged for a future independent reviewer. This closed ITR14 Annexure D;
+> Annexure E (Medium to Large Business) was the sole remaining unmodelled
+> ITR14 company-type Annexure at the time — since closed by GOV-1387 above.
 >
 > **Update (2026-07-06, GOV-1371):** The United Arab Emirates gains a second
 > Taxes-vertical document, `ae/fta/corporate-tax-registration`, sourced from
@@ -204,7 +233,7 @@
 | **Passport** | 14/15 (93%) | **AE** not yet modelled; **BR** newly modelled this cycle (`br/pf/passport-application`) |
 | **DMV** | 13/15 (87%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE, BR** not yet modelled |
 | **Business Formation** | 13/15 (87%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN); **KR, AE** not yet modelled; **BR** newly modelled this cycle (`br/sp/jucesp/cnpj-registration-dbe`) |
-| **Taxes** | 14/15 (93%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA Dormant/Micro-Business/Body-Corporate/Small-Business modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378; IE Form CT1, ZA's last ITR14 Annexure (Medium to Large Business) still open); **BR** not yet modelled (GOV-1295 Receita Federal IRPF candidate too fragmentary so far) |
+| **Taxes** | 14/15 (93%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 still open); **BR** not yet modelled (GOV-1295 Receita Federal IRPF candidate too fragmentary so far) |
 | **Visa** | 11/15 (73%) | **NL, ZA** — both confirmed dead ends (see below), not open work; **AE, BR** not yet modelled |
 | **National ID & Civic Documents** | 13/15 (87%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR** not yet modelled |
 
@@ -304,7 +333,7 @@ rather than authored against (see `GOV-1295`). Remaining gaps are sub-process
 expansions:
 
 - **India:** ITR-1 (SAHAJ), ITR-4 (SUGAM, presumptive business income), ITR-2 (capital gains/foreign income/multiple properties), and now ITR-3 (non-presumptive business/profession with full books of account, GOV-1254) are all modelled — the ITR-1/2/3/4 set is now complete. ITR-3 defers full re-derivation of Schedule S/House Property/Schedule CG/OS/itemised Chapter VI-A against its own workbook, since those schedules are structurally identical to the ones already published in full in `in/incometax/individual-tax-return-itr2` (see its VERIFICATION.md for the scope rationale).
-- **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's Dormant Company pathway (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`, GOV-1275), Body Corporate/Share Block Company pathway (`za/sars/corporate-income-tax-return-itr14-body-corporate`, GOV-1282), and Small Business pathway (`za/sars/corporate-income-tax-return-itr14-small-business`, GOV-1378) are now modelled — four of ITR14's five company-type Annexures, leaving only Annexure E (Medium to Large Business) open. Body Corporate/Share Block and Micro Business both model a full Balance Sheet, Income Statement, and Tax Computation (138 and 151 fields respectively); Small Business is structurally much larger (283 fields, guide §14 spanning 44 pages vs. 10-24 for the other three) — it adds Small Business Corporation eligibility, Contributed Tax Capital, Urban Development Zone, Company Structure, Multinational Entity group details, Reportable Arrangement, Dividends Declared, and a 33-field Additional Assessment Information section absent from the smaller siblings, plus a materially larger Balance Sheet/Income Statement and Tax Computation Debit/Credit Adjustments block. All four defer the repeating Share/Membership Register, Beneficial Owner details, Capital Gains schedule, PAYE Credits, Donations-organisation list, the s6quat(1A) foreign-tax-credit computation block, and the Enhanced Renewable Energy Deduction detail container; Small Business additionally defers, as a whole and explicitly disclosed, four large itemised Tax Computation sub-blocks (~84-item Special Allowances Not Claimed plus three smaller reversal/recoupment blocks) each comparable in scope to a repeating container (see each document's VERIFICATION.md). The remaining ITR14 Annexure E (Medium to Large Business) and IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remain unmodelled.
+- **Corporate/business tax:** SG IRAS Form C-S is now modelled (`sg/iras/corporate-income-tax-return-form-cs`, GOV-1261) — the simplified return for Singapore-incorporated companies with revenue ≤S$5M; it defers Form C-S (Lite), full Form C, and the Enterprise Innovation Scheme/R&D per-activity claim breakdowns (see its VERIFICATION.md). ZA SARS ITR14's full five-Annexure company-type set is now modelled: Dormant Company pathway (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`, GOV-1275), Body Corporate/Share Block Company pathway (`za/sars/corporate-income-tax-return-itr14-body-corporate`, GOV-1282), Small Business pathway (`za/sars/corporate-income-tax-return-itr14-small-business`, GOV-1378), and Medium to Large Business pathway (`za/sars/corporate-income-tax-return-itr14-medium-large-business`, GOV-1387). Body Corporate/Share Block and Micro Business both model a full Balance Sheet, Income Statement, and Tax Computation (138 and 151 fields respectively); Small Business is structurally much larger (283 fields, guide §14 spanning 44 pages) — it adds Small Business Corporation eligibility, Contributed Tax Capital, Urban Development Zone, Company Structure, Multinational Entity group details, Reportable Arrangement, Dividends Declared, and a 33-field Additional Assessment Information section absent from the smaller siblings; Medium to Large Business (Annexure E) is larger still (417 fields, guide §15 spanning 55 pages, the largest of the five) — it adds International, Foreign Exchange Gains/Losses, Foreign Dividends, Controlled Foreign Company, Double Taxation, STC Credits, Headquarter Company, Subsidiary Details, and Corporate Rules sections with no counterpart in any of the other four, plus a Balance Sheet (64 fields) and Income Statement (89 fields) splitting many lines by Local/Foreign and Connected/Non-Connected. All five defer the repeating Share/Membership Register, Beneficial Owner details, Capital Gains schedule, PAYE Credits, Donations-organisation list, the s6quat(1A) foreign-tax-credit computation block, and the Enhanced Renewable Energy Deduction detail container; Small Business and Medium to Large Business additionally defer, as a whole and explicitly disclosed, the same class of large itemised Tax Computation sub-blocks (~83-84-item Special Allowances Not Claimed plus related reversal/recoupment blocks) each comparable in scope to a repeating container, and Medium to Large Business further defers its wholly new, unbounded per-jurisdiction Transfer Pricing Received/Receivable, Paid/Payable, and Supporting Information containers (see each document's VERIFICATION.md). IE corporation tax (Form CT1, a much larger return — see "Known Gaps" below) remains the only open corporate-tax gap among jurisdictions already in the registry.
 - **CA:** only the 2022 tax year T1 General; more recent tax years not yet modelled.
 - **UAE Corporate Tax registration:** now modelled (`ae/fta/corporate-tax-registration`, GOV-1371) for the Legal Person registration pathway; Natural Person registration's own field set was not sourced this cycle (see its VERIFICATION.md).
 - **Secondary new-jurisdiction candidate (not opened yet):** Brazil's Receita Federal IRPF (`GOV-1295`) remains open in backlog pending either a stronger source or a narrower single-schedule scope — see its comment thread.
@@ -389,20 +418,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    corporate-return schema (its individual return is covered). SG IRAS is
    modelled via `sg/iras/corporate-income-tax-return-form-cs` (GOV-1261,
    Form C-S — the simplified return for companies with revenue ≤S$5M). ZA
-   SARS ITR14 is now modelled for its Dormant Company pathway
-   (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), its
-   Micro Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`,
-   GOV-1275), its Body Corporate/Share Block Company pathway
+   SARS ITR14 is now modelled in full across all five company-type
+   Annexures: Dormant Company pathway
+   (`za/sars/corporate-income-tax-return-itr14-dormant`, GOV-1268), Micro
+   Business pathway (`za/sars/corporate-income-tax-return-itr14-micro-business`,
+   GOV-1275), Body Corporate/Share Block Company pathway
    (`za/sars/corporate-income-tax-return-itr14-body-corporate`, GOV-1282,
-   guide pp.24-46, 138 fields), and its Small Business pathway
+   guide pp.24-46, 138 fields), Small Business pathway
    (`za/sars/corporate-income-tax-return-itr14-small-business`, GOV-1378,
-   guide pp.71-115, 283 fields) — four of ITR14's five company-type
-   Annexures. Only Annexure E (Medium to Large Business) now remains open —
-   the largest and last of the five, structurally comparable to Small
-   Business's own Balance Sheet/Income Statement/Tax Computation containers
-   plus size-specific disclosures (e.g. Transfer Pricing/thin-capitalisation
-   detail expected at higher turnover). IE Form CT1 was
-   scouted in a prior cycle and set aside as a poor next candidate: IRAS'
+   guide pp.71-115, 283 fields), and Medium to Large Business pathway
+   (`za/sars/corporate-income-tax-return-itr14-medium-large-business`,
+   GOV-1387, guide pp.115-169, 417 fields) — the largest and last of the
+   five, adding International, Foreign Exchange Gains/Losses, Foreign
+   Dividends, Controlled Foreign Company, Double Taxation, STC Credits,
+   Headquarter Company, Subsidiary Details, Corporate Rules, and
+   Transfer-Pricing/thin-capitalisation disclosure sections expected at
+   higher turnover, none of which have a counterpart in the four smaller
+   Annexures. This closes the ZA SARS ITR14 corporate-tax gap entirely. IE
+   Form CT1 was scouted in a prior cycle and set aside as a poor next
+   candidate: IRAS'
    own guide documents Form C-S with numbered line items and a worked
    tax-computation example across 13 pages, while Revenue's own "what's
    new" TDM guide for CT1 is 22 pages of change-log prose with no equivalent
@@ -473,4 +507,7 @@ Taxes vertical closed, global Taxes vertical 13/13), updated by
 GOV-1297/GOV-1335 (`ae/fta/vat-registration` authoring, United Arab
 Emirates opened as 14th jurisdiction), updated by GOV-1296/GOV-1342
 (`br/sp/jucesp/cnpj-registration-dbe` authoring, Brazil opened as 15th
-jurisdiction) | Standards Engineer
+jurisdiction), updated by GOV-1378 (`za/sars/corporate-income-tax-return-itr14-small-business`
+authoring, ZA ITR14 4th of 5 Annexures), updated by GOV-1387
+(`za/sars/corporate-income-tax-return-itr14-medium-large-business`
+authoring, ZA SARS ITR14 corporate-tax gap closed, 5th and last Annexure) | Standards Engineer
