@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **241 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **242 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-06, GOV-1504):** Mexico gains a fifth vertical,
+> `mx/sre/passport-application` (Passport) — the Secretaría de Relaciones
+> Exteriores' (SRE) Form OP-5, "Solicitud de pasaporte ordinario mexicano en
+> las Oficinas Consulares," covering first-time (primera vez), renewal
+> (canje), and replacement-for-loss/theft/damage (reposición) requests for an
+> adult applicant filed at a Mexican consulate abroad. Prior cycles (GOV-1414,
+> GOV-1428, GOV-1435) had explicitly deferred this vertical as "SRE passport
+> (in-person appointment only)" — this cycle re-examined that assumption
+> (every passport schema in this registry is ultimately an in-person
+> biometric process; what had been missing was a genuine downloadable form,
+> not an in-person-only disqualifier) and located Form OP-5 as a genuine,
+> directly downloadable (two independent official mirrors, `gob.mx` and
+> `sre.gob.mx`, both HTTP 200, no login/CAPTCHA/WAF), non-image text-layer
+> PDF. Recovered all 25 numbered fields, including the dense five-column
+> "Filiación" (physical-description) checkbox grid, via per-glyph coordinate
+> extraction to correctly attribute each option to its column — a full-page
+> keyword scan also confirmed the source's `civilStatus` checkbox set
+> genuinely offers only two options (Soltero(a)/Casado(a)), not omitted
+> viudo(a)/divorciado(a) values. This document deliberately does not model
+> the separate citas.sre.gob.mx online-appointment-booking flow's own
+> account-registration/slot-selection logistics, the minor/incapacitated
+> applicant path (Form OP-5's trámites B/D), or a differently-categorized
+> "Hoja de Datos Complementarios" supplementary sheet encountered during
+> research whose newer-looking trámite categorization was not merged into
+> this schema to avoid an inconsistent hybrid source — six other judgment
+> calls are disclosed in the document's own VERIFICATION.md for an
+> independent reviewer. This closes Mexico to 5/6 verticals (Business
+> Formation, Visa, Taxes, DMV, Passport); National ID (CURP, in-person
+> biometric only) remains the last open-but-weak backlog candidate.
 
 > **Update (2026-07-06, GOV-1497):** The Philippines gains a fifth vertical,
 > `ph/dfa/passport-application` (Passport) — the Department of Foreign
@@ -636,7 +666,7 @@
 
 | Vertical | Coverage | Genuinely open gap |
 |----------|----------|------------|
-| **Passport** | 15/17 (88%) | **AE, MX** not yet modelled; **PH** newly modelled this cycle (`ph/dfa/passport-application`, GOV-1497) — the field-name inventory was extracted from the Date and Time step's hidden-input payload without solving the reCAPTCHA gate or holding a real appointment slot, so select-option lists and required markers for the four applicant-data steps are inferred, not live-confirmed; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
+| **Passport** | 16/17 (94%) | **AE** not yet modelled; **MX** newly modelled this cycle (`mx/sre/passport-application`, GOV-1504) — SRE's own Form OP-5, a directly downloadable non-image text-layer PDF found after a prior "in-person appointment only" screening had deferred this vertical; **PH** modelled in a prior cycle (`ph/dfa/passport-application`, GOV-1497) — the field-name inventory was extracted from the Date and Time step's hidden-input payload without solving the reCAPTCHA gate or holding a real appointment slot, so select-option lists and required markers for the four applicant-data steps are inferred, not live-confirmed; **BR** modelled in a prior cycle (`br/pf/passport-application`) |
 | **DMV** | 14/17 (82%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB); **AE** screened (GOV-1474) — RTA's "Vehicle Renewal User Guide" is a strong, field-rich candidate but only confirmed via a third-party mirror, not the current `rta.ae` URL; strong open backlog candidate; **BR** not yet modelled; **PH** screened (GOV-1466) — LTO Form No. 21 exists but is only fetchable via a third-party CDN mirror since `lto.gov.ph` itself is Cloudflare-gated; open backlog candidate; **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 16/17 (94%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes; KR's own Section 3/4 trust-property and foreign-corporation pathways); **AE** not yet modelled (confirmed dead end this cycle's own prior pass, GOV-1474 — Basher login-gated, `app.invest.dubai.ae` 403s, `ded.ae` bot-mitigated); **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** modelled in a prior cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444); **KR** newly modelled this cycle (`kr/nts/corporation-establishment-and-business-registration`, GOV-1483), closing South Korea to 6/6 verticals |
 | **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
@@ -659,10 +689,10 @@
 
 ## By Vertical
 
-### Passport (15/17 jurisdictions)
+### Passport (16/17 jurisdictions)
 
-AU, BR, CA, DE, FR, GB, IE, IN, KR, NL, NZ, PH, SG, US, ZA all have at least one
-published Passport schema. India (`in/mea/passport-application-first-adult`,
+AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
+least one published Passport schema. India (`in/mea/passport-application-first-adult`,
 `in/mea/passport-reissue`), the Netherlands (`nl/rvig/passport-application`),
 New Zealand (`nz/dia/passport-application-first-adult`,
 `nz/dia/passport-renewal-adult`), and South Africa
@@ -694,6 +724,16 @@ schema, this document's select-option lists and required/requiredWhen
 markers for the four applicant-data steps are inferred (from field-name
 semantics, same-jurisdiction precedent, and corroborating DFA-affiliated
 documentation), not read from a live render. See its own VERIFICATION.md.
+**Mexico** (`mx/sre/passport-application`, GOV-1504) is new this cycle: the
+Secretaría de Relaciones Exteriores' Form OP-5, a directly downloadable,
+non-image text-layer PDF covering first-time/renewal/replacement requests at
+a consular office abroad. Two prior cycles (GOV-1428, GOV-1435) had
+explicitly deferred this vertical as "in-person appointment only"; this
+cycle found that disqualifier did not actually hold (every Passport schema
+in this registry is ultimately in-person/biometric) once a genuine
+downloadable form was located. See its own VERIFICATION.md for six disclosed
+judgment calls, including a coordinate-level re-derivation of the form's
+dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (14/17 jurisdictions)
 
@@ -971,7 +1011,7 @@ now closed.
 | **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **MX** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
