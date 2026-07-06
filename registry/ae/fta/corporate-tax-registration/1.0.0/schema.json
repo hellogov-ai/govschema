@@ -1,0 +1,928 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ae/fta/corporate-tax-registration",
+  "version": "1.0.0",
+  "title": "United Arab Emirates Corporate Tax Registration",
+  "description": "Application to register for Corporate Tax (CT) and obtain a Tax Registration Number (TRN) with the UAE Federal Tax Authority (FTA), filed online through the EmaraTax digital tax services platform. Covers entity classification, country of registration/incorporation and date of incorporation, the applicant's Corporate Tax Period, main trade license and business activity details, ownership, the local branch gate, registered address and contact details, the authorized signatory, and the final review declaration. This is a distinct EmaraTax application from VAT Registration (modelled separately as ae/fta/vat-registration). Models the Legal Person registration pathway that the source manual documents field-by-field; the Natural Person pathway is selectable via entityType but its own (simpler) field set was not sourced in this version — see VERIFICATION.md. Does not model per-branch/per-owner repeating detail beyond the first entry (GovSchema v0.3 has no array field type). It does not submit the application; the live EmaraTax platform (eservices.tax.gov.ae) and the Federal Tax Authority are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Tax Authority",
+    "abbreviation": "FTA",
+    "url": "https://tax.gov.ae/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://tax.gov.ae/Datafolder/Files/eservices/New%20CT/CT%20Registration%20Taxpayer%20User%20Manual%20EN%20V4.pdf",
+    "retrievedAt": "2026-07-06",
+    "documentRef": "Corporate Tax Registration – Taxpayer User Manual, EmaraTax, Version 4.0.0.0, dated 17 May 2023"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-06",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Source-derived reference schema authored field-by-field from the Federal Tax Authority's official 'Corporate Tax Registration – Taxpayer User Manual' (EmaraTax, v4.0.0.0, dated 17 May 2023), a 41-page screenshot-driven walkthrough of the live EmaraTax CT-registration wizard, downloaded directly from tax.gov.ae. Every field's label and its section membership were read directly off the manual's own EmaraTax UI screenshots (rendered from the PDF via pdfjs-dist + node-canvas, since the manual's extractable text layer is sparse step captions only). Picked up under this cycle's standing GovSchema Standard Research routine (GOV-1371) from the candidate the prior VAT Registration cycle (GOV-1335) explicitly flagged as a future sibling document. Status remains 'draft' pending an independent second reviewer's field-by-field pass; see the review-gate issue."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-06"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "entityType",
+      "label": "Entity Type",
+      "type": "enum",
+      "required": true,
+      "description": "The legal category and sub-type of the applicant, selected first because it determines which subsequent input fields the EmaraTax wizard displays. The 12 Legal Person values are read verbatim from the manual's own entity sub-type list (p.17). The three Natural Person values are asserted by direct analogy to the sibling ae/fta/vat-registration schema's confirmed Natural Person taxonomy on the same EmaraTax platform; only natural_person_partnership_or_heirs is independently confirmed for this specific document (p.22's trade-license carve-out list) — see VERIFICATION.md.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.16-17, Entity Details",
+      "validation": {
+        "enum": [
+          "legal_person_public_joint_stock_company",
+          "legal_person_private_company",
+          "legal_person_partnership",
+          "legal_person_foreign_company",
+          "legal_person_foreign_partnership",
+          "legal_person_club_association_society",
+          "legal_person_trust",
+          "legal_person_charity",
+          "legal_person_foundation",
+          "legal_person_federal_government_entity",
+          "legal_person_emirate_government_entity",
+          "legal_person_other",
+          "natural_person_individual",
+          "natural_person_partnership_or_heirs",
+          "natural_person_other"
+        ]
+      }
+    },
+    {
+      "name": "countryOfRegistrationOrIncorporation",
+      "label": "Country of Registration/Incorporation",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "entityType",
+        "in": [
+          "legal_person_public_joint_stock_company",
+          "legal_person_private_company",
+          "legal_person_partnership",
+          "legal_person_foreign_company",
+          "legal_person_foreign_partnership",
+          "legal_person_club_association_society",
+          "legal_person_trust",
+          "legal_person_charity",
+          "legal_person_foundation",
+          "legal_person_federal_government_entity",
+          "legal_person_emirate_government_entity",
+          "legal_person_other"
+        ]
+      },
+      "description": "Not applicable for the Natural Person pathway, which this version does not otherwise model beyond entityType selection (see VERIFICATION.md).",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.17, Entity Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfIncorporation",
+      "label": "Date of Incorporation",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "entityType",
+        "in": [
+          "legal_person_public_joint_stock_company",
+          "legal_person_private_company",
+          "legal_person_partnership",
+          "legal_person_foreign_company",
+          "legal_person_foreign_partnership",
+          "legal_person_club_association_society",
+          "legal_person_trust",
+          "legal_person_charity",
+          "legal_person_foundation",
+          "legal_person_federal_government_entity",
+          "legal_person_emirate_government_entity",
+          "legal_person_other"
+        ]
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.17, Entity Details"
+    },
+    {
+      "name": "corporateTaxPeriod",
+      "label": "Corporate Tax Period",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "entityType",
+        "in": [
+          "legal_person_public_joint_stock_company",
+          "legal_person_private_company",
+          "legal_person_partnership",
+          "legal_person_foreign_company",
+          "legal_person_foreign_partnership",
+          "legal_person_club_association_society",
+          "legal_person_trust",
+          "legal_person_charity",
+          "legal_person_foundation",
+          "legal_person_federal_government_entity",
+          "legal_person_emirate_government_entity",
+          "legal_person_other"
+        ]
+      },
+      "description": "The applicant's 12-month Corporate Tax financial period (e.g. 'January - December' in the rendered example), selected from a dropdown. The manual does not enumerate the dropdown's full list of period options, so this is modelled as free text rather than a fabricated enum — see VERIFICATION.md.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.17, Entity Details",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "tradeLicenseIssuingAuthority",
+      "label": "Trade License Issuing Authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "entityType",
+          "in": [
+            "legal_person_foreign_company",
+            "legal_person_foreign_partnership",
+            "legal_person_federal_government_entity",
+            "legal_person_emirate_government_entity",
+            "natural_person_partnership_or_heirs"
+          ]
+        }
+      },
+      "description": "The UAE mainland Emirate department or free-zone authority that issued the trade license. Not applicable for the entity types the source excludes (p.22): 'Natural Person - Partnership or Heir', 'Legal Person - Foreign Business' (interpreted here as covering both legal_person_foreign_company and legal_person_foreign_partnership — see VERIFICATION.md), 'Legal Person - Federal UAE Govt. Entity', and 'Legal Person - Emirate UAE Govt. Entity'.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21-22, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "tradeLicenseNumber",
+      "label": "Trade License Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "entityType",
+          "in": [
+            "legal_person_foreign_company",
+            "legal_person_foreign_partnership",
+            "legal_person_federal_government_entity",
+            "legal_person_emirate_government_entity",
+            "natural_person_partnership_or_heirs"
+          ]
+        }
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "licenseIssueDate",
+      "label": "License Issue Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "entityType",
+          "in": [
+            "legal_person_foreign_company",
+            "legal_person_foreign_partnership",
+            "legal_person_federal_government_entity",
+            "legal_person_emirate_government_entity",
+            "natural_person_partnership_or_heirs"
+          ]
+        }
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details"
+    },
+    {
+      "name": "licenseExpiryDate",
+      "label": "License Expiry Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "entityType",
+          "in": [
+            "legal_person_foreign_company",
+            "legal_person_foreign_partnership",
+            "legal_person_federal_government_entity",
+            "legal_person_emirate_government_entity",
+            "natural_person_partnership_or_heirs"
+          ]
+        }
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details"
+    },
+    {
+      "name": "legalNameEnglish",
+      "label": "Legal Name in English",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "legalNameArabic",
+      "label": "Legal Name in Arabic",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "tradeNameEnglish",
+      "label": "Trade Name in English",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "tradeNameArabic",
+      "label": "Trade Name in Arabic",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "businessActivityIndustry",
+      "label": "Industry",
+      "type": "string",
+      "required": true,
+      "description": "The industry classification selected in the 'Business Activities' modal. The applicant may add multiple business activities; this and the following four fields model the first/primary one, per this registry's convention for repeating groups (GovSchema v0.3 has no array field type).",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.23-24, Business Activities",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "businessActivityMainGroup",
+      "label": "Main Group",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.24, Business Activities",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "businessActivitySubGroup",
+      "label": "Sub-Group",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.24, Business Activities",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "businessActivityName",
+      "label": "Activity",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.24, Business Activities",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "businessActivityCode",
+      "label": "Activity Code",
+      "type": "string",
+      "required": true,
+      "description": "The activity classification code, populated by EmaraTax once Industry/Main Group/Sub-Group/Activity are selected.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.24, Business Activities",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "ownerType",
+      "label": "Owner Type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this owner is a Legal Person or a Natural Person. The applicant may add multiple owners; this and the following six fields model the first owner, per this registry's convention for repeating groups.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.25-26, Owner Details",
+      "validation": {
+        "enum": [
+          "legal_person",
+          "natural_person"
+        ]
+      }
+    },
+    {
+      "name": "ownerFirstNameEnglish",
+      "label": "First Name in English (Owner)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.26, Owner Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ownerLastNameEnglish",
+      "label": "Last Name in English (Owner)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.26, Owner Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ownerFirstNameArabic",
+      "label": "First Name in Arabic (Owner)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.26, Owner Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ownerLastNameArabic",
+      "label": "Last Name in Arabic (Owner)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.26, Owner Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ownershipStartDate",
+      "label": "Ownership Start Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.26, Owner Details"
+    },
+    {
+      "name": "ownerShareholdingPercentage",
+      "label": "Shareholding Percentage",
+      "type": "number",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.26, Owner Details",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "ownerCorporateTaxTrn",
+      "label": "Corporate Tax TRN (Optional)",
+      "type": "string",
+      "required": false,
+      "description": "The owner's own existing Corporate Tax Tax Registration Number, if the owner is already CT-registered.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.26, Owner Details",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "hasBranchesInUae",
+      "label": "Do you have branches in UAE?",
+      "type": "boolean",
+      "required": true,
+      "description": "Each branch requires its own trade license details, business activities, and owners list, structurally identical to the main entity's sub-forms above (p.27). Not modelled per-branch in this version — see VERIFICATION.md.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.27, Branch Details"
+    },
+    {
+      "name": "contactCountry",
+      "label": "Country",
+      "type": "string",
+      "required": true,
+      "description": "For Trade License holders, must match the trade license address; for natural persons, their residence.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactBuildingNameNumber",
+      "label": "Building Name & Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactStreet",
+      "label": "Street",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactArea",
+      "label": "Area",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "contactCity",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactEmirate",
+      "label": "Emirate",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "enum": [
+          "abu_dhabi",
+          "dubai",
+          "sharjah",
+          "ajman",
+          "umm_al_quwain",
+          "ras_al_khaimah",
+          "fujairah"
+        ]
+      }
+    },
+    {
+      "name": "contactMobileCountryCode",
+      "label": "Country Code (Mobile)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "contactMobileNumber",
+      "label": "Mobile Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "contactLandlineCountryCode",
+      "label": "Country Code (Landline)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "contactLandlineNumber",
+      "label": "Landline Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.30, Contact Details",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "authorizedSignatoryFirstNameEnglish",
+      "label": "Name in English (Authorized Signatory, first)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Inferred from the Authorized Signatory List's own summary-table column ('Name in English', p.33); the Add-modal's own top portion (above the UAE-residency gate) was not captured in the rendered manual — see VERIFICATION.md.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.33, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryLastNameEnglish",
+      "label": "Name in English (Authorized Signatory, last)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.33, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryNameArabic",
+      "label": "Name in Arabic (Authorized Signatory)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Inferred from the Authorized Signatory List's own summary-table column ('Name in Arabic', p.33) — see VERIFICATION.md.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.33, Authorized Signatory",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "authorizedSignatoryEmail",
+      "label": "Email ID (Authorized Signatory)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Inferred from the Authorized Signatory List's own summary-table column ('Email ID', p.33) — see VERIFICATION.md.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.33, Authorized Signatory",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "authorizedSignatoryIsUaeResident",
+      "label": "Is the authorized signatory a resident of the UAE?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory"
+    },
+    {
+      "name": "authorizedSignatoryEmiratesIdNumber",
+      "label": "Emirates ID Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatoryIsUaeResident",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "authorizedSignatoryEmiratesIdExpiryDate",
+      "label": "Emirates ID Expiry Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatoryIsUaeResident",
+        "equals": true
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory"
+    },
+    {
+      "name": "authorizedSignatoryPassportNumber",
+      "label": "Passport Number (Authorized Signatory)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "authorizedSignatoryPassportIssuingCountry",
+      "label": "Passport Issuing Country (Authorized Signatory)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "authorizedSignatoryPassportExpiryDate",
+      "label": "Passport Expiry Date (Authorized Signatory)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory"
+    },
+    {
+      "name": "authorizedSignatorySourceOfAuthorization",
+      "label": "Source of Authorization",
+      "type": "string",
+      "required": true,
+      "description": "The document establishing the signatory's authority to act on the applicant's behalf (e.g. 'Memorandum of Association' in the rendered example; a Power of Attorney is noted as an alternative for a Legal Person). The manual does not enumerate the dropdown's full list of options, so this is modelled as free text rather than a fabricated enum.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "declarantFirstNameEnglish",
+      "label": "First Name in English (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.37, Review and Declaration",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "declarantLastNameEnglish",
+      "label": "Last Name in English (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.37, Review and Declaration",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "declarantFirstNameArabic",
+      "label": "First Name in Arabic (Declaration)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.37, Review and Declaration",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "declarantLastNameArabic",
+      "label": "Last Name in Arabic (Declaration)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.37, Review and Declaration",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "declarantCountryCode",
+      "label": "Country Code (Declaration)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.37, Review and Declaration",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "declarantMobileNumber",
+      "label": "Mobile Number (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.37, Review and Declaration",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "declarantEmail",
+      "label": "Email (Declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.37, Review and Declaration",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "declarationAgreed",
+      "label": "I declare that all information provided on this application is true, accurate and complete to the best of my knowledge and belief",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        true
+      ],
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.38, Review and Declaration"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "licenseExpiryNotBeforeIssue",
+      "compare": {
+        "field": "licenseExpiryDate",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "licenseIssueDate"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "tradeLicenseCopy",
+      "label": "Copy of Trade License",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "entityType",
+          "in": [
+            "legal_person_foreign_company",
+            "legal_person_foreign_partnership",
+            "legal_person_federal_government_entity",
+            "legal_person_emirate_government_entity",
+            "natural_person_partnership_or_heirs"
+          ]
+        }
+      },
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf",
+          "application/msword"
+        ]
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.21, Main License Details ('Upload Copy of Trade License')"
+    },
+    {
+      "id": "authorizedSignatoryEmiratesIdCopy",
+      "label": "Copy of Emirates ID (Authorized Signatory)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "authorizedSignatoryIsUaeResident",
+        "equals": true
+      },
+      "belongsTo": "other",
+      "constraints": {
+        "maxBytes": 15728640,
+        "mediaTypes": [
+          "application/pdf",
+          "application/msword"
+        ]
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory ('Upload Copy of Emirates ID', max file size 15MB)"
+    },
+    {
+      "id": "authorizedSignatoryPassportCopy",
+      "label": "Copy of Passport (Authorized Signatory)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "other",
+      "constraints": {
+        "maxBytes": 15728640,
+        "mediaTypes": [
+          "application/pdf",
+          "application/msword"
+        ]
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.34, Authorized Signatory ('Upload Copy of Passport', max file size 15MB)"
+    },
+    {
+      "id": "authorizedSignatoryAuthorizationEvidence",
+      "label": "Evidence of Authorization for the Authorized Signatory (e.g. Memorandum of Association / Power of Attorney)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "other",
+      "constraints": {
+        "maxBytes": 15728640,
+        "mediaTypes": [
+          "application/pdf",
+          "application/msword"
+        ]
+      },
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.13 (Required Documents) and p.34, Authorized Signatory ('Evidence of Authorization may include a Power of Attorney in the case of a Legal Person')"
+    },
+    {
+      "id": "declarationAttestation",
+      "label": "Declaration attestation",
+      "category": "attestation",
+      "required": true,
+      "statement": "I declare that all information provided on this application is true, accurate and complete to the best of my knowledge and belief.",
+      "sourceRef": "FTA Corporate Tax Registration – Taxpayer User Manual (EmaraTax, v4.0.0.0, 17 May 2023) — p.38, Review and Declaration"
+    }
+  ],
+  "steps": [
+    {
+      "id": "entity_details",
+      "title": "Entity Details",
+      "fields": [
+        "entityType",
+        "countryOfRegistrationOrIncorporation",
+        "dateOfIncorporation",
+        "corporateTaxPeriod"
+      ],
+      "next": "identification_details"
+    },
+    {
+      "id": "identification_details",
+      "title": "Identification Details",
+      "fields": [
+        "tradeLicenseIssuingAuthority",
+        "tradeLicenseNumber",
+        "licenseIssueDate",
+        "licenseExpiryDate",
+        "legalNameEnglish",
+        "legalNameArabic",
+        "tradeNameEnglish",
+        "tradeNameArabic",
+        "businessActivityIndustry",
+        "businessActivityMainGroup",
+        "businessActivitySubGroup",
+        "businessActivityName",
+        "businessActivityCode",
+        "ownerType",
+        "ownerFirstNameEnglish",
+        "ownerLastNameEnglish",
+        "ownerFirstNameArabic",
+        "ownerLastNameArabic",
+        "ownershipStartDate",
+        "ownerShareholdingPercentage",
+        "ownerCorporateTaxTrn",
+        "hasBranchesInUae"
+      ],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact Details",
+      "fields": [
+        "contactCountry",
+        "contactBuildingNameNumber",
+        "contactStreet",
+        "contactArea",
+        "contactCity",
+        "contactEmirate",
+        "contactMobileCountryCode",
+        "contactMobileNumber",
+        "contactLandlineCountryCode",
+        "contactLandlineNumber"
+      ],
+      "next": "authorized_signatory"
+    },
+    {
+      "id": "authorized_signatory",
+      "title": "Authorized Signatory",
+      "fields": [
+        "authorizedSignatoryFirstNameEnglish",
+        "authorizedSignatoryLastNameEnglish",
+        "authorizedSignatoryNameArabic",
+        "authorizedSignatoryEmail",
+        "authorizedSignatoryIsUaeResident",
+        "authorizedSignatoryEmiratesIdNumber",
+        "authorizedSignatoryEmiratesIdExpiryDate",
+        "authorizedSignatoryPassportNumber",
+        "authorizedSignatoryPassportIssuingCountry",
+        "authorizedSignatoryPassportExpiryDate",
+        "authorizedSignatorySourceOfAuthorization"
+      ],
+      "next": "review_and_declaration"
+    },
+    {
+      "id": "review_and_declaration",
+      "title": "Review and Declaration",
+      "fields": [
+        "declarantFirstNameEnglish",
+        "declarantLastNameEnglish",
+        "declarantFirstNameArabic",
+        "declarantLastNameArabic",
+        "declarantCountryCode",
+        "declarantMobileNumber",
+        "declarantEmail",
+        "declarationAgreed"
+      ]
+    }
+  ]
+}
