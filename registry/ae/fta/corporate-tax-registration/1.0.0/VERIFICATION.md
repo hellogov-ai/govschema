@@ -11,266 +11,305 @@ published fields and flow and states the current verification claim honestly.
 - **`verification.lastVerifiedAt`:** `2026-07-06`
 
 The document was derived from a **directly-read primary source**: the
-Federal Tax Authority's own official Corporate Tax Registration user manual,
+Federal Tax Authority's own official Corporate Tax Registration user guide,
 retrieved as a PDF and read page-by-page via PDF-to-image rendering (its
 embedded text layer is sparse — mostly step captions, not the on-screen field
 labels themselves). It remains `draft`, not `verified`, pending an
 independent second reviewer's field-by-field pass.
 
-## Why this document exists
+## Why this document was re-authored (GOV-1374)
 
-This is a standing `GovSchema Standard Research` cycle (`GOV-1371`). The
-prior cycle that authored `ae/fta/vat-registration` (`GOV-1335`/`GOV-1297`)
-explicitly flagged, in its own `description` and in `CATALOG.md`'s "Known
-Gaps" section, that "the FTA's EmaraTax platform also publishes a separate
-Corporate Tax Self-Registration user manual (a distinct application from VAT
-Registration) — a candidate for a future sibling document." This cycle first
-scouted whether a genuinely new UAE vertical (Passport, DMV, Business
-Formation, or National ID — all still unmodelled for the UAE) had a
-sourceable, unauthenticated live wizard or manual:
-
-- **UAE Business Formation** (DED trade license / Invest in Dubai / Basher):
-  general web search surfaced only third-party summaries; the live
-  application flows (Invest in Dubai's e-Trader license, Basher) are
-  reachable only via Emirates ID/UAE Pass login, consistent with GOV-1289's
-  original WEAK/login-gated rating for this vertical.
-- **UAE National ID** (ICP Emirates ID issuance/renewal): the ICP portal
-  requires an Emirates ID number or UAE Pass login to start any application;
-  no field-by-field manual was found. Also login-gated.
-- **Brazil's Carteira de Identidade Nacional (CIN)** was also scouted as a
-  National-ID candidate for Brazil (unresearched since `GOV-1364`): a live
-  Playwright render of the São Paulo state portal
-  (`servicos.sp.gov.br/fcarta/...`) confirmed its "Iniciar" wizard redirects
-  to `sso.acesso.gov.br` (gov.br federal SSO, CPF-based login) before any
-  form field is shown — login-gated, not pursued further this cycle. Its
-  governing federal decree (Decreto 10.977/2022, read directly from
-  planalto.gov.br) does give a clean, gazetted field list (Art. 11/13/14),
-  but was set aside in favour of the stronger, already-precedented EmaraTax
-  sourcing shape below; it remains an open candidate for a future cycle.
-
-Given both new-vertical candidates for the UAE were login-gated and the CT
-Registration manual was already confirmed to exist as a plain, directly
-downloadable PDF (found via web search, no login/CAPTCHA), this cycle
-authored the explicitly-flagged CT Registration sibling document instead.
-This is the UAE's second Taxes-vertical document (alongside
-`ae/fta/vat-registration`), not a new vertical, but closes a real, precisely
-named gap.
+This version replaces an earlier authoring pass (GOV-1371, PR #231) that
+cited the FTA's **17-May-2023 "Corporate Tax Registration – Taxpayer User
+Manual", v4.0.0.0**. The GOV-1374 review gate's independent reviewer
+re-downloaded the FTA's live Corporate Tax Registration service page and
+found it now links a different, newer document — **"Corporate Tax
+Registration User Guide", Version 2.0, dated 1-May-2026** — which reflects a
+materially redesigned EmaraTax wizard. The reviewer's findings (posted on PR
+#231 and on this issue) were independently re-confirmed by re-downloading the
+v2.0 guide fresh and re-rendering every relevant page via the same
+`pdfjs-dist` + `node-canvas` technique, then re-authoring the schema
+field-by-field against it. Every field cited against the 2023 manual in the
+prior version was re-verified or superseded; none were carried over
+unverified.
 
 ## Source examined
 
 - **Document `(id, version)`:** `ae/fta/corporate-tax-registration` / `1.0.0`
 - **Spec version:** GovSchema `0.3.0`
 - **Authority:** Federal Tax Authority (FTA), United Arab Emirates
-- **Primary source URL:** <https://tax.gov.ae/Datafolder/Files/eservices/New%20CT/CT%20Registration%20Taxpayer%20User%20Manual%20EN%20V4.pdf>
-- **Official document title:** "Corporate Tax Registration – Taxpayer User
-  Manual", Version 4.0.0.0, dated 17 May 2023
+- **Primary source URL:** <https://tax.gov.ae/Datafolder/Files/Pdf/2026/Service-cards/CT/Corporate%20Tax%20Registration%20User%20Guide_EN%20-%20Updated%20version.pdf>
+- **Official document title:** "Corporate Tax Registration User Guide",
+  Version 2.0, dated 1-May-2026
 - **Retrieved / reviewed:** 2026-07-06
-- **Reviewer:** GovSchema Engineering (initial authoring source-review)
+- **Reviewer:** GovSchema Engineering (re-authoring source-review, GOV-1374)
 
-Note on version currency: the FTA's own document-control table (p.2) records
-four revisions (1.0 25-Jan-23 through 4.0 17-May-23, the last "Updates based
-on PwC/FTA Final Review"). Several other manual filenames were found in web
-search results without a visible version/date (e.g. a "V4" filename at a
-different path); the copy examined here is the one whose in-document control
-table could be read directly and is internally dated 17-May-23. A future
-reviewer should confirm no newer manual has since superseded this one — see
-"Path to a `verified` claim" below.
+Note on version currency: the guide's own document-control table (p.2)
+records a single entry — "2.0, 01-May-26, Federal Tax Authority, User Manual
+for EmaraTax Portal" — confirmed directly against the rendered screenshot.
+This is materially more recent (~2 months before this review) than the
+17-May-2023 manual the prior version of this document cited. A future
+reviewer should still confirm no even-newer guide has since superseded this
+one — see "Path to a `verified` claim" below; this is now a standing
+practice for every re-review of this document, not a one-time check.
 
 ## Access constraint and how it was worked around
 
-The manual is a plain, directly downloadable PDF (no login, no CAPTCHA) at
-the URL above, found via a targeted web search (the `tax.gov.ae` guides index
-page does not itself surface every manual). The PDF is **41 pages, mostly UI
-screenshots**: `pdfjs-dist`'s extractable text layer yields only ~17KB of
-step captions and instructional prose (e.g. "Select the Entity Type of your
-business from the list"), not the actual on-screen field labels visible in
-each screenshot (e.g. "Trade License Issuing Authority", "Shareholding
-Percentage"). Every field in this schema was therefore read directly off the
-**rendered screenshots**, not the text layer: each PDF page was rasterized to
-a PNG (`pdfjs-dist` + `node-canvas`, 2.6x scale) and read with Claude's own
-PDF-vision capability — the same technique used for `ae/fta/vat-registration`
-and this registry's other screenshot-driven guides (`za/sars` ITR14
-Annexures, `sg/iras/corporate-income-tax-return-form-cs`).
+The guide is a plain, directly downloadable PDF (no login, no CAPTCHA) at
+the URL above. It is **24 pages, mostly UI screenshots**: `pdfjs-dist`'s
+extractable text layer yields only step captions and instructional prose,
+not the actual on-screen field labels visible in each screenshot. Every
+field in this schema was therefore read directly off the **rendered
+screenshots**, not the text layer: each PDF page was rasterized to a PNG
+(`pdfjs-dist` + `node-canvas`, 2.6x scale) and read with Claude's own
+PDF-vision capability — the same technique used for the prior version of
+this document, `ae/fta/vat-registration`, and this registry's other
+screenshot-driven guides.
 
 ## What was confirmed directly (verbatim, from the rendered screenshots)
 
-Pages 1-41 were rendered and read in full; field labels and their
-step/section membership are cited in each field's `sourceRef` by page number:
+All 24 pages were rendered and read in full; field labels and their
+step/section membership are cited in each field's `sourceRef` by page
+number. Notable, directly-confirmed structural changes from the superseded
+2023 manual:
 
-- **p.13, Introduction / Required Documents:** the service overview (5
-  sections, ~30 minutes, free of charge) and the required-documents note,
-  which splits by registrant type — "In case registrant is a Natural
-  Person: Emirates ID/Passport of the Taxable person" vs. "In case
-  registrant is a Legal Person: Emirates ID/Passport of authorized
-  signatory, Proof of authorization for the authorized signatory". This is
-  the direct evidence for this version's Legal-Person-only scope decision
-  (see below).
-- **p.16-17, Entity Details:** the Entity Type dropdown; the full 12-item
-  Legal Person entity sub-type list, read verbatim from the "Note" callout
-  on p.17 (UAE Public Joint Stock Company, UAE Private Company incl. an
-  Establishment, UAE Partnership, Foreign Company, Foreign Partnership,
-  Club or Association or Society, Trust, Charity, Foundation, Federal
-  Government Entity, Emirate Government Entity, Other); Country of
-  Registration/Incorporation, Date of Incorporation, and Corporate Tax
-  Period.
-- **p.21-22, Main License Details:** Trade License Issuing Authority,
-  Number, Issue/Expiry Date, Legal/Trade Name in English and Arabic, and the
-  "Trade License is not applicable for the below entity sub types" carve-out
-  list (p.22): Natural Person - Partnership or Heir; Legal Person - Foreign
-  Business; Legal Person - Federal UAE Govt. Entity; Legal Person - Emirate
-  UAE Govt. Entity.
-- **p.23-24, Business Activities:** the Add Business Activity modal
-  (Industry, Main Group, Sub-Group, Activity, auto-populated Activity Code).
-- **p.25-26, Owner Details:** the Owner Type dropdown (confirmed
-  verbatim, p.26 text: "Owner Type can be a 'Legal Person' or a 'Natural
-  Person'"), First/Last Name in English and Arabic, Ownership Start Date,
-  Shareholding Percentage, and Corporate Tax TRN (Optional).
-- **p.27-28, Branch Details:** the "Do you have branches in UAE?" gate; the
-  instruction that each branch repeats the full trade-license/business
-  -activity/owner sub-form is read but **not** modelled per-branch (see
-  "What is out of scope" below).
-- **p.30-31, Contact Details:** the address block (Country, Building Name &
-  Number, Street, Area, City, Emirate dropdown) and phone fields (Mobile
-  and Landline, each with its own country code); the two source callouts
-  (address must match the trade license; do not use another company's
-  address). No email or P.O. Box field is present in this section, unlike
-  the sibling VAT Registration schema's Contact Details step — confirmed by
-  directly inspecting the rendered screenshot, not assumed.
-- **p.33-36, Authorized Signatory:** the Authorized Signatory List summary
-  table (columns: Name in English, Name in Arabic, ID Number, Email ID); the
-  "Is the authorized signatory a resident of the UAE?" gate; the Emirates ID
-  Number/Expiry Date/upload block (conditional on UAE residency); the
-  Passport Number/Issuing Country/Expiry Date/upload block (shown
-  unconditionally in the rendered "Yes, resident" example, alongside the
-  Emirates ID fields); the Source of Authorization dropdown (rendered
-  example value "Memorandum of Association") and its upload slot; and the
-  info callout confirming "Evidence of Authorization may include a Power of
-  Attorney in the case of a Legal Person."
-- **p.37-38, Review and Declaration:** the per-step review summary (not
-  modelled — echoes prior steps' own data, consistent with this registry's
-  convention); the Declaration block's own First/Last Name in English and
-  Arabic, Country Code, Mobile Number, and Email fields (rendered with
-  example values, confirming they are real, distinct inputs from the
-  Authorized Signatory block); and the verbatim attestation checkbox text.
+- **p.12, Entity Details:** the Entity Type dropdown is now a flat 9-value
+  list (`Natural Person`, `Legal Person - Incorporated`, `Legal Person -
+  Foreign Business`, `Legal Person - Club / Association / Society`, `Legal
+  Person - Charity`, `Legal Person - Federal Government Entity`, `Legal
+  Person - Emirate Government Entity`, `Legal Person - Other`,
+  `Partnership`) — transcribed verbatim from a zoomed re-render of the
+  dropdown, not paraphrased. Selecting `Legal Person - Incorporated` reveals
+  a dependent Entity Sub-Type dropdown with exactly 4 values (`UAE Private
+  Company (incl. an Establishment)`, `Public Joint Stock Company`,
+  `Foundation`, `Trust`), also transcribed from a zoomed re-render. `Trust`
+  and `Foundation` were top-level Entity Type values in the superseded 2023
+  manual; they are now Entity Sub-Type values nested under `Legal Person -
+  Incorporated`. The 2023 manual's two separate `Foreign Company`/`Foreign
+  Partnership` values are now a single `Legal Person - Foreign Business`.
+  `Partnership` moved from a Legal-Person sub-type to a top-level Entity
+  Type of its own.
+- **p.13, Entity Details - Continuity:** a new "Are you a Qualifying Public
+  Benefit Entity?" Yes/No field and a new "Upload Certificate of
+  Incorporation / Memorandum of Association" entity-level document upload,
+  neither present in the superseded 2023 manual. The Corporate Tax Period
+  dropdown is confirmed still showing only one example value
+  ("January - December"), never opened — free-text modelling retained. The
+  wizard now visibly auto-derives a First Corporate Tax Period Start/End
+  Date and a First Corporate Tax Return Filing Due Date from the Corporate
+  Tax Period selection (shown as read-only grey fields) — confirmed
+  directly and, being system-computed rather than applicant-supplied, not
+  modelled as fields.
+- **p.11, Instructions and Guidelines (Required Documents):** the full,
+  split-by-registrant-type required-documents list was read directly and is
+  the evidentiary basis for every document's `requiredWhen` gate in this
+  version, including the new `decreeLawDocument` (Federal/Emirate Government
+  Entity) and `cabinetDecisionDocument` (Qualifying Public Benefit Entity)
+  entries. Both the Natural Person list (item A2, "Trade Licenses") and the
+  Legal Person/Partnership list (item B4, "Main Trade License") call for a
+  trade license; only the Federal/Emirate Government Entity path
+  substitutes a Decree Law. This directly informs the trade-license
+  `requiredWhen` carve-out in this version, which is narrower than the
+  superseded 2023 manual's (see "Interpretive judgment calls" below).
+- **p.12, info box:** "Before proceeding to the next section, all mandatory
+  fields in the current section must be completed. Optional fields are
+  clearly marked as 'Optional'." This is direct, explicit textual evidence
+  used throughout this version to resolve required/optional for every field
+  not itself carrying a `(Optional)` suffix in its on-screen label — see
+  "Interpretive judgment calls" below.
+- **p.16, Main License Details – Adding Activities:** the Business Activity
+  modal now includes a "Sub Activity" field (rendered example "Tourism &
+  Recreation Consultants") in addition to Industry/Main Group/Sub-Group/
+  Activity/Activity Code — not present in the superseded 2023 manual.
+- **p.16-17, Adding Owners:** a new "Do any of the owners hold 25% or more
+  of the ownership?" Yes/No gate, not present in the superseded 2023
+  manual.
+- **p.17/p.19, Owners List:** the summary table's columns (`Owner Type`,
+  `Name in English`, `Name in Arabic`, `ID Number`, `Shareholding
+  Percentage`, `Actions`) were read directly and are the basis for this
+  version's `ownerNameEnglish`/`ownerNameArabic`/`ownerIdNumber` fields — a
+  single combined name pair and a single ID-number field, rather than the
+  superseded 2023 manual's first/last-name split (which had no owner ID
+  field at all).
+- **p.18, Adding Owner Details:** a new "Does the owner hold a valid
+  Emirates ID?" Yes/No gate (`ownerHasEmiratesId`) and a new "Do you want
+  your UAE Pass profile information to be retrieved?" Yes/No option (a
+  data-entry shortcut, not modelled as a field — see "What is out of scope"
+  below), neither present in the superseded 2023 manual.
+- **p.20, Contact Details:** fully re-confirmed and materially redesigned.
+  `Building Name & Number`/`Street`/`Area`/`Emirate` (superseded 2023
+  manual) are replaced by a generic `Address Line 1`–`Address Line 4` block
+  plus `City`. Two fields were added that the superseded version's own
+  VERIFICATION.md explicitly asserted were absent: **Email ID** and **P.O.
+  Box (Optional)**. This screenshot is fully visible (no crop/scroll issue),
+  so every field in this step is directly confirmed, not inferred.
+- **p.21, Authorized Signatory:** the "Add Authorized Signatory" modal is
+  **fully visible** in this guide — unlike the superseded 2023 manual, whose
+  equivalent screenshot began mid-scroll and forced the prior version to
+  infer Name/Email fields from a summary table instead. This version's
+  modal shows, in order: "Do you want your UAE Pass profile information to
+  be retrieved?" (not modelled, data-entry shortcut only), "Does the
+  authorized signatory hold a valid Emirates ID?" (`authorizedSignatoryHasEmiratesId`),
+  the "No" branch's Passport Number/Expiry Date/Issuing
+  Country/upload, First/Last Name in English and Arabic, Country Code +
+  Mobile Number, Email ID, and a new **Designation** field (rendered
+  example "CEO") not present in the superseded 2023 manual. No "Source of
+  Authorization" dropdown is visible in this modal (present in the
+  superseded 2023 manual) — see "Interpretive judgment calls" below.
+- **p.22, Review and Declaration:** the Declaration block's First/Last Name
+  in English and Arabic, Country Code, Mobile Number, Email, and Submission
+  Date (read-only, not modelled) fields are confirmed present, though this
+  page shows them as a read-only review echo rather than the original entry
+  form — see "Interpretive judgment calls" below regarding required/optional.
 
 ## Interpretive judgment calls (flagged for an independent reviewer)
 
-1. **Authorized Signatory's own Name/Email fields (p.33-34):** the rendered
-   manual's screenshot of the "Add Authorized Signatory" modal begins
-   mid-scroll, at "Is the authorized signatory a resident of the UAE?" — the
-   modal's own top portion (where Name/Email would be entered) was not
-   captured by any rendered page in this 41-page manual. This schema's
-   `authorizedSignatoryFirstNameEnglish`/`LastNameEnglish`/`NameArabic`/
-   `Email` fields are therefore inferred from the **Authorized Signatory
-   List** summary table's own column headers (p.33: "Name in English | Name
-   in Arabic | ID Number | Email ID"), which are directly confirmed, rather
-   than from the entry modal itself. A future reviewer should confirm the
-   modal's top portion directly (e.g. via a live EmaraTax render or a newer
-   manual revision) to verify these are exactly two name fields (First/Last)
-   rather than one combined field, and to check for any additional fields
-   (e.g. mobile number, designation) not visible in this manual's captured
-   screenshots.
-2. **"Legal Person - Foreign Business" (p.22) mapped to two enum values:**
-   the trade-license carve-out list names a single sub-type, "Foreign
-   Business", which does not exactly match either of p.17's two distinct
-   Legal Person sub-types "Foreign Company" and "Foreign Partnership". This
-   schema's `tradeLicenseIssuingAuthority`/etc. `requiredWhen` condition
-   excludes **both** `legal_person_foreign_company` and
-   `legal_person_foreign_partnership`, on the reasoning that neither a
-   foreign company nor a foreign partnership would hold a UAE trade
-   license. A future reviewer should confirm this reading against the live
-   EmaraTax wizard directly.
-3. **Natural Person `entityType` enum values (`natural_person_individual`,
-   `natural_person_other`):** only `natural_person_partnership_or_heirs` is
-   independently confirmed for this specific document (via the p.22
-   trade-license carve-out list's own text, "Natural Person - Partnership or
-   Heir"). The other two values are asserted by direct analogy to the
-   sibling `ae/fta/vat-registration` schema's confirmed Natural Person
-   taxonomy (`natural_person_individual`, `natural_person_partnership_or_heirs`,
-   `natural_person_others`) on the same EmaraTax platform, since this
-   manual's own screenshots never open the Entity Type dropdown to show its
-   Natural Person branch. A future reviewer should confirm this against a
-   live render.
-4. **`corporateTaxPeriod` and `authorizedSignatorySourceOfAuthorization`
-   modelled as free text, not enums:** both are dropdown fields in the live
-   wizard, but the manual's screenshots only ever show one selected example
-   value each ("January - December"; "Memorandum of Association") and never
-   open the dropdown to show its full option list. Modelling either as a
-   fabricated enum would violate this registry's "Spec precision over
-   cleverness" lens more than modelling them as free text with the known
-   example documented in `description`.
+1. **Untagged fields treated as mandatory:** per the guide's own explicit
+   instruction (p.12, quoted above), this version treats every field
+   without an on-screen `(Optional)` suffix as required. This is a change
+   from the prior version's approach (which inferred optionality for some
+   untagged fields, e.g. Landline Number and Declaration's Arabic name
+   fields, based on the 2023 manual's own layout). Applying this rule here
+   makes `contactAddressLine2`/`3`/`4`, `contactLandlineCountryCode`/
+   `Number`, and `declarantFirstNameArabic`/`LastNameArabic` all required —
+   in particular, a mandatory landline number alongside a mandatory mobile
+   number, and a mandatory second/third/fourth address line, are somewhat
+   unusual real-world requirements. A future reviewer should confirm these
+   against a live EmaraTax render rather than relying solely on the
+   guide's general instructional text.
+2. **Owner identity fields (`ownerNameEnglish`, `ownerNameArabic`,
+   `ownerIdNumber`):** the Owner Details entry-modal screenshot (p.18)
+   begins mid-scroll, at the Emirates ID gate — its own Name/ID-number
+   input fields (above what's captured) were not directly visible in any
+   rendered page of this 24-page guide. These three fields are instead
+   read from the Owners List **summary table's own column headers** (p.17/
+   p.19: "Name in English | Name in Arabic | ID Number | Shareholding
+   Percentage"), which are directly confirmed. A future reviewer should
+   confirm the modal's own field labels directly (e.g. via a live EmaraTax
+   render), and in particular check whether the live wizard splits
+   `ownerIdNumber` into separate Emirates-ID/passport fields the way the
+   Authorized Signatory section does, or genuinely keeps it as one field.
+3. **Authorized Signatory's Emirates ID fields
+   (`authorizedSignatoryEmiratesIdNumber`/`ExpiryDate`):** the rendered
+   "Add Authorized Signatory" modal (p.21) shows only the "No" (does not
+   hold a valid Emirates ID) branch, with its Passport fields. The "Yes"
+   branch's own Emirates ID Number/Expiry Date field labels are asserted by
+   direct analogy to this registry's established Emirates-ID-field pattern
+   (e.g. the Owner Details/Authorized Signatory sections of sibling EmaraTax
+   schemas), not independently confirmed in this guide. A future reviewer
+   should confirm this branch against a live render.
+4. **Trade-license `requiredWhen` carve-out narrowed:** the superseded 2023
+   manual excluded Natural-Person-Partnership-or-Heir, both Foreign
+   sub-types, and both Government-Entity sub-types from the trade-license
+   requirement. This version's required-documents list (p.11) shows
+   **both** the Natural Person and the Legal Person/Partnership document
+   lists calling for a trade license, with only the Federal/Emirate
+   Government Entity path substituting a Decree Law — so this version
+   excludes only `legal_person_federal_government_entity` and
+   `legal_person_emirate_government_entity`. This is a directly-evidenced,
+   narrower carve-out, not carried over from the prior version by default;
+   a future reviewer should confirm against a live render, in particular
+   for `legal_person_foreign_business` and `partnership`.
+5. **`authorizedSignatorySourceOfAuthorization` and its evidence field
+   dropped as a standalone free-text field:** the superseded 2023 manual
+   modelled a "Source of Authorization" dropdown (rendered example
+   "Memorandum of Association") in the Authorized Signatory section. No
+   such dropdown is visible anywhere in this guide's fully-rendered
+   Authorized Signatory modal (p.21). The corresponding required document
+   (`authorizedSignatoryAuthorizationEvidence`, required per p.11's
+   "Proof of Authorization of Authorised Signatories") is retained, since
+   it is directly evidenced by the required-documents list, but no
+   dedicated upload-slot screenshot for it was found in this 24-page guide
+   (unlike Passport/Certificate-of-Incorporation, which do have visible
+   upload slots) — its file-format/size constraints are therefore asserted
+   generically (`application/pdf`) rather than confirmed. A future reviewer
+   should confirm both the absence of a Source-of-Authorization field and
+   this document's actual upload constraints against a live render.
+6. **`decreeLawDocument` and `cabinetDecisionDocument` constraints:**
+   both documents are directly evidenced as required by the p.11
+   required-documents list, but neither has a dedicated upload-slot
+   screenshot rendered anywhere in this guide (only named in the
+   Instructions and Guidelines page's bulleted list). Their file-format/size
+   constraints are asserted generically (`application/pdf`, no explicit
+   size limit) rather than confirmed against an actual upload UI. A future
+   reviewer should confirm against a live render.
 
 ## What is out of scope for v1.0.0
 
 - **Natural Person registration's own field set:** `entityType` is
-  selectable as any of the three Natural Person values, but this version
-  does not model the Natural-Person-specific flow beyond that selection.
-  The manual's own required-documents note (p.13) implies this pathway is
-  materially simpler than the Legal Person one modelled here (Emirates
-  ID/Passport of the Taxable Person directly, with no separate Authorized
-  Signatory/Owner/Business-License block), but no screenshots of that
-  distinct flow were found in this 41-page manual — only the fully
-  documented Legal Person walkthrough (p.15-38) is modelled beyond the
-  Entity Type field itself. This is a disclosed scope decision, not an
-  oversight, matching this registry's precedent of deferring unsourced
-  sub-flows (e.g. `in/incometax/individual-tax-return-itr3`'s deferred
-  schedules).
-- **Per-branch and per-owner repeating detail beyond the first entry:** the
-  manual's Owner Details and Branch Details blocks are each an
-  add-another-row UI; GovSchema v0.3's field model is flat with no
+  selectable as `natural_person`, but this version does not model a
+  Natural-Person-specific flow beyond that selection, for the same reason
+  as the prior version: no screenshots of a distinct Natural Person flow
+  were found in this 24-page guide (every rendered example uses `Legal
+  Person - Incorporated`). This is a disclosed scope decision, matching
+  this registry's precedent of deferring unsourced sub-flows.
+- **UAE Pass / Emirates ID auto-retrieval options:** both the Owner Details
+  modal ("Do you want your UAE Pass profile information to be retrieved?")
+  and the Authorized Signatory modal (same question) offer a data-entry
+  shortcut that auto-fills fields from a UAE Pass-linked Emirates ID. This
+  is a UI/UX interaction mode, not itself applicant-supplied data distinct
+  from the underlying Name/ID/Contact fields already modelled, so it is not
+  modelled as a separate field — consistent with this registry's convention
+  of modelling only the data itself, not the entry method.
+- **Per-branch, per-owner, and per-business-activity repeating detail
+  beyond the first entry:** GovSchema v0.3's field model is flat with no
   array/repeating-group type yet (`spec/v0.3/SPEC.md` §6.1). Each is
-  modelled as a single first/primary entry, the same precedent
-  `ae/fta/vat-registration` and `kr/moj/visa-application` established for
-  their own repeating tables.
-- **Full per-branch sub-form:** Branch Details (p.27) states each branch
-  requires its own complete trade-license/business-activity/owner
+  modelled as a single first/primary entry, the same precedent this
+  registry has established for other repeating tables.
+- **Full per-branch sub-form:** Local Branch Details (p.19) states each
+  branch requires its own complete trade-license/business-activity/owner
   sub-structure, structurally identical to the main entity's — not
   duplicated here beyond the `hasBranchesInUae` gate itself.
 - **VAT Registration and Excise Tax registration:** both are separate
-  EmaraTax applications with their own user manuals (VAT Registration is
+  EmaraTax applications with their own user guides (VAT Registration is
   modelled separately as `ae/fta/vat-registration`), out of scope for this
-  document (noted in `description`).
-- **Review-summary step (p.37):** the Review-and-Declaration step's own
+  document.
+- **Review-summary step (p.22):** the Review-and-Declaration step's own
   read-only summary tables (echoing every prior step's entered values) are
   not modelled as fields — they carry no new data, consistent with this
   registry's convention of modelling only applicant-supplied data.
-- **Submission Date field (p.37):** shown pre-filled/read-only in the
-  Declaration block's rendered example; not applicant-supplied, so not
-  modelled as a field.
+- **First Corporate Tax Period Start/End Date and First Corporate Tax
+  Return Filing Due Date, and Submission Date:** shown as read-only,
+  system-computed fields in the rendered screenshots (p.13, p.22); not
+  applicant-supplied, so not modelled as fields.
 
 ## Conformance exercise
 
 `conformance/ae/fta/corporate-tax-registration/1.0.0/application-packet.json`
-models a fabricated Legal Person - UAE Private Company applicant (a Dubai
-mainland spice trader) with a trade license, a single natural-person owner
-at 100% shareholding, no branches, and a UAE-resident authorized signatory —
-exercising the Main License Details block, the Emirates ID block, and the
-always-required Passport block together. The generator script additionally
-re-evaluates the `requiredWhen` conditions against three fabricated negative
-branches (`entityType=natural_person_individual`,
-`authorizedSignatoryIsUaeResident=false`, and
-`entityType=legal_person_foreign_company`) and confirms each correctly turns
-off its gated fields — this caught no defects, but is recorded as a
-from-scratch check independent of the schema's own authoring pass. Re-run
-with `node tools/validate.mjs` and `node tools/validate-ajv.mjs` against
+models a fabricated Legal Person - Incorporated (UAE Private Company)
+applicant (a Dubai mainland spice trader) with a trade license, a single
+natural-person owner holding 100% (Emirates-ID-holding) and 25%+ of the
+ownership, no branches, and a non-UAE-resident-by-Emirates-ID authorized
+signatory (exercising the Passport block). A standalone check script
+re-evaluated every `requiredWhen`/`documents[].requiredWhen` condition
+against the primary scenario and four alternate branches
+(`entityType=natural_person`, `entityType=legal_person_federal_government_entity`,
+`isQualifyingPublicBenefitEntity=true`, `authorizedSignatoryHasEmiratesId=true`)
+and confirmed each correctly turns its gated fields/documents on or off — see
+`application-packet.txt` for the full results. Re-run with
+`node tools/validate.mjs` and `node tools/validate-ajv.mjs` against
 `schema.json` (both pass, GovSchema `0.3.0`).
 
 ## Path to a `verified` claim (next step)
 
 To advance this document to `status: verified`, a reviewer needs to:
 
-1. Independently re-fetch the manual PDF and re-render/re-read each cited
+1. Independently re-fetch the guide PDF and re-render/re-read each cited
    page, confirming every field `sourceRef` against the actual screenshot.
-2. Confirm the FTA has not since published a newer manual revision
-   superseding v4.0.0.0 (17 May 2023) — EmaraTax's UI evolves and a newer
-   manual version may exist even though this was the latest version found
-   this cycle.
-3. Resolve the four interpretive judgment calls above against a live
-   EmaraTax render if credentialed access is available, or a newer manual
-   revision if one surfaces.
+2. Confirm the FTA has not since published a newer guide revision
+   superseding v2.0 (1-May-2026) — this is now a standing check for every
+   re-review of this document, given it has already happened once.
+3. Resolve the six interpretive judgment calls above against a live
+   EmaraTax render if credentialed access is available, or a newer guide
+   revision if one surfaces. Judgment call 1 (untagged-fields-mandatory) in
+   particular has a broad blast radius across the Contact Details and
+   Review and Declaration steps and would benefit most from independent
+   confirmation.
 
 ## Re-verification
 
-Per the practice's **Cadence**, `nextReviewBy` is set to **2027-01-01** (~6
-months). Re-check the source, and confirm no newer manual revision has been
-published, on or before that date and on any `source.url` change.
+Per the practice's **Cadence**, `nextReviewBy` is set to **2026-11-01**
+(~4 months, shorter than this registry's usual ~6-month cadence, given this
+document has already been found stale once within months of its first
+authoring). Re-check the source, and confirm no newer guide revision has
+been published, on or before that date and on any `source.url` change.
