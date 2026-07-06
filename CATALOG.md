@@ -4,8 +4,46 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **232 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **236 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-06, GOV-1457):** The Philippines gains its second
+> vertical, `ph/comelec/overseas-voter-registration` (National ID & Civic
+> Documents), sourced from the Commission on Elections' (COMELEC) own public,
+> unauthenticated **iRehistro for Overseas Voters** web tool
+> (irehistro.comelec.gov.ph) — a live application-form generator that walks
+> an applicant through OVF No. 1 (Revised 2025) and produces a printable,
+> QR-coded PDF for personal submission at a Philippine post, per Sec. 6 of
+> the Overseas Voting Act (RA 10590). `comelec.gov.ph`'s own root domain
+> returns a Cloudflare challenge to a plain fetch, but the `irehistro`
+> subdomain and the site's own PDF-attachment paths were both directly
+> reachable and used to cross-check the wizard's DOM field-by-field against
+> the official gazetted form; documentary requirements (passport, or a
+> Post-issued Certification in its absence, plus a Seafarer's proof or Dual
+> Citizenship certificate depending on status abroad) were corroborated from
+> the Philippine Embassy in Berlin's own official requirements page. This
+> `GovSchema Standard Research` cycle (GOV-1457) picked this candidate first
+> among the registry's remaining voter-registration gaps: the UAE has no
+> general voter-registration process (not attempted, likely N/A), Brazil's
+> TSE electoral register remains suspended through 2026-11-03 (confirmed
+> dead end by GOV-1400, not re-attempted), and Mexico's INE credencial para
+> votar requires an in-person biometric appointment (not attempted, left as
+> an open backlog candidate). Six interpretive judgment calls are disclosed
+> in the document's own VERIFICATION.md, including: this v1.0.0 models only
+> OVF1's "Registration" application type (iRehistro's DOM does not expose
+> the same form's other seven application types — Certification,
+> Reactivation, Reinstatement, Change of Address, Recapture of Biometrics,
+> Transfer, Correction of Entry); `registeredCityMunicipality` is modeled as
+> an open string rather than an enum because the live tool populates its
+> own option list via a per-province AJAX call not enumerable from the
+> static page; and `citizenship` uses GSP-0018's `fieldRole: eligibility` /
+> `eligibleValues` mechanism rather than a narrowed enum, since the live
+> control blocks but does not remove a NON-FILIPINO selection. The
+> Philippines' remaining four verticals (DMV, Taxes, Visa, Passport) are
+> open backlog candidates for a future cycle; PhilSys national-ID
+> registration and LTO driver's-licence/vehicle-registration were this
+> cycle's designated fallback candidates but were not needed once COMELEC's
+> iRehistro tool proved directly reachable and well-sourced.
+>
 > **Update (2026-07-06, GOV-1444):** The Philippines opens as the registry's
 > 17th jurisdiction via `ph/bir/tin-application-corporations-partnerships`
 > (Business Formation), sourced from the Bureau of Internal Revenue's own
@@ -445,7 +483,7 @@
 | **Business Formation** | 15/17 (88%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes); **KR, AE** not yet modelled; **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** newly modelled this cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444), opening the Philippines as the registry's 17th jurisdiction |
 | **Taxes** | 16/17 (94%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** not yet modelled (new this cycle, not screened) |
 | **Visa** | 13/17 (76%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** not yet modelled (new this cycle, not screened); **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
-| **National ID & Civic Documents** | 13/17 (76%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX, PH** not yet modelled (MX's CURP candidate is in-person/biometric-only; **PH** new this cycle, not screened) |
+| **National ID & Civic Documents** | 14/17 (82%) | none genuinely open (SG voter-reg is a confirmed non-gap); **AE, BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only); **PH** newly modelled this cycle (`ph/comelec/overseas-voter-registration`, GOV-1457) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
 > (generated by GOV-1221) showed Passport as 9/13 with ZA, IN, and NL listed
@@ -663,11 +701,16 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (13/17 jurisdictions)
+### National ID & Civic Documents (14/17 jurisdictions)
 
-Every jurisdiction except the United Arab Emirates, Brazil, Mexico, and (new
-this cycle) the Philippines has at
-least one National ID and/or voter-registration schema. Mexico's CURP
+Every jurisdiction except the United Arab Emirates, Brazil, and Mexico has at
+least one National ID and/or voter-registration schema. **The Philippines**
+gained its first National ID & Civic Documents schema this cycle
+(GOV-1457): `ph/comelec/overseas-voter-registration`, sourced from
+COMELEC's public iRehistro web tool (OVF No. 1, Registration application
+type only — see that document's own VERIFICATION.md for the seven other
+application types left out of scope, and for why `registeredCityMunicipality`
+is modelled as an open string rather than an enum). Mexico's CURP
 national-ID candidate requires an in-person biometric appointment and was not
 sourceable this cycle (GOV-1393) — an open backlog candidate, not a dead end.
 Brazil's Carteira de Identidade Nacional (CIN) candidate remains an open but
@@ -706,7 +749,7 @@ now closed.
 | **MX** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PH** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **PH** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
