@@ -1,0 +1,427 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "id/imigrasi/passport-application-first-adult",
+  "version": "1.0.0",
+  "title": "Indonesia First-Time Adult Passport Application (M-Paspor)",
+  "description": "Apply for a first-time (never previously held) ordinary electronic passport (Paspor Biasa Elektronik) as an adult applicant, through the Direktorat Jenderal Imigrasi's (Directorate General of Immigration) own M-Paspor mobile application — Indonesia's second Passport-vertical document and the jurisdiction's fourth vertical overall (after Business Formation, DMV, and Taxes; see id/bkpm/oss-nib-registration-individual-umk, id/korlantas/international-driving-permit-registration, id/djp/annual-individual-income-tax-return-1770s). Sourced from the app's own official 'User Guide M-Paspor' (V.1.0, Juni 2026), a screenshot-driven, field-by-field walkthrough hosted unauthenticated on a regional Ditjen Imigrasi subdomain (batam.imigrasi.go.id), no login/CAPTCHA/WAF gate. Covers an adult (Dewasa) applicant applying for the first time (has never held an ordinary/'hijau' passport before) through either the standard (Reguler) or accelerated (Percepatan) service tier, which the guide's own screenshots confirm share one identical downstream form. Does not model: the child/minor (Anak-anak) applicant pathway; the renewal/replacement pathway for an applicant who has previously held a passport (habis masa berlaku / penuh / hilang / rusak); or the payment, reschedule, history, profile, and notification menus described later in the same guide (see VERIFICATION.md for the full scope rationale). This document does not submit the application; the live M-Paspor application and the Direktorat Jenderal Imigrasi are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ID",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Directorate General of Immigration (Direktorat Jenderal Imigrasi)",
+    "abbreviation": "Ditjen Imigrasi",
+    "url": "https://www.imigrasi.go.id/"
+  },
+  "process": {
+    "type": "application",
+    "language": "id-ID"
+  },
+  "source": {
+    "url": "https://batam.imigrasi.go.id/assets/resources/files/M-Paspor_UserGuide_V3.pdf",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "User Guide M-Paspor, V.1.0 (Juni 2026) — published by Ditjen Imigrasi, mirrored unauthenticated on the Batam regional immigration office's own subdomain"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "Opens Indonesia's second Passport-adjacent document and closes its Passport vertical (previously an open, unscreened backlog candidate flagged across several prior cycles, most recently GOV-1560/GOV-1567). A prior cycle (GOV-1567) confirmed the main imigrasi.go.id domain's own copy of this guide is CloudFront-blocked, but this Batam regional mirror is not (HTTP 200, confirmed again this cycle). Status remains 'draft', not 'verified': the guide is a screenshot walkthrough of the live app, not the live app itself, and the live app requires full account registration (name/DOB/email/phone/password + email OTP) plus a CAPTCHA-gated login before any application screen is reachable, which this review did not attempt (to avoid creating a real account/application record in a government system). See VERIFICATION.md for the full candidate-screening record and every disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "serviceSpeed",
+      "label": "Jenis Permohonan",
+      "type": "enum",
+      "required": true,
+      "description": "Service tier: standard processing (Reguler) or accelerated same-priority-queue processing (Percepatan, subject to a published Rp1,000,000 surcharge and available only at immigration offices with remaining accelerated-service quota). The guide's own screenshots interchange the two tiers' labels across steps 2-7 while showing byte-identical form layouts, confirming both tiers share this document's fields (see VERIFICATION.md).",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.2 'Jenis Permohonan Paspor'",
+      "validation": {
+        "enum": ["REGULER", "PERCEPATAN"]
+      }
+    },
+    {
+      "name": "applicantCategory",
+      "label": "Untuk siapa permohonan paspor ini?",
+      "type": "enum",
+      "required": true,
+      "description": "Dewasa = an Indonesian citizen (WNI) aged over 17, or already married regardless of age. Anak-anak = a WNI under 17 and not yet married. This document fully models only the Dewasa pathway; the guide states the Anak-anak pathway requires an additional, not-separately-walked identity document for a parent/guardian (see the parentIdentityForMinor document entry and VERIFICATION.md).",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.3 'Kuesioner Layanan paspor', 'Untuk siapa permohonan paspor ini?'",
+      "validation": {
+        "enum": ["DEWASA", "ANAK_ANAK"]
+      }
+    },
+    {
+      "name": "immigrationOffice",
+      "label": "Kantor Imigrasi",
+      "type": "string",
+      "required": true,
+      "description": "The immigration office (Kantor Imigrasi) or its partner service counter (e.g. a mall-based service point) where the applicant will attend in person and collect the finished passport. The live app surfaces this as a location-based, dynamically-ranked list (nearest-first, with distance shown), not a fixed catalogue, so it is modelled as an open string rather than an enum.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.4 'Pilih Lokasi Kantor Imigrasi'",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "passportType",
+      "label": "Jenis Paspor",
+      "type": "enum",
+      "required": true,
+      "description": "Electronic passport product and validity period. The guide's dropdown shows exactly these two options for a Paspor Biasa Elektronik; it does not offer a non-electronic ('Paspor Biasa') product in this screen.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.5 'Pilih Jenis Paspor'",
+      "validation": {
+        "enum": [
+          "PASPOR BIASA ELEKTRONIK LAMINASI 5 TAHUN",
+          "PASPOR BIASA ELEKTRONIK LAMINASI 10 TAHUN"
+        ]
+      }
+    },
+    {
+      "name": "applicantFullName",
+      "label": "Nama Pemohon",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's full legal name. The live field's own placeholder text is illustrative ('Cth: Charlize Scavendish'), not a real applicant value.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.6 'Isi Formulir Verifikasi', field 'Nama Pemohon'"
+    },
+    {
+      "name": "nik",
+      "label": "Masukkan NIK",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Applicant's 16-digit Nomor Induk Kependudukan (National Identity Number), as printed on their electronic KTP. The live field shows a '0/16' character counter, confirming the maximum/expected length.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.6 'Isi Formulir Verifikasi', field 'Masukkan NIK'",
+      "validation": {
+        "pattern": "^[0-9]{16}$"
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Tanggal Lahir",
+      "type": "date",
+      "required": true,
+      "description": "Applicant's date of birth, entered in the live field's own dd/mm/yyyy format.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.6 'Isi Formulir Verifikasi', field 'Tanggal Lahir'"
+    },
+    {
+      "name": "gender",
+      "label": "Jenis Kelamin",
+      "type": "enum",
+      "required": true,
+      "description": "Dropdown. Both of the guide's own worked-example values are directly confirmed on-screen: 'Pria' (male, in the 'Ubah Data Pemohon' recap, Gambar 3.11) and 'Perempuan' (female, in the 'Pemohon dengan Paspor Lama' recap, Gambar 3.7). No further values are shown, so this enum is scoped to exactly those two confirmed values rather than asserted as exhaustive.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.6 'Isi Formulir Verifikasi', field 'Jenis Kelamin'; confirmed values from Gambar 3.7 'Pemohon dengan Paspor Lama' ('Perempuan') and Gambar 3.11 'Ubah Data Pemohon' ('Pria')",
+      "validation": {
+        "enum": ["Pria", "Perempuan"]
+      }
+    },
+    {
+      "name": "civilStatus",
+      "label": "Status Sipil",
+      "type": "string",
+      "required": true,
+      "description": "Marital/civil status dropdown. No option list or worked example value is legible anywhere in the guide (the field is shown only in its unselected placeholder state, '-- Pilih Status Sipil'), so this is modelled as an open string rather than a fabricated enum.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.6 'Isi Formulir Verifikasi', field 'Status Sipil'",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "hadPriorRegularPassport",
+      "label": "Apakah anda sudah pernah memiliki paspor biasa (hijau)?",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant has ever previously held an ordinary ('hijau'/green-cover) passport; service/diplomatic passports do not count, per the source's own note. This document fully models only the BELUM (first-time applicant) pathway. When SUDAH, the guide's own next screens (condition of the old passport, its number, and a photo of its data page — Gambar 3.8-3.9) determine a replacement application instead; those screens and their fields are out of scope for this v1.0.0 (see VERIFICATION.md).",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.8 'Kuesioner apakah sudah memiliki paspor'",
+      "validation": {
+        "enum": ["BELUM", "SUDAH"]
+      }
+    },
+    {
+      "name": "travelPurpose",
+      "label": "Apakah tujuan anda membuat paspor?",
+      "type": "string",
+      "required": true,
+      "description": "Purpose for obtaining the passport, chosen from a scrolling picker. Only five options are fully legible in the guide's own screenshot (Wisata/Liburan, Umroh, Haji, Bekerja Formal, Pekerja Migran Indonesia (PMI)) before the list is cut off by the screenshot's own bottom edge with at least one further, illegible option below (partially visible, beginning 'BELAJAR...'); modelled as an open string rather than an incomplete enum. The guide's own step-9 summary also names two further conditional fields for this same questionnaire — 'negara tujuan' (destination country) and 'lama tinggal' (length of stay), likely gated on a work/migrant-labour travelPurpose value — that no screenshot in this guide ever renders; they are not modelled in this v1.0.0 (see VERIFICATION.md).",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Kuesioner pembuatan Paspor', 'Apakah tujuan anda membuat paspor?'",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "familyContactName",
+      "label": "Nama Kerabat",
+      "type": "string",
+      "required": true,
+      "description": "Name of a family member/relative in Indonesia who can be contacted regarding the application. The live field shows a '13/50' character counter against its own worked-example value, confirming a 50-character maximum.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Kuesioner pembuatan Paspor', 'Nomor telepon keluarga/kerabat terdekat...', field 'Nama Kerabat'",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "familyContactPhone",
+      "label": "Nomor Telepon",
+      "type": "string",
+      "required": true,
+      "description": "Phone number of the family member/relative named in familyContactName.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Kuesioner pembuatan Paspor', 'Nomor telepon keluarga/kerabat terdekat...', field 'Nomor Telepon'",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "familyRelationship",
+      "label": "Keterangan Hubungan Keluarga",
+      "type": "string",
+      "required": true,
+      "description": "Relationship of the contact named in familyContactName to the applicant (e.g. parent, sibling, spouse). Shown only in its unselected placeholder state ('-- Pilih hubungan') in the guide, with no option list or worked example legible, so modelled as an open string.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Kuesioner pembuatan Paspor', field 'Keterangan Hubungan Keluarga'",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "ktpIssueDate",
+      "label": "Tanggal dikeluarkan KTP",
+      "type": "date",
+      "required": true,
+      "description": "Issue date printed on the applicant's electronic KTP (Kartu Tanda Penduduk).",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (1/2)', section 'Alamat Sesuai KTP', field 'Tanggal dikeluarkan KTP'"
+    },
+    {
+      "name": "nationality",
+      "label": "Kewarganegaraan",
+      "type": "enum",
+      "required": true,
+      "description": "Nationality dropdown; the guide's only worked example shows 'Indonesia' selected. This document's scope is limited to a WNI (Indonesian citizen) applicant identified by e-KTP/NIK earlier in the same flow, so only that one confirmed value is modelled — mirroring this registry's existing single-confirmed-value enum convention (see id/korlantas/international-driving-permit-registration's issuingCounter field). Other values may exist in the live dropdown for edge cases this document does not cover.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (1/2)', section 'Alamat Sesuai KTP', field 'Kewarganegaraan'",
+      "validation": {
+        "enum": ["Indonesia"]
+      }
+    },
+    {
+      "name": "ktpAddress",
+      "label": "Alamat Sesuai KTP",
+      "type": "string",
+      "required": true,
+      "description": "Residential address exactly as printed on the applicant's KTP. The live textarea shows a '0/100' character counter.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (1/2)', section 'Alamat Sesuai KTP', field 'Alamat Sesuai KTP'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ktpProvince",
+      "label": "Provinsi Sesuai KTP",
+      "type": "string",
+      "required": true,
+      "description": "Province printed on the applicant's KTP. The live field is a searchable picker ('Cari Provinsi'); its full option list is not shown in the guide, so it is modelled as an open string.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (1/2)', section 'Alamat Sesuai KTP', field 'Provinsi Sesuai KTP'",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "ktpRegency",
+      "label": "Kabupaten / Kota Sesuai KTP",
+      "type": "string",
+      "required": true,
+      "description": "Regency or city (Kabupaten/Kota) printed on the applicant's KTP, dependent on the province selected in ktpProvince. The live picker's own option list is cut off by the guide screenshot's bottom edge, so it is modelled as an open string.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (1/2)', section 'Alamat Sesuai KTP', field 'Kabupaten / Kota Sesuai KTP'",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Pekerjaan",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's occupation. Shown only in its unselected placeholder state ('-- Pilih Pekerjaan') in the guide, with no option list or worked example legible, so modelled as an open string.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (2/2)', section 'Keterangan Pemohon', field 'Pekerjaan'",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "applicantPhone",
+      "label": "Nomor Telepon",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's own contact phone number, distinct from familyContactPhone. The live field's own placeholder text ('Cth: 08123456789') is illustrative, not a real applicant value.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (2/2)', section 'Keterangan Pemohon', field 'Nomor Telepon'",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "motherName",
+      "label": "Nama Ibu",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the applicant's mother, per the KTP-derived civil registry norm this guide's own field group ('Keterangan Ibu Pemohon') applies uniformly to adult applicants (not only to minors). The live field shows a '0/50' character counter.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (2/2)', section 'Keterangan Ibu Pemohon', field 'Nama Ibu'",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "motherNationality",
+      "label": "Kewarganegaraan Ibu",
+      "type": "string",
+      "required": true,
+      "description": "Nationality of the applicant's mother. Shown only in its unselected placeholder state ('-- Pilih Kewarganegaraan Ibu') in the guide, with no option list or worked example legible, so modelled as an open string.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (2/2)', section 'Keterangan Ibu Pemohon', field 'Kewarganegaraan Ibu'",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "motherAddress",
+      "label": "Alamat Ibu",
+      "type": "string",
+      "required": true,
+      "description": "Residential address of the applicant's mother.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.10 'Data Tambahan Pemohon (2/2)', section 'Keterangan Ibu Pemohon', field 'Alamat Ibu'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "appointmentSlot",
+      "label": "Tanggal Kedatangan",
+      "type": "string",
+      "required": true,
+      "description": "In-person appointment date and 3.5-hour arrival session at the office named in immigrationOffice, chosen from the live app's own list of currently available slots (source's own worked example: '31 Oktober 2025, 08:01-11:30'). Modelled as a string, not a pure date, since a single slot bundles both a calendar date and a time window rather than a bare date.",
+      "sourceRef": "User Guide M-Paspor — Gambar 3.13 'Pemilihan Tanggal dan Sesi', field 'Tanggal Kedatangan'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "ektp",
+      "label": "Electronic KTP (Kartu Tanda Penduduk) — photographed or uploaded directly within the app",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": ["image/jpeg"]
+      },
+      "sourceRef": "User Guide M-Paspor — step 5 ('Foto atau unggah KTP sebagai persyaratan permohonan') and Gambar 3.11's own note ('Unggah Dokumen hanya bisa berbentuk JPG')"
+    },
+    {
+      "id": "kartuKeluarga",
+      "label": "Kartu Keluarga (Family Card) — required for a first-time (new) passport application",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": ["image/jpeg"]
+      },
+      "sourceRef": "User Guide M-Paspor — step 10a and Gambar 3.11"
+    },
+    {
+      "id": "birthCertificateOrEquivalent",
+      "label": "Akta Kelahiran / Ijazah / Akta Perkawinan / Buku Nikah / Surat Baptis (birth certificate, school diploma, marriage certificate, marriage book, or baptismal certificate — any one, required for a first-time (new) passport application)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": ["image/jpeg"]
+      },
+      "sourceRef": "User Guide M-Paspor — step 10b and Gambar 3.11's field label 'Akta kelahiran/ijazah/akta perkawinan/buku nikah/surat baptis'"
+    },
+    {
+      "id": "parentIdentityForMinor",
+      "label": "Additional KTP or identity document of a parent — required only when applicantCategory is ANAK_ANAK (minor applicant), a pathway this v1.0.0 does not fully model",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "User Guide M-Paspor — step 10c ('Data tambahan KTP atau identitas orang tua (wajib jika pengajuan paspor untuk anak-anak)')"
+    }
+  ],
+  "steps": [
+    {
+      "id": "service_selection",
+      "title": "Jenis Permohonan Paspor",
+      "fields": ["serviceSpeed"],
+      "next": "applicant_category"
+    },
+    {
+      "id": "applicant_category",
+      "title": "Kuesioner Layanan Permohonan",
+      "fields": ["applicantCategory"],
+      "next": "office_selection"
+    },
+    {
+      "id": "office_selection",
+      "title": "Lokasi Kantor Imigrasi",
+      "fields": ["immigrationOffice"],
+      "next": "passport_type_selection"
+    },
+    {
+      "id": "passport_type_selection",
+      "title": "Jenis Paspor",
+      "fields": ["passportType"],
+      "next": "identity_verification"
+    },
+    {
+      "id": "identity_verification",
+      "title": "Isi Formulir Verifikasi",
+      "fields": ["applicantFullName", "nik", "dateOfBirth", "gender", "civilStatus"],
+      "next": "prior_passport_check"
+    },
+    {
+      "id": "prior_passport_check",
+      "title": "Kuesioner apakah sudah memiliki paspor",
+      "fields": ["hadPriorRegularPassport"],
+      "next": "perdim_questionnaire"
+    },
+    {
+      "id": "perdim_questionnaire",
+      "title": "Kuesioner Permohonan Paspor (PERDIM)",
+      "fields": ["travelPurpose", "familyContactName", "familyContactPhone", "familyRelationship"],
+      "next": "additional_applicant_data"
+    },
+    {
+      "id": "additional_applicant_data",
+      "title": "Data Tambahan Pemohon",
+      "fields": [
+        "ktpIssueDate",
+        "nationality",
+        "ktpAddress",
+        "ktpProvince",
+        "ktpRegency",
+        "occupation",
+        "applicantPhone",
+        "motherName",
+        "motherNationality",
+        "motherAddress"
+      ],
+      "next": "appointment_scheduling"
+    },
+    {
+      "id": "appointment_scheduling",
+      "title": "Tanggal dan Waktu Kedatangan",
+      "fields": ["appointmentSlot"]
+    }
+  ]
+}
