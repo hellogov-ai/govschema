@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**19 jurisdictions** | **257 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **258 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1616):** Colombia gains
+> `co/registraduria/duplicado-cedula-ciudadania`, closing its 6th and final
+> vertical (National ID & Civic Documents) — the first non-original
+> jurisdiction in this registry to reach 6/6. Three prior `GovSchema
+> Standard Research` cycles (GOV-1567, GOV-1595, GOV-1602) had each screened
+> this exact gap and stopped at the same wall: `www.registraduria.gov.co`
+> (the Registraduría Nacional del Estado Civil's main domain) returns HTTP
+> 403 to every direct fetch. This cycle found the actual online
+> "Duplicado de Cédula en Línea" application runs on a distinct,
+> unblocked subdomain, `epagos.registraduria.gov.co` — the same file path
+> the main domain 403s returns HTTP 200 there, and a Cancillería-affiliated
+> consulate site independently corroborates the same URL as the live
+> channel. Sourced from a combination of that subdomain's own live,
+> unauthenticated HTML (the Registro/account-creation screen — read
+> directly via `curl`, no rendering needed) and its own official RNEC PDF
+> user manual (the downstream "Iniciar Pago" wizard: Datos Básicos, Datos
+> de Contacto, Trámite, Preguntas de Seguridad, Registraduría de Entrega,
+> Confirmar Pago, and the PSE online payment), both independently re-fetched
+> and re-rendered by this reviewer rather than taken on trust from an
+> initial scouting pass. Models 24 fields across 6 steps plus the PSE
+> payment obligation, scoped to an adult Cédula de Ciudadanía holder whose
+> current card is the post-2019 "cédula amarilla con hologramas" — a
+> 2026-only eligibility gate confirmed live in a dated site modal that the
+> 2018 sourcing PDF never mentions at all. Deliberately does not model
+> account username/password creation (auto-generated, emailed), the Tarjeta
+> de Identidad (minor's ID) duplicate pathway the Registro screen's own
+> dropdown supports but no downstream screen confirms, the third-party PSE
+> bank-payment pages, the emailed claim receipt, or the separate
+> status-lookup tool — see the document's own VERIFICATION.md for the full
+> sourcing record, a confirmed 2018-to-2026 site change (two phone fields
+> removed from the Registro screen), and every other disclosed judgment
+> call. This closes the global National ID & Civic Documents vertical to
+> **16/19 jurisdictions (84%)**, up from 15/19; Brazil, Indonesia, and
+> Mexico remain the only open gaps, each previously confirmed weak
+> (in-person/biometric-only or decree-only, not a fully dead end).
 
 > **Update (2026-07-07, GOV-1609):** Colombia gains
 > `co/cancilleria/passport-citizen-data-registration`, giving it a 5th vertical
@@ -1614,16 +1650,24 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (15/19 jurisdictions)
+### National ID & Civic Documents (16/19 jurisdictions)
 
-**Colombia**, opened this cycle (GOV-1567) via its DMV vertical, has no
-National ID schema yet. Its voter-registration candidate was screened this
-cycle (GOV-1574): the Registraduría's own online overseas voter-registration
-microsite (`inscribeteonline2026.registraduria.gov.co`) no longer resolves —
-built for Colombia's 2026 elections, whose registration deadlines have
-already passed; see "Known Gaps" below for the full record. The
-Registraduría's cédula de ciudadanía process remains an open, unscreened
-backlog candidate for a future cycle. Every other jurisdiction except Brazil, Indonesia, and Mexico has at least one
+**Colombia** now has a National ID & Civic Documents schema:
+`co/registraduria/duplicado-cedula-ciudadania` (GOV-1616), closing Colombia's
+6th and final vertical. Three prior cycles (GOV-1567 opened Colombia;
+GOV-1595, GOV-1602) had each screened this gap and stopped at
+`www.registraduria.gov.co` returning HTTP 403 to every direct fetch —
+described as recently as GOV-1602 only via secondary sources ("full name,
+cédula number, email, phone, PSE payment"). This cycle found the real
+service subdomain (`epagos.registraduria.gov.co`), unblocked, and authored
+directly against its live HTML plus its own official PDF manual — see the
+Executive Summary update above and the document's own VERIFICATION.md.
+Colombia's own overseas voter-registration candidate, screened in GOV-1574,
+remains a separate, still-open, election-cycle-scoped gap (the
+`inscribeteonline2026.registraduria.gov.co` microsite no longer resolves —
+see "Known Gaps" below); it is not needed to consider Colombia's National ID
+vertical closed, since `duplicado-cedula-ciudadania` already covers the
+jurisdiction's core national-ID document. Every other jurisdiction except Brazil, Indonesia, and Mexico has at least one
 National ID and/or voter-registration schema. Indonesia's National ID gap was
 screened this cycle (GOV-1560): Dukcapil's own KTP-el/NIK registration is
 confirmed in-person and biometric (photo/fingerprint/iris) only, with
@@ -1691,7 +1735,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CO** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1806,7 +1850,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    application; National ID (Registraduría's "Cédula de ciudadanía digital"
    duplicate-request flow) is described in secondary sources as a short
    online form, but `registraduria.gov.co` itself returned HTTP 403 to every
-   direct fetch attempted this cycle. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
+   direct fetch attempted this cycle. **Update (GOV-1616): Colombia's
+   National ID gap is now closed too** —
+   `co/registraduria/duplicado-cedula-ciudadania`, sourced from a distinct,
+   unblocked subdomain (`epagos.registraduria.gov.co`) the same online
+   "Duplicado de Cédula en Línea" service actually runs on, rather than the
+   403-gated main domain three prior cycles had each stopped at. Colombia
+   now has all 6 of its verticals modelled, the first non-original
+   jurisdiction in this registry to reach 6/6 — see the Executive Summary
+   update above and the document's own VERIFICATION.md for the full
+   sourcing record. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
    GOV-1546) opened with one vertical — Business Formation, the individual/UMK
    NIB registration pathway through OSS RBA, sourced from BKPM's own official
    English-language user guide (a genuine 20-step screenshot walkthrough, no
@@ -2019,5 +2072,11 @@ election-window-decommissioned, not a hard dead end), updated by GOV-1602
 vertical, Visa, closing the gap GOV-1595 had left open — found via a second,
 previously unidentified source distinct from the live wizard's own
 bot-mitigation gate; Colombia's Passport and National ID candidates
-re-screened and left open backlog candidates).
+re-screened and left open backlog candidates), updated by GOV-1616
+(`co/registraduria/duplicado-cedula-ciudadania` authoring, Colombia 6th and
+last vertical, National ID & Civic Documents, closing the gap three prior
+cycles (GOV-1567, GOV-1595, GOV-1602) had each stopped at the same
+`www.registraduria.gov.co` HTTP 403 — resolved by finding the service's real
+subdomain, global National ID & Civic Documents vertical closed to
+16/19 / 84%).
 
