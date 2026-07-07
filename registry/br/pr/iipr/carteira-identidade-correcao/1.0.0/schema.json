@@ -1,0 +1,699 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "br/pr/iipr/carteira-identidade-correcao",
+  "version": "1.0.0",
+  "title": "Brazil (Paraná) National ID Card (CIN/RG) Data Correction and Reissuance Request",
+  "description": "The Instituto de Identificação do Paraná's (IIPR, a unit of the Polícia Civil do Paraná) online 'Solicitação on-line da Carteira de Identidade Nacional – CIN' correction/update pathway — for a citizen who ALREADY holds a Registro Geral (RG) or Carteira de Identidade Nacional (CIN) issued in Paraná and needs to correct or update the data on file (photo, documents, biographical data, signature, health/disability information, or contact/delivery address) ahead of reissuance. This is distinct from first-time CIN/RG issuance, which IIPR's own service catalog confirms is in-person-appointment-only for anyone who has never held a Paraná-issued RG/CIN (see VERIFICATION.md) and is out of scope here. Two prior GovSchema Standard Research cycles (GOV-1616, GOV-1624) had flagged this as a strong, ready-to-author candidate found via a Vue/Inertia single-page app's own compiled, unauthenticated `app.js` bundle, but deferred authoring because confirming each field's real on-screen label/requiredness needed a live-rendered pass, not just JS-bundle field-name inspection — this document is that pass. It also corrects a stale citation in this registry's own prior notes: the bare hostname `rci.pr.gov.br` no longer resolves in DNS at all (confirmed NXDOMAIN via `getent hosts`, Python `socket.gethostbyname`, and Google's DNS-over-HTTPS resolver as of 2026-07-07); the real, live, unauthenticated host is `https://www.rci.pr.gov.br` (with the `www.` prefix), embedded via an iframe on `https://www.policiacivil.pr.gov.br/Pagina/Correcao-de-Solicitacao` and linked from IIPR's own service-catalog pages. The eligibility gate (an RG-or-CPF-number lookup, at `https://www.rci.pr.gov.br/solicitante/iniciar`) genuinely checks the number against IIPR's own existing-record database — a synthetic, checksum-valid CPF was confirmed live to be correctly rejected ('Atenção: O seu cadastro no Paraná não está disponível para a solicitação on-line da CIN') — so the data-entry form's fields beyond that gate were confirmed by combining the live-rendered eligibility/lookup screen with a full reconstruction of the same app's compiled Vue render-function source (real on-screen labels, dropdown option lists, input masks, and required-field markers, not just internal field names) — see VERIFICATION.md for the complete method and every disclosed judgment call. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Brazil, the State of Paraná, the Polícia Civil do Paraná, or IIPR.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BR",
+    "level": "subnational",
+    "subdivision": "BR-PR"
+  },
+  "authority": {
+    "name": "Instituto de Identificação do Paraná (Polícia Civil do Paraná)",
+    "abbreviation": "IIPR",
+    "url": "https://www.policiacivil.pr.gov.br"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "pt-BR"
+  },
+  "source": {
+    "url": "https://www.rci.pr.gov.br/pedido",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "RCI (Registro Civil de Identificação) — 'Solicitação on-line da Carteira de Identidade Nacional – CIN', Vue/Inertia SPA, compiled bundle https://www.rci.pr.gov.br/js/app.js?id=1fff2a22899fb4be9662 (2.2MB, unauthenticated, no login/CAPTCHA/WAF), embedded on https://www.policiacivil.pr.gov.br/Pagina/Correcao-de-Solicitacao and reachable directly via the eligibility gate at https://www.rci.pr.gov.br/solicitante/iniciar"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "Live-rendered via Playwright (chromium) against the current www.rci.pr.gov.br host (HTTP 200, no login/CAPTCHA/WAF on either the eligibility screen or the embedding policiacivil.pr.gov.br page). The eligibility screen (num_doc RG-or-CPF lookup, then nome/data_nascimento confirmation) was walked live with a synthetic, checksum-valid CPF (529.982.247-25, a well-known placeholder test number) and correctly rejected by the real database check both via the num_doc gate ('O seu cadastro no Paraná não está disponível para a solicitação on-line da CIN') and via the separate phone-based 'Correção de Solicitação' re-entry point at the same host ('Pedido não encontrado') — confirming genuine server-side validation and that no synthetic path exists past this gate, a normal sourcing limit already anticipated by this registry's house style. Every field beyond that gate was confirmed by decompiling the same session's own compiled Vue single-file-component render functions from app.js (createElementVNode label text, createStaticVNode option lists, v-mask directive patterns, and 'Campo obrigatório'/'Arquivo é obrigatório' inline validation messages) rather than trusting the internal camelCase `$parent.form.<field>` names alone — this superseded and corrected two internal field names from the prior cycles' catalog notes (`nome_mae`/`nome_pai` turned out to be dead, commented-out code; the live field is a repeating `filiacoes` array). See VERIFICATION.md for the full method, the second corroborating source (IIPR's own official service-description page), and every disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "numCPF",
+      "label": "CADASTRO DE PESSOA FÍSICA (CPF) — Número",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's CPF (Cadastro de Pessoas Físicas), Brazil's individual taxpayer registry number. Always present and required for any correction/update request — IIPR's own decree-based requirement note states no scanned copy is needed since the number is validated directly against Receita Federal's database. The live field is rendered disabled (locked) whenever the CPF is already confirmed on the applicant's existing record.",
+      "sourceRef": "Documentos.vue, 'CADASTRO DE PESSOA FÍSICA (CPF)' / 'Número: ' input id=cpf, v-mask '###.###.###-##'",
+      "validation": { "pattern": "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$" }
+    },
+    {
+      "name": "numCPFResponsavel",
+      "label": "CPF do responsável pelo menor — Número",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The CPF of the legal guardian responsible for the applicant, shown only when the applicant is a minor per their existing IIPR record. This is a server-determined condition (based on the applicant's date of birth already on file, which this correction form does not otherwise collect), not a user-toggled field, so it cannot be expressed as a `requiredWhen` against another field modelled here — disclosed as a judgment call in VERIFICATION.md.",
+      "sourceRef": "Documentos.vue, 'CPF do responsável pelo menor' / 'Número: ' input id=cpf (v-if $props.precisaCpfResponsavel), v-mask '###.###.###-##'",
+      "validation": { "pattern": "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$" }
+    },
+    {
+      "name": "includeCnh",
+      "label": "CARTEIRA NACIONAL DE HABILITAÇÃO (CNH)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add/correct the applicant's driver's license (CNH) number and proof document on this request.",
+      "sourceRef": "Documentos.vue, input#checkCNH"
+    },
+    {
+      "name": "numCNH",
+      "label": "CARTEIRA NACIONAL DE HABILITAÇÃO (CNH) — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeCnh", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The applicant's CNH (driver's license) registration number.",
+      "sourceRef": "Documentos.vue, input#CNH, v-mask '###########'",
+      "validation": { "pattern": "^\\d{11}$" }
+    },
+    {
+      "name": "includeCns",
+      "label": "CARTÃO NACIONAL DE SAÚDE (CNS)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add/correct the applicant's national health card (CNS/SUS card) number and proof document on this request.",
+      "sourceRef": "Documentos.vue, input#checkCNS"
+    },
+    {
+      "name": "numCNS",
+      "label": "CARTÃO NACIONAL DE SAÚDE (CNS) — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeCns", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The applicant's CNS (Cartão Nacional de Saúde / SUS card) number.",
+      "sourceRef": "Documentos.vue, input#cns, v-mask '###############'",
+      "validation": { "pattern": "^\\d{15}$" }
+    },
+    {
+      "name": "includePis",
+      "label": "PIS / PASEP",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add/correct the applicant's PIS/PASEP (worker registry) number and proof document on this request.",
+      "sourceRef": "Documentos.vue, input#checkPIS"
+    },
+    {
+      "name": "numPIS",
+      "label": "PIS / PASEP — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includePis", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The applicant's PIS/PASEP number.",
+      "sourceRef": "Documentos.vue, input#PIS, v-mask '###.#####.##-#'",
+      "validation": { "pattern": "^\\d{3}\\.\\d{5}\\.\\d{2}-\\d{1}$" }
+    },
+    {
+      "name": "includeTre",
+      "label": "TÍTULO DE ELEITOR",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add/correct the applicant's voter registration (Título de Eleitor / TRE) number and proof document on this request.",
+      "sourceRef": "Documentos.vue, input#checkTRE"
+    },
+    {
+      "name": "numTRE",
+      "label": "TÍTULO DE ELEITOR — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeTre", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The applicant's Título de Eleitor (voter registration) number.",
+      "sourceRef": "Documentos.vue, input#TRE, v-mask '#############'",
+      "validation": { "pattern": "^\\d{13}$" }
+    },
+    {
+      "name": "includeCtm",
+      "label": "CERTIFICADO MILITAR",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add/correct the applicant's military service certificate (Certificado Militar) number and proof document on this request.",
+      "sourceRef": "Documentos.vue, input#checkCTM"
+    },
+    {
+      "name": "numCTM",
+      "label": "CERTIFICADO MILITAR — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeCtm", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The applicant's Certificado Militar (military certificate) number.",
+      "sourceRef": "Documentos.vue, input#CTM, v-mask '############'",
+      "validation": { "pattern": "^\\d{12}$" }
+    },
+    {
+      "name": "includeCtps",
+      "label": "CARTEIRA DE TRABALHO (CTPS)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add/correct the applicant's work card (Carteira de Trabalho e Previdência Social / CTPS) details and proof document on this request.",
+      "sourceRef": "Documentos.vue, input#checkCTPS"
+    },
+    {
+      "name": "numctps",
+      "label": "CARTEIRA DE TRABALHO (CTPS) — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeCtps", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The applicant's CTPS (work card) number.",
+      "sourceRef": "Documentos.vue, input#numctps, v-mask '###################'",
+      "validation": { "pattern": "^\\d{19}$" }
+    },
+    {
+      "name": "seriectps",
+      "label": "CARTEIRA DE TRABALHO (CTPS) — Série",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeCtps", "equals": true },
+      "description": "The CTPS series number.",
+      "sourceRef": "Documentos.vue, input#seriectps, v-mask '##########'",
+      "validation": { "pattern": "^\\d{10}$" }
+    },
+    {
+      "name": "ufctps",
+      "label": "CARTEIRA DE TRABALHO (CTPS) — UF",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "includeCtps", "equals": true },
+      "description": "The Brazilian state (UF) that issued the applicant's CTPS.",
+      "sourceRef": "Documentos.vue, select#ufctps, options rendered from the standard Brazilian-state option list",
+      "validation": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"] }
+    },
+    {
+      "name": "includeCip",
+      "label": "CARTEIRA PROFISSIONAL (CIP)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add/correct the applicant's professional card (Carteira Profissional / CIP) details and proof document on this request.",
+      "sourceRef": "Documentos.vue, input#checkCIP"
+    },
+    {
+      "name": "numcip",
+      "label": "CARTEIRA PROFISSIONAL (CIP) — Número",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeCip", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The applicant's CIP (professional card) number.",
+      "sourceRef": "Documentos.vue, input#numcip, v-mask 'NNNNNNNNNNNNNNNNNNNN' (alphanumeric, 20 characters)",
+      "validation": { "pattern": "^[0-9A-Za-z]{1,20}$" }
+    },
+    {
+      "name": "emissorcip",
+      "label": "CARTEIRA PROFISSIONAL (CIP) — Emissor",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "includeCip", "equals": true },
+      "description": "The issuing body of the applicant's CIP.",
+      "sourceRef": "Documentos.vue, input#emissorcip, v-mask 'NNNNNNNNNN' (alphanumeric, 10 characters)",
+      "validation": { "pattern": "^[0-9A-Za-z]{1,10}$" }
+    },
+    {
+      "name": "ufcip",
+      "label": "CARTEIRA PROFISSIONAL (CIP) — UF",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "includeCip", "equals": true },
+      "description": "The Brazilian state (UF) that issued the applicant's CIP.",
+      "sourceRef": "Documentos.vue, select#ufcip, options rendered from the standard Brazilian-state option list",
+      "validation": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"] }
+    },
+    {
+      "name": "correctBiographicalData",
+      "label": "Atualizar dados biográficos (nome, filiação, estado civil e data de nascimento)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to correct the applicant's name, parentage, marital status, and/or date of birth on this request. Per the form's own note, this requires sending an up-to-date civil-registry certificate bearing the registry number ('Número de Matrícula'), and per a separate note, correcting the name also makes updating the signature (see `updateSignature`) mandatory — a disclosed business rule, not enforced here via `requiredWhen` since GovSchema's cross-field grammar does not cleanly express 'field A true implies field B true' (see VERIFICATION.md).",
+      "sourceRef": "Home.vue tile, input#checkNome / '*Atualizar dados biográficos (nome, filiação, estado civil e data de nascimento)... Ao atualizar o nome torna-se obrigatório a atualização da assinatura'"
+    },
+    {
+      "name": "correctedFullName",
+      "label": "Nome:",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "correctBiographicalData", "equals": true },
+      "classification": "pii",
+      "description": "The applicant's corrected full legal name, in uppercase, matching the civil-registry certificate submitted. Per the form's own note, if this field is left blank the existing name on file is not changed.",
+      "sourceRef": "Nome.vue, label[for=nome] 'Nome:', input#nome (uppercase-letter-only directive), maxlength 60",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "correctedDateOfBirth",
+      "label": "Data de Nascimento:",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "correctBiographicalData", "equals": true },
+      "classification": "pii",
+      "description": "The applicant's corrected date of birth, entered on-screen in dd/mm/aaaa format.",
+      "sourceRef": "Nome.vue, label[for=nova_data_nascimento] 'Data de Nascimento:', input#nova_data_nascimento, v-mask '##/##/####', help text 'Formato dd/mm/aaaa'"
+    },
+    {
+      "name": "parentageChanged",
+      "label": "Houve alteração na filiação?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's parentage (filiação) has changed and needs correcting. Only shown/meaningful when `correctBiographicalData` is true.",
+      "sourceRef": "Nome.vue, input#checkFiliacao 'Houve alteração na filiação?'"
+    },
+    {
+      "name": "parent1Name",
+      "label": "Filiação 1:",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "correctBiographicalData", "equals": true }, { "field": "parentageChanged", "equals": true }] },
+      "classification": "pii",
+      "description": "The corrected name of the applicant's first parent/guardian (filiação), in uppercase. The live form supports a dynamically-added repeating list of up to 6 filiação entries (e.g. for blended families with multiple guardians); GovSchema v0.3 has no array/multi-select field type, so — consistent with this registry's precedent for other repeating-but-uncommonly-multi-valued blocks (e.g. br/sp/jucesp/cnpj-registration-dbe's single-founder QSA scoping) — only the first two entries (the common two-parent case) are modelled here as `parent1Name`/`parent2Name`; see VERIFICATION.md.",
+      "sourceRef": "Nome.vue, 'Filiação 1:' (filiacoes[0].nome), maxlength 60, uppercase-letter-only directive",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "parent2Name",
+      "label": "Filiação 2:",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "correctBiographicalData", "equals": true }, { "field": "parentageChanged", "equals": true }] },
+      "classification": "pii",
+      "description": "The corrected name of the applicant's second parent/guardian (filiação), in uppercase. See `parent1Name` for the scope note on the live form's repeating (up to 6) filiação list.",
+      "sourceRef": "Nome.vue, 'Filiação 2:' (filiacoes[1].nome), maxlength 60, uppercase-letter-only directive",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Estado Civil:",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "correctBiographicalData", "equals": true },
+      "description": "The applicant's corrected marital status. Coded values 2/1/3/4/6 are the live dropdown's own option values (value 5 is absent from the live option list — the dropdown skips it, presumably a retired/legacy code).",
+      "sourceRef": "Nome.vue, select#estadoCivil, createStaticVNode options '<option value=\"2\">Solteiro (a)</option><option value=\"1\">Casado (a)</option><option value=\"3\">Viúvo (a)</option><option value=\"4\">Separado (a)</option><option value=\"6\">Divorciado (a)</option>'",
+      "validation": { "enum": ["2", "1", "3", "4", "6"] }
+    },
+    {
+      "name": "civilRegistryNumber",
+      "label": "Matrícula da Certidão:",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "correctBiographicalData", "equals": true },
+      "description": "The 32-digit 'matrícula' registry number of the civil-registry certificate (birth, marriage, etc., depending on the selected marital status) supporting this correction, in Brazil's standard national civil-registry number format (CNJ Provimento nº 63/2017).",
+      "sourceRef": "Nome.vue, label[for=matricula] 'Matrícula da Certidão:', input#matricula, v-mask '######.##.##.####.#.#####.###.#######-##'",
+      "validation": { "pattern": "^\\d{6}\\.\\d{2}\\.\\d{2}\\.\\d{4}\\.\\d{1}\\.\\d{5}\\.\\d{3}\\.\\d{7}-\\d{2}$" }
+    },
+    {
+      "name": "updateSignature",
+      "label": "Atualizar assinatura",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to submit a new signature image for the reissued card.",
+      "sourceRef": "Home.vue tile, input#checkAssinatura 'Atualizar assinatura — Envie uma imagem da sua assinatura para o uso em seu RG'"
+    },
+    {
+      "name": "addHealthConditions",
+      "label": "Adicionar condições de saúde e deficiências",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox toggle to add disability indicators, a health observation, and/or blood type to the applicant's record.",
+      "sourceRef": "Home.vue tile, input#checkSaude 'Adicionar condições de saúde e deficiências — Será necessário o envio de LAUDO MÉDICO, comprobatório da condição de saúde.'"
+    },
+    {
+      "name": "defAuditiva",
+      "label": "AUDITIVA",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Indicates the applicant has a hearing disability (deficiência auditiva), to be printed on the card.",
+      "sourceRef": "Saude.vue, input#auditiva, under 'Deficiências e Autismo:'"
+    },
+    {
+      "name": "defFisica",
+      "label": "FÍSICA",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Indicates the applicant has a physical disability (deficiência física), to be printed on the card.",
+      "sourceRef": "Saude.vue, input#fisica, under 'Deficiências e Autismo:'"
+    },
+    {
+      "name": "defIntelectual",
+      "label": "INTELECTUAL",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Indicates the applicant has an intellectual disability (deficiência intelectual), to be printed on the card.",
+      "sourceRef": "Saude.vue, input#intelectual, under 'Deficiências e Autismo:'"
+    },
+    {
+      "name": "defVisual",
+      "label": "VISUAL",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Indicates the applicant has a visual disability (deficiência visual), to be printed on the card.",
+      "sourceRef": "Saude.vue, input#visual, under 'Deficiências e Autismo:'"
+    },
+    {
+      "name": "defAutismo",
+      "label": "AUTISMO",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Indicates the applicant has autism spectrum disorder (transtorno autista), to be printed on the card.",
+      "sourceRef": "Saude.vue, input#autismo, under 'Deficiências e Autismo:'"
+    },
+    {
+      "name": "observacoesSaude",
+      "label": "Observações de saúde:",
+      "type": "string",
+      "required": false,
+      "classification": "health",
+      "description": "A health observation to add to the applicant's record, selected from a dropdown. The dropdown's only statically-confirmed option is '' → 'Nenhuma' (None); the rest of the list is populated at runtime from an external, server-provided catalog (`observacoesOptions`, each item an `{id, descricao}` pair) not enumerable from the compiled source — modelled as an open string rather than a closed enum, consistent with this registry's precedent for dropdowns whose full option list isn't confirmable statically.",
+      "sourceRef": "Saude.vue, label[for=observacoes] 'Observações de saúde:', select#observacoes, static option value=\"\" 'Nenhuma' plus a v-for over $props.observacoesOptions"
+    },
+    {
+      "name": "tipoSanguineo",
+      "label": "Tipo Sanguíneo:",
+      "type": "enum",
+      "required": false,
+      "classification": "health",
+      "description": "The applicant's blood type to add to the record. Coded values: 0=Não incluir (do not include), 1=A+, 2=B+, 3=AB+, 4=O+, 5=A-, 6=B-, 7=AB-, 8=O-.",
+      "sourceRef": "Saude.vue, select#tipoSanguineo, createStaticVNode options '<option value=\"0\">Não incluir</option><option value=\"1\">A+</option><option value=\"2\">B+</option><option value=\"3\">AB+</option><option value=\"4\">O+</option><option value=\"5\">A-</option><option value=\"6\">B-</option><option value=\"7\">AB-</option><option value=\"8\">O-</option>'",
+      "validation": { "enum": ["0", "1", "2", "3", "4", "5", "6", "7", "8"] }
+    },
+    {
+      "name": "doadorOrgaos",
+      "label": "Doador de Órgãos:",
+      "type": "enum",
+      "required": false,
+      "classification": "health",
+      "description": "Whether the applicant wishes to be indicated as an organ donor on the card. Coded values: \"\"=Não informar (do not state), \"1\"=Sim (yes), \"0\"=Não (no).",
+      "sourceRef": "Saude.vue, select#doadororgaos, options value=\"\" 'Não informar', value=\"1\" 'Sim', value=\"0\" 'Não'",
+      "validation": { "enum": ["", "1", "0"] }
+    },
+    {
+      "name": "cellPhone",
+      "label": "Telefone Celular",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mobile phone number, used to send SMS notifications about the request's status and to receive an SMS verification code confirming the number live (the code-entry step itself is an OTP mechanic, out of scope here per this registry's convention). Always required — IIPR's own note states a valid mobile number is mandatory for any correction/update request.",
+      "sourceRef": "Endereço.vue, label[for=celular] 'Telefone Celular', input#celular, v-mask '(##)#####-####', help text 'É necessário informar um número de celular válido para comunicação de quando sua carteira estará pronta para retirada'",
+      "validation": { "pattern": "^\\(\\d{2}\\)\\d{5}-\\d{4}$" }
+    },
+    {
+      "name": "postalCode",
+      "label": "Cep",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's postal code (CEP). Submitting it live triggers a 'Buscar Cep' postal-code lookup that auto-populates `state` and `municipality` (both rendered as disabled/non-editable selects downstream of this lookup, matching this registry's existing ViaCEP-style autofill pattern, e.g. br/sp/jucesp/cnpj-registration-dbe).",
+      "sourceRef": "Endereço.vue, label[for=cep] 'Cep', input#cep, v-mask '##.###-###', button#btnCep 'Buscar Cep'",
+      "validation": { "pattern": "^\\d{2}\\.\\d{3}-\\d{3}$" }
+    },
+    {
+      "name": "state",
+      "label": "Estado",
+      "type": "enum",
+      "required": true,
+      "description": "The Brazilian state (UF) of the applicant's address, auto-populated by the postal-code (CEP) lookup and rendered as a disabled (non-directly-editable) select.",
+      "sourceRef": "Endereço.vue, label 'Estado', select#estado (disabled), options rendered from the standard Brazilian-state option list",
+      "validation": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"] }
+    },
+    {
+      "name": "municipality",
+      "label": "Município",
+      "type": "string",
+      "required": true,
+      "description": "The municipality of the applicant's address, auto-populated by the postal-code (CEP) lookup and rendered as a disabled (non-directly-editable) select. Its option list (`optionsMunicipios`, `{chave, nome}` pairs) is a per-state municipality catalog populated at runtime, not enumerable from the compiled source — modelled as an open string rather than a closed enum.",
+      "sourceRef": "Endereço.vue, label 'Município', select#municipio (disabled), options rendered from $data.optionsMunicipios"
+    },
+    {
+      "name": "neighborhood",
+      "label": "Bairro",
+      "type": "string",
+      "required": true,
+      "description": "The neighborhood/district (bairro) of the applicant's address.",
+      "sourceRef": "Endereço.vue, label[for=bairro] 'Bairro', input#bairro, inline 'Campo obrigatório.' when blank"
+    },
+    {
+      "name": "streetAddress",
+      "label": "Logradouro",
+      "type": "string",
+      "required": true,
+      "description": "The street name (logradouro) of the applicant's address.",
+      "sourceRef": "Endereço.vue, label[for=logradouro] 'Logradouro', input#logradouro, inline 'Campo obrigatório.' when blank"
+    },
+    {
+      "name": "addressNumber",
+      "label": "Número",
+      "type": "string",
+      "required": true,
+      "description": "The street address number.",
+      "sourceRef": "Endereço.vue, label[for=numero] 'Número', input#numero, maxlength 10, inline 'Campo obrigatório.' when blank",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "addressComplement",
+      "label": "Complemento",
+      "type": "string",
+      "required": false,
+      "description": "An optional apartment/suite/unit qualifier for the applicant's address.",
+      "sourceRef": "Endereço.vue, label[for=complemento] 'Complemento', input#complemento, maxlength 30",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "pickupLocationPost",
+      "label": "Local de Retirada",
+      "type": "string",
+      "required": true,
+      "description": "The IIPR identification post (posto de atendimento do Instituto de Identificação) where the applicant will collect the reissued card in person (biometric validation is required at pickup; the card cannot be delivered to a third party/attorney-in-fact when requested online). Its option list (`retiradaOptions`) is populated at runtime from IIPR's own posts catalog, not enumerable from the compiled source — modelled as an open string rather than a closed enum.",
+      "sourceRef": "Endereço.vue, label 'Local de Retirada', select#num_posto_retirada, options rendered from $props.retiradaOptions, inline 'Campo obrigatório.' when blank"
+    },
+    {
+      "name": "seniorCitizenStripe",
+      "label": "Incluir informação \"IDOSO\"?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether to print an elderly-priority ('IDOSO') indicator on the card, per Lei 10.048/2000. The live form only shows this field for applicants aged 60 or older per their existing IIPR record (`showTarjaIdoso`) — an external, server-determined condition this schema cannot express via `requiredWhen` since date of birth is not always a field collected in this flow (only when `correctBiographicalData` is also selected) — disclosed as a judgment call in VERIFICATION.md.",
+      "sourceRef": "Endereço.vue, label 'Incluir informação \"IDOSO\"?' (v-if $props.showTarjaIdoso), radio inputs #one (Sim) / #two (Não), help text 'Pessoas acima de 60 anos podem optar por incluir essa informação na carteira de identidade'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "photoFile",
+      "label": "*Atualizar foto",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["image/jpeg"] },
+      "handling": "color-front-facing-uncovered-face-white-background-natural-expression-no-accessories-hair-behind-ears-no-white-clothing",
+      "sourceRef": "Home.vue tile 'Atualizar foto — ... A atualização da foto é obrigatória para a solicitação da CIN com atualização'; Foto.vue 'Requisitos para a foto da Identidade' list and input#filePhoto (accept .jpg, .jpeg)"
+    },
+    {
+      "id": "cnhProofFile",
+      "label": "CARTEIRA NACIONAL DE HABILITAÇÃO (CNH) — comprovante",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "includeCnh", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Documentos.vue, input#fileCNH (accept application/pdf,image/jpeg), inline 'Arquivo é obrigatório' when checkCNH is set and the file is missing"
+    },
+    {
+      "id": "cnsProofFile",
+      "label": "CARTÃO NACIONAL DE SAÚDE (CNS) — comprovante",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "includeCns", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Documentos.vue, input#fileCNS (accept application/pdf,image/jpeg), inline 'Arquivo é obrigatório'"
+    },
+    {
+      "id": "pisProofFile",
+      "label": "PIS / PASEP — comprovante",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "includePis", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Documentos.vue, input#filePIS (accept application/pdf,image/jpeg), inline 'Arquivo é obrigatório'"
+    },
+    {
+      "id": "treProofFile",
+      "label": "TÍTULO DE ELEITOR — comprovante",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "includeTre", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Documentos.vue, input#fileTRE (accept application/pdf,image/jpeg), inline 'Arquivo é obrigatório'"
+    },
+    {
+      "id": "ctmProofFile",
+      "label": "CERTIFICADO MILITAR — comprovante",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "includeCtm", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Documentos.vue, input#fileCTM (accept application/pdf,image/jpeg), inline 'Arquivo é obrigatório'"
+    },
+    {
+      "id": "ctpsProofFile",
+      "label": "CARTEIRA DE TRABALHO (CTPS) — comprovante",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "includeCtps", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Documentos.vue, input#fileCTPS (accept application/pdf,image/jpeg), inline 'Arquivo é obrigatório'"
+    },
+    {
+      "id": "cipProofFile",
+      "label": "CARTEIRA PROFISSIONAL (CIP) — comprovante",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "includeCip", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Documentos.vue, input#fileCIP (accept application/pdf,image/jpeg), inline 'Arquivo é obrigatório'"
+    },
+    {
+      "id": "civilRegistryCertificateFile",
+      "label": "Enviar a certidão digitalizada",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "correctBiographicalData", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Nome.vue, 'Enviar a certidão digitalizada:' / 'Enviar nova certidão apenas caso seja necessário:' (input[type=file] ref=file, accept application/pdf,image/jpeg); Home.vue tile note 'Para realizar esse serviço, é necessário o envio de Certidão atualizada contendo Número de Matrícula'"
+    },
+    {
+      "id": "signatureImageFile",
+      "label": "Enviar foto da assinatura",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "updateSignature", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["image/png", "image/jpeg"] },
+      "handling": "black-ink-on-white-paper-or-drawn-live-on-a-touch-enabled-device",
+      "sourceRef": "Assinatura.vue, 'Requisitos para a atualização da assinatura' list, input#selecao-arquivo (accept image/jpeg,image/png), or the live signature-pad canvas"
+    },
+    {
+      "id": "healthConditionProofFile",
+      "label": "Laudos Comprobatórios",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "addHealthConditions", "equals": true },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg"] },
+      "sourceRef": "Saude.vue, 'Laudos Comprobatórios (selecione mais de um arquivo, caso necessário):' — the live form accepts multiple files for this one requirement; GovSchema v0.3 has no array/multi-value document type, so this models one representative attachment (see VERIFICATION.md)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "photo",
+      "title": "Foto",
+      "next": "documents"
+    },
+    {
+      "id": "documents",
+      "title": "Documentos",
+      "fields": [
+        "numCPF",
+        "numCPFResponsavel",
+        "includeCnh",
+        "numCNH",
+        "includeCns",
+        "numCNS",
+        "includePis",
+        "numPIS",
+        "includeTre",
+        "numTRE",
+        "includeCtm",
+        "numCTM",
+        "includeCtps",
+        "numctps",
+        "seriectps",
+        "ufctps",
+        "includeCip",
+        "numcip",
+        "emissorcip",
+        "ufcip"
+      ],
+      "next": "biographical_data"
+    },
+    {
+      "id": "biographical_data",
+      "title": "Dados biográficos",
+      "fields": [
+        "correctBiographicalData",
+        "correctedFullName",
+        "correctedDateOfBirth",
+        "parentageChanged",
+        "parent1Name",
+        "parent2Name",
+        "maritalStatus",
+        "civilRegistryNumber"
+      ],
+      "next": "signature"
+    },
+    {
+      "id": "signature",
+      "title": "Assinatura",
+      "fields": ["updateSignature"],
+      "next": "health"
+    },
+    {
+      "id": "health",
+      "title": "Saúde",
+      "fields": [
+        "addHealthConditions",
+        "defAuditiva",
+        "defFisica",
+        "defIntelectual",
+        "defVisual",
+        "defAutismo",
+        "observacoesSaude",
+        "tipoSanguineo",
+        "doadorOrgaos"
+      ],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Contato e endereço",
+      "fields": [
+        "cellPhone",
+        "postalCode",
+        "state",
+        "municipality",
+        "neighborhood",
+        "streetAddress",
+        "addressNumber",
+        "addressComplement",
+        "pickupLocationPost",
+        "seniorCitizenStripe"
+      ]
+    }
+  ]
+}
