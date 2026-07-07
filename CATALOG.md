@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**22 jurisdictions** | **267 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**22 jurisdictions** | **268 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1685):** Poland gains its fourth vertical,
+> Passport, with `pl/mswia/wniosek-o-wydanie-paszportu` — the standard adult
+> passport application. Unlike the sibling dowód osobisty (National ID)
+> schema, no downloadable AcroForm or field-numbered informator exists for
+> this process: gov.pl's own "Uzyskaj paszport" service page states plainly
+> that no paper wniosek is prepared at all, since the passport office fills
+> an equivalent electronic application from applicant-supplied and registry
+> data during the mandatory in-person visit. Several candidate paper-form
+> links were checked and rejected this cycle — a third-party site whose own
+> "download" links resolve to Google Drive, and a local-government (BIP)
+> "specimen filled form" PDF that turned out to be a single-page scanned
+> image with no extractable field text — before confirming, via a full
+> `pdfjs-dist` extraction of the implementing Rozporządzenie MSWiA z dnia 9
+> września 2022 r. (Dz.U. 2022 poz. 2050, 49 pages), that no wniosek
+> template is gazetted at all (its five annexes are the passport booklet's
+> own physical designs, not an application form). Rather than a dead end,
+> this document instead sources every field directly from **Art. 33 of the
+> Ustawa z dnia 27 stycznia 2022 r. o dokumentach paszportowych** (current
+> consolidated text, Dz.U. 2024 poz. 1063) — the primary legislation
+> enumerating the wniosek's own required content — cross-checked
+> article-for-article against the 2022 original text and corroborated by
+> the live gov.pl service page. 17 fields (citizenship eligibility, the
+> applicant's core identity data, five office-discretionary
+> identity-corroboration fields per Art. 38 ust. 5, a required correspondence
+> address, optional contact-register phone/email, and a reduced/exempt-fee
+> claim flag) plus 4 `documents[]` entries (a currently-held identity
+> document if any, the photograph with its full Art. 41 specification and
+> 6-month freshness window, proof of fee payment, and conditional
+> reduced/exempt-fee proof). Deliberately excludes the minor/ward pathway,
+> the applicant's own signature/fingerprint (captured in person, not
+> applicant-suppliable), the office-only "adnotacje urzędowe", and the
+> separate temporary/diplomatic/service-passport and "second passport"
+> processes — see the document's own VERIFICATION.md for these and other
+> disclosed judgment calls. This gives Poland 4 of its 6 verticals (National
+> ID, Business Formation, DMV, Passport); Taxes and Visa remain open,
+> unscreened backlog candidates for future cycles. Global Passport now
+> stands at 19/22 jurisdictions.
 
 > **Update (2026-07-07, GOV-1678):** Poland gains its third vertical, DMV,
 > with `pl/mi/wniosek-o-rejestracje-pojazdu` — the national vehicle
@@ -1615,12 +1653,19 @@
 
 ## By Vertical
 
-### Passport (17/22 jurisdictions — 77%)
+### Passport (19/22 jurisdictions — 86%)
 
-**Poland**, opened via its National ID vertical (GOV-1666), has no Passport
-schema yet — an open, unscreened backlog candidate for a future cycle.
-AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
-least one published Passport schema. **Colombia**, opened via its DMV
+**Poland**'s Passport gap is now closed (GOV-1685), via
+`pl/mswia/wniosek-o-wydanie-paszportu` — see the Executive Summary update
+above for the full sourcing story (no downloadable form exists for this
+process; every field is sourced from Art. 33 of the governing Ustawa o
+dokumentach paszportowych instead). This gives Poland 4 of its 6 verticals
+(National ID, Business Formation, DMV, Passport); Taxes and Visa remain
+open. AU, BR, CA, DE, FR, GB, ID, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all
+have at least one published Passport schema (this list previously omitted
+Indonesia's `id/imigrasi/passport-application-first-adult` — a
+transcription gap in this document, not a registry gap; corrected here).
+**Colombia**, opened via its DMV
 vertical (GOV-1567), now has 6 of its 6 verticals including Passport
 (GOV-1609). **Chile**, opened this cycle (GOV-1624) via its Business
 Formation vertical, has no Passport schema yet — an open, unscreened backlog
@@ -2331,7 +2376,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PL** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
+| **PL** | 4 | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
