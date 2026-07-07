@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**19 jurisdictions** | **253 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **254 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1588):** Colombia gains
+> `co/rues/matricula-mercantil`, closing its Business Formation gap and
+> giving the registry's newest (19th) jurisdiction its 2nd vertical
+> (alongside DMV, `co/runt/formulario-solicitud-tramites-vehiculo`,
+> GOV-1567). Sourced from RUES's (Registro Único Empresarial y Social)
+> shared registration form, scoped to its Registro Mercantil track — the
+> mercantile/company registration process Colombia's Cámaras de Comercio
+> (Chambers of Commerce) operate nationwide under a unified format the
+> Superintendencia de Industria y Comercio (SIC) sets via its Circular
+> Única. Extracted from two independently corroborating PDFs: SIC's own
+> published instructions (the regulator's unified-format circular,
+> `Anexo_4_1_INSTRUCCIONES_FORMULARIOS_RUES.pdf`) and the actual fillable
+> two-page form template mirrored on a Chamber of Commerce site, cross-read
+> at the glyph-coordinate level to correctly separate the form's three
+> parallel registry tracks (Registro Mercantil / Registro Único de
+> Proponentes / Entidades sin Ánimo de Lucro) printed side by side on the
+> same page — a naive line-grouped text read would have misattributed a
+> `cancelación` procedure option from the neighbouring Proponentes column
+> onto Registro Mercantil, which does not have one. Scoped deliberately to
+> just the core two-page Registro Mercantil form; RUES's other two parallel
+> registry tracks and four additional annexes (establishment/branch
+> registration, multi-year-overdue renewal, tourism-operator registry,
+> payroll-lending-operator registry) are explicitly out of scope — see the
+> document's own VERIFICATION.md for the full scope disclosure and ten other
+> judgment calls. This closes the global Business Formation vertical to
+> **19/19 jurisdictions (100%)**. Colombia's remaining open verticals are
+> Passport, Visa, Taxes, and National ID/Civic Documents.
 
 > **Update (2026-07-07, GOV-1581):** Indonesia gains
 > `id/imigrasi/evisa-visitor-visa-application`, closing the registry's own
@@ -1236,16 +1264,26 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (18/19 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (19/19 jurisdictions — 100%)
 
-**Colombia** is the sole remaining gap: newly opened this cycle via its DMV
-vertical (`co/runt/formulario-solicitud-tramites-vehiculo`, GOV-1567), not
-Business Formation. DIAN's RUT (Formulario 001) was screened this cycle and
-remains a viable-but-weak backlog candidate — three of its six sub-sections
-are unbounded repeating groups; DIAN's own "pre-RUT personas naturales"
-guide (natural-person-only, bounded, no repeating sections) is a
-materially stronger candidate for a future cycle. Every other jurisdiction
-has at least one Business Formation schema, including
+**Colombia** closes this vertical this cycle (GOV-1588) via
+`co/rues/matricula-mercantil` — the Registro Mercantil track of RUES's
+(Registro Único Empresarial y Social) shared form, the mercantile/company
+registration process Colombia's Cámaras de Comercio (Chambers of Commerce)
+operate nationwide under a unified format set by the Superintendencia de
+Industria y Comercio (SIC). Colombia had opened as the registry's 19th
+jurisdiction the prior cycle via its DMV vertical
+(`co/runt/formulario-solicitud-tramites-vehiculo`, GOV-1567), leaving
+Business Formation as its sole gap; DIAN's RUT (Formulario 001, previously
+screened as a viable-but-weak backlog candidate — three of its six
+sub-sections are unbounded repeating groups) and Colombia's online passport
+wizard were both pre-screened as fallback candidates but were not needed
+once RUES's own core form was properly extracted and confirmed well-bounded
+(see the document's own VERIFICATION.md, including its disclosed scoping-out
+of RUES's two other parallel registry tracks — Registro Único de
+Proponentes and Entidades sin Ánimo de Lucro/Economía Solidaria — printed on
+the same physical form but out of scope for company formation). Every other
+jurisdiction already has at least one Business Formation schema, including
 **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`, GOV-1546),
 new this cycle and this jurisdiction's first schema — see the Executive
 Summary update above for full detail — keeping the vertical at **18/18
@@ -1631,7 +1669,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    guide (bounded, natural-person-only) is a stronger Business Formation
    candidate for a future cycle. Colombia's other five verticals (Passport,
    Business Formation, Visa, Taxes, National ID) are open, unscreened backlog
-   candidates. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
+   candidates. **Update (GOV-1588):** Colombia now has 2 of its 6 verticals
+   (Business Formation added via `co/rues/matricula-mercantil`, RUES's
+   Registro Mercantil track — the DIAN RUT candidate flagged above was not
+   needed once RUES's own core form was properly extracted); Passport, Visa,
+   Taxes, and National ID remain open backlog candidates. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
    GOV-1546) opened with one vertical — Business Formation, the individual/UMK
    NIB registration pathway through OSS RBA, sourced from BKPM's own official
    English-language user guide (a genuine 20-step screenshot walkthrough, no
