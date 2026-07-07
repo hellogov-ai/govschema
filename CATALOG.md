@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**18 jurisdictions** | **250 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **251 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1567):** Colombia opens as the registry's **19th
+> jurisdiction** with `co/runt/formulario-solicitud-tramites-vehiculo`
+> (DMV) — the "Formulario de Solicitud de Trámites del Registro Nacional
+> Automotor", the standard nationwide form through which any of Colombia's
+> decentralised local transit authorities (organismos de tránsito) takes an
+> owner's request for any of eighteen vehicle-registry procedures (first
+> registration, ownership transfer, plate/colour/service changes, engine
+> re-stamping, lien registration, and more) feeding the single Registro Único
+> Nacional de Tránsito (RUNT). Sourced directly from RUNT's own `.xls` form
+> at `runt.gov.co` (no login/CAPTCHA/WAF; re-fetched twice and confirmed
+> byte-identical) and cross-checked against identical PDF mirrors on several
+> municipal transit-authority `.gov.co` sites. This `GovSchema Standard
+> Research` cycle first re-examined DIAN's RUT (Formulario 001,
+> `dian.gov.co`) — flagged by a prior cycle (GOV-1444) as a viable-but-weak
+> Business Formation candidate for a future Colombia-opening cycle — and
+> confirmed it is still not improved: three of its six sub-sections remain
+> explicitly unbounded repeating groups. RUNT's form was found instead and
+> is materially stronger on this registry's own bar: fully bounded (zero
+> unbounded repeating sections), minimal external code-table dependence, and
+> a single static two-page layout. Independent review (GOV-1570) confirmed
+> the import/auction sub-table's exact structure against the source
+> spreadsheet's own merged cells and an official PDF mirror, fixing a missing
+> field (`importOrAuctionDocumentType`); the meaning of a `Fecha` field beside
+> the owner's document number remains an unconfirmed, disclosed judgment call
+> — see the document's own VERIFICATION.md. This
+> same cycle's research phase also re-screened Indonesia's own Passport and
+> Visa gaps (both previously logged as "not viable" by GOV-1560) and found
+> **both have reversed to viable, well-sourced candidates**: Indonesia's
+> Passport gap (M-Paspor app) now has a genuine official, versioned,
+> screenshot-driven user guide (`M-Paspor_UserGuide_V3.pdf`) hosted
+> unauthenticated on a regional Ditjen Imigrasi subdomain
+> (`batam.imigrasi.go.id`) — the main `imigrasi.go.id` domain's own guide
+> remains CloudFront-blocked, but this regional mirror is not; and
+> Indonesia's Visa gap (`evisa.imigrasi.go.id`) — previously blocked only by
+> its official User Manual's "Fill Form" Personal Information step rendering
+> as an unlabelled wireframe — now has its real field labels (Full name,
+> Sex, Place/Date of Birth, Document Type/No./Nationality, Address in
+> Indonesia, etc.) corroborated by a third-party study-abroad office's own
+> published walkthrough showing a genuine live capture of the same portal
+> filled with a real worked example. Neither was authored this cycle (one
+> Colombia schema is this cycle's single deliverable); both are logged below
+> as ready-to-author backlog for an immediate follow-up cycle — see "Known
+> Gaps" below and each vertical's own section for the full record.
 
 > **Update (2026-07-07, GOV-1560):** Indonesia gains a third vertical,
 > `id/djp/annual-individual-income-tax-return-1770s` (Taxes) — Form 1770 S,
@@ -956,10 +1000,12 @@
 
 ## By Vertical
 
-### Passport (16/18 jurisdictions)
+### Passport (16/19 jurisdictions)
 
 AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
-least one published Passport schema. India (`in/mea/passport-application-first-adult`,
+least one published Passport schema. **Colombia**, opened this cycle
+(GOV-1567) via its DMV vertical, has no Passport schema yet — an open,
+unscreened backlog candidate for a future cycle. India (`in/mea/passport-application-first-adult`,
 `in/mea/passport-reissue`), the Netherlands (`nl/rvig/passport-application`),
 New Zealand (`nz/dia/passport-application-first-adult`,
 `nz/dia/passport-renewal-adult`), and South Africa
@@ -975,8 +1021,26 @@ rendered image or PDF of it. Uniquely among this registry's Passport schemas,
 Brazil's single wizard covers first-time issuance, renewal, and
 lost/stolen/retained replacement all through one `previousPassportStatus`
 field rather than needing separate forms per scenario. **United Arab
-Emirates** has no Passport schema yet — no candidate was sourced for it this
-cycle (see the Taxes entry below for the UAE document that was authored).
+Emirates** has no Passport schema yet — re-screened again this cycle
+(GOV-1567) with the same result as GOV-1533: ICP's own "Services Guide"
+covers passport issuance/renewal/replacement only as a service-card catalog
+(eligibility, fees, photo specs, no form-field walkthrough), and the ICP
+Smart App's own generic user manual never proceeds into the passport
+service's own field screens; the live service itself requires UAE Pass
+login with no public preview. Confirmed dead end; do not re-attempt without
+a genuinely new source. **Indonesia**'s Passport gap (M-Paspor app), logged
+as "sourceable only via secondary checklist-level how-to articles" by
+GOV-1560, **reversed to a viable candidate this cycle** (GOV-1567): a
+genuine official, versioned ("V3") screenshot-driven user guide
+(`M-Paspor_UserGuide_V3.pdf`) is hosted unauthenticated on a regional Ditjen
+Imigrasi subdomain (`batam.imigrasi.go.id/assets/resources/files/`), unlike
+the main `imigrasi.go.id` domain's own guide, which remains CloudFront-blocked
+to a direct fetch. Confirmed field labels include Jenis Paspor, Lokasi
+Kantor Imigrasi, NIK-verification fields (Nama, NIK, Tanggal Lahir, Jenis
+Kelamin), prior-passport fields, Jenis Permohonan, Alasan Penggantian, and
+the appointment-scheduling/payment flow. Not authored this cycle (Colombia's
+DMV schema was this cycle's single deliverable) — left as ready-to-author
+backlog for an immediate follow-up cycle; see "Known Gaps" below.
 **The Philippines** (`ph/dfa/passport-application`, GOV-1497) is new this
 cycle: the Department of Foreign Affairs' Online Passport Appointment System
 (`passport.gov.ph`), modelled — like Brazil's SINPA — as a single wizard
@@ -1002,11 +1066,24 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (18/18 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (19/19 jurisdictions — 100%)
 
 Every jurisdiction now has at least one DMV-vertical schema (driver
 licensing, International Driving Permit, and/or vehicle
-registration/transfer). **Indonesia** (`id/korlantas/international-driving-permit-registration`,
+registration/transfer). **Colombia** (`co/runt/formulario-solicitud-tramites-vehiculo`,
+GOV-1567) is new this cycle and opens Colombia as the registry's 19th
+jurisdiction — sourced from RUNT's own "Formulario de Solicitud de Trámites
+del Registro Nacional Automotor" `.xls` form, fetched directly from
+`runt.gov.co` (no login/CAPTCHA/WAF) and cross-checked against identical PDF
+mirrors on multiple municipal transit-authority sites. Models all 18 of the
+form's own procedure types (`tramiteType`) through one shared field set,
+including a `requiredWhen`-gated buyer block for ownership transfers
+(traspaso); DIAN's RUT (Formulario 001, a Business Formation candidate) was
+screened first and re-confirmed weaker (three unbounded repeating
+sub-sections) — see the document's own VERIFICATION.md for the full
+candidate comparison and two disclosed judgment calls (the import/auction
+sub-table's exact labels, and an ambiguous owner-document date field), both
+read from a merged/garbled source spreadsheet cell region. **Indonesia** (`id/korlantas/international-driving-permit-registration`,
 GOV-1553) is new this cycle and closes the vertical to 18/18 (100%) —
 sourced from Korlantas POLRI's own live "SIM Internasional" (International
 Driving Permit) online registration portal (`siminternasional.korlantas.polri.go.id`),
@@ -1097,9 +1174,16 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (18/18 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (18/19 jurisdictions — 95%)
 
-Every jurisdiction now has at least one Business Formation schema, including
+**Colombia** is the sole remaining gap: newly opened this cycle via its DMV
+vertical (`co/runt/formulario-solicitud-tramites-vehiculo`, GOV-1567), not
+Business Formation. DIAN's RUT (Formulario 001) was screened this cycle and
+remains a viable-but-weak backlog candidate — three of its six sub-sections
+are unbounded repeating groups; DIAN's own "pre-RUT personas naturales"
+guide (natural-person-only, bounded, no repeating sections) is a
+materially stronger candidate for a future cycle. Every other jurisdiction
+has at least one Business Formation schema, including
 **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`, GOV-1546),
 new this cycle and this jurisdiction's first schema — see the Executive
 Summary update above for full detail — keeping the vertical at **18/18
@@ -1184,9 +1268,12 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (18/18 jurisdictions — 100%)
+### Taxes — Income Tax Return, Tax Filing (18/19 jurisdictions — 95%)
 
-Every jurisdiction now has at least one Taxes-vertical schema. **Indonesia**
+**Colombia**, opened this cycle (GOV-1567) via its DMV vertical, has no
+Taxes schema yet — DIAN's own income-tax-return forms are an open, unscreened
+backlog candidate for a future cycle. Every other jurisdiction now has at
+least one Taxes-vertical schema. **Indonesia**
 (`id/djp/annual-individual-income-tax-return-1770s`, GOV-1560) is new this
 cycle and closes the vertical to 18/18 (100%) — Form 1770 S, the annual
 individual income tax return for a salaried resident taxpayer, sourced from
@@ -1245,7 +1332,11 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (14/18 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (14/19 jurisdictions)
+
+**Colombia**, opened this cycle (GOV-1567) via its DMV vertical, has no Visa
+schema yet — Migración Colombia's own e-visa channels are an open,
+unscreened backlog candidate for a future cycle.
 
 **Three confirmed, previously-researched dead ends — not open work:**
 
@@ -1270,7 +1361,20 @@ its core "Fill Form" Personal Information block is rendered only as an
 unlabelled wireframe diagram with no field labels at any resolution — left
 open as the strongest remaining candidate, not a dead end (see
 `id/djp/annual-individual-income-tax-return-1770s`'s own VERIFICATION.md for
-the full screening record). **The Philippines**
+the full screening record). **This wireframe gap reversed to fully viable
+this cycle (GOV-1567):** a third-party study-abroad office's own published
+e-Visa walkthrough (a genuine live capture of `evisa.imigrasi.go.id`, filled
+with a real worked B1-30-Day-visa example) shows the real, non-wireframe
+field labels for the Fill Form step — Personal Information (Full name, Sex,
+Place/Date of Birth, Phone Number), Passport Information (Document Type/No.,
+Nationality, Date of Expiry, Issuing Country), Address in Indonesia
+(Residence Type, Address, Postal Code), and Applicant Contact Confirmation
+(Email). Not authored this cycle (Colombia's DMV schema was this cycle's
+single deliverable) — combined with the official User Manual's already-confirmed
+wizard/payment steps, this is now ready-to-author backlog for an immediate
+follow-up cycle; the schema should cite both sources (the official manual for
+process/wizard structure, the third-party capture as corroborating evidence
+for the Fill Form field labels) per its own disclosed judgment call. **The Philippines**
 (`ph/bi/non-immigrant-visa-application`, GOV-1490) is new this cycle —
 sourced from the Bureau of Immigration's own Consolidated General Application
 Form (CGAF) for Non-Immigrant Visa, Special Work Permit, and Provisional Work
@@ -1301,9 +1405,12 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (15/18 jurisdictions)
+### National ID & Civic Documents (15/19 jurisdictions)
 
-Every jurisdiction except Brazil, Indonesia, and Mexico has at least one
+**Colombia**, opened this cycle (GOV-1567) via its DMV vertical, has no
+National ID schema yet — the Registraduría's cédula de ciudadanía and voter
+registration are open, unscreened backlog candidates for a future cycle.
+Every other jurisdiction except Brazil, Indonesia, and Mexico has at least one
 National ID and/or voter-registration schema. Indonesia's National ID gap was
 screened this cycle (GOV-1560): Dukcapil's own KTP-el/NIK registration is
 confirmed in-person and biometric (photo/fingerprint/iris) only, with
@@ -1371,6 +1478,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CO** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1444,23 +1552,45 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    panels (Transfer Pricing, Group Relief, Section 299 Leases, R&D Credit,
    Film Tax) far more extensive than a single-session schema should attempt
    without a comparably strong source.
-3. **New jurisdictions beyond the current 18** — the standard is meant to be
+3. **New jurisdictions beyond the current 19** — the standard is meant to be
    global from the start (see AGENTS.md charter). South Korea, the UAE,
-   Brazil, Mexico, the Philippines, and (this cycle) Indonesia have each been
-   opened in recent cycles (GOV-1289, GOV-1297, GOV-1296, GOV-1393, GOV-1444,
-   GOV-1546). **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
-   GOV-1546) opens with one vertical — Business Formation, the individual/UMK
+   Brazil, Mexico, the Philippines, Indonesia, and (this cycle) Colombia have
+   each been opened in recent cycles (GOV-1289, GOV-1297, GOV-1296, GOV-1393,
+   GOV-1444, GOV-1546, GOV-1567). **Colombia**
+   (`co/runt/formulario-solicitud-tramites-vehiculo`, GOV-1567) opens as the
+   registry's 19th jurisdiction with one vertical — DMV, RUNT's own vehicle
+   procedure request form, directly downloadable and unauthenticated from
+   `runt.gov.co` — see the Executive Summary update above for full detail.
+   DIAN's RUT (Formulario 001, previously flagged here as a Business
+   Formation candidate) was re-screened this cycle and remains weak (three
+   unbounded repeating sub-sections); its own "pre-RUT personas naturales"
+   guide (bounded, natural-person-only) is a stronger Business Formation
+   candidate for a future cycle. Colombia's other five verticals (Passport,
+   Business Formation, Visa, Taxes, National ID) are open, unscreened backlog
+   candidates. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
+   GOV-1546) opened with one vertical — Business Formation, the individual/UMK
    NIB registration pathway through OSS RBA, sourced from BKPM's own official
    English-language user guide (a genuine 20-step screenshot walkthrough, no
    login/CAPTCHA/WAF gate); its other five verticals (Passport, DMV, Visa,
-   Taxes, National ID) and its own Non-UMK/legal-entity NIB pathway are open,
-   unscreened backlog candidates for a future cycle — see the document's own
-   VERIFICATION.md. **Update:** Indonesia now has 3 of its 6 verticals
-   (DMV added GOV-1553; Taxes added GOV-1560, `id/djp/annual-individual-
-   income-tax-return-1770s`); Passport, Visa, and National ID remain open
-   backlog candidates, all screened at least once (see GOV-1560's own
-   VERIFICATION.md) — Visa is the strongest remaining candidate, National ID
-   the weakest (in-person/biometric-only, no online channel). Mexico
+   Taxes, National ID) and its own Non-UMK/legal-entity NIB pathway were open,
+   unscreened backlog candidates — see the document's own VERIFICATION.md.
+   **Update:** Indonesia now has 3 of its 6 verticals (DMV added GOV-1553;
+   Taxes added GOV-1560, `id/djp/annual-individual-income-tax-return-1770s`).
+   **This cycle (GOV-1567) re-screened Indonesia's remaining Passport and
+   Visa gaps and reversed both from "not viable" to genuinely open, ready-to-author
+   candidates:** Passport now has a genuine official, versioned
+   ("V3") screenshot-driven M-Paspor user guide hosted unauthenticated on a
+   regional Ditjen Imigrasi subdomain (`batam.imigrasi.go.id`, unlike the
+   main `imigrasi.go.id` domain, which remains CloudFront-blocked); Visa's
+   previously-wireframe-only "Fill Form" Personal Information block now has
+   its real field labels corroborated by a third-party study-abroad office's
+   own published walkthrough (a genuine live capture of `evisa.imigrasi.go.id`
+   filled with a real worked example). Neither was authored this cycle
+   (Colombia's DMV schema was this cycle's single deliverable); both are
+   ready-to-author backlog for an immediate follow-up cycle — see each
+   vertical's own section above for the full record. National ID
+   (Dukcapil KTP-el/NIK) remains the weakest of Indonesia's three open
+   verticals (confirmed in-person/biometric-only, no online channel). Mexico
    now has four of its six verticals
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
@@ -1488,11 +1618,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    own bar (its ~173 items lean heavily on external code tables not
    reproduced in the form, and it has substantially more unbounded
    repeating structures) — left as a viable backlog candidate for a future
-   Colombia-opening cycle (Colombia is not yet in this registry); see
-   `ph/bir/tin-application-corporations-partnerships`'s own VERIFICATION.md
-   for the full comparison. Candidates worth scouting for a 19th
-   jurisdiction in a future cycle: an EU member beyond DE/FR/NL — Japan
-   (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174).
+   Colombia-opening cycle (Colombia was not yet in this registry at the
+   time); see `ph/bir/tin-application-corporations-partnerships`'s own
+   VERIFICATION.md for the full comparison. **Colombia has since opened**
+   (GOV-1567, via RUNT's DMV form — see item 3's own Colombia entry above).
+   Candidates worth scouting for a 20th jurisdiction in a future cycle: an EU
+   member beyond DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked
+   dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
@@ -1542,9 +1674,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   published version/edition).
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
-- **Jurisdiction:** ISO 3166-1 alpha-2 code (AE, AU, BR, CA, DE, FR, GB, IE,
-  IN, KR, MX, NL, NZ, PH, SG, US, ZA) — 17 jurisdictions tracked as of
-  GOV-1444 (2026-07-06), up from the prior revision's 16.
+- **Jurisdiction:** ISO 3166-1 alpha-2 code (AE, AU, BR, CA, CO, DE, FR, GB,
+  IE, ID, IN, KR, MX, NL, NZ, PH, SG, US, ZA) — 19 jurisdictions tracked as of
+  GOV-1567 (2026-07-07), up from the prior revision's 18.
 
 ---
 
@@ -1614,5 +1746,9 @@ closed to 18/18 / 100%), updated by GOV-1553
 Indonesia 2nd vertical, DMV, global DMV vertical closed to 18/18 / 100%),
 updated by GOV-1560 (`id/djp/annual-individual-income-tax-return-1770s`
 authoring, Indonesia 3rd vertical, Taxes, global Taxes vertical closed to
-18/18 / 100%)
+18/18 / 100%), updated by GOV-1567
+(`co/runt/formulario-solicitud-tramites-vehiculo` authoring, Colombia opened
+as 19th jurisdiction, DMV, global DMV vertical closed to 19/19 / 100%;
+Indonesia's Passport and Visa gaps re-screened and reversed from "not
+viable" to ready-to-author backlog candidates)
 
