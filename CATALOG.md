@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**21 jurisdictions** | **264 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**22 jurisdictions** | **265 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1666):** Poland opens as this registry's **22nd
+> jurisdiction** with `pl/mswia/wniosek-o-wydanie-dowodu-osobistego`
+> (National ID & Civic Documents) — the "Wniosek o wydanie dowodu
+> osobistego" (form DO/W/1), Poland's national identity card (dowód
+> osobisty) application, through which a Polish citizen applies for a first,
+> renewed, or replacement card across fourteen possible reasons (first
+> issuance, data change, expiry, suspension lapse, loss, changed appearance,
+> damage, electronic-layer upgrade, authentication/certificate malfunction,
+> identity theft, fingerprint-free replacement, complaint, or another
+> reason). This `GovSchema Standard Research` cycle re-screened Spain's
+> Passport (Policía Nacional DNI, still appointment-only with no
+> downloadable field-level form) and Visa (the national Type-D visa form,
+> still duplicating `de/auswaertiges-amt/national-visa-application`) gaps,
+> and Chile's Passport/Visa/National ID gaps (Registro Civil e
+> Identificación, still ClaveÚnica-login-gated with only a photo-scanned
+> requirements flyer as an unauthenticated fallback, not a field-by-field
+> form) — all four re-confirmed weaker than a new candidate found this
+> cycle. Poland's dowód osobisty application form is a genuine,
+> currently-maintained (its governing regulation dated 2025-07-23, Dz. U. z
+> 2025 r. poz. 1031, implementing EU Regulation 2025/1208 on strengthened
+> identity-card security features), fully unauthenticated AcroForm PDF
+> attached directly to the gov.pl "Uzyskaj dowód osobisty" service page —
+> its 47 form-field widgets across 2 pages already carry complete,
+> self-documenting Polish names (e.g. "Numer PESEL", "Imię ojca (pierwsze)"),
+> extracted directly via `pdfjs-dist`'s own annotation layer with no
+> coordinate-matching or page-rendering needed. Models 26 fields across the
+> form's own six sections — identity data of the person to receive the
+> card, an optional correspondence-contact block, the closed
+> reason-for-application list, a personal-signature-certificate election,
+> and the applicant's own place/date declaration — plus 1 `documents[]`
+> entry for the required photograph. Deliberately does not model the form's
+> own clerk-only "Adnotacje urzędowe" block (identity-verification method,
+> a parent/guardian/carer's name when filing for a child or ward, the
+> document used to establish identity, and whether fingerprints were taken
+> — all completed by the receiving official, not the applicant) or the
+> distinct minor/no-fingerprint applicant pathway — see the document's own
+> VERIFICATION.md for the full candidate comparison and eight other
+> disclosed judgment calls. This opens Poland with 1 of its 6 verticals
+> (National ID & Civic Documents); Passport, DMV, Business Formation, Taxes,
+> and Visa are all open, unscreened backlog candidates for future cycles.
 
 > **Update (2026-07-07, GOV-1659):** Spain gains its third vertical, Business
 > Formation, with `es/aeat/declaracion-censal-alta-actividad-economica-modelo-036`
@@ -1500,8 +1541,10 @@
 
 ## By Vertical
 
-### Passport (17/21 jurisdictions — 81%)
+### Passport (17/22 jurisdictions — 77%)
 
+**Poland**, opened via its National ID vertical (GOV-1666), has no Passport
+schema yet — an open, unscreened backlog candidate for a future cycle.
 AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
 least one published Passport schema. **Colombia**, opened via its DMV
 vertical (GOV-1567), now has 6 of its 6 verticals including Passport
@@ -1574,8 +1617,10 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (21/21 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (21/22 jurisdictions — 95%)
 
+**Poland**, opened via its National ID vertical (GOV-1666), has no DMV
+schema yet — an open, unscreened backlog candidate for a future cycle.
 Every jurisdiction reached 100% (20/20) as of GOV-1638; **Spain**, opened
 via its Taxes vertical (GOV-1645), briefly reopened the gap before closing
 it again this cycle (GOV-1652) with `es/dgt/solicitud-tramites-vehiculo` —
@@ -1703,9 +1748,11 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (21/21 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (21/22 jurisdictions — 95%)
 
-This vertical reached 100% (20/20) as of GOV-1624, then reopened to 20/21
+**Poland**, opened via its National ID vertical (GOV-1666), has no Business
+Formation schema yet — an open, unscreened backlog candidate for a future
+cycle. This vertical reached 100% (20/20) as of GOV-1624, then reopened to 20/21
 when Spain joined as a 21st jurisdiction (via its Taxes vertical, GOV-1645)
 without yet having a Business Formation schema of its own. **Spain's gap is
 now closed (GOV-1659)** via
@@ -1843,8 +1890,10 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (20/21 jurisdictions — 95%)
+### Taxes — Income Tax Return, Tax Filing (20/22 jurisdictions — 91%)
 
+**Poland**, opened via its National ID vertical (GOV-1666), has no Taxes
+schema yet — an open, unscreened backlog candidate for a future cycle.
 **Spain** (`es/aeat/declaracion-censal-personas-fisicas-modelo-030`,
 GOV-1645) opens this cycle as the registry's 21st jurisdiction via this
 vertical — AEAT's Modelo 030, the census declaration/NIF-registration form
@@ -1938,8 +1987,10 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (16/21 jurisdictions — 76%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (16/22 jurisdictions — 73%)
 
+**Poland**, opened via its National ID vertical (GOV-1666), has no Visa
+schema yet — an open, unscreened backlog candidate for a future cycle.
 **Spain**, opened via its Taxes vertical (GOV-1645), has no Visa schema
 yet — an open, unscreened backlog candidate for a future cycle. **Chile**,
 opened via Business Formation (GOV-1624), has no Visa
@@ -2020,7 +2071,17 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (17/21 jurisdictions — 81%)
+### National ID & Civic Documents (18/22 jurisdictions — 82%)
+
+**Poland** opens as the registry's 22nd jurisdiction via this vertical
+(`pl/mswia/wniosek-o-wydanie-dowodu-osobistego`, GOV-1666) — MSWiA's dowód
+osobisty (national identity card) application form, DO/W/1, a genuine,
+unauthenticated AcroForm PDF with 47 self-documenting named field widgets,
+attached directly to the gov.pl "Uzyskaj dowód osobisty" service page. See
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full sourcing record and candidate comparison (which also
+re-screened and re-confirmed Spain's Passport/Visa and Chile's
+Passport/Visa/National ID gaps as still weaker).
 
 **Spain**, opened via its Taxes vertical (GOV-1645), has no dedicated
 National ID schema yet — Spain's own DNI is issued by the Policía
@@ -2174,6 +2235,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **PL** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -2411,10 +2473,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    as weaker: a genuine PDF but with no AcroForm layer). Spain's remaining
    two verticals (Passport, Visa) are open backlog
    candidates for a future cycle; National ID has a possible lead (the EX-15
-   foreigner-identity-number form) not yet picked up. Other candidates worth
-   scouting for a **22nd** jurisdiction in a future cycle: Portugal, Poland,
-   or an EU member beyond DE/ES/FR/NL — Japan (`mofa.go.jp`) is a confirmed
-   IP-blocked dead end (GOV-1174).
+   foreigner-identity-number form) not yet picked up. **Poland has since
+   opened as the registry's 22nd jurisdiction (GOV-1666)**, via
+   `pl/mswia/wniosek-o-wydanie-dowodu-osobistego` — MSWiA's dowód osobisty
+   (national identity card) application form, DO/W/1, sourced from a
+   genuine, unauthenticated AcroForm PDF with self-documenting field names;
+   see the Executive Summary update above and the document's own
+   VERIFICATION.md for the full candidate comparison (which also
+   re-screened and re-confirmed Spain's Passport/Visa and Chile's
+   Passport/Visa/National ID gaps as still weaker this cycle). Poland's
+   other five verticals (Passport, DMV, Business Formation, Taxes, Visa)
+   are open, unscreened backlog candidates for a future cycle. Other
+   candidates worth scouting for a **23rd** jurisdiction in a future cycle:
+   Portugal, or an EU member beyond DE/ES/FR/NL/PL — Japan (`mofa.go.jp`) is
+   a confirmed IP-blocked dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
