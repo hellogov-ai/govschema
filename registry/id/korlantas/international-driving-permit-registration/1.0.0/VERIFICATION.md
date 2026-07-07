@@ -109,7 +109,12 @@ brief itself suggested:
   was not independently re-fetched to re-derive the Rp250,000/Rp225,000
   figures — they are taken from the source page's own statement).
 - **Retrieved / reviewed:** 2026-07-07
-- **Reviewer:** GovSchema Engineering (initial authoring source-review)
+- **Reviewer:** GovSchema Engineering (initial authoring source-review); independently
+  re-verified 2026-07-07 by GovSchema Engineering (Review Engineer, review gate
+  GOV-1556 / PR #261) — re-fetched the live portal and requirements PDF directly,
+  confirmed all 6 field definitions, the two `display:none` fields, and the
+  `kitap`/`existingInternationalLicence` no-gating-field claim; found and disclosed
+  one additional gap (judgment call 7, `issuingCounter`'s coded-vs-label value)
 
 ## Field inventory (Phase 3)
 
@@ -197,7 +202,21 @@ section and its linked `persyaratan_pendaftaran.pdf`):
    (which this document uses as the field's actual accepted values, per this
    registry's convention of using source-coded values where the source
    itself defines them) are the upper-case strings shown.
-7. **SIM Nasional renewal (SINAR/Digital Korlantas POLRI) was read and
+7. **`issuingCounter`'s modelled value (`KORLANTAS POLRI`) is the option's
+   label text, not its raw `value` attribute — a disclosed deviation from
+   the source-coded-value convention applied to `golongan_sim_nas` and
+   `jenis_reg`.** Independent re-verification (2026-07-07, review gate
+   GOV-1556) confirmed the live `<select id="gerai_id">`'s only real,
+   non-placeholder `<option>` is `<option value="2">KORLANTAS POLRI</option>`
+   — i.e. the form actually submits `2`, not the string `KORLANTAS POLRI`,
+   for this field. This document deliberately models the human-readable
+   label instead, since `2` is an opaque internal reference code with no
+   meaning of its own and there is exactly one real destination facility to
+   name; this is flagged here, rather than silently left inconsistent with
+   the other two enum fields' convention, so a future reviewer or
+   schema-driven form-filler is not surprised if they compare this field
+   against the live source's raw HTML.
+8. **SIM Nasional renewal (SINAR/Digital Korlantas POLRI) was read and
    cross-checked but not used as the primary source.** Its own field-level
    detail (documents, photo pixel/size spec, delivery/payment steps) is
    real and unauthenticated, and is cited above as a rejected-but-considered
