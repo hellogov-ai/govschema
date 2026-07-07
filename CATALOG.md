@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**20 jurisdictions** | **259 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**20 jurisdictions** | **260 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1631):** Brazil gains
+> `br/pr/iipr/carteira-identidade-correcao`, closing its National ID &
+> Civic Documents gap (this catalog's own "Known Gaps" section had flagged
+> Brazil's Carteira de Identidade Nacional (CIN) as an open-but-weak
+> candidate, and two same-day prior cycles — GOV-1616, GOV-1624 — had each
+> independently found Paraná's own RCI (Registro Civil de Identificação)
+> system a genuinely strong, ready-to-author candidate but deferred it,
+> since confirming its fields' real on-screen labels needed a live-rendered
+> pass, not just JS-bundle field-name inspection). This cycle is that
+> dedicated pass, and corrects a stale citation both prior cycles' own notes
+> carried forward: the bare hostname `rci.pr.gov.br` no longer resolves in
+> DNS at all as of 2026-07-07 (confirmed NXDOMAIN via `getent hosts`, Python
+> `socket.gethostbyname`, and Google's DNS-over-HTTPS resolver); the real,
+> live, unauthenticated host is `https://www.rci.pr.gov.br` (with the `www.`
+> prefix), embedded via an iframe on
+> `policiacivil.pr.gov.br/Pagina/Correcao-de-Solicitacao` and linked from
+> IIPR's own service-catalog pages. This document is scoped to
+> correction/update of an *existing* Paraná RG/CIN record (photo, optional
+> secondary documents, biographical data, signature, health/disability
+> information, and contact/delivery address), confirmed via a live
+> Playwright render plus a full reconstruction of the same Vue app's
+> compiled render-function source (real labels/masks/option lists, not just
+> internal field names) — a synthetic, checksum-valid test CPF was correctly
+> rejected live by both of the app's real-record eligibility gates
+> ('Atenção: O seu cadastro no Paraná não está disponível...' /
+> 'Pedido não encontrado'), confirming genuine server-side validation and
+> that no synthetic path exists past them, consistent with this cycle's own
+> scoping. First-time CIN/RG issuance is confirmed separately,
+> in-person-appointment-only, via IIPR's own service-catalog page, and
+> remains out of scope. Models 48 fields plus 11 supporting-document
+> entries across six sections (Foto, Documentos, Dados biográficos,
+> Assinatura, Saúde, Endereço); one real authoring bug this cycle's own
+> pre-merge validation pass caught and fixed: a signature-image document
+> miscategorized `category: "attestation"`, which the v0.3 meta-schema
+> forbids from carrying file-type `constraints` — see the document's own
+> VERIFICATION.md for the full method, the second corroborating source
+> (IIPR's own service-description page), and every other disclosed
+> judgment call. This closes the global National ID & Civic Documents
+> vertical to **17/20 (85%)**.
 
 > **Update (2026-07-07, GOV-1624):** Chile opens as the registry's **20th
 > jurisdiction** with `cl/sii/inicio-actividades-personas-naturales`
@@ -1730,7 +1770,17 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (16/20 jurisdictions)
+### National ID & Civic Documents (17/20 jurisdictions — 85%)
+
+**Brazil** now has a National ID & Civic Documents schema:
+`br/pr/iipr/carteira-identidade-correcao` (GOV-1631) — see the Executive
+Summary update above for the full sourcing method (including the DNS
+correction to the two prior cycles' own `rci.pr.gov.br` citation) and the
+document's own VERIFICATION.md for every disclosed judgment call. This
+closes the gap the paragraph below (left largely as originally written,
+for its own historical record of how the candidate was found) describes as
+"the strongest-ever-found, ready-to-author candidate for Brazil's National
+ID gap."
 
 **Chile**, opened this cycle (GOV-1624) via Business Formation, has no
 National ID schema yet — Registro Civil's cédula de identidad renewal was
@@ -1782,8 +1832,10 @@ remains a separate, still-open, election-cycle-scoped gap (the
 `inscribeteonline2026.registraduria.gov.co` microsite no longer resolves —
 see "Known Gaps" below); it is not needed to consider Colombia's National ID
 vertical closed, since `duplicado-cedula-ciudadania` already covers the
-jurisdiction's core national-ID document. Every other jurisdiction except Brazil, Indonesia, and Mexico has at least one
-National ID and/or voter-registration schema. Indonesia's National ID gap was
+jurisdiction's core national-ID document. Every other jurisdiction except Indonesia and Mexico has at least one
+National ID and/or voter-registration schema (Brazil's own gap closed via
+`br/pr/iipr/carteira-identidade-correcao`, GOV-1631 — see the Executive
+Summary update above). Indonesia's National ID gap was
 screened this cycle (GOV-1560): Dukcapil's own KTP-el/NIK registration is
 confirmed in-person and biometric (photo/fingerprint/iris) only, with
 Dukcapil's own site explicitly stating no web/app channel exists even for NIK
@@ -1811,12 +1863,16 @@ application types left out of scope, and for why `registeredCityMunicipality`
 is modelled as an open string rather than an enum). Mexico's CURP
 national-ID candidate requires an in-person biometric appointment and was not
 sourceable in a prior cycle (GOV-1393) — an open backlog candidate, not a
-dead end. Brazil's Carteira de Identidade Nacional (CIN) candidate remains an
-open but weak backlog candidate (GOV-1428, 2026-07-06): Decreto nº
+dead end. Brazil's Carteira de Identidade Nacional (CIN) candidate was rated
+an open but weak backlog candidate as of GOV-1428 (2026-07-06): Decreto nº
 10.977/2022 enumerates the finished card's ~20+ printed data attributes, but
 that's the card's data schema, not an application form — the decree's actual
 filing requirements are just a CPF plus one birth/marriage certificate, too
-thin to author a field-level schema from on its own. **Brazil's voter-registration
+thin to author a field-level schema from on its own. **This has since
+closed** (GOV-1631, 2026-07-07): Paraná's own RCI correction/reissuance
+system turned out to be the strong candidate this decree-only read had
+missed — see the Executive Summary update above and
+`br/pr/iipr/carteira-identidade-correcao`'s own VERIFICATION.md. **Brazil's voter-registration
 candidate was newly screened this cycle (GOV-1483):** TSE's Título Net
 (Autoatendimento Eleitoral) self-service system is a genuine, fully-online
 first-time voter registration (alistamento eleitoral) — confirmed via a
@@ -1848,7 +1904,7 @@ now closed.
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CL** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -2058,8 +2114,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    all found ClaveÚnica-login-gated with no PDF fallback; see the Executive
    Summary update above and the document's own VERIFICATION.md for the full
    candidate comparison (which also re-confirms Brazil's National ID gap as
-   now a strong, ready-to-author candidate — see the National ID vertical
-   section above). Chile's other five verticals (Passport, DMV, Taxes, Visa,
+   then a strong, ready-to-author candidate — since closed via GOV-1631, see
+   the National ID vertical section above). Chile's other five verticals (Passport, DMV, Taxes, Visa,
    National ID) are open, unscreened-or-lightly-screened backlog candidates
    for a future cycle. Candidates worth scouting for a 21st jurisdiction in
    a future cycle: Spain (AEAT's Modelo 030 is a strong, genuinely
