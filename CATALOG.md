@@ -4,8 +4,36 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **247 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**18 jurisdictions** | **248 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-07, GOV-1546):** Indonesia opens as the registry's
+> **18th jurisdiction** with `id/bkpm/oss-nib-registration-individual-umk`
+> (Business Formation) — the Business Identification Number (Nomor Induk
+> Berusaha, NIB) registration for an individual Micro/Small Business (UMK)
+> actor through the Online Single Submission Risk-Based Approach system
+> (OSS RBA, `oss.go.id`), operated by the Ministry of Investment and
+> Downstream Industry / Investment Coordinating Board (BKPM). This research
+> cycle first re-confirmed the task brief's own named National ID targets
+> (DE Steuer-ID, SG NRIC loss/damage/re-registration, NZ RealMe) were already
+> published (`de/finanzamt/tax-identification-number`,
+> `sg/ica/identity-card-reregistration`, `nz/dia/realme-verified-identity`),
+> and re-screened the UAE Passport gap (unchanged, still checklist-level
+> only — see GOV-1533's own note below), before picking Indonesia — a
+> candidate this catalog's own "Known Gaps" section had explicitly flagged
+> as worth scouting. Sourced from BKPM's own official "Individual UMK
+> Licensing through OSS Indonesia Application" guide, a genuine 20-step,
+> English-language, screenshot-driven walkthrough of the OSS Indonesia
+> mobile app, directly downloadable from `oss.go.id`'s own CDN with no
+> login/CAPTCHA/WAF gate. Scoped to a single natural-person applicant
+> registering under the UMK (capital ≤ Rp5 billion) pathway with exactly one
+> KBLI business-activity code and one product/service line; the Non-UMK/
+> legal-entity (PT/CV/Yayasan) registration pathway, and the wizard's own
+> repeatable "add another KBLI"/"add another product" actions, are out of
+> scope for this v1.0.0 — see the document's own VERIFICATION.md for this
+> and eight other disclosed judgment calls, including one screen whose
+> second input's visible placeholder text does not match its own section
+> header (flagged, not silently corrected).
+>
 > **Update (2026-07-07, GOV-1540):** The United Arab Emirates gains
 > `ae/rakez/free-zone-establishment-registration` (Business Formation),
 > closing the **global Business Formation vertical to 17/17 jurisdictions
@@ -858,7 +886,7 @@
 
 ## By Vertical
 
-### Passport (16/17 jurisdictions)
+### Passport (16/18 jurisdictions)
 
 AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
 least one published Passport schema. India (`in/mea/passport-application-first-adult`,
@@ -904,9 +932,11 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (17/17 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (17/18 jurisdictions)
 
-Every jurisdiction now has at least one
+Every jurisdiction except Indonesia (opened this cycle via its Business
+Formation vertical only, GOV-1546; DMV is an open, unscreened backlog
+candidate) now has at least one
 DMV-vertical schema (driver licensing and/or vehicle registration/transfer).
 **Brazil** (`br/mg/detran/comunicacao-de-venda-de-veiculo`, GOV-1526) is new
 this cycle and closes the vertical to 17/17 — DETRAN-MG's (Minas Gerais) own
@@ -984,9 +1014,13 @@ within an already-covered vertical:
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 
-### Business Formation — Incorporation, LLC, Company Registration (17/17 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (18/18 jurisdictions — 100%)
 
-Every jurisdiction now has at least one Business Formation schema. **The
+Every jurisdiction now has at least one Business Formation schema, including
+**Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`, GOV-1546),
+new this cycle and this jurisdiction's first schema — see the Executive
+Summary update above for full detail — keeping the vertical at **18/18
+jurisdictions (100%)** as the registry's 18th jurisdiction joins. **The
 United Arab Emirates** (`ae/rakez/free-zone-establishment-registration`,
 GOV-1540) is new this cycle — sourced from the Ras Al Khaimah Economic Zone
 Authority's (RAKEZ) own "Application for Registration and Licence of a Free
@@ -1067,9 +1101,11 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (17/17 jurisdictions — 100%)
+### Taxes — Income Tax Return, Tax Filing (17/18 jurisdictions)
 
-Every jurisdiction now has at least one Taxes-vertical schema. **The
+Every jurisdiction except Indonesia (opened this cycle via its Business
+Formation vertical only, GOV-1546; Taxes is an open, unscreened backlog
+candidate) now has at least one Taxes-vertical schema. **The
 Philippines** (`ph/bir/annual-income-tax-return-1701a`, GOV-1466) is new
 this cycle and closes the global Taxes vertical to 100% — sourced from BIR
 Form 1701A (January 2018 ENCS, with rates), the annual income tax return for
@@ -1115,7 +1151,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (14/17 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (14/18 jurisdictions)
 
 **Three confirmed, previously-researched dead ends — not open work:**
 
@@ -1130,8 +1166,10 @@ file-layout specification and authored a bounded 67-field core against it
   both nationality-gated (AU/CA/US applicants only) and WAF-defended, with
   no official PDF form available as an alternative (GOV-1428, 2026-07-06).
 
-Every other jurisdiction (AE, AU, CA, DE, FR, GB, IE, IN, KR, MX, NZ, PH, SG,
-US) has at least one Visa schema. **The Philippines**
+Every other jurisdiction except Indonesia (AE, AU, CA, DE, FR, GB, IE, IN, KR,
+MX, NZ, PH, SG, US) has at least one Visa schema — Indonesia opened this
+cycle via its Business Formation vertical only (GOV-1546); Visa is an open,
+unscreened backlog candidate. **The Philippines**
 (`ph/bi/non-immigrant-visa-application`, GOV-1490) is new this cycle —
 sourced from the Bureau of Immigration's own Consolidated General Application
 Form (CGAF) for Non-Immigrant Visa, Special Work Permit, and Provisional Work
@@ -1162,10 +1200,12 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (15/17 jurisdictions)
+### National ID & Civic Documents (15/18 jurisdictions)
 
-Every jurisdiction except Brazil and Mexico has at least one National ID
-and/or voter-registration schema. **The United Arab Emirates**
+Every jurisdiction except Brazil, Indonesia, and Mexico has at least one
+National ID and/or voter-registration schema — Indonesia opened this cycle
+via its Business Formation vertical only (GOV-1546); National ID is an open,
+unscreened backlog candidate. **The United Arab Emirates**
 (`ae/icp/emirates-id-replacement`, GOV-1474) is new this cycle — sourced from
 the ICP (Federal Authority for Identity, Citizenship, Customs & Port
 Security) Smart App's own official user manual (Citizen Category, v5.23), a
@@ -1229,6 +1269,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **ID** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1298,10 +1339,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    panels (Transfer Pricing, Group Relief, Section 299 Leases, R&D Credit,
    Film Tax) far more extensive than a single-session schema should attempt
    without a comparably strong source.
-3. **New jurisdictions beyond the current 17** — the standard is meant to be
+3. **New jurisdictions beyond the current 18** — the standard is meant to be
    global from the start (see AGENTS.md charter). South Korea, the UAE,
-   Brazil, Mexico, and (this cycle) the Philippines have each been opened in
-   recent cycles (GOV-1289, GOV-1297, GOV-1296, GOV-1393, GOV-1444). Mexico
+   Brazil, Mexico, the Philippines, and (this cycle) Indonesia have each been
+   opened in recent cycles (GOV-1289, GOV-1297, GOV-1296, GOV-1393, GOV-1444,
+   GOV-1546). **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
+   GOV-1546) opens with one vertical — Business Formation, the individual/UMK
+   NIB registration pathway through OSS RBA, sourced from BKPM's own official
+   English-language user guide (a genuine 20-step screenshot walkthrough, no
+   login/CAPTCHA/WAF gate); its other five verticals (Passport, DMV, Visa,
+   Taxes, National ID) and its own Non-UMK/legal-entity NIB pathway are open,
+   unscreened backlog candidates for a future cycle — see the document's own
+   VERIFICATION.md. Mexico
    now has four of its six verticals
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
@@ -1331,11 +1380,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    repeating structures) — left as a viable backlog candidate for a future
    Colombia-opening cycle (Colombia is not yet in this registry); see
    `ph/bir/tin-application-corporations-partnerships`'s own VERIFICATION.md
-   for the full comparison. Candidates worth scouting for an 18th
-   jurisdiction in a future cycle: Indonesia (OSS/NIB business
-   registration, not screened in detail this cycle), an EU member beyond
-   DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end
-   (GOV-1174).
+   for the full comparison. Candidates worth scouting for a 19th
+   jurisdiction in a future cycle: an EU member beyond DE/FR/NL — Japan
+   (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
