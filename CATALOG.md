@@ -22,8 +22,8 @@
 > login/CAPTCHA/WAF) and performed a full `pdfjs-dist` text-content
 > extraction of the form's own two pages (it carries no AcroForm layer — a
 > static hand-fill/print template), yielding a materially richer field set:
-> 21 fields — the header (owner identity/address, the addressee registering
-> authority, a PESEL-or-REGON line, a foreigner-only date-of-birth line), a
+> 22 fields — the header (owner identity/address, the addressee registering
+> authority's name and locality, a PESEL-or-REGON line, a foreigner-only date-of-birth line), a
 > four-way `requestType` enum (registration / temporary registration /
 > deregistration / disposal notification) covering all four procedures this
 > single template serves, the six numbered vehicle-identification lines, the
@@ -1702,7 +1702,7 @@ Infrastruktury z dnia 8 listopada 2024 r. (Dz.U. 2024 poz. 1709), a static
 Dziennik Ustaw gazette API. Two prior cycles (GOV-1666, GOV-1671) had each
 screened this same regulation and set it aside as thinner-sourced at the
 time; this cycle's full `pdfjs-dist` text extraction of the form's own two
-pages yields 21 fields plus 13 `documents[]` entries, modelling all four
+pages yields 22 fields plus 13 `documents[]` entries, modelling all four
 request types this single template serves through one `requestType` enum —
 see the Executive Summary update above and the document's own
 VERIFICATION.md for the full candidate history and disclosed judgment
@@ -2589,7 +2589,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    VERIFICATION.md for the full candidate comparison. **Poland's DMV gap has
    since closed too (GOV-1678)**, via `pl/mi/wniosek-o-rejestracje-pojazdu`
    — the same regulation two prior cycles had set aside as thinner-sourced,
-   revisited for a full, dedicated extraction (21 fields, 13 `documents[]`
+   revisited for a full, dedicated extraction (22 fields, 13 `documents[]`
    entries across all four request types) rather than a secondary screening
    note; see the Executive Summary update above and the document's own
    VERIFICATION.md for the full candidate history and disclosed judgment

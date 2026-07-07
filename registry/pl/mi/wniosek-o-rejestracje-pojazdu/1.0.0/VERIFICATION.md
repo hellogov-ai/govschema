@@ -11,6 +11,11 @@ current verification claim honestly.
 - **`verification.method`:** `manual-source-review-v1`
 - **`verification.lastVerifiedAt`:** `2026-07-07`
 
+**Amended same-day** in response to GOV-1681's review-gate findings on PR
+#279: added `registeringAuthorityLocality` (see judgment call 3 below,
+correcting the original text of that call) and refreshed the conformance
+fixture accordingly. Field count: 21 → 22.
+
 This is issue **GOV-1678**, tasked directly with authoring Poland's national
 vehicle-registration application — the single remaining cell in the global
 DMV vertical (21/22 jurisdictions before this document; 22/22 after).
@@ -91,12 +96,12 @@ sole remaining gap in an entire global vertical.
 
 ## Field inventory
 
-All 21 `fields[]` entries and all 13 `documents[]` entries carry their exact
+All 22 `fields[]` entries and all 13 `documents[]` entries carry their exact
 source location inline in `schema.json`'s own `sourceRef`. Summary:
 
 | Section | Fields |
 |---|---|
-| Header (submission, owner, authority) | `submissionDate`, `submissionPlace`, `ownerName`, `ownerAddress`, `registeringAuthorityName`, `ownerPeselOrRegon`, `foreignerDateOfBirth` |
+| Header (submission, owner, authority) | `submissionDate`, `submissionPlace`, `ownerName`, `ownerAddress`, `registeringAuthorityName`, `registeringAuthorityLocality`, `ownerPeselOrRegon`, `foreignerDateOfBirth` |
 | Request type + vehicle data | `requestType`, `temporaryRegistrationPurpose`, `vehicleTypeAndPurpose`, `vehicleMakeTypeModel`, `yearOfProduction`, `vin`, `previousRegistrationNumber`, `euImportDate`, `previouslyRegisteredVehicleDisposalDate` |
 | Plates, retention, declaration | `individualPlateDesignator`, `reducedSizePlatesRequested`, `reducedMountingSpaceDeclared`, `retainPreviousRegistrationNumberRequested`, `dataAccuracyDeclaration` |
 
@@ -129,15 +134,25 @@ declaration verbatim.
    `notEquals`-on-an-absent-optional-field caution already logged elsewhere)
    is to avoid fabricating a condition the source does not itself express as
    a checkable flag. Both fields are left independently optional.
-3. **The header's raw extracted line reads "...(nr PESEL lub REGON
-   [footnotes 1,2] / data urodzenia [footnote 3]) (miejscowość)" — the
-   trailing "(miejscowość)" fragment is not modelled as a separate field.**
-   This is most plausibly a text-extraction artifact of the source's own
-   multi-column header layout (the same class of merged/ambiguous-cell
-   extraction issue disclosed for `co/runt/formulario-solicitud-tramites-
-   vehiculo`'s owner-document `Fecha` field), not a distinct data point; no
-   second occurrence of a "miejscowość"-labelled box appears elsewhere in
-   this section of the form.
+3. **`registeringAuthorityLocality` (correction from GOV-1681's review
+   gate).** v1.0.0 as first authored dismissed a `(miejscowość)` caption near
+   the registering-authority line as a probable text-extraction artifact of
+   linear reading order, and did not model it. The GOV-1681 review gate's
+   independent adversarial pass pulled the same PDF's raw x/y glyph
+   coordinates (not linear text order) and showed this does not hold up: the
+   right-hand header column carries two distinct dotted-line blanks, each
+   with its own independently-positioned caption —
+   `y=539.7 "(nazwa organu rejestrującego)"` and, on the row directly below,
+   `y=510.1 "(miejscowość)"` — not one wrapped caption. A filled-in
+   real-world example of an earlier (2020) version of this same form
+   (addressee handwritten as "Starosta Opolski / ul. 1 Maja 29 / 45-068
+   Opole" — authority name, then its own locality, like a postal heading)
+   corroborates the coordinate read. Re-verified independently again this
+   cycle via a fresh `pdfjs-dist` extraction of the same source PDF before
+   applying the fix. `registeringAuthorityLocality` is now
+   modelled as a required `string` field, paired with
+   `registeringAuthorityName`, and distinct from `submissionPlace` (the place
+   the application is signed, not the addressee's own locality).
 4. **`ownerName`/`ownerAddress` are documented as potentially describing
    either the vehicle's owner directly, or a distinct authorized submitting
    entity acting on the owner's behalf (footnote 1), without a separate pair
@@ -218,7 +233,8 @@ registration in their own name, keeping the vehicle's existing plates, with
 no vanity/reduced-size plate request. `submissionDate: "2026-07-07"`,
 `submissionPlace: "Kraków"`, `ownerName: "Marek Kowalski"`, `ownerAddress:
 "ul. Długa 12/3, 31-147 Kraków"`, `registeringAuthorityName: "Starosta
-Krakowski — Wydział Komunikacji"`, `ownerPeselOrRegon: "78051234567"` (an
+Krakowski — Wydział Komunikacji"`, `registeringAuthorityLocality: "Kraków"`
+(satisfying its own `required: true`), `ownerPeselOrRegon: "78051234567"` (an
 11-digit PESEL), `requestType: "registration"` (a valid enum member;
 `temporaryRegistrationPurpose` and `previouslyRegisteredVehicleDisposalDate`
 both correctly omitted since they are only `requiredWhen` a different
