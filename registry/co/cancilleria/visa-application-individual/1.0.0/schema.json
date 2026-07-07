@@ -1,0 +1,754 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "co/cancilleria/visa-application-individual",
+  "version": "1.0.0",
+  "title": "Colombia Online Visa Application (Individual, Titular Principal)",
+  "description": "Apply online for a Colombian visa (Visa) or transfer an existing visa to a new/replacement passport (Traspaso) through the Ministerio de Relaciones Exteriores' (Cancillería) Sistema Integral de Trámites al Ciudadano (SITAC) — Solicitud de Visa en Línea, tramitesmre.cancilleria.gov.co. Opens Colombia's fourth vertical (Visa), alongside the jurisdiction's existing DMV, Business Formation, and Taxes schemas. Covers the individual (non-group) applicant applying as their own visa's Titular Principal — either directly or through an apoderado (a person other than the applicant registering the request on the applicant's behalf) — across the wizard's Solicitud, Solicitante, Visa, Otros, Soportes, and Confirmación tabs: passport/nationality identification, visa-type and activity selection, the applicant's personal, academic, birth, and domicile data, generic (visa-type-independent) labor/occupation information, prior-Colombian-visa history, additional-information yes/no screening questions, family-in-Colombia disclosure, and required supporting documents (digital photo, passport-page copies, and contract/financial-support proof). Does not model: the Beneficiario (dependent-of-a-titular) applicant pathway and its own Búsqueda del Titular lookup; the Grupo Familiar (family-group) application pathway; the dozens of visa-type-specific (Tipo Visa × Actividad de la Visa) Información Laboral field variations the source's own §4.1 reference table documents beyond the generic fallback fields; the visa-study-fee (Liquidación de Estudio de Visa) payment step; or the post-submission status states (Requerimiento de Información, Inadmitida, Negada, Aprobada, Publicada). This document does not submit an application; the live SITAC platform and the Ministerio de Relaciones Exteriores are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministerio de Relaciones Exteriores de Colombia (Cancillería)",
+    "abbreviation": "Cancillería",
+    "url": "https://www.cancilleria.gov.co/"
+  },
+  "process": {
+    "type": "application",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://www.cancilleria.gov.co/sites/default/files/FOTOS2018/guia_del_usuario_solicitar_visa_en_linea.pdf",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "\"Guía de Usuario: Solicitar Visa en línea\" (SITAC), Cancillería de Colombia, last-updated date on the document's own cover page: 2018-03-09. Hosted unauthenticated, directly downloadable, on the Cancillería's own file server (cancilleria.gov.co); the live wizard it walks (tramitesmre.cancilleria.gov.co/tramites/enlinea/solicitarVisa.xhtml) is bot-mitigation (WAF/TSPD challenge-script)-gated to a direct, unauthenticated fetch (confirmed this cycle, HTTP 200 but a non-interactive JS challenge page, no form markup)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer); independently re-verified by Review Engineer (GOV-1605)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "Opens Colombia's Visa vertical. A prior 'GovSchema Standard Research' cycle (GOV-1595) had screened Colombia's e-visa channel and found it weaker than the Taxes candidate ultimately authored, describing it only as 'real fields locked behind a live AJAX wizard session' — that characterization is accurate for the live wizard itself (reconfirmed this cycle: WAF-gated) but did not identify this SITAC user guide, a distinct, genuine, full-resolution, screenshot-driven field-by-field walkthrough of the same wizard hosted directly on cancilleria.gov.co. This cycle located and authored against it. See VERIFICATION.md for the full sourcing record, candidate comparison, and every disclosed judgment call. Independent review-gate re-verification (GOV-1605) re-fetched the same PDF and re-rendered every page with a fresh pdfjs-dist+canvas pass; found and fixed one discrepancy (`tipoSolicitud` was declared `required: true` but the source shows it, uniquely among its sibling dropdowns, without a required-field asterisk on p.5 — corrected to `required: false`) and one cosmetic value-transcription error in VERIFICATION.md's own field-inventory table; every other disclosed judgment call was independently re-confirmed. `status` remains `draft`, not `verified`: this review did not submit a real application to a live, WAF-gated foreign-government system (see VERIFICATION.md, Test run)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "numeroPasaporte",
+      "label": "Número de Pasaporte",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Guía SITAC — p.5, Sección Solicitud",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "nacionalidadSolicitante",
+      "label": "Nacionalidad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Dropdown; only the selected value is visible on-screen (\"ARGENTINA\"), so no enum is asserted.",
+      "sourceRef": "Guía SITAC — p.5, Sección Solicitud",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "solicitudDe",
+      "label": "Solicitud de",
+      "type": "enum",
+      "required": true,
+      "description": "Both values are defined in the guide's own prose bullet list: VISA (\"solicitud de visa por primera vez\") and TRASPASO (\"la visa se traspasa a otro pasaporte por deterioro, cambio o pérdida del pasaporte\"). Only \"VISA\" is shown selected on-screen; \"TRASPASO\" is asserted from the prose definition, not an independent screenshot.",
+      "sourceRef": "Guía SITAC — p.5, Sección Solicitud",
+      "validation": { "enum": ["VISA", "TRASPASO"] }
+    },
+    {
+      "name": "tipoVisa",
+      "label": "Tipo Visa",
+      "type": "enum",
+      "required": true,
+      "description": "Top-level visa category. The one on-screen confirmed example is rendered \"MIGRANTE (M)\" (a parenthetical single-letter code); the guide's own §4.1 reference table (pp.39-47) independently corroborates exactly three such categories by using them as its own column-one section headers: Visitante, Migrante, Residente. The enum values here are kept in that table's own plain-text form (no parenthetical code), since the \"(V)\"/\"(R)\" codes for the other two categories are a reasonable inference from Colombia's well-known three-letter visa framework (Resolución 5477 de 2022) but were not independently confirmed on-screen — see VERIFICATION.md.",
+      "sourceRef": "Guía SITAC — p.5, Sección Solicitud; p.39-47, §4.1 Descripción de tipos de visas",
+      "validation": { "enum": ["Visitante", "Migrante", "Residente"] }
+    },
+    {
+      "name": "actividadVisa",
+      "label": "Actividad de la Visa",
+      "type": "string",
+      "required": true,
+      "description": "Activity/purpose sub-type, dependent on tipoVisa. The guide's own §4.1 table (pp.39-47) names roughly three dozen confirmed activity values across the three tipoVisa categories (e.g. \"Turismo\", \"Trabajador\", \"Estudiantes de Primaria, Secundaria, Media y Pregrado\", \"Socio / Propietario\"), each gating a different downstream Información Laboral field set — modelling that full per-activity field matrix is out of scope for this v1.0.0 (see VERIFICATION.md); only the single on-screen confirmed example (\"SOCIO / PROPIETARIO\") and the generic fallback Información Laboral fields below are modelled.",
+      "sourceRef": "Guía SITAC — p.5, Sección Solicitud; p.39-47, §4.1 Descripción de tipos de visas",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "tipoSolicitud",
+      "label": "Tipo Solicitud",
+      "type": "enum",
+      "required": false,
+      "description": "Both values are defined in the guide's own prose: INDIVIDUAL (\"si aplicará a la visa de forma individual\") and GRUPO FAMILIAR (\"si se presenta como titular de la visa e incluirá beneficiarios en su solicitud\"). This document scopes to the INDIVIDUAL pathway only — Grupo Familiar's own beneficiary-linking sub-flow is out of scope (see VERIFICATION.md). Shown without a required-field asterisk in the source, unlike its sibling fields (Tipo de Solicitante, Tramitada por) in the same section.",
+      "sourceRef": "Guía SITAC — p.5, Sección Solicitud",
+      "validation": { "enum": ["INDIVIDUAL", "GRUPO FAMILIAR"] }
+    },
+    {
+      "name": "tipoSolicitante",
+      "label": "Tipo de Solicitante",
+      "type": "enum",
+      "required": true,
+      "description": "Both values are defined in the guide's own prose: TITULAR (\"si los datos de la solicitud corresponden al titular de la visa\") and BENEFICIARIO (\"si los datos de la solicitud corresponden a los de un beneficiario de una solicitud de visa\"). This document scopes to TITULAR only — the Beneficiario pathway's own Búsqueda del Titular lookup and distinct Información Laboral field set (Ocupación en Colombia / Familia / Institución) are out of scope (see VERIFICATION.md).",
+      "sourceRef": "Guía SITAC — p.5-6, Sección Solicitud",
+      "validation": { "enum": ["TITULAR", "BENEFICIARIO"] }
+    },
+    {
+      "name": "tramitadaPor",
+      "label": "Tramitada por",
+      "type": "enum",
+      "required": true,
+      "description": "Both values are shown as an on-screen dropdown with a confirmed selected example (\"DIRECTAMENTE POR EXTRANJERO\") and defined in the guide's own prose: DIRECTAMENTE POR EXTRANJERO (\"quien registra la solicitud es el titular de la visa\") and APODERADO (\"otra persona diferente al titular que registra la solicitud en su nombre\").",
+      "sourceRef": "Guía SITAC — p.6, 10, Sección Solicitud",
+      "validation": { "enum": ["DIRECTAMENTE POR EXTRANJERO", "APODERADO"] }
+    },
+    {
+      "name": "apoderadoTipoDocumento",
+      "label": "Tipo Documento",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "description": "Información Apoderado. Dropdown shown unselected (\"Seleccione...\") in the source, so no enum is asserted.",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "apoderadoNumeroDocumento",
+      "label": "Número de Documento",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "classification": "sensitive-pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "apoderadoNacionalidad",
+      "label": "Nacionalidad",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "apoderadoPrimerNombre",
+      "label": "Primer Nombre",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "apoderadoSegundoNombre",
+      "label": "Segundo Nombre",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "apoderadoPrimerApellido",
+      "label": "Primer Apellido",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "apoderadoSegundoApellido",
+      "label": "Segundo Apellido",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "apoderadoEmpresa",
+      "label": "Empresa",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "apoderadoDireccion",
+      "label": "Dirección",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "apoderadoTelefono",
+      "label": "Teléfono",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "apoderadoCorreoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.10, Información Apoderado",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 254 }
+    },
+    {
+      "name": "primerNombre",
+      "label": "Primer Nombre",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.4, 10, Sección Solicitante — Datos Personales",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "segundoNombre",
+      "label": "Segundo Nombre",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.4, 10, Sección Solicitante — Datos Personales",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "primerApellido",
+      "label": "Primer Apellido",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.4, 10, Sección Solicitante — Datos Personales",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "segundoApellido",
+      "label": "Segundo Apellido",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.4, 10, Sección Solicitante — Datos Personales",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sexo",
+      "label": "Sexo",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Dropdown shown unselected (\"Seleccione...\") in the source, so no enum is asserted.",
+      "sourceRef": "Guía SITAC — p.10, Sección Solicitante — Datos Personales",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "estadoCivil",
+      "label": "Estado Civil",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Dropdown shown unselected (\"Seleccione...\") in the source, so no enum is asserted.",
+      "sourceRef": "Guía SITAC — p.10, Sección Solicitante — Datos Personales",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "tieneOtraNacionalidad",
+      "label": "¿Tiene otra Nacionalidad?",
+      "type": "boolean",
+      "required": true,
+      "description": "Two-option radio group, both values (\"Si\"/\"No\") visible on-screen regardless of selection.",
+      "sourceRef": "Guía SITAC — p.10, Sección Solicitante — Datos Personales"
+    },
+    {
+      "name": "nivelAcademico",
+      "label": "Nivel Académico",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; two confirmed on-screen examples across two independent worked examples in the source (\"Postgrado - Doctorado\", \"PREGRADO - TÉCNICO PROFESIONAL\"), evidence of a longer list — no full enum asserted.",
+      "sourceRef": "Guía SITAC — p.11, 19, Formación Académica",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "areaConocimiento",
+      "label": "Área de Conocimiento",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on nivelAcademico; two confirmed on-screen examples (\"Matemáticas y Ciencias naturales\", \"CIENCIAS DE LA EDUCACIÓN\").",
+      "sourceRef": "Guía SITAC — p.11, 19, Formación Académica",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "subareaConocimiento",
+      "label": "Subárea de Conocimiento",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on areaConocimiento; two confirmed on-screen examples (\"Biología, Microbiología y afines\", \"EDUCACIÓN\").",
+      "sourceRef": "Guía SITAC — p.11, 19, Formación Académica",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fechaNacimiento",
+      "label": "Fecha de Nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The live form's own date picker displays and accepts dd/mm/yyyy.",
+      "sourceRef": "Guía SITAC — p.11, 19, Datos de Nacimiento"
+    },
+    {
+      "name": "paisNacimiento",
+      "label": "País Nacimiento",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Dropdown; two confirmed on-screen examples (\"CANADA\", \"ARGENTINA\").",
+      "sourceRef": "Guía SITAC — p.11, 19, Datos de Nacimiento",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "paisDomicilio",
+      "label": "País",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; confirmed on-screen example \"COLOMBIA\".",
+      "sourceRef": "Guía SITAC — p.11, Datos Último Domicilio",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "ciudadMunicipioDomicilio",
+      "label": "Ciudad/Municipio",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on paisDomicilio. Confirmed on-screen example rendered verbatim \"BOGOTA, BOLIVAR\" — Bogotá is administratively in Cundinamarca, not Bolívar, in the real world; preserved exactly as shown in the source rather than silently corrected, since it is a genuine on-screen data quirk, not an authoring transcription error (see VERIFICATION.md).",
+      "sourceRef": "Guía SITAC — p.11, Datos Último Domicilio",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "direccionDomicilio",
+      "label": "Dirección",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Guía SITAC — p.11, Datos Último Domicilio",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "telefonoDomicilio",
+      "label": "Teléfono",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Shown without a required-field asterisk in the source, unlike its sibling fields in the same section.",
+      "sourceRef": "Guía SITAC — p.11, Datos Último Domicilio",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "deseaNotificacionesCorreo",
+      "label": "¿Tiene correo electrónico y desea recibir notificaciones sobre el estado de sus trámites?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.11, Datos Último Domicilio"
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deseaNotificacionesCorreo", "equals": true },
+      "classification": "pii",
+      "description": "The guide's own prose flags this as the applicant's sole channel for status updates: \"registre un correo al que tenga acceso comprobado ya que este es el medio de comunicación que le permite mantenerse actualizado del estado de su solicitud.\"",
+      "sourceRef": "Guía SITAC — p.11, Datos Último Domicilio",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 254 }
+    },
+    {
+      "name": "confirmacionCorreoElectronico",
+      "label": "Confirmación Correo Electrónico",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "deseaNotificacionesCorreo", "equals": true },
+      "classification": "pii",
+      "description": "Must match correoElectronico; see crossFieldValidation.",
+      "sourceRef": "Guía SITAC — p.11, Datos Último Domicilio",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 254 }
+    },
+    {
+      "name": "profesion",
+      "label": "Profesión",
+      "type": "string",
+      "required": true,
+      "description": "Título de la profesión del solicitante. One of the four generic (visa-type-independent) Información Laboral fields the guide documents for \"los tipos de visas no incluidos en la tabla anterior\" — the fallback field set this document scopes its Sección Visa to (see VERIFICATION.md).",
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Información Laboral",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "actividadUOcupacion",
+      "label": "Actividad u ocupación",
+      "type": "string",
+      "required": true,
+      "description": "Listado de la actividad a desempeñar por el solicitante en Colombia.",
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Información Laboral",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "descripcionActividadUOcupacion",
+      "label": "Descripción de actividad u ocupación",
+      "type": "string",
+      "required": true,
+      "description": "Breve descripción de la actividad a desempeñar.",
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Información Laboral",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "entidadFamiliaInversion",
+      "label": "Entidad / Familia / Inversión",
+      "type": "string",
+      "required": true,
+      "description": "Según el caso, nombre de la entidad o apellidos de la familia o tipo de inversión. The guide's own note: if the applicant's activity is an investor, enter \"Inversionista en Capital\" or \"Inversionista en Inmueble\" as applicable in this same field.",
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Información Laboral",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "haTenidoVisaColombiana",
+      "label": "¿Ha tenido Visa Colombiana?",
+      "type": "boolean",
+      "required": true,
+      "description": "Two-option radio group; the guide's own note flags this as especially necessary for a Traspaso (solicitudDe = TRASPASO) request.",
+      "sourceRef": "Guía SITAC — p.12-13, Sección Visa — Solicitudes Anteriores"
+    },
+    {
+      "name": "visaAnteriorTipo",
+      "label": "Visa Anterior",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "haTenidoVisaColombiana", "equals": true },
+      "description": "Dropdown shown unselected (\"Seleccione...\") in the source, so no enum is asserted. Not shown with a required-field asterisk.",
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Solicitudes Anteriores",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "visaAnteriorNumero",
+      "label": "Número",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "haTenidoVisaColombiana", "equals": true },
+      "classification": "sensitive-pii",
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Solicitudes Anteriores",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "visaAnteriorFechaExpedicion",
+      "label": "Fecha de Expedición",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "haTenidoVisaColombiana", "equals": true },
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Solicitudes Anteriores"
+    },
+    {
+      "name": "visaAnteriorFechaExpiracion",
+      "label": "Fecha de Expiración",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "haTenidoVisaColombiana", "equals": true },
+      "description": "The guide's own note: for a Traspaso (solicitudDe = TRASPASO) request, this date must be less than or equal to the request's own registration date.",
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Solicitudes Anteriores"
+    },
+    {
+      "name": "visaAnteriorLugarExpedicion",
+      "label": "Lugar de Expedición",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "haTenidoVisaColombiana", "equals": true },
+      "sourceRef": "Guía SITAC — p.13, Sección Visa — Solicitudes Anteriores",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "leHaSidoNegadaVisa",
+      "label": "¿Le ha sido negada alguna solicitud de visa anteriormente?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.12, Sección Visa — Solicitudes Anteriores"
+    },
+    {
+      "name": "leHaSidoCanceladaInadmitidaVisa",
+      "label": "¿Le ha sido cancelada/inadmitida alguna visa?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.12, Sección Visa — Solicitudes Anteriores"
+    },
+    {
+      "name": "haSidoExpulsadoColombia",
+      "label": "¿Ha sido expulsado de Colombia alguna vez?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.14, Sección Otros — Información Adicional"
+    },
+    {
+      "name": "haSidoDeportadoColombia",
+      "label": "¿Ha sido deportado de Colombia alguna vez?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.14, Sección Otros — Información Adicional"
+    },
+    {
+      "name": "tieneProcesosPenales",
+      "label": "¿Ha tenido o tiene procesos penales en su contra?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.14, Sección Otros — Información Adicional"
+    },
+    {
+      "name": "haPermanecidoSinVisaAutorizada",
+      "label": "¿Alguna vez ha permanecido en Colombia sin visa que lo autorice?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.14, Sección Otros — Información Adicional"
+    },
+    {
+      "name": "especifique",
+      "label": "Especifique",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "haSidoExpulsadoColombia", "equals": true },
+          { "field": "haSidoDeportadoColombia", "equals": true },
+          { "field": "tieneProcesosPenales", "equals": true },
+          { "field": "haPermanecidoSinVisaAutorizada", "equals": true }
+        ]
+      },
+      "description": "The guide's own instruction: if the answer to at least one of the four Información Adicional questions above is SI, fill in this field with a brief explanation for each option marked SI.",
+      "sourceRef": "Guía SITAC — p.14, Sección Otros — Información Adicional",
+      "validation": { "maxLength": 1000 }
+    },
+    {
+      "name": "familiarResideColombia",
+      "label": "¿Algún familiar suyo reside en Colombia?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Guía SITAC — p.14-15, Sección Otros — Familiares en Colombia"
+    },
+    {
+      "name": "parentescoFamiliar",
+      "label": "Parentesco",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "familiarResideColombia", "equals": true },
+      "description": "Dropdown shown unselected (\"Seleccione...\") in the source, so no enum is asserted.",
+      "sourceRef": "Guía SITAC — p.15, Sección Otros — Familiares en Colombia",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "tipoVisaFamiliar",
+      "label": "Tipo Visa",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "familiarResideColombia", "equals": true },
+      "description": "The visa class held by the Colombia-resident family member. The guide's own instruction: register this \"a menos que sea un ciudadano colombiano\" (unless the family member is a Colombian citizen) — that carve-out is not separately modelled as its own condition in this v1.0.0 (see VERIFICATION.md). Dropdown shown unselected (\"Seleccione...\") in the source, so no enum is asserted.",
+      "sourceRef": "Guía SITAC — p.15, Sección Otros — Familiares en Colombia",
+      "validation": { "maxLength": 100 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "fotoDigital",
+      "label": "Foto Digital",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "Foto a color con fondo blanco de 4 centímetros de alto por 3 centímetros de ancho. Debe estar mirando de frente a la cámara y la cabeza debe salir centrada y completa. Ambos ojos deben salir abiertos y las orejas deben estar visibles. No deben salir destellos en la foto, no permitir que el cabello u otros accesorios cubran el rostro.",
+      "constraints": {
+        "maxBytes": 307200,
+        "mediaTypes": ["image/jpeg"]
+      },
+      "sourceRef": "Guía SITAC — p.15-16, Sección Soportes — Foto Digital"
+    },
+    {
+      "id": "copiaPasaportePrincipal",
+      "label": "Copia de la página principal del pasaporte vigente",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "Página donde aparecen registrados los datos personales del titular.",
+      "constraints": { "maxBytes": 3145728, "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Guía SITAC — p.17, Documentos Soporte Solicitud Visa, ítem 1"
+    },
+    {
+      "id": "copiaPasaporteUltimoSello",
+      "label": "Copia de la página del pasaporte con el último sello de ingreso o salida",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "Copia de la página del pasaporte donde haya sido estampado el último sello de ingreso o salida de Colombia, según el caso.",
+      "constraints": { "maxBytes": 3145728, "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Guía SITAC — p.17, Documentos Soporte Solicitud Visa, ítem 2"
+    },
+    {
+      "id": "copiaVisaAnteriorSinOCR",
+      "label": "Copia de la última visa colombiana (sin código OCR)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "Requerido \"Sí\" per the source's own table column, but that same row's own text states a conditional exemption verbatim, preserved rather than reconciled: \"Para visas anteriores otorgadas sin el OCR o código de lectura rápida, anexar copia de la página que contenga la última visa colombiana. En caso de que ésta hubiere sido otorgada con el OCR este requisito no será necesario.\"",
+      "constraints": { "maxBytes": 3145728, "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Guía SITAC — p.17, Documentos Soporte Solicitud Visa, ítem 3"
+    },
+    {
+      "id": "poderApoderado",
+      "label": "Poder debidamente otorgado",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "tramitadaPor", "equals": "APODERADO" },
+      "belongsTo": "responsible-party",
+      "handling": "\"Si el trámite va a ser finalizado por un apoderado adjuntar poder debidamente otorgado.\" The source's own table column marks this row \"Obligatorio: Sí\" unconditionally, but its own Nombre text states the condition verbatim; modelled here with requiredWhen against tramitadaPor rather than an unconditional required:true, since a poder is meaningless when the applicant registers directly (see VERIFICATION.md).",
+      "constraints": { "maxBytes": 3145728, "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Guía SITAC — p.17, Documentos Soporte Solicitud Visa, ítem 4"
+    },
+    {
+      "id": "soporteContratoOActividadLaboral",
+      "label": "Formulario \"Resumen de contrato\" y soporte financiero (Individual)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "For the Individual (non-Grupo) pathway this document scopes to: a) Formulario \"Resumen de contrato\" completamente diligenciado y firmado por las partes, descargable de cancilleria.gov.co; plus, depending on the applicant's own case — b) persona jurídica: declaración de renta, certificado de existencia y representación legal, y primera hoja u hoja resumen de cada extracto bancario de los últimos seis (6) meses con promedio mínimo de cien (100) SMLMV; c) persona natural: primera hoja u hoja resumen de cada extracto bancario de los últimos seis (6) meses con promedio mínimo de 10 SMLMV, y copia de cédula de ciudadanía; d) ONG: documento válido que acredite la personería jurídica, y primera hoja u hoja resumen de cada extracto bancario de los últimos seis (6) meses con promedio mínimo de cincuenta (50) SMLMV. The source's own parallel Grupo (row 6) requirement and its state/international-organization-employer alternative (row 7, a single carta de solicitud replacing this entire requirement) are out of scope for this v1.0.0 — see VERIFICATION.md.",
+      "constraints": { "maxBytes": 3145728, "mediaTypes": ["application/pdf"] },
+      "sourceRef": "Guía SITAC — p.17, Documentos Soporte Solicitud Visa, ítem 5"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "emailMustMatchConfirmation",
+      "compare": {
+        "field": "confirmacionCorreoElectronico",
+        "operator": "equals",
+        "compareTo": "correoElectronico"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "solicitud",
+      "title": "Solicitud",
+      "fields": [
+        "numeroPasaporte",
+        "nacionalidadSolicitante",
+        "solicitudDe",
+        "tipoVisa",
+        "actividadVisa",
+        "tipoSolicitud",
+        "tipoSolicitante",
+        "tramitadaPor",
+        "apoderadoTipoDocumento",
+        "apoderadoNumeroDocumento",
+        "apoderadoNacionalidad",
+        "apoderadoPrimerNombre",
+        "apoderadoSegundoNombre",
+        "apoderadoPrimerApellido",
+        "apoderadoSegundoApellido",
+        "apoderadoEmpresa",
+        "apoderadoDireccion",
+        "apoderadoTelefono",
+        "apoderadoCorreoElectronico"
+      ],
+      "next": "solicitante"
+    },
+    {
+      "id": "solicitante",
+      "title": "Solicitante",
+      "fields": [
+        "primerNombre",
+        "segundoNombre",
+        "primerApellido",
+        "segundoApellido",
+        "sexo",
+        "estadoCivil",
+        "tieneOtraNacionalidad",
+        "nivelAcademico",
+        "areaConocimiento",
+        "subareaConocimiento",
+        "fechaNacimiento",
+        "paisNacimiento",
+        "paisDomicilio",
+        "ciudadMunicipioDomicilio",
+        "direccionDomicilio",
+        "telefonoDomicilio",
+        "deseaNotificacionesCorreo",
+        "correoElectronico",
+        "confirmacionCorreoElectronico"
+      ],
+      "next": "visa"
+    },
+    {
+      "id": "visa",
+      "title": "Visa",
+      "fields": [
+        "profesion",
+        "actividadUOcupacion",
+        "descripcionActividadUOcupacion",
+        "entidadFamiliaInversion",
+        "haTenidoVisaColombiana",
+        "visaAnteriorTipo",
+        "visaAnteriorNumero",
+        "visaAnteriorFechaExpedicion",
+        "visaAnteriorFechaExpiracion",
+        "visaAnteriorLugarExpedicion",
+        "leHaSidoNegadaVisa",
+        "leHaSidoCanceladaInadmitidaVisa"
+      ],
+      "next": "otros"
+    },
+    {
+      "id": "otros",
+      "title": "Otros",
+      "fields": [
+        "haSidoExpulsadoColombia",
+        "haSidoDeportadoColombia",
+        "tieneProcesosPenales",
+        "haPermanecidoSinVisaAutorizada",
+        "especifique",
+        "familiarResideColombia",
+        "parentescoFamiliar",
+        "tipoVisaFamiliar"
+      ],
+      "next": "soportes"
+    },
+    {
+      "id": "soportes",
+      "title": "Soportes",
+      "fields": [],
+      "next": "confirmacion"
+    },
+    {
+      "id": "confirmacion",
+      "title": "Confirmación",
+      "fields": []
+    }
+  ]
+}
