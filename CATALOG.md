@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**21 jurisdictions** | **263 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**21 jurisdictions** | **264 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1659):** Spain gains its third vertical, Business
+> Formation, with `es/aeat/declaracion-censal-alta-actividad-economica-modelo-036`
+> — AEAT's Modelo 036, "Declaración censal de alta, modificación y baja en el
+> Censo de empresarios, profesionales y retenedores," scoped to the
+> "declaración censal simplificada" pathway a natural person uses to register
+> the start of a business or professional economic activity (alta, casilla
+> 111 only — not the form's own modificación/baja causes). This
+> `GovSchema Standard Research` cycle deepened two pre-screened candidates:
+> Chile's SII Formulario 22 (Declaración de Renta, Taxes vertical) — a
+> genuine, current PDF confirmed to still carry no AcroForm layer at all
+> (re-checked for `/AcroForm`/`/Widget` markers), and whose own guide pages
+> (`guia_trib_suplemento_2026.html`) give rich código/recuadro-level detail
+> but no confirmed simplified wage-only track comparable in scope to this
+> registry's other individual-tax schemas — and Spain's Modelo 036/037. This
+> cycle confirmed Modelo 037 (a shorter, simplified sibling form) was
+> suppressed by Orden HAC/1526/2024 (BOE, effective 2025-02-03) and found
+> Modelo 036 itself is filed only through two session-based web applications
+> (one Cl@ve/certificado-authenticated, one an unauthenticated but
+> interactive "cumplimentación, validación y obtención en PDF" wizard), no
+> standalone downloadable blank AcroForm — but also found AEAT's own
+> official, current (footer-dated 26/marzo/2026), fully unauthenticated
+> "Guía práctica para cumplimentación del modelo censal 036," a
+> chapter-and-casilla-numbered walkthrough of the entire form, strong enough
+> to author against directly. Models 33 fields across identification, fiscal
+> domicile (including the mandatory cadastral-reference indicator),
+> notification domicile and AEAT-notice contact data, the economic activity's
+> own IAE classification and lugar-de-realización (fixed-premises vs. not),
+> and the VAT-regime/IRPF-estimation-method elections (each modelled as
+> mutually-exclusive checkbox groups). Deliberately does not model the VAT
+> "inicio de actividad" timing casillas, the Régimen Especial del Criterio de
+> Caja opt-in, IRPF pagos fraccionados, the representative block, or the
+> P.O.-box notification-address track — see the document's own VERIFICATION.md
+> for the full candidate comparison and every disclosed judgment call. This
+> closes CATALOG.md's own explicitly-flagged Spain Business Formation gap,
+> bringing global Business Formation back to **21/21 (100%)** and giving
+> Spain 3 of its 6 verticals (Business Formation, Taxes, DMV); Chile's Taxes
+> gap remains open (screened, not picked this cycle) alongside Spain's
+> Passport, Visa, and National ID verticals.
 
 > **Update (2026-07-07, GOV-1652):** Spain gains its second vertical, DMV,
 > with `es/dgt/solicitud-tramites-vehiculo` — the Dirección General de
@@ -1664,11 +1703,25 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (20/21 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (21/21 jurisdictions — 100%)
 
-This vertical reached 100% (20/20) as of GOV-1624; **Spain**, opened via
-its Taxes vertical (GOV-1645), does not yet have a Business Formation
-schema — an open, unscreened backlog candidate for a future cycle.
+This vertical reached 100% (20/20) as of GOV-1624, then reopened to 20/21
+when Spain joined as a 21st jurisdiction (via its Taxes vertical, GOV-1645)
+without yet having a Business Formation schema of its own. **Spain's gap is
+now closed (GOV-1659)** via
+`es/aeat/declaracion-censal-alta-actividad-economica-modelo-036` — AEAT's
+Modelo 036, scoped to the "declaración censal simplificada" natural-person
+alta (initial registration) pathway. Modelo 037, a shorter sibling form
+this cycle initially considered, was confirmed suppressed (Orden
+HAC/1526/2024, effective 2025-02-03); Modelo 036's own live filing channels
+are session-based web applications with no downloadable blank AcroForm, so
+this document is instead sourced from AEAT's own official, current,
+unauthenticated "Guía práctica para cumplimentación del modelo censal 036" —
+see the Executive Summary update above and the document's own VERIFICATION.md
+for the full candidate comparison (which also re-screened and re-confirmed
+Chile's Formulario 22 Taxes candidate as weaker: a genuine PDF but with no
+AcroForm layer and no confirmed simplified track). This restores global
+Business Formation to **21/21 (100%)**.
 **Chile**, opened via
 `cl/sii/inicio-actividades-personas-naturales` — the Servicio de Impuestos
 Internos' (SII) Formulario 4415-PN, "Declaración de Inicio de Actividades
@@ -1811,7 +1864,15 @@ repeatedly-screened-but-not-picked backlog candidate for a future cycle (a
 genuine, current, unauthenticated PDF, but a prose instructivo with no
 AcroForm layer at all, and SII's largest, most complex return besides — see
 `cl/sii/aviso-venta-vehiculo`'s own VERIFICATION.md for the fullest existing
-screening record).
+screening record). **Re-screened again in GOV-1659** (2026-07-07): the
+`f22_at2026.pdf` specimen and the `guia_trib_suplemento_2026.html`
+código/recuadro-level supplement guide were both re-fetched; the guide gives
+rich per-código detail but no confirmed bounded wage/salary-only pathway
+comparable in scope to this registry's other individual-tax schemas, so this
+remains a viable-but-weaker candidate than the Spain Business Formation
+candidate picked that cycle instead — see
+`es/aeat/declaracion-censal-alta-actividad-economica-modelo-036`'s own
+VERIFICATION.md for the full comparison.
 **Colombia** (`co/dian/declaracion-renta-personas-naturales-formulario-210`,
 GOV-1595) is new this cycle and closes the global Taxes vertical to 100% —
 DIAN's Formulario 210, the annual individual income tax return for resident
@@ -2102,7 +2163,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ES** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -2336,8 +2397,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    broad for one session), and found Policía Nacional's DNI/passport
    channels appointment-only with no downloadable field-level form — see
    the Executive Summary update above and the document's own
-   VERIFICATION.md for the full candidate comparison. Spain's remaining
-   three verticals (Passport, Business Formation, Visa) are open backlog
+   VERIFICATION.md for the full candidate comparison. **Spain's Business
+   Formation gap has since closed too (GOV-1659)**, via
+   `es/aeat/declaracion-censal-alta-actividad-economica-modelo-036` — AEAT's
+   Modelo 036, scoped to the natural-person "declaración censal
+   simplificada" alta pathway, sourced from AEAT's own official casilla-numbered
+   practical guide after confirming Modelo 037 was suppressed (Orden
+   HAC/1526/2024, effective 2025-02-03) and Modelo 036's own live filing
+   channels are session-based web applications with no standalone
+   downloadable form — see the Executive Summary update above and the
+   document's own VERIFICATION.md for the full candidate comparison (which
+   also re-screened and re-confirmed Chile's Formulario 22 Taxes candidate
+   as weaker: a genuine PDF but with no AcroForm layer). Spain's remaining
+   two verticals (Passport, Visa) are open backlog
    candidates for a future cycle; National ID has a possible lead (the EX-15
    foreigner-identity-number form) not yet picked up. Other candidates worth
    scouting for a **22nd** jurisdiction in a future cycle: Portugal, Poland,
