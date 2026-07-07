@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**22 jurisdictions** | **265 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**22 jurisdictions** | **266 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1671):** Poland gains its second vertical,
+> Business Formation, via `pl/ceidg/wniosek-o-wpis-do-ceidg` — CEIDG-1,
+> "Wniosek o wpis do Centralnej Ewidencji i Informacji o Działalności
+> Gospodarczej," the form through which a natural person registers a sole
+> proprietorship (jednoosobowa działalność gospodarcza) and is simultaneously
+> registered with ZUS/KRUS (social insurance), GUS (which assigns REGON),
+> and the tax office (which assigns NIP). This cycle first screened Poland's
+> DMV vertical, per the prior cycle's recommended order: the national wzór
+> wniosku o rejestrację pojazdu (Rozporządzenie Ministra Infrastruktury z
+> dnia 8 listopada 2024 r., Dz.U. 2024 poz. 1709, Załącznik nr 1), retrieved
+> via a third-party mirror after the primary `isap.sejm.gov.pl` host proved
+> Incapsula-bot-gated — genuine and current, but materially thinner (only 7
+> numbered data fields) than the Business Formation candidate picked
+> instead, and left open as a real backlog candidate. CEIDG-1 itself is a
+> genuine, unauthenticated PDF hosted directly on `ceidg.gov.pl` with no
+> login/CAPTCHA/WAF gate; although it carries no AcroForm layer (a static
+> hand-fill/print template, confirmed via `pdfjs-dist` returning zero
+> annotations), its own printed layout is fully self-documenting — 30
+> numbered sections, every field labeled in place in the PDF's own text
+> layer, the same "read the printed reference numbers directly" technique
+> this registry's Spanish Modelo 030/036 schemas established. Cross-checked
+> against CEIDG's own official 75-page "Instrukcja wypełniania wniosku
+> CEIDG-1" guide (dated 2025-01-07), which — despite targeting a slightly
+> earlier, differently-numbered form revision — confirmed every field's
+> label, required/optional status, and closed enum values with no
+> substantive content drift. Models 81 fields plus 2 `documents[]` entries,
+> scoped deliberately to the new-registration ("wpis") request type only —
+> CEIDG-1's own change/suspend/resume/deregister request types and their
+> type-specific sections, the KRUS-specific declaration block, and several
+> real but comparatively rare optional blocks (external-accounting-firm
+> details, a second personal bank account, foreign tax IDs, power of
+> attorney) are all disclosed as out of scope for v1.0.0 — see the
+> document's own VERIFICATION.md for the full candidate comparison and 8
+> disclosed judgment calls. This gives Poland 2 of its 6 verticals (National
+> ID, Business Formation); Passport, DMV, Taxes, and Visa remain open,
+> unscreened-or-lightly-screened backlog candidates for future cycles.
 
 > **Update (2026-07-07, GOV-1666):** Poland opens as this registry's **22nd
 > jurisdiction** with `pl/mswia/wniosek-o-wydanie-dowodu-osobistego`
@@ -1748,11 +1785,19 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (21/22 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (22/22 jurisdictions — 100%)
 
-**Poland**, opened via its National ID vertical (GOV-1666), has no Business
-Formation schema yet — an open, unscreened backlog candidate for a future
-cycle. This vertical reached 100% (20/20) as of GOV-1624, then reopened to 20/21
+**Poland's Business Formation gap is now closed (GOV-1671)** via
+`pl/ceidg/wniosek-o-wpis-do-ceidg` — CEIDG-1, the form through which a
+natural person registers a sole proprietorship with the Central
+Registration and Information on Business (CEIDG), simultaneously registering
+with ZUS/KRUS, GUS, and the tax office. A genuine, unauthenticated,
+self-documenting-numbered-section PDF hosted directly on `ceidg.gov.pl`;
+Poland's DMV vehicle-registration candidate was screened first and found
+thinner (7 fields vs. CEIDG-1's 81) — see the Executive Summary update
+above and the document's own VERIFICATION.md for the full candidate
+comparison. This restores global Business Formation to **22/22 (100%)**.
+This vertical reached 100% (20/20) as of GOV-1624, then reopened to 20/21
 when Spain joined as a 21st jurisdiction (via its Taxes vertical, GOV-1645)
 without yet having a Business Formation schema of its own. **Spain's gap is
 now closed (GOV-1659)** via
@@ -2235,7 +2280,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PL** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **PL** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -2481,9 +2526,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    see the Executive Summary update above and the document's own
    VERIFICATION.md for the full candidate comparison (which also
    re-screened and re-confirmed Spain's Passport/Visa and Chile's
-   Passport/Visa/National ID gaps as still weaker this cycle). Poland's
-   other five verticals (Passport, DMV, Business Formation, Taxes, Visa)
-   are open, unscreened backlog candidates for a future cycle. Other
+   Passport/Visa/National ID gaps as still weaker this cycle). **Poland's
+   Business Formation gap has since closed too (GOV-1671)**, via
+   `pl/ceidg/wniosek-o-wpis-do-ceidg` — CEIDG-1, the sole-proprietorship
+   registration form; that same cycle screened and set aside Poland's DMV
+   vehicle-registration candidate (Rozporządzenie Ministra Infrastruktury,
+   Dz.U. 2024 poz. 1709, Załącznik nr 1 — genuine and current, but only 7
+   numbered fields versus CEIDG-1's 81) and Poland's KRS/S24 company
+   -registration pathway (authenticated, session-based, no static form) —
+   see the Executive Summary update above and the document's own
+   VERIFICATION.md for the full candidate comparison. Poland's remaining
+   four verticals (Passport, DMV, Taxes, Visa) are open,
+   unscreened-or-lightly-screened backlog candidates for a future cycle
+   (DMV in particular is now a strong, ready-to-author candidate). Other
    candidates worth scouting for a **23rd** jurisdiction in a future cycle:
    Portugal, or an EU member beyond DE/ES/FR/NL/PL — Japan (`mofa.go.jp`) is
    a confirmed IP-blocked dead end (GOV-1174).
