@@ -1,0 +1,1695 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "co/rues/matricula-mercantil",
+  "version": "1.0.0",
+  "title": "Colombia RUES Mercantile Registration Form (Registro Mercantil — Personas Naturales y Jurídicas)",
+  "description": "Colombia's 'Formulario del Registro Único Empresarial y Social RUES', scoped to its Registro Mercantil / Vendedores de Juegos de Suerte y Azar / Sociedad Civil track: the standard nationwide form used by any of Colombia's decentralised Cámaras de Comercio (Chambers of Commerce) to register a business — a sole trader (persona natural comerciante) or a legal entity/company (persona jurídica, including SAS, sociedades limitadas, anónimas, sucursales de sociedad extranjera, etc. — see specificOrganizationType) — into the national Registro Mercantil, which together with the other RUES registries (Entidades sin Ánimo de Lucro, Registro Único de Proponentes) forms Colombia's Registro Único Empresarial y Social. The unified format is set by the Superintendencia de Industria y Comercio (SIC) via its Circular Única (Anexo 4.1) and used identically by every Chamber of Commerce nationwide (confirmed by cross-checking the SIC-published instructions against an identical two-page fillable form template mirrored on a Chamber of Commerce site — see VERIFICATION.md). Covers the two-page core form (Hoja 1: registration/procedure type, identification of the natural or legal person, business domicile and judicial-notification addresses, and CIIU economic-activity classification; Hoja 2: financial statement figures, capital composition, Ley 1780 de 2016 young-business benefit declaration, and social-security/protection status) for the four Registro Mercantil procedure types (first registration, renewal, change of domicile, financial-information adjustment). Deliberately excludes RUES's two other parallel registry tracks printed on the same physical form — Registro Único de Proponentes (public-contractor registry, its own Anexo 2 with additional hojas for classification, control situations, and experience) and Registro de Entidades sin Ánimo de Lucro/Economía Solidaria (its own Anexo 5) — along with the form's separate Anexo 1 (establishment/branch/agency registration), Anexo 3/4 (multi-year-overdue renewal), Anexo 6 (national tourism registry), and Anexo 7 (payroll-deduction lender registry), none of which this document models; see VERIFICATION.md for the full scope disclosure. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Colombia, the Superintendencia de Industria y Comercio, Confecámaras, or any Cámara de Comercio.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Registro Único Empresarial y Social",
+    "abbreviation": "RUES",
+    "url": "https://www.rues.org.co"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es-CO"
+  },
+  "source": {
+    "url": "https://www.sic.gov.co/sites/default/files/files/Normativa/Circular_Unica/Anexo_4_1_INSTRUCCIONES_FORMULARIOS_RUES.pdf",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "Anexo 4.1 — 'Instrucciones para Diligenciar el Formulario del Registro Único Empresarial y Social RUES', Superintendencia de Industria y Comercio (SIC) Circular Única; cross-checked against the fillable two-page 'Formulario RUES' template mirrored at camaramedellin.com.co"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "Source-derived reference schema opening Colombia's Business Formation vertical (GOV-1588). Fetched the SIC-published instructions PDF (regulator's own unified-format circular, the authoritative source since every Chamber of Commerce must follow it) and independently fetched the actual fillable two-page form template mirrored on a Chamber of Commerce site, both via direct curl (HTTP 200, genuine PDF magic bytes). Extracted both with pdfjs-dist 3.11.174 (text content + glyph x/y coordinates) to resolve the form's three-parallel-registry-track column layout (Registro Mercantil / Registro Único de Proponentes / Entidades sin Ánimo de Lucro), each occupying a distinct x-coordinate band on the same physical page, then cross-read against the instructions document's own per-track prose and numbered casilla/section key. Status remains 'draft' pending an independent second reviewer's field-by-field pass. See VERIFICATION.md for the full extraction method and every interpretive judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "registryProcedureType",
+      "label": "Registro Mercantil — Trámite",
+      "type": "enum",
+      "required": true,
+      "description": "Which Registro Mercantil procedure is being requested. Coordinate-level extraction confirmed this is one of exactly four options printed in the Registro Mercantil column of the form's three-parallel-track 'INFORMACIÓN DEL REGISTRO' panel (the neighbouring Registro Único de Proponentes column has its own five options, including a cancelación option this column does not have — see VERIFICATION.md).",
+      "sourceRef": "Casilla 1 — 'INFORMACIÓN DEL REGISTRO' / Registro Mercantil column: 'MATRÍCULA / INSCRIPCIÓN', 'RENOVACIÓN', 'TRASLADO DE DOMICILIO', 'AJUSTE DE INFORMACIÓN FINANCIERA'",
+      "validation": {
+        "enum": [
+          "matricula_inscripcion",
+          "renovacion",
+          "traslado_domicilio",
+          "ajuste_informacion_financiera"
+        ]
+      }
+    },
+    {
+      "name": "registrationNumber",
+      "label": "Nº Matrícula / Inscripción",
+      "type": "string",
+      "required": false,
+      "description": "The business's existing Registro Mercantil matrícula/inscripción number, required for every Registro Mercantil procedure except a brand-new first-time registration (which has no number yet — it is assigned by the Cámara de Comercio upon matrícula).",
+      "sourceRef": "Casilla 1 — 'Nº MATRÍCULA / INSCRIPCIÓN' (Registro Mercantil column)",
+      "requiredWhen": {
+        "field": "registryProcedureType",
+        "notEquals": "matricula_inscripcion"
+      }
+    },
+    {
+      "name": "renewalYear",
+      "label": "Año que Renueva",
+      "type": "integer",
+      "required": false,
+      "description": "The year being renewed, required when the procedure is a renovación.",
+      "sourceRef": "Casilla 1 — 'AÑO QUE RENUEVA' (Registro Mercantil column)",
+      "requiredWhen": {
+        "field": "registryProcedureType",
+        "equals": "renovacion"
+      },
+      "validation": {
+        "minimum": 1900,
+        "maximum": 2100
+      }
+    },
+    {
+      "name": "generalOrganizationType",
+      "label": "Tipo General de Organización",
+      "type": "enum",
+      "required": true,
+      "description": "The general organization-type code, from the code table published in the form's own instructions.",
+      "sourceRef": "Casilla 1 — 'TIPO GENERAL DE ORGANIZACIÓN (Revisar las instrucciones del formulario RUES)'; Instrucciones §1 code table",
+      "validation": {
+        "enum": [
+          "01",
+          "02",
+          "06"
+        ]
+      }
+    },
+    {
+      "name": "specificOrganizationType",
+      "label": "Tipo Específico de Organización",
+      "type": "enum",
+      "required": true,
+      "description": "The specific organization-type code, from the code table published in the form's own instructions (e.g. '01' persona natural, '16' Sociedad por Acciones Simplificada/SAS, '04' Sociedad Anónima).",
+      "sourceRef": "Casilla 1 — 'TIPO ESPECIFICO DE ORGANIZACIÓN (Revisar las instrucciones del formulario RUES)'; Instrucciones §1 code table",
+      "validation": {
+        "enum": [
+          "01",
+          "03",
+          "04",
+          "05",
+          "06",
+          "07",
+          "08",
+          "09",
+          "10",
+          "11",
+          "12",
+          "16"
+        ]
+      }
+    },
+    {
+      "name": "isBicCompany",
+      "label": "Condición Sociedad BIC",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the legal entity is a Sociedad de Beneficio e Interés Colectivo (BIC), marked only if the person jurídica meets that condition.",
+      "sourceRef": "Casilla 1 — 'CONDICIÓN SOCIEDAD BIC (Marque X sólo si la persona jurídica cumple esta condición)'"
+    },
+    {
+      "name": "personType",
+      "label": "Persona Jurídica / Personas Naturales",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the registrant is a legal entity (persona jurídica — fills razón social/sigla) or a natural person/sole trader (persona natural — fills apellidos/nombres/género). The form itself does not print an explicit 'tipo de persona' checkbox for this choice; instead its own instructions direct the filer to complete one set of fields and omit the other ('Para el caso de las Personas Jurídicas, diligencie los campos de razón social y sigla... y omita los campos... Personas Naturales. Para el caso de las Personas Naturales diligencie los campos de primer apellido, segundo apellido y nombres, y omita los campos razón social y sigla'). This document adds this field as an explicit machine-readable gate driving the requiredWhen conditions below — a disclosed judgment call, not a literal form checkbox. See VERIFICATION.md.",
+      "sourceRef": "Casilla 2 — 'IDENTIFICACIÓN' (implicit choice between 'Persona Jurídica' and 'Personas Naturales' field groups)",
+      "validation": {
+        "enum": [
+          "persona_natural",
+          "persona_juridica"
+        ]
+      }
+    },
+    {
+      "name": "razonSocial",
+      "label": "Razón Social",
+      "type": "string",
+      "required": false,
+      "description": "The legal entity's business/corporate name, required when personType is persona_juridica.",
+      "sourceRef": "Casilla 2 — 'Persona Jurídica' / 'RAZÓN SOCIAL'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      }
+    },
+    {
+      "name": "sigla",
+      "label": "Sigla",
+      "type": "string",
+      "required": false,
+      "description": "The legal entity's acronym/abbreviated trading name, if it has one.",
+      "sourceRef": "Casilla 2 — 'Persona Jurídica' / 'SIGLA'"
+    },
+    {
+      "name": "naturalPersonFirstSurname",
+      "label": "Primer Apellido",
+      "type": "string",
+      "required": false,
+      "description": "The natural person's first surname, required when personType is persona_natural.",
+      "sourceRef": "Casilla 2 — 'Personas Naturales' / 'PRIMER APELLIDO'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_natural"
+      }
+    },
+    {
+      "name": "naturalPersonSecondSurname",
+      "label": "Segundo Apellido",
+      "type": "string",
+      "required": false,
+      "description": "The natural person's second surname, when applicable.",
+      "sourceRef": "Casilla 2 — 'Personas Naturales' / 'SEGUNDO APELLIDO'"
+    },
+    {
+      "name": "naturalPersonFirstName",
+      "label": "Primer Nombre",
+      "type": "string",
+      "required": false,
+      "description": "The natural person's first given name, required when personType is persona_natural.",
+      "sourceRef": "Casilla 2 — 'Personas Naturales' / 'PRIMER NOMBRE'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_natural"
+      }
+    },
+    {
+      "name": "naturalPersonSecondName",
+      "label": "Segundo Nombre",
+      "type": "string",
+      "required": false,
+      "description": "The natural person's second given name, when applicable.",
+      "sourceRef": "Casilla 2 — 'Personas Naturales' / 'SEGUNDO NOMBRE'"
+    },
+    {
+      "name": "naturalPersonGender",
+      "label": "Género",
+      "type": "enum",
+      "required": false,
+      "description": "The natural person's gender as printed on the form (binary F/M checkbox), required when personType is persona_natural.",
+      "sourceRef": "Casilla 2 — 'Personas Naturales' / 'GÉNERO F M'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_natural"
+      },
+      "validation": {
+        "enum": [
+          "F",
+          "M"
+        ]
+      }
+    },
+    {
+      "name": "nit",
+      "label": "NIT",
+      "type": "string",
+      "required": false,
+      "description": "The registrant's Tax ID (NIT), required when renewing a matrícula/inscripción. Per the form's own instructions, a legal entity registering for the first time (matrícula) must leave this blank, since the Cámara de Comercio itself processes the NIT application with DIAN on the entity's behalf; only foreign legal entities without a Colombian branch must obtain a NIT from DIAN beforehand and enter it here.",
+      "sourceRef": "Casilla 2 — 'NIT'; Instrucciones §2 — 'Cuando se trate de matrícula de personas jurídicas por primera vez, no debe diligenciar esta casilla... Para renovar la matrícula y la inscripción, se debe diligenciar como dato obligatorio el NIT'",
+      "requiredWhen": {
+        "field": "registryProcedureType",
+        "equals": "renovacion"
+      }
+    },
+    {
+      "name": "nitVerificationDigit",
+      "label": "DV",
+      "type": "string",
+      "required": false,
+      "description": "The NIT's check/verification digit (dígito de verificación), required whenever nit is supplied.",
+      "sourceRef": "Casilla 2 — 'DV'",
+      "requiredWhen": {
+        "field": "registryProcedureType",
+        "equals": "renovacion"
+      },
+      "validation": {
+        "pattern": "^[0-9]$"
+      }
+    },
+    {
+      "name": "documentType",
+      "label": "Identificación — Tipo",
+      "type": "enum",
+      "required": false,
+      "description": "Type of identity document held by the natural person (or, for a foreign natural person, cédula de extranjería or pasaporte), required when personType is persona_natural.",
+      "sourceRef": "Casilla 2 — 'TIPO' (checkboxes 'CC', 'CE', 'TI', 'PASAPORTE')",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_natural"
+      },
+      "validation": {
+        "enum": [
+          "cedula_ciudadania",
+          "cedula_extranjeria",
+          "tarjeta_identidad",
+          "pasaporte"
+        ]
+      }
+    },
+    {
+      "name": "documentNumber",
+      "label": "Identificación Nº",
+      "type": "string",
+      "required": false,
+      "description": "The natural person's identity document number, required when personType is persona_natural.",
+      "sourceRef": "Casilla 2 — 'IDENTIFICACIÓN Nº'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_natural"
+      }
+    },
+    {
+      "name": "documentIssueDate",
+      "label": "Fecha de Expedición",
+      "type": "date",
+      "required": false,
+      "description": "The identity document's date of issue. The form's own instruction explicitly ties 'fecha y lugar de expedición' to the cédula de ciudadanía case ('indique el número de la cédula de ciudadanía junto con la fecha y lugar de expedición'); whether it is also expected for cédula de extranjería/tarjeta de identidad/pasaporte is not stated as explicitly, so this document gates it only on documentType being cédula de ciudadanía and discloses the remaining ambiguity rather than asserting it broadly. See VERIFICATION.md.",
+      "sourceRef": "Casilla 2 — 'FECHA DE EXPEDICIÓN'; Instrucciones §2",
+      "requiredWhen": {
+        "field": "documentType",
+        "equals": "cedula_ciudadania"
+      }
+    },
+    {
+      "name": "documentIssuePlace",
+      "label": "Lugar de Expedición",
+      "type": "string",
+      "required": false,
+      "description": "The identity document's place of issue, under the same disclosed scoping as documentIssueDate.",
+      "sourceRef": "Casilla 2 — 'LUGAR DE EXPEDICIÓN'; Instrucciones §2",
+      "requiredWhen": {
+        "field": "documentType",
+        "equals": "cedula_ciudadania"
+      }
+    },
+    {
+      "name": "documentCountry",
+      "label": "Identificación — País",
+      "type": "string",
+      "required": false,
+      "description": "Country associated with the identity document, positioned beside the PASAPORTE checkbox on the source form and modelled as required only for a passport holder.",
+      "sourceRef": "Casilla 2 — 'PAÍS' (adjacent to 'TIPO' / 'PASAPORTE')",
+      "requiredWhen": {
+        "field": "documentType",
+        "equals": "pasaporte"
+      }
+    },
+    {
+      "name": "foreignTaxIdNumberInOriginCountry",
+      "label": "No. Identificación Tributaria en el País de Origen",
+      "type": "string",
+      "required": false,
+      "description": "For a foreign natural person, their tax identification number in their country of origin.",
+      "sourceRef": "Casilla 2 — 'No. IDENTIFICACIÓN TRIBUTARIA EN EL PAÍS DE ORIGEN'; Instrucciones §2"
+    },
+    {
+      "name": "foreignTaxIdOriginCountry",
+      "label": "País Origen",
+      "type": "string",
+      "required": false,
+      "description": "The foreign natural person's country of origin, paired with foreignTaxIdNumberInOriginCountry.",
+      "sourceRef": "Casilla 2 — 'PAÍS ORIGEN'"
+    },
+    {
+      "name": "foreignEntityOrNaturalPersonTaxIdWithPermanentEstablishment",
+      "label": "No. Identificación Tributaria Sociedad o P. Natural del Extranjero con EP",
+      "type": "string",
+      "required": false,
+      "description": "Tax identification number of the foreign company or natural person operating in Colombia through a permanent establishment (Establecimiento Permanente, EP).",
+      "sourceRef": "Casilla 2 — 'No. IDENTIFICACIÓN TRIBUTARIA SOCIEDAD O P. NATURAL DEL EXTRANJERO CON EP (Establecimiento Permanente)'; Instrucciones §2"
+    },
+    {
+      "name": "domicileAddress",
+      "label": "Dirección de Domicilio Principal",
+      "type": "string",
+      "required": true,
+      "description": "The business's principal commercial address.",
+      "sourceRef": "Casilla 3 — 'DIRECCIÓN DE DOMICILIO PRINCIPAL'"
+    },
+    {
+      "name": "domicileZoneType",
+      "label": "Zona (Domicilio)",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the principal domicile address is in an urban or rural zone.",
+      "sourceRef": "Casilla 3 — 'ZONA: URBANA / RURAL'",
+      "validation": {
+        "enum": [
+          "urbana",
+          "rural"
+        ]
+      }
+    },
+    {
+      "name": "domicilePostalCode",
+      "label": "Código Postal (Domicilio)",
+      "type": "string",
+      "required": false,
+      "description": "Postal code of the principal domicile address, when the zone type selected is a postal-code zone.",
+      "sourceRef": "Casilla 3 — 'CÓDIGO POSTAL'"
+    },
+    {
+      "name": "locationType",
+      "label": "Ubicación",
+      "type": "enum",
+      "required": true,
+      "description": "The physical nature of the premises at the principal domicile address.",
+      "sourceRef": "Casilla 3 — 'UBICACIÓN: LOCAL / OFICINA / LOCAL Y OFICINA / FÁBRICA / VIVIENDA / FINCA'",
+      "validation": {
+        "enum": [
+          "local",
+          "oficina",
+          "local_y_oficina",
+          "fabrica",
+          "vivienda",
+          "finca"
+        ]
+      }
+    },
+    {
+      "name": "domicileLocalityBarrioVeredaCorregimiento",
+      "label": "Localidad-Barrio-Vereda-Corregimiento (Domicilio)",
+      "type": "string",
+      "required": false,
+      "description": "The domicile's locality/neighbourhood/rural-village/corregimiento, per the form's own single combined label.",
+      "sourceRef": "Casilla 3 — 'LOCALIDAD-BARRIO-VEREDA-CORREGIMIENTO'"
+    },
+    {
+      "name": "domicileMunicipality",
+      "label": "Municipio (Domicilio)",
+      "type": "string",
+      "required": true,
+      "description": "Municipality of the principal domicile address.",
+      "sourceRef": "Casilla 3 — 'MUNICIPIO'"
+    },
+    {
+      "name": "domicileDepartment",
+      "label": "Departamento (Domicilio)",
+      "type": "string",
+      "required": true,
+      "description": "Department (Colombian first-level administrative division) of the principal domicile address.",
+      "sourceRef": "Casilla 3 — 'DEPARTAMENTO'"
+    },
+    {
+      "name": "domicileCountry",
+      "label": "País (Domicilio)",
+      "type": "string",
+      "required": true,
+      "description": "Country of the principal domicile address.",
+      "sourceRef": "Casilla 3 — 'PAÍS'"
+    },
+    {
+      "name": "domicilePhone1",
+      "label": "Teléfono 1 (Domicilio)",
+      "type": "string",
+      "required": false,
+      "description": "Primary phone number. The form's own instruction states this should match the phone reported in casilla 44 of the DIAN RUT form, when one has already been filed.",
+      "sourceRef": "Casilla 3 — 'TELÉFONO 1 (Igual al reportado en el formulario del Registro Único Tributario DIAN Casilla 44)'"
+    },
+    {
+      "name": "domicilePhone2",
+      "label": "Teléfono 2 (Domicilio)",
+      "type": "string",
+      "required": false,
+      "description": "Secondary phone number.",
+      "sourceRef": "Casilla 3 — 'TELÉFONO 2'"
+    },
+    {
+      "name": "domicilePhone3",
+      "label": "Teléfono 3 (Domicilio)",
+      "type": "string",
+      "required": false,
+      "description": "Tertiary phone number.",
+      "sourceRef": "Casilla 3 — 'TELÉFONO 3'"
+    },
+    {
+      "name": "domicileEmail",
+      "label": "Correo Electrónico (Domicilio)",
+      "type": "string",
+      "required": true,
+      "description": "Email address, explicitly marked mandatory on the form itself.",
+      "sourceRef": "Casilla 3 — 'CORREO ELECTRÓNICO (Obligatorio)'"
+    },
+    {
+      "name": "notificationAddress",
+      "label": "Dirección para Notificación Judicial",
+      "type": "string",
+      "required": false,
+      "description": "Address for judicial and administrative notifications, when different from the principal domicile.",
+      "sourceRef": "Casilla 3 — 'DIRECCIÓN PARA NOTIFICACIÓN JUDICIAL'"
+    },
+    {
+      "name": "notificationZoneType",
+      "label": "Zona (Notificación)",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the notification address is in an urban or rural zone.",
+      "sourceRef": "Casilla 3 — 'ZONA: URBANA / RURAL' (notification block)",
+      "validation": {
+        "enum": [
+          "urbana",
+          "rural"
+        ]
+      }
+    },
+    {
+      "name": "notificationPostalCode",
+      "label": "Código Postal (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "Postal code of the notification address.",
+      "sourceRef": "Casilla 3 — 'CÓDIGO POSTAL' (notification block)"
+    },
+    {
+      "name": "notificationLocalityBarrioVeredaCorregimiento",
+      "label": "Localidad-Barrio-Vereda-Corregimiento (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "The notification address's locality/neighbourhood/rural-village/corregimiento.",
+      "sourceRef": "Casilla 3 — 'LOCALIDAD-BARRIO-VEREDA-CORREGIMIENTO' (notification block)"
+    },
+    {
+      "name": "notificationMunicipality",
+      "label": "Municipio (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "Municipality of the notification address.",
+      "sourceRef": "Casilla 3 — 'MUNICIPIO' (notification block)"
+    },
+    {
+      "name": "notificationDepartment",
+      "label": "Departamento (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "Department of the notification address.",
+      "sourceRef": "Casilla 3 — 'DEPARTAMENTO' (notification block)"
+    },
+    {
+      "name": "notificationCountry",
+      "label": "País (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "Country of the notification address.",
+      "sourceRef": "Casilla 3 — 'PAÍS' (notification block)"
+    },
+    {
+      "name": "notificationPhone1",
+      "label": "Teléfono 1 (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "Primary phone number for notifications.",
+      "sourceRef": "Casilla 3 — 'TELÉFONO 1' (notification block)"
+    },
+    {
+      "name": "notificationPhone2",
+      "label": "Teléfono 2 (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "Secondary phone number for notifications.",
+      "sourceRef": "Casilla 3 — 'TELÉFONO 2' (notification block)"
+    },
+    {
+      "name": "notificationPhone3",
+      "label": "Teléfono 3 (Notificación)",
+      "type": "string",
+      "required": false,
+      "description": "Tertiary phone number for notifications.",
+      "sourceRef": "Casilla 3 — 'TELÉFONO 3' (notification block)"
+    },
+    {
+      "name": "notificationEmail",
+      "label": "Correo Electrónico (Notificación)",
+      "type": "string",
+      "required": true,
+      "description": "Notification email address, explicitly marked mandatory on the form itself (disclosed as printed even though the surrounding notification address fields are not themselves marked mandatory — see VERIFICATION.md).",
+      "sourceRef": "Casilla 3 — 'CORREO ELECTRÓNICO (Obligatorio)' (notification block)"
+    },
+    {
+      "name": "administrativeHeadquartersType",
+      "label": "La Sede Administrativa Es",
+      "type": "enum",
+      "required": true,
+      "description": "The legal basis on which the registrant occupies its administrative headquarters.",
+      "sourceRef": "Casilla 3 — 'LA SEDE ADMINISTRATIVA ES: PROPIA / ARRIENDO / COMODATO / PRÉSTAMO'",
+      "validation": {
+        "enum": [
+          "propia",
+          "arriendo",
+          "comodato",
+          "prestamo"
+        ]
+      }
+    },
+    {
+      "name": "consentToElectronicNotification",
+      "label": "Autorización de Notificación Personal por Correo Electrónico",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the registrant authorises being personally notified via the notification email address, per Article 67 of the Código de Procedimiento Administrativo y de lo Contencioso Administrativo.",
+      "sourceRef": "Casilla 3 — 'De conformidad con lo establecido en el artículo 67... autorizo para que me notifiquen personalmente a través del correo electrónico aquí especificado SI / NO'"
+    },
+    {
+      "name": "ciiuPrimaryActivityCode",
+      "label": "Actividad Principal — CIIU 1 — Clase",
+      "type": "string",
+      "required": true,
+      "description": "The 4-digit CIIU (Clasificación Industrial Internacional Uniforme) code of the registrant's principal economic activity.",
+      "sourceRef": "Casilla 4 — 'ACTIVIDAD PRINCIPAL CIIU 1' / 'CLASE'",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "shdPrimaryActivityCode",
+      "label": "Actividad Principal — Código SHD",
+      "type": "string",
+      "required": false,
+      "description": "The Secretaría de Hacienda Distrital (SHD) code for the principal activity, required only when the activity is carried out in Bogotá D.C.",
+      "sourceRef": "Casilla 4 — 'ACTIVIDAD PRINCIPAL CIIU 1' / 'SHD'; Instrucciones §4 — 'indique el código SHD, solo si su actividad económica la desarrolla en la ciudad de Bogotá D.C.'"
+    },
+    {
+      "name": "ciiuSecondaryActivityCode",
+      "label": "Actividad Secundaria — CIIU 2 — Clase",
+      "type": "string",
+      "required": false,
+      "description": "The 4-digit CIIU code of a secondary economic activity, if any.",
+      "sourceRef": "Casilla 4 — 'ACTIVIDAD SECUNDARIA CIIU 2' / 'CLASE'",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "shdSecondaryActivityCode",
+      "label": "Actividad Secundaria — Código SHD",
+      "type": "string",
+      "required": false,
+      "description": "The SHD code for the secondary activity, Bogotá D.C. only.",
+      "sourceRef": "Casilla 4 — 'ACTIVIDAD SECUNDARIA CIIU 2' / 'SHD'"
+    },
+    {
+      "name": "ciiuOtherActivityCode3",
+      "label": "Otras Actividades — CIIU 3 — Clase",
+      "type": "string",
+      "required": false,
+      "description": "The 4-digit CIIU code of a third economic activity, if any (of up to three secondary classifications the instructions permit).",
+      "sourceRef": "Casilla 4 — 'OTRAS ACTIVIDADES CIIU 3 Y CIIU 4' / 'CLASE'",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "shdOtherActivityCode3",
+      "label": "Otras Actividades — CIIU 3 — Código SHD",
+      "type": "string",
+      "required": false,
+      "description": "The SHD code for the CIIU 3 activity, Bogotá D.C. only.",
+      "sourceRef": "Casilla 4 — 'OTRAS ACTIVIDADES CIIU 3 Y CIIU 4' / 'SHD'"
+    },
+    {
+      "name": "ciiuOtherActivityCode4",
+      "label": "Otras Actividades — CIIU 4 — Clase",
+      "type": "string",
+      "required": false,
+      "description": "The 4-digit CIIU code of a fourth economic activity, if any.",
+      "sourceRef": "Casilla 4 — 'OTRAS ACTIVIDADES CIIU 3 Y CIIU 4' / 'CLASE' (second slot)",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "shdOtherActivityCode4",
+      "label": "Otras Actividades — CIIU 4 — Código SHD",
+      "type": "string",
+      "required": false,
+      "description": "The SHD code for the CIIU 4 activity, Bogotá D.C. only.",
+      "sourceRef": "Casilla 4 — 'OTRAS ACTIVIDADES CIIU 3 Y CIIU 4' / 'SHD' (second slot)"
+    },
+    {
+      "name": "primaryActivityStartDate",
+      "label": "Fecha de Inicio Actividad Primaria",
+      "type": "date",
+      "required": true,
+      "description": "Start date of the principal economic activity.",
+      "sourceRef": "Casilla 4 — 'FECHA DE INICIO ACTIVIDAD PRIMARIA'"
+    },
+    {
+      "name": "secondaryActivityStartDate",
+      "label": "Fecha de Inicio Actividad Secundaria",
+      "type": "date",
+      "required": false,
+      "description": "Start date of the secondary economic activity, when one is declared. Not machine-gated via requiredWhen on ciiuSecondaryActivityCode's presence, since GovSchema v0.3's Condition grammar has no 'field is present' operator suitable for an optional string field (the same class of gap noted for a notEquals-empty-string pattern in this registry's prior work) — left optional and disclosed rather than asserting an unsupported condition. See VERIFICATION.md.",
+      "sourceRef": "Casilla 4 — 'FECHA DE INICIO ACTIVIDAD SECUNDARIA'"
+    },
+    {
+      "name": "isImporter",
+      "label": "Importador",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the registrant is an importer.",
+      "sourceRef": "Casilla 4 — 'IMPORTADOR'"
+    },
+    {
+      "name": "isExporter",
+      "label": "Exportador",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the registrant is an exporter.",
+      "sourceRef": "Casilla 4 — 'EXPORTADOR'"
+    },
+    {
+      "name": "isCustomsUser",
+      "label": "Usuario Aduanero",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the registrant is a registered customs user (usuario aduanero).",
+      "sourceRef": "Casilla 4 — 'USUARIO ADUANERO'"
+    },
+    {
+      "name": "naturalPersonActivityDescription",
+      "label": "Descripción Breve de la Actividad Económica (Personas Naturales)",
+      "type": "string",
+      "required": false,
+      "description": "Brief free-text description of the economic activity, required for natural persons, maximum 1,000 characters per the form's own instruction.",
+      "sourceRef": "Casilla 4 — 'DESCRIBA DE MANERA BREVE O RESUMIDA SU ACTIVIDAD ECONÓMICA - PARA PERSONAS NATURALES (Máximo 1.000 caracteres)'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_natural"
+      },
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "highestRevenueActivityCiiuCode",
+      "label": "Código CIIU de Mayores Ingresos",
+      "type": "string",
+      "required": false,
+      "description": "The CIIU code of the activity from which the registrant received the highest ordinary-activity income in the period. Not gated to renewal-only submissions since the form does not state that restriction explicitly, though a brand-new matrícula would typically have no prior-period revenue history to report here — disclosed as a genuine ambiguity rather than assumed. See VERIFICATION.md.",
+      "sourceRef": "Casilla 4 — 'INDIQUE A CONTINUACIÓN EL CÓDIGO CIIU POR EL CUAL PERCIBIÓ MAYORES INGRESOS POR ACTIVIDAD ORDINARIA EN EL PERIODO' / 'CLASE'",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "highestRevenueActivityShdCode",
+      "label": "Código SHD de Mayores Ingresos",
+      "type": "string",
+      "required": false,
+      "description": "The SHD code paired with highestRevenueActivityCiiuCode, Bogotá D.C. only.",
+      "sourceRef": "Casilla 4 — 'INDIQUE A CONTINUACIÓN EL CÓDIGO CIIU POR EL CUAL PERCIBIÓ MAYORES INGRESOS...' / 'SHD'"
+    },
+    {
+      "name": "currentAssets",
+      "label": "Activo Corriente",
+      "type": "number",
+      "required": true,
+      "description": "Current assets, in Colombian pesos, no decimals. Taken from the balance de apertura (matrícula) or the prior-year-end financial statements (renovación).",
+      "sourceRef": "Casilla 5 — 'Activo Corriente $'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonCurrentAssets",
+      "label": "Activo No Corriente",
+      "type": "number",
+      "required": true,
+      "description": "Non-current assets, in Colombian pesos.",
+      "sourceRef": "Casilla 5 — 'Activo No Corriente $'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAssets",
+      "label": "Activo Total",
+      "type": "number",
+      "required": true,
+      "description": "Total assets (current + non-current), the base figure for calculating the matrícula/renovación fee.",
+      "sourceRef": "Casilla 5 — 'Activo Total $'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "currentLiabilities",
+      "label": "Pasivo Corriente",
+      "type": "number",
+      "required": true,
+      "description": "Current liabilities, in Colombian pesos.",
+      "sourceRef": "Casilla 5 — 'Pasivo Corriente $'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonCurrentLiabilities",
+      "label": "Pasivo No Corriente",
+      "type": "number",
+      "required": true,
+      "description": "Non-current liabilities, in Colombian pesos.",
+      "sourceRef": "Casilla 5 — 'Pasivo No Corriente $'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalLiabilities",
+      "label": "Pasivo Total",
+      "type": "number",
+      "required": true,
+      "description": "Total liabilities (current + non-current).",
+      "sourceRef": "Casilla 5 — 'Pasivo Total $'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netEquity",
+      "label": "Patrimonio Neto",
+      "type": "number",
+      "required": true,
+      "description": "Net equity (assets minus liabilities).",
+      "sourceRef": "Casilla 5 — 'Patrimonio Neto $'"
+    },
+    {
+      "name": "liabilitiesPlusEquity",
+      "label": "Pasivo + Patrimonio",
+      "type": "number",
+      "required": true,
+      "description": "Total of liabilities plus equity, which per the form's own instruction must equal totalAssets.",
+      "sourceRef": "Casilla 5 — 'Pasivo + Patrimonio $'"
+    },
+    {
+      "name": "socialBalance",
+      "label": "Balance Social",
+      "type": "number",
+      "required": false,
+      "description": "Balance social, applicable only to a non-profit entity (entidad sin ánimo de lucro). Likely inapplicable to a filing under this document's Registro Mercantil scope, but the field is printed on the shared Hoja 2 template regardless of which of RUES's three registry tracks is selected, so it is retained here as optional. See VERIFICATION.md.",
+      "sourceRef": "Casilla 5 — 'Balance Social ( ) $ — ( ) Solamente si es Entidad sin ánimo de lucro'"
+    },
+    {
+      "name": "ordinaryActivityIncome",
+      "label": "Ingresos Actividad Ordinaria",
+      "type": "number",
+      "required": true,
+      "description": "Total income from ordinary business activity (sale of goods or services), in Colombian pesos.",
+      "sourceRef": "Casilla 5 — 'Ingresos Actividad Ordinaria $'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherIncome",
+      "label": "Otros Ingresos",
+      "type": "number",
+      "required": false,
+      "description": "Income from occasional, non-core sales.",
+      "sourceRef": "Casilla 5 — 'Otros Ingresos $'"
+    },
+    {
+      "name": "costOfSales",
+      "label": "Costo de Ventas",
+      "type": "number",
+      "required": false,
+      "description": "Cost of sales.",
+      "sourceRef": "Casilla 5 — 'Costo de Ventas $'"
+    },
+    {
+      "name": "operatingExpenses",
+      "label": "Gastos Operacionales",
+      "type": "number",
+      "required": false,
+      "description": "Operating expenses.",
+      "sourceRef": "Casilla 5 — 'Gastos Operacionales $'"
+    },
+    {
+      "name": "otherExpenses",
+      "label": "Otros Gastos",
+      "type": "number",
+      "required": false,
+      "description": "Other (non-operational) expenses.",
+      "sourceRef": "Casilla 5 — 'Otros Gastos $'"
+    },
+    {
+      "name": "taxExpenses",
+      "label": "Gastos por Impuestos",
+      "type": "number",
+      "required": false,
+      "description": "Tax-related expenses/obligations.",
+      "sourceRef": "Casilla 5 — 'Gastos por Impuestos $'"
+    },
+    {
+      "name": "operatingProfitLoss",
+      "label": "Utilidad / Pérdida Operacional",
+      "type": "number",
+      "required": true,
+      "description": "Operating profit or loss for the period.",
+      "sourceRef": "Casilla 5 — 'Utilidad / Pérdida Operacional $'"
+    },
+    {
+      "name": "periodResult",
+      "label": "Resultado del Período",
+      "type": "number",
+      "required": true,
+      "description": "Net result (profit or loss) for the period.",
+      "sourceRef": "Casilla 5 — 'Resultado del Período $'"
+    },
+    {
+      "name": "niifGroup",
+      "label": "Grupo NIIF",
+      "type": "enum",
+      "required": true,
+      "description": "The accounting standards (NIIF) group the registrant is classified under, per the form's own numbered code table.",
+      "sourceRef": "Casilla 5 — 'GRUPO NIIF (Revisar las instrucciones del formulario RUES)'; Instrucciones §5 code table",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ]
+      }
+    },
+    {
+      "name": "nationalPublicCapitalPercent",
+      "label": "Capital Nacional Público (%)",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of national public capital contribution, required for legal entities; the sum of all four capital-composition percentages must equal 100%.",
+      "sourceRef": "Casilla 5 — 'COMPOSICIÓN DEL CAPITAL EN CASO DE PERSONAS JURÍDICAS' / '1. NACIONAL' / '1.1. PÚBLICO %'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "nationalPrivateCapitalPercent",
+      "label": "Capital Nacional Privado (%)",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of national private capital contribution, required for legal entities.",
+      "sourceRef": "Casilla 5 — 'COMPOSICIÓN DEL CAPITAL...' / '1. NACIONAL' / '1.2. PRIVADO %'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "foreignPublicCapitalPercent",
+      "label": "Capital Extranjero Público (%)",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of foreign public capital contribution, required for legal entities.",
+      "sourceRef": "Casilla 5 — 'COMPOSICIÓN DEL CAPITAL...' / '2. EXTRANJERO' / '2.1. PÚBLICO %'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "foreignPrivateCapitalPercent",
+      "label": "Capital Extranjero Privado (%)",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of foreign private capital contribution, required for legal entities.",
+      "sourceRef": "Casilla 5 — 'COMPOSICIÓN DEL CAPITAL...' / '2. EXTRANJERO' / '2.2. PRIVADO %'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "womenCapitalParticipationPercent",
+      "label": "Porcentaje de Participación de las Mujeres en el Capital Social",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of the company's share capital held by women. Printed directly beneath the capital-composition block; this document infers it shares that block's persona-jurídica scope, since the line itself carries no separate restating of that condition — a disclosed inference, not a literal restatement. See VERIFICATION.md.",
+      "sourceRef": "Casilla 5 — 'INDIQUE EL PORCENTAJE DE PARTICIPACIÓN DE LAS MUJERES EN EL CAPITAL SOCIAL %'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseLaborContributionAmount",
+      "label": "Empresa Asociativa de Trabajo — Aportes Laborales ($)",
+      "type": "number",
+      "required": false,
+      "description": "Labour-contribution amount, in Colombian pesos, required when the registrant is registering as an Empresa Asociativa de Trabajo (specificOrganizationType '09').",
+      "sourceRef": "Casilla 6 — 'SI ES UNA EMPRESA ASOCIATIVA DE TRABAJO' / 'APORTES LABORALES $'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseLaborContributionPercent",
+      "label": "Empresa Asociativa de Trabajo — Aportes Laborales (%)",
+      "type": "number",
+      "required": false,
+      "description": "Labour-contribution percentage.",
+      "sourceRef": "Casilla 6 — 'APORTES LABORALES %'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseAssetContributionAmount",
+      "label": "Empresa Asociativa de Trabajo — Aportes Activos ($)",
+      "type": "number",
+      "required": false,
+      "description": "Asset-contribution amount.",
+      "sourceRef": "Casilla 6 — 'APORTES ACTIVOS $'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseAssetContributionPercent",
+      "label": "Empresa Asociativa de Trabajo — Aportes Activos (%)",
+      "type": "number",
+      "required": false,
+      "description": "Asset-contribution percentage.",
+      "sourceRef": "Casilla 6 — 'APORTES ACTIVOS %'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseAdditionalLaborContributionAmount",
+      "label": "Empresa Asociativa de Trabajo — Aportes Laborales Adicionales ($)",
+      "type": "number",
+      "required": false,
+      "description": "Additional labour-contribution amount.",
+      "sourceRef": "Casilla 6 — 'APORTES LABORALES ADICIONALES $'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseAdditionalLaborContributionPercent",
+      "label": "Empresa Asociativa de Trabajo — Aportes Laborales Adicionales (%)",
+      "type": "number",
+      "required": false,
+      "description": "Additional labour-contribution percentage.",
+      "sourceRef": "Casilla 6 — 'APORTES LABORALES ADICIONALES %'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseCashContributionAmount",
+      "label": "Empresa Asociativa de Trabajo — Aportes en Dinero ($)",
+      "type": "number",
+      "required": false,
+      "description": "Cash-contribution amount.",
+      "sourceRef": "Casilla 6 — 'APORTES EN DINERO $'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseCashContributionPercent",
+      "label": "Empresa Asociativa de Trabajo — Aportes en Dinero (%)",
+      "type": "number",
+      "required": false,
+      "description": "Cash-contribution percentage.",
+      "sourceRef": "Casilla 6 — 'APORTES EN DINERO %'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseTotalContributionAmount",
+      "label": "Empresa Asociativa de Trabajo — Total Aportes ($)",
+      "type": "number",
+      "required": false,
+      "description": "Total contribution amount across all contribution types.",
+      "sourceRef": "Casilla 6 — 'TOTAL APORTES $'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "workAssociativeEnterpriseTotalContributionPercent",
+      "label": "Empresa Asociativa de Trabajo — Total Aportes (%)",
+      "type": "number",
+      "required": false,
+      "description": "Total contribution percentage.",
+      "sourceRef": "Casilla 6 — 'TOTAL APORTES %'",
+      "requiredWhen": {
+        "field": "specificOrganizationType",
+        "equals": "09"
+      },
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "creditReference1Name",
+      "label": "Referencia Entidad de Crédito 1 — Nombre",
+      "type": "string",
+      "required": false,
+      "description": "Name of the first credit-institution reference.",
+      "sourceRef": "Casilla 7 — 'REFERENCIAS - ENTIDADES DE CRÉDITO' / '1. NOMBRE'"
+    },
+    {
+      "name": "creditReference1Phone",
+      "label": "Referencia Entidad de Crédito 1 — Teléfono",
+      "type": "string",
+      "required": false,
+      "description": "Phone number of the first credit-institution reference.",
+      "sourceRef": "Casilla 7 — '1. TELÉFONO'"
+    },
+    {
+      "name": "creditReference2Name",
+      "label": "Referencia Entidad de Crédito 2 — Nombre",
+      "type": "string",
+      "required": false,
+      "description": "Name of the second credit-institution reference.",
+      "sourceRef": "Casilla 7 — '2. NOMBRE'"
+    },
+    {
+      "name": "creditReference2Phone",
+      "label": "Referencia Entidad de Crédito 2 — Teléfono",
+      "type": "string",
+      "required": false,
+      "description": "Phone number of the second credit-institution reference.",
+      "sourceRef": "Casilla 7 — '2. TELÉFONO'"
+    },
+    {
+      "name": "commercialReference1Name",
+      "label": "Referencia Comercial 1 — Nombre",
+      "type": "string",
+      "required": false,
+      "description": "Name of the first commercial reference.",
+      "sourceRef": "Casilla 7 — 'REFERENCIAS - COMERCIALES' / '1. NOMBRE'"
+    },
+    {
+      "name": "commercialReference1Phone",
+      "label": "Referencia Comercial 1 — Teléfono",
+      "type": "string",
+      "required": false,
+      "description": "Phone number of the first commercial reference.",
+      "sourceRef": "Casilla 7 — '1. TELÉFONO' (comercial)"
+    },
+    {
+      "name": "commercialReference2Name",
+      "label": "Referencia Comercial 2 — Nombre",
+      "type": "string",
+      "required": false,
+      "description": "Name of the second commercial reference.",
+      "sourceRef": "Casilla 7 — '2. NOMBRE' (comercial)"
+    },
+    {
+      "name": "commercialReference2Phone",
+      "label": "Referencia Comercial 2 — Teléfono",
+      "type": "string",
+      "required": false,
+      "description": "Phone number of the second commercial reference.",
+      "sourceRef": "Casilla 7 — '2. TELÉFONO' (comercial)"
+    },
+    {
+      "name": "currentLegalStatusCode",
+      "label": "Código del Estado Actual de la Persona Jurídica",
+      "type": "enum",
+      "required": false,
+      "description": "The legal entity's current legal/administrative/financial status, per the form's own numbered code table. Required for legal entities only.",
+      "sourceRef": "Casilla 8 — 'ESTADO ACTUAL DE LA PERSONA JURÍDICA' / 'CÓDIGO DEL ESTADO ACTUAL DE LA PERSONA JURÍDICA (Revisar las instrucciones del formulario RUES)'; Instrucciones §8 code table",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      },
+      "validation": {
+        "enum": [
+          "01",
+          "02",
+          "03",
+          "04",
+          "05",
+          "06",
+          "07"
+        ]
+      }
+    },
+    {
+      "name": "currentLegalStatusOtherDescription",
+      "label": "Estado Actual — Cuál (Otro)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of the current status, required when currentLegalStatusCode is '07' (Otro).",
+      "sourceRef": "Casilla 8 — 'OTRO CUAL?'",
+      "requiredWhen": {
+        "field": "currentLegalStatusCode",
+        "equals": "07"
+      }
+    },
+    {
+      "name": "numberOfEmployees",
+      "label": "Número de Empleados",
+      "type": "integer",
+      "required": true,
+      "description": "Total number of employees, explicitly marked mandatory for both natural persons and legal entities.",
+      "sourceRef": "Casilla 8 — 'NÚMERO DE EMPLEADOS (Obligatorio personas naturales y jurídicas)'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "numberOfFemaleEmployees",
+      "label": "Número de Empleadas Mujeres",
+      "type": "integer",
+      "required": true,
+      "description": "Number of female employees, explicitly marked mandatory for both natural persons and legal entities.",
+      "sourceRef": "Casilla 8 — 'NÚMERO DE EMPLEADAS MUJERES (Obligatorio personas naturales y jurídicas)'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "numberOfWomenInManagementPositions",
+      "label": "Número Total de Mujeres que Ocupan Cargos Directivos",
+      "type": "integer",
+      "required": false,
+      "description": "Number of women occupying management/directive positions, explicitly marked mandatory only for legal entities.",
+      "sourceRef": "Casilla 8 — 'NÚMERO TOTAL DE MUJERES QUE OCUPAN CARGOS DIRECTIVOS (Obligatorio únicamente para personas jurídicas)'",
+      "requiredWhen": {
+        "field": "personType",
+        "equals": "persona_juridica"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "temporaryEmployeesPercent",
+      "label": "Porcentaje de Empleados Temporales",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of the total employee count that is temporary.",
+      "sourceRef": "Casilla 8 — 'PORCENTAJE DE EMPLEADOS TEMPORALES (%)'",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "hasEstablishmentsAgenciesOrBranches",
+      "label": "Tiene Establecimientos, Agencias o Sucursales",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the registrant has establishments, agencies, or branches.",
+      "sourceRef": "Casilla 8 — 'TIENE ESTABLECIMIENTOS, AGENCIAS O SUCURSALES: SI / NO'"
+    },
+    {
+      "name": "numberOfEstablishmentsAgenciesOrBranches",
+      "label": "Cuántos (Establecimientos, Agencias o Sucursales)",
+      "type": "integer",
+      "required": false,
+      "description": "Number of establishments, agencies, or branches, required when hasEstablishmentsAgenciesOrBranches is true.",
+      "sourceRef": "Casilla 8 — 'CUANTOS:'",
+      "requiredWhen": {
+        "field": "hasEstablishmentsAgenciesOrBranches",
+        "equals": true
+      },
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "hasInnovationProcess",
+      "label": "Tiene la Entidad Implementado un Proceso de Innovación",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the entity has implemented an innovation process.",
+      "sourceRef": "Casilla 8 — 'TIENE LA ENTIDAD IMPLEMENTADO UN PROCESO DE INNOVACIÓN SI / NO'"
+    },
+    {
+      "name": "isFamilyBusiness",
+      "label": "Empresa Familiar",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the business is a family business. The form itself notes this is collected for statistical purposes only ('Informar solo para fines estadísticos'), which does not change its scope as a normal question every filer is asked to answer.",
+      "sourceRef": "Casilla 8 — 'EMPRESA FAMILIAR (Informar solo para fines estadísticos) SI / NO'"
+    },
+    {
+      "name": "realEstateProperty1RegistryNumber",
+      "label": "Bien Raíz 1 — Matrícula Inmobiliaria",
+      "type": "string",
+      "required": false,
+      "description": "Property registration number (matrícula inmobiliaria) of the first real-estate asset the registrant owns, per Article 32 of the Código de Comercio. Optional since not every registrant owns real estate.",
+      "sourceRef": "Casilla 9 — 'DETALLE DE LOS BIENES RAICES QUE POSEA' / 'MATRÍCULA INMOBILIARIA' (first column)"
+    },
+    {
+      "name": "realEstateProperty1Address",
+      "label": "Bien Raíz 1 — Dirección",
+      "type": "string",
+      "required": false,
+      "description": "Address of the first real-estate asset.",
+      "sourceRef": "Casilla 9 — 'DIRECCIÓN' (first column)"
+    },
+    {
+      "name": "realEstateProperty1Neighborhood",
+      "label": "Bien Raíz 1 — Barrio",
+      "type": "string",
+      "required": false,
+      "description": "Neighbourhood of the first real-estate asset.",
+      "sourceRef": "Casilla 9 — 'BARRIO' (first column)"
+    },
+    {
+      "name": "realEstateProperty1Municipality",
+      "label": "Bien Raíz 1 — Municipio",
+      "type": "string",
+      "required": false,
+      "description": "Municipality of the first real-estate asset.",
+      "sourceRef": "Casilla 9 — 'MUNICIPIO' (first column)"
+    },
+    {
+      "name": "realEstateProperty1Department",
+      "label": "Bien Raíz 1 — Departamento",
+      "type": "string",
+      "required": false,
+      "description": "Department of the first real-estate asset.",
+      "sourceRef": "Casilla 9 — 'DEPARTAMENTO' (first column)"
+    },
+    {
+      "name": "realEstateProperty1Country",
+      "label": "Bien Raíz 1 — País",
+      "type": "string",
+      "required": false,
+      "description": "Country of the first real-estate asset.",
+      "sourceRef": "Casilla 9 — 'PAIS' (first column)"
+    },
+    {
+      "name": "realEstateProperty2RegistryNumber",
+      "label": "Bien Raíz 2 — Matrícula Inmobiliaria",
+      "type": "string",
+      "required": false,
+      "description": "Property registration number of a second real-estate asset, per the form's own two-column bounded layout for this section.",
+      "sourceRef": "Casilla 9 — 'MATRÍCULA INMOBILIARIA' (second column)"
+    },
+    {
+      "name": "realEstateProperty2Address",
+      "label": "Bien Raíz 2 — Dirección",
+      "type": "string",
+      "required": false,
+      "description": "Address of the second real-estate asset.",
+      "sourceRef": "Casilla 9 — 'DIRECCIÓN' (second column)"
+    },
+    {
+      "name": "realEstateProperty2Neighborhood",
+      "label": "Bien Raíz 2 — Barrio",
+      "type": "string",
+      "required": false,
+      "description": "Neighbourhood of the second real-estate asset.",
+      "sourceRef": "Casilla 9 — 'BARRIO' (second column)"
+    },
+    {
+      "name": "realEstateProperty2Municipality",
+      "label": "Bien Raíz 2 — Municipio",
+      "type": "string",
+      "required": false,
+      "description": "Municipality of the second real-estate asset.",
+      "sourceRef": "Casilla 9 — 'MUNICIPIO' (second column)"
+    },
+    {
+      "name": "realEstateProperty2Department",
+      "label": "Bien Raíz 2 — Departamento",
+      "type": "string",
+      "required": false,
+      "description": "Department of the second real-estate asset.",
+      "sourceRef": "Casilla 9 — 'DEPARTAMENTO' (second column)"
+    },
+    {
+      "name": "realEstateProperty2Country",
+      "label": "Bien Raíz 2 — País",
+      "type": "string",
+      "required": false,
+      "description": "Country of the second real-estate asset.",
+      "sourceRef": "Casilla 9 — 'PAIS' (second column)"
+    },
+    {
+      "name": "declaresLey1780Compliance",
+      "label": "Declaro Bajo Gravedad de Juramento que Cumplo con los Requisitos de la Ley 1780 de 2016",
+      "type": "boolean",
+      "required": false,
+      "description": "Voluntary declaration, at matrícula, of eligibility for Ley 1780 de 2016's young-business exemption from matrícula/first-renewal fees (ages 18-35, ≤50 workers, assets below the statutory threshold, among other conditions).",
+      "sourceRef": "Casilla 10 — 'LEY 1780 DE 2016' / 'DECLARO BAJO LA GRAVEDAD DE JURAMENTO QUE CUMPLO CON LOS REQUISITOS ESTABLECIDOS EN LA LEY 1780 DE 2016 PARA ACCEDER A LOS BENEFICIOS DEL ARTÍCULO 3. SI / NO'"
+    },
+    {
+      "name": "ley1780MaintainsComplianceOnRenewal",
+      "label": "Mantengo el Cumplimiento de los Requisitos (Ley 1780, 1ra Renovación)",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the registrant still meets Ley 1780 de 2016's requirements, asked only at the first renewal after having claimed the benefit at matrícula. This document gates it only on registryProcedureType being a renovación (not chained to declaresLey1780Compliance, which is answered on a different, earlier submission this document cannot see) — a disclosed temporal-scope limitation. See VERIFICATION.md.",
+      "sourceRef": "Casilla 10 — 'SOLO EN CASO DE 1RA RENOVACIÓN Y HABIÉNDOSE ACOGIDO A LOS BENEFICIOS DE LA LEY 1780 DE 2016 AL MOMENTO DE LA MATRÍCULA. MANIFIESTO BAJO LA GRAVEDAD DE JURAMENTO QUE MANTENGO EL CUMPLIMIENTO... CUMPLO / NO CUMPLO'",
+      "requiredWhen": {
+        "field": "registryProcedureType",
+        "equals": "renovacion"
+      },
+      "validation": {
+        "enum": [
+          "cumplo",
+          "no_cumplo"
+        ]
+      }
+    },
+    {
+      "name": "isSocialSecurityContributor",
+      "label": "Es Aportante al Sistema de Seguridad y Protección Social",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the registrant contributes to the social security and social protection system.",
+      "sourceRef": "Casilla 11 — '¿ES APORTANTE AL SISTEMA DE SEGURIDAD Y PROTECCIÓN SOCIAL? SI / NO'"
+    },
+    {
+      "name": "contributorType",
+      "label": "Tipo de Aportante",
+      "type": "enum",
+      "required": false,
+      "description": "The registrant's contributor category, required when isSocialSecurityContributor is true.",
+      "sourceRef": "Casilla 11 — 'TIPO DE APORTANTE: APORTANTE CON 200 O MAS COTIZANTES / CUENTA CON MENOS 200 DE COTIZANTES / APORTANTE BENEFICIARIO DEL ARTICULO 5 DE LA LEY 1429 DE 2010 / APORTANTE INDEPENDIENTE'",
+      "requiredWhen": {
+        "field": "isSocialSecurityContributor",
+        "equals": true
+      },
+      "validation": {
+        "enum": [
+          "200_or_more_contributors",
+          "less_than_200_contributors",
+          "law_1429_2010_article5_beneficiary",
+          "independent_contributor"
+        ]
+      }
+    },
+    {
+      "name": "declarantName",
+      "label": "Nombre de la Persona Natural o Representante Legal de la Persona Jurídica",
+      "type": "string",
+      "required": true,
+      "description": "Name of the natural person filer, or of the legal representative signing on behalf of a legal entity, attesting under oath that the information reported is reliable, truthful, complete, and accurate.",
+      "sourceRef": "Declaración — 'Nombre de la Persona Natural o Representante Legal de la Persona Jurídica'"
+    },
+    {
+      "name": "declarantDocumentType",
+      "label": "Documento de Identificación — Tipo (Declarante)",
+      "type": "enum",
+      "required": true,
+      "description": "Type of identity document held by the declarant.",
+      "sourceRef": "Declaración — 'Documento de identificación Nº CC / CE / TI / PASAPORTE'",
+      "validation": {
+        "enum": [
+          "cedula_ciudadania",
+          "cedula_extranjeria",
+          "tarjeta_identidad",
+          "pasaporte"
+        ]
+      }
+    },
+    {
+      "name": "declarantDocumentNumber",
+      "label": "Documento de Identificación Nº (Declarante)",
+      "type": "string",
+      "required": true,
+      "description": "The declarant's identity document number.",
+      "sourceRef": "Declaración — 'Documento de identificación Nº'"
+    },
+    {
+      "name": "declarantDocumentCountry",
+      "label": "País (Declarante)",
+      "type": "string",
+      "required": false,
+      "description": "Country associated with the declarant's document, required when declarantDocumentType is pasaporte.",
+      "sourceRef": "Declaración — 'PAÍS' (adjacent to 'PASAPORTE')",
+      "requiredWhen": {
+        "field": "declarantDocumentType",
+        "equals": "pasaporte"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "informacion_registro_e_identificacion",
+      "title": "Información del registro e identificación",
+      "fields": [
+        "registryProcedureType",
+        "registrationNumber",
+        "renewalYear",
+        "generalOrganizationType",
+        "specificOrganizationType",
+        "isBicCompany",
+        "personType",
+        "razonSocial",
+        "sigla",
+        "naturalPersonFirstSurname",
+        "naturalPersonSecondSurname",
+        "naturalPersonFirstName",
+        "naturalPersonSecondName",
+        "naturalPersonGender",
+        "nit",
+        "nitVerificationDigit",
+        "documentType",
+        "documentNumber",
+        "documentIssueDate",
+        "documentIssuePlace",
+        "documentCountry",
+        "foreignTaxIdNumberInOriginCountry",
+        "foreignTaxIdOriginCountry",
+        "foreignEntityOrNaturalPersonTaxIdWithPermanentEstablishment"
+      ],
+      "next": "ubicacion_y_actividades"
+    },
+    {
+      "id": "ubicacion_y_actividades",
+      "title": "Ubicación, datos generales y actividades económicas",
+      "fields": [
+        "domicileAddress",
+        "domicileZoneType",
+        "domicilePostalCode",
+        "locationType",
+        "domicileLocalityBarrioVeredaCorregimiento",
+        "domicileMunicipality",
+        "domicileDepartment",
+        "domicileCountry",
+        "domicilePhone1",
+        "domicilePhone2",
+        "domicilePhone3",
+        "domicileEmail",
+        "notificationAddress",
+        "notificationZoneType",
+        "notificationPostalCode",
+        "notificationLocalityBarrioVeredaCorregimiento",
+        "notificationMunicipality",
+        "notificationDepartment",
+        "notificationCountry",
+        "notificationPhone1",
+        "notificationPhone2",
+        "notificationPhone3",
+        "notificationEmail",
+        "administrativeHeadquartersType",
+        "consentToElectronicNotification",
+        "ciiuPrimaryActivityCode",
+        "shdPrimaryActivityCode",
+        "ciiuSecondaryActivityCode",
+        "shdSecondaryActivityCode",
+        "ciiuOtherActivityCode3",
+        "shdOtherActivityCode3",
+        "ciiuOtherActivityCode4",
+        "shdOtherActivityCode4",
+        "primaryActivityStartDate",
+        "secondaryActivityStartDate",
+        "isImporter",
+        "isExporter",
+        "isCustomsUser",
+        "naturalPersonActivityDescription",
+        "highestRevenueActivityCiiuCode",
+        "highestRevenueActivityShdCode"
+      ],
+      "next": "informacion_financiera"
+    },
+    {
+      "id": "informacion_financiera",
+      "title": "Información financiera y composición del capital",
+      "fields": [
+        "currentAssets",
+        "nonCurrentAssets",
+        "totalAssets",
+        "currentLiabilities",
+        "nonCurrentLiabilities",
+        "totalLiabilities",
+        "netEquity",
+        "liabilitiesPlusEquity",
+        "socialBalance",
+        "ordinaryActivityIncome",
+        "otherIncome",
+        "costOfSales",
+        "operatingExpenses",
+        "otherExpenses",
+        "taxExpenses",
+        "operatingProfitLoss",
+        "periodResult",
+        "niifGroup",
+        "nationalPublicCapitalPercent",
+        "nationalPrivateCapitalPercent",
+        "foreignPublicCapitalPercent",
+        "foreignPrivateCapitalPercent",
+        "womenCapitalParticipationPercent",
+        "workAssociativeEnterpriseLaborContributionAmount",
+        "workAssociativeEnterpriseLaborContributionPercent",
+        "workAssociativeEnterpriseAssetContributionAmount",
+        "workAssociativeEnterpriseAssetContributionPercent",
+        "workAssociativeEnterpriseAdditionalLaborContributionAmount",
+        "workAssociativeEnterpriseAdditionalLaborContributionPercent",
+        "workAssociativeEnterpriseCashContributionAmount",
+        "workAssociativeEnterpriseCashContributionPercent",
+        "workAssociativeEnterpriseTotalContributionAmount",
+        "workAssociativeEnterpriseTotalContributionPercent"
+      ],
+      "next": "estado_actual_y_bienes"
+    },
+    {
+      "id": "estado_actual_y_bienes",
+      "title": "Referencias, estado actual, bienes raíces, Ley 1780 y protección social",
+      "fields": [
+        "creditReference1Name",
+        "creditReference1Phone",
+        "creditReference2Name",
+        "creditReference2Phone",
+        "commercialReference1Name",
+        "commercialReference1Phone",
+        "commercialReference2Name",
+        "commercialReference2Phone",
+        "currentLegalStatusCode",
+        "currentLegalStatusOtherDescription",
+        "numberOfEmployees",
+        "numberOfFemaleEmployees",
+        "numberOfWomenInManagementPositions",
+        "temporaryEmployeesPercent",
+        "hasEstablishmentsAgenciesOrBranches",
+        "numberOfEstablishmentsAgenciesOrBranches",
+        "hasInnovationProcess",
+        "isFamilyBusiness",
+        "realEstateProperty1RegistryNumber",
+        "realEstateProperty1Address",
+        "realEstateProperty1Neighborhood",
+        "realEstateProperty1Municipality",
+        "realEstateProperty1Department",
+        "realEstateProperty1Country",
+        "realEstateProperty2RegistryNumber",
+        "realEstateProperty2Address",
+        "realEstateProperty2Neighborhood",
+        "realEstateProperty2Municipality",
+        "realEstateProperty2Department",
+        "realEstateProperty2Country",
+        "declaresLey1780Compliance",
+        "ley1780MaintainsComplianceOnRenewal",
+        "isSocialSecurityContributor",
+        "contributorType"
+      ],
+      "next": "declaracion"
+    },
+    {
+      "id": "declaracion",
+      "title": "Declaración",
+      "fields": [
+        "declarantName",
+        "declarantDocumentType",
+        "declarantDocumentNumber",
+        "declarantDocumentCountry"
+      ]
+    }
+  ]
+}
