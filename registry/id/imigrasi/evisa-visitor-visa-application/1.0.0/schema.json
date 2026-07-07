@@ -1,0 +1,443 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "id/imigrasi/evisa-visitor-visa-application",
+  "version": "1.0.0",
+  "title": "Indonesia e-Visa Application (Visitor Visa — General, Family & Social purpose)",
+  "description": "Apply for an Indonesian electronic visa (e-Visa) for a general/family/social-purpose short visit — e.g. the B1 Visitor visa, a single-entry visa valid for a stay of up to 30 days (extendable once for a further 30 days) — filed by a foreign national applicant through the Direktorat Jenderal Imigrasi's (Directorate General of Immigration) own online e-Visa platform, evisa.imigrasi.go.id. Opens Indonesia's fifth vertical (Visa), alongside the jurisdiction's existing Business Formation, DMV, Taxes, and Passport schemas. Covers the visa-type-selection wizard (passport country, main and sub purpose of visit, visa type, length of stay), the applicant's personal, passport, and Indonesia-address information, the required supporting documents (passport data page, applicant photo, return/onward ticket, and — for a non-passport travel document — its own validity-supporting document), the in-form payment-method choice, and applicant email confirmation. Does not model: account registration/sign-in (a separate, already-authenticated prerequisite); the Golden Visa / Investment and other main-purpose branches, which the source's own official manual shows follow a materially different, more complex flow (an added investor-type sub-classification and multi-year stay options) that neither source used here walks field-by-field; the read-only Review & Submit step's own checkbox-attestation screen (never rendered on-screen in either source); or the third-party credit-card payment-gateway entry screen. This document does not submit an application; the live e-Visa platform and the Direktorat Jenderal Imigrasi are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ID",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Directorate General of Immigration (Direktorat Jenderal Imigrasi)",
+    "abbreviation": "Ditjen Imigrasi",
+    "url": "https://www.imigrasi.go.id/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://kemlu.go.id/files/submenu/additional_file/1733965620675a373403bfd_User_Manual_E___Visa_Indonesia.pdf",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "\"User Manual e-Visa\" — published by the Direktorat Jenderal Imigrasi, mirrored unauthenticated on the Ministry of Foreign Affairs' (Kemlu) own file server (kemlu.go.id); the live evisa.imigrasi.go.id platform itself is WAF-blocked to a direct, unauthenticated fetch (confirmed this cycle, HTTP 403 'Request blocked')."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "Opens Indonesia's Visa vertical, previously flagged across several prior 'GovSchema Standard Research' cycles (GOV-1560, GOV-1567, GOV-1574) as a strong, ready-to-author candidate blocked only by the official manual's own 'Fill Form → Personal Information' screen rendering as an unlabelled wireframe. That gap is resolved this cycle by a second, independently located source: a foreign university's own study-abroad/international-programs office publishes a genuine live-DOM screen-capture walkthrough of the same platform (a real worked B1 – 30 Day visitor-visa example, filled for a study-abroad cruise itinerary), showing every field's real on-screen label, its required/optional marking, and dropdown/radio option values. `status` remains `draft`, not `verified`: neither this review nor either underlying source walked the live, authenticated evisa.imigrasi.go.id platform end-to-end (both are static guides), and this review did not attempt to create a real applicant account or submit a real application. See VERIFICATION.md for the full candidate-screening record, both sources' provenance, and every disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "passportCountry",
+      "label": "Passport/Country/Region",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The country/region that issued the applicant's passport, selected from a dropdown. Two confirmed on-screen values exist across the two sources used (\"UNITED STATES OF AMERICA\", \"ARGENTINA\"); the full country list is not visible in either source, so no enum is asserted.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" (E-Visa Step by Step Guide) — p.2, Box 1 \"Passport/Country/Region\"; corroborated by Ditjen Imigrasi's own \"User Manual e-Visa\" — p.10, \"I am traveling on a passport from?\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "mainPurpose",
+      "label": "The main purpose of my visit to Indonesia is",
+      "type": "string",
+      "required": true,
+      "description": "Top-level visit-purpose category, selected from a dropdown. Only one confirmed on-screen value is walked end-to-end by a source this document scopes to: \"General, Family, or Social\". The official manual's own worked example follows a different top-level category (a Golden Visa/Investment pathway) not modelled in this v1.0.0 — see VERIFICATION.md.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.2, Box 2 \"The main purpose of my visit to Indonesia is\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "subPurpose",
+      "label": "The sub purpose of my visit to Indonesia is",
+      "type": "string",
+      "required": true,
+      "description": "Sub-purpose of visit, dependent on mainPurpose. Confirmed on-screen value for the General/Family/Social pathway this document scopes to: \"Tourism, Family Visit, and Transit\".",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.2, Box 3 \"The sub purpose of my visit to Indonesia is\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "visaType",
+      "label": "I want to explore & choose a visa",
+      "type": "string",
+      "required": true,
+      "description": "Specific visa product within the selected sub-purpose. Confirmed on-screen value for this document's scope: \"B1 - Tourist (Visa On Arrival)\" — despite its name, this product is obtained through the full online e-Visa account/upload/verification process modelled here, not the separate, truly-instant e-VOA (Visa on Arrival) product the source's own manual describes as requiring no account (see VERIFICATION.md).",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.2, Box 4 \"I want to explore & choose a visa\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "lengthOfStay",
+      "label": "I am planning to stay",
+      "type": "string",
+      "required": true,
+      "description": "Requested stay duration, dependent on visaType. Confirmed on-screen value for this document's scope: \"30 Days\" (the B1 Visitor product's own info popup separately confirms this visa allows a stay of up to 30 days, extendable once for a further 30 days).",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.2, Box 5 \"I am planning to stay\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment Types",
+      "type": "enum",
+      "required": true,
+      "description": "Payment channel chosen inside the Fill Form step. Both values are independently confirmed on-screen: the official manual's own screenshot shows a two-option radio group (\"Credit Card\" / \"Simponi\"); the study-abroad guide's own worked example separately confirms the credit/debit-card option's exact label for a foreign cardholder.",
+      "sourceRef": "Ditjen Imigrasi \"User Manual e-Visa\" — p.13, \"Fill Form\", Payment Method; Principia College International Programs, \"Indonesia E-Visa Guide\" — p.5, \"Visa Type Information\", Payment Types",
+      "validation": {
+        "enum": ["CREDIT CARD / DEBIT CARD (Foreign Bank)", "Simponi"]
+      }
+    },
+    {
+      "name": "fullName",
+      "label": "Full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.5, \"Personal Information\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Both option labels are directly visible on-screen as a two-option radio group (not a dropdown showing only the selected value).",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.5, \"Personal Information\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.5, \"Personal Information\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The live form's own date picker displays and accepts DD/MM/YYYY.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.5, \"Personal Information\""
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The only field in the Personal Information section shown without a red required-field asterisk in the source.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.5, \"Personal Information\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "documentType",
+      "label": "Document Type",
+      "type": "string",
+      "required": true,
+      "description": "Travel-document-type dropdown; the only on-screen confirmed value is its own default, \"Passport\". The Support Document upload's own description (\"For holders of travel documents other than passports such as emergency passports, documents of identity, etc.\") is direct textual evidence further values exist, but neither is shown selected on-screen, so no enum is asserted.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Passport (or other travel document) Information\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "documentNumber",
+      "label": "Document No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Passport (or other travel document) Information\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Dropdown; only the selected value is visible in the source (rendered in Indonesian, \"AMERIKA SERIKAT\", even though the rest of the live UI is in English — a confirmed source quirk, not an authoring error), so no enum is asserted.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Passport (or other travel document) Information\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfExpiry",
+      "label": "Date of Expiry",
+      "type": "date",
+      "required": true,
+      "description": "The live form's own date picker displays and accepts DD/MM/YYYY.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Passport (or other travel document) Information\""
+    },
+    {
+      "name": "issuingCountry",
+      "label": "Issuing Country",
+      "type": "string",
+      "required": true,
+      "description": "Free-text field, distinct from the nationality dropdown above; shown blank (unfilled) in the source's own worked example.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Passport (or other travel document) Information\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "residenceType",
+      "label": "Residence Type",
+      "type": "string",
+      "required": true,
+      "description": "Type of accommodation in Indonesia, selected from a dropdown. Only confirmed on-screen value: \"OTHERS\" (used for a cruise-ship berth in the source's own worked example).",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "postalCode",
+      "label": "Postal Code",
+      "type": "string",
+      "required": true,
+      "description": "Entering this and the address/residence type auto-populates province/city/district/village/immigrationOffice below. Indonesian postal codes are a standard 5-digit format; the source's own worked example (\"80222\") is 5 digits.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "pattern": "^[0-9]{5}$"
+      }
+    },
+    {
+      "name": "province",
+      "label": "Province",
+      "type": "string",
+      "required": false,
+      "description": "Read-only, auto-populated from postalCode/address by the live form; not directly entered by the applicant.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "type": "string",
+      "required": false,
+      "description": "Read-only, auto-populated from postalCode/address by the live form; not directly entered by the applicant.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "district",
+      "label": "District",
+      "type": "string",
+      "required": false,
+      "description": "Read-only, auto-populated from postalCode/address by the live form; not directly entered by the applicant.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "village",
+      "label": "Village",
+      "type": "string",
+      "required": false,
+      "description": "Read-only, auto-populated from postalCode/address by the live form; not directly entered by the applicant.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "immigrationOffice",
+      "label": "Imigration Office",
+      "type": "string",
+      "required": false,
+      "description": "Read-only, auto-populated from postalCode/address by the live form: the immigration office serving that address. Label spelled \"Imigration\" (sic) verbatim as rendered on-screen in the source.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.6, \"Address in Indonesia\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.7, \"Applicant Contact Confirmation\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "emailConfirmation",
+      "label": "Email Confirmation",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must match email; see crossFieldValidation.",
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.7, \"Applicant Contact Confirmation\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportDataPage",
+      "label": "Travel Document (passport data page)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": ["image/jpeg", "image/png"]
+      },
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.4, \"Personal Information\", Travel Document"
+    },
+    {
+      "id": "applicantPhoto",
+      "label": "Photo (recent, chest-up, plain background)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "maxBytes": 2097152,
+        "mediaTypes": ["image/jpeg", "image/png"]
+      },
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.4, \"Personal Information\", Photo"
+    },
+    {
+      "id": "returnTicket",
+      "label": "Return Ticket",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "Return ticket or onward ticket to continue the journey to another country, except for crew of the Conveyance who will stop by to join the ship and continue the journey to another country.",
+      "constraints": {
+        "mediaTypes": ["application/pdf"]
+      },
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.7, \"Main Document\""
+    },
+    {
+      "id": "travelDocumentValidityDocument",
+      "label": "Support Document (\"Passport Valid for at Least 6 Months\")",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "The source's own label (\"Passport Valid for at Least 6 Months\") and its own description (\"For holders of travel documents other than passports such as emergency passports, documents of identity, etc. must be valid for 12 months\") state two different validity periods for what the source presents as a single upload slot; preserved verbatim rather than resolved — see VERIFICATION.md. Shown without a required-field asterisk in the source.",
+      "constraints": {
+        "mediaTypes": ["application/pdf"]
+      },
+      "sourceRef": "Principia College International Programs, \"Indonesia E-Visa Guide\" — p.7, \"Support Document\""
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "emailMustMatchConfirmation",
+      "compare": {
+        "field": "emailConfirmation",
+        "operator": "equals",
+        "compareTo": "email"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "visa_type_selection",
+      "title": "Visa type selection",
+      "fields": ["passportCountry", "mainPurpose", "subPurpose", "visaType", "lengthOfStay"],
+      "next": "upload_documents"
+    },
+    {
+      "id": "upload_documents",
+      "title": "Upload your passport and newest formal photo",
+      "fields": [],
+      "next": "fill_form"
+    },
+    {
+      "id": "fill_form",
+      "title": "Fill out the form completely, attach the applicable documents",
+      "fields": [
+        "paymentMethod",
+        "fullName",
+        "sex",
+        "placeOfBirth",
+        "dateOfBirth",
+        "phoneNumber",
+        "documentType",
+        "documentNumber",
+        "nationality",
+        "dateOfExpiry",
+        "issuingCountry",
+        "residenceType",
+        "address",
+        "postalCode",
+        "province",
+        "city",
+        "district",
+        "village",
+        "immigrationOffice",
+        "email",
+        "emailConfirmation"
+      ],
+      "next": "review_submit"
+    },
+    {
+      "id": "review_submit",
+      "title": "Review & Submit",
+      "fields": []
+    }
+  ]
+}
