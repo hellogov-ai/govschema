@@ -4,8 +4,48 @@
 
 ## Executive Summary
 
-**18 jurisdictions** | **249 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**18 jurisdictions** | **250 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-07, GOV-1560):** Indonesia gains a third vertical,
+> `id/djp/annual-individual-income-tax-return-1770s` (Taxes) — Form 1770 S,
+> the annual individual income tax return for a resident taxpayer with
+> salaried income from one or more employers plus other domestic/final-tax
+> income, filed through the Direktorat Jenderal Pajak's (DJP) own e-Filing
+> web application (`djponline.pajak.go.id`). This `GovSchema Standard
+> Research` cycle screened Indonesia's four remaining vertical gaps
+> (Passport, Visa, Taxes, National ID) before picking this one: **Passport**
+> (Direktorat Jenderal Imigrasi's M-Paspor app) is sourceable only via
+> secondary checklist-level how-to articles, no field-level walkthrough
+> found; **Visa** (`evisa.imigrasi.go.id`) has a genuine official "User
+> Manual e-Visa" PDF (no login/CAPTCHA/WAF) that is well-sourced for its
+> visa-type-selection wizard and payment step, but its core "Fill Form"
+> Personal Information block is rendered only as an unlabelled wireframe
+> diagram with no field labels at any resolution — left open as the
+> strongest remaining Visa candidate, not a dead end; **National ID**
+> (Dukcapil KTP-el/NIK) is confirmed in-person/biometric-only with no online
+> application channel, mirroring Mexico's CURP and Brazil's CIN precedent.
+> **Taxes** was picked instead: DJP's own official "Modul Pengisian SPT
+> Tahunan e-Filing Orang Pribadi 1770S" guide (directly downloadable from
+> `pajak.go.id`, no login/CAPTCHA/WAF) is a genuine 46-slide, field-by-field
+> screenshot walkthrough of the live e-Filing wizard, carrying a single
+> worked example (taxpayer "Nn Shinta", tax year 2022) end to end from login
+> through the final submission receipt — the strongest single source found
+> this cycle, comparable in shape to `ph/bir/annual-income-tax-return-1701a`
+> and `br/rfb/individual-income-tax-return-irpf`. Scoped to the wizard's own
+> "SPT 1770 S dengan bentuk formulir" (structured-form) pathway; the
+> alternative guided-interview and bulk-upload entry modes, the account
+> login/CAPTCHA screen, the e-mail/SMS verification-code exchange used only
+> to authorize submission, and every DJP-calculated subtotal/outcome field
+> (Penghasilan Neto totals, Penghasilan Kena Pajak, PPh Terutang, Jumlah
+> Kredit Pajak, and the final Nihil/Kurang Bayar/Lebih Bayar status) are
+> explicitly out of scope for this v1.0.0 — see the document's own
+> VERIFICATION.md for these and several other disclosed judgment calls,
+> including six dropdown fields modelled as open strings rather than
+> fabricated enums since DJP's own guide shows at most one example option
+> for each. This gives Indonesia 3 of its 6 verticals (DMV, Business
+> Formation, Taxes); Passport, Visa, and National ID remain open backlog
+> candidates for a future cycle (Visa the strongest of the three).
+>
 > **Update (2026-07-07, GOV-1553):** Indonesia's DMV vertical opens with
 > `id/korlantas/international-driving-permit-registration` — registration for
 > a new or renewed Surat Izin Mengemudi Internasional (International Driving
@@ -1144,12 +1184,23 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (17/18 jurisdictions)
+### Taxes — Income Tax Return, Tax Filing (18/18 jurisdictions — 100%)
 
-Every jurisdiction except Indonesia (opened this cycle via its Business
-Formation vertical only, GOV-1546; Taxes is an open, unscreened backlog
-candidate) now has at least one Taxes-vertical schema. **The
-Philippines** (`ph/bir/annual-income-tax-return-1701a`, GOV-1466) is new
+Every jurisdiction now has at least one Taxes-vertical schema. **Indonesia**
+(`id/djp/annual-individual-income-tax-return-1770s`, GOV-1560) is new this
+cycle and closes the vertical to 18/18 (100%) — Form 1770 S, the annual
+individual income tax return for a salaried resident taxpayer, sourced from
+the Direktorat Jenderal Pajak's (DJP) own official "Modul Pengisian SPT
+Tahunan e-Filing Orang Pribadi 1770S" guide, a genuine 46-slide screenshot
+walkthrough of the live `djponline.pajak.go.id` e-Filing wizard (directly
+downloadable from `pajak.go.id`, no login/CAPTCHA/WAF). Scoped to the
+wizard's own structured-form ("dengan bentuk formulir") pathway, with six
+repeating add-a-row sections (final-tax income, year-end assets, year-end
+debts, the family/dependents register, and withholding certificates) each
+bounded to a single entry pending GSP-0009 — see the document's own
+VERIFICATION.md for the full candidate-screening record (Passport and Visa
+were also screened this cycle and left open) and every disclosed judgment
+call. **The Philippines** (`ph/bir/annual-income-tax-return-1701a`, GOV-1466) is new
 this cycle and closes the global Taxes vertical to 100% — sourced from BIR
 Form 1701A (January 2018 ENCS, with rates), the annual income tax return for
 individuals earning income purely from business/profession, covering either
@@ -1210,9 +1261,16 @@ file-layout specification and authored a bounded 67-field core against it
   no official PDF form available as an alternative (GOV-1428, 2026-07-06).
 
 Every other jurisdiction except Indonesia (AE, AU, CA, DE, FR, GB, IE, IN, KR,
-MX, NZ, PH, SG, US) has at least one Visa schema — Indonesia opened this
-cycle via its Business Formation vertical only (GOV-1546); Visa is an open,
-unscreened backlog candidate. **The Philippines**
+MX, NZ, PH, SG, US) has at least one Visa schema. Indonesia's Visa gap was
+screened this cycle (GOV-1560): `evisa.imigrasi.go.id`'s own official "User
+Manual e-Visa" PDF (no login/CAPTCHA/WAF) is well-sourced for its
+visa-type-selection wizard (nationality/sub-purpose/category/applicant-type/
+length-of-stay, each with a confirmed worked example) and payment step, but
+its core "Fill Form" Personal Information block is rendered only as an
+unlabelled wireframe diagram with no field labels at any resolution — left
+open as the strongest remaining candidate, not a dead end (see
+`id/djp/annual-individual-income-tax-return-1770s`'s own VERIFICATION.md for
+the full screening record). **The Philippines**
 (`ph/bi/non-immigrant-visa-application`, GOV-1490) is new this cycle —
 sourced from the Bureau of Immigration's own Consolidated General Application
 Form (CGAF) for Non-Immigrant Visa, Special Work Permit, and Provisional Work
@@ -1246,9 +1304,13 @@ above).
 ### National ID & Civic Documents (15/18 jurisdictions)
 
 Every jurisdiction except Brazil, Indonesia, and Mexico has at least one
-National ID and/or voter-registration schema — Indonesia opened this cycle
-via its Business Formation vertical only (GOV-1546); National ID is an open,
-unscreened backlog candidate. **The United Arab Emirates**
+National ID and/or voter-registration schema. Indonesia's National ID gap was
+screened this cycle (GOV-1560): Dukcapil's own KTP-el/NIK registration is
+confirmed in-person and biometric (photo/fingerprint/iris) only, with
+Dukcapil's own site explicitly stating no web/app channel exists even for NIK
+lookup — a confirmed weak/no-online-channel candidate, mirroring Mexico's
+CURP and Brazil's CIN precedent, not a fully dead end but not pursued further
+this cycle. **The United Arab Emirates**
 (`ae/icp/emirates-id-replacement`, GOV-1474) is new this cycle — sourced from
 the ICP (Federal Authority for Identity, Citizenship, Customs & Port
 Security) Smart App's own official user manual (Citizen Category, v5.23), a
@@ -1312,7 +1374,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ID** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| **ID** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1393,7 +1455,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    login/CAPTCHA/WAF gate); its other five verticals (Passport, DMV, Visa,
    Taxes, National ID) and its own Non-UMK/legal-entity NIB pathway are open,
    unscreened backlog candidates for a future cycle — see the document's own
-   VERIFICATION.md. Mexico
+   VERIFICATION.md. **Update:** Indonesia now has 3 of its 6 verticals
+   (DMV added GOV-1553; Taxes added GOV-1560, `id/djp/annual-individual-
+   income-tax-return-1770s`); Passport, Visa, and National ID remain open
+   backlog candidates, all screened at least once (see GOV-1560's own
+   VERIFICATION.md) — Visa is the strongest remaining candidate, National ID
+   the weakest (in-person/biometric-only, no online channel). Mexico
    now has four of its six verticals
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
@@ -1544,5 +1611,8 @@ re-screened and re-confirmed weak, not picked), updated by GOV-1546
 18th jurisdiction, Business Formation, global Business Formation vertical
 closed to 18/18 / 100%), updated by GOV-1553
 (`id/korlantas/international-driving-permit-registration` authoring,
-Indonesia 2nd vertical, DMV, global DMV vertical closed to 18/18 / 100%)
+Indonesia 2nd vertical, DMV, global DMV vertical closed to 18/18 / 100%),
+updated by GOV-1560 (`id/djp/annual-individual-income-tax-return-1770s`
+authoring, Indonesia 3rd vertical, Taxes, global Taxes vertical closed to
+18/18 / 100%)
 
