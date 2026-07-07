@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**22 jurisdictions** | **266 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**22 jurisdictions** | **267 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1678):** Poland gains its third vertical, DMV,
+> with `pl/mi/wniosek-o-rejestracje-pojazdu` — the national vehicle
+> registration / temporary registration / deregistration / disposal
+> notification application, "WNIOSEK O REJESTRACJĘ, CZASOWĄ REJESTRACJĘ,
+> WYREJESTROWANIE POJAZDU LUB ZAWIADOMIENIA O ZBYCIU POJAZDU" (Załącznik nr 1
+> do Rozporządzenia Ministra Infrastruktury z dnia 8 listopada 2024 r., Dz.U.
+> 2024 poz. 1709). Two prior cycles (GOV-1666, GOV-1671) had each screened
+> this same regulation and set it aside for a different deliverable,
+> explicitly flagging it as thinner — a first-pass read of only its six
+> numbered vehicle-identification lines and request-type selector, without
+> extracting the header, the seven footnotes, or the plate-election and
+> declaration content. This cycle re-fetched the source directly
+> (`eli.gov.pl`, the official Dziennik Ustaw gazette API, HTTP 200, no
+> login/CAPTCHA/WAF) and performed a full `pdfjs-dist` text-content
+> extraction of the form's own two pages (it carries no AcroForm layer — a
+> static hand-fill/print template), yielding a materially richer field set:
+> 22 fields — the header (owner identity/address, the addressee registering
+> authority's name and locality, a PESEL-or-REGON line, a foreigner-only date-of-birth line), a
+> four-way `requestType` enum (registration / temporary registration /
+> deregistration / disposal notification) covering all four procedures this
+> single template serves, the six numbered vehicle-identification lines, the
+> individual/vanity-plate and reduced-size-plate elections, the
+> previous-registration-number retention election, and the form's own
+> closing data-accuracy declaration — plus 13 `documents[]` entries (12
+> case-dependent supporting-evidence requirements sourced from the
+> corroborating gov.pl "Zarejestruj pojazd" service page's own breakdown by
+> vehicle scenario, and 1 attestation citing the form's own closing
+> declaration verbatim). Deliberately does not model a vehicle-category/case
+> -selector field distinct from `requestType`, so every `documents[]` entry
+> is left `required: false` rather than fabricating a structural gate the
+> sources do not themselves state as a checkable field — see the document's
+> own VERIFICATION.md for this and ten other disclosed judgment calls. This
+> closes the **global DMV vertical to 22/22 jurisdictions (100%)**, matching
+> Business Formation's existing 22/22, and gives Poland 3 of its 6 verticals
+> (National ID, Business Formation, DMV); Passport, Taxes, and Visa remain
+> open, unscreened backlog candidates for future cycles.
 
 > **Update (2026-07-07, GOV-1671):** Poland gains its second vertical,
 > Business Formation, via `pl/ceidg/wniosek-o-wpis-do-ceidg` — CEIDG-1,
@@ -1654,10 +1691,24 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (21/22 jurisdictions — 95%)
+### DMV — Vehicle Registration, Licensing, Permits (22/22 jurisdictions — 100%)
 
-**Poland**, opened via its National ID vertical (GOV-1666), has no DMV
-schema yet — an open, unscreened backlog candidate for a future cycle.
+**Poland's DMV gap is now closed (GOV-1678)** via
+`pl/mi/wniosek-o-rejestracje-pojazdu` — the national vehicle registration /
+temporary registration / deregistration / disposal notification
+application, sourced from Załącznik nr 1 do Rozporządzenia Ministra
+Infrastruktury z dnia 8 listopada 2024 r. (Dz.U. 2024 poz. 1709), a static
+(no-AcroForm) print template retrieved directly from `eli.gov.pl`'s
+Dziennik Ustaw gazette API. Two prior cycles (GOV-1666, GOV-1671) had each
+screened this same regulation and set it aside as thinner-sourced at the
+time; this cycle's full `pdfjs-dist` text extraction of the form's own two
+pages yields 22 fields plus 13 `documents[]` entries, modelling all four
+request types this single template serves through one `requestType` enum —
+see the Executive Summary update above and the document's own
+VERIFICATION.md for the full candidate history and disclosed judgment
+calls. This restores the **global DMV vertical to 22/22 (100%)**, matching
+Business Formation's own 22/22.
+
 Every jurisdiction reached 100% (20/20) as of GOV-1638; **Spain**, opened
 via its Taxes vertical (GOV-1645), briefly reopened the gap before closing
 it again this cycle (GOV-1652) with `es/dgt/solicitud-tramites-vehiculo` —
@@ -2280,7 +2331,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PL** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **PL** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -2535,10 +2586,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    numbered fields versus CEIDG-1's 81) and Poland's KRS/S24 company
    -registration pathway (authenticated, session-based, no static form) —
    see the Executive Summary update above and the document's own
-   VERIFICATION.md for the full candidate comparison. Poland's remaining
-   four verticals (Passport, DMV, Taxes, Visa) are open,
-   unscreened-or-lightly-screened backlog candidates for a future cycle
-   (DMV in particular is now a strong, ready-to-author candidate). Other
+   VERIFICATION.md for the full candidate comparison. **Poland's DMV gap has
+   since closed too (GOV-1678)**, via `pl/mi/wniosek-o-rejestracje-pojazdu`
+   — the same regulation two prior cycles had set aside as thinner-sourced,
+   revisited for a full, dedicated extraction (22 fields, 13 `documents[]`
+   entries across all four request types) rather than a secondary screening
+   note; see the Executive Summary update above and the document's own
+   VERIFICATION.md for the full candidate history and disclosed judgment
+   calls. This closes the **global DMV vertical to 22/22 (100%)**. Poland's
+   remaining three verticals (Passport, Taxes, Visa) are open,
+   unscreened-or-lightly-screened backlog candidates for a future cycle.
+   Other
    candidates worth scouting for a **23rd** jurisdiction in a future cycle:
    Portugal, or an EU member beyond DE/ES/FR/NL/PL — Japan (`mofa.go.jp`) is
    a confirmed IP-blocked dead end (GOV-1174).
