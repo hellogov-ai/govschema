@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**19 jurisdictions** | **252 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **253 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1581):** Indonesia gains
+> `id/imigrasi/evisa-visitor-visa-application`, closing the registry's own
+> longstanding Visa-vertical gap for Indonesia (previously flagged across
+> three prior cycles — GOV-1560, GOV-1567, GOV-1574 — as "ready-to-author
+> backlog", blocked only by the official Ditjen Imigrasi "User Manual e-Visa"
+> PDF's own "Fill Form → Personal Information" screen rendering as an
+> unlabelled wireframe with no field labels at any resolution, reconfirmed
+> again this cycle). This `GovSchema Standard Research` cycle found a second,
+> independent source that resolves the gap: a US college's own study-abroad/
+> international-programs office (Principia College, Elsah, Illinois) publishes
+> a genuine, full-resolution walkthrough of the same live `evisa.imigrasi.go.id`
+> platform, filled with a real worked B1 – 30 Day Visitor-visa example for a
+> study-abroad cruise itinerary, showing every "Fill Form" field's actual
+> on-screen label, required/optional marking, and dropdown/radio option
+> values. Scoped to the General/Family/Social → B1 Visitor-visa pathway only;
+> the official manual's own worked example follows a different, more complex
+> Golden Visa/Investment top-level branch (with its own extra investor-type
+> sub-classification and multi-year stay options) that neither source used
+> here walks field-by-field, left out of scope for this v1.0.0 — see the
+> document's own VERIFICATION.md for this and every other disclosed judgment
+> call. This gives Indonesia 5 of its 6 verticals (DMV, Business Formation,
+> Taxes, Passport, Visa); National ID (Dukcapil KTP-el/NIK) remains its only
+> open vertical, still confirmed in-person/biometric-only with no online
+> channel (GOV-1560). Indonesia's Visa vertical now stands at 15/19
+> jurisdictions globally (up from 14/19).
 
 > **Update (2026-07-07, GOV-1574):** Indonesia gains
 > `id/imigrasi/passport-application-first-adult`, closing Indonesia's
@@ -1368,11 +1394,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (14/19 jurisdictions)
-
-**Colombia**, opened this cycle (GOV-1567) via its DMV vertical, has no Visa
-schema yet — Migración Colombia's own e-visa channels are an open,
-unscreened backlog candidate for a future cycle.
+### Visa — Entry Visas, ETAs, Work/Student Permits (15/19 jurisdictions)
 
 **Three confirmed, previously-researched dead ends — not open work:**
 
@@ -1387,30 +1409,32 @@ unscreened backlog candidate for a future cycle.
   both nationality-gated (AU/CA/US applicants only) and WAF-defended, with
   no official PDF form available as an alternative (GOV-1428, 2026-07-06).
 
-Every other jurisdiction except Indonesia (AE, AU, CA, DE, FR, GB, IE, IN, KR,
-MX, NZ, PH, SG, US) has at least one Visa schema. Indonesia's Visa gap was
-screened this cycle (GOV-1560): `evisa.imigrasi.go.id`'s own official "User
-Manual e-Visa" PDF (no login/CAPTCHA/WAF) is well-sourced for its
-visa-type-selection wizard (nationality/sub-purpose/category/applicant-type/
-length-of-stay, each with a confirmed worked example) and payment step, but
-its core "Fill Form" Personal Information block is rendered only as an
-unlabelled wireframe diagram with no field labels at any resolution — left
-open as the strongest remaining candidate, not a dead end (see
-`id/djp/annual-individual-income-tax-return-1770s`'s own VERIFICATION.md for
-the full screening record). **This wireframe gap reversed to fully viable
-this cycle (GOV-1567):** a third-party study-abroad office's own published
-e-Visa walkthrough (a genuine live capture of `evisa.imigrasi.go.id`, filled
-with a real worked B1-30-Day-visa example) shows the real, non-wireframe
-field labels for the Fill Form step — Personal Information (Full name, Sex,
-Place/Date of Birth, Phone Number), Passport Information (Document Type/No.,
-Nationality, Date of Expiry, Issuing Country), Address in Indonesia
-(Residence Type, Address, Postal Code), and Applicant Contact Confirmation
-(Email). Not authored this cycle (Colombia's DMV schema was this cycle's
-single deliverable) — combined with the official User Manual's already-confirmed
-wizard/payment steps, this is now ready-to-author backlog for an immediate
-follow-up cycle; the schema should cite both sources (the official manual for
-process/wizard structure, the third-party capture as corroborating evidence
-for the Fill Form field labels) per its own disclosed judgment call. **The Philippines**
+Every jurisdiction except Colombia (AE, AU, CA, DE, FR, GB, ID, IE, IN, KR,
+MX, NZ, PH, SG, US) now has at least one Visa schema. **Indonesia's Visa gap
+is now closed** (`id/imigrasi/evisa-visitor-visa-application`, GOV-1581) —
+this vertical had been screened across three prior cycles (GOV-1560,
+GOV-1567, GOV-1574) as a strong candidate blocked only by the official
+Ditjen Imigrasi "User Manual e-Visa" PDF's own "Fill Form → Personal
+Information" screen rendering as an unlabelled wireframe with no field
+labels at any resolution — reconfirmed once more this cycle by re-reading
+the same PDF directly. This cycle found a second, independent source that
+resolves the gap: a US college's own study-abroad/international-programs
+office (Principia College) publishes a full-resolution walkthrough of the
+same live `evisa.imigrasi.go.id` platform, filled with a real worked B1 – 30
+Day Visitor-visa example, showing every "Fill Form" field's actual on-screen
+label — Personal Information (Full name, Sex, Place/Date of Birth, Phone
+Number), Passport Information (Document Type/No., Nationality, Date of
+Expiry, Issuing Country), Address in Indonesia (Residence Type, Address,
+Postal Code, plus auto-populated Province/City/District/Village/Immigration
+Office), and Applicant Contact Confirmation (Email/Email Confirmation).
+Scoped to the General/Family/Social → B1 Visitor-visa pathway only; the
+official manual's own worked example follows a different, more complex
+Golden Visa/Investment top-level branch not walked field-by-field by either
+source, left out of scope for this v1.0.0 — see the document's own
+VERIFICATION.md. This gives Indonesia 5 of its 6 verticals. **Colombia**,
+opened via its DMV vertical (GOV-1567), remains the only jurisdiction with no
+Visa schema yet — Migración Colombia's own e-visa channels are an open,
+unscreened backlog candidate for a future cycle. **The Philippines**
 (`ph/bi/non-immigrant-visa-application`, GOV-1490) is new this cycle —
 sourced from the Bureau of Immigration's own Consolidated General Application
 Form (CGAF) for Non-Immigrant Visa, Special Work Permit, and Provisional Work
@@ -1522,7 +1546,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ID** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1629,11 +1653,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Passport gap is now closed — `id/imigrasi/passport-application-first-adult`,
    authored directly against the M-Paspor guide GOV-1567 identified (adult,
    first-time applicant only; see the Passport vertical section above and the
-   document's own VERIFICATION.md). Visa remains open, ready-to-author
-   backlog for a future cycle — see the Visa vertical section above for the
-   full record. National ID (Dukcapil KTP-el/NIK) remains the weakest of
-   Indonesia's two open verticals (confirmed in-person/biometric-only, no
-   online channel). Mexico
+   document's own VERIFICATION.md). **Update (GOV-1581):** Indonesia's Visa
+   gap is now closed too — `id/imigrasi/evisa-visitor-visa-application`,
+   combining the official manual's own wizard/payment structure with a
+   second independent source (a US college study-abroad office's guide) for
+   the "Fill Form" field labels the manual's own wireframe could not show
+   — see the Visa vertical section above for the full record. Indonesia now
+   has 5 of its 6 verticals; National ID (Dukcapil KTP-el/NIK) is its sole
+   remaining open vertical (confirmed in-person/biometric-only, no online
+   channel). Mexico
    now has four of its six verticals
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
