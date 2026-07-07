@@ -95,7 +95,7 @@ re-screened all three of Colombia's remaining gaps:
 
 | Field (schema `name`) | Label (source) | Source / page | Example valid value |
 |---|---|---|---|
-| `numeroPasaporte` | Número de Pasaporte | p.5 | `"MN9030389"` |
+| `numeroPasaporte` | Número de Pasaporte | p.5 | `"MN83039"` |
 | `nacionalidadSolicitante` | Nacionalidad | p.5 | `"ARGENTINA"` |
 | `solicitudDe` | Solicitud de | p.5 | `"VISA"` |
 | `tipoVisa` | Tipo Visa | p.5, 39-47 | `"Migrante"` |
@@ -249,6 +249,31 @@ re-screened all three of Colombia's remaining gaps:
     **and the Confirmación tab's own read-only recap are out of scope**, per
     the same discipline this registry already applies to review/attestation
     screens with no independent field content of their own.
+
+## Review gate (GOV-1605)
+
+Independent re-verification against a fresh `pdfjs-dist@3.11.174` + `canvas` render
+of the same source PDF found and fixed one discrepancy before merge:
+
+14. **`tipoSolicitud` was declared `required: true` but is shown on-screen (p.5)
+    without a required-field asterisk**, unlike its sibling dropdowns in the
+    same row (`Tipo de Solicitante *`, `Tramitada por *`). This is the same
+    asterisk-presence discipline this document already applies elsewhere (e.g.
+    `telefonoDomicilio`, judgment call 5's dropdowns) — it was simply missed
+    for this one field. Fixed to `required: false` in `schema.json`, with the
+    same on-screen observation added to the field's own `description`.
+
+A minor cosmetic error in this file's own field-inventory table (Phase 3) was
+also corrected: `numeroPasaporte`'s worked-example value was transcribed as
+`"MN9030389"` but the source's own worked example reads `"MN83039"`. This did
+not affect `schema.json`, which does not carry that example value.
+
+Every other disclosed judgment call — the `tipoVisa` enum's table-header
+sourcing, the `actividadVisa` generic-fallback scoping, the worked-example
+Titular/Beneficiario inconsistency (judgment call 4), and the `documents[]`
+table's exact required/conditional text (judgment calls 8-10) — was
+independently re-confirmed character-for-character against the re-rendered
+source pages and required no further changes.
 
 ## Test run (Phase 4)
 
