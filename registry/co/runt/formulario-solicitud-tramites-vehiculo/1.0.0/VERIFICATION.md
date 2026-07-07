@@ -134,31 +134,64 @@ vertical.
 
 ## Interpretive judgment calls flagged for an independent reviewer
 
-1. **The import/auction documentation sub-table (casilla 17) is read from a
-   visibly merged/garbled cell region.** The raw spreadsheet cells for this
-   sub-table concatenate a label with a bare digit across a line break inside
-   a single cell (e.g. a cell reading `"MANIF. O ACTA\n1"`), consistent with
-   the original spreadsheet's merged-cell layout not surviving CSV
-   flattening cleanly. This document's reading — `importDocumentType` as a
-   two-value choice between "manifiesto o acta" and "declaración de
-   importación", plus `auctionEntity` and the shared `importOrAuctionCity` —
-   is a best-effort reconstruction cross-checked against instruction §18's
-   own prose ("SI EL VEHICULO ES IMPORTADO INDIQUE CON UNA EQUIS (X) EL
+1. **RESOLVED during independent review ([GOV-1570](../../../../../GOV-1570)):
+   the import/auction documentation sub-table (casilla 17) has six numbered
+   cells, not four, and the authoring pass's `importDocumentType` field
+   omitted the sixth.** The original authoring pass read this sub-table from
+   a CSV-flattened export in which the raw cells concatenate a label with a
+   bare digit across a line break (e.g. a cell reading `"MANIF. O ACTA\n1"`),
+   and modelled only a two-value `importDocumentType` (manifiesto o acta /
+   declaración de importación) plus `auctionEntity` and the shared
+   `importOrAuctionCity`. Independent review re-opened the original `.xls` in
+   SheetJS and inspected its `!merges` array directly (not CSV-flattened),
+   and separately located an identical official PDF mirror
+   (`transitoitagui.gov.co/wp-content/uploads/2015/03/FORMULARIO-SOLICITUD-DE-TRAMITES-RNA.pdf`)
+   and cross-checked its text-layer glyph coordinates via `pdfjs-dist`. Both
+   independently confirm the same six-cell, sequentially-numbered layout:
+   under the "IMPORTACION" header, cell 1 = "MANIF. O ACTA" and cell 2 =
+   "DEC. DE IMPOR."; under the "REMATE" header, cell 3 = "ACTA" (a third,
+   previously unmodelled document-type checkbox), cell 4 = "ENTIDAD", cell 5
+   = "LUGAR (CIUDAD)", and cell 6 = "CODIGO" (office-only, correctly out of
+   scope — see below). The three document-type checkboxes (1, 2, 3) share one
+   continuous numbering sequence across both the "IMPORTACION" and "REMATE"
+   headers rather than resetting at "REMATE", indicating they form a single
+   selection group scoped to whichever of the two the applicant chose, not
+   two independent binary choices. `importDocumentType` was replaced with
+   `importOrAuctionDocumentType`: same two import-side values
+   (`manifiesto_o_acta`, `declaracion_importacion`) plus a new
+   `acta_remate` value for cell 3, `requiredWhen` widened to fire on either
+   `importOrAuctionType` value instead of `importacion` only. Instruction
+   §18's own prose ("SI EL VEHICULO ES IMPORTADO INDIQUE CON UNA EQUIS (X) EL
    DOCUMENTO RESPECTIVO, SI ES DE REMATE INDIQUE LA ENTIDAD, EN AMBOS CASOS
-   LA CIUDAD..."), which does independently confirm the three-part shape
-   (document-type-if-imported / entity-if-auctioned / city-in-both-cases).
-   A reviewer with access to the original spreadsheet's merged-cell metadata
-   (rather than this document's CSV-flattened reading) or a genuine filled
-   specimen should confirm the exact `importDocumentType` option labels.
-2. **`ownerDocumentIssueDate`'s meaning is not fully confirmed.** A
-   `DIA/MES/AÑO` triplet appears in the row immediately below "No.
-   DOCUMENTO" inside casilla 21's cell region, but nothing on the form labels
-   what date this represents (a document issue date is a plausible reading,
-   consistent with similar Colombian ID-collection forms, but this form does
-   not state it explicitly the way it does for `Fecha de trámite` at the very
-   top of the form). Modelled as optional (`required: false`) rather than
-   omitted, with this ambiguity disclosed rather than asserted with
-   confidence.
+   LA CIUDAD...") explicitly names only the entity and city for the remate
+   case, not a document checkbox — the "ACTA" checkbox's exact legal effect
+   is not spelled out in the instruction text itself, but a web search on the
+   RUNT auction-transfer process independently corroborates that a remate
+   registration is always evidenced by an "acta de remate" (adjudication
+   act), consistent with cell 3 functioning as a document-type confirmation
+   parallel to the import side's two options, rather than a stray label.
+   `auctionEntity` (cell 4) and the shared `importOrAuctionCity` (cell 5) were
+   already correctly modelled and are unchanged; cell 6 ("CODIGO") remains
+   correctly out of scope per Instruction §18's own "SERA SUMINISTRADO POR LA
+   OFICINA DE TRANSITO CORRESPONDIENTE" (office-only).
+2. **`ownerDocumentIssueDate`'s meaning is not fully confirmed** — independently
+   re-checked during review ([GOV-1570](../../../../../GOV-1570)) and still
+   genuinely unresolved. A `DIA/MES/AÑO` triplet appears in the row
+   immediately below "No. DOCUMENTO" inside casilla 21's cell region, but
+   nothing on the form labels what date this represents (a document issue
+   date is a plausible reading, consistent with similar Colombian
+   ID-collection forms, but this form does not state it explicitly the way
+   it does for `Fecha de trámite` at the very top of the form). Independent
+   review confirmed, via the PDF mirror's own text-layer coordinates, that
+   this triplet is positioned exactly as described (immediately beside/below
+   the owner's document-number entry box in casilla 21, not misattributed to
+   a neighbouring casilla) and that Instruction §21's own prose ("TRANSCRIBA
+   LOS DATOS PERSONALES DEL PROPIETARIO ACTUAL DEL VEHICULO... NUMERO,
+   DIRECCIÓN, CIUDAD, TELEFONO Y FIRMA") does not mention a date at all,
+   confirming the ambiguity is a genuine gap in the source's own
+   documentation, not something a closer reading resolves. Remains modelled
+   as optional (`required: false`) rather than omitted, with this ambiguity
+   disclosed rather than asserted with confidence.
 3. **`bodyworkCode`/`bodyworkType` and `importOrAuctionCity`'s office-code
    sibling are left as open strings, not closed enums**, because RUNT's own
    bodywork-code and city/organismo-de-tránsito code tables are external to
@@ -238,24 +271,58 @@ Both runs used only fabricated example values, consistent with this document
 carrying no verbatim worked example from RUNT itself (this static form
 carries no filled-in specimen, unlike a screenshot-driven user-guide source).
 
+## Independent review record (GOV-1570 / PR #263)
+
+- **Reviewer:** GovSchema Engineering (Standards Engineer), independent second
+  pass per the [`manual-source-review-v1`](../../../../../practices/manual-source-review-v1.md)
+  practice's second-reviewer requirement.
+- **Re-fetch:** independently re-fetched `ftrunt_0.xls` from a fresh
+  connection — HTTP 200, `Content-Length: 668160`, SHA-256
+  `3b1a222f6fef53bdf424a12cc2a0a5f451d453a7fe52da93c9e7b64acb958f05`, byte-
+  identical to the authoring pass's fetch and confirmed genuine OLE2 (`.xls`)
+  by magic bytes. `Last-Modified` unchanged (2023-04-25); no newer edition
+  found.
+- **Judgment call 1 (import/auction sub-table): resolved, schema fixed.**
+  Opened the `.xls`'s own `!merges` array directly with SheetJS (not
+  CSV-flattened) and independently located and rendered (via `pdfjs-dist`)
+  an identical official PDF mirror at `transitoitagui.gov.co`. Both sources
+  independently confirm casilla 17 has **six** numbered sub-cells, not four;
+  the authoring pass's `importDocumentType` field omitted the third
+  ("ACTA", under "REMATE") entirely. Fixed by replacing it with
+  `importOrAuctionDocumentType` (adds an `acta_remate` enum value, widens
+  `requiredWhen` to fire on either `importOrAuctionType` value) — see the
+  updated judgment call 1 above and `schema.json`.
+- **Judgment call 2 (`ownerDocumentIssueDate`): re-checked, remains
+  genuinely unconfirmed** (see updated note above) — no filled specimen or
+  RUNT procedural regulation was found this cycle that resolves it; left
+  optional and disclosed, unchanged.
+- **Re-validated:** `node tools/validate.mjs`, `node tools/validate-ajv.mjs`,
+  and `npm test` (`tools/govschema-client/`) all pass against the fixed
+  schema.
+- **Verdict:** merged with the one fix above. Document remains `status:
+  draft` per this registry's convention that a clean independent second
+  pass is necessary but not sufficient for `verified` — the two `Path to a
+  verified claim` items below (freshness re-check cadence and the still-open
+  `ownerDocumentIssueDate` ambiguity) remain the gating items for that
+  claim.
+
 ## Path to a `verified` claim (next step)
 
 To advance this document to `status: verified`, a reviewer needs to (a)
-independently re-fetch `ftrunt_0.xls` and confirm no newer edition has been
+periodically re-fetch `ftrunt_0.xls` and confirm no newer edition has been
 published (only a `Last-Modified` HTTP header, 2023-04-25, is available as a
-freshness proxy — the form carries no visible revision date of its own), (b)
-resolve judgment call 1 (the import/auction sub-table) against either the
-original spreadsheet's own merged-cell structure (opened in a real
-spreadsheet application rather than CSV-flattened) or a genuine filled
-specimen, and (c) confirm `ownerDocumentIssueDate`'s meaning (judgment call
-2) against RUNT's own procedural regulations or a filled specimen.
+freshness proxy — the form carries no visible revision date of its own; two
+independent fetches, authoring and this review, now agree), and (b) confirm
+`ownerDocumentIssueDate`'s meaning (judgment call 2) against RUNT's own
+procedural regulations or a filled specimen — the sole remaining open item
+after this review resolved judgment call 1.
 
 ## Re-verification
 
 Per the practice's **Cadence**, `nextReviewBy` is set to **2027-01-07** (~6
-months): this is the registry's first Colombian document, carries two
-materially uncertain fields (judgment calls 1–2), and its freshness proxy is
-an HTTP `Last-Modified` header rather than a dated, versioned manual — all of
+months): this is the registry's first Colombian document, still carries one
+materially uncertain field (judgment call 2), and its freshness proxy is an
+HTTP `Last-Modified` header rather than a dated, versioned manual — all of
 which argue for the shorter end of the cadence. Re-check the source and
-resolve the open judgment calls on or before that date and on any
+resolve the open judgment call on or before that date and on any
 `source.url` change.

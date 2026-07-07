@@ -25,11 +25,12 @@
 > explicitly unbounded repeating groups. RUNT's form was found instead and
 > is materially stronger on this registry's own bar: fully bounded (zero
 > unbounded repeating sections), minimal external code-table dependence, and
-> a single static two-page layout. Two of the eighteen procedure options
-> (`importDocumentType`'s exact sub-labels, and the meaning of a `Fecha`
-> field beside the owner's document number) are read from a merged/garbled
-> spreadsheet cell region and are flagged as lower-confidence judgment calls
-> for an independent reviewer — see the document's own VERIFICATION.md. This
+> a single static two-page layout. Independent review (GOV-1570) confirmed
+> the import/auction sub-table's exact structure against the source
+> spreadsheet's own merged cells and an official PDF mirror, fixing a missing
+> field (`importOrAuctionDocumentType`); the meaning of a `Fecha` field beside
+> the owner's document number remains an unconfirmed, disclosed judgment call
+> — see the document's own VERIFICATION.md. This
 > same cycle's research phase also re-screened Indonesia's own Passport and
 > Visa gaps (both previously logged as "not viable" by GOV-1560) and found
 > **both have reversed to viable, well-sourced candidates**: Indonesia's

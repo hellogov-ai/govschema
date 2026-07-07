@@ -306,14 +306,17 @@
       "validation": { "enum": ["importacion", "remate"] }
     },
     {
-      "name": "importDocumentType",
-      "label": "Documento de importación",
+      "name": "importOrAuctionDocumentType",
+      "label": "Documento (Importación/Remate)",
       "type": "enum",
       "required": false,
-      "description": "Which import document is being presented: the cargo manifest/act (manifiesto o acta) or the customs import declaration (declaración de importación). The source form's own casilla-17 sub-table cells are merged/garbled in extraction and this mapping is a best-effort reading — see VERIFICATION.md judgment calls.",
-      "sourceRef": "Casilla 17 — 'MANIF. O ACTA' / 'DEC. DE IMPOR.'; Instrucciones §18 — 'SI EL VEHICULO ES IMPORTADO INDIQUE CON UNA EQUIS (X) EL DOCUMENTO RESPECTIVO'",
-      "requiredWhen": { "field": "importOrAuctionType", "equals": "importacion" },
-      "validation": { "enum": ["manifiesto_o_acta", "declaracion_importacion"] }
+      "description": "Which supporting document is being presented for casilla 17's import-or-auction declaration: for an import, either the cargo manifest/act (manifiesto o acta) or the customs import declaration (declaración de importación); for an auction (remate), the auction act (acta). The source form's own sub-table numbers these three document-type checkboxes sequentially (1, 2, 3) as a single selection group spanning the 'IMPORTACION' and 'REMATE' column headers — confirmed during independent review against the original spreadsheet's own merged-cell layout and an identical official PDF mirror, which corrected this document's earlier reading of a two-value, import-only choice with no remate-side document field. See VERIFICATION.md.",
+      "sourceRef": "Casilla 17 — 'MANIF. O ACTA' (1) / 'DEC. DE IMPOR.' (2) / 'ACTA' (3); Instrucciones §18 — 'SI EL VEHICULO ES IMPORTADO INDIQUE CON UNA EQUIS (X) EL DOCUMENTO RESPECTIVO, SI ES DE REMATE INDIQUE LA ENTIDAD'",
+      "requiredWhen": { "any": [
+        { "field": "importOrAuctionType", "equals": "importacion" },
+        { "field": "importOrAuctionType", "equals": "remate" }
+      ] },
+      "validation": { "enum": ["manifiesto_o_acta", "declaracion_importacion", "acta_remate"] }
     },
     {
       "name": "auctionEntity",
@@ -569,7 +572,7 @@
       "fields": [
         "engineNumber", "engineNumberReengraved", "chassisNumber", "chassisNumberReengraved",
         "serialNumber", "serialNumberReengraved", "vin",
-        "importOrAuctionType", "importDocumentType", "auctionEntity", "importOrAuctionCity"
+        "importOrAuctionType", "importOrAuctionDocumentType", "auctionEntity", "importOrAuctionCity"
       ],
       "next": "servicio_y_alertas"
     },
