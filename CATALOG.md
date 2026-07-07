@@ -4,7 +4,64 @@
 
 ## Executive Summary
 
-**20 jurisdictions** | **261 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**21 jurisdictions** | **262 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1645):** Spain opens as this registry's **21st
+> jurisdiction** with `es/aeat/declaracion-censal-personas-fisicas-modelo-030`
+> (Taxes) — the Agencia Estatal de Administración Tributaria's (AEAT)
+> Modelo 030, "Declaración censal de alta en el Censo de obligados
+> tributarios, cambio de domicilio y/o de variación de datos personales,"
+> the census declaration a natural person not carrying out a business/
+> professional activity uses to register in Spain's tax census for the
+> first time, request a NIF when they hold no DNI/NIE, change their fiscal
+> or notification domicile, update identifying data, report a change of
+> civil status, or add/withdraw a phone number or email for AEAT notices.
+> This `GovSchema Standard Research` cycle screened six candidates before
+> picking this one: Chile's remaining Passport and National ID gaps
+> (Registro Civil e Identificación's own channels still CAPTCHA-gated on
+> direct fetch, ClaveÚnica-gated for scheduling, with only prose
+> instructivos — not fillable forms — found as PDF fallbacks; a PDI-hosted
+> "Habilitación para Renovar Cédula" lead 403'd on fetch and was narrowly
+> scoped to third-party pickup authorization regardless); Chile's Visa
+> gap (`evisa.minrel.gob.cl`, re-checked per this cycle's own brief since
+> DNS/hosting can change — still does not resolve as of 2026-07-07); Peru's
+> Passport channel (Migraciones' own downloadable `SOLICITUD-GENERAL.pdf`
+> is a genuine unauthenticated PDF but carries no AcroForm layer at all —
+> a generic, non-fillable, multi-purpose request template — and a second,
+> passport-specific PDF referenced in search results timed out on every
+> fetch attempt); Peru's National ID channel (RENIEC's own DNI-renewal app,
+> `apps.reniec.gob.pe/renovacionDni/`, is unauthenticated at its landing
+> page but loads Google's reCAPTCHA Enterprise on its very first screen);
+> and Argentina's RENAPER (DNI/Passport are both confirmed in-person
+> Documentation-Center-appointment processes booked via the "Mi Argentina"
+> app, no downloadable field-level form found for either). Spain's own
+> Modelo 030 had been screened once before (GOV-1624) and set aside only
+> because its ~135 AcroForm widgets carry generic internal names
+> (`dato.1`…`dato.135`); this cycle re-examined it properly and found the
+> form's own printed reference numbers (e.g. "207 NIF", "411 Tipo de vía")
+> give a clean, independently-checkable coordinate-matching path — each
+> attribution was extracted via `pdfjs-dist` (widget layer plus text-layer
+> coordinates) and then independently re-confirmed by rendering both pages
+> to a bitmap (`pdfjs-dist` + `canvas`, 3x zoom) and visually cropping the
+> most ambiguous rows. Models 119 fields across the form's ten sections —
+> a header identification block; fifteen "causa de presentación"
+> checkboxes (one interesado/cónyuge pair per cause) that this document's
+> own `requiredWhen` gating infers (a disclosed judgment call, not an
+> AEAT-published cross-reference) trigger which of the identity/domicile/
+> civil-status sections must be completed; identity blocks for the
+> interesado and, mirrored, for a cónyuge; phone/email-for-notices;
+> domestic and foreign fiscal domicile; a two-track notification-domicile
+> section; a representative block; and civil status — plus 6
+> `exclusivityGroups` entries. Deliberately does not model AEAT's own
+> authenticated electronic-filing channel, the external AEAT "Clave" code
+> tables the representative/country-code fields reference, or any
+> accompanying-document requirement (no source found this cycle publishes
+> one) — see the document's own VERIFICATION.md for the full candidate
+> comparison and ten other disclosed judgment calls, including an
+> unconfirmed `sexoInteresado`/`sexoConyuge` H/M enum inference flagged for
+> a human reviewer. This gives Spain 1 of its 6 verticals (Taxes);
+> Passport, DMV, Business Formation, Visa, and National ID are all open,
+> unscreened backlog candidates for future cycles.
 
 > **Update (2026-07-07, GOV-1638):** Chile gains its second vertical, DMV,
 > with `cl/sii/aviso-venta-vehiculo` — the Servicio de Impuestos Internos'
@@ -1348,7 +1405,7 @@
 
 ## By Vertical
 
-### Passport (17/20 jurisdictions)
+### Passport (17/21 jurisdictions — 81%)
 
 AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
 least one published Passport schema. **Colombia**, opened via its DMV
@@ -1422,12 +1479,13 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (20/20 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (20/21 jurisdictions — 95%)
 
-Every jurisdiction has at least one DMV-vertical schema (driver licensing,
-International Driving Permit, and/or vehicle registration/transfer/sale).
-**Chile** (`cl/sii/aviso-venta-vehiculo`, GOV-1638) closes the vertical back
-to 100% this cycle — SII's own Formulario 1816, "Aviso de Venta de
+Every jurisdiction reached 100% (20/20) as of GOV-1638; **Spain**, opened
+this cycle (GOV-1645) via its Taxes vertical, does not yet have a DMV
+schema of its own — an open, unscreened backlog candidate for a future
+cycle. **Chile** (`cl/sii/aviso-venta-vehiculo`, GOV-1638) closed the
+vertical to 100% (20/20) before Spain's opening — SII's own Formulario 1816, "Aviso de Venta de
 Vehículos," a sworn notice-of-vehicle-sale declaration, screened alongside
 several dead ends (Registro Civil e Identificación's vehicle-registration
 and driver's-licence channels, an MTT/Subtrans commercial-transport-permit
@@ -1540,9 +1598,12 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (20/20 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (20/21 jurisdictions — 95%)
 
-**Chile**, opened this cycle (GOV-1624) via
+This vertical reached 100% (20/20) as of GOV-1624; **Spain**, opened via
+its Taxes vertical (GOV-1645), does not yet have a Business Formation
+schema — an open, unscreened backlog candidate for a future cycle.
+**Chile**, opened via
 `cl/sii/inicio-actividades-personas-naturales` — the Servicio de Impuestos
 Internos' (SII) Formulario 4415-PN, "Declaración de Inicio de Actividades
 para Personas Naturales," through which an individual/sole-trader taxpayer
@@ -1663,13 +1724,28 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (19/20 jurisdictions — 95%)
+### Taxes — Income Tax Return, Tax Filing (20/21 jurisdictions — 95%)
 
-This vertical was at 100% (19/19) immediately before this cycle; **Chile**,
-opened this cycle (GOV-1624) via its Business Formation vertical
-(`cl/sii/inicio-actividades-personas-naturales`), does not yet have a
-dedicated annual income-tax-return schema of its own — the SII's Formulario
-22 (Renta) is an open, unscreened backlog candidate for a future cycle.
+**Spain** (`es/aeat/declaracion-censal-personas-fisicas-modelo-030`,
+GOV-1645) opens this cycle as the registry's 21st jurisdiction via this
+vertical — AEAT's Modelo 030, the census declaration/NIF-registration form
+for natural persons. It is a census/registration filing rather than an
+annual income-tax return proper (Spain's own annual return, the IRPF
+"Renta," is a distinct, much larger form not modelled here and left as an
+open backlog candidate for a future cycle), but is catalogued under Taxes
+per this registry's convention of classifying a schema by its administering
+authority's own function (the same convention already applied to
+`cl/sii/inicio-actividades-personas-naturales`, filed with Chile's tax
+authority but catalogued under Business Formation). See the Executive
+Summary update above and the document's own VERIFICATION.md for the full
+sourcing record. **Chile**, opened via its Business Formation vertical
+(GOV-1624), still does not yet have a dedicated annual income-tax-return
+schema of its own — the SII's Formulario 22 (Renta) remains an open,
+repeatedly-screened-but-not-picked backlog candidate for a future cycle (a
+genuine, current, unauthenticated PDF, but a prose instructivo with no
+AcroForm layer at all, and SII's largest, most complex return besides — see
+`cl/sii/aviso-venta-vehiculo`'s own VERIFICATION.md for the fullest existing
+screening record).
 **Colombia** (`co/dian/declaracion-renta-personas-naturales-formulario-210`,
 GOV-1595) is new this cycle and closes the global Taxes vertical to 100% —
 DIAN's Formulario 210, the annual individual income tax return for resident
@@ -1735,9 +1811,11 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (16/20 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (16/21 jurisdictions — 76%)
 
-**Chile**, opened this cycle (GOV-1624) via Business Formation, has no Visa
+**Spain**, opened via its Taxes vertical (GOV-1645), has no Visa schema
+yet — an open, unscreened backlog candidate for a future cycle. **Chile**,
+opened via Business Formation (GOV-1624), has no Visa
 schema yet — an open, unscreened backlog candidate for a future cycle.
 **Colombia's Visa gap is now closed** (`co/cancilleria/visa-application-individual`,
 GOV-1602) — sourced from the Cancillería's own "Guía de Usuario: Solicitar
@@ -1815,9 +1893,13 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (17/20 jurisdictions — 85%)
+### National ID & Civic Documents (17/21 jurisdictions — 81%)
 
-**Brazil** now has a National ID & Civic Documents schema:
+**Spain**, opened via its Taxes vertical (GOV-1645), has no dedicated
+National ID schema yet — Spain's own DNI is issued by the Policía
+Nacional, a wholly separate agency/process from AEAT's Modelo 030, and is
+an open, unscreened backlog candidate for a future cycle. **Brazil** now
+has a National ID & Civic Documents schema:
 `br/pr/iipr/carteira-identidade-correcao` (GOV-1631) — see the Executive
 Summary update above for the full sourcing method (including the DNS
 correction to the two prior cycles' own `rci.pr.gov.br` citation) and the
@@ -1954,6 +2036,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **ES** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -2164,13 +2247,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    opened via GOV-1638 (`cl/sii/aviso-venta-vehiculo`, see the Executive
    Summary update above); its remaining four verticals (Passport, Taxes,
    Visa, National ID) are open, unscreened-or-lightly-screened backlog
-   candidates for a future cycle. Candidates worth scouting for a 21st
-   jurisdiction in
-   a future cycle: Spain (AEAT's Modelo 030 is a strong, genuinely
-   unauthenticated PDF candidate, screened but not picked this cycle — see
-   GOV-1624's own VERIFICATION.md), Argentina, Peru, Portugal, Poland, or an
-   EU member beyond DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked
-   dead end (GOV-1174).
+   candidates for a future cycle. **Spain has since opened as the
+   registry's 21st jurisdiction (GOV-1645)**, via
+   `es/aeat/declaracion-censal-personas-fisicas-modelo-030` — AEAT's
+   Modelo 030 census/NIF-registration declaration, the same candidate
+   GOV-1624 had screened but set aside only because its ~135 AcroForm
+   widgets carry generic internal names (`dato.1`…`dato.135`); GOV-1645
+   found the form's own printed reference numbers give a clean,
+   independently-checkable coordinate-matching path and authored against
+   it — see the Executive Summary update above and the document's own
+   VERIFICATION.md for the full candidate comparison (which also
+   re-screened and re-confirmed Chile's Passport/National ID/Visa gaps
+   still gated/non-resolving, and screened Peru's Passport/National ID and
+   Argentina's DNI/Passport channels, all found appointment-gated,
+   reCAPTCHA-gated, or non-fillable). Spain's own remaining five verticals
+   (Passport, DMV, Business Formation, Visa, National ID) are open,
+   unscreened backlog candidates for a future cycle. Other candidates worth
+   scouting for a **22nd** jurisdiction in a future cycle: Portugal, Poland,
+   or an EU member beyond DE/ES/FR/NL — Japan (`mofa.go.jp`) is a confirmed
+   IP-blocked dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other

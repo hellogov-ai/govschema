@@ -1,0 +1,114 @@
+=============================================================
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+=============================================================
+
+Schema: es/aeat/declaracion-censal-personas-fisicas-modelo-030 v1.0.0
+Generated: 2026-07-07
+
+ELIGIBILITY / APPLICABILITY OUTCOME
+------------------------------------
+This packet models a single (unmarried), Spain-resident natural person
+simultaneously marking three of Section 1's fifteen "Causas de presentación"
+checkboxes: 101 (Alta en el censo de obligados tributarios), 103
+(Modificaciones/cambio de domicilio fiscal), and 117 (Alta/modificación/baja
+de datos de teléfonos y direcciones electrónicas). No cónyuge boxes are
+marked, so Section 3 (cónyuge identifying data) is correctly left absent.
+
+  - causaAltaCensoInteresado: True
+    -> triggers requiredWhen on nifSeccion2Interesado / primerApellidoInteresado
+       / nombreSeccion2Interesado (Section 2's core identity fields)
+    [Modelo 030 p.1 §1 box 101; requiredWhen]
+  - causaCambioDomicilioFiscalInteresado: True
+    -> triggers requiredWhen on tipoViaDomicilioFiscal / nombreViaDomicilioFiscal
+       / codigoPostalDomicilioFiscal / municipioDomicilioFiscal /
+       provinciaDomicilioFiscal (Section 5's core address fields)
+    [Modelo 030 p.1 §1 box 103; requiredWhen]
+  - causaTelefonosCorreoAvisos: True
+    -> Section 4's phone/email fields populated (not requiredWhen-gated in
+       this schema, since a "baja" submission would need them absent instead)
+    [Modelo 030 p.1 §1 box 117]
+  - residenteFiscalEspanaInteresado: True / noResidenteFiscalEspanaInteresado:
+    False -> satisfies exclusivityGroup "residenciaFiscalInteresado" (at most
+    one True)
+    [Modelo 030 p.1 §2 boxes 201/202; exclusivityGroups]
+  - No estadoCivil* box is set (civil-status change not being reported this
+    filing) -> exclusivityGroup "estadoCivilActual" is satisfied trivially
+    (zero True also respects "at most one True")
+    [Modelo 030 p.2 §9; exclusivityGroups]
+
+COLLECTED VALUES
+----------------
+  NIF (header): 12345678Z
+    (field: nifInteresado, source: Modelo 030 p.1 header box 01)
+  Apellidos / Nombre (header): García Molina / Laura
+    (fields: apellidosInteresado/nombreInteresado, source: p.1 header boxes 02/03)
+  Causas marcadas: Alta en el censo (101), Cambio de domicilio fiscal (103),
+  Alta de teléfonos/correo para avisos (117)
+    (fields: causaAltaCensoInteresado/causaCambioDomicilioFiscalInteresado/
+     causaTelefonosCorreoAvisos, source: p.1 §1)
+  Residente fiscal en España: Sí
+    (field: residenteFiscalEspanaInteresado, source: p.1 §2 box 201)
+  Nacionalidad / Sexo: Española / M
+    (fields: nacionalidadInteresado/sexoInteresado, source: p.1 §2 boxes 205/206
+     — sexoInteresado's H/M enum is this document's own inference, not confirmed
+     from the PDF's own widget data; see VERIFICATION.md)
+  NIF / Primer apellido / Segundo apellido / Nombre (Sección 2): 12345678Z /
+  García / Molina / Laura
+    (fields: nifSeccion2Interesado/primerApellidoInteresado/
+     segundoApellidoInteresado/nombreSeccion2Interesado, source: p.1 §2
+     boxes 207/208/209/210)
+  Fecha de nacimiento: 1994-03-22
+    (field: fechaNacimientoInteresado, source: p.1 §2 boxes 211/212/213,
+     merged from day/month/year sub-widgets)
+  Lugar de nacimiento: Valladolid, Valladolid, España
+    (fields: municipioNacimientoInteresado/provinciaNacimientoInteresado/
+     paisNacimientoInteresado, source: p.1 §2 boxes 214/215/216)
+  Prefijo país / Tlfo. móvil para avisos: +34 / 612345678
+    (fields: prefijoPaisTelefono/telefonoMovilAvisos, source: p.1 §4 boxes 426/427)
+  Correo electrónico para avisos: laura.garcia.molina@example.com
+    (field: correoElectronicoAvisos, source: p.1 §4 box 429)
+  Domicilio fiscal: Calle Calle Mayor, Número 27, Planta 3, Puerta B,
+  47001 Valladolid (Valladolid)
+    (fields: tipoViaDomicilioFiscal/nombreViaDomicilioFiscal/
+     tipoNumeracionDomicilioFiscal/numeroCasaDomicilioFiscal/
+     plantaDomicilioFiscal/puertaDomicilioFiscal/codigoPostalDomicilioFiscal/
+     municipioDomicilioFiscal/provinciaDomicilioFiscal, source: p.1 §5
+     boxes 411-425)
+  Fecha y lugar de la declaración: Valladolid, 2026-07-07
+    (fields: lugarFirma/fechaFirma, source: p.2 §10, fechaFirma merged from
+     day/month/year sub-widgets)
+
+NOT COLLECTED (correctly absent for this filer)
+------------------------------------------------
+  - Section 3 (cónyuge identifying data): no cónyuge cause box is marked.
+  - Section 6 (domicilio en el extranjero): this filer's domicile is
+    domestic (Section 5), not foreign.
+  - Section 7 (domicilio a efectos de notificaciones): no notification
+    domicile different from the fiscal one above is being registered this
+    filing.
+  - Section 8 (representante): this filer is not being represented.
+  - Section 9 (estado civil): no civil-status change is being reported this
+    filing (causaCambioEstadoCivilInteresado is False).
+
+SECOND SCENARIO (traced, not committed as a separate fixture file)
+--------------------------------------------------------------------
+A married couple jointly reporting a change of civil status (causa 111/112)
+and a foreign fiscal domicile (Section 6, box 501), filed through a
+voluntary representative (Section 8, boxes 703 SÍ / 706 Voluntaria) —
+exercises the estadoCivilActual, domicilioExtranjeroTipo,
+representanteResidencia, and causaRepresentacion exclusivityGroups, plus the
+fechaAdquisicionEstadoCivilActual requiredWhen tied to
+causaCambioEstadoCivilInteresado. Also passed with zero errors against the
+standalone rule-tracer described in VERIFICATION.md.
+
+VALIDATION
+----------
+$ node tools/validate.mjs registry/es/aeat/declaracion-censal-personas-fisicas-modelo-030/1.0.0/schema.json
+ok   registry/es/aeat/declaracion-censal-personas-fisicas-modelo-030/1.0.0/schema.json
+
+1/1 document(s) passed.
+
+$ node tools/validate-ajv.mjs registry/es/aeat/declaracion-censal-personas-fisicas-modelo-030/1.0.0/schema.json
+ok   registry/es/aeat/declaracion-censal-personas-fisicas-modelo-030/1.0.0/schema.json [v0.3]
+
+1/1 document(s) validated against the meta-schema (ajv 2020-12).
