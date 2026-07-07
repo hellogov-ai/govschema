@@ -4,7 +4,63 @@
 
 ## Executive Summary
 
-**21 jurisdictions** | **262 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**21 jurisdictions** | **263 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1652):** Spain gains its second vertical, DMV,
+> with `es/dgt/solicitud-tramites-vehiculo` — the Dirección General de
+> Tráfico's (DGT) Modelo 01, "Trámites de Vehículos," a single standard
+> paper/PDF request form a vehicle owner (or representative) presents at a
+> Jefatura de Tráfico to request any one of seven vehicle-registry
+> procedures: a duplicate circulation permit, a vehicle-information report
+> (up to eight plates), deregistration (temporary or definitive),
+> reactivation from a temporary deregistration, new registration (ordinary
+> or historic), a temporary circulation permit, or reinstatement. This
+> `GovSchema Standard Research` cycle screened Spain's remaining four open
+> verticals: the national (long-stay, Type D) visa application
+> (`exteriores.gob.es`'s "Solicitud de visado nacional") — a genuine,
+> unauthenticated AcroForm PDF, but confirmed to be the same EU-harmonized
+> national-visa template already modelled in this registry via
+> `de/auswaertiges-amt/national-visa-application`, so authoring it again
+> would duplicate an existing schema rather than fill a gap; CIRCE's
+> Documento Único Electrónico (DUE) for company formation, an authenticated
+> portal that itself unifies 25+ separate administrative forms and varies by
+> company type, judged too broad/unbounded for one session; and Policía
+> Nacional's DNI/passport channels, both confirmed in-person
+> Documentation-Unit-appointment processes with no downloadable field-level
+> application form (a distinct process, the EX-15 foreigner-identity-number
+> form, is a real downloadable form but is not Spain's own national identity
+> document, and was left as a possible future National ID candidate rather
+> than picked this cycle). DGT's Modelo 01 was picked instead: a genuine,
+> currently-maintained (own printed edition marker "MOD. 01/2025-08-ES")
+> fillable AcroForm PDF — `sede.dgt.gob.es` itself times out on every direct
+> connection attempt from this environment (DNS resolves, but the TCP
+> handshake never completes), so the form and its corroborating instruction
+> sheet were retrieved via Wayback Machine snapshots instead, both HTTP 200.
+> A top-level, native AcroForm radio-button group selects which of the seven
+> procedures is requested, and — for five of the seven — a second radio-button
+> group narrows the specific reason/sub-type; both are modelled as single
+> `enum` fields (not booleans + `exclusivityGroups`), consistent with this
+> registry's established convention for native PDF radio groups (e.g.
+> `co/runt/formulario-solicitud-tramites-vehiculo`'s `tramiteType`). A
+> rendered page crop (`pdfjs-dist` + `canvas`, 3x zoom) was used to resolve
+> the exact procedure/reason grid two of the five sub-trámite radio groups
+> implement, since their own export values alone did not fully disambiguate
+> column membership. Models 47 fields across the form's shared header blocks
+> (vehicle data, the vehicle's registered domicile, and the requesting
+> party's identity), the seven-procedure selection and its five nested
+> sub-choices, an optional "conductor habitual" (habitual driver)
+> notification block, and a free-text "Otros" block — plus 1 `documents[]`
+> entry for the identity documentation DGT's own instruction sheet confirms
+> for the duplicado/renovación procedure group specifically (not
+> independently confirmed for the form's other six trámites this cycle).
+> Deliberately does not model DGT's own authenticated online-filing channel
+> (Cl@ve/certificado), the municipal-census/IAE data DGT's own privacy
+> notice states it looks up electronically rather than collects from the
+> applicant, or the physical-signature line itself — see the document's own
+> VERIFICATION.md for the full candidate comparison and eleven other
+> disclosed judgment calls. This gives Spain 2 of its 6 verticals (Taxes,
+> DMV); Passport, Business Formation, Visa, and National ID remain open,
+> unscreened-or-screened-and-deferred backlog candidates for future cycles.
 
 > **Update (2026-07-07, GOV-1645):** Spain opens as this registry's **21st
 > jurisdiction** with `es/aeat/declaracion-censal-personas-fisicas-modelo-030`
@@ -1479,12 +1535,22 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (20/21 jurisdictions — 95%)
+### DMV — Vehicle Registration, Licensing, Permits (21/21 jurisdictions — 100%)
 
 Every jurisdiction reached 100% (20/20) as of GOV-1638; **Spain**, opened
-this cycle (GOV-1645) via its Taxes vertical, does not yet have a DMV
-schema of its own — an open, unscreened backlog candidate for a future
-cycle. **Chile** (`cl/sii/aviso-venta-vehiculo`, GOV-1638) closed the
+via its Taxes vertical (GOV-1645), briefly reopened the gap before closing
+it again this cycle (GOV-1652) with `es/dgt/solicitud-tramites-vehiculo` —
+the Dirección General de Tráfico's (DGT) Modelo 01, "Trámites de
+Vehículos," a single standard multi-procedure vehicle-request form covering
+seven distinct DGT procedures (duplicate circulation permit, vehicle-report,
+deregistration, reactivation, new registration, temporary permit,
+reinstatement) through one shared field set, the same one-form-many-
+procedures pattern as Colombia's own RUNT schema below. Screened alongside
+Spain's national visa application (found to duplicate Germany's own
+already-modelled EU-harmonized template) and CIRCE's Documento Único
+Electrónico (judged too broad/unbounded) — see the document's own
+VERIFICATION.md for the full candidate comparison. **Chile**
+(`cl/sii/aviso-venta-vehiculo`, GOV-1638) closed the
 vertical to 100% (20/20) before Spain's opening — SII's own Formulario 1816, "Aviso de Venta de
 Vehículos," a sworn notice-of-vehicle-sale declaration, screened alongside
 several dead ends (Registro Civil e Identificación's vehicle-registration
@@ -2036,7 +2102,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ES** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **ES** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -2260,9 +2326,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    re-screened and re-confirmed Chile's Passport/National ID/Visa gaps
    still gated/non-resolving, and screened Peru's Passport/National ID and
    Argentina's DNI/Passport channels, all found appointment-gated,
-   reCAPTCHA-gated, or non-fillable). Spain's own remaining five verticals
-   (Passport, DMV, Business Formation, Visa, National ID) are open,
-   unscreened backlog candidates for a future cycle. Other candidates worth
+   reCAPTCHA-gated, or non-fillable). **Spain's DMV vertical has since
+   opened too (GOV-1652)**, via `es/dgt/solicitud-tramites-vehiculo` —
+   DGT's Modelo 01 multi-procedure vehicle-request form; that same cycle
+   screened and rejected Spain's national visa application (duplicates
+   Germany's own already-modelled EU-harmonized template,
+   `de/auswaertiges-amt/national-visa-application`) and CIRCE's Documento
+   Único Electrónico (a 25+-form-unifying authenticated portal, judged too
+   broad for one session), and found Policía Nacional's DNI/passport
+   channels appointment-only with no downloadable field-level form — see
+   the Executive Summary update above and the document's own
+   VERIFICATION.md for the full candidate comparison. Spain's remaining
+   three verticals (Passport, Business Formation, Visa) are open backlog
+   candidates for a future cycle; National ID has a possible lead (the EX-15
+   foreigner-identity-number form) not yet picked up. Other candidates worth
    scouting for a **22nd** jurisdiction in a future cycle: Portugal, Poland,
    or an EU member beyond DE/ES/FR/NL — Japan (`mofa.go.jp`) is a confirmed
    IP-blocked dead end (GOV-1174).

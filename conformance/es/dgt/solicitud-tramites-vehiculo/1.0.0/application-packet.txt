@@ -1,0 +1,103 @@
+=============================================================
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+=============================================================
+
+Schema: es/dgt/solicitud-tramites-vehiculo v1.0.0
+Generated: 2026-07-07
+
+ELIGIBILITY / APPLICABILITY OUTCOME
+------------------------------------
+This packet models an individual requesting a duplicate circulation permit
+("Duplicados del permiso de circulación") because the original was damaged
+("Deterioro").
+
+  - tramite: "duplicado"
+    -> triggers requiredWhen on duplicadoMotivo
+    [Modelo 01 p.1 'SELECCIONE EL TRÁMITE...'; requiredWhen]
+  - duplicadoMotivo: "deterioro"
+    [Modelo 01 p.1 'DUPLICADOS DEL PERMISO DE CIRCULACIÓN']
+  - nifNieCifInteresado: "23456789Z" (required unconditionally — every
+    submission needs to identify the requesting party regardless of trámite)
+    [Modelo 01 p.1 'DATOS DEL INTERESADO']
+
+COLLECTED VALUES
+----------------
+  Matrícula / Fecha de matriculación / Bastidor-NIVE: 4521KTM / 2018-09-12 /
+  VF7SXHMZ6ES123456
+    (fields: matricula/fechaMatriculacionVehiculo/bastidorNive, source: p.1
+     'DATOS DEL VEHÍCULO')
+  Domicilio del vehículo: Calle Calle Serrano, Número 112, Planta 2, Puerta A,
+  28006 Madrid (Madrid)
+    (fields: tipoViaDomicilioVehiculo/nombreViaDomicilioVehiculo/
+     numeroDomicilioVehiculo/plantaDomicilioVehiculo/puertaDomicilioVehiculo/
+     codigoPostalDomicilioVehiculo/municipioDomicilioVehiculo/
+     provinciaDomicilioVehiculo, source: p.1 'DOMICILIO DEL VEHÍCULO')
+  NIF/NIE/CIF / Nombre / Primer apellido / Segundo apellido: 23456789Z /
+  Javier / Fernández / Ruiz
+    (fields: nifNieCifInteresado/nombreRazonSocialInteresado/
+     primerApellidoInteresado/segundoApellidoInteresado, source: p.1
+     'DATOS DEL INTERESADO')
+  Fecha de nacimiento / Teléfono / Correo electrónico: 1985-11-02 /
+  611223344 / javier.fernandez.ruiz@example.com
+    (fields: fechaNacimientoInteresado/telefonoInteresado/
+     correoElectronicoInteresado, source: p.1 'DATOS DEL INTERESADO')
+  Trámite / Motivo: Duplicados del permiso de circulación / Deterioro
+    (fields: tramite/duplicadoMotivo, source: p.1 radio groups 'tramite'/
+     'subtramite1')
+  Fecha y lugar de la solicitud: Madrid, 2026-07-07
+    (fields: lugarFirma/fechaFirma, source: p.1 signature line, fechaFirma
+     merged from day/month/year sub-widgets)
+
+NOT COLLECTED (correctly absent for this filer)
+------------------------------------------------
+  - Informe de vehículos (matriculaInformeVehiculo1-8): tramite is
+    "duplicado", not "informe".
+  - Baja / Alta de baja temporal / Matriculación / Permiso temporal
+    sub-fields: none of those trámites is selected.
+  - Notificación de conductor habitual: this filer is not naming a driver
+    distinct from themselves.
+  - Otros: no additional remarks for this filing.
+
+OTHER SCENARIOS (traced, not committed as separate fixture files)
+--------------------------------------------------------------------
+1. tramite "informe" (a company requesting a vehicle-information report on
+   three plates: matriculaInformeVehiculo1/2/3 populated,
+   matriculaInformeVehiculo4-8 correctly absent) — exercises the
+   at-least-the-first-of-eight requiredWhen tie.
+2. tramite "matriculacion" with matriculacionTipo "ordinaria",
+   servicioVehiculo "A-04" (Taxi), and codigoElectronicoMatriculacion set —
+   exercises the servicioVehiculo/CEM fields left ungated (required:false,
+   no requiredWhen) inside the Matriculación block.
+3. tramite "permiso_temporal" with permisoTemporalTipo
+   "particular_previa_matriculacion" — exercises the Permiso Temporal
+   sub-enum's "Particulares" column.
+
+NEGATIVE CONTROLS (each traced to fail exactly one rule via a standalone,
+ajv-free rule-tracing script reading schema.json's own required/
+requiredWhen/validation.pattern/validation.enum — not committed)
+--------------------------------------------------------------------------
+  (a) Removing "tramite" from the committed packet — correctly flagged as a
+      missing required field (tramite is required:true).
+  (b) Setting tramite:"baja" while leaving both duplicadoMotivo and
+      bajaMotivo absent — correctly flagged as a missing required field
+      (bajaMotivo's requiredWhen fires once tramite equals "baja").
+  (c) tramite:"invalid_value" — correctly flagged as a validation.enum
+      violation.
+  (d) nifNieCifInteresado:"1234567" (7 digits, no letter) — correctly
+      flagged as a validation.pattern violation.
+  (e) provinciaDomicilioVehiculo:"Nonexistent" — correctly flagged as a
+      validation.enum violation (the province list is closed to the
+      widget's own 52 embedded options).
+
+Both meta-schema validators were run against the finished document and pass
+clean:
+
+$ node tools/validate.mjs registry/es/dgt/solicitud-tramites-vehiculo/1.0.0/schema.json
+ok   registry/es/dgt/solicitud-tramites-vehiculo/1.0.0/schema.json
+
+1/1 document(s) passed.
+
+$ node tools/validate-ajv.mjs registry/es/dgt/solicitud-tramites-vehiculo/1.0.0/schema.json
+ok   registry/es/dgt/solicitud-tramites-vehiculo/1.0.0/schema.json [v0.3]
+
+1/1 document(s) validated against the meta-schema (ajv 2020-12).
