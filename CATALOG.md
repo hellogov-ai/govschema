@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**19 jurisdictions** | **251 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **252 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1574):** Indonesia gains
+> `id/imigrasi/passport-application-first-adult`, closing Indonesia's
+> Passport-vertical gap and giving the jurisdiction 4 of its 6 verticals
+> (DMV, Business Formation, Taxes, Passport). This is a `GovSchema Standard
+> Research` cycle: the issue brief's own named candidates (DE Steuer-ID, SG
+> NRIC loss/damage + re-registration, NZ RealMe) were re-checked first and
+> found already published (`de/finanzamt/tax-identification-number`,
+> `sg/ica/identity-card-replacement` + `sg/ica/identity-card-reregistration`,
+> `nz/dia/realme-verified-identity`); a "remaining voter registration"
+> candidate — Colombia's Registraduría overseas online voter-registration
+> microsite (`inscribeteonline2026.registraduria.gov.co`) — was found to no
+> longer resolve (its registration windows for Colombia's 2026 elections
+> have closed), logged below as a dead-for-now candidate. Indonesia's own
+> Passport gap, flagged as "ready-to-author backlog" by the immediately
+> prior cycle (GOV-1567), was picked up instead: sourced from Ditjen
+> Imigrasi's own official "User Guide M-Paspor" (V.1.0, Juni 2026), a
+> 31-page screenshot-driven walkthrough of the live M-Paspor app hosted
+> unauthenticated on a regional (Batam) immigration-office subdomain (the
+> main `imigrasi.go.id` copy remains CloudFront-blocked). Scoped to an adult
+> (Dewasa) applicant applying for the first time (never previously held an
+> ordinary passport), through either the Reguler or Percepatan service tier
+> — confirmed, via the guide's own interchanged screenshots across both
+> tiers' identical downstream screens, to share one form. The renewal/
+> replacement pathway (for an applicant who answers "Sudah" to having
+> already held a passport), the child/minor (Anak-anak) applicant pathway,
+> and the payment step (no base PNBP fee amount is stated anywhere in the
+> 31-page guide) are explicitly out of scope for this v1.0.0 — see the
+> document's own VERIFICATION.md for these and seven other disclosed
+> judgment calls. Indonesia's remaining open vertical is National ID
+> (Dukcapil KTP-el/NIK), still confirmed in-person/biometric-only with no
+> online channel (GOV-1560).
 
 > **Update (2026-07-07, GOV-1567):** Colombia opens as the registry's **19th
 > jurisdiction** with `co/runt/formulario-solicitud-tramites-vehiculo`
@@ -1000,7 +1032,7 @@
 
 ## By Vertical
 
-### Passport (16/19 jurisdictions)
+### Passport (17/19 jurisdictions)
 
 AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
 least one published Passport schema. **Colombia**, opened this cycle
@@ -1028,19 +1060,23 @@ covers passport issuance/renewal/replacement only as a service-card catalog
 Smart App's own generic user manual never proceeds into the passport
 service's own field screens; the live service itself requires UAE Pass
 login with no public preview. Confirmed dead end; do not re-attempt without
-a genuinely new source. **Indonesia**'s Passport gap (M-Paspor app), logged
-as "sourceable only via secondary checklist-level how-to articles" by
-GOV-1560, **reversed to a viable candidate this cycle** (GOV-1567): a
-genuine official, versioned ("V3") screenshot-driven user guide
-(`M-Paspor_UserGuide_V3.pdf`) is hosted unauthenticated on a regional Ditjen
-Imigrasi subdomain (`batam.imigrasi.go.id/assets/resources/files/`), unlike
-the main `imigrasi.go.id` domain's own guide, which remains CloudFront-blocked
-to a direct fetch. Confirmed field labels include Jenis Paspor, Lokasi
-Kantor Imigrasi, NIK-verification fields (Nama, NIK, Tanggal Lahir, Jenis
-Kelamin), prior-passport fields, Jenis Permohonan, Alasan Penggantian, and
-the appointment-scheduling/payment flow. Not authored this cycle (Colombia's
-DMV schema was this cycle's single deliverable) — left as ready-to-author
-backlog for an immediate follow-up cycle; see "Known Gaps" below.
+a genuinely new source. **Indonesia** (`id/imigrasi/passport-application-first-adult`,
+GOV-1574) is new this cycle, closing Indonesia's Passport gap. Its M-Paspor
+app gap was logged as "sourceable only via secondary checklist-level how-to
+articles" by GOV-1560, then reversed to a viable, ready-to-author candidate
+by GOV-1567 (which found a genuine official, versioned ("V3")
+screenshot-driven user guide, `M-Paspor_UserGuide_V3.pdf`, hosted
+unauthenticated on a regional Ditjen Imigrasi subdomain,
+`batam.imigrasi.go.id/assets/resources/files/`, unlike the main
+`imigrasi.go.id` domain's own guide, which remains CloudFront-blocked to a
+direct fetch). This cycle authored against it: an adult (Dewasa), first-time
+(never previously held a passport) applicant on either the Reguler or
+Percepatan service tier, confirmed via the guide's own interchanged
+screenshots to share one downstream form. The renewal/replacement pathway,
+the child/minor (Anak-anak) applicant pathway, and the payment step (no base
+PNBP fee amount is published anywhere in the 31-page guide) are out of scope
+for this v1.0.0 — see the document's own VERIFICATION.md for these and seven
+other disclosed judgment calls.
 **The Philippines** (`ph/dfa/passport-application`, GOV-1497) is new this
 cycle: the Department of Foreign Affairs' Online Passport Appointment System
 (`passport.gov.ph`), modelled — like Brazil's SINPA — as a single wizard
@@ -1408,9 +1444,13 @@ above).
 ### National ID & Civic Documents (15/19 jurisdictions)
 
 **Colombia**, opened this cycle (GOV-1567) via its DMV vertical, has no
-National ID schema yet — the Registraduría's cédula de ciudadanía and voter
-registration are open, unscreened backlog candidates for a future cycle.
-Every other jurisdiction except Brazil, Indonesia, and Mexico has at least one
+National ID schema yet. Its voter-registration candidate was screened this
+cycle (GOV-1574): the Registraduría's own online overseas voter-registration
+microsite (`inscribeteonline2026.registraduria.gov.co`) no longer resolves —
+built for Colombia's 2026 elections, whose registration deadlines have
+already passed; see "Known Gaps" below for the full record. The
+Registraduría's cédula de ciudadanía process remains an open, unscreened
+backlog candidate for a future cycle. Every other jurisdiction except Brazil, Indonesia, and Mexico has at least one
 National ID and/or voter-registration schema. Indonesia's National ID gap was
 screened this cycle (GOV-1560): Dukcapil's own KTP-el/NIK registration is
 confirmed in-person and biometric (photo/fingerprint/iris) only, with
@@ -1482,7 +1522,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ID** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **ID** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1576,21 +1616,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    unscreened backlog candidates — see the document's own VERIFICATION.md.
    **Update:** Indonesia now has 3 of its 6 verticals (DMV added GOV-1553;
    Taxes added GOV-1560, `id/djp/annual-individual-income-tax-return-1770s`).
-   **This cycle (GOV-1567) re-screened Indonesia's remaining Passport and
+   **GOV-1567 re-screened Indonesia's remaining Passport and
    Visa gaps and reversed both from "not viable" to genuinely open, ready-to-author
-   candidates:** Passport now has a genuine official, versioned
+   candidates:** Passport had a genuine official, versioned
    ("V3") screenshot-driven M-Paspor user guide hosted unauthenticated on a
    regional Ditjen Imigrasi subdomain (`batam.imigrasi.go.id`, unlike the
    main `imigrasi.go.id` domain, which remains CloudFront-blocked); Visa's
-   previously-wireframe-only "Fill Form" Personal Information block now has
+   previously-wireframe-only "Fill Form" Personal Information block had
    its real field labels corroborated by a third-party study-abroad office's
    own published walkthrough (a genuine live capture of `evisa.imigrasi.go.id`
-   filled with a real worked example). Neither was authored this cycle
-   (Colombia's DMV schema was this cycle's single deliverable); both are
-   ready-to-author backlog for an immediate follow-up cycle — see each
-   vertical's own section above for the full record. National ID
-   (Dukcapil KTP-el/NIK) remains the weakest of Indonesia's three open
-   verticals (confirmed in-person/biometric-only, no online channel). Mexico
+   filled with a real worked example). **Update (GOV-1574):** Indonesia's
+   Passport gap is now closed — `id/imigrasi/passport-application-first-adult`,
+   authored directly against the M-Paspor guide GOV-1567 identified (adult,
+   first-time applicant only; see the Passport vertical section above and the
+   document's own VERIFICATION.md). Visa remains open, ready-to-author
+   backlog for a future cycle — see the Visa vertical section above for the
+   full record. National ID (Dukcapil KTP-el/NIK) remains the weakest of
+   Indonesia's two open verticals (confirmed in-person/biometric-only, no
+   online channel). Mexico
    now has four of its six verticals
    modelled: Business Formation (`mx/sat/preinscripcion-rfc-persona-moral`,
    GOV-1414), Visa (`mx/inm/forma-migratoria-multiple-electronica`,
@@ -1622,7 +1665,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    time); see `ph/bir/tin-application-corporations-partnerships`'s own
    VERIFICATION.md for the full comparison. **Colombia has since opened**
    (GOV-1567, via RUNT's DMV form — see item 3's own Colombia entry above).
-   Candidates worth scouting for a 20th jurisdiction in a future cycle: an EU
+   **Colombia's National ID/voter-registration gap was screened this cycle**
+   (GOV-1574): the Registraduría Nacional del Estado Civil runs a genuine
+   online overseas-voter-registration microsite
+   (`inscribeteonline2026.registraduria.gov.co`, confirmed via Wayback
+   Machine snapshots from 2025-12 through 2026-03), but it no longer
+   resolves (`NXDOMAIN`, reconfirmed 2026-07-07) — built for Colombia's 2026
+   congressional/presidential elections, whose registration deadlines
+   (2026-01-08 and 2026-03-31) have both already passed. Not a hard dead
+   end, since it is election-cycle-scoped infrastructure rather than a
+   permanently retired system — a future Colombia-focused cycle should check
+   whether the same or an equivalent microsite is stood back up ahead of
+   Colombia's next election cycle; it is also a client-rendered Vue SPA, so
+   even a live instance would likely need a live-DOM/Playwright walk rather
+   than a static fetch. Candidates worth scouting for a 20th jurisdiction in
+   a future cycle: an EU
    member beyond DE/FR/NL — Japan (`mofa.go.jp`) is a confirmed IP-blocked
    dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
@@ -1750,5 +1807,9 @@ authoring, Indonesia 3rd vertical, Taxes, global Taxes vertical closed to
 (`co/runt/formulario-solicitud-tramites-vehiculo` authoring, Colombia opened
 as 19th jurisdiction, DMV, global DMV vertical closed to 19/19 / 100%;
 Indonesia's Passport and Visa gaps re-screened and reversed from "not
-viable" to ready-to-author backlog candidates)
+viable" to ready-to-author backlog candidates), updated by GOV-1574
+(`id/imigrasi/passport-application-first-adult` authoring, Indonesia 4th
+vertical, Passport, closing the gap GOV-1567 had flagged ready-to-author;
+Colombia's overseas voter-registration microsite screened and found
+election-window-decommissioned, not a hard dead end).
 
