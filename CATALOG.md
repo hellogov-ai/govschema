@@ -29,7 +29,7 @@
 > official, current (footer-dated 26/marzo/2026), fully unauthenticated
 > "Guía práctica para cumplimentación del modelo censal 036," a
 > chapter-and-casilla-numbered walkthrough of the entire form, strong enough
-> to author against directly. Models 33 fields across identification, fiscal
+> to author against directly. Models 39 fields across identification, fiscal
 > domicile (including the mandatory cadastral-reference indicator),
 > notification domicile and AEAT-notice contact data, the economic activity's
 > own IAE classification and lugar-de-realización (fixed-premises vs. not),

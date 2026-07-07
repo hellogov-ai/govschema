@@ -83,17 +83,30 @@ pre-screened candidates and asked for both to be deepened before picking:
 
 - **Authority:** Agencia Estatal de Administración Tributaria (AEAT)
 - **Document:** "Guía práctica para cumplimentación del modelo censal 036"
-- **Root URL (directly retrieved, HTTP 200, no login):**
-  <https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/guia-practica-cumplimentacion-modelo-censal-036.html>
+- **Root URL:** <https://sede.agenciatributaria.gob.es/Sede/Ayuda/guia-practica-declaracion-censal.html>
+  (directly retrieved, HTTP 200, no login). **Correction (2026-07-07,
+  post-review):** the URL originally cited here,
+  `.../Sede/ayuda/manuales-videos-folletos/manuales-practicos/guia-practica-cumplimentacion-modelo-censal-036.html`,
+  now 404s as a standalone leaf page — GovSchema's independent PR review
+  (GOV-1662) caught this. The guide's *content itself* did not move: every
+  chapter/casilla sub-page below is still live under that exact same
+  `.../manuales-videos-folletos/manuales-practicos/guia-practica-cumplimentacion-modelo-censal-036/capitulo-NN-.../....html`
+  path prefix (confirmed directly, HTTP 200) — only the bare
+  `guia-practica-cumplimentacion-modelo-censal-036.html` index file
+  itself stopped resolving. `schema.json`'s `source.url` and this
+  document's Root URL above have been repointed to the guide's live
+  top-level landing page instead.
 - **Retrieved / reviewed:** 2026-07-07. Every page fetched this cycle
   returned HTTP 200 with no login/CAPTCHA/WAF gate, footer-dated
   26/marzo/2026 (a currently-maintained edition, not a stale mirror).
-- **Pages read in full this cycle** (chapter → sub-page):
-  - `.../capitulo-01-cuestiones-generales/causas-presentacion-obligados-declarar/alta-modelo-036.html` (+ `casilla-110-solicitud-numero-identificacion-036.html`, `.../personas-fisicas.html`, `casilla-111-alta-censo-empresarios-036.html`)
-  - `.../capitulo-02-identificacion/modelo-036/pagina-2a-identificacion-personas-fisicas.html` (+ `identificacion.html`, `domicilio-fiscal-espana.html`, `domicilio-efectos-notificaciones.html`, `datos-telefonos-direcciones-electronicas-recibir-aeat.html`)
-  - `.../capitulo-04-actividades-economicas-locales/cumplimentacion-declaracion-actividades-economicas-locales.html` (+ `actividad.html`, `lugar-realizacion-actividad.html`, `lugar-realizacion-actividad/actividad-local-determinado.html`, `.../actividad-fuera-local-determinado.html`)
-  - `.../capitulo-06-impuesto-sobre-valor-anadido/inicio-actividad.html` (+ `regimenes-aplicables/regimen-general-modelo-036.html`, `.../simplificado-modelo-036.html`, `.../recargo-equivalencia-modelo-036.html`, `.../agricultura-ganaderia-pesca-modelo-036.html`, `.../regimen-especial-criterio-caja-modelo-036.html`)
-  - `.../capitulo-07-irpf-is-irnr/irpf-modelo-036.html` (+ `metodo-estimacion-irpf.html`, `.../estimacion-directa-simplificada.html`, `.../estimacion-objetiva.html`)
+- **Pages read in full this cycle** (chapter → sub-page; each relative to
+  `.../Sede/ayuda/manuales-videos-folletos/manuales-practicos/guia-practica-cumplimentacion-modelo-censal-036/`,
+  still live per the correction above):
+  - `capitulo-01-cuestiones-generales/causas-presentacion-obligados-declarar/alta-modelo-036.html` (+ `casilla-110-solicitud-numero-identificacion-036.html`, `.../personas-fisicas.html`, `casilla-111-alta-censo-empresarios-036.html`)
+  - `capitulo-02-identificacion/modelo-036/pagina-2a-identificacion-personas-fisicas.html` (+ `identificacion.html`, `domicilio-fiscal-espana.html`, `domicilio-efectos-notificaciones.html`, `datos-telefonos-direcciones-electronicas-recibir-aeat.html`)
+  - `capitulo-04-actividades-economicas-locales/cumplimentacion-declaracion-actividades-economicas-locales.html` (+ `actividad.html`, `lugar-realizacion-actividad.html`, `lugar-realizacion-actividad/actividad-local-determinado.html`, `.../actividad-fuera-local-determinado.html`)
+  - `capitulo-06-impuesto-sobre-valor-anadido/inicio-actividad.html` (+ `regimenes-aplicables/regimen-general-modelo-036.html`, `.../simplificado-modelo-036.html`, `.../recargo-equivalencia-modelo-036.html`, `.../agricultura-ganaderia-pesca-modelo-036.html`, `.../regimen-especial-criterio-caja-modelo-036.html`)
+  - `capitulo-07-irpf-is-irnr/irpf-modelo-036.html` (+ `metodo-estimacion-irpf.html`, `.../estimacion-directa-simplificada.html`, `.../estimacion-objetiva.html`)
   - `/Sede/Ayuda/guia-practica-declaracion-censal/capitulo_1/modelos/036-simplificada.html` — the "Modelo 036 declaración censal simplificada" summary page, giving the eligibility test and the causa/casilla/página table this document's own scope is built on (casillas 111/122/124/125/127/131/132/136/150).
 - **Extraction method:** direct HTTP fetch (`curl`, no browser rendering
   needed — every page is server-rendered HTML) followed by tag-stripping and
@@ -155,7 +168,7 @@ inline in `schema.json`'s own `sourceRef` per field. Summary by section:
 | Cap. 6 IVA | `regimenGeneral`, `regimenSimplificado`, `regimenRecargoEquivalencia`, `regimenAgriculturaGanaderiaPesca` | Exactly one expected true (`exclusivityGroups`), none individually required (a filer with no special-regime eligibility may leave all false, defaulting to general) |
 | Cap. 7 IRPF | `estimacionDirectaNormal`, `estimacionDirectaSimplificada`, `estimacionObjetiva` | Exactly one expected true (`exclusivityGroups`) |
 
-Total: **33 fields**, plus 2 `exclusivityGroups` (VAT regime, IRPF estimation
+Total: **39 fields**, plus 2 `exclusivityGroups` (VAT regime, IRPF estimation
 method).
 
 ## Access notes and judgment calls
