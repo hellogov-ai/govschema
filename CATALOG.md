@@ -1,11 +1,38 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-06** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-07** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**17 jurisdictions** | **245 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **246 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-07, GOV-1533):** Ireland gains
+> `ie/dttas/learner-permit-application` (DMV sub-process), sourced from
+> NDLS's own "Application Form for a Learner Permit" (D201, March 2020
+> edition), cross-checked against the RSA's own current "Apply for your
+> first permit" guidance page. This fills the specific gap
+> `ie/dttas/driving-licence-renewal`'s own description had explicitly
+> disclosed and left open — "It does not model a first-time driving licence"
+> — Ireland's entry point into its graduated driver-licensing system (a
+> driver theory test pass is a hard prerequisite; the permit must then be
+> held six months before a driving test can be sat). This research cycle
+> also re-attempted the United Arab Emirates' Passport gap a prior cycle
+> (GOV-1474) had explicitly flagged as worth a deeper pass: a full page-by-page
+> re-read of both ICP Smart App manuals (72 and 57 pages) and a 230-page ICP
+> "Guide for Services" PDF confirmed passport fields appear only inside the
+> already-modelled Emirates ID Replace flow, and the dedicated "Issuance of
+> Passport"/"Renewal of A Passport" service cards remain checklist/fee-schedule
+> prose, not a field-by-field form — UAE Passport remains open but weak, not
+> picked this cycle (see `ie/dttas/learner-permit-application`'s own
+> VERIFICATION.md for the full research trail). Scoped to the D201 form's own
+> "First time learner permit application" pathway (option 1 of 7); the other
+> six application-type values sharing the same form (renewal, add/remove
+> category, replace lost/stolen/damaged, personal-detail change, category
+> upgrade for existing full-licence holders) are captured as a closed enum
+> without full field/document-level scoping, mirroring the
+> `ph/lto/drivers-license-application` and `kr/koroad/driving-licence-application`
+> precedent for other multi-transaction-type forms in this registry.
+>
 > **Update (2026-07-06, GOV-1526):** Brazil gains a fourth vertical,
 > `br/mg/detran/comunicacao-de-venda-de-veiculo` (DMV), closing the
 > **global DMV vertical to 17/17 jurisdictions (100%)** — the last vertical
@@ -1162,7 +1189,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IE** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -1379,5 +1406,8 @@ global DMV vertical closed to 15/17 / 88%), updated by GOV-1519
 (`ph/lto/drivers-license-application` authoring, Philippines 6th and last
 vertical, DMV, global DMV vertical closed to 16/17 / 94%), updated by
 GOV-1526 (`br/mg/detran/comunicacao-de-venda-de-veiculo` authoring, Brazil
-4th vertical, DMV, global DMV vertical closed to 17/17 / 100%)
-Standards Engineer
+4th vertical, DMV, global DMV vertical closed to 17/17 / 100%), updated by
+GOV-1533 (`ie/dttas/learner-permit-application` authoring, Ireland DMV
+sub-process expansion — first-time learner permit application; UAE Passport
+re-screened and re-confirmed weak, not picked)
+
