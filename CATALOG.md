@@ -4,8 +4,39 @@
 
 ## Executive Summary
 
-**17 jurisdictions** | **246 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**17 jurisdictions** | **247 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-07, GOV-1540):** The United Arab Emirates gains
+> `ae/rakez/free-zone-establishment-registration` (Business Formation),
+> closing the **global Business Formation vertical to 17/17 jurisdictions
+> (100%)** — the last vertical gap standing at less than full coverage. A
+> prior cycle (GOV-1289) had rated UAE Business Formation WEAK
+> (mainland DED and RAKEZ's own `eportal.rakez.com` client portal are both
+> authenticated-account-gated) and it was never re-screened. This cycle
+> found a different source shape: the Ras Al Khaimah Economic Zone
+> Authority's (RAKEZ) own "Application for Registration and Licence of a
+> Free Zone Establishment or Company", Issue No. 03 (Feb 18, 2016, Ref:
+> LCN-019(A)) — a genuine fillable AcroForm PDF with ~100 real named field
+> widgets, hosted directly on `rakez.com` with no login/CAPTCHA/WAF gate,
+> and still cross-referenced from RAKEZ's own current (2017-dated, RAKEZ-
+> branded) new-registration checklist as a currently-accepted submission
+> channel alongside the Client Portal. Modelled as a subnational (`AE-RK`)
+> schema, since company registration in the UAE's free zones is
+> administered per free-zone authority, not federally — the same pattern
+> as this registry's other emirate-level AE schemas (`ae/rta`, `ae/icp`).
+> Scoped to the single-shareholder Free Zone Establishment (FZE) / multi-
+> shareholder Free Zone Company (FZC) pathway, modelling the first of up to
+> five shareholders per this registry's repeating-group convention; the
+> separate detailed application form required for Industrial-activity
+> licenses, and the post-approval Memorandum of Association/Lease
+> Agreement/Personnel Secondment Agreement execution steps, are out of
+> scope for this v1.0.0 — see the document's own VERIFICATION.md for this
+> and five other disclosed judgment calls, including a caught-and-fixed
+> `requiredWhen`/`notEquals` gate that would have misfired against this
+> registry's own previously-documented sentinel-default bug class. This
+> gives the United Arab Emirates 5 of its 6 verticals (Passport remains
+> open-but-weak per GOV-1533).
+>
 > **Update (2026-07-07, GOV-1533):** Ireland gains
 > `ie/dttas/learner-permit-application` (DMV sub-process), sourced from
 > NDLS's own "Application Form for a Learner Permit" (D201, March 2020
@@ -953,10 +984,17 @@ within an already-covered vertical:
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 
-### Business Formation — Incorporation, LLC, Company Registration (16/17 jurisdictions)
+### Business Formation — Incorporation, LLC, Company Registration (17/17 jurisdictions — 100%)
 
-Every jurisdiction except the United Arab Emirates has at
-least one Business Formation schema. **South Korea**
+Every jurisdiction now has at least one Business Formation schema. **The
+United Arab Emirates** (`ae/rakez/free-zone-establishment-registration`,
+GOV-1540) is new this cycle — sourced from the Ras Al Khaimah Economic Zone
+Authority's (RAKEZ) own "Application for Registration and Licence of a Free
+Zone Establishment or Company" (Issue No. 03, Feb 18, 2016, Ref: LCN-019(A)),
+a genuine fillable AcroForm PDF hosted directly on `rakez.com` with no login/
+CAPTCHA/WAF gate. This closes the global Business Formation vertical to
+**17/17 jurisdictions (100%)** — see the Executive Summary update above for
+full detail. **South Korea**
 (`kr/nts/corporation-establishment-and-business-registration`, GOV-1483) is
 new this cycle — sourced from the National Tax Service's own gazetted
 "Corporation Establishment Report and Business Registration Application"
@@ -1013,8 +1051,10 @@ REDESIM is a per-state integrator even though the CNPJ registry it feeds is
 federal. GOV-1289's research rated KR's Business Formation vertical **WEAK**
 (IROS/startbiz.go.kr both require certificate login) — not an open candidate
 without new sourcing. UAE's Business Formation vertical was likewise rated
-WEAK/login-gated in that same research cycle and was not revisited this
-cycle. Remaining gaps in the other 15 are sub-process expansions: sole
+WEAK/login-gated in that same research cycle (KR's rating stands; the UAE's
+was overturned in GOV-1540, which found RAKEZ's own downloadable AcroForm
+application — see the Executive Summary and this section's own opening
+paragraph above). Remaining gaps in the other 16 are sub-process expansions: sole
 trader/partnership/LLP forms in CA, NZ, IE, and India (only SPICe+ company
 incorporation modelled so far); a standalone EIN schema for the US (currently
 folded into `us/irs/employer-identification-number-ss4`, which does exist);
@@ -1182,7 +1222,7 @@ now closed.
 
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **AE** | 5 | ✗ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
