@@ -223,6 +223,28 @@ documents in this registry, carries a genuine, fully recoverable text layer):
    licence-issuance and renewal tracks, not learner-permit application; not
    modelled here.
 
+## Second-reviewer amendment (GOV-1536)
+
+Independent re-verification (re-fetching D201 and the RSA page fresh via the
+same Wayback URLs, and re-extracting D201's text layer via `pdfjs-dist`)
+confirmed all field- and document-level `sourceRef`s against the actual
+source text, with one exception: `medicalReportRequired`'s `description`
+originally stated the trigger included "or if aged 75 or over", copied from
+`ie/dttas/driving-licence-renewal`'s field of the same name. That age-75
+trigger does not appear anywhere in either source fetched for **this**
+document (confirmed via `grep` over both extracted texts — zero hits for
+"75"), and the sibling document's own version of that trigger is specific to
+its renewal/expiry-date context, which doesn't directly apply to a
+first-time application. The clause has been removed from the description
+(the Q19-40(c)/Group-2 portion, which *is* directly sourced from D201, is
+unaffected). This has no effect on validation/conformance, since
+`medicalReportRequired` is a declared (not computed) field and no
+`requiredWhen`/enum logic referenced the age-75 clause.
+
+Every other field and document `sourceRef` in this schema was independently
+re-confirmed verbatim against the re-fetched D201 text layer and RSA page
+text during this pass.
+
 ## What is NOT yet independently verified
 
 - A second reviewer has not yet independently re-fetched and re-extracted
