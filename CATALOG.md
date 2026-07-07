@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**18 jurisdictions** | **248 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**18 jurisdictions** | **249 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1553):** Indonesia's DMV vertical opens with
+> `id/korlantas/international-driving-permit-registration` — registration for
+> a new or renewed Surat Izin Mengemudi Internasional (International Driving
+> Permit, 1968 Vienna Convention on Road Traffic, Annexe 7), sourced from
+> Korlantas POLRI's (Traffic Police Corps of the Indonesian National Police)
+> own live, unauthenticated online registration portal
+> (`siminternasional.korlantas.polri.go.id`), whose static HTML embeds the
+> full "Registrasi SIM Internasional" form markup — field names, labels, and
+> dropdown option lists read directly from the page's own `<input>`/
+> `<select>` tags, not a screenshot or paraphrase. Two stronger-looking
+> candidates were screened first and found genuinely weaker: first-time
+> national SIM issuance's own governing regulation (Peraturan Kepolisian No.
+> 5 Tahun 2021, retrieved directly from `korlantas.polri.go.id`, no
+> login/CAPTCHA/WAF) carries no attached application-form lampiran, and its
+> only online channel (the "Digital Korlantas POLRI" mobile app) is
+> login/NIK/biometric-gated with no downloadable user guide found; vehicle
+> registration's own governing regulation (Peraturan Kepolisian No. 7 Tahun
+> 2021) attaches only a province vehicle-plate-code lookup table as its
+> lampiran, not an application form, and its citizen-facing guidance page is
+> checklist-level prose with no field-by-field detail. This closes
+> Indonesia's DMV vertical (its 2nd of 6 verticals modelled, after Business
+> Formation, GOV-1546) and, since Indonesia was the only jurisdiction
+> lacking a DMV-vertical schema, closes the **global DMV vertical to 18/18
+> jurisdictions (100%)**. Two fields (`appointmentDate`, `paymentMethod`) sit
+> inside `style="display:none"` containers in the source's own static markup
+> and two supporting documents (`kitap`, `existingInternationalLicence`) are
+> modelled as conditionally required by their own label text rather than a
+> fabricated gating field the live form does not expose — see the document's
+> own VERIFICATION.md for these and other disclosed judgment calls.
 
 > **Update (2026-07-07, GOV-1546):** Indonesia opens as the registry's
 > **18th jurisdiction** with `id/bkpm/oss-nib-registration-individual-umk`
@@ -932,14 +962,26 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (17/18 jurisdictions)
+### DMV — Vehicle Registration, Licensing, Permits (18/18 jurisdictions — 100%)
 
-Every jurisdiction except Indonesia (opened this cycle via its Business
-Formation vertical only, GOV-1546; DMV is an open, unscreened backlog
-candidate) now has at least one
-DMV-vertical schema (driver licensing and/or vehicle registration/transfer).
-**Brazil** (`br/mg/detran/comunicacao-de-venda-de-veiculo`, GOV-1526) is new
-this cycle and closes the vertical to 17/17 — DETRAN-MG's (Minas Gerais) own
+Every jurisdiction now has at least one DMV-vertical schema (driver
+licensing, International Driving Permit, and/or vehicle
+registration/transfer). **Indonesia** (`id/korlantas/international-driving-permit-registration`,
+GOV-1553) is new this cycle and closes the vertical to 18/18 (100%) —
+sourced from Korlantas POLRI's own live "SIM Internasional" (International
+Driving Permit) online registration portal (`siminternasional.korlantas.polri.go.id`),
+whose static, unauthenticated HTML embeds the full "Registrasi SIM
+Internasional" form's field markup, read directly rather than paraphrased.
+First-time national SIM issuance and vehicle registration (STNK/BPKB) were
+both screened first and found to have no genuine field-level, unauthenticated
+source: their governing regulations (Peraturan Kepolisian No. 5 and No. 7
+Tahun 2021, respectively) attach no application-form lampiran (only a
+vehicle-plate-code lookup table, for the latter), and their online channels
+are either checklist-level prose or gated behind full mobile-app account
+creation (NIK, OTP, and E-KTP biometric-liveness verification) with no
+downloadable user guide — see the document's own VERIFICATION.md for the
+full candidate-screening record. **Brazil** (`br/mg/detran/comunicacao-de-venda-de-veiculo`, GOV-1526) had
+closed the vertical to 17/17 in a prior cycle — DETRAN-MG's (Minas Gerais) own
 "Requerimento de Comunicação de Venda," the seller-side notice of vehicle
 sale required under art. 134 of the Código de Trânsito Brasileiro, filed
 with the state vehicle registry to record the buyer and release the seller
@@ -1013,6 +1055,7 @@ within an already-covered vertical:
 - **Brazil:** only the seller-side sale-notification filing is modelled (`br/mg/detran/comunicacao-de-venda-de-veiculo`, GOV-1526, Minas Gerais); `br/cnh` first driving licence remains a confirmed dead end (gov.br-SSO-gated, see GOV-1400), and the buyer-side CRV/ATPV-e ownership-transfer paperwork and full first-time/new-vehicle registration remain open sub-process candidates for a future cycle, contingent on finding a genuine citizen-facing application form for either (as opposed to a staff manual or a system-generated output) from a non-gov.br-gated state DETRAN.
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
+- **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
 ### Business Formation — Incorporation, LLC, Company Registration (18/18 jurisdictions — 100%)
 
@@ -1269,7 +1312,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ID** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **ID** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1496,5 +1539,10 @@ GOV-1526 (`br/mg/detran/comunicacao-de-venda-de-veiculo` authoring, Brazil
 4th vertical, DMV, global DMV vertical closed to 17/17 / 100%), updated by
 GOV-1533 (`ie/dttas/learner-permit-application` authoring, Ireland DMV
 sub-process expansion — first-time learner permit application; UAE Passport
-re-screened and re-confirmed weak, not picked)
+re-screened and re-confirmed weak, not picked), updated by GOV-1546
+(`id/bkpm/oss-nib-registration-individual-umk` authoring, Indonesia opened as
+18th jurisdiction, Business Formation, global Business Formation vertical
+closed to 18/18 / 100%), updated by GOV-1553
+(`id/korlantas/international-driving-permit-registration` authoring,
+Indonesia 2nd vertical, DMV, global DMV vertical closed to 18/18 / 100%)
 
