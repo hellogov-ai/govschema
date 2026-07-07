@@ -1,0 +1,421 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "co/registraduria/duplicado-cedula-ciudadania",
+  "version": "1.0.0",
+  "title": "Colombia National ID (Cédula de Ciudadanía) Online Duplicate Request",
+  "description": "Request and pay online for a duplicate/replacement Colombian national ID card (cédula de ciudadanía) through the Registraduría Nacional del Estado Civil's (RNEC) 'Duplicado de Cédula en Línea' web application, hosted on epagos.registraduria.gov.co. Closes Colombia's sixth and final vertical (National ID & Civic Documents), after three prior 'GovSchema Standard Research' cycles (GOV-1567, GOV-1595, GOV-1602) each screened this gap and found the main registraduria.gov.co domain returning HTTP 403 to every direct fetch. This cycle found that the epagos.registraduria.gov.co subdomain the same service actually runs on is not behind that gate. Covers new-account registration, the payment wizard's Datos Básicos/Datos de Contacto/Trámite/Preguntas de Seguridad/Registraduría de Entrega steps, and the online PSE (Pagos Seguros en Línea) payment itself. Scoped to an adult Cédula de Ciudadanía holder whose currently-held physical card is the 'cédula amarilla con hologramas' issued after 2019 — the live application's own 2026 warning modal (not present in the sourcing PDF manual, which predates it) states this online service only produces a duplicate of that card generation; holders of an older card must apply in person. Does not model: account username/password creation (auto-generated and emailed, an authentication mechanic rather than applicant data); the Tarjeta de Identidad (minor's ID) duplicate pathway, which the registration screen's own tipoDocumento dropdown supports but which no further downstream screen in this source confirms; the third-party PSE bank-selection and bank-hosted payment pages themselves; the emailed Comprobante de Documento en Trámite (a receipt, not an input); and the separate 'Estado del Trámite' status-lookup tool. This document does not submit a request; the live epagos.registraduria.gov.co application and the Registraduría Nacional del Estado Civil are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Registraduría Nacional del Estado Civil",
+    "abbreviation": "RNEC",
+    "url": "https://www.registraduria.gov.co/"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://epagos.registraduria.gov.co/tramites_web/manuales/Manual%20de%20usuario%20-%20Tr%C3%A1mites%20web%20con%20pago%20en%20l%C3%ADnea.pdf",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "\"Manual de Usuario Pago y Solicitud del Duplicado del Documento de Identidad en Línea\", Versión 5, RNEC (Gerencia de Informática — Coordinación de Desarrollo y Programación), dated 2018-09-21 on its own cover page. Hosted unauthenticated on epagos.registraduria.gov.co (the same path on the main www.registraduria.gov.co domain returns HTTP 403). Cross-checked against the live epagos.registraduria.gov.co/registro/registro.php and epagos.registraduria.gov.co/tramites_web/ raw HTML, both fetched directly and unauthenticated on 2026-07-07."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "This is a 'GovSchema Standard Research' cycle (GOV-1616), a general research-analyst brief covering DMV, Business Formation, Visa, Passport, Taxes, and National ID & Civic Documents across all jurisdictions. Three prior cycles (GOV-1567, GOV-1595, GOV-1602) had each screened Colombia's National ID gap and stopped at the same wall: www.registraduria.gov.co returns HTTP 403 to every direct fetch. This cycle found the actual service lives on a distinct, unblocked subdomain (epagos.registraduria.gov.co) and authored directly against its own live HTML plus its own official PDF user manual (served from the same subdomain). Field labels, input names, HTML5 validation patterns, and required markers for the Registro screen were read directly from the live page's raw HTML; the payment wizard's downstream screens (no longer reachable without an activated account) were read from the manual's own embedded page screenshots (its text layer carries only picture captions, not field labels), rendered via pdfjs-dist@3.11.174 + canvas at 2.5x-5x scale. See VERIFICATION.md for the full sourcing record, field inventory, and every disclosed judgment call, including a confirmed 2018-to-2026 site change (the Registro screen's two phone fields were removed) and a 2026-only eligibility gate (a card-generation restriction) not present in the 2018 manual at all. Status remains 'draft', not 'verified': no live submission was attempted (see VERIFICATION.md, Test run)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "tipoDocumento",
+      "label": "Tipo de Documento",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Confirmed live in the current (2026) <select id=\"tipo_id\"> markup on the Registro screen; exactly two values. This document scopes only to the Cédula de ciudadanía pathway — every downstream screen in this source (Trámite, Preguntas de Seguridad, etc.) only confirms a 'C.C. - Duplicado' option; no downstream screen confirming a parallel Tarjeta de identidad duplicate flow was found, so that pathway is left out of scope (see VERIFICATION.md).",
+      "sourceRef": "Live HTML, epagos.registraduria.gov.co/registro/registro.php, <select id=\"tipo_id\">",
+      "validation": {
+        "enum": ["Cédula de ciudadanía", "Tarjeta de identidad"]
+      }
+    },
+    {
+      "name": "numeroIdentificacion",
+      "label": "Número de Identificación",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's current national ID number, as issued by RNEC.",
+      "sourceRef": "Live HTML, epagos.registraduria.gov.co/registro/registro.php, input#numero_id",
+      "validation": {
+        "pattern": "^[0-9]{2,11}$",
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "nombres",
+      "label": "Nombres",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Live HTML, epagos.registraduria.gov.co/registro/registro.php, input#nombres",
+      "validation": {
+        "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑãÃüÜàèìòùÀÈÌÒÙ ()._-]+$",
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "apellidos",
+      "label": "Apellidos",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Live HTML, epagos.registraduria.gov.co/registro/registro.php, input#apellidos",
+      "validation": {
+        "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑãÃüÜàèìòùÀÈÌÒÙ ()._-]+$",
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Used to send the account-activation link (valid 24 hours per the manual's own text, Ilustración 5) and, later, login-recovery messages.",
+      "sourceRef": "Live HTML, epagos.registraduria.gov.co/registro/registro.php, input#correo",
+      "validation": {
+        "pattern": "[a-z0-9._-]+[a-z0-9_-]+@[a-z0-9.-]+\\.[a-z]{2,3}$",
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "confirmarCorreoElectronico",
+      "label": "Correo Electrónico (confirmar)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must match correoElectronico; see crossFieldValidation.",
+      "sourceRef": "Live HTML, epagos.registraduria.gov.co/registro/registro.php, input#correo2",
+      "validation": {
+        "pattern": "[a-z0-9._-]+[a-z0-9_-]+@[a-z0-9.-]+\\.[a-z]{2,3}$",
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "aceptaPoliticasPrivacidad",
+      "label": "Acepto las políticas de privacidad",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "Checkbox linked to RNEC's own IT security policy ('políticas de seguridad informática establecidas mediante resolución 9025 de 2012'). Unlike its sibling fields, this checkbox carries no native HTML `required` attribute, but the page's own adjacent `#errorpoliticas` error-message element confirms the live form enforces it client-side before allowing registration.",
+      "sourceRef": "Live HTML, epagos.registraduria.gov.co/registro/registro.php, input[name=\"politicas\"]"
+    },
+    {
+      "name": "tipoDocumentoSolicitante",
+      "label": "Tipo de Documento",
+      "type": "string",
+      "required": true,
+      "description": "Datos Básicos screen (payment wizard, after login). Shown as a dropdown in its own 'Seleccione una opción...' (unselected) state in the manual's screenshot, so no enum is asserted here — plausibly the same tipoDocumento list confirmed on the Registro screen, but not independently confirmed on this specific screen.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 8 (Datos Básicos)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "numeroIdentificacionSolicitante",
+      "label": "Número de Identificación",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Re-confirms the identity of the person requesting the duplicate on the Datos Básicos screen; same real-world value as numeroIdentificacion entered at registration.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 8 (Datos Básicos)",
+      "validation": { "maxLength": 11 }
+    },
+    {
+      "name": "nombresCompletos",
+      "label": "Nombres completos",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "RNEC manual — p.6, Ilustración 8 (Datos Básicos)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "apellidosCompletos",
+      "label": "Apellidos completos",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "RNEC manual — p.6, Ilustración 8 (Datos Básicos)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "telefonoCelular",
+      "label": "Teléfono celular",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "'(10 dígitos)' per the source's own field hint. This manual uses no required-field asterisk anywhere (unlike this registry's other Colombian sources, e.g. the Cancillería SITAC guide) — required is inferred from the Datos de Contacto screen's own imperative instruction ('Deberá ingresar los datos de contacto'), applied uniformly to every field on this screen; see VERIFICATION.md.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 9 (Datos de Contacto)",
+      "validation": {
+        "pattern": "^[0-9]{10}$",
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "telefonoFijo",
+      "label": "Teléfono fijo",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "'(8 dígitos)' per the source's own field hint. See telefonoCelular's description for the required-field inference discipline used on this screen.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 9 (Datos de Contacto)",
+      "validation": {
+        "pattern": "^[0-9]{8}$",
+        "maxLength": 8
+      }
+    },
+    {
+      "name": "correoElectronicoContacto",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Datos de Contacto screen (distinct data-capture moment from the Registro screen's correoElectronico, per this source's own two-screen structure) — the 7.1 Comprobante de Documento en Trámite (claim receipt) is sent here.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 9 (Datos de Contacto)",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "confirmarCorreoElectronicoContacto",
+      "label": "Confirmar Correo Electrónico",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Must match correoElectronicoContacto; see crossFieldValidation.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 9 (Datos de Contacto)",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "departamentoResidencia",
+      "label": "Departamento de residencia",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown shown unselected ('Seleccione una opción...') in the source; parent of municipioResidencia. No enum asserted.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 9 (Datos de Contacto)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "municipioResidencia",
+      "label": "Municipio de residencia",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on departamentoResidencia, shown unselected in the source. No enum asserted.",
+      "sourceRef": "RNEC manual — p.6, Ilustración 9 (Datos de Contacto)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "direccionResidencia",
+      "label": "Dirección de residencia",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "RNEC manual — p.6, Ilustración 9 (Datos de Contacto)",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "tipoTramite",
+      "label": "Tipo de Trámite",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; only one confirmed on-screen value ('C.C. - Duplicado', COP $43,050 fee shown alongside it in the 2018 manual — the live fee is not re-confirmed by this cycle and is not encoded as a field value). Given the Registro screen's own tipoDocumento dropdown supports a second document type (Tarjeta de identidad), a parallel 'T.I. - Duplicado' option is plausible but not confirmed anywhere in this source — no second enum value is fabricated.",
+      "sourceRef": "RNEC manual — p.7, Ilustración 10 (Trámite)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "aceptaCondicionesTramite",
+      "label": "Acepto",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "'Acepto' / 'NO Acepto' buttons gating the Trámite screen, shown alongside the source's own explanatory text: 'El duplicado de su cédula de ciudadanía será fiel copia del último documento emitido por la Registraduría Nacional del Estado Civil. Si requiere actualizar o rectificar datos de su cédula de ciudadanía como: nombres, apellidos, foto, firma y/o huellas o tiene descuentos de ley, deberá realizar el pago directamente en el banco y agendar una cita.'",
+      "sourceRef": "RNEC manual — p.7, Ilustración 10 (Trámite)"
+    },
+    {
+      "name": "respuestaPreguntaEstatura",
+      "label": "¿Cuál de las siguientes opciones corresponde a la estatura registrada en su cédula de ciudadanía? (metros)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Identity-verification question with 3 radio-button options. The source's own worked example shows 3 plausible values (e.g. '1,84', '1,74', '1,8'); these are dynamically generated per applicant from RNEC's own civil-registry record (one genuine value plus decoy distractors), not a fixed, universal enum, so this field is modelled as an open string rather than an enum of specific heights. The source's own note: answering any of the three security questions incorrectly requires completing the process in person instead.",
+      "sourceRef": "RNEC manual — p.7, Ilustración 11 (Preguntas de Seguridad), question 1"
+    },
+    {
+      "name": "respuestaPreguntaAnioExpedicion",
+      "label": "¿Cuál de las siguientes opciones corresponde al año de expedición de su cédula de ciudadanía por primera vez?",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Same per-applicant-generated multiple-choice discipline as respuestaPreguntaEstatura (source's own worked example: '2007', '2011', '2004').",
+      "sourceRef": "RNEC manual — p.7, Ilustración 11 (Preguntas de Seguridad), question 2"
+    },
+    {
+      "name": "respuestaPreguntaFechaCumpleanos",
+      "label": "¿Cuál de las siguientes opciones corresponde a su fecha de cumpleaños en su cédula de ciudadanía?",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Same per-applicant-generated multiple-choice discipline as respuestaPreguntaEstatura (source's own worked example: '01 de marzo', '02 de noviembre', '29 de octubre').",
+      "sourceRef": "RNEC manual — p.7, Ilustración 11 (Preguntas de Seguridad), question 3"
+    },
+    {
+      "name": "departamentoEntrega",
+      "label": "Departamento",
+      "type": "string",
+      "required": true,
+      "description": "Registraduría de Entrega screen: the department where the applicant will collect the finished card. Dropdown shown unselected in the source; parent of municipioEntrega. No enum asserted.",
+      "sourceRef": "RNEC manual — p.8, Ilustración 12 (Registraduría de Entrega)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "municipioEntrega",
+      "label": "Municipio",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on departamentoEntrega, shown unselected in the source. No enum asserted.",
+      "sourceRef": "RNEC manual — p.8, Ilustración 12 (Registraduría de Entrega)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "oficinaEntrega",
+      "label": "Oficina",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on municipioEntrega, naming the specific Registraduría office where the applicant will collect the card. Shown unselected in the source. No enum asserted.",
+      "sourceRef": "RNEC manual — p.8, Ilustración 12 (Registraduría de Entrega)",
+      "validation": { "maxLength": 150 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "pagoDuplicadoCedula",
+      "label": "Pago en línea del duplicado de cédula de ciudadanía (PSE)",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "Paid via PSE (Pagos Seguros en Línea) from a Colombian savings or checking account, per the manual's own §1 Requisitos ('Contar con una cuenta de ahorros o corriente para realizar el pago... El pago se realizará a través del proveedor de servicios electrónicos (PSE)'). The Confirmar Pago screen (Ilustración 13) shows the amount, recipient ('Fondo Rotatorio de la Registraduría Nacional del Estado Civil', per the live PSE-hosting confirmation page), and the source's own irrevocability warning verbatim: 'Una vez aprobado el pago, NO se realizará devolución del dinero.' The bank-selection and bank-hosted payment pages themselves (Ilustración 14-16) are third-party PSE/bank UI, not RNEC-controlled applicant-input fields, and are out of scope.",
+      "sourceRef": "RNEC manual — p.9-10, Ilustración 13-16"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "emailMustMatchConfirmation",
+      "compare": {
+        "field": "confirmarCorreoElectronico",
+        "operator": "equals",
+        "compareTo": "correoElectronico"
+      }
+    },
+    {
+      "id": "contactEmailMustMatchConfirmation",
+      "compare": {
+        "field": "confirmarCorreoElectronicoContacto",
+        "operator": "equals",
+        "compareTo": "correoElectronicoContacto"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "registro",
+      "title": "Registro de Nuevo Usuario",
+      "fields": [
+        "tipoDocumento",
+        "numeroIdentificacion",
+        "nombres",
+        "apellidos",
+        "correoElectronico",
+        "confirmarCorreoElectronico",
+        "aceptaPoliticasPrivacidad"
+      ],
+      "next": "datos_basicos"
+    },
+    {
+      "id": "datos_basicos",
+      "title": "Datos Básicos",
+      "fields": [
+        "tipoDocumentoSolicitante",
+        "numeroIdentificacionSolicitante",
+        "nombresCompletos",
+        "apellidosCompletos"
+      ],
+      "next": "datos_contacto"
+    },
+    {
+      "id": "datos_contacto",
+      "title": "Datos de Contacto",
+      "fields": [
+        "telefonoCelular",
+        "telefonoFijo",
+        "correoElectronicoContacto",
+        "confirmarCorreoElectronicoContacto",
+        "departamentoResidencia",
+        "municipioResidencia",
+        "direccionResidencia"
+      ],
+      "next": "tramite"
+    },
+    {
+      "id": "tramite",
+      "title": "Trámite",
+      "fields": [
+        "tipoTramite",
+        "aceptaCondicionesTramite"
+      ],
+      "next": "preguntas_seguridad"
+    },
+    {
+      "id": "preguntas_seguridad",
+      "title": "Preguntas de Seguridad",
+      "fields": [
+        "respuestaPreguntaEstatura",
+        "respuestaPreguntaAnioExpedicion",
+        "respuestaPreguntaFechaCumpleanos"
+      ],
+      "next": "registraduria_entrega"
+    },
+    {
+      "id": "registraduria_entrega",
+      "title": "Registraduría de Entrega",
+      "fields": [
+        "departamentoEntrega",
+        "municipioEntrega",
+        "oficinaEntrega"
+      ],
+      "next": "confirmar_pago"
+    },
+    {
+      "id": "confirmar_pago",
+      "title": "Confirmar Pago",
+      "fields": []
+    }
+  ]
+}
