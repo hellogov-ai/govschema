@@ -134,19 +134,19 @@ unauthenticated, unambiguous, and directly citable article-by-article.
 
 ## Field inventory (Phase 2)
 
-All 17 `fields[]` entries and the 4 `documents[]` entries carry their own
+All 18 `fields[]` entries and the 4 `documents[]` entries carry their own
 Art./pkt `sourceRef` inline in `schema.json`. Summary by step:
 
 | Step | Fields | Required for this v1.0.0? |
 |---|---|---|
 | Eligibility | `isPolishCitizen` | Required (folds Art. 33 ust. 1 pkt 1 lit. e `obywatelstwo` into a single gate — judgment call 1) |
 | Applicant details | `nazwisko`, `imiona`, `dataUrodzenia`, `miejsceUrodzenia`, `plec`, `pesel` | All required — Art. 33 ust. 1 pkt 1 lit. a/b/c/d/f/g |
-| Supplementary identity data | `nazwiskoRodowe`, `poprzednieNazwiska`, `imieOjca`, `imieMatki`, `nazwiskoRodoweMatki` | All optional — Art. 38 ust. 5 is discretionary ("może żądać"), not universal (judgment call 2) |
+| Supplementary identity data | `nazwiskoRodowe`, `poprzednieNazwiska`, `imieOjca`, `imieMatki`, `nazwiskoRodoweMatki`, `nazwiskoRodoweOjca` | All optional — Art. 38 ust. 5 is discretionary ("może żądać"), not universal (judgment call 2) |
 | Correspondence and contact | `correspondenceAddressLine`, `correspondenceCity`, `correspondencePostalCode` required; `numerTelefonuKontaktowy`, `adresEmailKontaktowy` optional | Address required per Art. 33 ust. 1 pkt 4; phone/email optional per Art. 33 ust. 3 |
 | Fee | `claimsReducedOrExemptFee` | Optional |
 | Documents | `currentIdentityDocument` (optional), `photo` (required), `proofOfFeePayment` (required), `reducedOrExemptFeeProof` (optional, `requiredWhen` `claimsReducedOrExemptFee` true) | Per Art. 36 |
 
-Total: **17 fields** plus **4 `documents[]` entries**. No
+Total: **18 fields** plus **4 `documents[]` entries**. No
 `crossFieldValidation` or `exclusivityGroups` are modelled — the one
 conditional relationship this cycle found structurally confirmable
 (`reducedOrExemptFeeProof`'s dependency on `claimsReducedOrExemptFee`) is
@@ -163,20 +163,38 @@ expressed as a `requiredWhen` gate on the document itself.
    the exact same treatment `pl/mswia/wniosek-o-wydanie-dowodu-osobistego`
    gives its own analogous `obywatelstwoPolskie` field, and this document
    follows that sibling schema's precedent directly.
-2. **The five "supplementary identity data" fields
+2. **The six "supplementary identity data" fields
    (`nazwiskoRodowe`/`poprzednieNazwiska`/`imieOjca`/`imieMatki`/
-   `nazwiskoRodoweMatki`) are modelled as optional, not required,** even
-   though the sibling dowód osobisty schema requires close analogues
-   (`imieOjca`, `imieMatki`, `nazwiskoRodoweMatki`) unconditionally. This is
-   a real difference in the two source instruments, not an oversight: the
-   dowód osobisty form's own AcroForm makes these required fields on every
-   application; the passport Act's Art. 38 ust. 5 instead frames the
-   office's right to request this data as discretionary ("może żądać
-   podania"), used only when needed to establish identity, citizenship, or
-   other data necessary for the application — a genuine conditional
-   collection, not a universal one. Modelling it as optional reflects the
-   source's own wording rather than importing the sibling schema's
-   requiredness by analogy.
+   `nazwiskoRodoweMatki`/`nazwiskoRodoweOjca`) are modelled as optional, not
+   required,** even though the sibling dowód osobisty schema requires close
+   analogues (`imieOjca`, `imieMatki`, `nazwiskoRodoweMatki`) unconditionally.
+   This is a real difference in the two source instruments, not an
+   oversight: the dowód osobisty form's own AcroForm makes these required
+   fields on every application; the passport Act's Art. 38 ust. 5 instead
+   frames the office's right to request this data as discretionary ("może
+   żądać podania"), used only when needed to establish identity,
+   citizenship, or other data necessary for the application — a genuine
+   conditional collection, not a universal one. Modelling it as optional
+   reflects the source's own wording rather than importing the sibling
+   schema's requiredness by analogy.
+   **Correction (post-review, GOV-1687):** an earlier revision of this
+   document carried over the sibling dowód osobisty schema's exact 3-field
+   set (`imieOjca`/`imieMatki`/`nazwiskoRodoweMatki`) by analogy instead of
+   independently transcribing Art. 38 ust. 5 pkt 2's own text, which names
+   given names, surnames, *and* birth surnames for **both** parents. The
+   review gate caught this and `nazwiskoRodoweOjca` (father's birth
+   surname, the direct parallel to the modelled `nazwiskoRodoweMatki`) has
+   been added. The parents' current/plain surnames (`nazwisko matki`/
+   `nazwisko ojca`, distinct from their birth surnames) are pkt 2 text but
+   are deliberately still **not** modelled as separate fields in this
+   v1.0.0: the parent's *birth* surname is the datum this Act's own drafting
+   treats as identity-corroborating (it is stable and does not change on
+   marriage, unlike a current surname), and the sibling identity-card form's
+   own field set independently confirms birth surname, not current surname,
+   as the data element gathered for this purpose in Polish civil-registry
+   practice. A future revision could add `nazwiskoMatki`/`nazwiskoOjca` if a
+   field-numbered source ever confirms the office collects them separately
+   from the birth-surname fields.
 3. **`plec`'s two enum values (`kobieta`/`mężczyzna`) are borrowed from
    `pl/mswia/wniosek-o-wydanie-dowodu-osobistego`'s own confirmed AcroForm
    export values, not from this document's own source review** — the Act's
@@ -281,7 +299,7 @@ channels supplied, and a student (18-26) reduced-fee claim with proof.**
 "Zielińska"`, `imiona: "Aleksandra"`, `dataUrodzenia: "2001-11-19"`,
 `miejsceUrodzenia: "Wrocław"`, `plec: "kobieta"` (valid enum member),
 `pesel: "01111912345"` (11 digits), `nazwiskoRodoweMatki: "Kowalczyk"`
-supplied (the other four optional identity-corroboration fields
+supplied (the other five optional identity-corroboration fields
 deliberately left absent, to also exercise the "optional and independently
 settable" path), `correspondenceAddressLine`/`correspondenceCity` supplied,
 `correspondencePostalCode: "50-051"` (matches `NN-NNN`),
