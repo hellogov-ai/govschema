@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**19 jurisdictions** | **256 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **257 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1609):** Colombia gains
+> `co/cancilleria/passport-citizen-data-registration`, giving it a 5th vertical
+> (Passport) alongside DMV (GOV-1567), Business Formation (GOV-1588), Taxes
+> (GOV-1595), and Visa (GOV-1602). A prior cycle (GOV-1595) had screened
+> Colombia's Passport candidate and found only
+> `tramitesmre.cancilleria.gov.co/tramites/enlinea/pasaporte/solicitar.xhtml`
+> — a narrow, ~15-field, renewal/change-only form with one AJAX-gated dropdown
+> (`inputMotivoSolicitud`), left open as a weak backlog candidate. This cycle
+> re-confirmed that finding still holds (replayed the live PrimeFaces AJAX
+> call directly; the dropdown still ships empty) but found a second, distinct,
+> and substantially richer Passport-process form the prior screening had not
+> examined: `registrarCiudadano.xhtml` ("Registro de Ciudadano"), the online
+> citizen-data-registration step every passport applicant — first-time or
+> renewing — completes before finishing the process in person at a Cancillería
+> office. Sourced primarily from the live form's own initial panel
+> (unauthenticated, no bot-mitigation gate, confirmed live) cross-checked
+> against a 2018-dated Cancillería "Guía de Usuario" walkthrough PDF that
+> documents the form's full downstream flow (the guide's own footer names the
+> exact live URL this cycle independently reconfirmed still resolves in 2026).
+> Models 43 fields across 7 sections — document identification, personal data,
+> birth data, residence/contact data, an optional emergency-contact block,
+> academic background, and a security question — scoped to a Colombian
+> national adult applicant (Cédula de Ciudadanía). Deliberately does not model
+> the Tarjeta de Identidad/Registro Civil minor-applicant pathways, the
+> downstream `solicitar.xhtml` reason/office-selection step (left open, per
+> GOV-1595's own screening), or the in-person finalization (original document
+> presentation, photograph, fingerprints, signature) — see the document's own
+> VERIFICATION.md for the full sourcing record, the guide-vs-live cross-check
+> table, and every disclosed judgment call, including a genuine site change
+> since 2018 (`fechaNacimiento` relocated into the form's first panel) and one
+> newly-added enum value (`LICENCIA DE CONDUCCIÓN` added to `tipoDocumento`).
+> This gives Colombia 5 of its 6 verticals; only National ID/Civic Documents
+> remains open. Colombia's Passport vertical now stands at 18/19 jurisdictions
+> globally (up from 17/19).
 
 > **Update (2026-07-07, GOV-1602):** Colombia gains
 > `co/cancilleria/visa-application-individual`, giving it a 4th vertical
@@ -1656,7 +1691,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CO** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **CO** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

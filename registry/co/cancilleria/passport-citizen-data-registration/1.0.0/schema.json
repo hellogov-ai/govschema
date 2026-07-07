@@ -1,0 +1,708 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "co/cancilleria/passport-citizen-data-registration",
+  "version": "1.0.0",
+  "title": "Colombia Passport Citizen Data Registration (Registro de Ciudadano)",
+  "description": "Register citizen biographic, birth, residence, academic, and security-question data online as the first step of Colombia's passport process, through the Ministerio de Relaciones Exteriores' (Cancillería) Sistema Integral de Trámites al Ciudadano (SITAC) — Registro de Ciudadano, tramitesmre.cancilleria.gov.co. This is a partially-online process: after online data registration, the applicant must still attend a passport office in person to present the original identity document, have a photograph taken, and register fingerprints and signature — this document models only the online data-registration step, not the in-person finalization. Scoped to a Colombian national adult applicant identifying with a Cédula de Ciudadanía; does not model the Tarjeta de Identidad (minor, 7-17) or Registro Civil (minor, 0-6, or any-age minor applying from abroad) pathways, nor the separate, subsequent \"Solicitar Pasaporte\" reason/office/document-delivery step (tramitesmre.cancilleria.gov.co/tramites/enlinea/pasaporte/solicitar.xhtml) that a prior research cycle (GOV-1595) screened and left open as a narrow, ~15-field, renewal/change-only candidate. This document does not submit an application; the live SITAC platform and the Ministerio de Relaciones Exteriores are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministerio de Relaciones Exteriores de Colombia (Cancillería)",
+    "abbreviation": "Cancillería",
+    "url": "https://www.cancilleria.gov.co/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://tramitesmre.cancilleria.gov.co/tramites/enlinea/registrarCiudadano.xhtml",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "SITAC Registro de Ciudadano live form (primary source for the documento step, independently re-fetched and re-derived this cycle); \"Guía de Usuario – Trámite parcialmente en línea para Pasaportes\" (Cancillería de Colombia, elaborado por Claudia M. Forero / Julián Villarreal, revisado y aprobado por Embajadora Maria del Pilar Gómez, Coordinadora GIT Pasaportes Calle 53, dated 2018-02-28, https://www.cancilleria.gov.co/sites/default/files/FOTOS2018/manual_del_usuario_pasaporte.pdf) — a screenshot-driven, field-by-field walkthrough of the same registrarCiudadano.xhtml form, used as the sole source for the personal/nacimiento/residencia/informacionAdicional/academica/seguridad steps, which sit behind a reCAPTCHA gate this cycle did not solve."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "A `GovSchema Standard Research` cycle (GOV-1609). Colombia had 4 of its 6 verticals modelled going into this cycle (DMV, Business Formation, Taxes, Visa); Passport and National ID were open. A prior cycle (GOV-1595) had screened Colombia's Passport candidate and found only the `solicitar.xhtml` reason/office form (~15 fields, renewal/change-only, one AJAX-gated dropdown) — this cycle located a second, distinct, and richer Passport-process form the prior screening had not examined: `registrarCiudadano.xhtml`, the citizen-data-registration step every applicant (first-time or renewing) completes online before finishing in person. Its initial panel was independently re-fetched and cross-checked live against a 2018-dated Cancillería user guide describing the same form; the two matched on every field except one addition (LICENCIA DE CONDUCCIÓN added to tipoDocumento's enum) and one repositioning (fechaNacimiento moved into the initial panel). The guide's own remaining screens (personal, birth, residence, academic, security-question data) sit behind a reCAPTCHA challenge this cycle did not solve, so those fields are sourced from the guide alone, not independently re-confirmed live this cycle — `status` remains `draft`, not `verified`. See VERIFICATION.md for the full sourcing record, every disclosed judgment call, and the mock conformance run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "tipoDocumento",
+      "label": "Tipo de Documento",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Confirmed live in the current (2026) DOM's static <select> markup: CC, CE, DE, OE, PA, RC, TI, LC. The 2018 guide (p.4) screenshots the same dropdown with only 7 of these 8 values — LICENCIA DE CONDUCCIÓN (LC) is not present in the guide's screenshot, so it was evidently added to the shared form after 2018. The guide's own prose recommends only three of these eight codes for a passport applicant specifically: Cédula de Ciudadanía (adult), Tarjeta de Identidad (minor, 7-17, in Colombia), Registro Civil (minor, 0-6, or any-age minor abroad). This document scopes to the Cédula de Ciudadanía (adult) pathway only; the two minor-applicant document types are out of scope.",
+      "sourceRef": "Live form, tramitesmre.cancilleria.gov.co/registrarCiudadano.xhtml, panel Datos Documento",
+      "validation": {
+        "enum": [
+          "CC",
+          "CE",
+          "DE",
+          "OE",
+          "PA",
+          "RC",
+          "TI",
+          "LC"
+        ]
+      }
+    },
+    {
+      "name": "numeroDocumento",
+      "label": "Número de Documento",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "\"En esta casilla digite únicamente en números, el documento del titular del pasaporte; cédula de ciudadanía o Nuip (Número único de identificación personal)\" — digits only, per the guide's own instruction.",
+      "sourceRef": "Live form, tramitesmre.cancilleria.gov.co/registrarCiudadano.xhtml, panel Datos Documento; Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.5",
+      "validation": {
+        "pattern": "^[0-9]+$",
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "nacionalidad",
+      "label": "Nacionalidad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Auto-filled by the live form when tipoDocumento is selected (\"Al seleccionar alguna de las opciones anteriormente descritas, automáticamente el sistema diligenciará el campo de NACIONALIDAD\") — the guide's own worked example shows CÉDULA DE CIUDADANÍA auto-resolving to \"COLOMBIA\". This cycle attempted to reproduce the underlying PrimeFaces AJAX call live (tipoDocumento=CC) but the response returned an empty option list, confirming the prior cycle's own finding that this dropdown's coded values are not recoverable from an unauthenticated automated request; the guide's worked example is the only evidence of its populated value. No enum asserted beyond the single confirmed example.",
+      "sourceRef": "Live form, tramitesmre.cancilleria.gov.co/registrarCiudadano.xhtml, panel Datos Documento; Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.5",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "lugarExpedicion",
+      "label": "Lugar de Expedición",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Place of issue of the identity document cited in numeroDocumento (free-text place name, not a coded municipality list per the guide's own worked example, a plain text box).",
+      "sourceRef": "Live form, tramitesmre.cancilleria.gov.co/registrarCiudadano.xhtml, panel Datos Documento; Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.5",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fechaExpedicion",
+      "label": "Fecha de Expedición",
+      "type": "date",
+      "required": true,
+      "description": "Date of issue of the identity document cited in numeroDocumento. The live date picker and the guide's own screenshot both display/accept dd/mm/yyyy.",
+      "sourceRef": "Live form, tramitesmre.cancilleria.gov.co/registrarCiudadano.xhtml, panel Datos Documento; Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.5-6"
+    },
+    {
+      "name": "fechaNacimiento",
+      "label": "Fecha de Nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Confirmed live, with a required-field asterisk, inside the current form's initial Datos Documento panel. The 2018 guide instead shows this same field inside a later \"Datos de Nacimiento\" panel (p.8), reached only after the reCAPTCHA/Continuar step — the live site has since moved birth-date capture into the first panel, a genuine change since 2018. The live panel's own screen-reader summary text (\"Los campos Tipo de Documento, Número de Documento, Nacionalidad, Lugar de Expedición, Fecha de Expedición, Autoriza envío de datos personales son requeridos\") does not list Fecha de Nacimiento among the required fields, despite the field's own on-screen label carrying a required-field asterisk — a disclosed discrepancy between the panel's own summary text and its per-field markup; this document trusts the per-field asterisk, consistent with prior-cycle practice.",
+      "sourceRef": "Live form, tramitesmre.cancilleria.gov.co/registrarCiudadano.xhtml, panel Datos Documento"
+    },
+    {
+      "name": "idAutorizaEnvioDatos",
+      "label": "Consiento que mis datos personales sean transferidos en los términos que señala el presente aviso de privacidad",
+      "type": "boolean",
+      "required": true,
+      "description": "Consent checkbox for personal-data processing under the Ministerio de Relaciones Exteriores' privacy notice (Ley 1581 de 2012). Must be checked to proceed past the reCAPTCHA gate.",
+      "sourceRef": "Live form, tramitesmre.cancilleria.gov.co/registrarCiudadano.xhtml, panel Aviso de Privacidad; Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.6"
+    },
+    {
+      "name": "primerNombre",
+      "label": "Primer Nombre",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "\"Diligencie sus datos personales (nombres y apellidos) como aparecen en su último documento de identidad vigente.\" Field-name split (primer/segundo nombre, primer/segundo apellido) follows the same convention already established in this registry's sibling co/cancilleria/visa-application-individual schema, which sources the identical underlying SITAC citizen-data-registration convention.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.7",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "segundoNombre",
+      "label": "Segundo Nombre",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not independently screenshotted in the guide as a distinct box; inferred from the standard Colombian civil-registry name convention (primer/segundo nombre) and the guide's own generic instruction to enter names \"como aparecen en su último documento de identidad vigente,\" mirroring co/cancilleria/visa-application-individual's identical field. Optional since not every applicant has a second given name.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.7",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "primerApellido",
+      "label": "Primer Apellido",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.7",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "segundoApellido",
+      "label": "Segundo Apellido",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional since not every applicant has a second surname, mirroring co/cancilleria/visa-application-individual's identical field.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.7",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "estatura",
+      "label": "Estatura",
+      "type": "integer",
+      "required": true,
+      "description": "\"Ingrese su estatura en centímetros, tal y como aparece en su cédula de ciudadanía.\" No minimum/maximum bound is stated in the source, so none is asserted.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.7"
+    },
+    {
+      "name": "sexo",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full two-value dropdown confirmed on-screen: FEMENINO, MASCULINO.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.7",
+      "validation": {
+        "enum": [
+          "FEMENINO",
+          "MASCULINO"
+        ]
+      }
+    },
+    {
+      "name": "estadoCivil",
+      "label": "Estado Civil",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Full five-value dropdown confirmed on-screen: CASADO(A), DIVORCIADO(A), SOLTERO(A), UNIÓN LIBRE, VIUDO(A).",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.8",
+      "validation": {
+        "enum": [
+          "CASADO(A)",
+          "DIVORCIADO(A)",
+          "SOLTERO(A)",
+          "UNIÓN LIBRE",
+          "VIUDO(A)"
+        ]
+      }
+    },
+    {
+      "name": "identidadEtnica",
+      "label": "Identidad Étnica",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Full seven-value dropdown confirmed on-screen: NINGUNA, AFRODESCENDIENTE, GITANO, INDÍGENA, OTRO, PALENQUERO DE SAN BASILIO, RAIZAL DEL ARCHIPIELAGO DE SAN ANDRES. The form's own Aviso de Privacidad text explicitly names \"el origen étnico [y] racial\" as sensitive data under Colombia's Ley 1581 de 2012 — classified sensitive-pii on that basis. A value must be selected (NINGUNA is the applicable value for an applicant who does not identify with any listed ethnic group), so the field itself is required even though most applicants will select NINGUNA.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.8",
+      "validation": {
+        "enum": [
+          "NINGUNA",
+          "AFRODESCENDIENTE",
+          "GITANO",
+          "INDÍGENA",
+          "OTRO",
+          "PALENQUERO DE SAN BASILIO",
+          "RAIZAL DEL ARCHIPIELAGO DE SAN ANDRES"
+        ]
+      }
+    },
+    {
+      "name": "paisNacimiento",
+      "label": "País (Nacimiento)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Dropdown; the guide's own screenshot shows the field unselected (\"Seleccione...\"), so no enum is asserted.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.8",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ciudadMunicipioNacimiento",
+      "label": "Ciudad/Municipio (Nacimiento)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Type-ahead search-and-select control (magnifying-glass icon); the guide's own worked example enters \"BOGOTA\" and instructs the applicant to \"busque el departamento del lugar de su nacimiento\" — the guide uses \"departamento\" loosely here even though the field's own on-screen label reads \"Ciudad/Municipio,\" the same label used by the later Datos de Residencia y Contacto panel's identical control (p.9). Treated as one field per its own on-screen label, not two.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.8-9",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "paisResidencia",
+      "label": "País (Residencia)",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown; the guide's own screenshot shows the field unselected (\"Seleccione...\"), so no enum is asserted.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ciudadMunicipioResidencia",
+      "label": "Ciudad/Municipio (Residencia)",
+      "type": "string",
+      "required": true,
+      "description": "Type-ahead search-and-select control, same convention as ciudadMunicipioNacimiento.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "direccionResidencia",
+      "label": "Dirección (Residencia)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "telefonoResidencia",
+      "label": "Teléfono",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "\"Digite únicamente en números, el teléfono fijo, móvil y/o código postal (si lo tiene)\" — no required-field asterisk shown in the guide's own screenshot of this box, unlike the país/ciudad/dirección fields above it.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9",
+      "validation": {
+        "pattern": "^[0-9]+$",
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "movilResidencia",
+      "label": "Móvil",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9",
+      "validation": {
+        "pattern": "^[0-9]+$",
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "codigoPostalResidencia",
+      "label": "Código Postal",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9",
+      "validation": {
+        "pattern": "^[0-9]+$",
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "desdeCuandoReside",
+      "label": "Desde cuando reside en ese país",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "paisResidencia",
+        "notEquals": "COLOMBIA"
+      },
+      "description": "\"Si su lugar de residencia es en Colombia, no es necesario que diligencie esta información\" / \"si su lugar de residencia es en el exterior, puede diligenciar los campos anteriores indicando el día, mes y año desde que reside en ese país.\" paisResidencia is itself an always-required field (never absent), so this notEquals gate is safe (GOV-1045 review-gate lesson: never gate on notEquals against a field that can itself be absent).",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9-10"
+    },
+    {
+      "name": "actividadDesempena",
+      "label": "Actividad que desempeña normalmente",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "paisResidencia",
+        "notEquals": "COLOMBIA"
+      },
+      "description": "Full six-value dropdown confirmed on-screen: Trabajo calificado, Trabajo no calificado, Estudio, Hogar, Oficios o actividades independientes, Otra. Same residency-abroad condition as desdeCuandoReside.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.10",
+      "validation": {
+        "enum": [
+          "Trabajo calificado",
+          "Trabajo no calificado",
+          "Estudio",
+          "Hogar",
+          "Oficios o actividades independientes",
+          "Otra"
+        ]
+      }
+    },
+    {
+      "name": "deseaNotificacionesCorreo",
+      "label": "¿Tiene correo electrónico y desea recibir notificaciones de los servicios y sus trámites con la Cancillería?",
+      "type": "boolean",
+      "required": true,
+      "description": "Two-option radio group (Sí/No), required-field asterisk confirmed on-screen.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.9-10"
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "deseaNotificacionesCorreo",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "\"Si usted tiene correo electrónico y desea recibir notificaciones... marque la opción 'SI' e ingrese el correo electrónico respectivo\" — the guide's own screenshot shows this field carrying a required-field asterisk only in the branch where deseaNotificacionesCorreo is Sí.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.10",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "confirmacionCorreoElectronico",
+      "label": "Confirmación Correo Electrónico",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "deseaNotificacionesCorreo",
+        "equals": true
+      },
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.10",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "viajeHastaSeisMeses",
+      "label": "¿Está o estará usted en otro país en un viaje de hasta seis meses?",
+      "type": "boolean",
+      "required": true,
+      "description": "Two-option radio group (Sí/No), required-field asterisk confirmed on-screen.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.10"
+    },
+    {
+      "name": "contactoNombres",
+      "label": "Nombres de Contacto",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "\"Usted puede diligenciar los campos de INFORMACIÓN ADICIONAL, en donde puede relacionar los datos de un familiar o conocido que el Ministerio de Relaciones Exteriores pueda contactar en caso de emergencia... Tenga en cuenta que esta información, no es obligatoria.\" No field in this group carries a required-field asterisk in the guide's own screenshot.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactoDireccion",
+      "label": "Dirección de Contacto",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactoTelefono",
+      "label": "Teléfono de Contacto",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "pattern": "^[0-9]+$",
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "contactoMovil",
+      "label": "Móvil de Contacto",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "pattern": "^[0-9]+$",
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "contactoPais",
+      "label": "País de Contacto",
+      "type": "string",
+      "required": false,
+      "description": "Dropdown; the guide's own screenshot shows the field unselected (\"Seleccione...\"), so no enum is asserted.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactoCiudadMunicipio",
+      "label": "Ciudad/Municipio de Contacto",
+      "type": "string",
+      "required": false,
+      "description": "Type-ahead search-and-select control, same convention as ciudadMunicipioNacimiento.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactoCorreoElectronico",
+      "label": "Correo Electrónico de Contacto",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "contactoConfirmacionCorreoElectronico",
+      "label": "Confirmación Correo Electrónico de Contacto",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "nivelEstudio",
+      "label": "Nivel de Estudio",
+      "type": "enum",
+      "required": true,
+      "description": "Full nine-value dropdown confirmed on-screen: PRIMARIA, BACHILLERATO, TECNICO, TECNOLÓGICO, UNIVERSITARIO, ESPECIALIZACIÓN, MAESTRÍA, DOCTORADO, NINGUNO.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11",
+      "validation": {
+        "enum": [
+          "PRIMARIA",
+          "BACHILLERATO",
+          "TECNICO",
+          "TECNOLÓGICO",
+          "UNIVERSITARIO",
+          "ESPECIALIZACIÓN",
+          "MAESTRÍA",
+          "DOCTORADO",
+          "NINGUNO"
+        ]
+      }
+    },
+    {
+      "name": "areaConocimiento",
+      "label": "Área de Conocimiento",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on nivelEstudio. When nivelEstudio is PRIMARIA or BACHILLERATO, the guide's own worked example shows this auto/manually set to \"Ninguna\" (p.11). When nivelEstudio is one of TECNICO/TECNOLÓGICO/UNIVERSITARIO/ESPECIALIZACIÓN/MAESTRÍA/DOCTORADO, the guide's own screenshot (p.12) shows a partial, scroll-truncated list of at least 10 values (Agronomía Veterinaria y afines, Aviación, Bellas Artes, Ciencias de la Educación, Ciencias de la Salud, Ciencias Sociales y Humanas, Cocina y Culinaria, Economía Administración Contaduría y afines, Ingeniería Arquitectura y afines, Matemáticas y Ciencias naturales, and more below the visible fold) — no full enum asserted since the list is confirmed incomplete in the source.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11-12",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "subareaConocimiento",
+      "label": "Subárea de Conocimiento",
+      "type": "string",
+      "required": true,
+      "description": "Dropdown dependent on areaConocimiento. When areaConocimiento is \"Ninguna,\" the guide's own worked example shows this set to \"Ninguna\" too (p.11, the only value offered in that branch). For a non-\"Ninguna\" areaConocimiento (e.g. Bellas Artes), the guide's own screenshot (p.12) shows a confirmed six-value example list (Artes Dramáticas y Representativas, Artes Plásticas Visuales y afines, Diseño, Música, Otro programa de bellas artes, Publicidad y afines) — not asserted as the full enum for every areaConocimiento branch, only as a confirmed on-screen example.",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.11-12",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "preguntaSeguridad",
+      "label": "Pregunta",
+      "type": "enum",
+      "required": true,
+      "description": "\"Con el fin de mantener actualizados sus datos, el sistema le permitirá seleccionar una PREGUNTA y deberá escribir su respuesta.\" Full seven-value list confirmed in the guide's own prose enumeration (p.13): the six named questions plus \"Otra Pregunta,\" which requires the applicant to write a custom question (see preguntaSeguridadPersonalizada).",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.12-13",
+      "validation": {
+        "enum": [
+          "Nombre de la primera mascota",
+          "Mes de matrimonio de sus padres",
+          "Marca del primer vehículo que tuvo",
+          "Nombre de la clínica donde nació",
+          "Primer país que visitó",
+          "Empresa donde trabajó por primera vez",
+          "Otra Pregunta"
+        ]
+      }
+    },
+    {
+      "name": "preguntaSeguridadPersonalizada",
+      "label": "Otra Pregunta (personalizada)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "preguntaSeguridad",
+        "equals": "Otra Pregunta"
+      },
+      "description": "\"Si escoje la opción 'Otra Pregunta', deberá escribir una nueva pregunta y posteriormente indicar su respuesta.\"",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.13",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "respuestaSeguridad",
+      "label": "Respuesta",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Guía de Usuario — Registro de Ciudadano para el Trámite de Pasaportes p.12-13",
+      "validation": {
+        "maxLength": 100
+      }
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "emailMustMatchConfirmation",
+      "compare": {
+        "field": "confirmacionCorreoElectronico",
+        "operator": "equals",
+        "compareTo": "correoElectronico"
+      }
+    },
+    {
+      "id": "contactoEmailMustMatchConfirmation",
+      "compare": {
+        "field": "contactoConfirmacionCorreoElectronico",
+        "operator": "equals",
+        "compareTo": "contactoCorreoElectronico"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "documento",
+      "title": "Datos Documento",
+      "fields": [
+        "tipoDocumento",
+        "numeroDocumento",
+        "nacionalidad",
+        "lugarExpedicion",
+        "fechaExpedicion",
+        "fechaNacimiento",
+        "idAutorizaEnvioDatos"
+      ],
+      "next": "personal"
+    },
+    {
+      "id": "personal",
+      "title": "Datos Personales",
+      "fields": [
+        "primerNombre",
+        "segundoNombre",
+        "primerApellido",
+        "segundoApellido",
+        "estatura",
+        "sexo",
+        "estadoCivil",
+        "identidadEtnica"
+      ],
+      "next": "nacimiento"
+    },
+    {
+      "id": "nacimiento",
+      "title": "Datos de Nacimiento",
+      "fields": [
+        "paisNacimiento",
+        "ciudadMunicipioNacimiento"
+      ],
+      "next": "residencia"
+    },
+    {
+      "id": "residencia",
+      "title": "Datos de Residencia y Contacto",
+      "fields": [
+        "paisResidencia",
+        "ciudadMunicipioResidencia",
+        "direccionResidencia",
+        "telefonoResidencia",
+        "movilResidencia",
+        "codigoPostalResidencia",
+        "desdeCuandoReside",
+        "actividadDesempena",
+        "deseaNotificacionesCorreo",
+        "correoElectronico",
+        "confirmacionCorreoElectronico",
+        "viajeHastaSeisMeses"
+      ],
+      "next": "informacionAdicional"
+    },
+    {
+      "id": "informacionAdicional",
+      "title": "Información Adicional",
+      "fields": [
+        "contactoNombres",
+        "contactoDireccion",
+        "contactoTelefono",
+        "contactoMovil",
+        "contactoPais",
+        "contactoCiudadMunicipio",
+        "contactoCorreoElectronico",
+        "contactoConfirmacionCorreoElectronico"
+      ],
+      "next": "academica"
+    },
+    {
+      "id": "academica",
+      "title": "Formación Académica",
+      "fields": [
+        "nivelEstudio",
+        "areaConocimiento",
+        "subareaConocimiento"
+      ],
+      "next": "seguridad"
+    },
+    {
+      "id": "seguridad",
+      "title": "Información para actualizar sus datos",
+      "fields": [
+        "preguntaSeguridad",
+        "preguntaSeguridadPersonalizada",
+        "respuestaSeguridad"
+      ]
+    }
+  ]
+}
