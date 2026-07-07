@@ -103,7 +103,7 @@ footer number, which runs one behind):
 | `applicantFullName` | Nama Pemohon | p.13, Gambar 3.6 | `"SITI RAHAYU WULANDARI"` |
 | `nik` | Masukkan NIK | p.13, Gambar 3.6 | `"2171054512980003"` |
 | `dateOfBirth` | Tanggal Lahir | p.13, Gambar 3.6 | `"1998-12-05"` |
-| `gender` | Jenis Kelamin | p.13, Gambar 3.6 (dropdown); p.18, Gambar 3.11 (worked value "Pria") | `"Wanita"` |
+| `gender` | Jenis Kelamin | p.13, Gambar 3.6 (dropdown); p.14, Gambar 3.7 (worked value "Perempuan"); p.18, Gambar 3.11 (worked value "Pria") | `"Perempuan"` |
 | `civilStatus` | Status Sipil | p.13, Gambar 3.6 | `"Belum Kawin"` |
 | `hadPriorRegularPassport` | Apakah anda sudah pernah memiliki paspor biasa (hijau)? | p.15, Gambar 3.8 | `"BELUM"` |
 | `travelPurpose` | Apakah tujuan anda membuat paspor? | p.17, Gambar 3.10 | `"Wisata / Liburan"` |
@@ -160,14 +160,21 @@ Gambar 3.11's own field labels):
    Percepatan differs only by its surcharge and an office-availability
    filter toggle (both out of scope: the surcharge is a computed fee, and
    the filter is presentational).
-3. **`gender` and `civilStatus` are modelled as open strings, not enums.**
-   Neither field's live dropdown option list is ever shown open in the
-   guide; the only confirmed value for `gender` is "Pria" (from the "Ubah
-   Data Pemohon" recap screen, Gambar 3.11, for a male worked example), and
-   no value at all is confirmed for `civilStatus`. Rather than fabricate the
-   remaining option(s), both follow the exact precedent already set by
-   `id/bkpm/oss-nib-registration-individual-umk`'s own `gender` field
-   (a maxLength-bounded open string with the same disclosure).
+3. **`gender` is modelled as a 2-value enum; `civilStatus` remains an open
+   string.** **Correction from this document's initial authoring pass** (found
+   by the GOV-1577 review gate's independent page-render re-check): the
+   guide confirms *two* `gender` values on-screen, not one — "Pria" (male,
+   "Ubah Data Pemohon" recap, Gambar 3.11) and "Perempuan" (female,
+   "Pemohon dengan Paspor Lama" recap, Gambar 3.7, part of the out-of-scope
+   `SUDAH` branch, but the same dropdown/field). The initial pass checked
+   only Gambar 3.11 and asserted "Pria" was the sole confirmed value; it
+   is not. `gender` is now modelled as `enum: ["Pria", "Perempuan"]`,
+   scoped to exactly the two confirmed values (not asserted as
+   exhaustive). `civilStatus`'s live dropdown option list is never shown
+   open anywhere in the guide, and no worked-example value is legible
+   either (the field is shown only in its unselected placeholder state),
+   so it remains an open string — following the same precedent as
+   `id/bkpm/oss-nib-registration-individual-umk`'s own `gender` field.
 4. **`travelPurpose` is a known-incomplete picklist.** The guide's own
    screenshot (Gambar 3.10) shows five fully legible options (Wisata/
    Liburan, Umroh, Haji, Bekerja Formal, Pekerja Migran Indonesia (PMI))
@@ -219,6 +226,24 @@ Gambar 3.11's own field labels):
     value; GovSchema's `date` type does not carry a time-range component, so
     a plain string preserves the source's own compound format rather than
     truncating it to a bare date.
+11. **`negara tujuan` (destination country) and `lama tinggal` (length of
+    stay) are not modelled — found undisclosed by the GOV-1577 review
+    gate.** The guide's own step-9 prose summary (page 15, printed footer
+    "14": "Isi Kuesioner (kondisi paspor lama, foto dan no paspor lama,
+    tujuan pembuatan, negara tujuan, lama tinggal, kontak keluarga)")
+    names these two fields in the same breath as `travelPurpose`
+    ("tujuan pembuatan") and the family-contact fields ("kontak
+    keluarga"), both of which *are* modelled here — but no screenshot
+    anywhere in the 31-page guide ever renders their labels, positions, or
+    option lists; the worked example throughout Gambar 3.10 selects
+    "Wisata/Liburan" as `travelPurpose`, and destination-country/length-of-
+    stay fields most plausibly gate on a work/migrant-labour purpose
+    ("Bekerja Formal" or "Pekerja Migran Indonesia (PMI)") that the guide
+    never walks. Rather than fabricate a label, type, or condition this
+    source never visually confirms, these two fields are left out of scope
+    for this v1.0.0 — a future minor version should add them, gated behind
+    `travelPurpose`, once a screenshot or the live app confirms their exact
+    shape.
 
 ## Test run (Phase 4)
 
