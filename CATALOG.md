@@ -1653,12 +1653,19 @@
 
 ## By Vertical
 
-### Passport (17/22 jurisdictions — 77%)
+### Passport (19/22 jurisdictions — 86%)
 
-**Poland**, opened via its National ID vertical (GOV-1666), has no Passport
-schema yet — an open, unscreened backlog candidate for a future cycle.
-AU, BR, CA, DE, FR, GB, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all have at
-least one published Passport schema. **Colombia**, opened via its DMV
+**Poland**'s Passport gap is now closed (GOV-1685), via
+`pl/mswia/wniosek-o-wydanie-paszportu` — see the Executive Summary update
+above for the full sourcing story (no downloadable form exists for this
+process; every field is sourced from Art. 33 of the governing Ustawa o
+dokumentach paszportowych instead). This gives Poland 4 of its 6 verticals
+(National ID, Business Formation, DMV, Passport); Taxes and Visa remain
+open. AU, BR, CA, DE, FR, GB, ID, IE, IN, KR, MX, NL, NZ, PH, SG, US, ZA all
+have at least one published Passport schema (this list previously omitted
+Indonesia's `id/imigrasi/passport-application-first-adult` — a
+transcription gap in this document, not a registry gap; corrected here).
+**Colombia**, opened via its DMV
 vertical (GOV-1567), now has 6 of its 6 verticals including Passport
 (GOV-1609). **Chile**, opened this cycle (GOV-1624) via its Business
 Formation vertical, has no Passport schema yet — an open, unscreened backlog
@@ -2369,7 +2376,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PL** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
+| **PL** | 4 | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
