@@ -187,11 +187,13 @@ supporting-evidence annex pointer, one required attestation). No
 ## Access notes and judgment calls
 
 1. **Office-only header fields excluded.** Poz. 3 ("Numer dokumentu") and
-   poz. 4 ("Status") sit directly under the "WYŁĄCZNIE DO UŻYTKU SŁUŻBOWEGO"
-   (for official use only) annotation next to poz. 1-2 on the form's own
-   layout and read as system/processing identifiers rather than applicant
-   -supplied data — the same class of exclusion `pl/mswia/wniosek-o-wydanie-
-   dowodu-osobistego` applied to its own "Adnotacje urzędowe" clerk-only
+   poz. 4 ("Status") are excluded per the form's own printed instruction on
+   page 1 — "W formularzu wypełnij pola jasne... Pola ciemne wypełni urząd
+   skarbowy" ("Fill in only the light-colored fields... dark/shaded fields
+   will be filled in by the tax office") — and read as system/processing
+   identifiers rather than applicant-supplied data — the same class of
+   exclusion `pl/mswia/wniosek-o-wydanie-dowodu-osobistego` applied to its
+   own "Adnotacje urzędowe" clerk-only
    block.
 2. **The entire computed-arithmetic chain (§F Odliczenia od dochodu, §G/H
    Obliczenie podatku, §I Obliczenie zobowiązania podatkowego, §J Dodatkowy
