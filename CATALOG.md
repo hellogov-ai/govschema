@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**19 jurisdictions** | **254 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **255 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1595):** Colombia gains
+> `co/dian/declaracion-renta-personas-naturales-formulario-210`, giving it a
+> 3rd vertical (Taxes) alongside DMV (GOV-1567) and Business Formation
+> (GOV-1588). Sourced from DIAN's own published Formulario 210 instructivo
+> (the annual individual income tax return for resident natural persons), a
+> genuine, unauthenticated, text-layer PDF with a full casilla-by-casilla
+> field-level walkthrough, no login/CAPTCHA/WAF gate — screened this cycle
+> against Colombia's other two open candidates (Cancillería Passport
+> renewal, ~15 fields, narrow in-person-first-time scope; Cancillería Visa,
+> real fields locked behind a live AJAX wizard session) and found strongest.
+> Models 132 fields across the return's full structure: declarant/patrimonio
+> data, the four cédula general sub-schedules (Rentas de trabajo, Rentas de
+> trabajo no laboral, Rentas de capital, Rentas no laborales), cédula de
+> pensiones, cédula de dividendos y participaciones, ganancias ocasionales,
+> the private tax computation/discounts/anticipo-retenciones-saldo blocks,
+> and the signature/accountant block — extracted via a left/right
+> coordinate-column split (pdfjs-dist glyph x/y-coordinates) after a naive
+> single-stream text join jumbled the instructivo's own two-column page
+> layout around casillas 108-123. A second, independently spawned research
+> pass visually rendered the printed form grid and confirmed casillas 2, 3,
+> 11 and 13-23 do not exist on this form edition at all (not merely
+> undocumented) and found casilla 983 (professional card number), a
+> visual-only field with no instructivo narrative, now modelled on that
+> basis. Colombia's remaining open verticals are Passport, Visa, and
+> National ID/Civic Documents. This closes the global Taxes vertical to
+> **19/19 jurisdictions (100%)** — see the document's own VERIFICATION.md
+> for the full scope disclosure and every judgment call, including one
+> flagged as genuinely uncertain (casilla 111's formula, reproduced verbatim
+> from the source despite reading as dimensionally unusual).
 
 > **Update (2026-07-07, GOV-1588):** Colombia gains
 > `co/rues/matricula-mercantil`, closing its Business Formation gap and
@@ -1368,12 +1398,15 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (18/19 jurisdictions — 95%)
+### Taxes — Income Tax Return, Tax Filing (19/19 jurisdictions — 100%)
 
-**Colombia**, opened this cycle (GOV-1567) via its DMV vertical, has no
-Taxes schema yet — DIAN's own income-tax-return forms are an open, unscreened
-backlog candidate for a future cycle. Every other jurisdiction now has at
-least one Taxes-vertical schema. **Indonesia**
+**Colombia** (`co/dian/declaracion-renta-personas-naturales-formulario-210`,
+GOV-1595) is new this cycle and closes the global Taxes vertical to 100% —
+DIAN's Formulario 210, the annual individual income tax return for resident
+natural persons, sourced from DIAN's own published instructivo (132 fields
+across the return's full cédula-based structure). See the document's own
+VERIFICATION.md for the full sourcing record, extraction method, and every
+disclosed judgment call. **Indonesia**
 (`id/djp/annual-individual-income-tax-return-1770s`, GOV-1560) is new this
 cycle and closes the vertical to 18/18 (100%) — Form 1770 S, the annual
 individual income tax return for a salaried resident taxpayer, sourced from
@@ -1580,7 +1613,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CO** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **CO** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1673,7 +1706,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    (Business Formation added via `co/rues/matricula-mercantil`, RUES's
    Registro Mercantil track — the DIAN RUT candidate flagged above was not
    needed once RUES's own core form was properly extracted); Passport, Visa,
-   Taxes, and National ID remain open backlog candidates. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
+   Taxes, and National ID remain open backlog candidates. **Update
+   (GOV-1595):** Colombia now has 3 of its 6 verticals — Taxes added via
+   `co/dian/declaracion-renta-personas-naturales-formulario-210` (DIAN
+   Formulario 210, the annual individual income tax return for resident
+   natural persons), sourced from DIAN's own published instructivo after
+   Passport (Cancillería) and Visa (Cancillería e-visa) were screened this
+   cycle and found weaker (see the document's own VERIFICATION.md for the
+   full comparison). Passport, Visa, and National ID remain open backlog
+   candidates. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
    GOV-1546) opened with one vertical — Business Formation, the individual/UMK
    NIB registration pathway through OSS RBA, sourced from BKPM's own official
    English-language user guide (a genuine 20-step screenshot walkthrough, no
