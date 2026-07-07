@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**22 jurisdictions** | **268 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**22 jurisdictions** | **269 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1691):** Poland gains its fifth vertical, Taxes,
+> with `pl/mf/zeznanie-pit-37` — PIT-37, the annual personal income tax
+> return for individuals whose income is taxed at the progressive scale and
+> consists exclusively of amounts a payer already reported on a PIT-11/
+> PIT-11A/PIT-40A/PIT-R/IFT-1R information slip (in practice, chiefly
+> employees and pensioners — the single most commonly filed Polish PIT
+> return). This cycle first re-screened Poland's Passport gap (independently
+> re-reaching, before discovering it had already been closed same-day by a
+> concurrent cycle, GOV-1685/PR #280, the same "no downloadable form exists;
+> the governing statute is the primary source" finding) and its national
+> Type-D visa gap — the current wzór (Załącznik nr 2 do Rozporządzenie MSWiA
+> z dnia 25 czerwca 2025 r. w sprawie wiz dla cudzoziemców, Dz.U. 2025 poz.
+> 847, retrieved via `eli.gov.pl`, no gate), confirmed via a field-by-field
+> comparison of both PDFs' own text layers to share the same EU
+> long-stay-visa field sequence already modelled as
+> `de/auswaertiges-amt/national-visa-application` — a genuine duplicate, not
+> authored. PIT-37(31) (tax year 2025) was picked instead: a genuine,
+> current, directly-downloadable, unauthenticated PDF on `podatki.gov.pl`/
+> `gov.pl` with no AcroForm layer (confirmed via `pdfjs-dist` returning zero
+> widget annotations — a static hand-fill/print template, like Poland's
+> CEIDG-1 and vehicle-registration schemas) but fully self-documenting: 171
+> numbered positions across sections A-Q, each labeled in place, several
+> citing their own governing statute article inline. A prior cycle
+> (GOV-1671) had screened this vertical only shallowly, correctly noting
+> Poland's e-Deklaracje/Twój e-PIT *online-filing* channels are
+> authenticated, but incompletely — the underlying paper PIT-37 form itself,
+> separate from those channels, is a plain unauthenticated download. Models
+> 38 fields (taxpayer identification and address, four common tax-relief
+> elections, and the two most common Section E.1 income-source line items —
+> employment wages and pensions) plus 2 `documents[]` entries (a conditional
+> PIT/O annex pointer and the form's own closing signature declaration).
+> Deliberately excludes the entire computed-arithmetic chain (Sections F
+> through K: deductions, tax calculation, tax due, the children's-relief
+> additional refund, and rare withheld-securities income) since each of
+> those figures sums across all five Section E.1 income-source rows
+> (including three this v1.0.0 does not model) and, for a joint return, the
+> mirrored spouse column — modelling those totals correctly would require a
+> materially larger v1.1.0/v2.0.0 scope, and this cycle chose not to
+> fabricate a computed tax-due figure backed by an incomplete input set. Also
+> excludes the joint/spouse filing column throughout, and Section N (refund
+> bank account) — see the document's own VERIFICATION.md for this and 6
+> other disclosed judgment calls. This gives Poland 5 of its 6 verticals
+> (National ID, Business Formation, DMV, Passport, Taxes); only Visa remains
+> open, now a confirmed-duplicate dead end pending a genuinely distinct
+> Polish visa pathway (if one exists) for a future cycle to find. Chile's
+> Registro Civil, SII Formulario 22, and Visa gaps were not re-screened this
+> cycle and remain open backlog.
 
 > **Update (2026-07-07, GOV-1685):** Poland gains its fourth vertical,
 > Passport, with `pl/mswia/wniosek-o-wydanie-paszportu` — the standard adult
@@ -2031,11 +2079,26 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (20/22 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (21/22 jurisdictions — 95%)
 
-**Poland**, opened via its National ID vertical (GOV-1666), has no Taxes
-schema yet — an open, unscreened backlog candidate for a future cycle.
-**Spain** (`es/aeat/declaracion-censal-personas-fisicas-modelo-030`,
+**Poland's Taxes gap is now closed** (`pl/mf/zeznanie-pit-37`, GOV-1691) —
+PIT-37, the annual personal income tax return for individuals whose income
+is taxed at the progressive scale and consists exclusively of amounts a
+payer already reported on a PIT-11/PIT-11A/PIT-40A/PIT-R/IFT-1R information
+slip (in practice, chiefly employees and pensioners). A genuine, current
+(version 31, tax year 2025), directly downloadable, unauthenticated PDF on
+`podatki.gov.pl`/`gov.pl`, no AcroForm layer but fully self-documenting (171
+numbered positions across sections A-Q). A prior cycle (GOV-1671) had
+screened this vertical only shallowly and assumed the whole vertical was
+authenticated-only (conflating the paper form with the separate, genuinely
+gated e-Deklaracje/Twój e-PIT online-filing channels); this cycle found and
+used the underlying paper form directly. Deliberately excludes the entire
+computed-arithmetic chain (deductions, tax calculation, tax due, and the
+children's-relief additional refund), since those figures sum across
+several income-source categories and a spouse column this v1.0.0 does not
+model — see the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record and every disclosed judgment
+call. Chile's Taxes gap remains open. **Spain** (`es/aeat/declaracion-censal-personas-fisicas-modelo-030`,
 GOV-1645) opens this cycle as the registry's 21st jurisdiction via this
 vertical — AEAT's Modelo 030, the census declaration/NIF-registration form
 for natural persons. It is a census/registration filing rather than an
@@ -2130,9 +2193,15 @@ file-layout specification and authored a bounded 67-field core against it
 
 ### Visa — Entry Visas, ETAs, Work/Student Permits (16/22 jurisdictions — 73%)
 
-**Poland**, opened via its National ID vertical (GOV-1666), has no Visa
-schema yet — an open, unscreened backlog candidate for a future cycle.
-**Spain**, opened via its Taxes vertical (GOV-1645), has no Visa schema
+**Poland's Visa gap was screened this cycle (GOV-1691) and confirmed a
+duplicate, not an open candidate**: the current wzór wniosku o wydanie wizy
+krajowej (Załącznik nr 2 do Rozporządzenie MSWiA z dnia 25 czerwca 2025 r.,
+Dz.U. 2025 poz. 847) shares the same EU long-stay-visa field sequence,
+field-for-field, as the already-modelled
+`de/auswaertiges-amt/national-visa-application` — see
+`pl/mf/zeznanie-pit-37`'s own VERIFICATION.md for the comparison. Not
+authored; a genuinely distinct Polish visa pathway, if one exists, remains
+open backlog. **Spain**, opened via its Taxes vertical (GOV-1645), has no Visa schema
 yet — an open, unscreened backlog candidate for a future cycle. **Chile**,
 opened via Business Formation (GOV-1624), has no Visa
 schema yet — an open, unscreened backlog candidate for a future cycle.
@@ -2376,7 +2445,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PL** | 4 | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ |
+| **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -2638,9 +2707,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    entries across all four request types) rather than a secondary screening
    note; see the Executive Summary update above and the document's own
    VERIFICATION.md for the full candidate history and disclosed judgment
-   calls. This closes the **global DMV vertical to 22/22 (100%)**. Poland's
-   remaining three verticals (Passport, Taxes, Visa) are open,
-   unscreened-or-lightly-screened backlog candidates for a future cycle.
+   calls. This closes the **global DMV vertical to 22/22 (100%)**. **Poland's
+   Passport gap has since closed too (GOV-1685)**, via
+   `pl/mswia/wniosek-o-wydanie-paszportu` — sourced from Art. 33 of the
+   ustawa o dokumentach paszportowych directly, since no downloadable
+   application-form template is gazetted at all (the implementing
+   rozporządzenie's own annexes are the passport booklet's physical design,
+   not an application form); see the Executive Summary update above and the
+   document's own VERIFICATION.md. **Poland's Taxes gap has since closed too
+   (GOV-1691)**, via `pl/mf/zeznanie-pit-37` — PIT-37, the annual personal
+   income tax return for employees/pensioners, a genuine unauthenticated PDF
+   with no AcroForm layer but 171 self-documenting numbered positions; that
+   same cycle screened Poland's national (Type D) visa candidate and
+   confirmed it a duplicate of the already-modelled
+   `de/auswaertiges-amt/national-visa-application` (same EU long-stay-visa
+   field sequence, field-for-field) — see the Executive Summary update above
+   and the document's own VERIFICATION.md for the full candidate comparison.
+   This gives Poland 5 of its 6 verticals; only Visa remains open, now a
+   confirmed-duplicate dead end pending a genuinely distinct Polish visa
+   pathway (if one exists) for a future cycle to find.
    Other
    candidates worth scouting for a **23rd** jurisdiction in a future cycle:
    Portugal, or an EU member beyond DE/ES/FR/NL/PL — Japan (`mofa.go.jp`) is
@@ -2658,6 +2743,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **NL Visa** (Schengen dupes FR; Dutch MVV is 200+ fragmented forms) — GOV-777/GOV-859.
+- **PL Visa (national Type D)** — GOV-1691, 2026-07-07. Poland's current
+  wzór wniosku o wydanie wizy krajowej (Załącznik nr 2 do Rozporządzenie
+  MSWiA z dnia 25 czerwca 2025 r., Dz.U. 2025 poz. 847) shares the same EU
+  long-stay-visa field sequence, field-for-field, as the already-modelled
+  `de/auswaertiges-amt/national-visa-application` — a confirmed duplicate,
+  not an open gap, per this registry's own established convention for
+  Spain's equivalent form. Not a hard dead end for Poland's Visa vertical as
+  a whole: untested is whether Poland's Schengen short-stay visa pathway (a
+  separate form, distinct from the national D-visa checked this cycle)
+  offers anything not already covered by `fr/france-visas/schengen-visa-application`.
 - **ZA Visa** (eHomeAffairs reCAPTCHA + nationality-gated) — GOV-1225, reconfirmed 2026-07-05.
 - **BR Visa** — GOV-1428, 2026-07-06. The SCI wizard
   (`formulario-mre.serpro.gov.br`) is CAPTCHA-gated before any field page;
