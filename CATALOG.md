@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**19 jurisdictions** | **255 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**19 jurisdictions** | **256 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1602):** Colombia gains
+> `co/cancilleria/visa-application-individual`, giving it a 4th vertical
+> (Visa) alongside DMV (GOV-1567), Business Formation (GOV-1588), and Taxes
+> (GOV-1595). The prior cycle that closed Taxes had screened Colombia's Visa
+> channel and found the live SITAC wizard
+> (`tramitesmre.cancilleria.gov.co/tramites/enlinea/solicitarVisa.xhtml`)
+> bot-mitigation-gated to a direct fetch — reconfirmed this cycle (HTTP 200
+> but a non-interactive `TSPD` challenge-script page, no form markup). Rather
+> than treat that as settled, this cycle searched independently and found a
+> second, distinct source the prior screening had not identified: the
+> Cancillería's own "Guía de Usuario: Solicitar Visa en línea" (SITAC), a
+> 47-page, screenshot-driven, field-by-field walkthrough of the exact same
+> wizard, hosted directly and unauthenticated on `cancilleria.gov.co`. Models
+> 58 fields across the wizard's six tabs (Solicitud, Solicitante, Visa,
+> Otros, Soportes, Confirmación) for an Individual applicant acting as their
+> own visa's Titular Principal — either directly or through an apoderado —
+> including four genuine two-value enums sourced from the guide's own prose
+> bullet-point definitions (`solicitudDe`: Visa/Traspaso; `tipoSolicitud`:
+> Individual/Grupo Familiar; `tipoSolicitante`: Titular/Beneficiario;
+> `tramitadaPor`: directly/apoderado), a three-value `tipoVisa` enum sourced
+> from the guide's own §4.1 reference-table section headers (Visitante/
+> Migrante/Residente), and 6 supporting documents. Deliberately scopes out
+> the Grupo Familiar and Beneficiario pathways and the ~38-value `actividadVisa`
+> taxonomy's own per-activity Información Laboral field variations (the
+> guide's own §4.1 table spans 8 dense pages) in favor of the generic
+> visa-type-independent fallback field set the guide itself defines — see the
+> document's own VERIFICATION.md for the full candidate comparison (Colombia's
+> Passport and National ID gaps were also re-screened this cycle and remain
+> open backlog candidates) and every disclosed judgment call, including a
+> worked-example inconsistency in the source itself (the guide's own Sección
+> Visa screenshot shows a field a Titular applicant's own reference table
+> does not name) preserved as a disclosed discrepancy rather than silently
+> resolved. This gives Colombia 4 of its 6 verticals; Passport and National ID
+> remain open. Colombia's Visa vertical now stands at 16/19 jurisdictions
+> globally (up from 15/19).
 
 > **Update (2026-07-07, GOV-1595):** Colombia gains
 > `co/dian/declaracion-renta-personas-naturales-formulario-210`, giving it a
@@ -1465,7 +1501,17 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (15/19 jurisdictions)
+### Visa — Entry Visas, ETAs, Work/Student Permits (16/19 jurisdictions)
+
+**Colombia's Visa gap is now closed** (`co/cancilleria/visa-application-individual`,
+GOV-1602) — sourced from the Cancillería's own "Guía de Usuario: Solicitar
+Visa en línea" (SITAC), a 47-page screenshot-driven walkthrough of the live
+online-visa wizard, hosted directly and unauthenticated on
+`cancilleria.gov.co`; the live wizard itself is bot-mitigation (WAF/TSPD
+challenge-script)-gated, reconfirmed this cycle. Scoped to an Individual
+applicant acting as their own visa's Titular Principal (directly or through
+an apoderado) — see the Executive Summary update above and the document's own
+VERIFICATION.md for the full candidate record and scope disclosures.
 
 **Three confirmed, previously-researched dead ends — not open work:**
 
@@ -1502,10 +1548,7 @@ Scoped to the General/Family/Social → B1 Visitor-visa pathway only; the
 official manual's own worked example follows a different, more complex
 Golden Visa/Investment top-level branch not walked field-by-field by either
 source, left out of scope for this v1.0.0 — see the document's own
-VERIFICATION.md. This gives Indonesia 5 of its 6 verticals. **Colombia**,
-opened via its DMV vertical (GOV-1567), remains the only jurisdiction with no
-Visa schema yet — Migración Colombia's own e-visa channels are an open,
-unscreened backlog candidate for a future cycle. **The Philippines**
+VERIFICATION.md. This gives Indonesia 5 of its 6 verticals. **The Philippines**
 (`ph/bi/non-immigrant-visa-application`, GOV-1490) is new this cycle —
 sourced from the Bureau of Immigration's own Consolidated General Application
 Form (CGAF) for Non-Immigrant Visa, Special Work Permit, and Provisional Work
@@ -1613,7 +1656,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CO** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **CO** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -1714,7 +1757,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Passport (Cancillería) and Visa (Cancillería e-visa) were screened this
    cycle and found weaker (see the document's own VERIFICATION.md for the
    full comparison). Passport, Visa, and National ID remain open backlog
-   candidates. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
+   candidates. **Update (GOV-1602):** Colombia now has 4 of its 6 verticals —
+   Visa added via `co/cancilleria/visa-application-individual`, sourced from
+   the Cancillería's own "Guía de Usuario: Solicitar Visa en línea" (SITAC),
+   a genuine field-by-field walkthrough of the live wizard the prior cycle's
+   screening note had described only as bot-mitigation-gated (that live-wizard
+   finding is reconfirmed, but this guide document is a distinct, previously
+   unidentified source — see the Executive Summary update above and the
+   document's own VERIFICATION.md). Colombia's Passport and National ID
+   candidates were both re-screened this cycle and remain open: Passport
+   (Cancillería's online form) is a change/renewal request requiring an
+   in-person-issued "contraseña por primera vez," not a first-time
+   application; National ID (Registraduría's "Cédula de ciudadanía digital"
+   duplicate-request flow) is described in secondary sources as a short
+   online form, but `registraduria.gov.co` itself returned HTTP 403 to every
+   direct fetch attempted this cycle. **Indonesia** (`id/bkpm/oss-nib-registration-individual-umk`,
    GOV-1546) opened with one vertical — Business Formation, the individual/UMK
    NIB registration pathway through OSS RBA, sourced from BKPM's own official
    English-language user guide (a genuine 20-step screenshot walkthrough, no
@@ -1922,5 +1979,10 @@ viable" to ready-to-author backlog candidates), updated by GOV-1574
 (`id/imigrasi/passport-application-first-adult` authoring, Indonesia 4th
 vertical, Passport, closing the gap GOV-1567 had flagged ready-to-author;
 Colombia's overseas voter-registration microsite screened and found
-election-window-decommissioned, not a hard dead end).
+election-window-decommissioned, not a hard dead end), updated by GOV-1602
+(`co/cancilleria/visa-application-individual` authoring, Colombia 4th
+vertical, Visa, closing the gap GOV-1595 had left open — found via a second,
+previously unidentified source distinct from the live wizard's own
+bot-mitigation gate; Colombia's Passport and National ID candidates
+re-screened and left open backlog candidates).
 
