@@ -1,0 +1,798 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/dttas/learner-permit-application",
+  "version": "1.0.0",
+  "title": "Ireland Learner Permit Application (NDLS)",
+  "description": "Application for a first-time Irish learner permit through the National Driver Licence Service (NDLS), the single nationwide authority for driving-licence and learner-permit applications in Ireland. This is the entry point into the Irish graduated driver-licensing system: a driver theory test pass is a hard prerequisite, and the resulting learner permit must be held for at least six months (plus Essential/Initial Basic Training) before a driving test can be sat. Two application channels exist — online at ndls.ie (using a Public Services Card and a verified MyGovID account, no paper form) and in person at an NDLS centre by appointment, using the paper Application Form for a Learner Permit (D201). This document is derived field-by-field from the D201 form, which is a single, multi-purpose instrument also used for learner-permit renewal, category add/remove, replacement (lost/stolen/damaged), personal-detail changes, and category upgrade for existing full-licence holders — this schema is deliberately scoped to the 'First time learner permit application' pathway (the form's own option 1) in full field and document depth; the other six application-type values are modelled only as a closed enum, not fully scoped (mirroring the precedent set by ph/lto/drivers-license-application and kr/koroad/driving-licence-application for other multi-transaction-type forms in this registry). It complements the existing ie/dttas/driving-licence-renewal document (which itself explicitly excludes a first-time application) and does not model the licence category upgrade after passing a driving test (the D401 'Application Form for a Driving Licence', a distinct sibling form). It does not submit the application; the live ndls.ie/rsa.ie sources are always authoritative (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Road Safety Authority, National Driver Licence Service",
+    "abbreviation": "NDLS",
+    "url": "https://www.ndls.ie/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.ndls.ie/images/Documents/LearnerPermits/D201_Learner_Permit_app_form.pdf",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "Application Form for a Learner Permit D201 (March 2020 edition)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "Source-derived reference schema authored field-by-field from NDLS's own Application Form for a Learner Permit (D201, March 2020 edition), a genuine (non-scanned) text-layer PDF extracted directly via pdfjs-dist getTextContent() — no login/CAPTCHA/WAF on the underlying file, though ndls.ie itself returns HTTP 403 to direct automated fetches (reconfirmed this cycle), so both D201 and its D401 sibling were retrieved via Wayback Machine snapshots, the same access pattern already established for ie/dttas/driving-licence-renewal and gov-au-wayback-workaround. Cross-checked ndls.ie's own current 'Forms' listing page (retrieved via a 2025-11-15 Wayback snapshot) to confirm D201 remains the live, current form (no newer edition superseding March 2020 was found). The channel structure (online vs in-person), current fee (EUR 45.00, increased from EUR 35.00 on 2025-01-01), and several conditional document triggers were instead cross-checked against the RSA's own current 'Apply for your first permit' page (retrieved via a 2025-11-12 Wayback snapshot), since the 2020-dated D201 form predates that fee increase and does not itself state a fee amount (its own checklist page only says 'see page 2 of guidance notes', a document not independently retrieved this cycle). See VERIFICATION.md for the full sourcing trail, the D201/RSA-page cross-check, and all disclosed judgment calls, including the scope decision to model only the 'first time learner permit application' pathway of this multi-purpose form to full field/document depth."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationChannel",
+      "label": "How are you applying?",
+      "type": "enum",
+      "required": true,
+      "description": "online = apply through ndls.ie using a Public Services Card (PSC) and a verified MyGovID account, with no paper form and no need to visit an NDLS centre; in_person = book an appointment and attend one of the 34 NDLS centres nationwide, using the paper D201 form, where photo and signature are captured digitally.",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'How to apply for a first-time learner permit online' / 'How to apply for a first-time learner permit in person at NDLS centre'",
+      "validation": { "enum": ["online", "in_person"] }
+    },
+    {
+      "name": "theoryTestPassed",
+      "label": "Have you passed the driver theory test in the category you are applying for?",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "A hard prerequisite for both channels: you must have successfully passed the driver theory test in the vehicle category before a first-time learner permit can be issued.",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'Important: you must have passed a driver theory test before you can apply for a learner permit.'"
+    },
+    {
+      "name": "theoryTestCategory",
+      "label": "Theory test category",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle category the theory test was passed in; must match the licenceCategory being applied for.",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'to have successfully passed the driver theory test in the category'",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "previouslyHeldLearnerPermitOrLicenceInIreland",
+      "label": "Have you previously held a learner permit and/or driving licence in Ireland?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 1: Personal Details, Q1"
+    },
+    {
+      "name": "priorLicenceType",
+      "label": "If yes, which one?",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "previouslyHeldLearnerPermitOrLicenceInIreland", "equals": true },
+      "sourceRef": "D201 — Part 1: Personal Details, Q1",
+      "validation": { "enum": ["learner_permit", "driving_licence"] }
+    },
+    {
+      "name": "driverNumber",
+      "label": "Driver number (if known)",
+      "type": "string",
+      "required": false,
+      "description": "Found on field 5 of a paper licence or field 4d of a plastic card licence.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q1",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "D201 — Part 1: Personal Details, Q2",
+      "validation": { "enum": ["mr", "mrs", "miss", "ms", "other"] }
+    },
+    {
+      "name": "otherTitleSpecify",
+      "label": "Other title (please specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "title", "equals": "other" },
+      "sourceRef": "D201 — Part 1: Personal Details, Q2",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "firstName",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q3",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "As it appears on your birth certificate.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q4",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fullNameForPermit",
+      "label": "Full name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name to appear on the permit, if different from the first name/surname combination above (for example, following a name change). Acceptable photo ID must be provided in this name.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q5",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "surnameChangeReason",
+      "label": "If your surname has changed since your last learner permit issued, please indicate the reason",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "D201 — Part 1: Personal Details, Q6",
+      "validation": {
+        "enum": ["marriage_civil_partnership", "deed_poll", "use_of_irish_name", "divorce_separation"]
+      }
+    },
+    {
+      "name": "previousNames",
+      "label": "Previous names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Relevant only when surnameChangeReason is set. Not gated with requiredWhen: this spec's Condition grammar has no field-absence operator, so notEquals/equals-against-absence would misfire as always-true for every applicant, not just those who set a surnameChangeReason (see the notequals-empty-string-absent-field-bug precedent) — left as a plain optional field instead.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q6",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Address 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Proof of address provided must match exactly.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q7",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "addressLine2",
+      "label": "Address 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q7",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "town",
+      "label": "Town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q7",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "countyOrCity",
+      "label": "County/City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q7",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "eircode",
+      "label": "Eircode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q7",
+      "validation": { "pattern": "^[A-Za-z0-9]{3} ?[A-Za-z0-9]{4}$" }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q8"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "D201 — Part 1: Personal Details, Q9",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "ppsNumber",
+      "label": "PPS number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Original proof of PPS number must also be provided.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q10",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "County, if born in Ireland; country, if born outside Ireland.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q11",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile no.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q12",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "landlineNumber",
+      "label": "Landline",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "D201 — Part 1: Personal Details, Q12",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "NDLS will use these contact details to contact you about issues with your application, dispatch of your licence, and future renewal reminders.",
+      "sourceRef": "D201 — Part 1: Personal Details, Q12",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "applicationType",
+      "label": "Application type",
+      "type": "enum",
+      "required": true,
+      "description": "This schema models the first_time_learner_permit_application pathway (option 1) to full field and document depth. The other six values share the same underlying D201 form but are not fully scoped in this v1.0.0 — see VERIFICATION.md.",
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q13(a)",
+      "validation": {
+        "enum": [
+          "first_time_learner_permit_application",
+          "renewal_of_learner_permit",
+          "add_remove_category",
+          "replace_lost_or_stolen_permit",
+          "personal_detail_change",
+          "replace_damaged_permit",
+          "already_hold_licence_different_category",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "otherApplicationTypeReason",
+      "label": "Other (reason)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "other" },
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q13(a)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "disqualificationPeriod",
+      "label": "Period of disqualification",
+      "type": "string",
+      "required": false,
+      "description": "If this application relates to the requirement to sit a driving test/driver training following a period of disqualification, provide the period of disqualification.",
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q13(b)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "disqualificationConditionDetails",
+      "label": "Details of any condition relating to the disqualification",
+      "type": "string",
+      "required": false,
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q13(b)",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "licenceCategory",
+      "label": "Category or categories that you wish to apply for",
+      "type": "enum",
+      "required": true,
+      "description": "The D201 form permits ticking multiple categories in a single application (using a repeated Group 1/Group 2 category-and-vehicle-description table); this schema models exactly one category per instance, pending GSP-0009 (composite/repeating values), the same discipline already used by ie/dttas/driving-licence-renewal's includesGroup2Category field. Group 2 categories (C1, C, C1E, CE, D1, D, D1E, DE) always require a medical report (see medicalReportRequired) and, per the D201 checklist, evidence of CPC (Certificate of Professional Competence) where applicable.",
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q14 (category table)",
+      "validation": {
+        "enum": ["AM", "A1", "A2", "A", "B", "BE", "W", "C1", "C", "C1E", "CE", "D1", "D", "D1E", "DE"]
+      }
+    },
+    {
+      "name": "willHoldForeignLicenceUponReceipt",
+      "label": "On receipt of this learner permit, will you hold a licence issued by another country?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q15"
+    },
+    {
+      "name": "foreignIssuingCountry",
+      "label": "Issuing country",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "willHoldForeignLicenceUponReceipt", "equals": true },
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q15",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "foreignDrivingLicenceNumber",
+      "label": "Driving licence no.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "willHoldForeignLicenceUponReceipt", "equals": true },
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q15",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "lostPermitDeclarationSigned",
+      "label": "I declare my learner permit lost/stolen",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "replace_lost_or_stolen_permit" },
+      "description": "Must be signed and then witnessed and stamped at the applicant's local Garda station (see gardaCertificationObtained). If the old permit is later found, it no longer remains valid once a replacement has been applied for.",
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q16"
+    },
+    {
+      "name": "gardaCertificationObtained",
+      "label": "Certified by Garda that the applicant has declared his/her learner permit lost/stolen",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "replace_lost_or_stolen_permit" },
+      "sourceRef": "D201 — Part 2: Learner Permit Details, Q16"
+    },
+    {
+      "name": "organDonorCode115Requested",
+      "label": "Would you like code 115 to appear on your learner permit, indicating your wish to become an organ donor?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "D201 — Part 3: Organ Donation, Q17"
+    },
+    {
+      "name": "requiresGlassesOrLensesForDriving",
+      "label": "Do you need to wear glasses or lenses for driving?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, code 01 is added to the licence.",
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q18"
+    },
+    {
+      "name": "eyesightReportForm",
+      "label": "Driving Licence Eyesight Report Form (D502)",
+      "type": "file",
+      "required": false,
+      "requiredWhen": { "field": "requiresGlassesOrLensesForDriving", "equals": true },
+      "description": "A completed and signed eyesight report form dated within one month, if applicable.",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'your completed and signed eyesight report form or medical report form dated within one month, if applicable to you'"
+    },
+    {
+      "name": "diabetesInsulinOrHypoglycaemiaRiskMedication",
+      "label": "Diabetes treated by insulin, or managed by tablets which carry a risk of inducing hypoglycaemia",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q19"
+    },
+    {
+      "name": "epilepsy",
+      "label": "Epilepsy",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q20"
+    },
+    {
+      "name": "strokeOrTIA",
+      "label": "Stroke or TIAs, with any associated symptoms lasting longer than one month",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q21"
+    },
+    {
+      "name": "fitsOrBlackouts",
+      "label": "Fits or blackouts",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q22"
+    },
+    {
+      "name": "brainOrSpinalConditionOrInjury",
+      "label": "Any type of brain surgery, brain abscess, severe head injury involving in-patient treatment, brain tumour, spinal injury, or spinal tumour",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q23"
+    },
+    {
+      "name": "implantedCardiacPacemaker",
+      "label": "An implanted cardiac pacemaker",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q24"
+    },
+    {
+      "name": "implantedCardiacDefibrillator",
+      "label": "An implanted cardiac defibrillator (ICD)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q25"
+    },
+    {
+      "name": "suddenDisablingDizziness",
+      "label": "Repeated attacks of sudden disabling dizziness",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q26"
+    },
+    {
+      "name": "chronicNeurologicalCondition",
+      "label": "Any other chronic neurological condition, such as multiple sclerosis, motor neurone disease, or Huntington's disease",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q27"
+    },
+    {
+      "name": "memoryProblemsOrConfusion",
+      "label": "A serious problem with memory or periods of confusion",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q28"
+    },
+    {
+      "name": "persistentAlcoholMisuseOrDependency",
+      "label": "Persistent alcohol misuse or dependency",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q29"
+    },
+    {
+      "name": "persistentDrugMisuseOrDependency",
+      "label": "Persistent drug misuse or dependency",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q30"
+    },
+    {
+      "name": "seriousPsychiatricIllnessOrMentalHealthProblems",
+      "label": "Serious psychiatric illness or mental health problems",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q31"
+    },
+    {
+      "name": "parkinsonsDisease",
+      "label": "Parkinson's disease",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q32"
+    },
+    {
+      "name": "sleepApnoeaSyndrome",
+      "label": "Sleep Apnoea syndrome",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q33"
+    },
+    {
+      "name": "narcolepsy",
+      "label": "Narcolepsy",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q34"
+    },
+    {
+      "name": "peripheralVisionCondition",
+      "label": "Any condition affecting your peripheral vision",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q35"
+    },
+    {
+      "name": "totalSightLossOneEye",
+      "label": "Total loss of sight in one eye",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q36"
+    },
+    {
+      "name": "conditionAffectingBothEyesOrRemainingEye",
+      "label": "Any condition affecting both eyes, or the remaining eye if you only have one eye (not including colour blindness or short or long sight)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q37"
+    },
+    {
+      "name": "seriousHearingDeficiencyWorsened",
+      "label": "A serious hearing deficiency which has worsened since your last application/renewal",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q38"
+    },
+    {
+      "name": "severeLearningDisability",
+      "label": "Severe learning disability",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q39"
+    },
+    {
+      "name": "armsOrLegsRestrictToAutomaticVehicle",
+      "label": "Any persistent problems with arms or legs which restricts your driving to an automatic vehicle",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q40(a)"
+    },
+    {
+      "name": "armsOrLegsRestrictToAdaptedVehicle",
+      "label": "Any persistent problems with arms or legs which restricts your driving to an adapted vehicle",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q40(b)"
+    },
+    {
+      "name": "conditionDeterioratedSinceLastApplication",
+      "label": "If you have ticked yes to 40(a) or 40(b), has your condition deteriorated since your last application/renewal?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "armsOrLegsRestrictToAutomaticVehicle", "equals": true },
+          { "field": "armsOrLegsRestrictToAdaptedVehicle", "equals": true }
+        ]
+      },
+      "sourceRef": "D201 — Part 4: Driver Fitness, Q40(c)"
+    },
+    {
+      "name": "medicalReportRequired",
+      "label": "Do you need to submit an NDLS Medical Report Form?",
+      "type": "boolean",
+      "required": true,
+      "description": "true if you answered 'Yes' to any of questions 19 to 39 or 40(c) above, or if licenceCategory is a Group 2 category (C1, C, C1E, CE, D1, D, D1E, DE), or if aged 75 or over — mirroring the same medical-report trigger logic already used by ie/dttas/driving-licence-renewal's medicalReportRequired field.",
+      "sourceRef": "D201 — Part 4: Driver Fitness (introductory note: 'If you answer Yes to any of the questions below 19 to 39 or 40(c), you will also be required to submit a medical report dated within three months of application date'); D201 — Application Checklist, 'All applications for group 2 categories must be accompanied by a completed medical report dated within three months of application'"
+    },
+    {
+      "name": "medicalReportForm",
+      "label": "NDLS Medical Report Form",
+      "type": "file",
+      "required": false,
+      "requiredWhen": { "field": "medicalReportRequired", "equals": true },
+      "description": "Dated within three months of the application date.",
+      "sourceRef": "D201 — Part 4: Driver Fitness (introductory note); D201 — Application Checklist"
+    },
+    {
+      "name": "declarationAccepted",
+      "label": "Declaration by applicant",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [true],
+      "description": "The applicant declares understanding that a person cannot apply for a learner permit or driving licence whilst disqualified in Ireland, the EU/EEA, or a recognised state (with limited exceptions), that it is an offence to knowingly provide false or misleading information, that Ireland is their normal place of residence, and that they are not currently disqualified (with the same limited exceptions). Must be signed and dated by the person to whom the learner permit is to be issued.",
+      "sourceRef": "D201 — Part 5: Declaration by Applicant, Q41"
+    },
+    {
+      "name": "signatureDate",
+      "label": "Signature date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "D201 — Part 5: Declaration by Applicant, Q41"
+    },
+    {
+      "name": "bornOutsideEUEEASwitzerlandUKNorthernIreland",
+      "label": "Is your place of birth and nationality outside the EU, EEA, Switzerland, the UK, or Northern Ireland?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, proof that the applicant is normally resident in Ireland must be provided (residencyEntitlementEvidence) — the same test and wording already used by ie/dttas/driving-licence-renewal's birthplaceAndNationalityOutsideEUEEASwitzerlandUKOrNI field.",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'proof that you are normally resident in Ireland if your place of birth and nationality are outside the EU/EEA/Switzerland/UK/Northern Ireland'"
+    },
+    {
+      "name": "feeExemptionReason",
+      "label": "Fee exemption",
+      "type": "enum",
+      "required": false,
+      "description": "Set to age_70_or_over when the applicant is aged 70 or over, in which case no application fee is charged on either channel and paymentMethod does not apply.",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'If you are 70 years and over you are exempt from paying the fee.'",
+      "validation": { "enum": ["age_70_or_over"] }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "How are you paying?",
+      "type": "enum",
+      "required": false,
+      "description": "Required when feeExemptionReason is not set. credit_or_debit_card is accepted on both channels; google_pay, apple_pay, and payzone_voucher are accepted only when applicationChannel is in_person. The application fee is EUR 45.00 (increased from EUR 35.00 on 2025-01-01).",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'your application fee of €45.00. You can pay by credit/debit card' (online) / 'You can only pay by credit/debit card, Google Pay/Apple Pay or Payzone voucher' (in person)",
+      "validation": { "enum": ["credit_or_debit_card", "google_pay", "apple_pay", "payzone_voucher"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "ppsNumberEvidence",
+      "label": "Evidence of PPS number",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "D201 — Application Checklist, 'Evidence of PPS number (list 3 on page 4 of guidance notes)'"
+    },
+    {
+      "id": "addressEvidence",
+      "label": "Proof of address dated within the last six months",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'proof of your address dated within the last six months' (online) / 'Proof of your address dated within the last six months' (in person)"
+    },
+    {
+      "id": "photographicId",
+      "label": "Photographic ID",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "D201 — Application Checklist, 'Photographic ID (list 1 on page 4 of guidance notes)'"
+    },
+    {
+      "id": "residencyEntitlementEvidence",
+      "label": "Evidence of residency entitlement",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "bornOutsideEUEEASwitzerlandUKNorthernIreland", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "RSA 'Apply for your first permit' page — 'Proof that you are normally resident in Ireland (if your place of birth and nationality are outside the EU/EEA/Switzerland/UK/Northern Ireland)'"
+    },
+    {
+      "id": "cpcEvidence",
+      "label": "Evidence of CPC (Certificate of Professional Competence) — relevant only for certain Group 2 (bus/truck) professional-driving categories; the precise gating condition was not independently sourced this cycle (see accompanying guidance notes, not retrieved) — see VERIFICATION.md",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "D201 — Application Checklist, 'Evidence of CPC if required (see page 3 of guidance notes)'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "eligibility_and_channel",
+      "title": "Eligibility and Application Channel",
+      "fields": [
+        "applicationChannel",
+        "theoryTestPassed",
+        "theoryTestCategory"
+      ],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal Details",
+      "fields": [
+        "previouslyHeldLearnerPermitOrLicenceInIreland",
+        "priorLicenceType",
+        "driverNumber",
+        "title",
+        "otherTitleSpecify",
+        "firstName",
+        "surname",
+        "fullNameForPermit",
+        "surnameChangeReason",
+        "previousNames",
+        "addressLine1",
+        "addressLine2",
+        "town",
+        "countyOrCity",
+        "eircode",
+        "dateOfBirth",
+        "gender",
+        "ppsNumber",
+        "placeOfBirth",
+        "mobileNumber",
+        "landlineNumber",
+        "emailAddress",
+        "bornOutsideEUEEASwitzerlandUKNorthernIreland"
+      ],
+      "next": "learner_permit_details"
+    },
+    {
+      "id": "learner_permit_details",
+      "title": "Learner Permit Details",
+      "fields": [
+        "applicationType",
+        "otherApplicationTypeReason",
+        "disqualificationPeriod",
+        "disqualificationConditionDetails",
+        "licenceCategory",
+        "willHoldForeignLicenceUponReceipt",
+        "foreignIssuingCountry",
+        "foreignDrivingLicenceNumber",
+        "lostPermitDeclarationSigned",
+        "gardaCertificationObtained"
+      ],
+      "next": "organ_donation"
+    },
+    {
+      "id": "organ_donation",
+      "title": "Organ Donation",
+      "fields": [
+        "organDonorCode115Requested"
+      ],
+      "next": "driver_fitness"
+    },
+    {
+      "id": "driver_fitness",
+      "title": "Driver Fitness",
+      "fields": [
+        "requiresGlassesOrLensesForDriving",
+        "eyesightReportForm",
+        "diabetesInsulinOrHypoglycaemiaRiskMedication",
+        "epilepsy",
+        "strokeOrTIA",
+        "fitsOrBlackouts",
+        "brainOrSpinalConditionOrInjury",
+        "implantedCardiacPacemaker",
+        "implantedCardiacDefibrillator",
+        "suddenDisablingDizziness",
+        "chronicNeurologicalCondition",
+        "memoryProblemsOrConfusion",
+        "persistentAlcoholMisuseOrDependency",
+        "persistentDrugMisuseOrDependency",
+        "seriousPsychiatricIllnessOrMentalHealthProblems",
+        "parkinsonsDisease",
+        "sleepApnoeaSyndrome",
+        "narcolepsy",
+        "peripheralVisionCondition",
+        "totalSightLossOneEye",
+        "conditionAffectingBothEyesOrRemainingEye",
+        "seriousHearingDeficiencyWorsened",
+        "severeLearningDisability",
+        "armsOrLegsRestrictToAutomaticVehicle",
+        "armsOrLegsRestrictToAdaptedVehicle",
+        "conditionDeterioratedSinceLastApplication",
+        "medicalReportRequired",
+        "medicalReportForm"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration by Applicant",
+      "fields": [
+        "declarationAccepted",
+        "signatureDate"
+      ],
+      "next": "fees_and_payment"
+    },
+    {
+      "id": "fees_and_payment",
+      "title": "Fees and Payment",
+      "fields": [
+        "feeExemptionReason",
+        "paymentMethod"
+      ]
+    }
+  ]
+}
