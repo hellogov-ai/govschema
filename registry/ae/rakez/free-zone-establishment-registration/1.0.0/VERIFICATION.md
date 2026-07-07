@@ -116,14 +116,17 @@ pass — see "Judgment calls" below for how this was caught and corrected):
   of the Shareholder 1 sub-form specifically (not shareholders 2-5, which
   are visually and structurally identical but out of scope for this
   version — see below).
-- **p.2, 3. Manager Details:** Name, Address & Contact details, Nationality,
-  Passport Number, and the Residency-status-in-UAE Yes/No radio, plus its
-  verbatim NOC-required note. **The visible "Mother Name:" label in this
-  section has no corresponding fillable widget** (unlike the Shareholder
-  section, which does have one) — confirmed by checking every annotation's
-  rectangle in this section; none sit at the "Mother Name:" label's
-  y-coordinate. This is treated as a genuine gap in the source form, not
-  modelled as a field (see "Judgment calls" below).
+- **p.2, 3. Manager Details:** Name, Mother Name, Nationality, Passport
+  Number, and the Residency-status-in-UAE Yes/No radio, plus its verbatim
+  NOC-required note. **The widget carrying the PDF's own internal field name
+  "Address & Contact details" in fact sits at the y-coordinate of the
+  printed "Mother Name:" label, not at any printed "Address & Contact"
+  label** — confirmed by checking every annotation's rectangle in this
+  section against the text layer; no widget sits at the "Address & Contact
+  Details:" printed label at all in this section (unlike the Shareholder
+  section, which has a genuine, correctly-positioned Address & Contact
+  Details widget). This is modelled as `managerMotherName`, not
+  `managerAddressContact` (see "Judgment calls" below).
 - **p.2-3, 4. Facility Details:** five mutually-exclusive subsections, each
   confirmed via coordinate cross-referencing between each radio widget's
   rectangle and the nearest label token(s) at the same y-coordinate:
@@ -174,11 +177,18 @@ pass — see "Judgment calls" below for how this was caught and corrected):
   groups (GovSchema v0.3 has no array/repeating-field type — `spec/v0.3/SPEC.md`
   §6.1), the same precedent used by `ae/fta/vat-registration`'s owner/
   relationship blocks.
-- **Manager's "Mother Name" label has no fillable widget:** not modelled as
-  a field, since GovSchema models applicant-fillable data points, not every
-  printed label. This is flagged here as a probable authoring gap in RAKEZ's
-  own PDF (the parallel Shareholder section does have a Mother Name widget)
-  rather than assumed to be an intentional omission.
+- **Manager's PDF-internal "Address & Contact details" field name is a
+  mislabeled Mother Name widget:** unlike the Shareholder section (where the
+  widget named "Address & Contact Details" genuinely sits at the printed
+  "Address & Contact Details:" label), the Manager section's widget carrying
+  that same internal PDF field name is positioned at the y-coordinate of the
+  printed "Mother Name:" label instead — RAKEZ's own PDF authoring mislabeled
+  it, not the printed form layout. There is no widget anywhere in the Manager
+  section at the printed "Address & Contact Details:" label's position.
+  Modelled as `managerMotherName` (optional, `pii`), mirroring
+  `shareholderMotherName`, in place of the `managerAddressContact` field this
+  document originally (incorrectly) modelled — corrected during independent
+  review ([GOV-1543](../../../../../GOV-1543)).
 - **No single "facility category" selector field:** the source form has five
   independent radio-button groups (one per facility subsection), not one
   combined selector; this schema mirrors that shape exactly (five independent
