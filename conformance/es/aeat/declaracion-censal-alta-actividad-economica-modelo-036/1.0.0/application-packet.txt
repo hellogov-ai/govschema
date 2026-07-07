@@ -1,0 +1,109 @@
+=============================================================
+DRAFT — NOT SUBMITTED — review with a human before proceeding
+=============================================================
+
+Schema: es/aeat/declaracion-censal-alta-actividad-economica-modelo-036 v1.0.0
+Generated: 2026-07-07
+
+ELIGIBILITY / APPLICABILITY OUTCOME
+------------------------------------
+This packet models a fiscally-resident natural person registering the start
+of a professional economic activity (freelance translation/interpretation)
+carried out outside a fixed premises, under Modelo 036's simplified,
+natural-person, alta-only pathway.
+
+  - codigoActividad: "A05 Resto de actividades profesionales"
+    -> triggers requiredWhen on grupoEpigrafeIae (IAE hecho-imponible codes
+       A01-A05 require a group/heading/section code)
+    [Guía 036 Cap. 4, casillas 403/404; requiredWhen]
+  - lugarRealizacionActividad: "Fuera de local determinado"
+    -> triggers visibleWhen on municipioActividad; the five "local
+       determinado" address fields (comunidadAutonomaLocal, provinciaLocal,
+       municipioLocal, direccionLocal, referenciaCatastralLocal) are
+       correctly absent
+    [Guía 036 Cap. 4, casillas 405-411; visibleWhen/requiredWhen]
+  - indicadorReferenciaCatastral: "4" (sin referencia catastral asignada)
+    -> referenciaCatastral is correctly absent (its requiredWhen only fires
+       for indicator values "1"/"2"/"3")
+    [Guía 036 Cap. 2, Página 2A, casillas A30/A39; requiredWhen]
+  - regimenGeneral/regimenSimplificado/regimenRecargoEquivalencia/
+    regimenAgriculturaGanaderiaPesca: all False
+    -> satisfies exclusivityGroup "regimenIva" trivially (zero True also
+       respects "at most one True"); a professional-services activity is
+       not eligible for any of the four special VAT regimes modelled here,
+       so the ordinary régimen general applies by default
+    [Guía 036 Cap. 6; exclusivityGroups]
+  - estimacionDirectaSimplificada: True, the other two IRPF booleans False
+    -> satisfies exclusivityGroup "metodoEstimacionIrpf" (exactly one True)
+    [Guía 036 Cap. 7, casilla 609; exclusivityGroups]
+
+COLLECTED VALUES
+----------------
+  NIF: 12345678Z
+    (field: nif, source: Guía 036 Cap. 2, Página 2A, casilla A4)
+  Primer apellido / Segundo apellido / Nombre: Serrano / Gil / Marta
+    (fields: primerApellido/segundoApellido/nombre, source: Página 2A)
+  Domicilio fiscal: Calle Calle del Pez 14, 28004 Madrid (Madrid)
+    (fields: tipoViaDomicilioFiscal/nombreViaDomicilioFiscal/
+     numeroDomicilioFiscal/municipioDomicilioFiscal/provinciaDomicilioFiscal/
+     codigoPostalDomicilioFiscal, source: Página 2A, casillas A11-A25)
+  Indicador Ref. Catastral: 4 (sin referencia catastral)
+    (field: indicadorReferenciaCatastral, source: Página 2A, casilla A39)
+  Correo electrónico para avisos: marta.serrano.gil@example.com
+    (field: emailAvisos, source: Página 2A)
+  Descripción de la actividad: Traducción e interpretación de idiomas
+    (field: descripcionActividad, source: Cap. 4, casilla 400)
+  Código de actividad: A05 Resto de actividades profesionales
+    (field: codigoActividad, source: Cap. 4, casillas 403/404)
+  Grupo, epígrafe / sección IAE: 774
+    (field: grupoEpigrafeIae, source: Cap. 4, casilla 402)
+  Lugar de realización de la actividad: Fuera de local determinado
+    (field: lugarRealizacionActividad, source: Cap. 4)
+  Fecha de inicio: 2026-09-01
+    (field: fechaInicioActividad, source: Cap. 4, casilla 406)
+  Municipio de la actividad: Madrid
+    (field: municipioActividad, source: Cap. 4, casilla 411)
+  Régimen de IVA: Régimen general (ninguna casilla especial marcada)
+    (fields: regimenGeneral/regimenSimplificado/regimenRecargoEquivalencia/
+     regimenAgriculturaGanaderiaPesca, source: Cap. 6, casillas 510/550/514/534)
+  Método de estimación IRPF: Estimación directa simplificada
+    (field: estimacionDirectaSimplificada, source: Cap. 7, casilla 609)
+
+NOT COLLECTED (correctly absent for this filer)
+------------------------------------------------
+  - segundoApellido/nombreComercial-adjacent optional fields not otherwise
+    populated here beyond segundoApellido (nombreComercial: this filer
+    trades under her own name, no separate trade name).
+  - Domicilio a efectos de notificaciones: not different from the fiscal
+    domicile above, so its six fields are absent.
+  - Teléfono para avisos: only the email channel is registered this filing.
+  - referenciaCatastral: indicadorReferenciaCatastral is "4" (no cadastral
+    reference assigned), so this field is correctly not required.
+  - The five "local determinado" premises fields: the activity is carried
+    out "fuera de un local determinado."
+  - All four VAT special-regime booleans and estimacionDirectaNormal /
+    estimacionObjetiva: not applicable to this filer's activity/election.
+
+SECOND SCENARIO (traced, not committed as a separate fixture file)
+--------------------------------------------------------------------
+A retail shopkeeper operating from a fixed premises (codigoActividad "A03
+Resto de actividades empresariales", lugarRealizacionActividad "Local
+determinado", so comunidadAutonomaLocal/provinciaLocal/municipioLocal/
+direccionLocal are required and populated), under recargo de equivalencia
+(regimenRecargoEquivalencia: true) and estimación objetiva
+(estimacionObjetiva: true) — exercises the "local determinado" address
+block and both exclusivityGroups' non-trivial (exactly-one-true) branch.
+Also passed with zero errors against the standalone rule-tracer described
+in VERIFICATION.md.
+
+VALIDATION
+----------
+$ node tools/validate.mjs registry/es/aeat/declaracion-censal-alta-actividad-economica-modelo-036/1.0.0/schema.json
+ok   registry/es/aeat/declaracion-censal-alta-actividad-economica-modelo-036/1.0.0/schema.json
+
+1/1 document(s) passed.
+
+$ node tools/validate-ajv.mjs registry/es/aeat/declaracion-censal-alta-actividad-economica-modelo-036/1.0.0/schema.json
+ok   registry/es/aeat/declaracion-censal-alta-actividad-economica-modelo-036/1.0.0/schema.json [v0.3]
+
+1/1 document(s) validated against the meta-schema (ajv 2020-12).
