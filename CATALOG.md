@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**20 jurisdictions** | **260 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**20 jurisdictions** | **261 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-07, GOV-1638):** Chile gains its second vertical, DMV,
+> with `cl/sii/aviso-venta-vehiculo` — the Servicio de Impuestos Internos'
+> (SII) Formulario 1816, "Aviso de Venta de Vehículos," a sworn declaration a
+> taxpayer who owns passenger-transport or cargo-for-hire vehicles must file
+> with SII each time they sell one. This `GovSchema Standard Research` cycle
+> screened Chile's remaining five open verticals in priority order:
+> Registro Civil e Identificación's vehicle-registration and driver's-licence
+> channels (the former CAPTCHA-gated on direct fetch and 403'd via
+> ChileAtiende's aggregator fichas, the latter a confirmed in-person-only,
+> by-municipality process with no form or wizard at all); a Ministerio de
+> Transportes (MTT/Subtrans) Formulario N°1 vehicle-service-registration PDF
+> (recovered via Wayback after `mtt.gob.cl` itself proved unreachable
+> directly, but scoped narrowly to commercial passenger-transport-service
+> permits and carrying no AcroForm widget layer at all); SII's own
+> Formulario 22 annual income-tax return (a genuine, current 15-page PDF,
+> but a prose instructivo with zero AcroForm fields, standing in for nothing
+> the way F4415-PN does for the sibling schema, and SII's largest, most
+> complex return besides); and Chile's consular e-visa channel
+> (`evisa.minrel.gob.cl`, referenced from a live, unauthenticated
+> `tramites.minrel.gov.cl` landing page's own CSP header, but the subdomain
+> itself did not resolve this cycle). Formulario 1816 was picked instead: a
+> genuine, unauthenticated, currently-maintained (`Last-Modified:
+> 2025-02-13`) fillable AcroForm PDF hosted directly on `sii.cl`, no
+> login/CAPTCHA/WAF gate — unlike the sibling schema's F4415-PN, this form's
+> 55 AcroForm widgets carry only generic sequential names (`Texto1`…
+> `Texto54`), so every field's real label was attributed via `pdfjs-dist`
+> per-glyph x/y-coordinate cross-matching against the page's own text layer,
+> not name-guessing. Models 40 fields across the vendor/representative/buyer
+> identification blocks, the sale's own details, the vehicle's
+> identification, and two sections (capital-gain calculation, continuation
+> as a Primera Categoría taxpayer) the instructivo names as mandatory only
+> for taxpayer categories this form provides no field to distinguish —
+> disclosed and left `required: false` rather than fabricating a
+> `requiredWhen` gate with no real trigger — plus 2 `documents[]` entries and
+> 1 `exclusivityGroups` entry. This closes the **global DMV vertical to
+> 20/20 (100%)**. Chile's remaining open verticals are Passport, Taxes,
+> Visa, and National ID.
 
 > **Update (2026-07-07, GOV-1631):** Brazil gains
 > `br/pr/iipr/carteira-identidade-correcao`, closing its National ID &
@@ -1384,14 +1422,21 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (19/20 jurisdictions — 95%)
+### DMV — Vehicle Registration, Licensing, Permits (20/20 jurisdictions — 100%)
 
-Every jurisdiction except the newest (Chile, opened this cycle via Business
-Formation) has at least one DMV-vertical schema (driver licensing,
-International Driving Permit, and/or vehicle registration/transfer). This
-vertical was at 100% (19/19) immediately before this cycle; opening a 20th
-jurisdiction with a single vertical necessarily reopens it, the same way
-Colombia's own opening (GOV-1567) briefly did for other verticals. **Colombia** (`co/runt/formulario-solicitud-tramites-vehiculo`,
+Every jurisdiction has at least one DMV-vertical schema (driver licensing,
+International Driving Permit, and/or vehicle registration/transfer/sale).
+**Chile** (`cl/sii/aviso-venta-vehiculo`, GOV-1638) closes the vertical back
+to 100% this cycle — SII's own Formulario 1816, "Aviso de Venta de
+Vehículos," a sworn notice-of-vehicle-sale declaration, screened alongside
+several dead ends (Registro Civil e Identificación's vehicle-registration
+and driver's-licence channels, an MTT/Subtrans commercial-transport-permit
+form, SII's own Formulario 22 income-tax instructivo, and an unreachable
+consular e-visa subdomain) — see the document's own VERIFICATION.md for the
+full candidate comparison. This vertical was at 100% (19/19) immediately
+before Chile's opening (GOV-1624, Business Formation) briefly reopened it,
+the same way Colombia's own opening (GOV-1567) briefly did for other
+verticals. **Colombia** (`co/runt/formulario-solicitud-tramites-vehiculo`,
 GOV-1567) is new this cycle and opens Colombia as the registry's 19th
 jurisdiction — sourced from RUNT's own "Formulario de Solicitud de Trámites
 del Registro Nacional Automotor" `.xls` form, fetched directly from
@@ -1906,7 +1951,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CL** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -2115,9 +2160,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Summary update above and the document's own VERIFICATION.md for the full
    candidate comparison (which also re-confirms Brazil's National ID gap as
    then a strong, ready-to-author candidate — since closed via GOV-1631, see
-   the National ID vertical section above). Chile's other five verticals (Passport, DMV, Taxes, Visa,
-   National ID) are open, unscreened-or-lightly-screened backlog candidates
-   for a future cycle. Candidates worth scouting for a 21st jurisdiction in
+   the National ID vertical section above). Chile's DMV vertical has since
+   opened via GOV-1638 (`cl/sii/aviso-venta-vehiculo`, see the Executive
+   Summary update above); its remaining four verticals (Passport, Taxes,
+   Visa, National ID) are open, unscreened-or-lightly-screened backlog
+   candidates for a future cycle. Candidates worth scouting for a 21st
+   jurisdiction in
    a future cycle: Spain (AEAT's Modelo 030 is a strong, genuinely
    unauthenticated PDF candidate, screened but not picked this cycle — see
    GOV-1624's own VERIFICATION.md), Argentina, Peru, Portugal, Poland, or an

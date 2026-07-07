@@ -1,0 +1,460 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "cl/sii/aviso-venta-vehiculo",
+  "version": "1.0.0",
+  "title": "Chile Notice of Vehicle Sale (Aviso de Venta de Vehículos, Formulario 1816)",
+  "description": "The Servicio de Impuestos Internos' (SII, Chile's tax authority) Formulario 1816, a sworn declaration ('declaración jurada') a taxpayer who owns one or more motor vehicles used in passenger transport (e.g. taxis, buses) or in third-party freight transport ('transporte de carga ajena') must file with SII each time they sell one such vehicle — one form per vehicle sold, per the form's own instructivo. It identifies the seller and buyer, the sale's own terms (date, price, notary), the vehicle being sold, and — only for taxpayers whose category requires it per the instructivo's own sections 4.2/4.3 — whether the seller continues as a Primera Categoría taxpayer and/or the sale's own capital-gain ('utilidad') calculation. This is the closest DMV-vertical analogue in this registry to a vehicle-sale/transfer notification for Chile (matching the precedent set by `br/mg/detran/comunicacao-de-venda-de-veiculo` and `kr/molit/vehicle-ownership-transfer-registration`), even though it is administered by Chile's tax authority rather than a dedicated transport/vehicle-registry body — Chile has no separate agency-published sale-notification form for this process; SII's own F1816 is it. The form is genuinely downloadable and fillable (a two-page AcroForm PDF hosted directly on sii.cl, HTTP 200, no login/CAPTCHA/WAF gate) for printing and in-person submission at SII's own Unidad de Término de Giro; this document is derived entirely from the public, unauthenticated PDF form and its own second-page instructivo. Deliberately does not model: the general private passenger-vehicle sale/transfer process handled by the Servicio de Registro Civil e Identificación ('declaración consensual' or notarial transfer) — that channel is entirely ClaveÚnica-gated online with no PDF fallback found this cycle, and is a materially different process (this form is scoped to commercial passenger/freight-for-hire vehicles a taxpayer sells, not any private vehicle sale); the reverse-side 'USO EXCLUSIVO SII'/notarial-authorization/fiscalizador stamp-and-signature block, which is not applicant-supplied data; and the office-assigned 'FOLIO' control number and page-selector dropdown, neither of which is applicant-entered. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Chile or the Servicio de Impuestos Internos.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Servicio de Impuestos Internos",
+    "abbreviation": "SII",
+    "url": "https://www.sii.cl"
+  },
+  "process": {
+    "type": "filing",
+    "language": "es-CL"
+  },
+  "source": {
+    "url": "https://www.sii.cl/formularios/imagen/F1816.pdf",
+    "retrievedAt": "2026-07-07",
+    "documentRef": "Formulario 1816, 'Aviso de Venta de Vehículos', Servicio de Impuestos Internos (SII) (2-page fillable AcroForm PDF, page 2 carries the form's own instructivo)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-07",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-07",
+    "notes": "GovSchema Standard Research cycle (GOV-1638), opening Chile's second vertical (DMV) after `cl/sii/inicio-actividades-personas-naturales` (Business Formation, GOV-1624). Screened alongside Registro Civil/ChileAtiende vehicle-registration and driver's-license candidates (both entirely ClaveÚnica-gated or in-person-municipal-only, no PDF fallback found), SII's own Formulario 22 annual income-tax return (a 15-page prose instructivo with no AcroForm layer at all, and materially larger/more complex than this candidate), and Chile's consular e-visa channel (a live wizard, not independently confirmed reachable this cycle) — see VERIFICATION.md 'Why this candidate' for the full comparison. The live PDF was independently fetched (HTTP 200, Last-Modified 2025-02-13, no login/CAPTCHA/WAF) and its AcroForm field structure extracted programmatically via pdfjs-dist (both the annotation/widget layer and the page text layer, cross-referenced by x/y-coordinate to attach each generically-named widget — Texto1…Texto54 — to its printed label, since unlike the sibling schema's F4415-PN this form's own AcroForm field names are not self-documenting). No native required/maxLength constraints are asserted on any widget (checked via each annotation's own `required`/`maxLen` properties, all false/0); required markers instead follow the instructivo's own explicit naming of which sections are always mandatory (A, B, C) versus conditionally mandatory only for specific taxpayer categories the form itself cannot distinguish (D, E). See VERIFICATION.md for the full field inventory, sourcing, and every disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-07"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "rutVendedor",
+      "label": "Rol Único Tributario",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "RUT (Rol Único Tributario) of the vendor (seller) filing this notice. The instructivo's own §4.1 names this as required 'en todos los casos' (in all cases): 'Rol Único Tributario (vendedor)'.",
+      "sourceRef": "F1816 p.1, header, above Sección A — 'ROL ÚNICO TRIBUTARIO' (AcroForm fields Texto2–Texto9 digit boxes + Texto10 check-digit box)",
+      "validation": { "pattern": "^[0-9]{7,8}-[0-9Kk]$" }
+    },
+    {
+      "name": "razonSocialApellidoPaternoVendedor",
+      "label": "Razón Social o Apellido Paterno",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Legal-entity name (razón social), if the vendor is a company, or paternal surname, if the vendor is a natural person. The form itself does not carry a separate Persona Natural/Persona Jurídica selector; which meaning applies is inferred from context (e.g. whether the Persona Jurídica/Representante block below is also completed).",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'RAZÓN SOCIAL O APELLIDO PATERNO' (AcroForm field Texto11)"
+    },
+    {
+      "name": "apellidoMaternoVendedor",
+      "label": "Apellido Materno",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Maternal surname of the vendor, when the vendor is a natural person. Modelled as optional: not every vendor entry carries a second surname (e.g. a company, or a foreign-nationality individual), and the source names no per-field mandatory marker.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'APELLIDO MATERNO' (AcroForm field Texto12)"
+    },
+    {
+      "name": "nombresVendedor",
+      "label": "Nombres",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Given name(s) of the vendor.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'NOMBRES' (AcroForm field Texto13)"
+    },
+    {
+      "name": "domicilioCalleVendedor",
+      "label": "Domicilio: Calle",
+      "type": "string",
+      "required": true,
+      "description": "Street name of the vendor's address.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'DOMICILIO: CALLE' (AcroForm field Texto14)"
+    },
+    {
+      "name": "domicilioNumeroVendedor",
+      "label": "Número",
+      "type": "string",
+      "required": true,
+      "description": "Street number of the vendor's address.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'NÚMERO' (AcroForm field Texto15)"
+    },
+    {
+      "name": "domicilioOficinaLocalDeptoVendedor",
+      "label": "Oficina/Local/Depto.",
+      "type": "string",
+      "required": false,
+      "description": "Office/store/apartment unit of the vendor's address, if applicable.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'OFICINA/ LOCAL / DEPTO.' (AcroForm field Texto16)"
+    },
+    {
+      "name": "domicilioPoblacionVillaVendedor",
+      "label": "Población / Villa",
+      "type": "string",
+      "required": false,
+      "description": "Named residential development (población/villa) of the vendor's address, if applicable.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'POBL / VILLA' (AcroForm field Texto17)"
+    },
+    {
+      "name": "domicilioComunaVendedor",
+      "label": "Comuna",
+      "type": "string",
+      "required": true,
+      "description": "Comuna (Chile's third-level administrative division) of the vendor's address.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'COMUNA' (AcroForm field Texto18)"
+    },
+    {
+      "name": "domicilioFonoVendedor",
+      "label": "Fono",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Telephone number of the vendor.",
+      "sourceRef": "F1816 p.1, Sección A 'Identificación del Vendedor' — 'FONO' (AcroForm field Texto19)"
+    },
+    {
+      "name": "apellidoPaternoRepresentante",
+      "label": "Apellido Paterno",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Paternal surname of the legal representative (if the vendor is a legal entity) or mandatario (attorney-in-fact) acting on the vendor's behalf. The instructivo describes this block as applicable 'si actúa un representante' (if a representative acts); the form carries no separate boolean marker for this, so it is modelled as optional rather than gated on a fabricated condition.",
+      "sourceRef": "F1816 p.1, 'Representante (Si Se Trata De Persona Jurídica) o Mandatario' — 'APELLIDO PATERNO' (AcroForm field Texto20)"
+    },
+    {
+      "name": "apellidoMaternoRepresentante",
+      "label": "Apellido Materno",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Maternal surname of the legal representative or mandatario, if applicable.",
+      "sourceRef": "F1816 p.1, 'Representante (Si Se Trata De Persona Jurídica) o Mandatario' — 'APELLIDO MATERNO' (AcroForm field Texto21)"
+    },
+    {
+      "name": "nombresRepresentante",
+      "label": "Nombres",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Given name(s) of the legal representative or mandatario, if applicable.",
+      "sourceRef": "F1816 p.1, 'Representante (Si Se Trata De Persona Jurídica) o Mandatario' — 'NOMBRES' (AcroForm field Texto22)"
+    },
+    {
+      "name": "rutRepresentante",
+      "label": "RUT",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "RUT of the legal representative or mandatario, if applicable.",
+      "sourceRef": "F1816 p.1, 'Representante (Si Se Trata De Persona Jurídica) o Mandatario' — 'RUT' (AcroForm field Texto23)",
+      "validation": { "pattern": "^[0-9]{7,8}-[0-9Kk]$" }
+    },
+    {
+      "name": "razonSocialApellidoPaternoComprador",
+      "label": "Razón Social o Apellido Paterno",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Legal-entity name (razón social), if the buyer is a company, or paternal surname, if the buyer is a natural person.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'RAZÓN SOCIAL O APELLIDO PATERNO' (AcroForm field Texto24)"
+    },
+    {
+      "name": "apellidoMaternoComprador",
+      "label": "Apellido Materno",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Maternal surname of the buyer, when the buyer is a natural person. Modelled as optional for the same reason as `apellidoMaternoVendedor`.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'APELLIDO MATERNO' (AcroForm field Texto25)"
+    },
+    {
+      "name": "nombresComprador",
+      "label": "Nombres",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Given name(s) of the buyer.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'NOMBRES' (AcroForm field Texto26)"
+    },
+    {
+      "name": "domicilioCalleComprador",
+      "label": "Domicilio: Calle",
+      "type": "string",
+      "required": true,
+      "description": "Street name of the buyer's address.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'DOMICILIO: CALLE' (AcroForm field Texto27)"
+    },
+    {
+      "name": "domicilioNumeroComprador",
+      "label": "Número",
+      "type": "string",
+      "required": true,
+      "description": "Street number of the buyer's address.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'NÚMERO' (AcroForm field Texto28)"
+    },
+    {
+      "name": "domicilioOficinaLocalDeptoComprador",
+      "label": "Oficina/Local/Depto.",
+      "type": "string",
+      "required": false,
+      "description": "Office/store/apartment unit of the buyer's address, if applicable.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'OFICINA / LOCAL / DEPTO.' (AcroForm field Texto29)"
+    },
+    {
+      "name": "domicilioPoblacionVillaComprador",
+      "label": "Población / Villa",
+      "type": "string",
+      "required": false,
+      "description": "Named residential development (población/villa) of the buyer's address, if applicable.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'POBL / VILLA' (AcroForm field Texto30)"
+    },
+    {
+      "name": "domicilioComunaComprador",
+      "label": "Comuna",
+      "type": "string",
+      "required": true,
+      "description": "Comuna of the buyer's address.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'COMUNA' (AcroForm field Texto31)"
+    },
+    {
+      "name": "domicilioFonoComprador",
+      "label": "Fono",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Telephone number of the buyer.",
+      "sourceRef": "F1816 p.1, 'Individualización del Comprador' — 'FONO' (AcroForm field Texto32)"
+    },
+    {
+      "name": "fechaIniciacionActividad",
+      "label": "Fecha Iniciación",
+      "type": "date",
+      "required": true,
+      "description": "The vendor's own date of iniciación de actividades (start of the economic activity within which the sold vehicle was used). Printed as three narrow day/month/year AcroForm text boxes; modelled as a single date-typed field per this registry's convention.",
+      "sourceRef": "F1816 p.1, Sección B 'Detalles' — 'FECHA INICIACIÓN' (AcroForm fields Texto33/Texto34/Texto35, día/mes/año boxes)"
+    },
+    {
+      "name": "fechaVenta",
+      "label": "Fecha de Venta",
+      "type": "date",
+      "required": true,
+      "description": "Date the vehicle was sold. Printed as three narrow day/month/year AcroForm text boxes; modelled as a single date-typed field.",
+      "sourceRef": "F1816 p.1, Sección B 'Detalles' — 'FECHA DE VENTA' (AcroForm fields Texto36/Texto37/Texto38, día/mes/año boxes)"
+    },
+    {
+      "name": "precioVenta",
+      "label": "Precio de Venta",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "Sale price of the vehicle, in Chilean pesos.",
+      "sourceRef": "F1816 p.1, Sección B 'Detalles' — 'PRECIO DE VENTA' (AcroForm field Texto39)"
+    },
+    {
+      "name": "nombreNotario",
+      "label": "Nombre del Notario",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name of the notary before whom the sale contract was executed.",
+      "sourceRef": "F1816 p.1, Sección B 'Detalles' — 'NOMBRE DEL NOTARIO' (AcroForm field Texto40)"
+    },
+    {
+      "name": "numeroRepertorio",
+      "label": "N° Repertorio",
+      "type": "string",
+      "required": true,
+      "description": "Notarial repertoire (registry) number assigned to the sale contract.",
+      "sourceRef": "F1816 p.1, Sección B 'Detalles' — 'N° REPERTORIO' (AcroForm field Texto41)"
+    },
+    {
+      "name": "inscripcionRVM",
+      "label": "Inscripción R.V.M.",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's inscription/registration number in the Registro de Vehículos Motorizados (R.V.M.).",
+      "sourceRef": "F1816 p.1, Sección C 'Identificación del Vehículo' — 'INSCRIPCIÓN R.V.M.' (AcroForm field Texto42)"
+    },
+    {
+      "name": "tipoVehiculo",
+      "label": "Tipo",
+      "type": "string",
+      "required": true,
+      "description": "Type of vehicle (the instructivo's own non-exhaustive examples: auto, bus, camión, camioneta, 'etc.' — not a closed list printed on the form, so modelled as open string rather than a fabricated enum).",
+      "sourceRef": "F1816 p.1, Sección C 'Identificación del Vehículo' — 'TIPO' (AcroForm field Texto43)"
+    },
+    {
+      "name": "marcaVehiculo",
+      "label": "Marca",
+      "type": "string",
+      "required": true,
+      "description": "Make/brand of the vehicle.",
+      "sourceRef": "F1816 p.1, Sección C 'Identificación del Vehículo' — 'MARCA' (AcroForm field Texto44)"
+    },
+    {
+      "name": "modeloVehiculo",
+      "label": "Modelo",
+      "type": "string",
+      "required": true,
+      "description": "Model of the vehicle.",
+      "sourceRef": "F1816 p.1, Sección C 'Identificación del Vehículo' — 'MODELO' (AcroForm field Texto45)"
+    },
+    {
+      "name": "anioVehiculo",
+      "label": "Año",
+      "type": "string",
+      "required": true,
+      "description": "Model year of the vehicle.",
+      "sourceRef": "F1816 p.1, Sección C 'Identificación del Vehículo' — 'AÑO' (AcroForm field Texto46)",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "otrosDetallesVehiculo",
+      "label": "Otros Detalles",
+      "type": "string",
+      "required": false,
+      "description": "Any other identifying details of the vehicle the vendor wishes to note. Not named in the instructivo's own list of always-mandatory Sección C items, so modelled as optional.",
+      "sourceRef": "F1816 p.1, Sección C 'Identificación del Vehículo' — 'OTROS DETALLES' (AcroForm field Texto47)"
+    },
+    {
+      "name": "precioVentaUtilidad",
+      "label": "Precio de Venta",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Sale price of the vehicle, as used in the Sección D capital-gain ('utilidad en venta') calculation. Per the instructivo's own §4.3, Sección D is mandatory only for specific taxpayer categories (owners of more than one passenger-transport vehicle, companies, or partial-liquidation Renta Presunta cargo-transport filers) that this form provides no boolean field to distinguish from the §4.2 categories exempt from it — modelled `required: false` rather than fabricating a `requiredWhen` gate with no corresponding source field. See VERIFICATION.md.",
+      "sourceRef": "F1816 p.1, Sección D 'Determinación de la Utilidad en Venta' — 'PRECIO DE VENTA' row (AcroForm field Texto48)"
+    },
+    {
+      "name": "costoAdquisicionActualizado",
+      "label": "Menos: Costo de Adquisición Actualizado Deducida la Depreciación Correspondiente",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Updated acquisition cost of the vehicle, net of accumulated depreciation, per the instructivo's own §4's worked formula. Same conditional-applicability limitation as `precioVentaUtilidad`.",
+      "sourceRef": "F1816 p.1, Sección D 'Determinación de la Utilidad en Venta' — 'MENOS: COSTO DE ADQUISICIÓN ACTUALIZADO DEDUCIDA LA DEPRECIACIÓN CORRESPONDIENTE' row (AcroForm field Texto49)"
+    },
+    {
+      "name": "utilidadPerdida",
+      "label": "Utilidad o Pérdida",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Resulting gain or loss on the sale (precioVentaUtilidad minus costoAdquisicionActualizado). Same conditional-applicability limitation as `precioVentaUtilidad`.",
+      "sourceRef": "F1816 p.1, Sección D 'Determinación de la Utilidad en Venta' — 'UTILIDAD O PÉRDIDA' row (AcroForm field Texto50)"
+    },
+    {
+      "name": "numeroUltimaFacturaEmitida",
+      "label": "N° de Última Factura Emitida",
+      "type": "string",
+      "required": false,
+      "description": "Number of the last invoice (factura) issued, asked only of cargo-for-hire ('transporte de carga ajena') taxpayers under the Renta Presunta regime per instructivo §4.1's own closing sentence, a category this form provides no field to identify — modelled optional.",
+      "sourceRef": "F1816 p.1, Sección D area — 'N° DE ÚLTIMA FACTURA EMITIDA' (AcroForm field Texto51)"
+    },
+    {
+      "name": "continuaPrimeraCategoriaSi",
+      "label": "Sí",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "description": "Whether the vendor declares they will continue as a Primera Categoría taxpayer of the Ley de la Renta after this sale. Per instructivo §4.2, Sección E is mandatory only for specific taxpayer categories (natural persons selling their sole passenger-transport vehicle, or full-liquidation Renta Presunta cargo-transport sellers) this form provides no field to distinguish — modelled `required: false`. Mutually exclusive with `continuaPrimeraCategoriaNo`.",
+      "sourceRef": "F1816 p.1, Sección E 'Declaro que Continuaré como Contribuyente de Primera Categoría de la Ley de la Renta' — 'SI' checkbox (AcroForm field `Casilla de verificación52`)"
+    },
+    {
+      "name": "continuaPrimeraCategoriaNo",
+      "label": "No",
+      "type": "boolean",
+      "required": false,
+      "fieldRole": "eligibility",
+      "description": "Whether the vendor declares they will NOT continue as a Primera Categoría taxpayer after this sale. Mutually exclusive with `continuaPrimeraCategoriaSi`.",
+      "sourceRef": "F1816 p.1, Sección E 'Declaro que Continuaré como Contribuyente de Primera Categoría de la Ley de la Renta' — 'NO' checkbox (AcroForm field `Casilla de verificación53`)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "certificadoRegistroNacionalVehiculos",
+      "label": "Certificado del Registro Nacional de Vehículos Motorizados, vigente, que acredite la propiedad del o los vehículos",
+      "category": "supporting-evidence",
+      "required": true,
+      "issuingAuthority": "Servicio de Registro Civil e Identificación"
+    },
+    {
+      "id": "borradorContratoNotarial",
+      "label": "Borrador del Contrato Notarial firmado por las partes contratantes, con número de repertorio y timbre de la Notaría (sólo contribuyentes propietarios de vehículos de transporte de carga ajena)",
+      "category": "supporting-evidence",
+      "required": false,
+      "issuingAuthority": "Notaría"
+    }
+  ],
+  "exclusivityGroups": [
+    { "id": "continuacionPrimeraCategoria", "fields": ["continuaPrimeraCategoriaSi", "continuaPrimeraCategoriaNo"] }
+  ],
+  "steps": [
+    {
+      "id": "encabezado",
+      "title": "Encabezado — Rol Único Tributario",
+      "fields": ["rutVendedor"],
+      "next": "vendedor"
+    },
+    {
+      "id": "vendedor",
+      "title": "A. Identificación del Vendedor",
+      "fields": ["razonSocialApellidoPaternoVendedor", "apellidoMaternoVendedor", "nombresVendedor", "domicilioCalleVendedor", "domicilioNumeroVendedor", "domicilioOficinaLocalDeptoVendedor", "domicilioPoblacionVillaVendedor", "domicilioComunaVendedor", "domicilioFonoVendedor"],
+      "next": "representante"
+    },
+    {
+      "id": "representante",
+      "title": "Representante (Si Se Trata de Persona Jurídica) o Mandatario",
+      "fields": ["apellidoPaternoRepresentante", "apellidoMaternoRepresentante", "nombresRepresentante", "rutRepresentante"],
+      "next": "comprador"
+    },
+    {
+      "id": "comprador",
+      "title": "Individualización del Comprador",
+      "fields": ["razonSocialApellidoPaternoComprador", "apellidoMaternoComprador", "nombresComprador", "domicilioCalleComprador", "domicilioNumeroComprador", "domicilioOficinaLocalDeptoComprador", "domicilioPoblacionVillaComprador", "domicilioComunaComprador", "domicilioFonoComprador"],
+      "next": "detalles"
+    },
+    {
+      "id": "detalles",
+      "title": "B. Detalles",
+      "fields": ["fechaIniciacionActividad", "fechaVenta", "precioVenta", "nombreNotario", "numeroRepertorio"],
+      "next": "vehiculo"
+    },
+    {
+      "id": "vehiculo",
+      "title": "C. Identificación del Vehículo",
+      "fields": ["inscripcionRVM", "tipoVehiculo", "marcaVehiculo", "modeloVehiculo", "anioVehiculo", "otrosDetallesVehiculo"],
+      "next": "utilidad"
+    },
+    {
+      "id": "utilidad",
+      "title": "D. Determinación de la Utilidad en Venta (sólo si corresponde)",
+      "fields": ["precioVentaUtilidad", "costoAdquisicionActualizado", "utilidadPerdida", "numeroUltimaFacturaEmitida"],
+      "next": "continuacion"
+    },
+    {
+      "id": "continuacion",
+      "title": "E. Declaro que Continuaré como Contribuyente de Primera Categoría de la Ley de la Renta (sólo si corresponde)",
+      "fields": ["continuaPrimeraCategoriaSi", "continuaPrimeraCategoriaNo"]
+    }
+  ]
+}
