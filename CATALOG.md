@@ -4,7 +4,53 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **276 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**24 jurisdictions** | **277 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1750): Portugal opens as GovSchema's 24th
+> jurisdiction**, via its DMV vertical, with
+> `pt/imt/requerimento-carta-de-conducao` — the Instituto da Mobilidade e dos
+> Transportes' (IMT) Mod. 1-IMT "Requerimento," the general-purpose
+> application through which a driving-title holder requests renewal
+> (revalidação), a duplicate copy (2ª via ou duplicado), replacement
+> (substituição), exchange (troca), or an address change (alteração de
+> morada) for a Licença de Aprendizagem, Licença de Condução, or Carta de
+> Condução. This cycle screened all six of Portugal's verticals: Business
+> Formation (IRN's "Empresa na Hora" specimen documents are scanned images
+> with no extractable text, and the sole-trader "Início de Atividade" route
+> is now fully login-gated); Taxes (AT's Modelo 3 IRS return is a genuine,
+> current, rich PDF, but — like Portugal's e-filing-only regime generally —
+> carries no AcroForm layer, a print/reference facsimile rather than a
+> fillable form); Passport (no citizen-facing application form exists
+> domestically; issuance is in-person/biometric-only per Decreto-Lei n.º
+> 83/2000 Art. 16); Visa (the national long-stay visa application at
+> `vistos.mne.gov.pt` was confirmed, field-for-field, to duplicate the
+> already-published `de/auswaertiges-amt/national-visa-application`
+> EU-harmonized template — the same duplicate-template pattern this registry
+> has found in Poland and Spain); and National ID (Cartão de Cidadão is
+> issued via an in-person biometric appointment, with only a consular-only
+> application PDF found). IMT's Mod. 1-IMT was picked instead: a genuine,
+> unauthenticated, currently-served AcroForm PDF (98 named widgets, confirmed
+> directly via `pdfjs-dist`), backed by a self-documenting companion
+> instructions PDF — the only Portuguese candidate this cycle found meeting
+> this registry's top-tier source bar. A first-time learner's-permit
+> application is out of scope (IMT's own service pages state it is requested
+> by the driving school, not the applicant, via this form). Models 34 fields
+> across the title requested, the six (non-exclusive) request purposes, the
+> 19-option licence-category/restriction-code grid, the current-title
+> block, applicant identification, address/contact data, and the closing
+> request date, plus 3 `documents[]` entries (photograph, the state fee, and
+> the form's own sworn declaration). One genuine authoring hazard this
+> cycle's own independent re-verification caught: several of the
+> category grid's internal AcroForm field names (e.g. a field literally
+> named `catA`) do not correspond to their own printed checkbox position
+> (confirmed by cross-matching widget coordinates against a rendered bitmap
+> of the page) — `licenceCategory`'s enum values are the printed category
+> codes themselves, unaffected, but this is disclosed in the document's own
+> VERIFICATION.md as a caution against trusting this particular form's
+> internal field names at face value. This gives Portugal 1 of its 6
+> verticals (DMV); Business Formation, Taxes, Passport, Visa, and National ID
+> are open backlog candidates for future cycles, with Taxes (AT's Modelo 3)
+> the strongest-sourced of the five.
 
 > **Update (2026-07-08, GOV-1744):** Chile gains its 3rd vertical, Taxes,
 > with `cl/sii/formulario-22` — the Servicio de Impuestos Internos' (SII)
@@ -1990,7 +2036,7 @@
 
 ## By Vertical
 
-### Passport (20/23 jurisdictions — 87%)
+### Passport (20/24 jurisdictions — 83%)
 
 **Estonia**'s Passport gap is now closed (GOV-1712), via
 `ee/ppa/passport-application` — see the Executive Summary update above for
@@ -2080,7 +2126,13 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (23/23 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (24/24 jurisdictions — 100%)
+
+**Portugal opens as this registry's 24th jurisdiction via this vertical
+(GOV-1750)**, with `pt/imt/requerimento-carta-de-conducao` — IMT's Mod.
+1-IMT driving-licence Requerimento (renewal/duplicate/replacement/exchange/
+address-change). See the Executive Summary update above and the document's
+own VERIFICATION.md for the full six-vertical candidate comparison.
 
 **Estonia's DMV gap is now closed (GOV-1728)** via
 `ee/transpordiamet/vehicle-transfer-notification` — the notice a registered
@@ -2246,7 +2298,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (23/23 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (23/24 jurisdictions — 96%)
 
 **Estonia's Business Formation gap is now closed (GOV-1705)** via
 `ee/rik/private-limited-company-foundation` — the petition for entry of a
@@ -2407,7 +2459,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (23/23 jurisdictions — 100%)
+### Taxes — Income Tax Return, Tax Filing (23/24 jurisdictions — 96%)
 
 **Chile's Taxes gap is now closed** (`cl/sii/formulario-22`, GOV-1744) —
 Formulario 22 (F-22), SII's "Declaración de Renta," Chile's annual income
@@ -2547,7 +2599,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (16/23 jurisdictions — 70%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (16/24 jurisdictions — 67%)
 
 **Poland's Visa gap was screened this cycle (GOV-1691) and confirmed a
 duplicate, not an open candidate**: the current wzór wniosku o wydanie wizy
@@ -2637,7 +2689,7 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (20/23 jurisdictions — 87%)
+### National ID & Civic Documents (20/24 jurisdictions — 83%)
 
 **Estonia** opens as the registry's 23rd jurisdiction via this vertical
 (`ee/ppa/e-residency-application`, GOV-1698) — the Police and Border Guard
@@ -2824,6 +2876,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **PT** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -3114,10 +3167,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    This gives Poland 5 of its 6 verticals; only Visa remains open, now a
    confirmed-duplicate dead end pending a genuinely distinct Polish visa
    pathway (if one exists) for a future cycle to find.
-   Other
-   candidates worth scouting for a **23rd** jurisdiction in a future cycle:
-   Portugal, or an EU member beyond DE/ES/FR/NL/PL — Japan (`mofa.go.jp`) is
-   a confirmed IP-blocked dead end (GOV-1174).
+   **Portugal has since opened as the registry's 24th jurisdiction (GOV-1750)**,
+   via `pt/imt/requerimento-carta-de-conducao` — IMT's Mod. 1-IMT
+   driving-licence Requerimento (DMV vertical); see the Executive Summary
+   update above and the document's own VERIFICATION.md for the full
+   six-vertical candidate comparison (which also confirms Portugal's national
+   visa application, at `vistos.mne.gov.pt`, duplicates the already-modelled
+   `de/auswaertiges-amt/national-visa-application` EU-harmonized template,
+   field-for-field — the same pattern found for Poland's and Spain's
+   equivalent forms). Portugal's remaining five verticals (Business
+   Formation, Taxes, Passport, Visa, National ID) are open backlog candidates
+   for a future cycle, with Taxes (AT's Modelo 3 IRS return) the
+   strongest-sourced. Other candidates worth scouting for a **25th**
+   jurisdiction in a future cycle: an EU member beyond DE/EE/ES/FR/NL/PL/PT —
+   Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
@@ -3130,6 +3193,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **PT Visa (national long-stay visa)** — GOV-1750, 2026-07-08. Portugal's
+  national visa application form (`vistos.mne.gov.pt`) shares the same
+  harmonized EU long-stay-visa field sequence, field-for-field, as the
+  already-modelled `de/auswaertiges-amt/national-visa-application` — a
+  confirmed duplicate, not an open gap, per this registry's own established
+  convention for Poland's and Spain's equivalent forms. A non-duplicate
+  alternative was found but not authored this cycle: AIMA's Modelo 1
+  (residence-permit request/renewal, ~30 fields, genuinely Portugal-specific,
+  confirmed live) — a real, open backlog candidate for a future cycle, not a
+  dead end for Portugal's Visa vertical as a whole.
 - **NL Visa** (Schengen dupes FR; Dutch MVV is 200+ fragmented forms) — GOV-777/GOV-859.
 - **PL Visa (national Type D)** — GOV-1691, 2026-07-07. Poland's current
   wzór wniosku o wydanie wizy krajowej (Załącznik nr 2 do Rozporządzenie
