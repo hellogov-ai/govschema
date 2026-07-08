@@ -86,7 +86,7 @@ required this cycle.
 
 ## Field inventory (Phase 2)
 
-All 22 `fields[]` entries and the one `documents[]` entry, and their exact
+All 23 `fields[]` entries and the one `documents[]` entry, and their exact
 Vorm A 2025 section/line reference, are listed inline in `schema.json`'s own
 `sourceRef` per field/document. Summary by section:
 
@@ -96,12 +96,12 @@ Vorm A 2025 section/line reference, are listed inline in `schema.json`'s own
 | §3 Aadress (Address) | `addressOfResidence` | Full — the form itself prints one address field, not a structured breakdown |
 | §4 Kontaktandmed (Contact details) | `telephone`, `mobilePhone`, `contactEmail` | Full |
 | §5.1 Part I (domestic wages, tax withheld) | `wagePayerName`, `wagePayerRegistryOrPersonalIdCode`, `wageIncomeType`, `wageIncomeAmount`, `wageWithheldIncomeTax` | Only this row's own column set; §5.1 Part II (wages with no tax withheld) and §5.2-§5.5 out of scope |
-| §9.4 Kingitused ja annetused (Gifts and donations) | `giftRecipientName`, `giftRecipientRegistryOrPersonalIdCode`, `giftOrDonationAmount` | Full |
+| §9.4 Kingitused ja annetused (Gifts and donations) | `giftRecipientName`, `giftRecipientRegistryOrPersonalIdCode`, `giftRecipientCountry`, `giftOrDonationAmount` | Full |
 | §9.6 Koolituskulud (Training expenses) | `traineePersonalIdCode`, `traineeFullName`, `trainingInstitutionNameOrRegistryCode`, `trainingInstitutionCountry`, `trainingExpensesPaidAmount` | Full |
 | §11 Enammakse tagastamine (Refund to Estonian account) | `refundAccountNumber`, `refundAccountOwnerFullName`, `refundAccountOwnerPersonalIdCode` | Full; §12 (foreign bank account) out of scope |
 | §14/§14.1 Kinnitused (Confirmations) | `documents[].signatureDeclaration` | Modelled as an attestation, not a field; §14.2 (representative-filed variant) out of scope |
 
-Total: **22 fields** plus **1 `documents[]` entry** (a required attestation).
+Total: **23 fields** plus **1 `documents[]` entry** (a required attestation).
 No `crossFieldValidation` rules, `exclusivityGroups`, or `steps` are modelled
 (the form's own numbered sections are already a faithful, self-documenting
 ordering, consistent with `pl/mf/zeznanie-pit-37`'s own choice not to model
