@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **290 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **291 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1854): canton Zürich's Wertschriftenverzeichnis**
+> (securities and holdings inventory) is now published, with
+> `ch/zh/sta/wertschriften-und-guthabenverzeichnis` — the Kantonales
+> Steueramt Zürich's "Wertschriften- und Guthabenverzeichnis 2025 mit
+> Verrechnungsantrag," the companion schedule to
+> `ch/zh/sta/steuererklaerung-natuerliche-personen` (GOV-1847) used to
+> itemize every security/account/claim held during the tax year and to claim
+> a refund of Switzerland's 35% federal withholding tax (Verrechnungssteuer)
+> deducted at source on domestic investment income. This closes the specific
+> gap GOV-1847 flagged by name as "likely the strongest follow-up
+> candidate ... the most commonly-populated companion schedule." Sourced
+> from a genuine, current, unauthenticated, flat (non-AcroForm) 4-page PDF
+> (`340 WV ZH 2025 HA DEF.pdf`, HTTP 200, no login/CAPTCHA/WAF gate,
+> confirmed via `pdfjs-dist`/`pdf-lib` to carry zero AcroForm widgets),
+> fetched from the same `zh.ch` tax-forms listing as the main return.
+> Because the totals block packs several box-reference numbers into a dense
+> three-column layout that a text-only extraction cannot reliably
+> disambiguate, pages were additionally rendered to PNG (`pdfjs-dist` +
+> `node-canvas`) and visually cross-checked before field names were
+> assigned. The 24-row itemized holdings table is collapsed into one
+> free-text field, consistent with this registry's established treatment of
+> unbounded repeating tables under GovSchema v0.3's flat field model;
+> Beiblatt 1/2 (continuation sheets) and Form DA-1 (foreign-withholding
+> relief) are represented only as gated pass-through transfer totals, not
+> modelled in their own right. This remains Switzerland's 2nd of 6
+> verticals (DMV, Taxes) — a companion schedule, not a new vertical — but
+> materially deepens Taxes-vertical coverage. See
+> `registry/ch/zh/sta/wertschriften-und-guthabenverzeichnis/1.0.0/VERIFICATION.md`
+> for the full sourcing record, every disclosed scope decision, and a worked
+> mock-data example.
 
 > **Update (2026-07-08, GOV-1847): Switzerland's Taxes vertical** is now
 > published, with `ch/zh/sta/steuererklaerung-natuerliche-personen` — the
@@ -3028,6 +3059,19 @@ established treatment of income-tax schemas elsewhere. This gives
 Switzerland its 2nd of 6 verticals. See the Executive Summary update above
 and the document's own VERIFICATION.md for the full sourcing record.
 
+**The main return's own flagged Wertschriftenverzeichnis gap is now also
+published** (`ch/zh/sta/wertschriften-und-guthabenverzeichnis`, GOV-1854) —
+the securities-and-holdings-inventory companion schedule, itemizing every
+security/account/claim held during the tax year and claiming a refund of the
+35% federal withholding tax deducted at source on domestic investment
+income. Sourced the same way (genuine, current, unauthenticated, flat
+non-AcroForm PDF from the same `zh.ch` listing), with pages additionally
+rendered to PNG to disambiguate a dense three-column totals layout. The
+24-row itemized table is collapsed to one free-text field; the continuation
+sheets (Beiblatt 1/2) and Form DA-1 (foreign-withholding relief) are
+represented only as gated pass-through transfer totals. See the Executive
+Summary update above and the document's own VERIFICATION.md.
+
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
 osob" (form 25 5405, MFin 5405), the annual personal income tax return under
@@ -3926,11 +3970,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    VERIFICATION.md has the full record. Canton Zürich's own companion
    schedules (Wertschriftenverzeichnis, Berufsauslagen, Versicherungsprämien,
    Aus- und Weiterbildung, Liegenschaftenverzeichnis, Schuldenverzeichnis,
-   Hilfsblatt A/B/G) remain open backlog candidates for a future cycle — the
-   Wertschriftenverzeichnis (securities and holdings inventory) is likely
-   the strongest follow-up, being the most commonly-populated companion
-   schedule. Switzerland's other 25 cantons each likely publish their own
-   equivalent tax-return form, also unpursued.
+   Hilfsblatt A/B/G) remain open backlog candidates for a future cycle.
+   **The Wertschriftenverzeichnis gap has since closed too (GOV-1854,
+   2026-07-08)**, via `ch/zh/sta/wertschriften-und-guthabenverzeichnis` — see
+   the Executive Summary update above and the document's own
+   VERIFICATION.md. The remaining six companion schedules (Berufsauslagen,
+   Versicherungsprämien, Aus- und Weiterbildung, Liegenschaftenverzeichnis,
+   Schuldenverzeichnis, Hilfsblatt A/B/G) remain open backlog candidates for
+   a future cycle; none has yet been screened for tractability. Switzerland's
+   other 25 cantons each likely publish their own equivalent tax-return form,
+   also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
