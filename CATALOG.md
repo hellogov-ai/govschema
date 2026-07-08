@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**25 jurisdictions** | **282 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**25 jurisdictions** | **283 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1797): Portugal's National ID gap closes**, with
+> `pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
+> Consulado-Geral de Portugal em São Paulo's "Requerimento de Atos
+> Presenciais — Cartão do Cidadão e/ou Passaporte," the in-person-appointment
+> request form filed with this consular post (a subordinate body of the
+> Ministério dos Negócios Estrangeiros, MNE) to request a Cartão de Cidadão,
+> a passport, or both. This is a follow-up cycle re-screening Portugal's
+> three remaining open verticals (Business Formation, Passport, National ID)
+> after GOV-1750's opening cycle gave each only a light pass. Business
+> Formation and Passport were re-confirmed dead ends (IRN's "Empresa na
+> Hora"/"Empresa Online" specimens remain scanned images; domestic passport
+> issuance remains in-person/biometric-only per Decreto-Lei n.º 83/2000 Art.
+> 16, with no distinct citizen-facing application PDF found). National ID's
+> consular-PDF lead — flagged by GOV-1750 as found but not pursued — was
+> followed up directly: the Rio de Janeiro consulate's `req_cc.pdf` (the PDF
+> GOV-1750 had examined) was re-confirmed to carry zero AcroForm widgets (a
+> flat print facsimile), but a further search surfaced the São Paulo
+> consulate's own `cc_e_pep_formulario.pdf`, which carries a genuine
+> 45-unique-position AcroForm widget layer (2 radio groups, 1 checkbox, 26
+> text fields; every widget rect independently confirmed via `pdfjs-dist`,
+> and every field-to-label mapping cross-checked against a full-page
+> Chromium/pdfjs render since this PDF's own text layer is unusually sparse)
+> — a genuine, currently-linked, unauthenticated fillable form, the
+> strongest National ID candidate found for Portugal to date. The consulate's
+> own domain (`saopaulo.consuladoportugal.mne.gov.pt`) could not be reached
+> directly from this cycle's environment (a TLS-handshake reset on every
+> path, consistent with an IP/ASN-level WAF block, not a dead resource); the
+> PDF was instead retrieved via its most recent Wayback Machine snapshot
+> (2025-12-08), per this registry's established workaround for
+> similarly-blocked sources. Modelled 29 fields (26 with a real widget, plus
+> a closing signature-block date modelled from a printed but widget-less
+> blank line) and 2 `documents[]` entries, scoped explicitly to this one
+> consular post's own published document — other Portuguese consulates
+> publish their own, differently structured versions of the same underlying
+> process, and this schema does not claim to represent a unified national
+> MNE standard. This gives Portugal **4 of its 6 verticals** (DMV, Visa,
+> Taxes, National ID); Business Formation and Passport remain open backlog
+> candidates. See the document's own VERIFICATION.md for the full
+> three-vertical candidate comparison, field-by-field sourcing, and every
+> disclosed scope decision.
 
 > **Update (2026-07-08, GOV-1789): Malaysia's 3rd vertical (Visa)** is now
 > published, with `my/jim/visa-with-reference-application` — the Jabatan
@@ -2970,7 +3011,29 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (20/25 jurisdictions — 80%)
+### National ID & Civic Documents (21/25 jurisdictions — 84%)
+
+**Portugal**'s National ID gap is now closed (GOV-1797), via
+`pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
+Consulado-Geral de Portugal em São Paulo's "Requerimento de Atos Presenciais
+— Cartão do Cidadão e/ou Passaporte." Domestic Cartão de Cidadão issuance
+remains an in-person, biometric-only appointment with no downloadable form
+(as GOV-1750 found); this cycle instead pursued the consular-PDF lead
+GOV-1750 had flagged as unexplored, and found this São Paulo consulate
+counter-intake form carries a genuine 45-unique-position AcroForm widget
+layer — stronger than the Rio de Janeiro consulate's equivalent
+`req_cc.pdf` (a flat, widget-free print facsimile, the only consular PDF
+GOV-1750 had examined). Scoped explicitly to this one consular post's own
+published document (other consulates publish their own, differently
+structured versions — see the document's own VERIFICATION.md), and modelled
+under National ID since Cartão de Cidadão is the form's first-listed,
+primary modality even though the same form also serves a passport-only
+request option; Portugal's Passport vertical (domestic, e.g. a distinct SEF/
+PEP application) remains a separately open, unscreened-for-a-consular-
+equivalent backlog candidate. This gives Portugal **4 of its 6 verticals**
+(DMV, Visa, Taxes, National ID); Business Formation and Passport remain
+open backlog candidates, both re-confirmed dead ends this cycle for the
+domestic channel specifically (see "Confirmed dead ends" below).
 
 **Estonia** opens as the registry's 23rd jurisdiction via this vertical
 (`ee/ppa/e-residency-application`, GOV-1698) — the Police and Border Guard
@@ -3158,7 +3221,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **PT** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **PT** | 4 | ✗ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -3461,10 +3524,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    closed (GOV-1757)** via `pt/aima/requerimento-autorizacao-residencia`,
    and **its Taxes gap has since closed too (GOV-1765)** via
    `pt/at/declaracao-rendimentos-irs-modelo-3` — see the Executive Summary
-   updates above and each document's own VERIFICATION.md. Portugal now
-   stands at **3 of its 6 verticals** (DMV, Visa, Taxes); Business
-   Formation, Passport, and National ID remain open backlog candidates for
-   a future cycle. **Malaysia has since opened as the registry's 25th
+   updates above and each document's own VERIFICATION.md. **Portugal's
+   National ID gap has since closed too (GOV-1797)**, via
+   `pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
+   Consulado-Geral de Portugal em São Paulo's "Requerimento de Atos
+   Presenciais — Cartão do Cidadão e/ou Passaporte," a genuine, currently-
+   linked AcroForm PDF (45 unique-position widget fields) discovered by
+   pursuing the consular-PDF lead GOV-1750 had flagged but not pursued; that
+   same cycle re-screened Business Formation (IRN's "Empresa na Hora"/
+   "Empresa Online" pacto-social specimens remain scanned images with no
+   extractable text, and the sole-trader route remains `acesso.gov.pt`
+   login-gated) and Passport (still no distinct domestic citizen-facing
+   application PDF; Decreto-Lei n.º 83/2000 Art. 16 in-person/biometric-only
+   issuance re-confirmed) and found both still dead ends — see the Executive
+   Summary update above and the document's own VERIFICATION.md for the full
+   three-vertical candidate comparison. Portugal now stands at **4 of its 6
+   verticals** (DMV, Visa, Taxes, National ID); Business Formation and
+   Passport remain open backlog candidates for a future cycle. **Malaysia
+   has since opened as the registry's 25th
    jurisdiction (GOV-1774)**, via `my/jpj/driving-licence-application` — the
    Jabatan Pengangkutan Jalan's (JPJ) "Borang Permohonan Lesen Memandu"
    (JPJ-L1) driving-licence application (DMV vertical); see the Executive
@@ -3531,6 +3608,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   (residence-permit request/renewal, ~30 fields, genuinely Portugal-specific,
   confirmed live) — a real, open backlog candidate for a future cycle, not a
   dead end for Portugal's Visa vertical as a whole.
+- **PT Business Formation** — GOV-1750, re-confirmed GOV-1797, 2026-07-08.
+  IRN's "Empresa na Hora" pacto-social specimen PDFs remain scanned images
+  with no extractable text layer (re-fetched and re-checked this cycle); the
+  sole-trader "Início de Atividade" self-service route remains a fully
+  authenticated `acesso.gov.pt` wizard with no PDF fallback found. Not a hard
+  dead end (the Código das Sociedades Comerciais statute itself enumerates a
+  thin ~14-16 field list, per GOV-1750's own note) — a real but comparatively
+  weak backlog candidate for a future cycle.
+- **PT Passport (domestic)** — GOV-1750, re-confirmed GOV-1797, 2026-07-08.
+  Decreto-Lei n.º 83/2000 Art. 16 confirms ordinary Portuguese passport
+  issuance is an in-person, biometric-only process; IRN's own forms library
+  has no "Passaporte" category, and neither `gov.pt`'s "Pedir o passaporte
+  português para estrangeiros" nor IRN's "Passaporte eletrónico" page links a
+  citizen-facing application PDF. The one passport-adjacent PDF found (the
+  São Paulo consulate's `cc_e_pep_formulario.pdf`, modelled this cycle under
+  National ID — see above) is a National-ID-centric consular intake form
+  with a passport sub-option, not a passport-specific application; a
+  genuinely distinct domestic or consular passport-specific form remains an
+  open, unscreened backlog candidate for a future cycle.
 - **NL Visa** (Schengen dupes FR; Dutch MVV is 200+ fragmented forms) — GOV-777/GOV-859.
 - **PL Visa (national Type D)** — GOV-1691, 2026-07-07. Poland's current
   wzór wniosku o wydanie wizy krajowej (Załącznik nr 2 do Rozporządzenie
