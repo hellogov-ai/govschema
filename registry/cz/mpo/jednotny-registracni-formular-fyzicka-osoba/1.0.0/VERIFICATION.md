@@ -11,6 +11,20 @@ current verification claim honestly.
 - **`verification.method`:** `manual-source-review-v1`
 - **`verification.lastVerifiedAt`:** `2026-07-08`
 
+**Amended same-day** in response to GOV-1807's review-gate findings on PR
+#298: (1) `seatPostalCode` (§03.e) was missing the `requiredWhen
+seatSameAsResidence == false` gate that its four sibling seat-address fields
+(`seatStreet`/`seatHouseNumber`/`seatMunicipality`/`seatCountry`) carry —
+inconsistent with §02's own unconditionally-`required` `residencePostalCode`
+and with this registry's established convention for `sameAs`-style address
+toggles (e.g. `za/sars/individual-income-tax-return-itr12`'s
+`residentialAddressSameAsPostal` gates its postal-code field too). Fixed by
+adding the same `requiredWhen` gate to `seatPostalCode`. (2) The §07-§11
+summary table below stated the responsible-representative field count as
+"33 (12+8+7+1+1...)" — the parenthetical sums to 29, not 33; the schema's
+actual field count (116 total, verified independently) was never affected,
+only this table's arithmetic. Fixed the table to read 29.
+
 This is a `GovSchema Standard Research` cycle (**GOV-1804**). The registry's
 25 existing jurisdictions are heavily screened, and this repository's own
 `CATALOG.md` "Known Gaps & Opportunities" section documents a long list of
@@ -149,11 +163,11 @@ per field/document. Summary by section:
 |---|---|---|
 | §01 Podnikatel | 16 (`titlePrefix`…`businessFirmName`) | Core identity fields (`firstName`, `surname`, `gender`, `placeOfBirth`, `birthCountry`, `citizenship`, `dateOfBirth`) required; `personalIdNumber`/`personIdentificationNumber` left mutually-optional (judgment call 1) |
 | §02 Adresa bydliště | 8 | `residenceHouseNumber`/`PostalCode`/`Municipality`/`Country` required |
-| §03 Adresa sídla | 9 (`seatSameAsResidence` + 8 address fields) | `seatSameAsResidence` required; the address sub-fields `requiredWhen` it is `false` |
+| §03 Adresa sídla | 9 (`seatSameAsResidence` + 8 address fields) | `seatSameAsResidence` required; `seatStreet`/`seatHouseNumber`/`seatPostalCode`/`seatMunicipality`/`seatCountry` `requiredWhen` it is `false`, mirroring §02's own required subset (orientation number/municipality part/district stay optional in both sections) |
 | §04 Adresa pobytu (zahraniční osoby) | 8 | All optional — applies only to a foreign applicant with a granted/confirmed residence permit |
 | §05 Předmět podnikání | 2 | `businessActivityDescription` required (models only the first, pořadové číslo 1, activity — see judgment call 2) |
 | §06 Provozovna | 12 | All optional (a premises is not mandatory at initial registration) |
-| §07-11 Odpovědný zástupce | 33 (12+8+7+1+1 across §07-§11) | All optional — applies only when a responsible representative is appointed (see judgment call 3) |
+| §07-11 Odpovědný zástupce | 29 (12+8+7+1+1 across §07-§11) | All optional — applies only when a responsible representative is appointed (see judgment call 3) |
 | Část B (ČSSZ) | 3 | `notifySocialSecurityAdmin` required; the branch/date fields `requiredWhen` it is `true` |
 | Část C (zdravotní pojišťovna) | 8 | `notifyHealthInsuranceCompany` required; company name/code/start-date `requiredWhen` it is `true`; bank-account/advance-amount left optional even when notified (see judgment call 4) |
 | Část E (routing) | 6 (2 of Část B/C's booleans live here structurally, plus 4 attachment-count fields + `notifyTradeLicensingOffice`/`notifyTaxOffice`) | `notifyTradeLicensingOffice`/`notifyTaxOffice` required; attachment counts optional |
