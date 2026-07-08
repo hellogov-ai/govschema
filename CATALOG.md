@@ -1,10 +1,61 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-07** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-08** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**22 jurisdictions** | **269 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **270 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1698):** **Estonia (EE) opens as GovSchema's
+> 23rd jurisdiction**, via its National ID & Civic Documents vertical, with
+> `ee/ppa/e-residency-application` — the Police and Border Guard Board
+> (PPA)'s e-Resident's digital ID application, the credential foreign
+> nationals use to access Estonia's e-services and digitally sign documents
+> without residence, citizenship, or a right to enter Estonia/the EU.
+> Coverage across the prior 22 jurisdictions is heavily saturated (nearly
+> every one at 5/6 or 6/6, and this cycle's own re-screen of Chile's Visa
+> and Taxes gaps re-confirmed them as dead ends), so this cycle opened a new
+> jurisdiction instead of continuing to fight already-dead per-jurisdiction
+> gaps. Estonia was the issue's own primary candidate, screened first: the
+> live application environment (`apply.gov.ee`, technically served from
+> `eresident.politsei.ee`) turned out to be a fully client-rendered,
+> account-gated Angular SPA with no unauthenticated field-level view — every
+> route returns the identical empty shell, confirmed by direct `curl`
+> retrieval and by grepping its own compiled JS bundle for field-name/label
+> text (none present outside the app's own runtime). Rather than a dead end,
+> this cycle found that the issuing agency's own official FAQ, published in
+> plain, unauthenticated English HTML on `politsei.ee` (a separate,
+> server-rendered site from the application SPA), states verbatim which
+> regulation sections list the application's required data
+> ("sections 5, 6, 9 and 17 of Regulation No. 20 and section 7 of Regulation
+> No. 78 of the Minister of the Interior of Estonia") and then gives the
+> PPA's own clause-by-clause English enumeration of every one of those data
+> elements — an even stronger variant of the "governing statute as primary
+> source when the live form has no field-level transparency" technique this
+> registry used for Poland's passport application (GOV-1685), since here
+> the government agency's own page states the field list in plain English
+> directly, with no translation step. Models 37 fields (core identity and
+> contact data with the source's own 8-element address split, travel
+> document data, a merged purpose/justification statement, and the
+> statute's full background-disclosure data list — former names/citizenship,
+> business/financial ties, criminal record, and security/organisation
+> history — modelled as optional where the underlying fact may not exist for
+> a given applicant, and as required boolean declarations for the three
+> universal yes/no security questions) plus 4 `documents[]` entries (travel
+> document copy, facial photograph with its confirmed pixel/format/size
+> specification, CV, and the EUR 150 state-fee payment). Deliberately
+> excludes: the live wizard's own internal page boundaries (unconfirmable
+> without creating a real account); the politically-contingent,
+> time-boxed, two-group citizenship-based application-restriction country
+> list (a real eligibility mechanism, left undisclosed as data rather than
+> encoded as a fast-staling validation rule); the Minister-of-the-Interior
+> "compelling public interest" exception pathway; and the separate
+> account-creation, in-person fingerprinting, and pick-up-location-change
+> processes. No fallback candidate (Portugal NIF, Malaysia SSM/JPJ, Japan
+> e-Tax/driver's license) was screened this cycle, since Estonia's own
+> primary candidate was strong enough on its own. See the document's own
+> VERIFICATION.md for the full source inventory and every disclosed
+> judgment call.
 
 > **Update (2026-07-07, GOV-1691):** Poland gains its fifth vertical, Taxes,
 > with `pl/mf/zeznanie-pit-37` — PIT-37, the annual personal income tax
@@ -1701,7 +1752,7 @@
 
 ## By Vertical
 
-### Passport (19/22 jurisdictions — 86%)
+### Passport (19/23 jurisdictions — 83%)
 
 **Poland**'s Passport gap is now closed (GOV-1685), via
 `pl/mswia/wniosek-o-wydanie-paszportu` — see the Executive Summary update
@@ -1784,7 +1835,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (22/22 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (22/23 jurisdictions — 96%)
 
 **Poland's DMV gap is now closed (GOV-1678)** via
 `pl/mi/wniosek-o-rejestracje-pojazdu` — the national vehicle registration /
@@ -1929,7 +1980,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (22/22 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (22/23 jurisdictions — 96%)
 
 **Poland's Business Formation gap is now closed (GOV-1671)** via
 `pl/ceidg/wniosek-o-wpis-do-ceidg` — CEIDG-1, the form through which a
@@ -2079,7 +2130,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (21/22 jurisdictions — 95%)
+### Taxes — Income Tax Return, Tax Filing (21/23 jurisdictions — 91%)
 
 **Poland's Taxes gap is now closed** (`pl/mf/zeznanie-pit-37`, GOV-1691) —
 PIT-37, the annual personal income tax return for individuals whose income
@@ -2191,7 +2242,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (16/22 jurisdictions — 73%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (16/23 jurisdictions — 70%)
 
 **Poland's Visa gap was screened this cycle (GOV-1691) and confirmed a
 duplicate, not an open candidate**: the current wzór wniosku o wydanie wizy
@@ -2281,7 +2332,16 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (18/22 jurisdictions — 82%)
+### National ID & Civic Documents (19/23 jurisdictions — 83%)
+
+**Estonia** opens as the registry's 23rd jurisdiction via this vertical
+(`ee/ppa/e-residency-application`, GOV-1698) — the Police and Border Guard
+Board's e-Resident's digital ID application. See the Executive Summary
+update above and the document's own VERIFICATION.md for the full sourcing
+record (the live `apply.gov.ee`/`eresident.politsei.ee` application SPA has
+no unauthenticated field-level view; every field is instead sourced from
+the PPA's own official English-language statutory field list, published in
+plain HTML on `politsei.ee`).
 
 **Poland** opens as the registry's 22nd jurisdiction via this vertical
 (`pl/mswia/wniosek-o-wydanie-dowodu-osobistego`, GOV-1666) — MSWiA's dowód
@@ -2434,6 +2494,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **EE** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
