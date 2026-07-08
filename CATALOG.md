@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **291 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **292 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1861): Spain's Visa vertical** is now
+> published, with `es/maec/solicitud-visado-nacional` — the Ministerio de
+> Asuntos Exteriores, Unión Europea y Cooperación's (MAEC) "Solicitud de
+> visado nacional," Spain's national (long-stay, Type D) visa application,
+> the vertical CATALOG.md's own "Known Gaps" section had explicitly flagged
+> as "an open, unscreened backlog candidate for a future cycle." A prior
+> cycle (GOV-1652) had in fact already screened this same form and
+> characterized it as a field-for-field duplicate of the already-modelled
+> `de/auswaertiges-amt/national-visa-application`; this cycle re-did that
+> comparison from scratch — re-fetching and re-extracting both the German
+> source PDF and Spain's own form directly rather than trusting the prior
+> note — and found the two forms diverge sharply past their shared ~9-item
+> Schengen-harmonized identity block. Germany's own form has an extensive
+> spouse/children/unconditional-parents/prior-Germany-stays/accommodation/
+> health/criminal-history structure with no Spanish counterpart; Spain's own
+> form has its own 12-category residence-purpose taxonomy (family
+> reunification, employment, self-employment, seasonal work,
+> investor/entrepreneur, study, internship, research, residence recovery,
+> accreditation) plus three purpose-conditional data blocks (a
+> family-reunification sponsor block with the sponsor's own NIE/DNI, an
+> employer/company block with the company's own CIF tax ID, and an
+> educational-establishment block) with no German counterpart at all.
+> Sourced from a genuine, current, unauthenticated AcroForm PDF (110
+> widgets across 4 pages, mostly descriptive Spanish field names),
+> cross-checked against a December-2025-dated mirror on Spain's unified
+> public-administration portal (`one.gob.es`) to confirm currency. Spain's
+> own Schengen (Type C) short-stay visa form was separately checked and
+> reconfirmed a genuine duplicate of `fr/france-visas/schengen-visa-application`
+> (matching the established pattern already found for Poland's, Portugal's,
+> Czechia's, and Switzerland's own Schengen forms) — not authored. Modelled
+> 60 fields (7 `documents[]` entries) across 10 `steps`. This gives Spain
+> **5 of its 6 verticals** (DMV, Business Formation, Taxes, National ID,
+> Visa); Passport remains a confirmed dead end (Policía Nacional's
+> DNI/passport channel is appointment-only, no downloadable form). See
+> `registry/es/maec/solicitud-visado-nacional/1.0.0/VERIFICATION.md` for the
+> full field-by-field duplicate-detection comparison, sourcing record, and a
+> worked mock-data example.
 
 > **Update (2026-07-08, GOV-1854): canton Zürich's Wertschriftenverzeichnis**
 > (securities and holdings inventory) is now published, with
@@ -3280,8 +3318,22 @@ field-for-field, as the already-modelled
 `de/auswaertiges-amt/national-visa-application` — see
 `pl/mf/zeznanie-pit-37`'s own VERIFICATION.md for the comparison. Not
 authored; a genuinely distinct Polish visa pathway, if one exists, remains
-open backlog. **Spain**, opened via its Taxes vertical (GOV-1645), has no Visa schema
-yet — an open, unscreened backlog candidate for a future cycle. **Chile**,
+open backlog. **Spain's Visa gap is now closed** (`es/maec/solicitud-visado-nacional`,
+GOV-1861) — sourced from MAEC's own "Solicitud de visado nacional," Spain's
+national (long-stay, Type D) visa application. A prior cycle (GOV-1652) had
+screened this same form and set it aside as a duplicate of
+`de/auswaertiges-amt/national-visa-application`; this cycle re-did that
+comparison field-by-field against both the DE schema's own committed field
+list and a fresh re-extraction of the DE source PDF, and found the two
+forms diverge sharply past their shared ~9-item Schengen-harmonized identity
+block — Spain's own 12-category residence-purpose taxonomy and its
+family-reunification-sponsor/employer/educational-establishment blocks have
+no German counterpart, and Germany's own spouse/children/parents/prior-stays/
+health/criminal-history sections have no Spanish counterpart. Spain's own
+Schengen short-stay visa form, by contrast, is confirmed a genuine duplicate
+of `fr/france-visas/schengen-visa-application` and was not authored — see
+the document's own VERIFICATION.md for the full comparison. This gives
+Spain 5 of its 6 verticals. **Chile**,
 opened via Business Formation (GOV-1624), has no Visa
 schema yet — an open, unscreened backlog candidate for a future cycle.
 **Colombia's Visa gap is now closed** (`co/cancilleria/visa-application-individual`,
@@ -3559,7 +3611,7 @@ now closed.
 | **CZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **ES** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
