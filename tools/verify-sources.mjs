@@ -168,8 +168,11 @@ async function fetchWithTimeout(url, opts = {}) {
 async function attemptOnce(url) {
   try {
     let res = await fetchWithTimeout(url, { method: "HEAD" });
-    if (res.status === 405 || res.status === 501) {
-      // Some gov servers don't implement HEAD; fall back to GET.
+    if (!res.ok) {
+      // Many gov/gateway-fronted sites answer HEAD and GET inconsistently
+      // (e.g. oss.go.id: HEAD 404s, GET 200s) rather than the standard-only
+      // 405/501 "HEAD unsupported" signal. Never trust a non-2xx HEAD result
+      // on its own — confirm with GET before calling a URL unresolvable.
       res = await fetchWithTimeout(url, { method: "GET" });
     }
     if (res.ok) return { kind: "ok", status: res.status };
