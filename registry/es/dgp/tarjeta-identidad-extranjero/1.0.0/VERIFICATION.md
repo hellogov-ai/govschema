@@ -46,11 +46,22 @@ issue brief had already done that comparison.
    retrieval method.
 
    The PDF's AcroForm/widget-annotation layer was inspected via `pdfjs-dist`
-   and confirmed **empty** (zero named widgets) — this is a static
-   print/hand-fill template, the same shape as `pl/mf/zeznanie-pit-37` and
-   `ee/emta/income-tax-return-form-a`. Its page-text layer (also extracted
-   via `pdfjs-dist`) is fully self-documenting across all 3 pages: page 1 is
-   the applicant/representative/notification data, page 2 is the addressee
+   (`page.getAnnotations()`, filtered to `subtype === "Widget"`) and found to
+   be a **fillable form**: 70 named widgets (58 on page 1, 12 on page 2; 0 on
+   page 3), including checkboxes named `TARJETA INICIAL`, `RENOVACION DE
+   TARJETA`, and `DUPLICADO POR ROBO EXTRAVIO DESTRUCCION O INUTILIZ` (the
+   exact three `documentRequestType` options), sex/civil-status checkbox
+   groups (`H`/`M`/`ChkBox`, `C`/`V`/`D`/`Sp`/`ChkBox-0`), and named text
+   fields for the filing-office block (`DIRIGIDA A`, `Codigo DIR3`,
+   `PROVINCIA`) and applicant data (`Nombre y apellidos del titular`,
+   `Email`, `Provincia`, `CP`, plus a run of generic `Textfield-N` names).
+   This corrects an earlier draft of this record, which had misdescribed the
+   PDF as a static print/hand-fill template with an empty AcroForm layer —
+   flagged in a GOV-1738 review-gate finding and fixed here; the named
+   widgets line up with the fields already modelled and did not change the
+   schema's field/enum content. Its page-text layer (also extracted via
+   `pdfjs-dist`) is fully self-documenting across all 3 pages: page 1 is the
+   applicant/representative/notification data, page 2 is the addressee
    header, document-type checkbox, and signature line, and page 3 is a
    numbered instructions key (footnotes (1)-(7)) explaining every checkbox
    and marker referenced on pages 1-2.
