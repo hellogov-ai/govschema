@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**26 jurisdictions** | **285 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**26 jurisdictions** | **286 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1819): Czech Republic's 3rd vertical (Visa)** is
+> now published, with `cz/mzv/zadost-o-udeleni-dlouhodobeho-viza` — the
+> Ministry of Foreign Affairs' (Ministerstvo zahraničních věcí, MZV) bilingual
+> "Žádost o udělení dlouhodobého víza" / "Application for long-stay visa"
+> (form ŘSCP č. 1/2010), the national (category D) long-stay visa application
+> submitted at a Czech embassy or consulate. This cycle screened all four of
+> the Czech Republic's remaining gaps (Passport, Taxes, Visa, National ID):
+> Passport and National ID are confirmed dead ends (both `mv.gov.cz` and
+> `portal.gov.cz` state explicitly that citizens do not complete a printed
+> application form for either process — an office clerk enters the data
+> directly and captures biometrics in person); Taxes has a strong candidate
+> (`financnisprava.gov.cz`'s Form 25 5405 plus its own field-by-field
+> "Pokyny" instructions guide) left as an open, larger-scope backlog item for
+> a future cycle. This form's PDF uses a custom font encoding with no
+> ToUnicode CMap (the text layer is unreadable by direct extraction, a
+> distinct failure mode from this registry's more common zero-AcroForm flat
+> PDFs), so every field was read from a high-resolution page render and
+> cross-checked twice. Per this registry's established duplicate-detection
+> convention (Poland's, Spain's, Portugal's, and Switzerland's national
+> D-visa forms all turned out to be field-for-field duplicates of
+> `de/auswaertiges-amt/national-visa-application`), this form's full field
+> sequence was compared against that German template: it shares only the
+> opening Schengen-harmonized identity-block numbering, then diverges with
+> an unconditional parents block, a distinct "employer after entry" field, a
+> structured "previous stay in the Czech Republic longer than 3 months"
+> block, a Czech-specific "Executive manager" purpose option citing Act
+> No. 513/1991 Coll. (the Czech Commercial Code) verbatim, and a fully
+> structured inviting-person/company block — a genuinely distinct national
+> form, not a duplicate. The Czech Republic's own companion Schengen
+> short-stay visa form was also checked and confirmed a duplicate of
+> `fr/france-visas/schengen-visa-application`, per the same established
+> convention; not authored. Modelled 89 fields (11 `documents[]` entries,
+> including a single combined 8-point bilingual declaration/consent
+> attestation, since this form places all eight points above one shared
+> signature line rather than two independently-signed blocks as Germany's
+> does) and 2 `crossFieldValidation` rules. This gives the Czech Republic
+> **3 of its 6 verticals** (Business Formation, DMV, Visa); Passport, Taxes,
+> and National ID remain open backlog candidates for a future cycle (Taxes
+> being the strongest of the three). See the document's own VERIFICATION.md
+> for the full extraction method and every disclosed judgment call.
 
 > **Update (2026-07-08, GOV-1804): Czech Republic's 2nd vertical (DMV)** is
 > now published, with `cz/md/zadost-o-zapis-silnicniho-vozidla` — the
@@ -3015,7 +3056,28 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (17/26 jurisdictions — 65%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (18/26 jurisdictions — 69%)
+
+**The Czech Republic's Visa gap is now closed** (`cz/mzv/zadost-o-udeleni-dlouhodobeho-viza`,
+GOV-1819) — sourced from the Ministry of Foreign Affairs' own bilingual
+"Žádost o udělení dlouhodobého víza" / "Application for long-stay visa"
+(ŘSCP č. 1/2010), a genuine, directly-downloadable, unauthenticated PDF
+(`mzv.gov.cz`, no login/CAPTCHA/WAF gate). Its opening identity block follows
+the same Schengen-harmonized numbering convention Poland's, Spain's,
+Portugal's, and Switzerland's national visa forms all turned out to
+duplicate field-for-field against `de/auswaertiges-amt/national-visa-application`,
+but this form was confirmed genuinely distinct after a full field-sequence
+comparison: an unconditional parents block, a distinct "employer after
+entry" field, a structured "previous stay in the Czech Republic longer than
+3 months" block, a Czech-specific "Executive manager" purpose option citing
+the Czech Commercial Code (Act No. 513/1991 Coll.) verbatim, and a fully
+structured inviting-person/company block, none of which have a German
+counterpart. The Czech Republic's own companion Schengen short-stay visa
+form was checked separately and confirmed a duplicate of
+`fr/france-visas/schengen-visa-application`; not authored. This gives the
+Czech Republic 3 of its 6 verticals (Business Formation, DMV, Visa) — see
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full candidate comparison and sourcing record.
 
 **Malaysia's Visa gap is now closed** (`my/jim/visa-with-reference-application`,
 GOV-1789) — sourced from JIM's IM.12 "Borang Permohonan Pas Lawatan" (Visit
@@ -3309,7 +3371,7 @@ now closed.
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CZ** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| **CZ** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **ES** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -3685,9 +3747,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    future cycle with different network access or a Wayback Machine
    workaround — and confirmed Switzerland's domestic passport process is
    cantonal/appointment-based with no downloadable application form. The
-   Czech Republic stands at **1 of its 6 verticals** (Business Formation);
-   its other five (Passport, DMV, Taxes, Visa, National ID) are open,
-   unscreened backlog candidates for a future cycle.
+   Czech Republic's DMV gap has since closed too (GOV-1804 follow-up)**, via
+   `cz/md/zadost-o-zapis-silnicniho-vozidla` — see the Executive Summary
+   update above. **The Czech Republic's Visa gap has since closed too
+   (GOV-1819)**, via `cz/mzv/zadost-o-udeleni-dlouhodobeho-viza` — the
+   Ministry of Foreign Affairs' national long-stay (category D) visa
+   application, confirmed genuinely distinct from the EU-harmonized template
+   several other member states' equivalent forms duplicate; that same cycle
+   screened Passport and National ID as confirmed dead ends (both processes
+   are in-person-only with no citizen-facing application form) and flagged
+   Taxes (`financnisprava.gov.cz`'s Form 25 5405 plus its own Pokyny guide)
+   as a strong, larger-scope open candidate — see the Executive Summary
+   update above and the document's own VERIFICATION.md. The Czech Republic
+   stands at **3 of its 6 verticals** (Business Formation, DMV, Visa); Taxes
+   is its strongest remaining open backlog candidate, with Passport and
+   National ID confirmed dead ends.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
@@ -3700,6 +3774,30 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
+  `portal.gov.cz` state identically that citizens do not complete a printed
+  application form for a passport: a clerk enters the applicant's data
+  directly into the system and captures biometrics (facial image, plus
+  fingerprints over age 12) in person. `mv.gov.cz`'s own "Tiskopisy a vzory"
+  (forms library) does not list a passport application PDF. Not a hard dead
+  end if a genuinely new source surfaces (e.g. a third-party-republished
+  specimen with real field numbers); a dead end for the current official
+  publishing pattern.
+- **CZ National ID (občanský průkaz)** — GOV-1819, 2026-07-08. The same
+  in-person-only pattern as CZ Passport: `portal.gov.cz` explicitly states
+  the applicant does not fill out or submit a form; the municipal office
+  generates and prints the application electronically from the citizen's
+  existing data, and the applicant only verifies and signs it in person.
+  `zákon č. 269/2021 Sb., o občanských průkazech` specifies required
+  documents, not a field-by-field form layout, since none exists.
+- **CZ Schengen (short-stay) visa** — GOV-1819, 2026-07-08. The Ministry of
+  Foreign Affairs' own Schengen short-stay visa PDF
+  (`mzv.gov.cz/public/fe/ee/98/6103975_3488176_ENGLISH.pdf`) is a confirmed
+  field-for-field duplicate of the already-modelled
+  `fr/france-visas/schengen-visa-application` (same purpose-of-journey
+  checkboxes and funding section, same order) — a confirmed duplicate, not
+  an open gap, per this registry's established convention for Poland's,
+  Spain's, Portugal's, and Switzerland's equivalent Schengen forms.
 - **MY Taxes (LHDN Borang BE/B/M/BT)** — GOV-1783, 2026-07-08. Every
   individual-return category's current-year (2025) PDF
   (`hasil.gov.my`'s own "Muat Turun Borang" download tool, replayed
