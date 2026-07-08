@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**26 jurisdictions** | **288 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **289 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1840): Switzerland opens as the registry's 27th
+> jurisdiction**, with a DMV schema:
+> `ch/sg/stva/gesuch-lernfahr-fuehrerausweis` — the canton of St.Gallen's
+> Strassenverkehrs- und Schifffahrtsamt's (StVA) "Gesuch um Erteilung eines
+> Lernfahr- bzw. eines Führerausweises" (learner's-permit/driving-licence
+> application), a genuine, current, unauthenticated 63-field AcroForm PDF.
+> Switzerland has no single federal driving-licence application form: ASTRA
+> (the federal roads office) sets the substantive legal framework (the
+> Verkehrszulassungsverordnung, VZV) but each of the 26 cantons
+> independently publishes its own PDF implementation; this cycle
+> cross-checked St.Gallen's version against three further cantons' own
+> independently-authored PDFs (Solothurn, Appenzell Ausserrhoden, and an
+> encrypted Zürich copy that could not be cleanly extracted) and confirmed a
+> materially identical section structure across all of them, corroborating
+> this as a nationwide VZV-derived questionnaire rather than a
+> St.Gallen-only idiosyncrasy. This cycle also re-confirmed Switzerland's
+> Visa (GOV-1774) and domestic Passport dead ends, newly confirmed National
+> ID as a dead end (same fedpol.admin.ch online-application-plus-biometric
+> pathway as Passport), confirmed Business Formation
+> (`easygov.swiss`, an authenticated SwissID-gated wizard with no
+> downloadable form) as a dead end, and flagged Taxes (canton Zürich's own
+> current, unauthenticated, flat "Steuererklärung 2025" main-declaration
+> PDF) as a strong, unpursued open backlog candidate for a future cycle. See
+> `registry/ch/sg/stva/gesuch-lernfahr-fuehrerausweis/1.0.0/VERIFICATION.md`
+> for the full candidate-screening record.
 
 > **Update (2026-07-08, GOV-1833): Portugal's Passport vertical** is now
 > published, with `pt/mne/requerimento-passaporte-consular` — the
@@ -2488,7 +2514,7 @@
 
 ## By Vertical
 
-### Passport (21/26 jurisdictions — 81%)
+### Passport (21/27 jurisdictions — 78%)
 
 **Malaysia**'s Passport gap is now closed (GOV-1783), via
 `my/jim/passport-travel-document-application` — see the Executive Summary
@@ -2590,7 +2616,15 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (25/26 jurisdictions — 96%)
+### DMV — Vehicle Registration, Licensing, Permits (26/27 jurisdictions — 96%)
+
+**Switzerland opens as this registry's 27th jurisdiction via this vertical
+(GOV-1840)**, with `ch/sg/stva/gesuch-lernfahr-fuehrerausweis` — the canton
+of St.Gallen's Strassenverkehrs- und Schifffahrtsamt's learner's-permit/
+driving-licence application, a genuine 63-field AcroForm PDF cross-checked
+against three further cantons' own independently-authored equivalents. See
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full six-vertical candidate comparison.
 
 **Malaysia opens as this registry's 25th jurisdiction via this vertical
 (GOV-1774)**, with `my/jpj/driving-licence-application` — JPJ's "Borang
@@ -2770,7 +2804,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (24/26 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (24/27 jurisdictions — 89%)
 
 **The Czech Republic opens as the registry's 26th jurisdiction with a
 Business Formation schema (GOV-1804)**, via
@@ -2948,7 +2982,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (25/26 jurisdictions — 96%)
+### Taxes — Income Tax Return, Tax Filing (25/27 jurisdictions — 93%)
 
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
@@ -3118,7 +3152,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (18/26 jurisdictions — 69%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (18/27 jurisdictions — 67%)
 
 **The Czech Republic's Visa gap is now closed** (`cz/mzv/zadost-o-udeleni-dlouhodobeho-viza`,
 GOV-1819) — sourced from the Ministry of Foreign Affairs' own bilingual
@@ -3238,7 +3272,7 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (21/26 jurisdictions — 81%)
+### National ID & Civic Documents (21/27 jurisdictions — 78%)
 
 **Portugal**'s National ID gap is now closed (GOV-1797), via
 `pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
@@ -3431,6 +3465,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CH** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -3840,6 +3875,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    GOV-1254 as a documented scope decision (these schedules are structurally
    identical to `in/incometax/individual-tax-return-itr2`'s already-published
    ones), not a sourcing dead end.
+5. **CH Taxes (canton Zürich's `Steuererklärung 2025`)**: GOV-1840,
+   2026-07-08. Canton Zürich's own tax office publishes a genuine, current,
+   unauthenticated, flat (non-AcroForm) main-declaration PDF for individuals
+   (`300 STE ZH 2025 HA DEF.pdf`, HTTP 200, no login/CAPTCHA gate, legible
+   numbered-line text layer) as a paper-filing alternative to the
+   `ZHprivateTax` online portal, plus companion schedules (securities/
+   holdings, professional expenses, insurance premiums) and a 40-page
+   official Wegleitung. Screened and found genuinely strong this cycle but
+   not pursued to a full schema, since Switzerland's DMV vertical was
+   already picked as this cycle's single deliverable per the research
+   brief's own priority order — a real, open, well-sourced candidate for a
+   future cycle to pursue directly (Switzerland has 26 cantons, each with
+   its own tax administration and likely its own equivalent form; Zürich's
+   was the one confirmed this cycle).
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -3965,6 +4014,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   vertical as a whole: untested is whether a cantonal residence-permit
   process (Switzerland's cantons administer residence permits, not SEM
   centrally) offers a genuinely distinct, non-duplicate pathway.
+- **CH Business Formation (`easygov.swiss`)** — GOV-1840, 2026-07-08. The
+  federal one-stop business-registration platform is a pure authenticated
+  single-page application (SwissID/CH-Login-based digital signature); its
+  own landing page carries no descriptive content beyond a "launch
+  application" button, and no downloadable PDF form exists for sole-
+  proprietorship (Einzelunternehmen) registration. The "EasyGov-Guide"
+  PDFs found via search (hosted on cantonal `startbox.swiss` mirrors) are
+  screenshot-and-prose walkthroughs of the live wizard's screens, not a
+  fillable or field-documenting specimen. Same class of dead end as
+  Portugal's `acesso.gov.pt`-gated sole-trader route.
+- **CH Passport (domestic)** — re-confirmed GOV-1840, 2026-07-08 (originally
+  found GOV-1804/GOV-1774). `fedpol.admin.ch/de/beantragen` states
+  applications are made online or by phone via `ch-edoc-passantrag.admin.ch`
+  followed by a mandatory in-person biometric appointment; no downloadable
+  citizen-facing PDF exists anywhere in the flow.
+- **CH National ID (Identitätskarte)** — GOV-1840, 2026-07-08. Shares the
+  exact same `fedpol.admin.ch`/`ch-edoc-passantrag.admin.ch` online-
+  application-plus-biometric-appointment pathway as the passport (both are
+  fedpol-issued documents processed through the same system) — no separate
+  citizen-facing PDF application form exists for the ID card either.
 
 ---
 
