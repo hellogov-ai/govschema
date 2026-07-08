@@ -4,7 +4,34 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **289 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **290 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1847): Switzerland's Taxes vertical** is now
+> published, with `ch/zh/sta/steuererklaerung-natuerliche-personen` — the
+> Kantonales Steueramt Zürich's "Steuererklärung 2025 für natürliche
+> Personen," the canton of Zürich's annual personal income and wealth tax
+> return covering both cantonal/communal tax and direct federal tax in one
+> filing. This closes the lead the prior CH cycle (GOV-1840) had explicitly
+> flagged as a genuinely strong, deferred candidate: a genuine, current,
+> unauthenticated, flat (non-AcroForm) 4-page main-declaration PDF (`300 STE
+> ZH 2025 HA DEF.pdf`, HTTP 200, no login/CAPTCHA/WAF gate, confirmed via
+> `pdfjs-dist`/`pdf-lib` to carry zero AcroForm widgets), cross-checked
+> field-by-field against the Kantonales Steueramt's own 40-page "Wegleitung
+> zur Steuererklärung 2025" instruction guide, which supplies several
+> statutory caps/rates (pillar-3a contribution limits, the childcare-cost
+> cap, the donation ceiling, the medical-cost floor) the return itself does
+> not print. Modelled 122 fields (18 `documents[]` entries) across 7
+> `steps`, scoped to the main declaration only — deliberately excluding
+> seven companion schedules the form references by name (securities/
+> holdings inventory, professional expenses, insurance premiums, further
+> education, real-estate register, debts register, self-employment
+> worksheets) and every pure computed/arithmetic or capped-derivative line.
+> This gives Switzerland **2 of its 6 verticals** (DMV, Taxes); Visa,
+> Passport, Business Formation, and National ID remain confirmed dead ends
+> per GOV-1840. See
+> `registry/ch/zh/sta/steuererklaerung-natuerliche-personen/1.0.0/VERIFICATION.md`
+> for the full sourcing record, every disclosed scope decision, and a worked
+> mock-data example.
 
 > **Update (2026-07-08, GOV-1840): Switzerland opens as the registry's 27th
 > jurisdiction**, with a DMV schema:
@@ -2982,7 +3009,24 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (25/27 jurisdictions — 93%)
+### Taxes — Income Tax Return, Tax Filing (26/27 jurisdictions — 96%)
+
+**Switzerland's Taxes vertical is now published** (`ch/zh/sta/steuererklaerung-natuerliche-personen`,
+GOV-1847) — the Kantonales Steueramt Zürich's "Steuererklärung 2025 für
+natürliche Personen," canton Zürich's annual personal income and wealth tax
+return (cantonal/communal tax and direct federal tax filed together). The
+prior CH cycle (GOV-1840, which opened Switzerland via its DMV vertical)
+screened this candidate and flagged it as genuinely strong: a genuine,
+current, unauthenticated, flat (non-AcroForm) main-declaration PDF, cross-
+checked against the cantonal tax office's own 40-page Wegleitung instruction
+guide. Scoped to the main 4-page declaration only, excluding seven
+companion schedules the form references by name (securities/holdings
+inventory, professional expenses, insurance premiums, further education,
+real-estate register, debts register, self-employment worksheets) and every
+pure computed/arithmetic or capped-derivative line, per this registry's
+established treatment of income-tax schemas elsewhere. This gives
+Switzerland its 2nd of 6 verticals. See the Executive Summary update above
+and the document's own VERIFICATION.md for the full sourcing record.
 
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
@@ -3465,7 +3509,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CH** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **CH** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -3875,20 +3919,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    GOV-1254 as a documented scope decision (these schedules are structurally
    identical to `in/incometax/individual-tax-return-itr2`'s already-published
    ones), not a sourcing dead end.
-5. **CH Taxes (canton Zürich's `Steuererklärung 2025`)**: GOV-1840,
-   2026-07-08. Canton Zürich's own tax office publishes a genuine, current,
-   unauthenticated, flat (non-AcroForm) main-declaration PDF for individuals
-   (`300 STE ZH 2025 HA DEF.pdf`, HTTP 200, no login/CAPTCHA gate, legible
-   numbered-line text layer) as a paper-filing alternative to the
-   `ZHprivateTax` online portal, plus companion schedules (securities/
-   holdings, professional expenses, insurance premiums) and a 40-page
-   official Wegleitung. Screened and found genuinely strong this cycle but
-   not pursued to a full schema, since Switzerland's DMV vertical was
-   already picked as this cycle's single deliverable per the research
-   brief's own priority order — a real, open, well-sourced candidate for a
-   future cycle to pursue directly (Switzerland has 26 cantons, each with
-   its own tax administration and likely its own equivalent form; Zürich's
-   was the one confirmed this cycle).
+5. **CH Taxes — now published** (`ch/zh/sta/steuererklaerung-natuerliche-personen`,
+   GOV-1847, 2026-07-08): the candidate GOV-1840 flagged above was pursued to
+   a full schema this cycle. See the Executive Summary update and the Taxes
+   vertical section below for the sourcing summary; the document's own
+   VERIFICATION.md has the full record. Canton Zürich's own companion
+   schedules (Wertschriftenverzeichnis, Berufsauslagen, Versicherungsprämien,
+   Aus- und Weiterbildung, Liegenschaftenverzeichnis, Schuldenverzeichnis,
+   Hilfsblatt A/B/G) remain open backlog candidates for a future cycle — the
+   Wertschriftenverzeichnis (securities and holdings inventory) is likely
+   the strongest follow-up, being the most commonly-populated companion
+   schedule. Switzerland's other 25 cantons each likely publish their own
+   equivalent tax-return form, also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
