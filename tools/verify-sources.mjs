@@ -56,11 +56,31 @@ const FETCH_TIMEOUT_MS = 15_000;
 const RETRIES = 2; // additional attempts after the first, for 5xx/timeout only
 const RETRY_BACKOFF_MS = 1_500;
 
-const URL_RE = /https?:\/\/[^\s"'`<>\)\]]+/g;
+// Parens are allowed inside the match (some government sites, e.g. CZ's
+// md.gov.cz, put literal "(1)" disambiguators in attachment paths) — the
+// trailing-punctuation trim below removes only a genuinely unbalanced
+// closing paren (the kind markdown's `[text](url)` wraps around the URL),
+// not one that's part of the URL's own path.
+const URL_RE = /https?:\/\/[^\s"'`<>\]]+/g;
 // Trailing characters that are almost always markdown/JSON punctuation, not
-// part of the URL itself (closing paren from a markdown link, a sentence's
-// trailing period/comma, a trailing backtick already excluded above).
-const TRAILING_PUNCT_RE = /[.,;:!?)\]]+$/;
+// part of the URL itself (a sentence's trailing period/comma, a trailing
+// backtick/bracket already excluded above).
+const TRAILING_PUNCT_RE = /[.,;:!?\]]+$/;
+
+// Strip a trailing ")" only while it has no matching "(" earlier in the
+// URL — i.e. only while the parens are unbalanced. This removes markdown's
+// wrapping close-paren (`[text](https://example.com)`) without truncating a
+// URL whose own path contains a balanced literal "(...)" segment.
+function stripUnbalancedTrailingParen(url) {
+  let s = url;
+  while (s.endsWith(")")) {
+    const opens = (s.match(/\(/g) || []).length;
+    const closes = (s.match(/\)/g) || []).length;
+    if (closes <= opens) break;
+    s = s.slice(0, -1);
+  }
+  return s;
+}
 
 function log(msg) {
   process.stdout.write(msg + "\n");
@@ -126,6 +146,7 @@ function extractUrls(text) {
   for (const m of text.matchAll(URL_RE)) {
     let url = m[0];
     url = url.replace(TRAILING_PUNCT_RE, "");
+    url = stripUnbalancedTrailingParen(url);
     const start = Math.max(0, m.index - CONTEXT_WINDOW);
     const end = Math.min(text.length, m.index + m[0].length + CONTEXT_WINDOW);
     const context = text.slice(start, end);
