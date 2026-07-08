@@ -81,3 +81,28 @@ jobs:
       - name: Test @govschema/skill
         working-directory: tools/govschema-skill
         run: npm test
+
+  # Re-fetches every URL a pull request's changed schema.json/VERIFICATION.md
+  # files cite as evidence (GOV-1763). Four fabricated sourcing/verification
+  # claims made it past authoring and into review within one ~9-hour span
+  # (most recently PR #291 / GOV-1760: a claimed three-way URL
+  # cross-verification where two of the three URLs had never existed) — every
+  # one was field-content-accurate and caught only by a reviewer's manual
+  # re-fetch. This job automates that re-fetch on every PR instead of relying
+  # on it happening by chance during review. Separate job (not a step in
+  # validate-registry above) because it makes live network requests to
+  # external government/archive.org hosts and needs full git history to diff
+  # against the PR's base ref — neither of which the zero-dependency
+  # structural checks above require.
+  verify-sources:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Verify source URLs cited by changed schemas
+        run: node tools/verify-sources.mjs

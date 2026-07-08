@@ -55,6 +55,47 @@ npm run validate:schema   # ajv 2020-12 meta-schema (needs npm ci)
 npm run validate:all      # both
 ```
 
+## `verify-sources.mjs`
+
+Zero-dependency source-URL verifier (GOV-1763). A schema's trustworthiness
+rests on `source`/`verification`/`VERIFICATION.md` accurately describing where
+its fields came from — but a review gate has caught four fabricated sourcing
+claims (invented citations, a fabricated quoted heading, a false "no AcroForm
+fields" claim, a false three-URL cross-verification) in this registry's
+history, all with otherwise-accurate field content. This tool re-fetches
+every URL a changed schema's `schema.json` + `VERIFICATION.md` cite, so a
+fabricated or dead citation is caught on the PR that introduces it instead of
+by a reviewer's manual re-fetch.
+
+```sh
+# PR/push-aware: checks only the registry files changed since the base ref
+# (falls back to a full registry scan if there's no base ref to diff against)
+node tools/verify-sources.mjs
+
+# check every schema in the registry (slow — makes a live network request
+# per cited URL; expect some transient WARNs from gov-site flakiness)
+node tools/verify-sources.mjs --all
+
+# check specific files/directories
+node tools/verify-sources.mjs registry/gb/hmpo/passport-renewal-adult/1.0.0
+```
+
+A URL that 404s or fails DNS resolution is checked against the Wayback
+Machine's CDX API: zero history is treated as the fabrication signature
+(**FAIL**); prior history means the source moved or was retired, not that it
+was invented (**WARN** — cite an explicit `web.archive.org` snapshot instead).
+A `web.archive.org` citation is itself re-fetched and must resolve, or it
+FAILs (a broken "proof" URL is as bad as a fabricated one). Bot/WAF-blocked
+responses (401/403/429 — extremely common across this registry's government
+sources) and 5xx/timeouts (retried with backoff first) never fail the check;
+only a definitively nonexistent URL does. See
+[`verify-sources-allowlist.json`](./verify-sources-allowlist.json) for the
+rare case a specific URL needs an audited, reasoned exception.
+
+Exit code `0` if nothing FAILs (WARNs are printed but non-blocking), `1`
+otherwise. CI runs this on every pull request against the files it changes
+(`.github/workflows/validate.yml`).
+
 ## `govschema-client/`
 
 [`@govschema/client`](./govschema-client) — a non-normative reference client

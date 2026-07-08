@@ -30,7 +30,29 @@ Contributions fall into a few kinds; each has a short path.
    ```sh
    node tools/validate.mjs
    ```
-5. If this schema came from a `discovery/catalog.json` candidate, flip its
+5. **Before opening the PR, re-verify your own sourcing claims — don't let the
+   review gate be the first re-fetch.** A review gate has caught four
+   fabricated sourcing/verification claims in this registry's history
+   (invented citations, a fabricated quoted heading, a false "no AcroForm
+   fields" claim, a false three-URL cross-verification) — every one was
+   field-content-accurate and the fabrication was confined to the narrative
+   describing *how* the schema was verified. Before opening a PR:
+   - Re-fetch every URL your `schema.json` `source`/`verification` and
+     `VERIFICATION.md` cite, live, right before submitting — don't rely on a
+     fetch from earlier in the session. `node tools/verify-sources.mjs
+     <path/to/version-dir>` automates this (see
+     [`tools/README.md`](./tools/README.md#verify-sourcesmjs)); CI also runs
+     it against your PR's changed files, but catching it yourself is faster
+     than a round trip through review.
+   - Re-extract the source PDF/page text yourself and grep for every quoted
+     phrase, heading, or field label your `VERIFICATION.md` puts in quotes —
+     a quote that isn't verbatim in the extracted text is a fabrication, not
+     a paraphrase.
+   - If you claim a document has (or lacks) an AcroForm layer, a specific
+     byte size, or that multiple URLs resolve to the identical file, confirm
+     each of those claims mechanically (`pdfjs-dist`, a byte/hash compare)
+     rather than asserting it from memory of an earlier fetch.
+6. If this schema came from a `discovery/catalog.json` candidate, flip its
    `status` to `published` and regenerate the client index — every registry
    change and every catalog status flip must be reflected here:
    ```sh
@@ -46,7 +68,7 @@ Contributions fall into a few kinds; each has a short path.
    you'll commit a reference to a file that isn't actually part of your
    change (GOV-1233/GOV-1234). `git status` should show nothing but your own
    change before you run it.
-6. Open a pull request using the schema PR template.
+7. Open a pull request using the schema PR template.
 
 ## Correcting / re-verifying a schema
 
@@ -71,6 +93,9 @@ decisions — see [GOVERNANCE.md](./GOVERNANCE.md).
 - [ ] `id` matches the path; `version` matches the version directory.
 - [ ] `source` cites a live government URL with a `retrievedAt` date.
 - [ ] `verification` names a real practice and a current `lastVerifiedAt`.
+- [ ] Every cited URL was re-fetched live just before opening the PR
+      (`node tools/verify-sources.mjs <path/to/version-dir>`); every quoted
+      phrase/heading was re-grepped against a fresh source extraction.
 - [ ] No personal data; no affiliation/endorsement claims.
 - [ ] Version bump (if any) follows VERSIONING.md.
 - [ ] Relative links in `VERIFICATION.md` (e.g. to `spec/proposals/`) resolve:
