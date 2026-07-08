@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**24 jurisdictions** | **277 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**24 jurisdictions** | **278 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-08, GOV-1750): Portugal opens as GovSchema's 24th
 > jurisdiction**, via its DMV vertical, with
@@ -51,6 +51,43 @@
 > verticals (DMV); Business Formation, Taxes, Passport, Visa, and National ID
 > are open backlog candidates for future cycles, with Taxes (AT's Modelo 3)
 > the strongest-sourced of the five.
+
+> **Update (2026-07-08, GOV-1757):** Portugal closes its Visa/residence-status
+> gap with `pt/aima/requerimento-autorizacao-residencia` — the Agência para a
+> Integração, Migrações e Asilo's (AIMA) Modelo 1 "REQUERIMENTO," the
+> general-purpose application a foreign national files with AIMA to request a
+> grant or renewal of a temporary or permanent Autorização de Residência
+> (residence permit), an Estatuto de Residente de Longa Duração (long-term
+> resident status), an Autorização de Residência para Investimento (ARI,
+> investment-based residence permit / "golden visa"), an EU Blue Card, family
+> reunification under Lei n.º 23/2007, de 4 de julho (Foreigners' Law), or — on
+> the same form — a data change or duplicate/second copy of an already-issued
+> title. This was flagged as an open backlog candidate by GOV-1750's own research
+> cycle, which noted it had been explicitly identified as "a genuine, unauthenticated,
+> currently-served [form]… the only Portuguese candidate this cycle found
+> meeting this registry's top-tier source bar" — but not authored at that time
+> pending a focused research cycle to locate and confirm its live hosting and
+> sourcing. GOV-1757 confirmed the form's sourcing directly: AIMA's own official
+> document URL is live and is the exact link published on AIMA's own
+> "Impressos e Minutas" forms index page; `pdfjs-dist` extraction
+> confirms zero AcroForm widgets across all 4 pages (a flat, non-fillable PDF,
+> same source-tier as AT's Modelo 3 IRS, already documented for Portugal's
+> Taxes vertical). Models 28 applicant-supplied fields across the request-type
+> track selection (new permit/status vs. data change/duplicate), the seven
+> resident-status pathways (ordinary temporary/permanent residence, long-term
+> resident status, investment-residence with optional permanent track, EU Blue
+> Card, family reunification), optional family-reunification beneficiary details,
+> applicant identification/nationality/biometrics, address/contact data, travel
+> document (passport) details, three consent/declaration checkboxes, and 9 supporting-document
+> category pointers — plus explicit exclusion of AIMA-staff-only administrative
+> boxes and decision fields. Submission model is print-to-photocopy-mail (not
+> digital fill-and-submit), same as the form's Portuguese government peers. This
+> closes Portugal's Visa/residence-status gap, giving Portugal **2 of its 6 verticals**
+> (DMV via GOV-1750's `pt/imt/requerimento-carta-de-conducao` + Visa via this schema);
+> Business Formation, Taxes, Passport, National ID remain open backlog candidates,
+> with Taxes (AT's Modelo 3) the strongest-sourced. See the document's own
+> VERIFICATION.md for the full sourcing record, field-by-field citations, and
+> every disclosed scope decision.
 
 > **Update (2026-07-08, GOV-1744):** Chile gains its 3rd vertical, Taxes,
 > with `cl/sii/formulario-22` — the Servicio de Impuestos Internos' (SII)
@@ -2017,7 +2054,7 @@
 | **DMV** | 16/17 (94%) | sub-process/edition expansion (CDL beyond US-CA, IDL beyond US/IE/GB) only; **BR** not yet modelled (the sole remaining jurisdiction gap — see below); **PH** newly modelled this cycle (`ph/lto/drivers-license-application`, GOV-1519) — LTO Form No. 21, recovered via the Wayback Machine directly from `lto.gov.ph`'s own upload path, resolving the third-party-mirror-only provenance gap GOV-1466 had flagged, closing PH to 6/6 verticals; **AE** modelled in a prior cycle (`ae/rta/vehicle-registration-renewal`, GOV-1512); **MX** modelled in a prior cycle (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435) |
 | **Business Formation** | 16/17 (94%) | sub-process expansion only (sole trader/partnership/LLP in CA/NZ/IE/IN; PH's own Branch/Facility/PEZA-BOI-incentive sub-processes; KR's own Section 3/4 trust-property and foreign-corporation pathways); **AE** not yet modelled (confirmed dead end this cycle's own prior pass, GOV-1474 — Basher login-gated, `app.invest.dubai.ae` 403s, `ded.ae` bot-mitigated); **BR** modelled in a prior cycle (`br/sp/jucesp/cnpj-registration-dbe`); **MX** modelled in a prior cycle (`mx/sat/preinscripcion-rfc-persona-moral`, GOV-1414); **PH** modelled in a prior cycle (`ph/bir/tin-application-corporations-partnerships`, GOV-1444); **KR** newly modelled this cycle (`kr/nts/corporation-establishment-and-business-registration`, GOV-1483), closing South Korea to 6/6 verticals |
 | **Taxes** | 17/17 (100%) | sub-process expansion only (corporate tax: SG modelled GOV-1261, ZA's full 5-Annexure ITR14 set now modelled GOV-1268/GOV-1275/GOV-1282/GOV-1378/GOV-1387; IE Form CT1 re-examined and re-confirmed a poor candidate GOV-1444); **BR** modelled in a prior cycle (`br/rfb/individual-income-tax-return-irpf`, GOV-1407); **MX** modelled in a prior cycle (`mx/sat/declaracion-anual-sueldos-salarios`, GOV-1428); **PH** newly modelled this cycle (`ph/bir/annual-income-tax-return-1701a`, GOV-1466), closing the global Taxes vertical to 100% |
-| **Visa** | 14/17 (82%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PH** newly modelled this cycle (`ph/bi/non-immigrant-visa-application`, GOV-1490), closing the candidate this catalog's own "Known Gaps" note had flagged as strong and open; **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`) |
+| **Visa** | 15/17 (88%) | **NL, ZA, BR** — all three confirmed dead ends (see below), not open work; **PT** newly modelled this cycle (`pt/aima/requerimento-autorizacao-residencia`, GOV-1757), closing the residence-permit gap flagged by GOV-1750's research; **PH** modelled in a prior cycle (`ph/bi/non-immigrant-visa-application`, GOV-1490); **AE** modelled in a prior cycle (`ae/icp/visa-single-entry-long-stay-pleasure`, GOV-1421); **MX** modelled in a prior cycle (`mx/inm/forma-migratoria-multiple-electronica`); **CL, ES** — the only two remaining gaps, both unscreened or confirmed weak (ES Visa is a duplicate of DE's EU-harmonized template per prior cycles). |
 | **National ID & Civic Documents** | 15/17 (88%) | none genuinely open (SG voter-reg is a confirmed non-gap); **BR, MX** not yet modelled (MX's CURP candidate is in-person/biometric-only); **AE** newly modelled this cycle (`ae/icp/emirates-id-replacement`, GOV-1474) |
 
 > **Correction (2026-07-05, GOV-1240):** the prior version of this table
@@ -2876,7 +2913,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **PT** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **PT** | 2 | ✗ | ✓ | ✗ | ✗ | ✓ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
