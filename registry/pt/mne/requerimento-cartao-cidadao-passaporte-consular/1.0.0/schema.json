@@ -1,0 +1,359 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pt/mne/requerimento-cartao-cidadao-passaporte-consular",
+  "version": "1.0.0",
+  "title": "Portugal Cartão de Cidadão and/or Passport Request at the São Paulo Consulate (Requerimento de Atos Presenciais)",
+  "description": "The in-person-appointment request form (\"Requerimento de Atos Presenciais — Cartão de Cidadão / Passaporte\") a Portuguese citizen resident in the São Paulo consular district files with the Consulado-Geral de Portugal em São Paulo — a post of the Ministério dos Negócios Estrangeiros (MNE) — to request issuance or renewal of a Cartão de Cidadão (CC, citizen card), a Bilhete de Identidade (BI, the citizen card's discontinued lifetime predecessor, referenced only for renewal identification), a Passaporte Eletrónico Português (PEP), or a combined CC-and-passport request, at a scheduled consular counter appointment. Portugal's domestic Cartão de Cidadão process has no citizen-facing downloadable application form (it is an in-person biometric-enrolment appointment); this consulate-hosted counter-intake form is, so far as this registry has found, the closest genuine downloadable, fillable AcroForm equivalent — modelling it under GovSchema's National ID vertical, since Cartão de Cidadão is the form's first-listed and primary modality. This document is scoped to this one consular post's own published PDF: other Portuguese consulates (e.g. Rio de Janeiro) publish their own, differently-structured request forms for the same underlying process, and this schema does not claim to represent a single centrally-standardized MNE template — see VERIFICATION.md. Several fields (CPF, RG/RNE, CEP, Bairro) reflect this form's Brazil-specific localization and would not appear on an equivalent form published by a consulate in another country. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Portugal, the Ministério dos Negócios Estrangeiros, or the Consulado-Geral de Portugal em São Paulo.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministério dos Negócios Estrangeiros — Consulado-Geral de Portugal em São Paulo",
+    "abbreviation": "MNE",
+    "url": "https://saopaulo.consuladoportugal.mne.gov.pt/"
+  },
+  "process": {
+    "type": "request",
+    "language": "pt"
+  },
+  "source": {
+    "url": "https://saopaulo.consuladoportugal.mne.gov.pt/images/cc_e_pep_formulario.pdf",
+    "retrievedAt": "2026-07-08",
+    "documentRef": "Requerimento de Atos Presenciais — Cartão do Cidadão e/ou Passaporte (Consulado-Geral de Portugal em São Paulo)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-08",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-08",
+    "notes": "GOV-1797: GovSchema Standard Research follow-up cycle re-screening Portugal's three remaining open verticals (Business Formation, Passport, National ID) per GOV-1750's initial light screening. Re-confirmed Business Formation (IRN 'Empresa na Hora'/'Empresa Online' pacto-social specimens remain scanned-image PDFs with no extractable text layer) and Passport (no distinct domestic citizen-facing application PDF exists; Decreto-Lei n.º 83/2000 Art. 16 in-person/biometric-only issuance still holds) as dead ends. Pursued the National ID consular-PDF lead flagged as unexplored by GOV-1750: found the São Paulo consulate's cc_e_pep_formulario.pdf carries a genuine 45-widget AcroForm layer (confirmed via pdfjs-dist annotation extraction and a full-page Chromium/pdfjs render used to map every widget to its printed label), stronger than the Rio de Janeiro consulate's req_cc.pdf (no AcroForm layer at all, a flat print facsimile) that GOV-1750 had examined. Picked as this cycle's strongest genuinely-sourceable candidate. See VERIFICATION.md for the full three-vertical candidate comparison, field-by-field sourcing, and every disclosed scope decision."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-08"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestModality",
+      "label": "Vou solicitar (I am requesting)",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the form's three combined document tracks this request concerns: the Cartão de Cidadão alone, the passport alone (for an applicant who already holds a valid Cartão de Cidadão or lifetime Bilhete de Identidade), or both together.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, header 'Vou solicitar:' / 'Selecione »', AcroForm field 'radio_group_48upva' (3-option radio group; widget order top-to-bottom: 'Somente Cartão de Cidadão' = Value_ocfm, 'Somente Passaporte, pois tenho Cartão de Cidadão válido ou Bilhete de Identidade vitalício' = Value_ppep, 'Cartão de Cidadão + Passaporte' = Value_akij)",
+      "validation": {
+        "enum": ["cartao_cidadao_only", "passaporte_only", "cartao_cidadao_e_passaporte"]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Estado Civil Actual (current marital status)",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's current marital status, per Portugal's civil registry (the form's own adjacent note states name and marital status will be as recorded in the Portuguese civil registry).",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Estado Civil Actual' with printed options 'solteiro', 'casado', 'viúvo', 'divorciado', AcroForm field 'radio_group_38phjd' (4-option radio group; left-to-right widget order matches printed order: Value_knq=solteiro, Value_fvcm=casado, Value_sqrq=viúvo, Value_rcju=divorciado)",
+      "validation": {
+        "enum": ["solteiro", "casado", "viuvo", "divorciado"]
+      }
+    },
+    {
+      "name": "age",
+      "label": "Idade (age)",
+      "type": "integer",
+      "required": false,
+      "description": "The applicant's age in years, printed as '(idade: __ anos)' beside the marital-status question.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, '(idade: ___ anos)', AcroForm field 'text_2ekak' (duplicate widget 'text_20uiwp' at the same rect [43,687,93,704])"
+    },
+    {
+      "name": "fullName",
+      "label": "Nome (full name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full name, as recorded in the Portuguese civil registry. The form repeats a same-labelled 'Nome do Requerente' field in its closing signature block; this schema treats both occurrences as one logical value.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Nome:', AcroForm field 'text_7itaa' (duplicate widget 'text_26flad'); repeated at 'DATA E ASSINATURA DO REQUERENTE' section, 'Nome do Requerente:', AcroForm field 'text_38yiag' (duplicate widget 'text_28kzzv')"
+    },
+    {
+      "name": "identityCardNumber",
+      "label": "Bilhete de Identidade (BI) ou Cartão de Cidadão (CC)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The number of the applicant's current Bilhete de Identidade or Cartão de Cidadão, when already held (relevant for a renewal or a passport-only request). A sibling consulate's equivalent form (Rio de Janeiro's req_cc.pdf) labels the same data point 'caso possua' (if you have one), confirming it is conditional on the applicant already holding a title.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Bilhete de Identidade (BI) ou Cartão de Cidadão (CC):', AcroForm field 'text_8eeil' (duplicate widget 'text_21yfrl'); cf. req_cc.pdf (Consulado-Geral de Portugal no Rio de Janeiro), 'Nº do Cartão de Cidadão ou Bilhete de identidade (caso possua)'"
+    },
+    {
+      "name": "maidenOrBirthName",
+      "label": "Nome de solteiro (maiden/birth name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's birth/maiden name, if different from the current full name.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Nome de solteiro:', AcroForm field 'text_9naqb' (duplicate widget 'text_22nbxo')"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Data de Nascimento (date of birth)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's date of birth.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Data de Nascimento:', AcroForm field 'text_11xlqu' (duplicate widget 'text_27vgjt')"
+    },
+    {
+      "name": "height",
+      "label": "Altura (height)",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's height — a field the Cartão de Cidadão itself prints. A sibling consulate's equivalent form (Rio de Janeiro's req_cc.pdf) marks the same data point '(item obrigatório)' (mandatory item), but this São Paulo form carries no equivalent mandatory-marker text next to its own 'Altura' field (confirmed by rendering the page; see VERIFICATION.md), so this schema does not assert it as required here.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Altura:', AcroForm field 'text_2kmuq'; cf. req_cc.pdf (Consulado-Geral de Portugal no Rio de Janeiro), 'Altura : , ( item obrigatório)'"
+    },
+    {
+      "name": "rgOrRne",
+      "label": "RG ou RNE",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's Brazilian Registro Geral (RG, for Brazilian nationals/dual nationals) or Registro Nacional de Estrangeiros (RNE, for foreign residents of Brazil) identity-document number — a data point specific to this consulate's Brazil-resident applicant base.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'RG ou RNE:', AcroForm field 'text_10wctv' (duplicate widget 'text_25odgd')"
+    },
+    {
+      "name": "cpf",
+      "label": "CPF",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's Brazilian Cadastro de Pessoas Físicas (CPF) taxpayer number — a data point specific to this consulate's Brazil-resident applicant base.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'CPF:', AcroForm field 'text_12emvn' (duplicate widget 'text_24suxm')"
+    },
+    {
+      "name": "phoneNumbers",
+      "label": "Telefones (phone numbers)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "One or more direct contact phone numbers for the applicant.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Telefones: (forneça contactos directos)', AcroForm field 'text_13afpn' (duplicate widget 'text_23crdk')"
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's email address.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'e-mail:', AcroForm field 'text_14agec' (duplicate widget 'text_18eebr')",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "civilParishOfBirth",
+      "label": "Freguesia (Bairro) — if born in Portugal",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The civil parish (freguesia) of birth, applicable when the applicant was born in Portugal. Printed under the section header 'Se nasceu em Portugal:' (if born in Portugal), an alternative to the separate 'Se nasceu no Exterior' (if born abroad) fields below; the form does not carry a distinct checkbox selecting between the two, so this schema does not assert a structural requiredWhen dependency between them.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Se nasceu em Portugal: Freguesia: (Bairro)', AcroForm field 'text_3udii'"
+    },
+    {
+      "name": "municipalityOfBirth",
+      "label": "Concelho de (Cidade) — if born in Portugal",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The municipality (concelho) of birth, applicable when the applicant was born in Portugal.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Concelho de: (Cidade)', AcroForm field 'text_4sglc'"
+    },
+    {
+      "name": "districtOfBirth",
+      "label": "Distrito de (Estado) — if born in Portugal",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The district (distrito) of birth, applicable when the applicant was born in Portugal.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Distrito de: (Estado)', AcroForm field 'text_5rxtu'"
+    },
+    {
+      "name": "dateOfEntryToCountry",
+      "label": "Data de entrada no país (date of entry into the country)",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant entered Brazil, printed in the same 'Se nasceu em Portugal' block as the birth-parish/municipality/district fields (relevant to establishing a Portuguese-born applicant's residence timeline in the consular district).",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Data de entrada no país:', AcroForm field 'text_6omfi'"
+    },
+    {
+      "name": "placeOfBirthAbroad",
+      "label": "País/Cidade/Estado — se nasceu no Exterior (country/city/state, if born abroad)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The country, city, and state of birth, combined in one field, applicable when the applicant was born outside Portugal (typically Brazil, for this consular district).",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'REQUERENTE' section, 'Se nasceu no Exterior: País/Cidade/Estado', AcroForm field 'text_7xnrh'"
+    },
+    {
+      "name": "confirmSameDeliveryAddress",
+      "label": "Confirma o mesmo endereço de entrega da documentação? (confirm same address for document delivery)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the residential address given in the ENDEREÇO (address) section below is the same address to which the completed documents should be delivered (relevant to the form's own 'URGENTE: Entregue na Morada' mail-delivery option). The source does not state a fallback field for a different delivery address, so this schema models only the confirmation checkbox itself.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'ENDEREÇO' section header, 'Confirma o mesmo endereço de entrega da documentação?', AcroForm field 'checkbox_1syxn'"
+    },
+    {
+      "name": "streetAddress",
+      "label": "Rua/Av. (street/avenue)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's street or avenue address.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'ENDEREÇO' section, 'Rua/Av.:', AcroForm field 'text_8exzx'"
+    },
+    {
+      "name": "addressNumber",
+      "label": "Num. (street number)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The street number of the applicant's address.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'ENDEREÇO' section, 'Num:', AcroForm field 'text_12sxyk'"
+    },
+    {
+      "name": "addressUnit",
+      "label": "Apto. (apartment/unit)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The apartment or unit number of the applicant's address, if applicable.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'ENDEREÇO' section, 'Apto:', AcroForm field 'text_13rqc'"
+    },
+    {
+      "name": "neighborhood",
+      "label": "Bairro (neighborhood)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The neighborhood (bairro) of the applicant's address — a Brazilian address-format field.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'ENDEREÇO' section, 'Bairro:', AcroForm field 'text_10byds'"
+    },
+    {
+      "name": "postalCode",
+      "label": "CEP (postal code)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The Brazilian postal code (CEP) of the applicant's address. The form's own CEP field is a single unconstrained text widget (not split into individually-counted character boxes), so this schema does not assert a digit-count pattern the source itself does not structurally enforce.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'ENDEREÇO' section, 'CEP:', AcroForm field 'text_11dswr'"
+    },
+    {
+      "name": "cityState",
+      "label": "Cidade/Estado (city/state)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The city and state of the applicant's address, combined in one field.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'ENDEREÇO' section, 'Cidade/Estado:', AcroForm field 'text_9emie'"
+    },
+    {
+      "name": "fatherName",
+      "label": "Nome do Pai (father's name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's father's full name — filiação (parentage) data that Portugal's Cartão de Cidadão and Lei n.º 7/2007 identity record always carries.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'PAIS DO(A) REQUERENTE' section, 'Nome do Pai:', AcroForm field 'text_22jpva' (duplicate widget 'text_16qonb')"
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Data de Nascimento (father)",
+      "type": "date",
+      "required": false,
+      "description": "The applicant's father's date of birth.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'PAIS DO(A) REQUERENTE' section, 'Nome do Pai' row, 'Data de Nascimento', AcroForm field 'text_29ktfo' (duplicate widget 'text_17jgp')"
+    },
+    {
+      "name": "motherName",
+      "label": "Nome da Mãe (mother's name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mother's full name — filiação (parentage) data that Portugal's Cartão de Cidadão and Lei n.º 7/2007 identity record always carries.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'PAIS DO(A) REQUERENTE' section, 'Nome da Mãe:', AcroForm field 'text_14makd'"
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Data de Nascimento (mother)",
+      "type": "date",
+      "required": false,
+      "description": "The applicant's mother's date of birth.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'PAIS DO(A) REQUERENTE' section, 'Nome da Mãe' row, 'Data de Nascimento', AcroForm field 'text_15hwwm'"
+    },
+    {
+      "name": "dateOfRequest",
+      "label": "Data (date of request)",
+      "type": "date",
+      "required": true,
+      "description": "The date the request is signed, printed as a blank 'Data: ___/___/___' line in the closing signature block. Unlike the form's other fields, this line carries no AcroForm widget of its own (a printed blank for handwriting) — modelled here because it is a clearly designated, self-documenting field on the form's own face.",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'DATA E ASSINATURA DO REQUERENTE' section, 'Data: ____/____/______'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identificationDocumentsPresented",
+      "label": "Current identification document (Cartão de Cidadão or Bilhete de Identidade) and/or travel document (Passaporte)",
+      "category": "identity-document",
+      "required": true,
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, illustrated 'Documentos de Identificação Civil: Cartão de Cidadão (CC) Ou Bilhete de Identidade (BI)' / 'Documento de Viagem: Passaporte (PEP)' panel"
+    },
+    {
+      "id": "requerentePresence",
+      "label": "Applicant's own in-person appearance at the consular appointment",
+      "category": "attestation",
+      "required": true,
+      "statement": "Obrigatório a presença do Requerente, sendo ele(a) maior ou menor de idade, pois trata-se de um documento de identificação civil. Procurador(a) não será válido para solicitação do documento.",
+      "issuingAuthority": "Consulado-Geral de Portugal em São Paulo",
+      "sourceRef": "cc_e_pep_formulario.pdf p.1, 'Obs:' note beside the 'Requerente' heading"
+    }
+  ],
+  "steps": [
+    {
+      "id": "modalidade",
+      "title": "Vou solicitar (request modality)",
+      "fields": ["requestModality"],
+      "next": "requerente"
+    },
+    {
+      "id": "requerente",
+      "title": "REQUERENTE (applicant identification)",
+      "fields": ["age", "maritalStatus", "fullName", "identityCardNumber", "maidenOrBirthName", "dateOfBirth", "height", "rgOrRne", "cpf", "phoneNumbers", "email", "civilParishOfBirth", "municipalityOfBirth", "districtOfBirth", "dateOfEntryToCountry", "placeOfBirthAbroad"],
+      "next": "endereco"
+    },
+    {
+      "id": "endereco",
+      "title": "ENDEREÇO (address)",
+      "fields": ["confirmSameDeliveryAddress", "streetAddress", "addressNumber", "addressUnit", "neighborhood", "postalCode", "cityState"],
+      "next": "pais"
+    },
+    {
+      "id": "pais",
+      "title": "PAIS DO(A) REQUERENTE (applicant's parents)",
+      "fields": ["fatherName", "fatherDateOfBirth", "motherName", "motherDateOfBirth"],
+      "next": "data_assinatura"
+    },
+    {
+      "id": "data_assinatura",
+      "title": "DATA E ASSINATURA DO REQUERENTE (date and signature)",
+      "fields": ["dateOfRequest"]
+    }
+  ]
+}
