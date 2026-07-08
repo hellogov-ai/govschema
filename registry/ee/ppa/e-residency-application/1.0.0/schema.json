@@ -1,0 +1,470 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ee/ppa/e-residency-application",
+  "version": "1.0.0",
+  "title": "Estonia e-Resident's Digital ID Application",
+  "description": "The application a foreign national (a non-resident of Estonia, with no Estonian citizenship or residence permit) files with the Police and Border Guard Board (Politsei- ja Piirivalveamet, PPA) to be issued an e-Resident's digital identity card — a state-issued digital identity that lets its holder use Estonia's e-services and digitally sign documents, without granting residence, citizenship, a right to travel, or a right to physically enter Estonia or the EU. The live application environment (apply.gov.ee, formerly e-resident.gov.ee, technically served from eresident.politsei.ee) is a client-rendered, account-gated multi-page wizard with no unauthenticated field-level view; this document instead sources every field directly from the PPA's own official English-language description of the statutory data list the application must contain (per the Identity Documents Act and its implementing regulations), corroborated by the PPA's own service-description pages for the practical (non-statutory) details. It models the applicant's core identity and contact data, travel-document data, the required purpose/justification statement, the wide statutory background-disclosure data list (former names/citizenship, business/financial ties, criminal record, security-related history, and organisation membership), and the pickup-location choice, plus the travel-document copy, facial photograph, CV, and state-fee payment as documents. It deliberately does not model: the live wizard's own internal page/section boundaries (unconfirmed at field level, since the wizard itself is not inspectable without an account); the closed, changing, and politically-contingent list of citizenship-based application restrictions the Identity Documents Act and a Minister of the Interior regulation impose on certain countries' citizens (an eligibility mechanism, not a data field); the Minister-of-the-Interior \"compelling public interest\" exception pathway; and the separate account-creation, in-person biometric (fingerprint) collection, and pickup-location-change processes. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Estonia or the Politsei- ja Piirivalveamet.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "EE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Politsei- ja Piirivalveamet (Police and Border Guard Board)",
+    "abbreviation": "PPA",
+    "url": "https://www.politsei.ee/en/instructions/e-resident-s-digital-id"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.politsei.ee/en/instructions/e-resident-s-digital-id/frequently-asked-questions",
+    "retrievedAt": "2026-07-08",
+    "documentRef": "Police and Border Guard Board (PPA) 'E-Resident's digital ID — Frequently asked questions' page, section 'On what basis am I being asked to provide information?', which states verbatim: 'The data and evidence to be submitted when applying are listed in sections 5, 6, 9 and 17 of Regulation No. 20 and section 7 of Regulation No. 78 of the Minister of the Interior of Estonia', followed by the PPA's own clause-by-clause enumeration of each data element (quoted per-field below); cross-referenced against the Identity Documents Act (Isikut tõendavate dokumentide seadus), sections 20-5 through 20-12."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-08",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-08",
+    "notes": "GOV-1698: opens Estonia (EE) as GovSchema's 23rd jurisdiction. The live application environment (apply.gov.ee / eresident.politsei.ee) is an Angular single-page app that requires an account (created by email, no password) before any field renders — confirmed this cycle by direct retrieval of its unauthenticated HTML shell (all routes return the identical <apply-root> shell; no field text is present outside the client-side JS bundle) and by the PPA's own FAQ text ('You need to create an account to be able to submit your application; otherwise, it is not possible to submit your application'). Rather than treat this as a dead end, this document sources every field from the PPA's own official English-language statutory field list, published in plain, unauthenticated HTML on politsei.ee (a materially stronger source than a scraped/rendered wizard would be, since it is the government's own citation of the legal definition of the application's required content). See VERIFICATION.md for the full source inventory and every disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-08"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Current surname of the applicant, as it appears on the travel document presented.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(1) ('given name and surname'), per PPA FAQ"
+    },
+    {
+      "name": "givenNames",
+      "label": "Given name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Given name(s) of the applicant, in full, as they appear on the travel document presented.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(1) ('given name and surname'), per PPA FAQ"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Date of birth, ISO 8601. The source names this as an alternative to the Estonian personal identification code ('Estonian personal identification code or, if unavailable, date of birth'); since an e-Residency applicant is by definition a foreign national and a first-time applicant has not yet been issued one, this document models date of birth as the universally-supplied element of that pair and estonianPersonalIdentificationCode as the optional element a repeat applicant may already hold — see VERIFICATION.md.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(2), per PPA FAQ"
+    },
+    {
+      "name": "estonianPersonalIdentificationCode",
+      "label": "Estonian personal identification code",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's Estonian personal identification code (isikukood), an 11-digit number, supplied only if the applicant already holds one — e.g. from a previously issued e-Resident's digital ID, an Estonian residence permit, or another basis for entry in the Estonian population register. A genuine first-time applicant has none and leaves this absent, supplying dateOfBirth instead.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(2), per PPA FAQ",
+      "validation": { "pattern": "^[0-9]{11}$" }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Place of birth of the applicant.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(3), per PPA FAQ"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Sex of the applicant. The source requires this data element without stating coded/dropdown values anywhere this cycle's review could confirm; modelled as an open string rather than a guessed enum — see VERIFICATION.md.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(4), per PPA FAQ"
+    },
+    {
+      "name": "citizenship",
+      "label": "Citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's country of citizenship. Certain countries' citizens are subject to additional statutory application restrictions or a review suspension under the Identity Documents Act and a Minister of the Interior regulation, not modelled here as validation — see VERIFICATION.md.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(5), per PPA FAQ"
+    },
+    {
+      "name": "addressStreet",
+      "label": "Contact address — street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street name of the applicant's contact address.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "addressHouseNumber",
+      "label": "Contact address — house number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "House number of the applicant's contact address.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "addressApartmentNumber",
+      "label": "Contact address — apartment number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Apartment number of the applicant's contact address, when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "addressCityOrVillage",
+      "label": "Contact address — city or village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "City or village of the applicant's contact address.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "addressMunicipality",
+      "label": "Contact address — municipality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Municipality of the applicant's contact address.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "addressCounty",
+      "label": "Contact address — county",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "County of the applicant's contact address.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Contact address — postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Postal code of the applicant's contact address.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "addressCountry",
+      "label": "Contact address — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Country of the applicant's contact address.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Email address used both as a required data element of the application and as the applicant's login/notification channel for the application environment.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(7), per PPA FAQ",
+      "validation": { "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$" }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's phone number.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §5(1)(8), per PPA FAQ"
+    },
+    {
+      "name": "documentType",
+      "label": "Travel document type",
+      "type": "enum",
+      "required": true,
+      "description": "Type of the identity/travel document presented. PPA's own 'Applying through e-service' page names exactly two accepted types in its own prose ('a copy of a travel document of the country of nationality or of both sides of the European Union identity card'); this document slugifies that prose into two enum values, a disclosed encoding rather than a confirmed literal form value — see VERIFICATION.md.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §6(1), per PPA FAQ; document types per PPA 'Applying through e-service' page",
+      "validation": { "enum": ["passport", "eu-identity-card"] }
+    },
+    {
+      "name": "documentNumber",
+      "label": "Travel document number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Document number of the travel document presented.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §6(2), per PPA FAQ"
+    },
+    {
+      "name": "documentIssuingAuthority",
+      "label": "Travel document issuing authority",
+      "type": "string",
+      "required": true,
+      "description": "Authority that issued the travel document presented.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §6(3), per PPA FAQ"
+    },
+    {
+      "name": "documentIssueDate",
+      "label": "Travel document date of issue",
+      "type": "date",
+      "required": true,
+      "description": "Date the travel document presented was issued, ISO 8601.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §6(4), per PPA FAQ"
+    },
+    {
+      "name": "documentExpiryDate",
+      "label": "Travel document date of expiry",
+      "type": "date",
+      "required": true,
+      "description": "Date the travel document presented expires, ISO 8601.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §6(5), per PPA FAQ"
+    },
+    {
+      "name": "purposeAndJustification",
+      "label": "Purpose of applying, planned activities, and justification",
+      "type": "string",
+      "required": true,
+      "description": "A written statement of the applicant's reasons for applying, a description of their planned activities, and the justification for the application — the single free-text 'motivation statement' several PPA/e-Residency pages describe in plain language. Modelled as one field, matching the source's own single-subsection framing of these three elements together.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(2), per PPA FAQ ('an application for an e-resident digital ID shall state the purpose of applying, a description of the planned activities and the justification for the application')",
+      "validation": { "minLength": 1, "maxLength": 4000 }
+    },
+    {
+      "name": "otherNamesOrPatronymic",
+      "label": "Patronymic, former name(s), or other name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Patronymic, any former name(s), and any other name(s) the applicant has used, when applicable. Modelled as optional: this is a fact only applicants with such a name history have to report — see VERIFICATION.md.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(2), per PPA FAQ"
+    },
+    {
+      "name": "formerCitizenship",
+      "label": "Former citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Any citizenship the applicant formerly held, when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(3), per PPA FAQ"
+    },
+    {
+      "name": "socialMediaAccounts",
+      "label": "Social media accounts",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's social media account(s), when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(4), per PPA FAQ"
+    },
+    {
+      "name": "relatedUndertakings",
+      "label": "Related Estonian or foreign undertakings",
+      "type": "string",
+      "required": false,
+      "description": "Data on any Estonian or foreign undertaking(s) (companies) related to the applicant, when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(5), per PPA FAQ"
+    },
+    {
+      "name": "businessProhibitions",
+      "label": "Business prohibitions",
+      "type": "string",
+      "required": false,
+      "description": "Data on any business prohibition(s) imposed on the applicant, when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(6), per PPA FAQ"
+    },
+    {
+      "name": "foreignPersonalIdentificationCode",
+      "label": "Foreign personal identification code",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's foreign (non-Estonian) personal identification code, when the applicant's country of citizenship or residence issues one.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(7), per PPA FAQ"
+    },
+    {
+      "name": "bankAndVirtualCurrencyAccounts",
+      "label": "Personal and related-undertaking bank/payment accounts, and virtual currency use",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "description": "Data on the applicant's own personal bank account, on the bank and payment institution accounts of any undertaking related to the applicant, and on the applicant's use of virtual currency, when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(8), per PPA FAQ"
+    },
+    {
+      "name": "criminalRecordAndProceedings",
+      "label": "Criminal record and proceedings",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Data concerning the applicant's criminal record and any criminal proceedings initiated against the applicant, when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(9), per PPA FAQ"
+    },
+    {
+      "name": "suspectedOfEconomicCyberOrTerroristOffence",
+      "label": "Suspected or accused of an economic, cyber, or terrorist offence",
+      "type": "boolean",
+      "required": true,
+      "description": "Declaration of whether the applicant is, or has ever been, suspected or accused of an economic, cyber, or terrorist offence.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(10), per PPA FAQ"
+    },
+    {
+      "name": "visaRefusalOrEntryBan",
+      "label": "Visa refusal or entry ban",
+      "type": "boolean",
+      "required": true,
+      "description": "Declaration of whether the applicant has ever been refused a visa or had an entry ban imposed.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(11), per PPA FAQ"
+    },
+    {
+      "name": "militaryOrSecurityServiceHistory",
+      "label": "Military, armed forces, or security/intelligence service history",
+      "type": "string",
+      "required": false,
+      "description": "Data on service or employment in compulsory military service, the armed forces, as a professional soldier, or in intelligence or security services; participation in military operations outside Estonia; and service in a state or non-state armed organisation or unit, when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(12), per PPA FAQ"
+    },
+    {
+      "name": "civilSocietyOrganisationMembership",
+      "label": "Civil society organisation membership",
+      "type": "string",
+      "required": false,
+      "description": "Data on the applicant's membership in civil society organisation(s), when applicable.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(13), per PPA FAQ"
+    },
+    {
+      "name": "terroristOrganisationMembership",
+      "label": "Terrorist organisation membership",
+      "type": "boolean",
+      "required": true,
+      "description": "Declaration of whether the applicant has ever been a member of a terrorist organisation.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(14), per PPA FAQ"
+    },
+    {
+      "name": "pickupLocationType",
+      "label": "Pick-up location type",
+      "type": "enum",
+      "required": true,
+      "description": "The category of location the applicant selects in the application for later collecting the physical e-Resident's digital ID card in person (the specific office/embassy/pickup-point name is chosen within the application environment's own location picker and is not modelled as a separate field, since PPA's own pages name the three categories but do not publish the picker's own location list as static text).",
+      "sourceRef": "PPA 'Pick-up' page ('Applicants can collect their e-resident's digital IDs at the Estonian Police and Border Guard board service office, at an Estonian embassy or at any mobile pickup point')",
+      "validation": { "enum": ["pbgb-service-office", "estonian-embassy", "mobile-pickup-point"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "travelDocumentCopy",
+      "label": "Copy of the personal data page of the travel document",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "A copy of the personal data page of the applicant's valid travel document (passport) or, where the applicant's country issues one, both sides of a European Union identity card, or, if neither is available, another identity document issued by the applicant's country of nationality or country of residence.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §17(1), per PPA FAQ"
+    },
+    {
+      "id": "facialPhotograph",
+      "label": "Digital colour facial photograph",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "freshness": { "issuedWithin": "P6M" },
+      "constraints": {
+        "maxBytes": 5242880,
+        "mediaTypes": ["image/jpeg"]
+      },
+      "handling": "A digital colour photograph of the applicant's face, used to verify identity. Per eresident.politsei.ee's own photo-requirement pages (corroborated by the PPA FAQ's own 'I am unable to upload my facial photo' answer): minimum 1300×1600 pixels, maximum 6000×7380 pixels, 1–5 MB, .jpg/.jpeg format only — a simple file-extension rename to .jpg is explicitly stated as insufficient.",
+      "sourceRef": "Regulation No. 78 of the Minister of the Interior, §7(7), per PPA FAQ; photo specification per PPA FAQ and eresident.politsei.ee application-guidelines page"
+    },
+    {
+      "id": "curriculumVitae",
+      "label": "Curriculum vitae",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "A curriculum vitae, submitted as a link to an existing online CV, an uploaded CV file, or, if the applicant has neither, filled in directly within the application environment's own CV form.",
+      "sourceRef": "Regulation No. 20 of the Minister of the Interior, §9(1)(1), per PPA FAQ; submission modes per PPA 'Applying through e-service' page"
+    },
+    {
+      "id": "stateFeePayment",
+      "label": "State fee payment",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": { "currency": "EUR", "value": 150 },
+      "methods": ["visa", "mastercard"],
+      "handling": "Payment of the non-refundable state fee for reviewing the application, by VISA or Mastercard credit or debit card (online payments must be enabled if using a debit card; the card must support 3D Secure). The fee is not refunded if the application is refused.",
+      "sourceRef": "PPA 'How much and how to pay?' page; PPA FAQ 'Which cards can I use for the payment?'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicant_identity",
+      "title": "Applicant identity",
+      "fields": ["surname", "givenNames", "dateOfBirth", "estonianPersonalIdentificationCode", "placeOfBirth", "sex", "citizenship"],
+      "next": "contact_and_address"
+    },
+    {
+      "id": "contact_and_address",
+      "title": "Contact address and contact details",
+      "fields": ["addressStreet", "addressHouseNumber", "addressApartmentNumber", "addressCityOrVillage", "addressMunicipality", "addressCounty", "addressPostalCode", "addressCountry", "email", "phoneNumber"],
+      "next": "travel_document"
+    },
+    {
+      "id": "travel_document",
+      "title": "Travel document",
+      "fields": ["documentType", "documentNumber", "documentIssuingAuthority", "documentIssueDate", "documentExpiryDate"],
+      "next": "purpose_of_application"
+    },
+    {
+      "id": "purpose_of_application",
+      "title": "Purpose of application",
+      "fields": ["purposeAndJustification"],
+      "next": "background_disclosures"
+    },
+    {
+      "id": "background_disclosures",
+      "title": "Background and history disclosures",
+      "fields": [
+        "otherNamesOrPatronymic",
+        "formerCitizenship",
+        "socialMediaAccounts",
+        "relatedUndertakings",
+        "businessProhibitions",
+        "foreignPersonalIdentificationCode",
+        "bankAndVirtualCurrencyAccounts",
+        "criminalRecordAndProceedings",
+        "suspectedOfEconomicCyberOrTerroristOffence",
+        "visaRefusalOrEntryBan",
+        "militaryOrSecurityServiceHistory",
+        "civilSocietyOrganisationMembership",
+        "terroristOrganisationMembership"
+      ],
+      "next": "pickup_location"
+    },
+    {
+      "id": "pickup_location",
+      "title": "Pick-up location and payment",
+      "fields": ["pickupLocationType"]
+    }
+  ]
+}
