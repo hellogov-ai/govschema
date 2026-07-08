@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**24 jurisdictions** | **278 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**24 jurisdictions** | **279 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1765):** Portugal closes its Taxes gap with
+> `pt/at/declaracao-rendimentos-irs-modelo-3` — the Autoridade Tributária e
+> Aduaneira's (AT) Modelo 3, "Declaração de Rendimentos - IRS," Portugal's
+> annual personal income tax return under art. 57.º do Código do IRS. This
+> was the candidate GOV-1750's own opening cycle had already flagged as
+> Portugal's strongest-sourced remaining Taxes candidate: "a genuine,
+> current, rich PDF, but — like Portugal's e-filing-only regime generally —
+> carries no AcroForm layer, a print/reference facsimile rather than a
+> fillable form." Both halves of that claim were independently re-confirmed
+> this cycle rather than taken on faith: fresh `curl` fetches of AT's own
+> Rosto (cover-page) and Anexo A (employment/pension-income annex) URLs at
+> `info.portaldasfinancas.gov.pt` both returned HTTP 200 with genuine `%PDF`
+> bytes and no login/CAPTCHA/WAF gate, and `pdfjs-dist` extraction confirmed
+> zero AcroForm widgets across all 27 combined pages of both documents. A
+> genuine same-day edition-date discrepancy between the two files (the Rosto
+> untouched since March 2025, Anexo A updated March 2026) was investigated,
+> not assumed: it traces to Portaria n.º 104/2026/1, de 5 de março, which
+> expanded the "IRS Jovem" young-worker tax regime (art. 12.º-B do Código do
+> IRS) for income years 2025 and following entirely within Anexo A, leaving
+> the Rosto's own cover-page structure unamended this edition cycle — both
+> files are the current, correct ones. A legacy same-host mirror
+> (`www.portaldasfinancas.gov.pt/de/impressos/Mod3.pdf`) was also fetched,
+> found live, but found on inspection to be a stale 2009 edition kept for
+> historical filings — disclosed explicitly rather than miscounted as a
+> second confirming source, learning directly from GOV-1760's finding on
+> the immediately preceding Portugal schema that fabricated/miscounted
+> cross-verification claims, not field content, have been this registry's
+> recurring failure mode. Given Modelo 3's real-world complexity (Portugal's
+> main income-tax return, with a dozen income-category annexes), this
+> schema is deliberately bounded to the single most common filer profile — a
+> Portuguese-resident salaried employee/pensioner — modelling the Rosto's
+> service-office/tax-year/taxpayer/spouse identification, marital-status and
+> joint-taxation election, resident fiscal-region, refund IBAN, declaration
+> nature, 1%/0.5% IRS/IVA consignment election, and annex-count table,
+> plus Anexo A's Quadro 4A income table for its two most common income
+> codes (401 trabalho dependente/employment, 403 pensões/pensions) and the
+> current "IRS Jovem" election (Quadro 4F.1). 28 fields plus 1
+> `documents[]` entry; every excluded annex (B, C, D, E, F, G, G1, H, I, J,
+> L) and every excluded Rosto/Anexo A table is disclosed explicitly in the
+> schema's own `description` and VERIFICATION.md. This gives Portugal **3 of
+> its 6 verticals** (DMV via GOV-1750, Visa via GOV-1757, Taxes via this
+> schema); Business Formation, Passport, and National ID remain open backlog
+> candidates. This also closes the **global Taxes vertical back to 24/24
+> (100%)** — Portugal had been the vertical's only gap since opening as the
+> registry's 24th jurisdiction via its DMV vertical (GOV-1750). See the
+> document's own VERIFICATION.md for the full sourcing record, field-by-field
+> citations, and every disclosed scope decision.
 
 > **Update (2026-07-08, GOV-1750): Portugal opens as GovSchema's 24th
 > jurisdiction**, via its DMV vertical, with
@@ -2496,7 +2544,22 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (23/24 jurisdictions — 96%)
+### Taxes — Income Tax Return, Tax Filing (24/24 jurisdictions — 100%)
+
+**Portugal's Taxes gap is now closed** (`pt/at/declaracao-rendimentos-irs-modelo-3`,
+GOV-1765) — Modelo 3, the Autoridade Tributária e Aduaneira's (AT) annual
+personal income tax return, bounded to the Rosto cover page plus Anexo A
+(employment/pension income), the two most common income codes (401
+trabalho dependente, 403 pensões), and the current "IRS Jovem" young-worker
+election. A genuine, current, directly downloadable PDF pair with no
+AcroForm layer, confirmed directly via `pdfjs-dist` (zero Widget
+annotations across 27 combined pages), the same candidate GOV-1750's own
+Portugal-opening cycle had already flagged as the jurisdiction's
+strongest-sourced Taxes candidate. This closes the **global Taxes vertical
+back to 24/24 (100%)** — Portugal had been its only gap since opening as
+the registry's 24th jurisdiction (GOV-1750). See the Executive Summary
+update above and the document's own VERIFICATION.md for the full sourcing
+record and every disclosed scope decision.
 
 **Chile's Taxes gap is now closed** (`cl/sii/formulario-22`, GOV-1744) —
 Formulario 22 (F-22), SII's "Declaración de Renta," Chile's annual income
@@ -2913,7 +2976,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **PT** | 2 | ✗ | ✓ | ✗ | ✗ | ✓ | ✗ |
+| **PT** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -3212,10 +3275,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    visa application, at `vistos.mne.gov.pt`, duplicates the already-modelled
    `de/auswaertiges-amt/national-visa-application` EU-harmonized template,
    field-for-field — the same pattern found for Poland's and Spain's
-   equivalent forms). Portugal's remaining five verticals (Business
-   Formation, Taxes, Passport, Visa, National ID) are open backlog candidates
-   for a future cycle, with Taxes (AT's Modelo 3 IRS return) the
-   strongest-sourced. Other candidates worth scouting for a **25th**
+   equivalent forms). **Portugal's Visa/residence-status gap has since
+   closed (GOV-1757)** via `pt/aima/requerimento-autorizacao-residencia`,
+   and **its Taxes gap has since closed too (GOV-1765)** via
+   `pt/at/declaracao-rendimentos-irs-modelo-3` — see the Executive Summary
+   updates above and each document's own VERIFICATION.md. Portugal now
+   stands at **3 of its 6 verticals** (DMV, Visa, Taxes); Business
+   Formation, Passport, and National ID remain open backlog candidates for
+   a future cycle. Other candidates worth scouting for a **25th**
    jurisdiction in a future cycle: an EU member beyond DE/EE/ES/FR/NL/PL/PT —
    Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174).
 4. **India ITR-3's deferred shared schedules**: a future version of
