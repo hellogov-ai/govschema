@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**26 jurisdictions** | **286 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**26 jurisdictions** | **287 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1826): Czech Republic's 4th vertical (Taxes)** is
+> now published, with `cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob` — the
+> Ministerstvo financí's (operated by Finanční správa České republiky)
+> "Přiznání k dani z příjmů fyzických osob" (form 25 5405, MFin 5405, vzor č.
+> 30), the annual personal income tax return under zákon č. 586/1992 Sb.,
+> scoped to the base four-page return for an employment/pension-income filer
+> (§6/§8 zákona), read together with its own field-by-field "Pokyny"
+> instructions (vzor č. 34). This was the strong, larger-scope Taxes
+> candidate the prior cycle (GOV-1819) had flagged and set aside; both PDFs
+> were re-fetched fresh (no login/CAPTCHA/WAF gate) and, unlike that cycle's
+> visa-form PDF, extracted cleanly via `pdfjs-dist` with zero AcroForm
+> widgets (a flat print/reference facsimile, filed on paper or via the
+> authenticated `www.mojedane.cz` portal). Scoped to the base return only,
+> excluding its four annexes (Příloha č. 1-4, covering self-employment,
+> rental/other, foreign-source, and separate-tax-base income respectively,
+> each a distinct larger PDF left as an open backlog candidate) and every
+> pure computed/arithmetic line, consistent with this registry's established
+> treatment of income-tax schemas elsewhere (e.g.
+> `pt/at/declaracao-rendimentos-irs-modelo-3`, `cl/sii/formulario-22`).
+> Modelled 88 fields (11 `documents[]` entries) across 12 `steps`. This gives
+> the Czech Republic its **4th of 6 verticals** (Business Formation, DMV,
+> Visa, Taxes); Passport and National ID remain confirmed dead ends
+> (GOV-1819). See `registry/cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob/1.0.0/VERIFICATION.md`
+> for the full sourcing record and every disclosed scope decision.
 
 > **Update (2026-07-08, GOV-1819): Czech Republic's 3rd vertical (Visa)** is
 > now published, with `cz/mzv/zadost-o-udeleni-dlouhodobeho-viza` — the
@@ -2901,7 +2926,22 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (24/26 jurisdictions — 92%)
+### Taxes — Income Tax Return, Tax Filing (25/26 jurisdictions — 96%)
+
+**The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
+GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
+osob" (form 25 5405, MFin 5405), the annual personal income tax return under
+zákon č. 586/1992 Sb., scoped to the base four-page return for an
+employment/pension-income filer. This was the strong, larger-scope candidate
+the prior CZ cycle (GOV-1819) had flagged and set aside; unlike that cycle's
+visa-form PDF, both this return and its own field-by-field "Pokyny"
+instructions extracted cleanly via `pdfjs-dist` (zero AcroForm widgets — a
+flat print/reference facsimile). Scoped to exclude the four annexes
+(self-employment, rental/other, foreign-source, and separate-tax-base
+income) and every pure computed/arithmetic line, per this registry's
+established treatment of income-tax schemas elsewhere. This gives the Czech
+Republic its 4th of 6 verticals. See the Executive Summary update above and
+the document's own VERIFICATION.md for the full sourcing record.
 
 **Portugal's Taxes gap is now closed** (`pt/at/declaracao-rendimentos-irs-modelo-3`,
 GOV-1765) — Modelo 3, the Autoridade Tributária e Aduaneira's (AT) annual
@@ -3371,7 +3411,7 @@ now closed.
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CZ** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **CZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **ES** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -3758,10 +3798,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    are in-person-only with no citizen-facing application form) and flagged
    Taxes (`financnisprava.gov.cz`'s Form 25 5405 plus its own Pokyny guide)
    as a strong, larger-scope open candidate — see the Executive Summary
-   update above and the document's own VERIFICATION.md. The Czech Republic
-   stands at **3 of its 6 verticals** (Business Formation, DMV, Visa); Taxes
-   is its strongest remaining open backlog candidate, with Passport and
-   National ID confirmed dead ends.
+   update above and the document's own VERIFICATION.md. **The Czech
+   Republic's Taxes gap has since closed too (GOV-1826)**, via
+   `cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob` — the base four-page
+   return scoped to an employment/pension-income filer, excluding its four
+   annexes (self-employment, rental/other, foreign-source, and
+   separate-tax-base income); see the Executive Summary update above and the
+   document's own VERIFICATION.md. The Czech Republic stands at **4 of its 6
+   verticals** (Business Formation, DMV, Visa, Taxes); Passport and National
+   ID are confirmed dead ends, and Business Formation/DMV/Visa/Taxes's own
+   four annexes/sub-processes remain open backlog candidates for a future
+   cycle.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
