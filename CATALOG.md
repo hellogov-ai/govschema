@@ -4,7 +4,53 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **275 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **276 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1744):** Chile gains its 3rd vertical, Taxes,
+> with `cl/sii/formulario-22` — the Servicio de Impuestos Internos' (SII)
+> Formulario 22 (F-22), "Declaración de Renta," Chile's annual income tax
+> return. Four prior cycles (GOV-1624, GOV-1638, GOV-1645, GOV-1659) had
+> each screened F-22 and deferred it every time: a genuine, current,
+> unauthenticated PDF specimen, but no AcroForm field layer at all (confirmed
+> once again this cycle via `pdfjs-dist` returning zero Widget annotations
+> across all 15 pages) and SII's largest, most complex return besides. This
+> cycle located a source none of the four prior cycles had used — SII's own
+> interactive "Navegar por Formulario de Renta (F22)" tool
+> (`sii.cl/servicios_online/renta/2026/rentaform.html`), whose per-recuadro
+> content is itself served as discrete static HTML fragments and per-línea
+> "Instrucción" PDFs (e.g. `l13_instruccion.pdf`, `l46_instruccion.pdf`),
+> giving genuine SII-authored, línea/código-numbered legal instructions to
+> source individual fields against, the same shape of source this registry
+> has used before for AEAT's Modelo 030/036 and CEIDG-1. Applying
+> `pl/mf/zeznanie-pit-37`'s (GOV-1691) own precedent for scoping an unbounded
+> national income-tax return, this document is scoped to the single most
+> common individual case: a salaried employee or pensioner reliquidating the
+> Impuesto Único de Segunda Categoría (IUSC) after receiving wages from more
+> than one employer, or voluntarily reliquidating to claim credits SII's own
+> guide devotes worked examples to. Models the taxpayer's identification data
+> (Recuadro N°0), Línea 13's wage/pension income (códigos 1098/1030/161),
+> Línea 46's IUSC-withheld credit (código 162), and four common single-line
+> rebajas/créditos (Línea 16 donations, Línea 21 mortgage interest/DFL-2
+> dividends, Línea 23 voluntary pension savings, Línea 41 education-expense
+> credit) — 14 fields plus one supporting-evidence document pointer to the
+> employer/payer withholding certificates. Deliberately excludes business/
+> capital/honorarios income, every capital-gains schedule, the special-regime
+> franchise checkboxes, and — the single largest scope decision in this
+> document — the entire computed-arithmetic chain from the taxable-base
+> subtotal through the progressive tax table, further créditos, and the
+> final refund/bank-account block, the same class of exclusion PIT-37
+> applied to its own §F-K chain. This cycle also re-screened Chile's
+> Passport and National ID gaps (`registrocivil.cl`'s root domain now
+> returns an explicit WAF rejection page on direct fetch, a harder-gated
+> finding than prior cycles' ClaveÚnica-redirect reports, but the same
+> substantive conclusion) and Chile's Visa gap (`evisa.minrel.gob.cl` and
+> `tramites.minrel.gob.cl` both fail to resolve via DNS from this
+> environment) — all three re-confirmed weaker than F-22, consistent with
+> every prior cycle's finding; no pivot. This closes Chile's Taxes gap, its
+> 3rd of 6 verticals (Business Formation and DMV were already modelled;
+> Passport, Visa, and National ID remain open backlog candidates). See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed judgment call.
 
 > **Update (2026-07-08, GOV-1735):** Spain gains its 4th vertical, National
 > ID & Civic Documents, with `es/dgp/tarjeta-identidad-extranjero` — the EX-17
@@ -2361,7 +2407,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (22/23 jurisdictions — 96%)
+### Taxes — Income Tax Return, Tax Filing (23/23 jurisdictions — 100%)
+
+**Chile's Taxes gap is now closed** (`cl/sii/formulario-22`, GOV-1744) —
+Formulario 22 (F-22), SII's "Declaración de Renta," Chile's annual income
+tax return. This closes the global Taxes vertical to 23/23 (100%). See the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full sourcing record, the source this cycle found that the four prior
+screening cycles below had not used, and every disclosed judgment call.
 
 **Estonia's Taxes gap is now closed** (`ee/emta/income-tax-return-form-a`,
 GOV-1721) — Vorm A / Form A, the annual income tax return a resident natural
@@ -2376,8 +2429,8 @@ excludes EEA cross-border provisions, all property-transfer gains, all
 foreign-sourced income, and the remaining voluntary-deduction/overpayment-
 election sections. Gives Estonia 4/6 verticals. See the Executive Summary
 update above and the document's own VERIFICATION.md for the full sourcing
-record and every disclosed judgment call. Chile's Taxes gap remains this
-registry's only fully open Taxes-vertical candidate.
+record and every disclosed judgment call. Chile's Taxes gap has since closed
+too (GOV-1744) — see the Executive Summary update above.
 
 **Poland's Taxes gap is now closed** (`pl/mf/zeznanie-pit-37`, GOV-1691) —
 PIT-37, the annual personal income tax return for individuals whose income
@@ -2423,7 +2476,12 @@ comparable in scope to this registry's other individual-tax schemas, so this
 remains a viable-but-weaker candidate than the Spain Business Formation
 candidate picked that cycle instead — see
 `es/aeat/declaracion-censal-alta-actividad-economica-modelo-036`'s own
-VERIFICATION.md for the full comparison.
+VERIFICATION.md for the full comparison. **Chile's Formulario 22 has since
+been authored too (GOV-1744)** — see the Executive Summary update above:
+scoped to the salaried-employee/pensioner IUSC-reliquidación case, sourced
+from a previously-unused SII interactive per-línea instruction tool rather
+than the topical supplement guide the GOV-1659 re-screen above had found
+insufficiently bounded.
 **Colombia** (`co/dian/declaracion-renta-personas-naturales-formulario-210`,
 GOV-1595) is new this cycle and closes the global Taxes vertical to 100% —
 DIAN's Formulario 210, the annual individual income tax return for resident
@@ -2750,7 +2808,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -2965,8 +3023,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    the National ID vertical section above). Chile's DMV vertical has since
    opened via GOV-1638 (`cl/sii/aviso-venta-vehiculo`, see the Executive
    Summary update above); its remaining four verticals (Passport, Taxes,
-   Visa, National ID) are open, unscreened-or-lightly-screened backlog
-   candidates for a future cycle. **Spain has since opened as the
+   Visa, National ID) were then open, unscreened-or-lightly-screened backlog
+   candidates for a future cycle — **Chile's Taxes vertical has since closed
+   too (GOV-1744)**, via `cl/sii/formulario-22` (SII's Formulario 22,
+   "Declaración de Renta"), scoped to the common salaried-employee/pensioner
+   case reliquidating the Impuesto Único de Segunda Categoría; Chile's
+   Passport, Visa, and National ID remain open backlog candidates — see the
+   Executive Summary update above and the document's own VERIFICATION.md for
+   the full sourcing record. **Spain has since opened as the
    registry's 21st jurisdiction (GOV-1645)**, via
    `es/aeat/declaracion-censal-personas-fisicas-modelo-030` — AEAT's
    Modelo 030 census/NIF-registration declaration, the same candidate
