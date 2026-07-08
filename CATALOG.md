@@ -4,7 +4,53 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **274 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **275 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1735):** Spain gains its 4th vertical, National
+> ID & Civic Documents, with `es/dgp/tarjeta-identidad-extranjero` — the EX-17
+> form, "Solicitud de Tarjeta de Identidad de Extranjero (TIE)," the
+> application a foreign national authorized to reside in Spain files, in
+> person, with the Dirección General de la Policía (DGP) to obtain the
+> physical Tarjeta de Identidad de Extranjero documenting their legal
+> residence status. This follows up on this catalog's own previously flagged
+> lead — the EX-15 foreigner-identity-number form — but picks EX-17 instead:
+> EX-15 only assigns a tax/administrative number (the NIE), while EX-17 is
+> the application for the physical resident-ID card itself, a closer
+> structural match to already-published national-ID schemas like
+> `ae/icp/emirates-id-replacement` and
+> `kr/mois/resident-registration-card-reissuance`. The live
+> `inclusion.gob.es` hosting domain is WAF-blocked to direct fetch from this
+> environment; the form was instead retrieved via a Wayback Machine snapshot
+> (confirmed HTTP 200, real `%PDF-1.7` bytes) and corroborated against the
+> Policía Nacional's own official procedure page (`sede.policia.gob.es`,
+> fetched directly with no gate), which confirmed the in-person-only filing
+> channel, the required Tasa 790 Código 012 fee-payment-proof document, and
+> the issuing authority. The form itself carries zero AcroForm fields — a
+> static print/hand-fill template, the same shape as `pl/mf/zeznanie-pit-37`
+> and `ee/emta/income-tax-return-form-a` — but is fully self-documenting via
+> its own page-3 numbered instructions key. **Disclosed discrepancy:** the
+> form's own printed header still cites its legal basis as "(LO 4/2000 y RD
+> 557/2011)," while the live procedure page cites the current governing
+> rules as LO 4/2000 alongside Real Decreto 1155/2024 (which replaced RD
+> 557/2011's implementing regulation) — the form has apparently not been
+> reprinted since the 2024 renumbering; this is flagged in the document's own
+> `verification.notes` and VERIFICATION.md rather than silently resolved.
+> Models applicant identification/filiation/domicile data, an optional
+> distinct-submitter block (footnote 5, for when a representative rather
+> than the applicant files), an optional notification-address block
+> including an opt-in Dirección Electrónica Habilitada Única (Dehú)
+> electronic-notification consent, the filing office, the three-way
+> initial/renewal/duplicate document-type selection, and the closing
+> place/date/signature — 52 fields plus a fee-payment-proof document and a
+> signature attestation. Deliberately excludes any online/telematic
+> submission channel (the form's own header states in-person presentation is
+> the only accepted channel) and the fee amount itself (not confirmed from a
+> primary government source this cycle) — see the document's own
+> VERIFICATION.md for these and every other disclosed judgment call. This
+> closes Spain's National ID & Civic Documents gap, its 4th of 6 verticals
+> (Business Formation, DMV, Taxes, and now National ID are modelled; Passport
+> and Visa remain confirmed dead ends/duplicates, per this catalog's own
+> prior findings).
 
 > **Update (2026-07-08, GOV-1728):** Estonia gains its fifth vertical, DMV,
 > with `ee/transpordiamet/vehicle-transfer-notification` — the notice a
@@ -2533,7 +2579,7 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (19/23 jurisdictions — 83%)
+### National ID & Civic Documents (20/23 jurisdictions — 87%)
 
 **Estonia** opens as the registry's 23rd jurisdiction via this vertical
 (`ee/ppa/e-residency-application`, GOV-1698) — the Police and Border Guard
@@ -2554,10 +2600,22 @@ for the full sourcing record and candidate comparison (which also
 re-screened and re-confirmed Spain's Passport/Visa and Chile's
 Passport/Visa/National ID gaps as still weaker).
 
-**Spain**, opened via its Taxes vertical (GOV-1645), has no dedicated
-National ID schema yet — Spain's own DNI is issued by the Policía
-Nacional, a wholly separate agency/process from AEAT's Modelo 030, and is
-an open, unscreened backlog candidate for a future cycle. **Brazil** now
+**Spain**, opened via its Taxes vertical (GOV-1645), now has a National ID &
+Civic Documents schema: `es/dgp/tarjeta-identidad-extranjero` (GOV-1735) —
+the Dirección General de la Policía's EX-17 form, "Solicitud de Tarjeta de
+Identidad de Extranjero (TIE)," the application a foreign national files, in
+person, for the physical foreign-resident identity card. This follows up on
+this catalog's own previously flagged EX-15 lead, picking EX-17 instead as
+the closer structural match to already-published national-ID schemas — see
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full sourcing record, including a disclosed citation mismatch
+between the form's own printed legal basis (RD 557/2011) and the current
+governing regulation (RD 1155/2024) per the Policía Nacional's own live
+procedure page. Spain's own DNI (for Spanish citizens, as opposed to
+foreign residents) remains issued by the Policía Nacional via a separate,
+in-person-appointment-only channel with no downloadable form — a confirmed
+dead end, unrelated to this newly-modelled TIE schema (see "Confirmed dead
+ends" below). **Brazil** now
 has a National ID & Civic Documents schema:
 `br/pr/iipr/carteira-identidade-correcao` (GOV-1631) — see the Executive
 Summary update above for the full sourcing method (including the DNS
@@ -2696,7 +2754,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **ES** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -2944,8 +3002,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    also re-screened and re-confirmed Chile's Formulario 22 Taxes candidate
    as weaker: a genuine PDF but with no AcroForm layer). Spain's remaining
    two verticals (Passport, Visa) are open backlog
-   candidates for a future cycle; National ID has a possible lead (the EX-15
-   foreigner-identity-number form) not yet picked up. **Poland has since
+   candidates for a future cycle; National ID's possible lead (the EX-15
+   foreigner-identity-number form) noted here **has since closed
+   (GOV-1735)** — not via EX-15 itself, but via its closer-fitting sibling
+   EX-17 (Tarjeta de Identidad de Extranjero, TIE),
+   `es/dgp/tarjeta-identidad-extranjero` — see the Executive Summary update
+   above. **Poland has since
    opened as the registry's 22nd jurisdiction (GOV-1666)**, via
    `pl/mswia/wniosek-o-wydanie-dowodu-osobistego` — MSWiA's dowód osobisty
    (national identity card) application form, DO/W/1, sourced from a
