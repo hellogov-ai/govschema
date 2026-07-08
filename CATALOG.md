@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **271 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **272 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1712):** Estonia gains its third vertical,
+> Passport, with `ee/ppa/passport-application` — the Police and Border Guard
+> Board (PPA)'s application for an Estonian citizen's passport, whether
+> first-time, renewal, replacement, or a data-change update. This cycle's own
+> priority order named Passport as the top candidate (PPA already publishes
+> the already-modelled e-Residency schema's own agency), and it turned out
+> stronger-sourced than either prior EE schema: rather than relying on the
+> "governing statute as primary source" technique both `ee/ppa/e-residency-application`
+> (GOV-1698) and `ee/rik/private-limited-company-foundation` (GOV-1705) used,
+> this cycle found `politsei.ee` itself hosts a real, unauthenticated,
+> directly downloadable AcroForm PDF — "APPLICATION FOR IDENTITY DOCUMENTS,"
+> a single combined form PPA publishes for five document types (identity
+> card, digital identity card, travel document, additional passport,
+> seafarer's discharge book), scoped here to the travel-document/passport
+> track only. Cross-referenced against PPA's own plain-English "Estonian
+> passport for an adult" service pages (confirming the ordinary/expedited
+> procedure timelines, first-time-application citizenship-proof
+> requirements, and — a first for this jurisdiction — a fully
+> primary-sourced, four-tier state-fee schedule) and the Identity Documents
+> Act (Isikut tõendavate dokumentide seadus), whose current (01.10.2025)
+> consolidated English translation was again retrieved via a Wayback Machine
+> snapshot of `riigiteataja.ee`'s own `/tolge/pdf/` route (the same
+> client-rendered-SPA-shell obstacle both prior EE schemas hit), this time
+> with an added wrinkle: the Act's numbered redaction URLs are permanently
+> pinned to a specific in-force window, so the correct current redaction had
+> to be located first via the Act's own version-index page. Models 24 fields
+> (personal data, contacts, passport-request reason and place of issue, the
+> 1-year-validity-without-fingerprints pathway for citizens abroad, and legal
+> representative data) plus 5 `documents[]` entries (document photo,
+> conditional first-time citizenship proof, state fee, and a data-accuracy
+> attestation). Deliberately scoped to a single form track and a single
+> submission channel (domestic service office, not the self-service portal
+> or consular submission abroad, each of which carries its own distinct fee
+> schedule) — see the document's own VERIFICATION.md for the full source
+> inventory and every disclosed judgment call. Estonia's Taxes and DMV
+> verticals were not screened this cycle (Passport was strong enough on its
+> own); Visa remains this registry's lowest priority given the confirmed
+> Schengen-template-duplicate pattern found in other EU jurisdictions.
 
 > **Update (2026-07-08, GOV-1705):** Estonia gains its second vertical,
 > Business Formation, with `ee/rik/private-limited-company-foundation` —
@@ -1790,8 +1829,15 @@
 
 ## By Vertical
 
-### Passport (19/23 jurisdictions — 83%)
+### Passport (20/23 jurisdictions — 87%)
 
+**Estonia**'s Passport gap is now closed (GOV-1712), via
+`ee/ppa/passport-application` — see the Executive Summary update above for
+the full sourcing story (a genuine, unauthenticated, directly downloadable
+AcroForm PDF, "APPLICATION FOR IDENTITY DOCUMENTS," scoped to its
+travel-document track). This gives Estonia 3 of its 6 verticals (National
+ID & Civic Documents, Business Formation, Passport); Taxes, DMV, and Visa
+remain open, unscreened backlog candidates.
 **Poland**'s Passport gap is now closed (GOV-1685), via
 `pl/mswia/wniosek-o-wydanie-paszportu` — see the Executive Summary update
 above for the full sourcing story (no downloadable form exists for this
@@ -2543,7 +2589,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EE** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **EE** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -2895,7 +2941,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 - **Scraping:** `find registry -mindepth 3 -maxdepth 3 -type d` (one entry
   per `<agency>/<process-name>`), cross-checked against
-  `tools/govschema-client/registry-index.json` (232 entries, one per
+  `tools/govschema-client/registry-index.json` (272 entries, one per
   published version/edition).
 - **Classification:** Vertical assigned based on schema id, title, and
   authority.
