@@ -1,0 +1,457 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "cz/md/zadost-o-zapis-silnicniho-vozidla",
+  "version": "1.0.0",
+  "title": "Czech Republic Road Vehicle Registration Application (Žádost o zápis silničního vozidla do registru silničních vozidel)",
+  "description": "The Czech Ministry of Transport's (Ministerstvo dopravy, MD) 'Žádost o zápis silničního vozidla do registru silničních vozidel' — the application by which a vehicle's owner (vlastník) and, where different, its operator/holder (provozovatel) request that a road vehicle be entered into the Register of Road Vehicles (registr silničních vozidel). MD publishes this nationally standardized form; it is filed in person or electronically with the applicant's locally competent municipal authority with extended jurisdiction (obecní úřad obce s rozšířenou působností), which administers the register on the ministry's behalf. This document models both the new-registration and same-owner re-registration pathways the form's own printed text supports (e.g. an already-registered vehicle changing hands within the Czech Republic, evidenced by its own 'surrendering existing plates/certificate' fields), but not any other registr-vozidel transaction (a change of operator alone without a new owner, a permanent/temporary deregistration, or a duplicate-document request), each of which uses its own separate MD form out of scope for this version. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of the Czech Republic or the Ministerstvo dopravy.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministerstvo dopravy",
+    "abbreviation": "MD",
+    "url": "https://md.gov.cz/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "cs-CZ"
+  },
+  "source": {
+    "url": "https://md.gov.cz/getattachment/Dokumenty/Silnicni-doprava/Elektronicke-formulare-(1)/Elektronicke-formulare/Zadost-o-zapis-silnicniho-vozidla-do-registru-silnicnich-vozidel-(1).pdf.aspx?lang=cs-CZ",
+    "retrievedAt": "2026-07-08",
+    "documentRef": "Žádost o zápis silničního vozidla do registru silničních vozidel, Ministerstvo dopravy"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-08",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-08",
+    "notes": "GOV-1804: GovSchema Standard Research cycle, follow-up to GOV-1807's opening of the Czech Republic (26th jurisdiction) with a Business Formation schema. This document opens the Czech Republic's 2nd of 6 verticals (DMV). Source: a genuine, current, unauthenticated PDF confirmed live this cycle (HTTP 200 from md.gov.cz, no login/CAPTCHA/WAF gate, %PDF-1.6, 683,153 bytes), linked directly from Ministerstvo dopravy's own 'Formuláře registru silničních vozidel' index page. Unlike this registry's other recent Czech/Polish/Malaysian print-layout PDF finds, this form carries a genuine 57-field AcroForm layer (confirmed with both pdfjs-dist's per-page getAnnotations() and an independent pdf-lib form.getFields() pass — both report exactly 57 fields, so no orphaned/duplicate Widgets of the kind GOV-1801 caught elsewhere). Because several of this form's comb-style ID-number boxes and its operator name block visually run together or leave no printed line at all, this cycle also rendered both pages to PNG (pdfjs-dist + node-canvas, the same technique used for mx/semovi/alta-vehiculo-foraneo) and visually cross-checked every widget rect against the rendered page before assigning field names/types — see VERIFICATION.md for the specific ambiguities this resolved (the split rodné-číslo comb boxes, the two-line operator-name block, and the office-only sections excluded from this schema)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-08"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "ownerName",
+      "label": "Část A) Jméno, popřípadě jména a příjmení (nebo obchodní firma nebo název právnické osoby)",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the vehicle's owner (natural person), or the business name/company name of a legal-person owner.",
+      "sourceRef": "Část A",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerPersonalIdNumber",
+      "label": "Část A) rodné číslo",
+      "type": "string",
+      "description": "The owner's rodné číslo (Czech birth/personal identification number), written across the form's own 10-digit comb box with no printed separator. Per the form's own footnote, an owner never assigned a rodné číslo instead writes their date of birth here in DDMMRRRR form.",
+      "sourceRef": "Část A",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{8,10}$"
+      }
+    },
+    {
+      "name": "ownerIdentificationNumber",
+      "label": "Část A) identifikační číslo",
+      "type": "string",
+      "description": "The owner's identifikační číslo (IČO), an 8-digit identifier used for a legal-person owner (or a natural person already assigned one) in place of ownerPersonalIdNumber.",
+      "sourceRef": "Část A",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{8}$"
+      }
+    },
+    {
+      "name": "ownerAddress",
+      "label": "Část A) Adresa místa pobytu fyzické osoby (nebo sídlo právnické osoby / fyzické osoby, nebo umístění odštěpného závodu zahraniční právnické osoby)",
+      "type": "string",
+      "required": true,
+      "description": "The owner's residential address (natural person), registered seat (legal person or self-employed natural person), or the location of a foreign legal person's branch. The source form provides a single free-text line for the full address rather than separate street/house-number/municipality fields.",
+      "sourceRef": "Část A",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerPostalCode",
+      "label": "Část A) PSČ",
+      "type": "string",
+      "required": true,
+      "description": "Postal code (PSČ) of the owner's address above.",
+      "sourceRef": "Část A",
+      "classification": "pii",
+      "validation": {
+        "pattern": "^[0-9]{3} ?[0-9]{2}$"
+      }
+    },
+    {
+      "name": "operatorName",
+      "label": "Část B) jméno, popřípadě jména a příjmení (nebo obchodní firma nebo název právnické osoby)",
+      "type": "string",
+      "description": "Full name (or business/company name) of the vehicle's operator/holder (provozovatel), filled in only when the operator differs from the owner ('vyplnit jen, když je provozovatel odlišný od vlastníka'). The source form prints two blank lines for this single value, evidently to leave room for a longer business name.",
+      "sourceRef": "Část B",
+      "classification": "pii"
+    },
+    {
+      "name": "operatorPersonalIdNumber",
+      "label": "Část B) rodné číslo",
+      "type": "string",
+      "description": "The operator's rodné číslo, on the same terms as ownerPersonalIdNumber. Applicable only when Část B is filled in.",
+      "sourceRef": "Část B",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{8,10}$"
+      }
+    },
+    {
+      "name": "operatorIdentificationNumber",
+      "label": "Část B) identifikační číslo",
+      "type": "string",
+      "description": "The operator's identifikační číslo (IČO), on the same terms as ownerIdentificationNumber. Applicable only when Část B is filled in.",
+      "sourceRef": "Část B",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{8}$"
+      }
+    },
+    {
+      "name": "operatorAddress",
+      "label": "Část B) Adresa místa pobytu fyzické osoby (nebo sídlo právnické osoby / fyzické osoby, nebo umístění odštěpného závodu zahraniční právnické osoby)",
+      "type": "string",
+      "description": "The operator's address, on the same terms as ownerAddress. Applicable only when Část B is filled in.",
+      "sourceRef": "Část B",
+      "classification": "pii"
+    },
+    {
+      "name": "operatorPostalCode",
+      "label": "Část B) PSČ",
+      "type": "string",
+      "description": "Postal code (PSČ) of the operator's address above. Applicable only when Část B is filled in.",
+      "sourceRef": "Část B",
+      "classification": "pii",
+      "validation": {
+        "pattern": "^[0-9]{3} ?[0-9]{2}$"
+      }
+    },
+    {
+      "name": "existingRegistrationNumber",
+      "label": "registrační značka",
+      "type": "string",
+      "description": "The vehicle's existing Czech registration mark (license plate number), when this application concerns a vehicle already carrying Czech plates (e.g. a change of registered owner/operator rather than a first-time registration). Left blank for a vehicle never before registered in the Czech Republic. Distinct from the separate 'registrační značka (vyplní úřad)' box elsewhere on the form, which the issuing office itself completes and is out of scope for this document.",
+      "sourceRef": "p.1, below Část B",
+      "validation": {
+        "pattern": "^[A-Z0-9]{1,8}$"
+      }
+    },
+    {
+      "name": "surrenderedPlateNumber",
+      "label": "Odevzdávám tabulku(y) s registrační značkou",
+      "type": "string",
+      "description": "Registration mark of the plate(s) the applicant is surrendering with this filing (e.g. on re-registering a vehicle that already carried a different set of Czech plates). The source form provides no boolean toggle indicating when this declaration applies, so this field is left optional rather than gated on a fabricated condition.",
+      "sourceRef": "p.1, pre-signature declaration"
+    },
+    {
+      "name": "surrenderedPlateCount",
+      "label": "v počtu ... ks",
+      "type": "integer",
+      "description": "Number of plates being surrendered alongside surrenderedPlateNumber.",
+      "sourceRef": "p.1, pre-signature declaration",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "surrenderedRegistrationCertificateSeries",
+      "label": "Odevzdávám osvědčení o registraci vozidla",
+      "type": "string",
+      "description": "Series/descriptor of the vehicle registration certificate (osvědčení o registraci vozidla) being surrendered with this filing, printed on the form immediately before its own 'číslo' (number) blank.",
+      "sourceRef": "p.1, pre-signature declaration"
+    },
+    {
+      "name": "surrenderedRegistrationCertificateNumber",
+      "label": "Odevzdávám osvědčení o registraci vozidla: číslo",
+      "type": "string",
+      "description": "Number of the vehicle registration certificate being surrendered with this filing.",
+      "sourceRef": "p.1, pre-signature declaration"
+    },
+    {
+      "name": "signaturePlace",
+      "label": "V",
+      "type": "string",
+      "description": "Place where the form is signed.",
+      "sourceRef": "Část D"
+    },
+    {
+      "name": "signatureDate",
+      "label": "dne",
+      "type": "date",
+      "required": true,
+      "description": "Date the form is signed. Part D's own declaration ('Prohlašuji a svým podpisem potvrzuji, že všechny mnou uvedené údaje jsou pravdivé' — I declare and confirm by my signature that all my stated data are true) is attached to this date and the applicant's/applicants' signature.",
+      "sourceRef": "Část D"
+    },
+    {
+      "name": "vehicleVin",
+      "label": "Část E) Identifikační číslo vozidla (VIN)",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's 17-character Vehicle Identification Number (VIN).",
+      "sourceRef": "Část E",
+      "validation": {
+        "pattern": "^[A-HJ-NPR-Z0-9]{17}$"
+      }
+    },
+    {
+      "name": "vehicleCategory",
+      "label": "Část E) Kategorie vozidla",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's UNECE/EU type-approval category (e.g. M1, N1, L3e, O2).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleKind",
+      "label": "Část E) Druh vozidla",
+      "type": "string",
+      "description": "The kind of vehicle (druh vozidla), e.g. 'osobní automobil' (passenger car).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleType",
+      "label": "Část E) Typ vozidla",
+      "type": "string",
+      "description": "The vehicle's type/model designation as assigned by its manufacturer.",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleMakeAndCommercialDesignation",
+      "label": "Část E) Značka a obchodní označení",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's make (značka) and commercial designation/model name (obchodní označení).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorWhite",
+      "label": "Část E) Barva vozidla — bílá",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is white (bílá), one of 10 independent checkboxes printed side by side under 'Barva vozidla'; a vehicle is expected to check at most one. See exclusivityGroups.",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorYellow",
+      "label": "Část E) Barva vozidla — žlutá",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is yellow (žlutá).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorOrange",
+      "label": "Část E) Barva vozidla — oranžová",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is orange (oranžová).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorRed",
+      "label": "Část E) Barva vozidla — červená",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is red (červená).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorPurple",
+      "label": "Část E) Barva vozidla — fialová",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is purple (fialová).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorBlue",
+      "label": "Část E) Barva vozidla — modrá",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is blue (modrá).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorGreen",
+      "label": "Část E) Barva vozidla — zelená",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is green (zelená).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorGray",
+      "label": "Část E) Barva vozidla — šedá",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is gray (šedá).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorBrown",
+      "label": "Část E) Barva vozidla — hnědá",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is brown (hnědá).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleColorBlack",
+      "label": "Část E) Barva vozidla — černá",
+      "type": "boolean",
+      "description": "Whether the vehicle's color is black (černá).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "technicalCertificateNumber",
+      "label": "Část E) Číslo technického průkazu",
+      "type": "string",
+      "description": "Number of the vehicle's technical certificate (technický průkaz).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "technicalApprovalNumber",
+      "label": "Část E) Číslo schválení technické způsobilosti",
+      "type": "string",
+      "description": "Number of the vehicle's technical-fitness type-approval (schválení technické způsobilosti).",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "vehicleNotes",
+      "label": "Část E) Poznámky (Zvláštní výbava a zařízení, povolené výjimky apod.)",
+      "type": "string",
+      "description": "Free-text notes on special equipment, fittings, or permitted exemptions. The source form prints four blank lines for this value; this document models them as a single multi-line field.",
+      "sourceRef": "Část E"
+    },
+    {
+      "name": "purposeTaxi",
+      "label": "Část F) vozidlo taxislužby",
+      "type": "boolean",
+      "description": "Whether the vehicle is declared as a taxi-service vehicle (vozidlo taxislužby), one of 4 independent checkboxes printed under 'Účel využití vozidla'; at most one is expected checked, and none at all for an ordinary vehicle carrying no special-use declaration. See exclusivityGroups.",
+      "sourceRef": "Část F"
+    },
+    {
+      "name": "purposeRightOfWay",
+      "label": "Část F) silniční vozidlo s právem přednosti v jízdě",
+      "type": "boolean",
+      "description": "Whether the vehicle is declared as a vehicle with right of way (e.g. an emergency vehicle).",
+      "sourceRef": "Část F"
+    },
+    {
+      "name": "purposeRentalCar",
+      "label": "Část F) vozidlo půjčovny automobilů určené k nájmu",
+      "type": "boolean",
+      "description": "Whether the vehicle is declared as a car-rental company's vehicle intended for hire.",
+      "sourceRef": "Část F"
+    },
+    {
+      "name": "purposeGeneralUse",
+      "label": "Část F) vozidlo obecného užití",
+      "type": "boolean",
+      "description": "Whether the vehicle is declared as a vehicle of general/public use (vozidlo obecného užití).",
+      "sourceRef": "Část F"
+    }
+  ],
+  "documents": [
+    {
+      "id": "technicalFitnessDocument",
+      "label": "Doklad o technické způsobilosti vozidla (document of the vehicle's technical fitness)",
+      "category": "supporting-evidence",
+      "required": true,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "technicalInspectionDocument",
+      "label": "Doklad o technické prohlídce (technical-inspection document, STK), required unless the vehicle has never been operated (i.e. is new)",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "vehicleIdentityCheckProtocol",
+      "label": "Protokol o evidenční kontrole vozidla (vehicle evidence/identity-check protocol), required unless the vehicle is new",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "thirdPartyLiabilityInsuranceDocument",
+      "label": "Doklad o pojištění odpovědnosti z provozu vozidla (zelená karta, third-party motor liability insurance 'green card')",
+      "category": "supporting-evidence",
+      "required": true,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "residencePermitOrAsylumDocument",
+      "label": "Doklad o povolení k pobytu, o udělení azylu, nebo o délce přechodného pobytu (residence permit, asylum grant, or temporary-residence-duration document), required if the operator lacks permanent residence in the Czech Republic",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "vatPaymentConfirmation",
+      "label": "Potvrzení o zaplacení DPH (VAT payment confirmation), required for a new means of transport acquired from another EU member state",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "applicantIdentityDocument",
+      "label": "Doklad totožnosti žadatele (applicant's identity document), required if identity is being verified",
+      "category": "identity-document",
+      "required": false,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "powerOfAttorney",
+      "label": "Zplnomocnění (power of attorney), required when the filing is made by a representative on behalf of the owner and/or operator",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Část C"
+    },
+    {
+      "id": "technicalCertificateSupportingDocumentation",
+      "label": "Dokumentace obsahující údaje potřebné pro vydání technického průkazu vozidla (documentation with the data needed to issue the vehicle's technical certificate), required only if not already contained in technicalFitnessDocument",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Část C"
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "vehicleColorGroup",
+      "fields": [
+        "vehicleColorWhite",
+        "vehicleColorYellow",
+        "vehicleColorOrange",
+        "vehicleColorRed",
+        "vehicleColorPurple",
+        "vehicleColorBlue",
+        "vehicleColorGreen",
+        "vehicleColorGray",
+        "vehicleColorBrown",
+        "vehicleColorBlack"
+      ]
+    },
+    {
+      "id": "vehiclePurposeGroup",
+      "fields": [
+        "purposeTaxi",
+        "purposeRightOfWay",
+        "purposeRentalCar",
+        "purposeGeneralUse"
+      ]
+    }
+  ]
+}
