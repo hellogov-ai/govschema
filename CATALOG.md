@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **272 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **273 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1721):** Estonia gains its fourth vertical,
+> Taxes, with `ee/emta/income-tax-return-form-a` — Vorm A / Form A, the
+> annual income tax return a resident natural person files with the
+> Maksu- ja Tolliamet (Estonian Tax and Customs Board, EMTA). The issue
+> named the source directly: a genuine, current (2025 tax year), directly
+> downloadable, unauthenticated, bilingual (Estonian/English) PDF, confirmed
+> to have zero AcroForm fields (a static print/hand-fill template, like
+> `pl/mf/zeznanie-pit-37`) but fully self-documenting across 12 numbered
+> sections. Scoped to the common wage-earner case per the issue's brief:
+> general personal data, address, contact details, one representative
+> domestic-wage-income row already taxed at source, one representative
+> gift/donation and paid-training-expense deduction entry, the domestic
+> bank account nominated for an overpayment refund, and the closing
+> declaration. Deliberately excludes EEA cross-border resident provisions,
+> all property-transfer gains (financial assets, forestry, other property,
+> holding reductions, investment accounts, company-merger income), all
+> foreign-sourced income, and the remaining voluntary-deduction tables and
+> overpayment-use election — each a materially larger scope. Cross-referenced
+> against EMTA's own "Income tax returns for 2025" page for the filing
+> window (16 February - 30 April 2026), tax rate, and statutory basis
+> (Tulumaksuseadus / Income Tax Act section 43(4)); `riigiteataja.ee` itself
+> remains the same client-rendered-SPA-shell obstacle this registry's prior
+> two EE schemas hit, not re-fetched this cycle since the form itself is
+> fully self-documenting. Models 27 fields plus a closing signature
+> attestation — see the document's own VERIFICATION.md for the full field
+> inventory and every disclosed judgment call. This gives Estonia 4 of its 6
+> verticals (National ID, Business Formation, Passport, Taxes); DMV and Visa
+> remain open, with Visa still this registry's lowest priority given the
+> confirmed Schengen-template-duplicate pattern found in other EU
+> jurisdictions.
 
 > **Update (2026-07-08, GOV-1712):** Estonia gains its third vertical,
 > Passport, with `ee/ppa/passport-application` — the Police and Border Guard
@@ -2225,7 +2256,23 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (21/23 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (22/23 jurisdictions — 96%)
+
+**Estonia's Taxes gap is now closed** (`ee/emta/income-tax-return-form-a`,
+GOV-1721) — Vorm A / Form A, the annual income tax return a resident natural
+person files with the Maksu- ja Tolliamet (EMTA). A genuine, current (2025
+tax year), directly downloadable, unauthenticated, bilingual PDF, no
+AcroForm layer but fully self-documenting across 12 numbered sections.
+Scoped to the common wage-earner case: general/address/contact data, one
+representative domestic-wage-income row already taxed at source, one
+representative gift/donation and paid-training-expense deduction entry, the
+domestic refund bank account, and the closing declaration; deliberately
+excludes EEA cross-border provisions, all property-transfer gains, all
+foreign-sourced income, and the remaining voluntary-deduction/overpayment-
+election sections. Gives Estonia 4/6 verticals. See the Executive Summary
+update above and the document's own VERIFICATION.md for the full sourcing
+record and every disclosed judgment call. Chile's Taxes gap remains this
+registry's only fully open Taxes-vertical candidate.
 
 **Poland's Taxes gap is now closed** (`pl/mf/zeznanie-pit-37`, GOV-1691) —
 PIT-37, the annual personal income tax return for individuals whose income
@@ -2589,7 +2636,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EE** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **EE** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
