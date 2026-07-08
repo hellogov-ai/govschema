@@ -30,9 +30,9 @@ before authoring against it).
 `https://www.imt-ip.pt/wp-content/uploads/IMTT/Portugues/Formularios/Documents/Mod1_IMT.pdf`
 — confirmed directly this cycle: a plain `curl` GET returns HTTP 200 and
 9,277,317 bytes of real `%PDF-1.6` data. `pdfjs-dist`'s AcroForm annotation
-layer lists 98 named field entries (108 widget annotations total, since the
-12-option "requerimento" radio group and several checkbox groups each carry
-multiple widgets under one field name) — a genuine, unauthenticated,
+layer lists 96 named field entries (108 widget annotations total, since the
+12-option "requerimento" radio group and the two-widget "catC1E" checkbox
+field each carry multiple widgets under one field name) — a genuine, unauthenticated,
 currently-served fillable AcroForm, the strongest source-shape tier this
 registry looks for. A companion, self-documenting instructions PDF
 (`Mod1_IMT_Instrucoes.pdf`, also HTTP 200, plain text layer, no AcroForm)

@@ -29,8 +29,8 @@
 > has found in Poland and Spain); and National ID (Cartão de Cidadão is
 > issued via an in-person biometric appointment, with only a consular-only
 > application PDF found). IMT's Mod. 1-IMT was picked instead: a genuine,
-> unauthenticated, currently-served AcroForm PDF (98 named widgets, confirmed
-> directly via `pdfjs-dist`), backed by a self-documenting companion
+> unauthenticated, currently-served AcroForm PDF (96 named fields, 108 widget
+> annotations total, confirmed directly via `pdfjs-dist`), backed by a self-documenting companion
 > instructions PDF — the only Portuguese candidate this cycle found meeting
 > this registry's top-tier source bar. A first-time learner's-permit
 > application is out of scope (IMT's own service pages state it is requested
