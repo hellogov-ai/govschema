@@ -32,7 +32,7 @@
 > was assigned. The two-row private-vehicle commuting worksheet is collapsed
 > into one free-text field per person, consistent with this registry's
 > established treatment of unbounded repeating tables under GovSchema v0.3's
-> flat field model. Modelled 70 fields (4 `documents[]` entries) across 8
+> flat field model. Modelled 74 fields (4 `documents[]` entries) across 7
 > `steps`. This remains Switzerland's 2nd of 6 verticals (DMV, Taxes) — a
 > companion schedule, not a new vertical — but further deepens Taxes-vertical
 > coverage, leaving five companion schedules open. See
