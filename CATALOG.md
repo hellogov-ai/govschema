@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **270 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **271 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1705):** Estonia gains its second vertical,
+> Business Formation, with `ee/rik/private-limited-company-foundation` —
+> the petition for entry of a newly-founded private limited company
+> (osaühing/OÜ, Estonia's LLC equivalent) in the Commercial Register,
+> submitted through the e-Business Register (e-äriregister) portal and
+> reviewed by the Registration Department of Tartu County Court. Estonia
+> was this registry's most under-built jurisdiction (1/6 verticals) after
+> GOV-1698 opened it via National ID & Civic Documents, and this process is
+> the natural companion to the e-Residency schema already published there —
+> an e-Resident's flagship real-world use is founding and remotely managing
+> exactly this kind of one-person OÜ. Like `ee/ppa/e-residency-application`,
+> the live e-Business Register filing portal is authenticated (digital
+> signature required before any field renders), so this document again uses
+> the "governing statute as primary source" technique: the Commercial Code
+> (Äriseadustik) §138 and §139 state verbatim what a memorandum of
+> association and articles of association "shall set out," and the
+> Commercial Register Act (Äriregistri seadus) §§9-14 state exactly what
+> data the resulting registry card carries. A new wrinkle this cycle: the
+> Riigi Teataja (State Gazette) site itself — the host of both statutes'
+> official English translations — is now a fully client-rendered Angular
+> SPA that returns an identical empty shell to direct automated retrieval,
+> even on its own "official translation PDF" download route; both statutes
+> were instead retrieved from Wayback Machine snapshots, the same workaround
+> this registry has used before for `passports.gov.au`/`dfat.gov.au`. Models
+> 29 fields (company identity, the single founder's identity, share capital
+> and contribution terms, management board/supervisory board/procurator/
+> auditor data, and foundation costs/legal reserve/financial year) plus 4
+> `documents[]` entries. Deliberately scoped to a single founder — the v0.3
+> meta-schema has no repeating-group primitive, and a second founder is
+> where the Commercial Code's "division of shares among the founders" first
+> becomes genuinely multi-valued — and deliberately excludes EMTAK activity
+> classification and the e-Resident-specific contact-person/virtual-office
+> obligations (both real, but sourced from statutes this cycle did not
+> independently verify) and the exact current state-fee amount (found only
+> in secondary sources, disclosed as unconfirmed rather than asserted). See
+> the document's own VERIFICATION.md for the full source inventory and
+> every disclosed judgment call.
 
 > **Update (2026-07-08, GOV-1698):** **Estonia (EE) opens as GovSchema's
 > 23rd jurisdiction**, via its National ID & Civic Documents vertical, with
@@ -1980,7 +2018,18 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (22/23 jurisdictions — 96%)
+### Business Formation — Incorporation, LLC, Company Registration (23/23 jurisdictions — 100%)
+
+**Estonia's Business Formation gap is now closed (GOV-1705)** via
+`ee/rik/private-limited-company-foundation` — the petition for entry of a
+newly-founded private limited company (osaühing/OÜ) in the Commercial
+Register, sourced from the Commercial Code's and Commercial Register Act's
+own enumerated memorandum-of-association/articles-of-association/
+registry-card content requirements (the live e-Business Register filing
+portal is digital-signature-authenticated, with no unauthenticated
+field-level view). This restores global Business Formation to **23/23
+(100%)** — see the Executive Summary update above and the document's own
+VERIFICATION.md for the full candidate screening and sourcing detail.
 
 **Poland's Business Formation gap is now closed (GOV-1671)** via
 `pl/ceidg/wniosek-o-wpis-do-ceidg` — CEIDG-1, the form through which a
@@ -2494,7 +2543,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EE** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **EE** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
