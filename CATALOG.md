@@ -4,7 +4,61 @@
 
 ## Executive Summary
 
-**24 jurisdictions** | **279 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**25 jurisdictions** | **280 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1774): Malaysia opens as GovSchema's 25th
+> jurisdiction**, via its DMV vertical, with
+> `my/jpj/driving-licence-application` — the Jabatan Pengangkutan Jalan
+> Malaysia's (JPJ, Malaysia's Road Transport Department) "Borang Permohonan
+> Lesen Memandu" (JPJ-L1), a single form covering 21 distinct driving-licence
+> transactions: new/renewal/add-class/copy/conversion across the Learner's
+> Licence (Lesen Belajar Memandu), Probationary Licence (Lesen Percubaan),
+> and full Driving Licence (Lesen Memandu) tiers, plus the International
+> Driving Permit (Permit Memandu Antarabangsa). Three candidates were
+> screened this cycle: Switzerland's national D-visa and short-stay Schengen
+> C-visa forms (both fetched directly and run through `pdfjs-dist` — 71 and
+> 108 AcroForm widgets respectively — but both confirmed to be field-for-
+> field matches of already-covered EU/Schengen-harmonized templates: the
+> Schengen C-visa form duplicates the uniform template behind this
+> registry's `fr/.../schengen-visa` schema, and the D-visa form duplicates
+> the same EU-model national-visa-application template already found
+> duplicated by Poland's and Portugal's own national visa forms against
+> `de/auswaertiges-amt/national-visa-application` — rejected as duplicate
+> risk, not a genuine gap); and Malaysia's own SSM (Companies Commission)
+> Companies Act 2016 s.14 "Superform" business-incorporation PDF (fetched
+> directly, HTTP 200, but confirmed via `pdfjs-dist` to carry zero AcroForm
+> fields and, on inspection, to be only a thin 2-page specimen printout of
+> SSM's online MyCoID portal wizard — bare field labels with no field-by-
+> field numbered instructions of the kind this registry's guide-document
+> fallback precedent (AEAT Modelo 030/036, SII Formulario 22, CEIDG-1)
+> requires — rejected as too thin to model responsibly). JPJ-L1 was picked
+> instead: a genuine, unauthenticated, directly downloadable, currently-
+> served PDF (confirmed live, `last-modified: 2022-04-22` unchanged) that,
+> while itself carrying no AcroForm layer (confirmed via `pdfjs-dist`: 0
+> widget annotations), is a self-documenting field-by-field guide document —
+> its own page 2 ("PANDUAN MENGISI BORANG PERMOHONAN LESEN MEMANDU") numbers
+> and explains every item on page 1 by section letter and item number,
+> including two full code legends (a 21-code transaction-type legend and a
+> 7-code applicant-category legend), the same guide-document source shape
+> already proven for three prior schemas in this registry. Models 29 fields
+> across the application-type selector, applicant identification, licence-
+> class/conversion/copy details (each conditionally required via the shared
+> `Condition` grammar, gated only where the source's own subheadings map
+> unambiguously onto a specific code subset — two cases where the mapping
+> was ambiguous were left ungated and disclosed instead, see the document's
+> own VERIFICATION.md), and the six-item medical/court declaration, plus 4
+> `documents[]` entries (identification document, photograph, the state fee,
+> and the form's own signed declaration). This gives Malaysia **1 of its 6
+> verticals (DMV)**; Business Formation, Passport, Taxes, Visa, and National
+> ID remain open backlog candidates — Business Formation was screened this
+> cycle and found too thin (above) but not exhaustively (SSM's own "Form A"
+> sole-proprietorship form was searched for but no live, directly
+> downloadable PDF was located, only third-party summaries); the other four
+> verticals were not screened at all this cycle. This also moves the
+> **global DMV vertical to 25/25 (100%)**, unchanged at full coverage since
+> Portugal's own opening (GOV-1750). See the document's own VERIFICATION.md
+> for the full candidate comparison, field-by-field citations, and every
+> disclosed scope decision.
 
 > **Update (2026-07-08, GOV-1765):** Portugal closes its Taxes gap with
 > `pt/at/declaracao-rendimentos-irs-modelo-3` — the Autoridade Tributária e
@@ -2121,7 +2175,7 @@
 
 ## By Vertical
 
-### Passport (20/24 jurisdictions — 83%)
+### Passport (20/25 jurisdictions — 80%)
 
 **Estonia**'s Passport gap is now closed (GOV-1712), via
 `ee/ppa/passport-application` — see the Executive Summary update above for
@@ -2211,7 +2265,15 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (24/24 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (25/25 jurisdictions — 100%)
+
+**Malaysia opens as this registry's 25th jurisdiction via this vertical
+(GOV-1774)**, with `my/jpj/driving-licence-application` — JPJ's "Borang
+Permohonan Lesen Memandu" (JPJ-L1), a single form covering 21 distinct
+driving-licence transactions across the Learner's, Probationary, and full
+Driving Licence tiers plus the International Driving Permit. See the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full candidate comparison.
 
 **Portugal opens as this registry's 24th jurisdiction via this vertical
 (GOV-1750)**, with `pt/imt/requerimento-carta-de-conducao` — IMT's Mod.
@@ -2383,7 +2445,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (23/24 jurisdictions — 96%)
+### Business Formation — Incorporation, LLC, Company Registration (23/25 jurisdictions — 92%)
 
 **Estonia's Business Formation gap is now closed (GOV-1705)** via
 `ee/rik/private-limited-company-foundation` — the petition for entry of a
@@ -2544,7 +2606,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (24/24 jurisdictions — 100%)
+### Taxes — Income Tax Return, Tax Filing (24/25 jurisdictions — 96%)
 
 **Portugal's Taxes gap is now closed** (`pt/at/declaracao-rendimentos-irs-modelo-3`,
 GOV-1765) — Modelo 3, the Autoridade Tributária e Aduaneira's (AT) annual
@@ -2699,7 +2761,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (16/24 jurisdictions — 67%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (16/25 jurisdictions — 64%)
 
 **Poland's Visa gap was screened this cycle (GOV-1691) and confirmed a
 duplicate, not an open candidate**: the current wzór wniosku o wydanie wizy
@@ -2789,7 +2851,7 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (20/24 jurisdictions — 83%)
+### National ID & Civic Documents (20/25 jurisdictions — 80%)
 
 **Estonia** opens as the registry's 23rd jurisdiction via this vertical
 (`ee/ppa/e-residency-application`, GOV-1698) — the Police and Border Guard
@@ -2972,6 +3034,7 @@ now closed.
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **MY** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -3282,9 +3345,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    updates above and each document's own VERIFICATION.md. Portugal now
    stands at **3 of its 6 verticals** (DMV, Visa, Taxes); Business
    Formation, Passport, and National ID remain open backlog candidates for
-   a future cycle. Other candidates worth scouting for a **25th**
+   a future cycle. **Malaysia has since opened as the registry's 25th
+   jurisdiction (GOV-1774)**, via `my/jpj/driving-licence-application` — the
+   Jabatan Pengangkutan Jalan's (JPJ) "Borang Permohonan Lesen Memandu"
+   (JPJ-L1) driving-licence application (DMV vertical); see the Executive
+   Summary update above and the document's own VERIFICATION.md for the full
+   candidate comparison. That cycle also screened and rejected Switzerland's
+   national D-visa and Schengen C-visa forms (both confirmed field-for-field
+   duplicates of already-modelled EU/Schengen-harmonized templates — the
+   same pattern as Poland's, Spain's, and Portugal's national visa forms)
+   and Malaysia's own SSM Companies Act s.14 "Superform" business-
+   incorporation PDF (zero AcroForm fields, too thin a specimen printout to
+   model responsibly). Malaysia stands at **1 of its 6 verticals** (DMV);
+   Business Formation, Passport, Taxes, Visa, and National ID remain open
+   backlog candidates. Other candidates worth scouting for a **26th**
    jurisdiction in a future cycle: an EU member beyond DE/EE/ES/FR/NL/PL/PT —
-   Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174).
+   Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174), and
+   Switzerland's Visa vertical is now a confirmed EU/Schengen-harmonized
+   duplicate dead end (GOV-1774) pending a genuinely distinct Swiss-specific
+   pathway (e.g. a cantonal residence-permit process) for a future cycle to
+   find.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
@@ -3343,6 +3423,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   application form's fields). Not a hard dead end — untested is whether any
   individual state DETRAN publishes the RENACH form's own field list outside
   its authenticated portal; a candidate for a future cycle only if one does.
+- **CH Visa (national Type D and short-stay Schengen Type C)** — GOV-1774,
+  2026-07-08. Both of SEM's (State Secretariat for Migration) own visa
+  application PDFs (fetched directly from `sem.admin.ch`, no login/CAPTCHA/
+  WAF gate, both genuine AcroForm PDFs — 71 and 108 widgets respectively)
+  are confirmed field-for-field duplicates of already-modelled harmonized
+  templates: the short-stay form duplicates the uniform Schengen visa
+  application behind `fr/.../schengen-visa`, and the national D-visa form
+  duplicates the same EU-model long-stay-visa template already found
+  duplicated by Poland's, Spain's, and Portugal's own national visa forms
+  against `de/auswaertiges-amt/national-visa-application` — a confirmed
+  duplicate, not an open gap. Not a hard dead end for Switzerland's Visa
+  vertical as a whole: untested is whether a cantonal residence-permit
+  process (Switzerland's cantons administer residence permits, not SEM
+  centrally) offers a genuinely distinct, non-duplicate pathway.
 
 ---
 
