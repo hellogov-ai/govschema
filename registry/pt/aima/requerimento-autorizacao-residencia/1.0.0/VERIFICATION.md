@@ -14,22 +14,21 @@
 
 **URL:** `https://aima.gov.pt/media/pages/documents/8dfcb7803c-1752595470/modelo-1.pdf`  
 **Retrieved:** 2026-07-08 via direct `curl -k` fetch (HTTPS cert verification bypassed due to sandbox environment)  
-**Size:** ~100 KB  
+**Size:** ~252 KB (258,533 bytes)  
 **Pages:** 4  
 **Language:** Portuguese  
 **AcroForm Widgets:** 0 (confirmed via `pdfjs-dist` extraction; form is printed/photocopied, not digitally fillable)
 
 ### Source Verification
-Three independently-discovered URLs resolve to the identical byte-sequence PDF:
+**Correction (GOV-1760 review, 2026-07-08):** this section originally claimed three independently-discovered URLs — the primary link below, a legacy `sef.pt` mirror, and an alternative `aima.gov.pt` path — all resolved to the identical byte-sequence PDF. On re-verification at merge time, only the primary URL is live; the other two both return HTTP 404 and have no Wayback Machine snapshot under either URL, indicating they were never live at a stable location. Those two citations have been removed. The confirmed sourcing record is:
 
-1. **AIMA's own official listed link** on its impressos-e-minutas (forms & minutes) page, as cited in the schema's source URL above
-2. **Legacy SEF.pt mirror:** `https://www.sef.pt/pt/documents/8dfcb7803c-1752595470/requerimento-autorizacao-residencia.pdf` — Portugal's former Serviço de Estrangeiros e Fronteiras (SEF, now absorbed into AIMA, retired Oct 2023) — still live, identical PDF
-3. **Alternative AIMA path:** `https://aima.gov.pt/pt/impressos-e-minutas/requerimento-modelo-1` — confirmed as the same form with a different URL path
+1. **Direct fetch:** `https://aima.gov.pt/media/pages/documents/8dfcb7803c-1752595470/modelo-1.pdf` returns HTTP 200, `content-type: application/pdf`, 258,533 bytes, `last-modified: Mon, 27 Oct 2025`.
+2. **Cross-referenced from AIMA's official forms index:** `https://aima.gov.pt/pt/impressos-e-minutas` (AIMA's own "Impressos e Minutas" page) links directly to this exact URL as "Modelo 1", alongside Modelos 2–7 and other AIMA forms at the same `media/pages/documents/` path convention — confirming this is AIMA's own officially-published, currently-served copy, not an orphaned or third-party-hosted file.
 
-All three verified via `curl -sk` fetch and byte-comparison (`sha256sum`). The form has remained stable and unchanged across both the legacy SEF and current AIMA hosting.
+No independent second-host mirror has been found or verified for this form; sourcing rests on the single official AIMA URL, corroborated by its own forms-index listing.
 
 ### Alternative Forms Considered & Rejected
-No AcroForm-layered variant exists or has ever existed for this form. Modelo 1 is a printed/photocopy form across all known Portuguese government hosting.
+No AcroForm-layered variant of this form has been found at any live URL or in Wayback Machine history. Modelo 1 is a printed/photocopy form at its one confirmed hosting location.
 
 ---
 
@@ -79,17 +78,18 @@ No AcroForm-layered variant exists or has ever existed for this form. Modelo 1 i
 - `placeOfSigning`: Location where the applicant signed the declaration
 - `dateOfRequest`: Date the form was completed and signed
 
-**Supporting Documents** (9 optional document pointers, marked as categories rather than structured input fields)
-- `supportingTravelDocument`: Copy of travel document (passport/identity card)
-- `supportingCriminalRecord`: Criminal record certificate or equivalent
-- `supportingProofOfMeans`: Proof of stable/regular means of subsistence
-- `supportingMeansOfSubsistence`: Means of subsistence documentation
-- `supportingHealthInsurance`: Health insurance policy or National Health Service registration
-- `supportingAccommodation`: Proof of accommodation
-- `supportingPortugueseLanguageProficiency`: Proof of basic Portuguese-language proficiency (when required)
+**Supporting Documents** (9 document pointers — 6 evidence categories from the form's own p.2 checklist, plus 3 attestations from the p.3 DECLARAÇÃO block)
+- `supportingPassportOrTravelDocument`: Passaporte ou outro documento de viagem válido (valid passport or other travel document)
+- `supportingTaxSituation`: IRS (comprovativo de situação fiscal)
+- `supportingMeansOfSubsistence`: Meios de Subsistência (proof of means of subsistence)
+- `supportingHealthInsurance`: Seguro de Saúde / SNS (health insurance or National Health Service registration)
+- `supportingAccommodation`: Alojamento (proof of accommodation)
+- `supportingPortugueseLanguageProficiency`: Comprovativo de Conhecimento de Português Básico (proof of basic Portuguese-language proficiency)
 - `signedDeclaration`: Applicant's declaration of accuracy (checkbox + signature on form p.3)
 - `communicationsByEmailDeclaration`: Applicant's acceptance of email-based communications
 - `domicileForNotificationsDeclaration`: Applicant's acceptance of domicile for legal notifications
+
+*(Correction, GOV-1760 review: this list previously named a `supportingCriminalRecord` and a `supportingProofOfMeans` document, neither of which exists in `schema.json`'s `documents[]` array, and omitted the real `supportingTaxSituation` entry. The form's p.2 checklist has no standalone criminal-record line item — criminal-record consultation is instead handled via the data-exchange consent declaration (`consentToDataExchange`), not a document upload. The list above now matches `schema.json` exactly.)*
 
 ### Excluded: AIMA Administrative Sections
 The following form sections are **EXCLUDED** as AIMA-staff-only, not applicant-supplied:
@@ -171,12 +171,12 @@ This is the same submission model as Austria's Modelo 3 (taxes), already documen
 
 ## Verification Checklist
 
-- [x] Source document retrieved and confirmed live (2026-07-08)
-- [x] Source document byte-verified against legacy hosting (SEF.pt mirror)
+- [x] Source document retrieved and confirmed live (2026-07-08; re-confirmed at GOV-1760 merge time)
+- [x] Source document confirmed as AIMA's own officially-listed form (linked from its Impressos e Minutas index page)
 - [x] AcroForm layer checked and confirmed absent (`pdfjs-dist` extraction)
-- [x] All field names sourced directly from the form or Lei n.º 23/2007
+- [x] All field names sourced directly from the form or Lei n.º 23/2007 (independently re-extracted and spot-checked at GOV-1760 merge time)
 - [x] Field-level enum values verified against form's printable options
-- [x] Supporting-document checklist converted to `documents[]` array
+- [x] Supporting-document checklist converted to `documents[]` array (corrected at GOV-1760 merge time to match schema.json exactly)
 - [x] Administrative (agency-filled) sections explicitly excluded
 - [x] Example values are placeholder/fictional (no real applicant data)
 - [x] VERIFICATION.md cites this schema's own decisions and limitations

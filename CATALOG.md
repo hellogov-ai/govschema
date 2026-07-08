@@ -67,9 +67,9 @@
 > currently-served [form]… the only Portuguese candidate this cycle found
 > meeting this registry's top-tier source bar" — but not authored at that time
 > pending a focused research cycle to locate and confirm its live hosting and
-> sourcing. GOV-1757 confirmed the form's sourcing directly: three independently-discovered
-> URLs (`aima.gov.pt` official link, legacy `sef.pt` mirror, alternative AIMA
-> path) all resolve to the identical byte-sequence PDF; `pdfjs-dist` extraction
+> sourcing. GOV-1757 confirmed the form's sourcing directly: AIMA's own official
+> document URL is live and is the exact link published on AIMA's own
+> "Impressos e Minutas" forms index page; `pdfjs-dist` extraction
 > confirms zero AcroForm widgets across all 4 pages (a flat, non-fillable PDF,
 > same source-tier as AT's Modelo 3 IRS, already documented for Portugal's
 > Taxes vertical). Models 28 applicant-supplied fields across the request-type
