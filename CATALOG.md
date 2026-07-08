@@ -35,7 +35,7 @@
 > path, consistent with an IP/ASN-level WAF block, not a dead resource); the
 > PDF was instead retrieved via its most recent Wayback Machine snapshot
 > (2025-12-08), per this registry's established workaround for
-> similarly-blocked sources. Modelled 29 fields (26 with a real widget, plus
+> similarly-blocked sources. Modelled 29 fields (28 with a real widget, plus
 > a closing signature-block date modelled from a printed but widget-less
 > blank line) and 2 `documents[]` entries, scoped explicitly to this one
 > consular post's own published document — other Portuguese consulates

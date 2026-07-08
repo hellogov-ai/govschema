@@ -38,13 +38,22 @@ This cycle searched further and found a **second, stronger** consulate-hosted
 PDF: the Consulado-Geral de Portugal em São Paulo's
 `https://saopaulo.consuladoportugal.mne.gov.pt/images/cc_e_pep_formulario.pdf`
 ("Requerimento de Atos Presenciais — Cartão do Cidadão e/ou Passaporte"). Its
-`pdfjs-dist` annotation layer lists **45 unique-position Widget fields** (90
-raw widget annotations, since every text field and the two radio groups are
-each duplicated across two overlapping widgets at the same rect — an artifact
-of the online form-builder tool that appears to have produced this PDF, not a
-government-authored native AcroForm export): 2 radio groups (`vou solicitar`
-3-option modality selector, `Estado Civil Actual` 4-option marital-status
-selector), 1 checkbox, and 26 unique text fields. This is a genuine,
+`pdfjs-dist` annotation layer, scoped to the page's own `/Annots` array,
+lists **46 raw Widget annotations collapsing to 45 unique positions**: 12 of
+the 26 unique text-field positions are each backed by two near-identically-
+rects widgets (an artifact of the online form-builder tool that appears to
+have produced this PDF, not a government-authored native AcroForm export),
+while the two radio groups' own widgets are each a genuinely distinct
+position (one per selectable option), not duplicates. Separately, the file's
+underlying AcroForm field tree also carries roughly 40 additional Widget
+objects that are **not** attached to this page's `/Annots` array — orphaned,
+invisible, unfillable leftovers from the same form-builder tool, confirmed
+via a direct pdf-lib field-tree walk cross-referenced against the page's own
+annotation list; they carry no rendered label and are not part of the live,
+fillable form a user actually sees or fills, so no field here is sourced from
+them. The two radio groups are `vou solicitar` (3-option modality selector)
+and `Estado Civil Actual` (4-option marital-status selector), plus 1 checkbox
+and 26 unique text fields. This is a genuine,
 currently-linked, unauthenticated, fillable AcroForm — the strongest
 Portuguese candidate either this cycle or GOV-1750 found across all three
 gaps. A third PDF, São Paulo's older `formulario_cc__pep.pdf`, is also a flat,
@@ -127,9 +136,11 @@ that rendered image, cross-checked against each widget's rect coordinates.
 
 ## Field inventory
 
-29 `fields[]` entries (26 with a real AcroForm widget; `dateOfRequest` is
-modelled from a printed, self-documenting but widget-less blank line — see
-judgment call 4) and 2 `documents[]` entries.
+29 `fields[]` entries (28 with a real AcroForm widget — 2 radio groups, 1
+checkbox, and 25 unique logical text fields, one of which, `fullName`, is
+backed by two distinct on-page positions; `dateOfRequest` is modelled from a
+printed, self-documenting but widget-less blank line — see judgment call 4)
+and 2 `documents[]` entries.
 
 | Step | Fields | Source |
 |---|---|---|
