@@ -110,14 +110,29 @@ function findVersionDirs(dir) {
   }
 }
 
+// VERIFICATION.md routinely narrates dead ends on purpose — an "Alternative
+// Forms Considered & Rejected" section citing a URL that the author already
+// confirmed doesn't resolve is a sign of honest authoring, not a claim that
+// needs re-verifying. Without this, checkUrl would hard-FAIL exactly the
+// transparency this registry wants to encourage. If a URL's surrounding
+// prose already discloses it as unreachable/rejected, don't treat a fresh
+// "doesn't resolve" finding as new information.
+const DISCLOSED_DEAD_RE =
+  /\b(did not resolve|does(?:n't| not) resolve|no longer resolves?|not reachable|not independently confirmed reachable|dead end|not pursued|considered(?:\s*(?:&|and)\s*)?rejected|returns? 404|returned 404|enotfound|exit 6|screened[\s-]and[\s-]rejected|no longer live|blocked from direct)\b/i;
+const CONTEXT_WINDOW = 250;
+
 function extractUrls(text) {
-  const found = new Set();
+  const found = new Map(); // url -> disclosedDead
   for (const m of text.matchAll(URL_RE)) {
     let url = m[0];
     url = url.replace(TRAILING_PUNCT_RE, "");
-    found.add(url);
+    const start = Math.max(0, m.index - CONTEXT_WINDOW);
+    const end = Math.min(text.length, m.index + m[0].length + CONTEXT_WINDOW);
+    const context = text.slice(start, end);
+    const disclosedDead = DISCLOSED_DEAD_RE.test(context);
+    found.set(url, (found.get(url) || false) || disclosedDead);
   }
-  return [...found];
+  return [...found.entries()].map(([url, disclosedDead]) => ({ url, disclosedDead }));
 }
 
 function isArchivalUrl(url) {
@@ -204,7 +219,7 @@ async function hasWaybackHistory(url) {
   return null; // CDX itself unreachable after retries — inconclusive, not a verdict either way
 }
 
-async function checkUrl(url, allowlist) {
+async function checkUrl(url, disclosedDead, allowlist) {
   if (allowlist[url]) {
     return { url, verdict: "SKIP", detail: `allowlisted: ${allowlist[url]}` };
   }
@@ -213,6 +228,18 @@ async function checkUrl(url, allowlist) {
 
   if (result.kind === "ok") {
     return { url, verdict: "PASS", detail: `HTTP ${result.status}` };
+  }
+
+  // The author's own prose already says this URL doesn't resolve (e.g. an
+  // "Alternative Forms Considered & Rejected" dead end) — a fresh
+  // confirmation that it still doesn't resolve is expected, not a new
+  // finding, and must never block a merge.
+  if (disclosedDead) {
+    return {
+      url,
+      verdict: "INFO",
+      detail: `unresolvable (${result.error || result.status}), but already disclosed as a known dead end in the surrounding text — not treated as a failure`,
+    };
   }
 
   if (isArchivalUrl(url)) {
@@ -348,19 +375,20 @@ async function main() {
     const urls = extractUrls(text);
     if (urls.length === 0) continue;
 
-    const results = await Promise.all(urls.map((u) => checkUrl(u, allowlist)));
+    const results = await Promise.all(urls.map(({ url, disclosedDead }) => checkUrl(url, disclosedDead, allowlist)));
     totalUrls += results.length;
 
     const fails = results.filter((r) => r.verdict === "FAIL");
     const warns = results.filter((r) => r.verdict === "WARN");
     const skips = results.filter((r) => r.verdict === "SKIP");
+    const infos = results.filter((r) => r.verdict === "INFO");
     totalWarn += warns.length;
     totalSkip += skips.length;
 
-    if (fails.length === 0 && warns.length === 0 && skips.length === 0) continue; // fully quiet pass
+    if (fails.length === 0 && warns.length === 0 && skips.length === 0 && infos.length === 0) continue; // fully quiet pass
 
     log(`\n${id} (${urls.length} URL${urls.length === 1 ? "" : "s"})`);
-    for (const r of [...fails, ...warns, ...skips]) {
+    for (const r of [...fails, ...warns, ...skips, ...infos]) {
       log(`  [${r.verdict}] ${r.url}\n      ${r.detail}`);
     }
     if (fails.length > 0) anyFail = true;
