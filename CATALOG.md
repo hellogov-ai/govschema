@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**25 jurisdictions** | **283 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**26 jurisdictions** | **284 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1804): Czech Republic opens as the registry's
+> 26th jurisdiction**, with
+> `cz/mpo/jednotny-registracni-formular-fyzicka-osoba` — the Ministerstvo
+> průmyslu a obchodu's (MPO, Ministry of Industry and Trade) Jednotný
+> registrační formulář (JRF, Unified Registration Form) for a natural person
+> (fyzická osoba), form "MPO FO – vzor č. 14 (240101)". A single JRF filing
+> reports a trade-licence registration or concession application under Act
+> No. 455/1991 Sb. to the applicant's locally competent Trade Licensing
+> Office (živnostenský úřad) and, at the applicant's election in the form's
+> own Part E, simultaneously routes the same filing to the Czech Social
+> Security Administration (ČSSZ), the applicant's health-insurance company,
+> and/or the Tax Office. This cycle's brief recommended screening several
+> strong digital-government candidates for a 26th jurisdiction ahead of
+> re-treading this registry's long list of already-confirmed-dead gaps in
+> the existing 25; Austria's regional Gewerbeanmeldung (trade-registration)
+> forms and Sweden's Skatteverket/Transportstyrelsen forms were identified
+> by search as promising leads but could not be reached at all from this
+> cycle's research environment (`tirol.gv.at` and `skatteverket.se` both
+> failed at the TCP level — connection timeout/reset, not a WAF/CAPTCHA
+> page — while `web.archive.org` and `mpo.gov.cz` were both reachable
+> directly), and Switzerland's domestic passport process was confirmed to be
+> a cantonal, appointment/counter-based service with no downloadable
+> application PDF. The Czech Republic was picked because `mpo.gov.cz`
+> responded normally to a direct fetch: a genuine, current, unauthenticated
+> PDF with no login/CAPTCHA/WAF gate, still linked from MPO's own current JRF
+> landing page alongside a 2025-dated field-by-field instruction guide
+> ("Pokyny"). The PDF carries zero AcroForm/XFA widgets (a static
+> print/hand-fill template, the same shape as this registry's Polish
+> CEIDG-1/PIT-37 and Malaysian JIM/JPJ sources) but a fully self-documenting
+> numbered layout — 11 numbered sections across Parts A-G, resolved via a
+> y/x-coordinate-sorted re-render of `pdfjs-dist`'s text content after a
+> first linear-text pass scrambled the form's multi-column layout. Modelled
+> 116 fields and 7 `documents[]` entries, scoped to only the fyzická osoba
+> (natural-person/sole-trader) variant of the JRF — MPO separately publishes
+> a distinct legal-entity (právnická osoba) JRF and a separate
+> change-of-registration (ZL) form, both out of scope. This opens the Czech
+> Republic with **1 of its 6 verticals** (Business Formation); its other five
+> (Passport, DMV, Taxes, Visa, National ID) are open, unscreened backlog
+> candidates for a future cycle. Austria's and Sweden's connectivity-blocked
+> candidates above remain untested (not confirmed dead) for a future cycle
+> with different network access, possibly via the Wayback Machine workaround
+> this registry has used for similarly-blocked sources elsewhere. See the
+> document's own VERIFICATION.md for the full candidate comparison and every
+> disclosed judgment call.
 
 > **Update (2026-07-08, GOV-1797): Portugal's National ID gap closes**, with
 > `pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
@@ -2314,7 +2359,7 @@
 
 ## By Vertical
 
-### Passport (21/25 jurisdictions — 84%)
+### Passport (21/26 jurisdictions — 81%)
 
 **Malaysia**'s Passport gap is now closed (GOV-1783), via
 `my/jim/passport-travel-document-application` — see the Executive Summary
@@ -2416,7 +2461,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (25/25 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (25/26 jurisdictions — 96%)
 
 **Malaysia opens as this registry's 25th jurisdiction via this vertical
 (GOV-1774)**, with `my/jpj/driving-licence-application` — JPJ's "Borang
@@ -2596,7 +2641,24 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (23/25 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (24/26 jurisdictions — 92%)
+
+**The Czech Republic opens as the registry's 26th jurisdiction with a
+Business Formation schema (GOV-1804)**, via
+`cz/mpo/jednotny-registracni-formular-fyzicka-osoba` — the Ministry of
+Industry and Trade's Jednotný registrační formulář (JRF, Unified
+Registration Form) for a natural person, a genuine, current,
+unauthenticated PDF that simultaneously reports a trade-licence
+registration and, at the applicant's election, routes the same filing to
+the Social Security Administration, a health-insurance company, and/or the
+Tax Office. See the Executive Summary update above and the document's own
+VERIFICATION.md for the full candidate comparison (which also screened and
+could not reach Austria's Gewerbeanmeldung and Sweden's Skatteverket/
+Transportstyrelsen forms due to an apparent environment-level connectivity
+block, and confirmed Switzerland's domestic passport process is
+cantonal/appointment-based with no downloadable form). The Czech Republic's
+other five verticals (Passport, DMV, Taxes, Visa, National ID) are open,
+unscreened backlog candidates for a future cycle.
 
 **Estonia's Business Formation gap is now closed (GOV-1705)** via
 `ee/rik/private-limited-company-foundation` — the petition for entry of a
@@ -2757,7 +2819,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (24/25 jurisdictions — 96%)
+### Taxes — Income Tax Return, Tax Filing (24/26 jurisdictions — 92%)
 
 **Portugal's Taxes gap is now closed** (`pt/at/declaracao-rendimentos-irs-modelo-3`,
 GOV-1765) — Modelo 3, the Autoridade Tributária e Aduaneira's (AT) annual
@@ -2912,7 +2974,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (17/25 jurisdictions — 68%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (17/26 jurisdictions — 65%)
 
 **Malaysia's Visa gap is now closed** (`my/jim/visa-with-reference-application`,
 GOV-1789) — sourced from JIM's IM.12 "Borang Permohonan Pas Lawatan" (Visit
@@ -3011,7 +3073,7 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (21/25 jurisdictions — 84%)
+### National ID & Civic Documents (21/26 jurisdictions — 81%)
 
 **Portugal**'s National ID gap is now closed (GOV-1797), via
 `pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
@@ -3206,6 +3268,7 @@ now closed.
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CZ** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **ES** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -3567,7 +3630,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Switzerland's Visa vertical is now a confirmed EU/Schengen-harmonized
    duplicate dead end (GOV-1774) pending a genuinely distinct Swiss-specific
    pathway (e.g. a cantonal residence-permit process) for a future cycle to
-   find.
+   find. **The Czech Republic has since opened as the registry's 26th
+   jurisdiction (GOV-1804)**, via
+   `cz/mpo/jednotny-registracni-formular-fyzicka-osoba` — MPO's Jednotný
+   registrační formulář (JRF) for a natural person (Business Formation
+   vertical); see the Executive Summary update above and the document's own
+   VERIFICATION.md for the full candidate comparison. That cycle also
+   screened Austria's regional Gewerbeanmeldung forms and Sweden's
+   Skatteverket/Transportstyrelsen forms as candidates but could not reach
+   either host from the research environment (TCP-level connection
+   timeout/reset on `tirol.gv.at` and `skatteverket.se`, distinct from a
+   WAF/CAPTCHA block) — both remain untested, not confirmed dead, for a
+   future cycle with different network access or a Wayback Machine
+   workaround — and confirmed Switzerland's domestic passport process is
+   cantonal/appointment-based with no downloadable application form. The
+   Czech Republic stands at **1 of its 6 verticals** (Business Formation);
+   its other five (Passport, DMV, Taxes, Visa, National ID) are open,
+   unscreened backlog candidates for a future cycle.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
