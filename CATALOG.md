@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**25 jurisdictions** | **280 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**25 jurisdictions** | **281 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1783): Malaysia's 2nd vertical (Passport)** is
+> now published, with `my/jim/passport-travel-document-application` — the
+> Jabatan Imigresen Malaysia's (JIM, Immigration Department of Malaysia)
+> "Borang Permohonan Pasport / Dokumen Perjalanan" (IM.42), a single form
+> covering first-time issuance, replacement (damage/pages-exhausted/expiry
+> or loss), and child-photo-insertion requests across eight document types
+> (the 64- and 32-page international passports, the Malaysia-Indonesia and
+> Malaysia-Philippines border-crossing passports, the Brunei- and
+> Singapore-restricted passports, the Restricted Travel Document, and the
+> Emergency Certificate). Screened in the assigned order: LHDN's Borang
+> BE/B/M/BT individual-return PDFs (Taxes) were all fetched directly and
+> confirmed to carry an empty AcroForm `Fields[]` array in every category
+> and year checked — every one is explicitly labelled "Contoh" (specimen)
+> because resident-individual filing is mandatory e-Filing only via an
+> authenticated SPA (`mytax.hasil.gov.my`); rejected as too thin, the same
+> reasoning as GOV-1774's SSM Superform rejection. JPN's MyKad
+> replacement/amendment service pages (National ID) were fetched directly
+> and confirmed to describe an entirely in-person, counter-based, walk-in
+> process with no downloadable or fillable form at all — only a prose
+> "documents to bring" checklist; rejected as weaker than even a thin
+> specimen. JIM's IM.42 was picked instead: a genuine, unauthenticated,
+> directly downloadable, currently-served PDF (confirmed live this cycle,
+> an Adobe LiveCycle Designer XFA container) still actively referenced by
+> JIM's own current "Pasport Malaysia Antarabangsa" service page as the
+> required application form for several eligibility categories. Like
+> JPJ-L1 (GOV-1774), it carries no interactive field layer (0 XFA
+> `<field>` elements — a print-layout container, not a fillable form), but
+> is itself a self-documenting, numbered field-by-field form: 14 numbered
+> items across six lettered sections (A-F). Models 19 fields across the
+> application-reason/document-type selectors, applicant particulars,
+> replacement-specific details (conditionally required via the shared
+> `Condition` grammar), and the consent/declaration section, plus 7
+> `documents[]` entries (identity document, applicant photograph, the
+> previous document, a police report for loss, additional child
+> photographs, the fee, and the form's own signed declaration). This gives
+> Malaysia **2 of its 6 verticals (DMV, Passport)**; Business Formation
+> (confirmed too thin, GOV-1774), Taxes, and National ID (both confirmed
+> dead ends this cycle, above) are not further open work absent a
+> genuinely new source; Visa remains the sole unscreened backlog
+> candidate. This also moves the **global Passport vertical to 21/25
+> (84%)**. See the document's own VERIFICATION.md for the full candidate
+> comparison, field-by-field citations, and every disclosed scope decision.
 
 > **Update (2026-07-08, GOV-1774): Malaysia opens as GovSchema's 25th
 > jurisdiction**, via its DMV vertical, with
@@ -2175,7 +2218,19 @@
 
 ## By Vertical
 
-### Passport (20/25 jurisdictions — 80%)
+### Passport (21/25 jurisdictions — 84%)
+
+**Malaysia**'s Passport gap is now closed (GOV-1783), via
+`my/jim/passport-travel-document-application` — see the Executive Summary
+update above for the full sourcing story (JIM's IM.42, a genuine, directly
+downloadable, currently-referenced XFA print-layout form with no
+interactive field layer but a self-documenting, numbered field-by-field
+structure, the same fallback shape as GOV-1774's own JPJ-L1 precedent).
+This gives Malaysia 2 of its 6 verticals (DMV, Passport); Taxes and
+National ID were screened this cycle and confirmed dead ends (LHDN's
+returns are e-Filing-only specimens with empty AcroForms; JPN's MyKad
+service has no downloadable form at all, in-person-only); Visa remains the
+sole open, unscreened backlog candidate.
 
 **Estonia**'s Passport gap is now closed (GOV-1712), via
 `ee/ppa/passport-application` — see the Executive Summary update above for
@@ -3034,7 +3089,7 @@ now closed.
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **MY** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **MY** | 2 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -3356,9 +3411,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    same pattern as Poland's, Spain's, and Portugal's national visa forms)
    and Malaysia's own SSM Companies Act s.14 "Superform" business-
    incorporation PDF (zero AcroForm fields, too thin a specimen printout to
-   model responsibly). Malaysia stands at **1 of its 6 verticals** (DMV);
-   Business Formation, Passport, Taxes, Visa, and National ID remain open
-   backlog candidates. Other candidates worth scouting for a **26th**
+   model responsibly). **Malaysia's Passport gap has since closed
+   (GOV-1783)** via `my/jim/passport-travel-document-application` — JIM's
+   IM.42 passport/travel-document application form; see the Executive
+   Summary update above and the document's own VERIFICATION.md. That cycle
+   also screened and rejected Malaysia's Taxes vertical (LHDN's Borang
+   BE/B/M/BT are all e-Filing-only specimens with empty AcroForms) and
+   National ID vertical (JPN's MyKad service has no downloadable form at
+   all, in-person-only) as confirmed dead ends. Malaysia stands at **2 of
+   its 6 verticals** (DMV, Passport); Visa remains the sole open,
+   unscreened backlog candidate. Other candidates worth scouting for a **26th**
    jurisdiction in a future cycle: an EU member beyond DE/EE/ES/FR/NL/PL/PT —
    Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174), and
    Switzerland's Visa vertical is now a confirmed EU/Schengen-harmonized
@@ -3377,6 +3439,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **MY Taxes (LHDN Borang BE/B/M/BT)** — GOV-1783, 2026-07-08. Every
+  individual-return category's current-year (2025) PDF
+  (`hasil.gov.my`'s own "Muat Turun Borang" download tool, replayed
+  directly) carries an `/AcroForm` dict with an empty `Fields[]` array —
+  every one is explicitly labelled "Contoh" (specimen), because
+  resident-individual filing is mandatory e-Filing only via an
+  authenticated SPA (`mytax.hasil.gov.my`). Not a hard dead end for
+  Malaysia's Taxes vertical as a whole if e-Filing's mandate ever changes
+  or a casilla-numbered guide equivalent surfaces; a dead end for these
+  specific PDFs as currently published.
+- **MY National ID (JPN MyKad)** — GOV-1783, 2026-07-08. JPN's own
+  "Kad Pengenalan" service pages (9 sibling pages for
+  replacement/loss/damage/address-change/late-registration) all describe
+  an entirely in-person, counter-based, walk-in process with no
+  downloadable or fillable application form at all — only a prose
+  documents-to-bring checklist. Weaker than a thin specimen PDF; do not
+  re-attempt without a genuinely new source (e.g. a published
+  MyJanjiTemu pre-registration form).
 - **PT Visa (national long-stay visa)** — GOV-1750, 2026-07-08. Portugal's
   national visa application form (`vistos.mne.gov.pt`) shares the same
   harmonized EU long-stay-visa field sequence, field-for-field, as the
