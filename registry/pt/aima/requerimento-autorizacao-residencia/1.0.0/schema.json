@@ -1,0 +1,457 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pt/aima/requerimento-autorizacao-residencia",
+  "version": "1.0.0",
+  "title": "Portugal Residence Permit Requerimento (Modelo 1) — Grant, Renewal, Long-Term Resident Status, Investment Residence Permit, EU Blue Card, Family Reunification, Data Change, or Duplicate",
+  "description": "The general-purpose application (\"Requerimento\", Modelo 1) a non-EU/EEA foreign national files with the Agência para a Integração, Migrações e Asilo (AIMA), Portugal's migration and asylum agency, to request a grant or renewal of a temporary or permanent Autorização de Residência (residence permit), an Estatuto de Residente de Longa Duração (long-term resident status), an Autorização de Residência para Investimento (ARI, the investment-based residence permit commonly known as the \"golden visa\"), an EU Blue Card, or family reunification under Lei n.º 23/2007, de 4 de julho (the Foreigners' Law); or, on the same form, to request a data change or a duplicate/second copy of an already-issued title. Scoped to the fields an applicant supplies; excludes the form's own agency-reserved administrative boxes (\"A preencher pelos Serviços\": Loja AIMA, Entrada n.º, NIE, MC) and its final page's staff-only document-authenticity certification, both filled exclusively by AIMA case officers. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Portugal or the Agência para a Integração, Migrações e Asilo.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Agência para a Integração, Migrações e Asilo, I.P.",
+    "abbreviation": "AIMA",
+    "url": "https://aima.gov.pt/"
+  },
+  "process": {
+    "type": "request",
+    "language": "pt"
+  },
+  "source": {
+    "url": "https://aima.gov.pt/media/pages/documents/8dfcb7803c-1752595470/modelo-1.pdf",
+    "retrievedAt": "2026-07-08",
+    "documentRef": "Modelo 1 — REQUERIMENTO (application form for residence-permit grant, renewal, status, data change, or duplicate)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-08",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-08",
+    "notes": "GOV-1757: closes Portugal's Visa/residence-status gap, a candidate GOV-1750 had explicitly flagged as a genuine open backlog item rather than a dead end. Confirmed directly this cycle via a fresh curl fetch (three independently-discovered URLs resolve to the same byte-identical PDF, one of them AIMA's own officially-listed link on its impressos-e-minutas page) and pdfjs-dist extraction (0 AcroForm widgets across all 4 pages — a flat, non-fillable PDF, the same source-shape tier as AT's Modelo 3 IRS return already documented for Portugal's Taxes vertical). A legacy sef.pt-hosted mirror of the same form (RequerimentoAR.pdf, still live) was also checked and confirmed likewise flat (0 widgets), ruling out a fillable AcroForm version ever having existed at a stable URL. See VERIFICATION.md for the full sourcing record, field-by-field citations, and every disclosed scope decision."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-08"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestCategory",
+      "label": "Type of request",
+      "type": "enum",
+      "required": true,
+      "description": "Which of Modelo 1's two main tracks this submission is: a new grant, renewal, or specific residence-status request (the form's \"Venho requerer\" section), or a change of data on, or a duplicate of, an already-issued title (the form's \"Alteração de dados / Segunda via\" section).",
+      "sourceRef": "Modelo 1 p.1, \"Venho requerer:\" section header; p.2, \"Alteração de dados / Segunda via de A. R. / E.R.L.D. / A.R.I. / Cartão Azul U.E.\" section header",
+      "validation": {
+        "enum": ["new_permit_or_status_request", "data_change_or_duplicate"]
+      }
+    },
+    {
+      "name": "requestType",
+      "label": "Venho requerer (I hereby request)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestCategory",
+        "equals": "new_permit_or_status_request"
+      },
+      "description": "The specific residence-status transaction requested, one of the seven lines printed under \"Venho requerer:\". Modelled as a single choice: the source presents these as an unlabelled checkbox list with no confirmed mutual-exclusivity marker (the same kind of uncertainty this registry has disclosed before for other checkbox grids, e.g. `pt/imt/requerimento-carta-de-conducao`'s `licenceCategory`), but in practice an applicant pursues one specific immigration pathway per submission.",
+      "sourceRef": "Modelo 1 p.1, \"Venho requerer:\", the seven lines: \"Concessão de A.R. TEMPORÁRIA/PERMANENTE\", \"Renovação de A.R. TEMPORÁRIA/PERMANENTE\", \"Concessão/Renovação de E.R.L.D.\", \"Concessão/Renovação de A.R.I.\", \"Concessão de A.R.I. Permanente\", \"Concessão/Renovação de Cartão Azul UE\", \"Reagrupamento Familiar\" — each citing an article of Lei n.º 23/2007, de 4 de julho",
+      "validation": {
+        "enum": [
+          "residence_permit_grant",
+          "residence_permit_renewal",
+          "long_term_resident_status",
+          "investment_residence_permit",
+          "permanent_investment_residence_permit",
+          "eu_blue_card",
+          "family_reunification"
+        ]
+      }
+    },
+    {
+      "name": "residencePermitDuration",
+      "label": "Temporária / Permanente (temporary / permanent)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestType",
+        "in": ["residence_permit_grant", "residence_permit_renewal"]
+      },
+      "description": "Whether the ordinary Autorização de Residência being requested or renewed is temporary or permanent, printed as \"TEMPORÁRIA / PERMANENTE\" on both the Concessão and Renovação lines.",
+      "sourceRef": "Modelo 1 p.1, \"Venho requerer:\", \"Concessão de A.R. TEMPORÁRIA / PERMANENTE...\" and \"Renovação de A.R. TEMPORÁRIA / PERMANENTE...\" lines",
+      "validation": {
+        "enum": ["temporary", "permanent"]
+      }
+    },
+    {
+      "name": "familyReunificationBeneficiaryName",
+      "label": "A favor de (in favor of)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "requestType",
+        "equals": "family_reunification"
+      },
+      "description": "The name of the Portugal-based family member (the \"anchor\" resident) through whom family reunification is being requested.",
+      "sourceRef": "Modelo 1 p.1, \"Reagrupamento Familiar nos termos do n.º __ do art.º __ da Lei 23/2007..., a favor de ____\""
+    },
+    {
+      "name": "familyRelationship",
+      "label": "Vínculo Familiar (family relationship)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "requestType",
+        "equals": "family_reunification"
+      },
+      "description": "The family relationship between the applicant and the beneficiary named above (e.g. spouse, minor child, dependent parent).",
+      "sourceRef": "Modelo 1 p.1, \"...a favor de ____ (Vínculo Familiar)\""
+    },
+    {
+      "name": "legalBasisArticle",
+      "label": "Nos termos do art.º (under article)",
+      "type": "string",
+      "required": false,
+      "description": "The specific article (and, for family reunification, paragraph) of Lei n.º 23/2007, de 4 de julho, the applicant cites as the legal basis for the request. The form prints a blank \"nos termos do art.º ___\" after each of the six non-family-reunification request lines and a two-part \"n.º ___ do art.º ___\" after the family-reunification line — the same kind of blank repeated per request type, not one this schema attempts to pre-populate: Lei 23/2007 carries dozens of distinct grant grounds (e.g. Art. 77 general grounds, Art. 88/89/90 subordinate/independent/highly-qualified work, Art. 91 entrepreneurs, Art. 98 family reunification), and which one applies is a case-specific legal determination the applicant or their representative makes, not a fixed enumerable list this document fabricates. Left as one free-text field, not required, since the printed form gives applicants a blank rather than a mandated citation.",
+      "sourceRef": "Modelo 1 p.1, \"nos termos do art.º ___ da Lei 23/2007, de 4 de julho, na sua atual versão\" (repeated after each of six request lines); \"nos termos do n.º ___ do art.º ___ da Lei 23/2007\" (Reagrupamento Familiar line); p.2, \"nos termos do art.º ___ da Lei 23/2007\" (Alteração de dados / Segunda via header)"
+    },
+    {
+      "name": "diplomaticRepresentation",
+      "label": "Representação Diplomática Portuguesa",
+      "type": "string",
+      "required": false,
+      "description": "When the request involves applying for a Visto de Residência (residence visa) at a Portuguese diplomatic mission abroad, the specific embassy or consulate through which the applicant is proceeding.",
+      "sourceRef": "Modelo 1 p.1, \"Havendo lugar à solicitação de Visto de Residência indico como Representação Diplomática Portuguesa ____\""
+    },
+    {
+      "name": "dataChangeReason",
+      "label": "Reason for data change / duplicate",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestCategory",
+        "equals": "data_change_or_duplicate"
+      },
+      "description": "The reason for the data change or duplicate/second-copy request, one of five printed checkbox options.",
+      "sourceRef": "Modelo 1 p.2, \"Alteração de dados / Segunda via...\": \"Mau estado\", \"Extravio / Furto\", \"Morada\", \"Estado civil\", \"Outro\"",
+      "validation": {
+        "enum": ["damaged", "lost_or_stolen", "address_change", "marital_status_change", "other"]
+      }
+    },
+    {
+      "name": "dataChangeReasonOtherDetail",
+      "label": "Outro — detail",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "dataChangeReason",
+        "equals": "other"
+      },
+      "description": "Free-text detail of the data-change reason, required whenever \"Outro\" is marked.",
+      "sourceRef": "Modelo 1 p.2, \"Outro: ________________________________________________\""
+    },
+    {
+      "name": "fullName",
+      "label": "Nome / Name / Nom",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full name.",
+      "sourceRef": "Modelo 1 p.1, \"1. Nome / Name / Nom\""
+    },
+    {
+      "name": "fatherName",
+      "label": "Filiação (Pai / Father / Père)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's father's name, as recorded in the \"Filiação\" (parentage) field.",
+      "sourceRef": "Modelo 1 p.1, \"2. Filiação: (Pai, Father, Père), (Mãe, Mother, Mère),\""
+    },
+    {
+      "name": "motherName",
+      "label": "Filiação (Mãe / Mother / Mère)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mother's name, as recorded in the \"Filiação\" (parentage) field.",
+      "sourceRef": "Modelo 1 p.1, \"2. Filiação: (Pai, Father, Père), (Mãe, Mother, Mère),\""
+    },
+    {
+      "name": "nationality",
+      "label": "Nacionalidade (País) / Nationality (Country)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's nationality (country).",
+      "sourceRef": "Modelo 1 p.1, \"3. Nacionalidade (País) / Nationality (Country) / Nationalité (Pays)\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Data de Nascimento / Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's date of birth.",
+      "sourceRef": "Modelo 1 p.1, \"4. Data de Nascimento / Date of Birth / Date de Naissance\""
+    },
+    {
+      "name": "sex",
+      "label": "Sexo / Sex / Sexe",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's sex, as printed on the form's own two-option \"M / F\" checkbox.",
+      "sourceRef": "Modelo 1 p.1, \"5. Sexo / Sex / Sexe: M F\"",
+      "validation": {
+        "enum": ["M", "F"]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Estado Civil / Marital Status",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's marital status. The form provides a blank line rather than a fixed set of options, so no enum is asserted.",
+      "sourceRef": "Modelo 1 p.1, \"6. Estado Civil / Marital Status / État Civil\""
+    },
+    {
+      "name": "permanentAddress",
+      "label": "Endereço Permanente / Permanent Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's permanent postal address (street, number, and floor/unit as applicable).",
+      "sourceRef": "Modelo 1 p.1, \"7. Endereço Permanente / Permanent Address / Adress\""
+    },
+    {
+      "name": "permanentAddressLocality",
+      "label": "Localidade / Location",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Continuation line of the applicant's permanent address (locality/city), immediately below the street-address line.",
+      "sourceRef": "Modelo 1 p.1, \"Localidade / Location / Localité\""
+    },
+    {
+      "name": "postalCode",
+      "label": "Código Postal / Postal Code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The postal code for the permanent address. Unlike `pt/imt/requerimento-carta-de-conducao`'s postal code, no digit-count pattern is asserted here: this form's applicant pool is broader than a domestic-only DMV process (it explicitly contemplates applicants proceeding via a Portuguese diplomatic mission abroad, i.e. a foreign address), so a Portugal-specific NNNN-NNN pattern is not enforced.",
+      "sourceRef": "Modelo 1 p.1, \"Código Postal / Postal Code / Code Postal: ___ - ___\""
+    },
+    {
+      "name": "telephone",
+      "label": "Telefone / Telephone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's telephone number.",
+      "sourceRef": "Modelo 1 p.1, \"8. Telefone / Telephone\""
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's email address. Per the form's own DECLARAÇÃO section, this is the address to which AIMA sends all procedural communications, including the final decision (see `communicationsByEmailDeclaration` in `documents[]`).",
+      "sourceRef": "Modelo 1 p.1, \"9. E-mail\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passaporte N.º / Passport No.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The number of the applicant's passport.",
+      "sourceRef": "Modelo 1 p.1, \"10. Passaporte N.º / Passport No. / Passeporte No\""
+    },
+    {
+      "name": "passportIssuedBy",
+      "label": "Emitido em / Issued by",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The authority or country that issued the applicant's passport.",
+      "sourceRef": "Modelo 1 p.1, \"Emitido em / Issued by / Passe à\""
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Data de Emissão / Date of Issue",
+      "type": "date",
+      "required": false,
+      "description": "The issue date of the applicant's passport.",
+      "sourceRef": "Modelo 1 p.1, \"Data de Emissão / Date of Issue / Délivree le\""
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Data de Validade / Expiry Date",
+      "type": "date",
+      "required": false,
+      "description": "The expiry date of the applicant's passport.",
+      "sourceRef": "Modelo 1 p.1, \"Data de Validade / Expiry Date / Valable Jusqu'au\""
+    },
+    {
+      "name": "consentToDataExchange",
+      "label": "Autorizo / Não Autorizo (data-exchange consent)",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's binary declaration on whether AIMA may exchange their information with the Portuguese tax authority (Finanças) and Social Security, and consult the Portuguese criminal record, to assess the request. The form prints both the affirmative and negative declarations as parallel numbered items (2 and 3) rather than a single yes/no checkbox, but they are mutually exclusive alternative statements the applicant selects between.",
+      "sourceRef": "Modelo 1 p.3, DECLARAÇÃO items 2–3: \"Declaro que Autorizo a AIMA I.P. a trocar informação...\" / \"Declaro que Não Autorizo a AIMA I.P. a trocar informação...\"",
+      "validation": {
+        "enum": ["authorize", "do_not_authorize"]
+      }
+    },
+    {
+      "name": "placeOfSigning",
+      "label": "Local (place of signing)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The place where the applicant signs and dates the request, in the closing \"Pede deferimento\" line.",
+      "sourceRef": "Modelo 1 p.2, \"Pede deferimento: ___ , __ / __ / ____ (nome, data)\""
+    },
+    {
+      "name": "dateOfRequest",
+      "label": "Data (date of signing)",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant signs and submits the request.",
+      "sourceRef": "Modelo 1 p.2, \"Pede deferimento: ___ , __ / __ / ____ (nome, data)\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "supportingPassportOrTravelDocument",
+      "label": "Passaporte ou outro documento de viagem válido (valid passport or other travel document)",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Modelo 1 p.2, \"Foram apresentados os seguintes documentos:\" checklist"
+    },
+    {
+      "id": "supportingTaxSituation",
+      "label": "IRS (comprovativo de situação fiscal — proof of income-tax filing/status)",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Modelo 1 p.2, \"Foram apresentados os seguintes documentos:\" checklist, \"IRS\""
+    },
+    {
+      "id": "supportingMeansOfSubsistence",
+      "label": "Meios de Subsistência (proof of means of subsistence)",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Modelo 1 p.2, \"Foram apresentados os seguintes documentos:\" checklist, \"Meios de Subsistência\""
+    },
+    {
+      "id": "supportingHealthInsurance",
+      "label": "Seguro de Saúde / SNS (health insurance or National Health Service registration)",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Modelo 1 p.2, \"Foram apresentados os seguintes documentos:\" checklist, \"Seguro de Saúde/SNS\""
+    },
+    {
+      "id": "supportingAccommodation",
+      "label": "Alojamento (proof of accommodation)",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Modelo 1 p.2, \"Foram apresentados os seguintes documentos:\" checklist, \"Alojamento\""
+    },
+    {
+      "id": "supportingPortugueseLanguageProficiency",
+      "label": "Comprovativo de Conhecimento de Português Básico (proof of basic Portuguese-language proficiency)",
+      "category": "supporting-evidence",
+      "required": false,
+      "sourceRef": "Modelo 1 p.2, \"Foram apresentados os seguintes documentos:\" checklist, \"Comprovativo de Conhecimento de Português Básico\""
+    },
+    {
+      "id": "signedDeclaration",
+      "label": "Applicant's declaration of accuracy and good faith",
+      "category": "attestation",
+      "required": true,
+      "statement": "Declaro prestar estas informações de boa fé e que as mesmas são exatas e corretas. Qualquer declaração falsa da minha parte implicará a não apreciação deste pedido, sem prejuízo das ações previstas pela legislação em vigor;",
+      "issuingAuthority": "Self-attested by the applicant, signed within the form's Assinatura/Signature block",
+      "sourceRef": "Modelo 1 p.3, DECLARAÇÃO item 1; Assinatura/Signature block"
+    },
+    {
+      "id": "communicationsByEmailDeclaration",
+      "label": "Applicant's acceptance of email-based communications",
+      "category": "attestation",
+      "required": true,
+      "statement": "Declaro aceitar que todas as comunicações no âmbito do procedimento são efetuadas por email para o endereço supra indicado, incluindo a decisão final e eventuais notificações para abandono voluntário, em conformidade com o artigo 112.º n.ºs 1 c) e 2 b) do Código do Procedimento Administrativo (CPA);",
+      "issuingAuthority": "Self-attested by the applicant, signed within the form's Assinatura/Signature block",
+      "sourceRef": "Modelo 1 p.3, DECLARAÇÃO item 4"
+    },
+    {
+      "id": "domicileForNotificationsDeclaration",
+      "label": "Applicant's acceptance of the declared domicile for legal notifications",
+      "category": "attestation",
+      "required": true,
+      "statement": "Declaro aceitar que o domicílio comunicado neste requerimento inicial fica convencionado para todos os devidos e legais efeitos, valendo para toda e qualquer notificação, salvo atualização efetuada nos registos AIMA;",
+      "issuingAuthority": "Self-attested by the applicant, signed within the form's Assinatura/Signature block",
+      "sourceRef": "Modelo 1 p.3, DECLARAÇÃO item 5"
+    }
+  ],
+  "steps": [
+    {
+      "id": "tipo_pedido",
+      "title": "Type of request",
+      "fields": ["requestCategory"],
+      "next": "pedido_novo"
+    },
+    {
+      "id": "pedido_novo",
+      "title": "Venho requerer (new permit / status request)",
+      "fields": ["requestType", "residencePermitDuration", "familyReunificationBeneficiaryName", "familyRelationship", "legalBasisArticle", "diplomaticRepresentation"],
+      "next": "alteracao_dados"
+    },
+    {
+      "id": "alteracao_dados",
+      "title": "Alteração de dados / Segunda via (data change / duplicate)",
+      "fields": ["dataChangeReason", "dataChangeReasonOtherDetail"],
+      "next": "identificacao"
+    },
+    {
+      "id": "identificacao",
+      "title": "Identificação do requerente",
+      "fields": ["fullName", "fatherName", "motherName", "nationality", "dateOfBirth", "sex", "maritalStatus"],
+      "next": "endereco_contacto"
+    },
+    {
+      "id": "endereco_contacto",
+      "title": "Endereço e contacto",
+      "fields": ["permanentAddress", "permanentAddressLocality", "postalCode", "telephone", "email"],
+      "next": "documento_viagem"
+    },
+    {
+      "id": "documento_viagem",
+      "title": "Documento de viagem",
+      "fields": ["passportNumber", "passportIssuedBy", "passportIssueDate", "passportExpiryDate"],
+      "next": "declaracao_assinatura"
+    },
+    {
+      "id": "declaracao_assinatura",
+      "title": "Declaração e assinatura",
+      "fields": ["consentToDataExchange", "placeOfSigning", "dateOfRequest"]
+    }
+  ]
+}
