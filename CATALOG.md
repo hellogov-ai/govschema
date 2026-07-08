@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **273 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **274 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1728):** Estonia gains its fifth vertical, DMV,
+> with `ee/transpordiamet/vehicle-transfer-notification` — the notice a
+> registered owner (or their authorized representative) files with
+> Transpordiamet (the Estonian Transport Administration) when a motor
+> vehicle is sold, gifted, exchanged, or otherwise disposed of, amending the
+> owner-of-record data in Estonia's traffic/motor register per the Road
+> Traffic Act (Liiklusseadus) §77(2)-(3). Transpordiamet's e-service portals
+> (`eteenindus.mnt.ee`, the authenticated self-service system, and
+> `dire.transpordiamet.ee`, its client-rendered digital first-registration
+> environment) are both gated/unauthenticated-content-free, the same
+> obstacle class this registry has repeatedly found for client-rendered SPA
+> government portals — but the agency's own plain "Forms" page publishes a
+> genuine, unauthenticated, directly downloadable AcroForm PDF for this
+> transaction, a stronger source shape than the "governing statute as
+> primary source" technique two of Estonia's four prior schemas relied on.
+> Every one of the form's 67 generically-named AcroForm widgets
+> (`Text Box 1`, `Text Box 2_12`, etc.) was mapped to its printed caption by
+> cross-referencing widget bounding-box coordinates against the page's own
+> text layout, cross-checked by an internal consistency signal: the
+> 11-box identifier clusters exactly match Estonia's 11-digit personal code
+> length, and the 17-box VIN cluster exactly matches the ISO 3779 VIN
+> standard. Modelled as the closer analogue of the already-published
+> `cl/sii/aviso-venta-vehiculo` (a "notice of vehicle sale/transfer" shape),
+> capturing registered-owner data, an optional authorized representative,
+> vehicle identification, the disposal contract itself (sale/gift/exchange/
+> other), and the new owner's data. The Road Traffic Act's own English
+> translation (via a Wayback Machine snapshot, since `riigiteataja.ee`
+> remains the same client-rendered-SPA-shell obstacle every prior EE schema
+> hit) sourced the statutory basis (§76-77) for the transaction; no state fee
+> is modelled, since — unlike sibling deletion/watercraft-registration forms
+> on the same page — this form's own text names none. Models 22 fields plus
+> a scanned-contract attachment and a digital-signature attestation — see
+> the document's own VERIFICATION.md for the full field inventory and every
+> disclosed judgment call. This gives Estonia 5 of its 6 verticals (National
+> ID, Business Formation, Passport, Taxes, DMV); Visa remains open, this
+> registry's lowest priority given the confirmed Schengen-template-duplicate
+> pattern found in other EU jurisdictions — Estonia's last remaining gap.
 
 > **Update (2026-07-08, GOV-1721):** Estonia gains its fourth vertical,
 > Taxes, with `ee/emta/income-tax-return-form-a` — Vorm A / Form A, the
@@ -1950,7 +1988,28 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (22/23 jurisdictions — 96%)
+### DMV — Vehicle Registration, Licensing, Permits (23/23 jurisdictions — 100%)
+
+**Estonia's DMV gap is now closed (GOV-1728)** via
+`ee/transpordiamet/vehicle-transfer-notification` — the notice a registered
+owner (or authorized representative) files with Transpordiamet, the Estonian
+Transport Administration, when a motor vehicle is disposed of (sold, gifted,
+exchanged, or otherwise transferred), amending the owner-of-record data in
+Estonia's traffic/motor register per the Road Traffic Act (Liiklusseadus)
+§77(2)-(3). Sourced from a genuine, unauthenticated, directly downloadable
+AcroForm PDF on Transpordiamet's own "Forms" page — Transpordiamet's
+authenticated e-service portal (`eteenindus.mnt.ee`) and its client-rendered
+digital first-registration environment (`dire.transpordiamet.ee`) were both
+screened and ruled out as primary sources first. The form's 67 generically-
+named AcroForm widgets were mapped to their printed captions via
+bounding-box/text-coordinate cross-referencing, cross-checked by an internal
+consistency signal (the 11-box identifier clusters match Estonia's 11-digit
+personal-code length; the 17-box VIN cluster matches the ISO 3779 standard).
+The closer analogue of the already-published `cl/sii/aviso-venta-vehiculo`
+"notice of vehicle sale/transfer" shape — see the Executive Summary update
+above and the document's own VERIFICATION.md for the full candidate
+screening and disclosed judgment calls. This restores the **global DMV
+vertical to 23/23 (100%)**, matching Business Formation's own 23/23.
 
 **Poland's DMV gap is now closed (GOV-1678)** via
 `pl/mi/wniosek-o-rejestracje-pojazdu` — the national vehicle registration /
@@ -2636,7 +2695,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EE** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

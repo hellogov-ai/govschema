@@ -1,0 +1,345 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ee/transpordiamet/vehicle-transfer-notification",
+  "version": "1.0.0",
+  "title": "Estonia Notification of Vehicle Transfer (Disposal)",
+  "description": "The notice a vehicle's registered owner (or their authorized representative) files with the Estonian Transport Administration (Transpordiamet), the agency that maintains Estonia's traffic/motor register (liiklusregister), when a registered motor vehicle is disposed of (sold, gifted, exchanged, or otherwise transferred) to a new owner. Filing amends the vehicle's owner-of-record data in the register, as required by the Road Traffic Act (Liiklusseadus) §77(2)-(3). Sourced directly from Transpordiamet's own downloadable AcroForm PDF, 'AVALDUS SÕIDUKI VÕÕRANDAMISEST TEATAMISEKS' ('Notice of Vehicle Disposal'), completed, digitally signed, and e-mailed together with a scanned copy of the underlying disposal contract to the agency's info@ address — the channel the form itself instructs. This document is scoped to that e-mail/paper-equivalent submission channel; Transpordiamet also offers an authenticated self-service portal (eteenindus.mnt.ee) and a fully digital first-registration environment (dire.transpordiamet.ee) for related but distinct traffic-register transactions, both out of scope here (see VERIFICATION.md). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Estonia or Transpordiamet.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "EE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Transpordiamet (Estonian Transport Administration)",
+    "abbreviation": "Transpordiamet",
+    "url": "https://www.transpordiamet.ee/en/vehicle-registration"
+  },
+  "process": {
+    "type": "amendment",
+    "language": "et"
+  },
+  "source": {
+    "url": "https://www.transpordiamet.ee/sites/default/files/documents/2025-09/V%C3%B5%C3%B5randamisest%20teatamise%20avaldus.pdf",
+    "retrievedAt": "2026-07-08",
+    "documentRef": "AVALDUS SÕIDUKI VÕÕRANDAMISEST TEATAMISEKS (Võõrandamisest teatamise avaldus.pdf) — Transpordiamet's official Estonian-language AcroForm application, retrieved directly (HTTP 200, no login, real AcroForm text/radio widgets, not a scanned image)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-08",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-08",
+    "notes": "GOV-1728: GovSchema Standard Research cycle. Opens Estonia's DMV vertical (5th of 6 EE verticals), the top-priority candidate per this cycle's own screening order: Transpordiamet's authenticated e-service portals (eteenindus.mnt.ee, dire.transpordiamet.ee) return only a login prompt or an empty client-rendered shell to an unauthenticated fetch, but the agency's own 'Forms' page (taotlused-blanketid) publishes a genuine, unauthenticated, directly downloadable AcroForm PDF for notifying the register of a vehicle's disposal/transfer of ownership. See VERIFICATION.md for the full source inventory, coordinate-verified field-by-field mapping, Road Traffic Act citations, and every disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-08"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "ownerName",
+      "label": "Name (first and last name) / Business name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The registered owner's full name (natural person) or business name (legal person), as recorded in the traffic register.",
+      "sourceRef": "Application form, REGISTRIJÄRGSE OMANIKU ANDMED (registered owner data) section, field 'Nimi (ees- ja perekonnanimi)/ Ärinimi' (AcroForm widget 'Text Box 1')"
+    },
+    {
+      "name": "ownerIdentifierType",
+      "label": "Owner identifier type",
+      "type": "enum",
+      "required": true,
+      "description": "The form offers two mutually exclusive identifier boxes for the owner: an 11-digit Estonian personal identification code (isikukood, for a natural person) or a registry code (registrikood, for a legal person/business). This field selects which one applies; see `ownerPersonalIdCode`/`ownerRegistryCode`.",
+      "sourceRef": "Application form, registered owner data section, 'Eesti isikukood või Registrikood'",
+      "validation": {
+        "enum": ["personal-code", "registry-code"]
+      }
+    },
+    {
+      "name": "ownerPersonalIdCode",
+      "label": "Owner's Estonian personal identification code",
+      "type": "string",
+      "requiredWhen": {
+        "field": "ownerIdentifierType",
+        "equals": "personal-code"
+      },
+      "classification": "sensitive-pii",
+      "description": "The registered owner's 11-digit Estonian isikukood, entered one digit per box on the form (11 boxes).",
+      "sourceRef": "Application form, registered owner data section, 'Eesti isikukood' (AcroForm widgets 'Text Box 2'..'Text Box 2_11', 11 single-digit boxes)",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "ownerRegistryCode",
+      "label": "Owner's registry code",
+      "type": "string",
+      "requiredWhen": {
+        "field": "ownerIdentifierType",
+        "equals": "registry-code"
+      },
+      "description": "The registered owner's business/legal-entity registry code (äriregistri kood), for a legal-person owner.",
+      "sourceRef": "Application form, registered owner data section, 'Registrikood' (AcroForm widget 'Text Box 3')"
+    },
+    {
+      "name": "ownerCounty",
+      "label": "County",
+      "type": "string",
+      "required": true,
+      "description": "County (maakond) of the registered owner's address.",
+      "sourceRef": "Application form, registered owner data section, 'Maakond' (AcroForm widget 'Text Box 3_2')"
+    },
+    {
+      "name": "ownerCityOrParish",
+      "label": "City / Parish",
+      "type": "string",
+      "required": true,
+      "description": "City or rural municipality (linn/vald) of the registered owner's address.",
+      "sourceRef": "Application form, registered owner data section, 'Linn/Vald' (AcroForm widget 'Text Box 3_3')"
+    },
+    {
+      "name": "ownerStreetAddress",
+      "label": "Village/Street/House/Apartment",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Village, street, house number, and apartment number of the registered owner's address, as one combined field on the form.",
+      "sourceRef": "Application form, registered owner data section, 'Küla/Tänav/Maja/Korter' (AcroForm widget 'Text Box 3_4')"
+    },
+    {
+      "name": "ownerPhone",
+      "label": "Phone",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Registered owner's contact phone number.",
+      "sourceRef": "Application form, registered owner data section, 'Telefon' (AcroForm widget 'Text Box 3_5')"
+    },
+    {
+      "name": "ownerEmail",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Registered owner's contact e-mail address. Not marked mandatory on the form (unlike phone).",
+      "sourceRef": "Application form, registered owner data section, 'E-post' (AcroForm widget 'Text Box 3_6')",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "authorizedPersonGivenName",
+      "label": "Authorized person — given name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Given name of a person authorized to submit the notice on the registered owner's behalf. The form's own heading marks this whole section '(vajadusel)' — 'if needed' — so it is only completed when a representative, rather than the owner, is filing.",
+      "sourceRef": "Application form, VOLITATUD ISIK (authorized person) section, 'Eesnimi' (AcroForm widget 'Text Box 3_7')"
+    },
+    {
+      "name": "authorizedPersonSurname",
+      "label": "Authorized person — surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Surname of the authorized person filing on the owner's behalf, if applicable.",
+      "sourceRef": "Application form, VOLITATUD ISIK section, 'Perekonnanimi' (AcroForm widget 'Text Box 3_8')"
+    },
+    {
+      "name": "authorizedPersonPersonalIdCode",
+      "label": "Authorized person — Estonian personal identification code",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "11-digit Estonian isikukood of the authorized person filing on the owner's behalf, if applicable.",
+      "sourceRef": "Application form, VOLITATUD ISIK section, 'Eesti isikukood' (AcroForm widgets 'Text Box 2_12'..'Text Box 2_22', 11 single-digit boxes)",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "vehicleMake",
+      "label": "Make",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle manufacturer/make (mark).",
+      "sourceRef": "Application form, SÕIDUKI ANDMED (vehicle data) section, 'Mark' (AcroForm widget 'Text Box 3_9')"
+    },
+    {
+      "name": "vehicleCommercialName",
+      "label": "Commercial name (model)",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle's commercial name/model (kaubanduslik nimetus).",
+      "sourceRef": "Application form, vehicle data section, 'Kaubanduslik nimetus (mudel)' (AcroForm widget 'Text Box 3_10')"
+    },
+    {
+      "name": "registrationPlate",
+      "label": "Estonian registration plate",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's current Estonian state registration plate number.",
+      "sourceRef": "Application form, vehicle data section, 'Eesti registreerimismärk' (AcroForm widget 'Text Box 3_11')"
+    },
+    {
+      "name": "vin",
+      "label": "VIN code",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's 17-character Vehicle Identification Number, entered one character per box on the form (17 boxes).",
+      "sourceRef": "Application form, vehicle data section, 'VIN-kood' (AcroForm widgets 'Text Box 4'..'Text Box 4_17', 17 single-character boxes)",
+      "validation": {
+        "pattern": "^[A-HJ-NPR-Z0-9]{17}$"
+      }
+    },
+    {
+      "name": "contractType",
+      "label": "Contract type",
+      "type": "enum",
+      "required": true,
+      "description": "The type of disposal contract (võõrandamisleping) the transfer is based on: sale, gift, exchange, or another type of contract, per the form's own four radio options.",
+      "sourceRef": "Application form, LEPINGU ANDMED (contract data) section, radio group 'Option Button 1' with options 'müügileping'/'kinkeleping'/'vahetusleping'/'muu'",
+      "validation": {
+        "enum": ["sale-agreement", "gift-agreement", "exchange-agreement", "other"]
+      }
+    },
+    {
+      "name": "contractDate",
+      "label": "Date of conclusion",
+      "type": "date",
+      "required": true,
+      "description": "Date the disposal contract was concluded (sõlmimise kuupäev).",
+      "sourceRef": "Application form, contract data section, 'Sõlmimise kuupäev' (AcroForm widget 'Text Box 3_12')"
+    },
+    {
+      "name": "contractNumber",
+      "label": "Contract number",
+      "type": "string",
+      "required": false,
+      "description": "The disposal contract's own reference number, where the contract carries one. A private sale/gift/exchange agreement between individuals may not be numbered.",
+      "sourceRef": "Application form, contract data section, 'Number' (AcroForm widget 'Text Box 3_13')"
+    },
+    {
+      "name": "newOwnerName",
+      "label": "New owner — name / business name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name (natural person) or business name (legal person) of the vehicle's new owner under the disposal contract.",
+      "sourceRef": "Application form, UUE OMANIKU ANDMED (new owner data) section, 'Nimi (ees- ja perekonnanimi)/ Ärinimi' (AcroForm widget 'Text Box 3_14')"
+    },
+    {
+      "name": "newOwnerIdentifierType",
+      "label": "New owner identifier type",
+      "type": "enum",
+      "required": true,
+      "description": "Same personal-code/registry-code alternative as `ownerIdentifierType`, applied to the new owner.",
+      "sourceRef": "Application form, new owner data section, 'Eesti isikukood või Registrikood'",
+      "validation": {
+        "enum": ["personal-code", "registry-code"]
+      }
+    },
+    {
+      "name": "newOwnerPersonalIdCode",
+      "label": "New owner's Estonian personal identification code",
+      "type": "string",
+      "requiredWhen": {
+        "field": "newOwnerIdentifierType",
+        "equals": "personal-code"
+      },
+      "classification": "sensitive-pii",
+      "description": "The new owner's 11-digit Estonian isikukood, entered one digit per box on the form (11 boxes).",
+      "sourceRef": "Application form, new owner data section, 'Eesti isikukood' (AcroForm widgets 'Text Box 2_23'..'Text Box 2_33', 11 single-digit boxes)",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "newOwnerRegistryCode",
+      "label": "New owner's registry code",
+      "type": "string",
+      "requiredWhen": {
+        "field": "newOwnerIdentifierType",
+        "equals": "registry-code"
+      },
+      "description": "The new owner's business/legal-entity registry code, for a legal-person new owner.",
+      "sourceRef": "Application form, new owner data section, 'Registrikood' (AcroForm widget 'Text Box 3_15')"
+    },
+    {
+      "name": "applicationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the notice itself is signed/submitted, printed next to the signature line. The signature itself is applied as a digital signature over the submitted file (see `documents.signatureAttestation`) rather than typed into a field.",
+      "sourceRef": "Application form, 'ALLKIRI KUUPÄEV' row (AcroForm widget 'Text Box 3_16')"
+    }
+  ],
+  "documents": [
+    {
+      "id": "disposalContractDocument",
+      "label": "Scanned disposal contract (võõrandamisleping)",
+      "category": "supporting-evidence",
+      "required": true,
+      "constraints": {
+        "mediaTypes": ["application/pdf", "image/jpeg", "image/png"]
+      },
+      "sourceRef": "Application form header instruction: 'Palume täita hallid lahtrid, allkirjastada digiallkirjaga, lisada skaneeritud võõrandamisleping ja saata info@transpordiamet.ee' ('Please fill in the grey fields, sign with a digital signature, attach a scanned disposal contract, and send to info@transpordiamet.ee')."
+    },
+    {
+      "id": "signatureAttestation",
+      "label": "Applicant's digital signature",
+      "category": "attestation",
+      "required": true,
+      "statement": "/allkirjastatud digitaalselt/ (digitally signed)",
+      "issuingAuthority": "Self-attested by the registered owner or their authorized person",
+      "sourceRef": "Application form, signature row note '/allkirjastatud digitaalselt/', directly below the 'ALLKIRI' (signature) label"
+    }
+  ],
+  "steps": [
+    {
+      "id": "registered_owner",
+      "title": "Registered owner's data",
+      "fields": ["ownerName", "ownerIdentifierType", "ownerPersonalIdCode", "ownerRegistryCode", "ownerCounty", "ownerCityOrParish", "ownerStreetAddress", "ownerPhone", "ownerEmail"],
+      "next": "authorized_person"
+    },
+    {
+      "id": "authorized_person",
+      "title": "Authorized person (if needed)",
+      "fields": ["authorizedPersonGivenName", "authorizedPersonSurname", "authorizedPersonPersonalIdCode"],
+      "next": "vehicle_data"
+    },
+    {
+      "id": "vehicle_data",
+      "title": "Vehicle data",
+      "fields": ["vehicleMake", "vehicleCommercialName", "registrationPlate", "vin"],
+      "next": "contract_data"
+    },
+    {
+      "id": "contract_data",
+      "title": "Disposal contract data",
+      "fields": ["contractType", "contractDate", "contractNumber"],
+      "next": "new_owner_data"
+    },
+    {
+      "id": "new_owner_data",
+      "title": "New owner's data",
+      "fields": ["newOwnerName", "newOwnerIdentifierType", "newOwnerPersonalIdCode", "newOwnerRegistryCode"],
+      "next": "signature"
+    },
+    {
+      "id": "signature",
+      "title": "Signature and date",
+      "fields": ["applicationDate"]
+    }
+  ]
+}
