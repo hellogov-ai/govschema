@@ -4,7 +4,62 @@
 
 ## Executive Summary
 
-**25 jurisdictions** | **281 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**25 jurisdictions** | **282 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1789): Malaysia's 3rd vertical (Visa)** is now
+> published, with `my/jim/visa-with-reference-application` — the Jabatan
+> Imigresen Malaysia's (JIM, Immigration Department of Malaysia) "Borang
+> Permohonan Pas Lawatan" (Visit Pass Application Form, IM.12), submitted
+> together with the companion Form Imm.38 ("Application For Visa") as the
+> intake form for a Visa With Reference (VDR) — a visa a Malaysian
+> Representative Office abroad issues to a non-citizen so they may enter
+> Malaysia once the Immigration Department Headquarters approves it.
+> Screened first: Malaysia's eVISA portal (`malaysiavisa.imi.gov.my`), an
+> Angular SPA whose `/evisa/apply/vdr/personal-detail` route serves only an
+> app shell requiring an authenticated session/token to reach any real
+> field screen — login-gated, rejected; eNTRI (`windowmalaysia.my`),
+> which requires account registration before any field is visible —
+> rejected; and JIM's own legacy `portal2017/images/borang/` subsite, whose
+> Visa PDF links are still referenced from the current "Forms Download"
+> page but every one 404s/500s on direct fetch, with the Wayback CDX API
+> confirming HTTP 404 in every snapshot since 2022-08 — a stale link, not a
+> genuine source. Spain's Policía Nacional DNI/passport channel and
+> Chile's Passport/Visa/National ID candidates were re-confirmed still dead
+> ends from prior cycles (login/CAPTCHA/appointment-gated, no downloadable
+> field-level form) and not re-attempted. IM.12 was picked instead: a
+> genuine, unauthenticated, directly downloadable, currently-served PDF
+> (confirmed live this cycle, HTTP 200, 770,958 bytes, an Adobe LiveCycle
+> Designer XFA container with 0 AcroForm/XFA Widget annotations — a
+> print-layout container, not fillable, but a self-documenting, numbered
+> field-by-field form, the same shape as this registry's other JIM/JPJ
+> Malaysian schemas). IM.12's own printed title names a "Pass," not a
+> "Visa" — modelled under this registry's Visa vertical (there is no
+> separate "Pass" vertical in GovSchema's 6-vertical taxonomy) because the
+> form's own Section D, "KEPERLUAN VISA / VISA REQUIREMENT," asks whether a
+> visa is required and, if so, single- or multiple-entry, and because JIM's
+> own current VDR service page classifies this exact form as the required
+> VDR intake form. Scope: JIM's VDR checklist page lists five applicant
+> categories (A-E); this schema models only the four — A (wife of a
+> Malaysian citizen), B (husband of a Malaysian citizen), D (India), E
+> (China, Vietnam, North Korea, Cuba) — that submit Form Imm.12 together
+> with Form Imm.38. Category C (Afghanistan) instead submits a different
+> form, Form Imm.47, and is out of scope. Models 20 fields across the
+> pass-type/application-type/VDR-category selectors, applicant
+> particulars, travel-document particulars, sponsor particulars, and the
+> visa-requirement section, plus 19 `documents[]` entries (identity
+> document, photographs, the Form Imm.38 companion document cited without
+> describing its contents — confirmed to be a single embedded raster image
+> with no extractable text layer at all — and a set of category-gated
+> supporting documents drawn from JIM's own VDR checklist, conditionally
+> required via the shared `Condition` grammar). This gives Malaysia **3 of
+> its 6 verticals (DMV, Passport, Visa)**; Business Formation (confirmed
+> too thin, GOV-1774), Taxes, and National ID (both confirmed dead ends,
+> GOV-1783) remain not further open work absent a genuinely new source.
+> This also moves the **global Visa vertical to 17/25 (68%)**. See the
+> document's own VERIFICATION.md for the full candidate comparison,
+> field-by-field citations, and every disclosed scope decision (including
+> the resolution of an item-16 numbering ambiguity flagged during
+> research, confirmed absent from the source's own printed numbering).
 
 > **Update (2026-07-08, GOV-1783): Malaysia's 2nd vertical (Passport)** is
 > now published, with `my/jim/passport-travel-document-application` — the
@@ -2816,7 +2871,16 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (16/25 jurisdictions — 64%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (17/25 jurisdictions — 68%)
+
+**Malaysia's Visa gap is now closed** (`my/jim/visa-with-reference-application`,
+GOV-1789) — sourced from JIM's IM.12 "Borang Permohonan Pas Lawatan" (Visit
+Pass Application Form), the intake form JIM's own current "Visa With
+Reference" service page requires (together with the companion Form Imm.38)
+for four of its five VDR applicant categories; see the Executive Summary
+update above and the document's own VERIFICATION.md for the full sourcing
+record and disclosed scope decisions. This gives Malaysia 3 of its 6
+verticals (DMV, Passport, Visa).
 
 **Poland's Visa gap was screened this cycle (GOV-1691) and confirmed a
 duplicate, not an open candidate**: the current wzór wniosku o wydanie wizy
@@ -3089,7 +3153,7 @@ now closed.
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **MY** | 2 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **MY** | 3 | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
