@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**23 jurisdictions** | **272 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**23 jurisdictions** | **273 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1721):** Estonia gains its fourth vertical,
+> Taxes, with `ee/emta/income-tax-return-form-a` — Vorm A / Form A, the
+> Estonian Tax and Customs Board (Maksu- ja Tolliamet, EMTA)'s annual income
+> tax return for a resident natural person. A genuine, current (tax year
+> 2025), directly downloadable, unauthenticated, bilingual (Estonian/English)
+> 12-page PDF with no AcroForm layer (confirmed via `pdfjs-dist`: zero `/T`
+> or `/FT` entries after inflating streams) — the same static print/hand-fill
+> template shape as `pl/mf/zeznanie-pit-37` — but fully self-documenting via
+> its own printed numbered sections and bilingual inline labels. Scoped to
+> the single most common filer profile: a resident wage-earner filing alone
+> with domestic-only income already taxed at source. Models 22 fields
+> (identification, a single address-of-residence field, contact details, the
+> domestic Part I wages table, gifts/donations made, paid training expenses,
+> and refund of an overpayment to an Estonian bank account) plus 1
+> `documents[]` attestation entry (the closing signature declaration).
+> Deliberately excludes the form's far larger and more arithmetic-heavy
+> sections: §2 (EEA cross-border-resident provisions), §5.2-§5.5
+> (pension/insurance/rental/partnership income), §6 (gains from the transfer
+> of property — the form's largest section), §7 (basic-exemption-only
+> income), §8 (all foreign-country income), §9.1-§9.3 (mostly payer-reported
+> pension/social-security contributions), §10 (training-deduction transfer to
+> a spouse), §12 (refund to a foreign account), §13 (overpayment elections),
+> and §14.2 (representative-filed variant) — mirroring
+> `pl/mf/zeznanie-pit-37`'s own precedent of scoping to the simple
+> single-filer wage case. Cross-referenced against the governing Minister of
+> Finance regulation "Residendist füüsilise isiku tulu deklareerimine"
+> (Riigi Teataja, consolidated text in force from 16.02.2025), retrieved via
+> a Wayback Machine snapshot since `riigiteataja.ee` is a client-rendered SPA
+> that returns an empty shell to direct automated retrieval — this
+> registry's now-repeated workaround for the same host (see
+> `ee/rik/private-limited-company-foundation`, GOV-1705;
+> `ee/ppa/passport-application`, GOV-1712). Estonia now stands at 4 of 6
+> verticals (National ID, Business Formation, Passport, Taxes); DMV and Visa
+> remain open, with Visa still this registry's lowest EE priority as a likely
+> Schengen-template duplicate. See the document's own VERIFICATION.md for the
+> full sourcing record and every disclosed scope exclusion.
 
 > **Update (2026-07-08, GOV-1712):** Estonia gains its third vertical,
 > Passport, with `ee/ppa/passport-application` — the Police and Border Guard
@@ -2225,7 +2262,19 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (21/23 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (22/23 jurisdictions — 96%)
+
+**Estonia's Taxes gap is now closed** (`ee/emta/income-tax-return-form-a`,
+GOV-1721) — Vorm A / Form A, EMTA's annual income tax return for a resident
+natural person, scoped to a resident wage-earner filing alone with
+domestic-only income already taxed at source. A genuine, current (tax year
+2025), directly downloadable, unauthenticated, bilingual PDF with no
+AcroForm layer but fully self-documenting, the same shape as
+`pl/mf/zeznanie-pit-37`. Deliberately excludes the form's capital-gains
+(§6), foreign-income (§8), and joint-filing/spouse-transfer (§10) sections,
+among others — see the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record and every disclosed scope
+exclusion. Chile's Taxes gap remains the vertical's only open candidate.
 
 **Poland's Taxes gap is now closed** (`pl/mf/zeznanie-pit-37`, GOV-1691) —
 PIT-37, the annual personal income tax return for individuals whose income
@@ -2589,7 +2638,7 @@ now closed.
 | **CL** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EE** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **EE** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **ES** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -2882,6 +2931,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    This gives Poland 5 of its 6 verticals; only Visa remains open, now a
    confirmed-duplicate dead end pending a genuinely distinct Polish visa
    pathway (if one exists) for a future cycle to find.
+   **Estonia**, opened as the registry's 23rd jurisdiction (GOV-1698, via
+   `ee/ppa/e-residency-application` under National ID), has since reached 4
+   of its 6 verticals: Business Formation
+   (`ee/rik/private-limited-company-foundation`, GOV-1705), Passport
+   (`ee/ppa/passport-application`, GOV-1712), and Taxes
+   (`ee/emta/income-tax-return-form-a`, GOV-1721) each closed in their own
+   cycle. DMV and Visa remain open; Visa is this registry's standing lowest
+   EE priority, flagged as a likely duplicate of the EU/Schengen long-stay
+   -visa template already modelled for other jurisdictions.
    Other
    candidates worth scouting for a **23rd** jurisdiction in a future cycle:
    Portugal, or an EU member beyond DE/ES/FR/NL/PL — Japan (`mofa.go.jp`) is
