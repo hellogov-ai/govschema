@@ -25,10 +25,10 @@
 > Policía Nacional's own official procedure page (`sede.policia.gob.es`,
 > fetched directly with no gate), which confirmed the in-person-only filing
 > channel, the required Tasa 790 Código 012 fee-payment-proof document, and
-> the issuing authority. The form itself carries zero AcroForm fields — a
-> static print/hand-fill template, the same shape as `pl/mf/zeznanie-pit-37`
-> and `ee/emta/income-tax-return-form-a` — but is fully self-documenting via
-> its own page-3 numbered instructions key. **Disclosed discrepancy:** the
+> the issuing authority. The form itself is a fillable AcroForm PDF (70
+> named widget annotations, including checkboxes matching this schema's
+> `documentRequestType` options), also fully self-documenting via its own
+> page-3 numbered instructions key. **Disclosed discrepancy:** the
 > form's own printed header still cites its legal basis as "(LO 4/2000 y RD
 > 557/2011)," while the live procedure page cites the current governing
 > rules as LO 4/2000 alongside Real Decreto 1155/2024 (which replaced RD
