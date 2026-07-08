@@ -4,7 +4,29 @@
 
 ## Executive Summary
 
-**26 jurisdictions** | **287 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**26 jurisdictions** | **288 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1833): Portugal's Passport vertical** is now
+> published, with `pt/mne/requerimento-passaporte-consular` — the
+> Ministério dos Negócios Estrangeiros' Consulado-Geral de Portugal no Rio
+> de Janeiro's "Requerimento de Passaporte," a passport-specific consular
+> intake form distinct from the already-published
+> `pt/mne/requerimento-cartao-cidadao-passaporte-consular` (São Paulo's
+> Cartão de Cidadão-centric form, filed under National ID). This closes the
+> lead GOV-1797's own VERIFICATION.md had explicitly flagged as an
+> unscreened backlog candidate: whether a genuinely distinct, passport-only
+> consular form exists beyond the CC-centric ones already examined. Found at
+> the Rio de Janeiro consulate — a flat, single-page, self-documenting PDF
+> with zero AcroForm/XFA widgets (confirmed via `pdfjs-dist`), modelled from
+> its cleanly legible printed text layer alone via coordinate-sorted
+> line reconstruction. Modelled 25 fields (1 `documents[]` entry) across 7
+> `steps`. This gives Portugal **5 of its 6 verticals** (DMV, Passport,
+> Taxes, Visa, National ID); Business Formation remains a confirmed dead end
+> (IRN's pacto-social specimens are scanned images with no text layer; the
+> sole-trader route is a fully authenticated `acesso.gov.pt` wizard with no
+> PDF fallback). See
+> `registry/pt/mne/requerimento-passaporte-consular/1.0.0/VERIFICATION.md`
+> for the full sourcing record and every disclosed judgment call.
 
 > **Update (2026-07-08, GOV-1826): Czech Republic's 4th vertical (Taxes)** is
 > now published, with `cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob` — the
@@ -3427,7 +3449,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **PT** | 4 | ✗ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **PT** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -3886,12 +3908,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   issuance is an in-person, biometric-only process; IRN's own forms library
   has no "Passaporte" category, and neither `gov.pt`'s "Pedir o passaporte
   português para estrangeiros" nor IRN's "Passaporte eletrónico" page links a
-  citizen-facing application PDF. The one passport-adjacent PDF found (the
-  São Paulo consulate's `cc_e_pep_formulario.pdf`, modelled this cycle under
-  National ID — see above) is a National-ID-centric consular intake form
-  with a passport sub-option, not a passport-specific application; a
-  genuinely distinct domestic or consular passport-specific form remains an
-  open, unscreened backlog candidate for a future cycle.
+  citizen-facing application PDF. **The consular route is not a dead end,
+  however: GOV-1833 (2026-07-08) found the Rio de Janeiro consulate's own
+  passport-specific `req_psspnovo.pdf`, distinct from the São Paulo
+  consulate's National-ID-centric `cc_e_pep_formulario.pdf`, and modelled it
+  as `pt/mne/requerimento-passaporte-consular` — closing Portugal's Passport
+  vertical.** The domestic (non-consular) route remains a confirmed dead
+  end.
 - **NL Visa** (Schengen dupes FR; Dutch MVV is 200+ fragmented forms) — GOV-777/GOV-859.
 - **PL Visa (national Type D)** — GOV-1691, 2026-07-07. Poland's current
   wzór wniosku o wydanie wizy krajowej (Załącznik nr 2 do Rozporządzenie
