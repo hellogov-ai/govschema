@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **292 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **293 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1868): canton Zürich's Berufsauslagen**
+> (professional/work-related expense deductions) schedule is now published,
+> with `ch/zh/sta/berufsauslagen` — the Kantonales Steueramt Zürich's
+> "Berufsauslagen 2025," the third companion schedule to
+> `ch/zh/sta/steuererklaerung-natuerliche-personen` (GOV-1847), used by an
+> employed taxpayer to compute the deductible work-related expenses
+> referenced by the main return's own Ziffer 11.1/11.2. This picks the
+> strongest remaining candidate off the open list GOV-1854 left behind
+> (Berufsauslagen, Versicherungsprämien, Aus- und Weiterbildung,
+> Liegenschaftenverzeichnis, Schuldenverzeichnis, Hilfsblatt A/B/G): unlike
+> the securities schedule closed last cycle, which only applies to filers who
+> hold investments, professional-expense deductions are claimed by nearly
+> every salaried filer. Sourced from a genuine, current, unauthenticated,
+> flat (non-AcroForm) 2-page PDF (`360 Berufsauslagen ZH 2025 HA DEF.pdf`,
+> HTTP 200, no login/CAPTCHA/WAF gate, confirmed via `pdfjs-dist`/`pdf-lib` to
+> carry zero AcroForm widgets), fetched from the same `zh.ch` tax-forms
+> listing as the main return and the Wertschriftenverzeichnis. Unlike the
+> main return, this form prints every statutory rate/cap it depends on
+> directly on its own two pages; the Kantonales Steueramt's own Wegleitung
+> was still fetched and cross-checked to confirm no further cap applied to
+> the one line the form itself defers to it, and its p.36 carries an
+> official worked specimen of this exact form, rendered to PNG and visually
+> cross-checked against this schema's own field layout before any field name
+> was assigned. The two-row private-vehicle commuting worksheet is collapsed
+> into one free-text field per person, consistent with this registry's
+> established treatment of unbounded repeating tables under GovSchema v0.3's
+> flat field model. Modelled 70 fields (4 `documents[]` entries) across 8
+> `steps`. This remains Switzerland's 2nd of 6 verticals (DMV, Taxes) — a
+> companion schedule, not a new vertical — but further deepens Taxes-vertical
+> coverage, leaving five companion schedules open. See
+> `registry/ch/zh/sta/berufsauslagen/1.0.0/VERIFICATION.md` for the full
+> sourcing record, every disclosed scope decision, and a worked mock-data
+> example.
 
 > **Update (2026-07-08, GOV-1861): Spain's Visa vertical** is now
 > published, with `es/maec/solicitud-visado-nacional` — the Ministerio de
@@ -3110,6 +3144,19 @@ sheets (Beiblatt 1/2) and Form DA-1 (foreign-withholding relief) are
 represented only as gated pass-through transfer totals. See the Executive
 Summary update above and the document's own VERIFICATION.md.
 
+**The main return's own flagged Berufsauslagen gap is now also published**
+(`ch/zh/sta/berufsauslagen`, GOV-1868) — the professional/work-related
+expense deductions companion schedule, used by an employed taxpayer to
+compute the deduction referenced by the main return's own Ziffer 11.1/11.2.
+Sourced the same way (genuine, current, unauthenticated, flat non-AcroForm
+PDF from the same `zh.ch` listing); unlike the main return, this form prints
+every statutory rate/cap it depends on directly on its own two pages, and
+its Wegleitung's own worked specimen (p.36) was rendered to PNG and visually
+cross-checked against this schema's field layout. The two-row private-
+vehicle commuting worksheet is collapsed to one free-text field per person.
+See the Executive Summary update above and the document's own
+VERIFICATION.md.
+
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
 osob" (form 25 5405, MFin 5405), the annual personal income tax return under
@@ -4026,12 +4073,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    **The Wertschriftenverzeichnis gap has since closed too (GOV-1854,
    2026-07-08)**, via `ch/zh/sta/wertschriften-und-guthabenverzeichnis` — see
    the Executive Summary update above and the document's own
-   VERIFICATION.md. The remaining six companion schedules (Berufsauslagen,
-   Versicherungsprämien, Aus- und Weiterbildung, Liegenschaftenverzeichnis,
-   Schuldenverzeichnis, Hilfsblatt A/B/G) remain open backlog candidates for
-   a future cycle; none has yet been screened for tractability. Switzerland's
-   other 25 cantons each likely publish their own equivalent tax-return form,
-   also unpursued.
+   VERIFICATION.md. **The Berufsauslagen gap has since closed too (GOV-1868,
+   2026-07-08)**, via `ch/zh/sta/berufsauslagen` — see the Executive Summary
+   update above and the document's own VERIFICATION.md. The remaining five
+   companion schedules (Versicherungsprämien, Aus- und Weiterbildung,
+   Liegenschaftenverzeichnis, Schuldenverzeichnis, Hilfsblatt A/B/G) remain
+   open backlog candidates for a future cycle; none has yet been screened for
+   tractability. Switzerland's other 25 cantons each likely publish their own
+   equivalent tax-return form, also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
