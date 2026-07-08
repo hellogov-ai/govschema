@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**26 jurisdictions** | **284 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**26 jurisdictions** | **285 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-08, GOV-1804): Czech Republic's 2nd vertical (DMV)** is
+> now published, with `cz/md/zadost-o-zapis-silnicniho-vozidla` — the
+> Ministerstvo dopravy's (MD, Ministry of Transport) "Žádost o zápis
+> silničního vozidla do registru silničních vozidel," the application by
+> which a vehicle's owner (and, where different, its operator/holder)
+> request entry into the Register of Road Vehicles (registr silničních
+> vozidel), filed with the applicant's locally competent municipal
+> authority with extended jurisdiction (obecní úřad obce s rozšířenou
+> působností). This is a follow-up cycle to GOV-1807's opening of the Czech
+> Republic (26th jurisdiction) with a single Business Formation schema,
+> continuing this registry's established pattern of building out a
+> newly-opened jurisdiction's remaining verticals (the same sequencing
+> Malaysia's `my/jpj` → `my/jim` (Passport) → `my/jim` (Visa) used). Unlike
+> most of this registry's recent Czech/Polish/Malaysian print-layout PDF
+> finds, this form carries a genuine 57-field AcroForm layer, confirmed by
+> two independent extraction passes (`pdfjs-dist`'s per-page
+> `getAnnotations()` and a separate `pdf-lib` `form.getFields()` pass both
+> report exactly 57 fields, so — unlike GOV-1801's `pt/mne` PDF — no
+> orphaned/duplicate Widgets needed reconciling). Because several of the
+> form's comb-style ID-number boxes and its operator-name block visually
+> run together or print no visible line at all, this cycle also rendered
+> both pages to PNG (`pdfjs-dist` + `node-canvas`) and visually
+> cross-checked every widget rectangle against the rendered page — this
+> resolved a 3-widget rodné-číslo/IČO row into two logical fields (a
+> 6-digit + 4-digit comb pair forming one `ownerPersonalIdNumber`, plus a
+> separate 8-digit IČO field) and confirmed a two-line operator-name block
+> as a single logical field. Modelled 39 fields (including two
+> `exclusivityGroups` — one for 10 independent vehicle-color checkboxes,
+> one for 4 independent vehicle-purpose checkboxes, both modelled as
+> separate boolean fields rather than collapsed into an enum, since the
+> source PDF defines each checkbox as its own independently-named `/Btn`
+> field rather than a shared radio group) and 9 `documents[]` entries,
+> explicitly excluding the form's own office-only sections (an authority
+> -assigned plate-number box, and the entire p.2 "confirmation of documents
+> received" and administrative-fee-receipt blocks, both completed by
+> issuing-office staff, not the applicant). This gives the Czech Republic
+> **2 of its 6 verticals** (Business Formation, DMV); Passport, Taxes, Visa,
+> and National ID remain open backlog candidates for a future cycle. See
+> the document's own VERIFICATION.md for the full extraction method and
+> every disclosed judgment call.
 
 > **Update (2026-07-08, GOV-1804): Czech Republic opens as the registry's
 > 26th jurisdiction**, with
@@ -3268,7 +3309,7 @@ now closed.
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CZ** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **CZ** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **ES** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
