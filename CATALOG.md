@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**28 jurisdictions** | **315 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**28 jurisdictions** | **316 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-2035): Japan's Seal Registration Notification**
+> (印鑑届書) is now published, as
+> `jp/houmukyoku/seal-registration-notification` v1.0.0 — a companion/
+> supporting-filing schema, not a new company-type application: this is the
+> Legal Affairs Bureau's own generic seal-registration/seal-change
+> notification, common to every entity type it registers (companies, NPOs,
+> associations, foundations, cooperatives, and more), used both alongside a
+> brand-new entity's own establishment registration and, later, whenever a
+> representative's seal changes. This was the candidate CATALOG.md's own
+> Known Gaps item 6 had flagged as an open companion-schedule opportunity
+> since GOV-2019, referenced by name in both already-published Houmukyoku
+> company-formation schemas' own scope notes. Sourced from the same
+> `houmukyoku.moj.go.jp` index page as those two schemas
+> (`https://houmukyoku.moj.go.jp/homu/COMMERCE_11-1.html`); unlike those two
+> schemas' own first-PDF-found-was-a-worked-example trap, this notification's
+> index-page row cleanly separates its one blank template
+> (`001188212.pdf`, 81174 bytes, 1 page, zero AcroForm/Widget annotations) from
+> its thirteen separate per-entity-type worked-example PDFs, two of which
+> (株式会社, 持分会社) were cross-checked field-by-field against the blank
+> template. Models the seal submitter's own particulars, seal-card
+> continuity across a change of representative, and — sourced directly from
+> the blank template itself, a stronger finding than either sibling schema's
+> own agent/proxy fields — a complete embedded power-of-attorney block with
+> two independent delegated-power checkboxes, plus a waivable personal seal
+> certificate attachment. Deliberately scoped out: the scenario where the
+> entity's representative is itself a corporation (a distinct filing case the
+> source's own worked examples document across four dedicated pages,
+> including its own 保証書 guarantee-letter attachment), flagged as a future
+> companion-schedule candidate — see the document's own VERIFICATION.md for
+> the full sourcing record, extraction diff, and every disclosed scope
+> decision. Japan's vertical count remains 3 of 6 (Visa, National ID, Business
+> Formation), unchanged by this companion-schedule cycle.
 
 > **Update (2026-07-09, GOV-2026): Japan's Business Formation vertical is
 > deepened** with a second company-type schema,
@@ -3798,6 +3831,16 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (26/28 jurisdictions — 93%)
 
+**Japan's Seal Registration Notification companion filing is now published
+(GOV-2035)**, via `jp/houmukyoku/seal-registration-notification` — the Legal
+Affairs Bureau's generic seal-registration/seal-change notification (印鑑届書),
+common to every entity type it registers, used both alongside a new entity's
+own establishment registration and, later, whenever a representative's seal
+changes. This is a companion/supporting-filing schema, not a new company-type
+application; Japan's vertical count remains 3 of 6 (Visa, National ID,
+Business Formation), unchanged. See the Executive Summary update above and
+the document's own VERIFICATION.md.
+
 **Japan's Business Formation vertical is deepened with a second company type
 (GOV-2026)**, via
 `jp/houmukyoku/limited-liability-company-establishment-registration-application`
@@ -5367,7 +5410,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Registration Notification (both of those remain open, unpursued
     candidates — see the document's own VERIFICATION.md). Japan's vertical
     count remains 3 of 6 (Visa, National ID, Business Formation); this
-    deepens rather than widens its coverage.
+    deepens rather than widens its coverage. **Update (2026-07-09, GOV-2035):
+    the Seal Registration Notification is now published too**, via
+    `jp/houmukyoku/seal-registration-notification` — a companion/supporting-
+    filing schema (共通の印鑑届書, used across every entity type the Bureau
+    registers, both alongside a new entity's own establishment registration
+    and, later, whenever a representative's seal changes), not a new
+    company-type application or a new vertical; see the Executive Summary
+    update above and the document's own VERIFICATION.md. Its own
+    corporate-representative-member (職務執行者) filing scenario was
+    deliberately scoped out and remains an open companion-schedule candidate,
+    alongside the three sibling Kabushiki Kaisha incorporation variants,
+    which remain this registry's sole open Japan candidates at this time.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
