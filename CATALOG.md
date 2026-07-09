@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **300 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **301 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1924): canton Zürich's Hilfsblatt B**
+> (agricultural/forestry income questionnaire) is now published, with
+> `ch/zh/sta/hilfsblatt-b` — the Kantonales Steueramt Zürich's "Hilfsblatt B
+> Fragebogen für Land- und Forstwirtschaft" (StA Form 330, 2020 edition), the
+> eleventh CH-ZH companion schedule to
+> `ch/zh/sta/steuererklaerung-natuerliche-personen`, used by farms that do not
+> qualify for, or do not elect, the simplified sibling schedule
+> `ch/zh/sta/hilfsblatt-g` (Form 331, GOV-1917). This form itself forks into
+> two mutually exclusive computation paths within one single 4-page PDF —
+> "Landwirte mit Buchhaltung" (Ziffern 1/2, full double-entry bookkeeping) or
+> "Landwirte mit Aufzeichnungen" (Ziffer 3, simplified cash-register/bank
+> records with its own business net-worth statement), both converging on
+> shared Ziffer 4/5 sections — confirmed by direct re-extraction to be case
+> (a) of the branching-decision framework (one document, two internal
+> branches), not two separate form numbers the way Hilfsblatt A's Form
+> 328/329 pair turned out to be. Modelled as a single schema using a required
+> `berichtsart` discriminator field and `requiredWhen` conditions gating each
+> path's own computed subtotal/total fields — no second child issue was filed,
+> since there is no second PDF/form-number variant to defer. Sourced from a
+> genuine, current, unauthenticated, flat (non-AcroForm) 4-page PDF (97,364
+> bytes) from the same `zh.ch` "Formulare für Selbständigerwerbende" listing;
+> the listing page's own on-page label (no "bis `<year>`" cutoff qualifier)
+> confirms it is the current, unsuperseded edition despite its 2020-dated
+> filename. This cycle also corrected a stale size figure inherited from the
+> GOV-1917 cycle's own record (which cited "110 KB" without a direct re-fetch;
+> the true size is 93 KB, and 110 KB instead matches sibling Form 329). Two
+> genuine structural differences from the sibling Hilfsblatt G were found and
+> disclosed: an extra "Zwischenkulturen" land-use line, and a four-tier
+> (rather than three-tier) Bergzone production-zone selector — both flagged,
+> the latter as a possible follow-up for Hilfsblatt G's own field. Modelled
+> 136 fields across 12 steps — the largest CH-ZH companion schedule to date,
+> reflecting its own dual-computation-path structure. This gives Switzerland
+> its eleventh Taxes-vertical document; Switzerland remains at 2 of its 6
+> verticals (DMV, Taxes). This closes the CH-ZH companion-schedule backlog
+> entirely — no further Hilfsblatt A/B/G variant remains unscreened. See
+> `registry/ch/zh/sta/hilfsblatt-b/1.0.0/VERIFICATION.md` for the full
+> field-by-field source mapping, every disclosed scope decision, and the
+> two worked mock-data examples (one per computation path).
 
 > **Update (2026-07-09, GOV-1917): canton Zürich's Hilfsblatt G**
 > (agricultural/forestry income worksheet, simplified statements) is now
@@ -3402,6 +3441,20 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (26/27 jurisdictions — 96%)
 
+**The main return's own flagged Hilfsblatt B gap is now also published**
+(`ch/zh/sta/hilfsblatt-b`, GOV-1924) — Form 330, "Hilfsblatt B Fragebogen für
+Land- und Forstwirtschaft," the larger agricultural/forestry questionnaire
+used by farms that exceed Hilfsblatt G's own eligibility thresholds. Unlike
+Hilfsblatt A's Form 328/329 pair, this form's own two computation paths
+("mit Buchhaltung" vs. "mit Aufzeichnungen") live inside one single PDF,
+confirmed by direct re-extraction, and are modelled in one schema via a
+required `berichtsart` discriminator field with `requiredWhen`-gated
+subtotal/total fields per path. Sourced the same way (genuine, current,
+unauthenticated, flat non-AcroForm 4-page PDF from the same `zh.ch` listing).
+Modelled 136 fields across 12 steps — the largest CH-ZH companion schedule to
+date. This closes the CH-ZH companion-schedule backlog entirely. See the
+Executive Summary update above and the document's own VERIFICATION.md.
+
 **The main return's own flagged Hilfsblatt G gap is now also published**
 (`ch/zh/sta/hilfsblatt-g`, GOV-1917) — Form 331, "Hilfsblatt G für Land- und
 Forstwirtschaft," a simplified agricultural/forestry income worksheet used by
@@ -4500,17 +4553,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Executive Summary update above and the document's own VERIFICATION.md.
    **The Hilfsblatt G gap has since closed too (GOV-1917, 2026-07-09)**, via
    `ch/zh/sta/hilfsblatt-g` (Form 331) — see the Executive Summary update
-   above and the document's own VERIFICATION.md. One companion-schedule gap
-   remains an open backlog candidate for a future cycle: Hilfsblatt B (Form
-   330, agricultural questionnaire), a structurally forked form (two
-   materially different bookkeeping/records computation paths) confirmed via
-   this cycle's own re-fetch of the `zh.ch` listing page to be a current,
-   unsuperseded edition (its own on-page label carries no "bis `<year>`"
-   cutoff qualifier, despite a filename date stamp of 2020), but not yet
-   screened in depth for tractability beyond that currency check.
-   Switzerland's other 25 cantons each likely publish their own equivalent
-   tax-return form, also
-   unpursued.
+   above and the document's own VERIFICATION.md. **The last remaining
+   companion-schedule gap, Hilfsblatt B, has since closed too (GOV-1924,
+   2026-07-09)**, via `ch/zh/sta/hilfsblatt-b` (Form 330) — confirmed to be a
+   single 4-page PDF whose own two bookkeeping/records computation paths
+   fork within that one document (not two separate form numbers), modelled
+   via a `berichtsart` discriminator field — see the Executive Summary update
+   above and the document's own VERIFICATION.md. This closes the CH-ZH
+   companion-schedule backlog entirely; Switzerland's other 25 cantons each
+   likely publish their own equivalent tax-return form, also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
