@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **307 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **308 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1977): Czech Republic's Příloha č. 1
+> self-employment annex** is now published, with
+> `cz/mf/priloha-1-vypocet-dilciho-zakladu-dane-samostatna-cinnost` — form 25
+> 5405/P1, the self-employment/business-income companion schedule to the
+> already-published base return (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
+> GOV-1826), whose own description and VERIFICATION.md had explicitly named
+> and deferred this exact annex. The two candidate URLs supplied at the
+> start of this cycle were independently confirmed, by reading their own
+> printed edition text rather than trusting the URL path, to be stale —
+> tax-year-2016 (vzor č. 12) and tax-year-2017 (vzor č. 25) editions, roughly
+> a decade behind. `financnisprava.gov.cz`'s own "Daňové tiskopisy" listing
+> page was fetched directly instead and confirmed the current edition is
+> vzor č. 22 (`financnisprava.gov.cz/assets/tiskopisy/5405-P1_22.pdf`, a flat
+> print/reference facsimile with zero AcroForm/Widget fields, the same shape
+> as the base return), self-contained with its own embedded "POKYNY K
+> PŘÍLOZE č. 1" field-by-field instructions on its own pages 3-4 — no
+> separate instructions document was needed. A genuine, disclosed structural
+> finding: unlike the base return (whose downstream lines are all pure
+> arithmetic), this annex's own ř. 104 line is not purely computable from
+> ř. 101/102 for a taxpayer on the full-accounting method, who instead enters
+> an independently-derived accounting profit/loss directly — modelled as its
+> own field rather than excluded as computed. Models the partial-tax-base
+> computation (ř. 101-112, excluding ř. 113's own pure-arithmetic final sum
+> and the unoccupied ř. 103/111), the taxpayer's three-way record-keeping
+> method (tax records/full accounting/flat expense-percentage, a literal
+> printed checkbox, unlike the inferred discriminator this registry's own
+> CH-ZH Hilfsblatt B needed), its own bounded 9-row/18-field tax-records
+> balance-sheet worksheet, the main business activity and its expense rate,
+> activity dates, and company-partner/collaborating-person/partnership
+> disclosures. Modelled 53 fields across 5 `steps`. This closes the
+> self-employment share of the Known Gaps section's Czech Republic Taxes
+> item; the Czech Republic remains at **4 of its 6 verticals** (Business
+> Formation, DMV, Visa, Taxes), with Příloha č. 2-4 (rental/other,
+> foreign-source, and separate-tax-base income) still open backlog
+> candidates. See
+> `registry/cz/mf/priloha-1-vypocet-dilciho-zakladu-dane-samostatna-cinnost/1.0.0/VERIFICATION.md`
+> for the full field-by-field source mapping and every disclosed scope
+> decision.
 
 > **Update (2026-07-09, GOV-1970): Estonia's Visa vertical** is now
 > published, with `ee/vm/long-stay-visa-application` — Valisministeerium's
@@ -3893,7 +3932,11 @@ flat print/reference facsimile). Scoped to exclude the four annexes
 income) and every pure computed/arithmetic line, per this registry's
 established treatment of income-tax schemas elsewhere. This gives the Czech
 Republic its 4th of 6 verticals. See the Executive Summary update above and
-the document's own VERIFICATION.md for the full sourcing record.
+the document's own VERIFICATION.md for the full sourcing record. **Update
+(GOV-1977): the self-employment annex, Příloha č. 1, is now closed too**
+(`cz/mf/priloha-1-vypocet-dilciho-zakladu-dane-samostatna-cinnost`, form 25
+5405/P1), a companion schedule to this base return; see the Executive
+Summary update above and the document's own VERIFICATION.md.
 
 **Portugal's Taxes gap is now closed** (`pt/at/declaracao-rendimentos-irs-modelo-3`,
 GOV-1765) — Modelo 3, the Autoridade Tributária e Aduaneira's (AT) annual
@@ -4407,7 +4450,7 @@ now closed.
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **CZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -4835,10 +4878,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    return scoped to an employment/pension-income filer, excluding its four
    annexes (self-employment, rental/other, foreign-source, and
    separate-tax-base income); see the Executive Summary update above and the
-   document's own VERIFICATION.md. The Czech Republic stands at **4 of its 6
-   verticals** (Business Formation, DMV, Visa, Taxes); Passport and National
-   ID are confirmed dead ends, and Business Formation/DMV/Visa/Taxes's own
-   four annexes/sub-processes remain open backlog candidates for a future
+   document's own VERIFICATION.md. **Update (2026-07-09, GOV-1977): the
+   self-employment annex, Příloha č. 1, is now closed too**, via
+   `cz/mf/priloha-1-vypocet-dilciho-zakladu-dane-samostatna-cinnost` (form 25
+   5405/P1) — a companion schedule to the base return, the same pattern this
+   registry has used for Canton Zürich's Hilfsblatt family; see the
+   Executive Summary update above and the document's own VERIFICATION.md.
+   The Czech Republic stands at **4 of its 6 verticals** (Business
+   Formation, DMV, Visa, Taxes); Passport and National ID are confirmed dead
+   ends, and Příloha č. 2-4 (rental/other, foreign-source, and
+   separate-tax-base income) remain open backlog candidates for a future
    cycle.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
