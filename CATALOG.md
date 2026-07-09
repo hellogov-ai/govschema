@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **302 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **303 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1938): Malaysia's Business Formation gap is
+> now closed**, with `my/ssm/sole-proprietorship-partnership-registration`
+> — Form A ("Borang A"), the First Schedule to the Registration of
+> Businesses Rules 1957 (P.U.(A) 282/1957), through which a person
+> responsible for a new sole proprietorship or partnership registers the
+> business with the Registrar of Businesses under the Registration of
+> Businesses Act 1956 (Act 197). This is a different statute and a
+> different registry from the Companies Act 2016 regime GOV-1774's own
+> cycle had already screened and rejected (SSM's "Superform" company
+> -incorporation specimen, zero AcroForm fields, too thin to model) —
+> GOV-1774's own record explicitly flagged that a live Form A PDF was
+> searched for but not found at the time. This cycle located it directly
+> and unauthenticated on `ssm.com.my` (a Word-generated HTML reproduction
+> of the gazetted First Schedule's own table layout, not a PDF), and
+> cross-read the parent Act 197 (fetched fresh, `pdfjs-dist`-extracted)
+> for legal grounding, confirming s.5(1)'s thirty-day post-commencement
+> registration deadline and s.5(2)'s statutory content requirements match
+> the form's own printed sections field-for-field. Scoped to Form A only:
+> its own siblings printed on the same First Schedule page — Form A1
+> (renewal, Rule 5) and Form B (change of particulars, Rule 6) — are
+> distinct later-in-time statutory transactions against an
+> already-registered business (Act 197 ss.5A/5B) and are out of scope,
+> along with a single-owner/partner-particulars-block scope limit (no
+> repeating/array field type in this spec line) and two undecoded internal
+> SSM "Kod (2)" code boxes disclosed rather than guessed at. This gives
+> Malaysia **4 of its 6 verticals** (DMV, Passport, Visa, Business
+> Formation); Taxes (LHDN Borang BE/B/M/BT, e-Filing-only with empty
+> AcroForms) and National ID (JPN MyKad, in-person-only with no
+> downloadable form) remain confirmed dead ends from GOV-1783's own
+> screening — see the document's own VERIFICATION.md for the full
+> candidate comparison and every disclosed scope/judgment call.
 
 > **Update (2026-07-09, GOV-1931): Switzerland's federal Passport and
 > National ID verticals** are now published, with
@@ -3313,7 +3345,32 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (24/27 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (25/27 jurisdictions — 93%)
+
+**Malaysia's Business Formation gap is now closed (GOV-1938)**, via
+`my/ssm/sole-proprietorship-partnership-registration` — Form A (Borang A),
+the First Schedule to the Registration of Businesses Rules 1957, through
+which a person responsible for a new sole proprietorship or partnership
+registers the business with the Registrar of Businesses under the
+Registration of Businesses Act 1956 (Act 197). A genuine, unauthenticated,
+directly-served source hosted on `ssm.com.my` — a Word-generated HTML
+reproduction of the gazetted First Schedule's own table layout, not a PDF,
+but the government's own current, self-documenting statutory text of the
+form. This is a distinct statute and registry from the Companies Act 2016
+company-incorporation regime whose own "Superform" specimen GOV-1774's
+cycle had already screened and rejected as a zero-AcroForm-field, too-thin
+specimen — that same cycle's own record explicitly flagged Form A as a
+known target it had searched for but could not locate at the time. This
+cycle also cross-read the parent Act 197 for legal grounding (confirming
+the 30-day post-commencement registration deadline and the statutory
+content requirements behind every one of Form A's printed sections) — see
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full candidate comparison and disclosed scope decisions (Form A1
+renewal and Form B change-of-particulars are distinct, later-in-time
+statutory transactions and are out of scope; a single owner/partner
+-particulars block is modelled, not a repeating structure for multiple
+partners). This gives Malaysia 4 of its 6 verticals (DMV, Passport, Visa,
+Business Formation).
 
 **The Czech Republic opens as the registry's 26th jurisdiction with a
 Business Formation schema (GOV-1804)**, via
@@ -4182,7 +4239,7 @@ now closed.
 | **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **MY** | 3 | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
+| **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -4525,9 +4582,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    also screened and rejected Malaysia's Taxes vertical (LHDN's Borang
    BE/B/M/BT are all e-Filing-only specimens with empty AcroForms) and
    National ID vertical (JPN's MyKad service has no downloadable form at
-   all, in-person-only) as confirmed dead ends. Malaysia stands at **2 of
-   its 6 verticals** (DMV, Passport); Visa remains the sole open,
-   unscreened backlog candidate. Other candidates worth scouting for a **26th**
+   all, in-person-only) as confirmed dead ends. Malaysia stood at **2 of
+   its 6 verticals** (DMV, Passport) at that point. **Malaysia's Visa gap
+   has since closed too (GOV-1789)**, via
+   `my/jim/visa-with-reference-application` — JIM's IM.12 visit-pass
+   intake form for the Visa With Reference service; see the Executive
+   Summary update above and the document's own VERIFICATION.md. **Malaysia's
+   Business Formation gap has since closed too (GOV-1938)**, via
+   `my/ssm/sole-proprietorship-partnership-registration` — Form A (Borang
+   A), the First Schedule to the Registration of Businesses Rules 1957, a
+   different statute and registry from the Companies Act 2016 "Superform"
+   this same GOV-1774 cycle had rejected as too thin; see the Executive
+   Summary update above and the document's own VERIFICATION.md for the full
+   candidate comparison. Malaysia now stands at **4 of its 6 verticals**
+   (DMV, Passport, Visa, Business Formation); Taxes and National ID remain
+   confirmed dead ends. Other candidates worth scouting for a **26th**
    jurisdiction in a future cycle: an EU member beyond DE/EE/ES/FR/NL/PL/PT —
    Japan (`mofa.go.jp`) is a confirmed IP-blocked dead end (GOV-1174), and
    Switzerland's Visa vertical is now a confirmed EU/Schengen-harmonized
