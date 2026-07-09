@@ -102,7 +102,7 @@ is the same source family already used successfully for
 | Section 3, General Details | `primaryActivityCode`, `officialEmailAddress` |
 | Section 4, Address of the Principal Place of Business — "Yes" (Ontario), Standard Address | `businessAddressStreetNumber` through `businessAddressPostalCode` |
 | Section 5, Sole Proprietor | `soleProprietorFirstName` through `soleProprietorLastName`, `serviceAddressSameAsBusinessAddress` through `serviceAddressPostalCode` |
-| Section 6, Authorization — Sole Proprietor path | `authorizingPersonType`, `authorizingFullName` |
+| Section 6, Authorization — Sole Proprietor path | `authorizingPersonType`, `authorizingFullName` (`access="readOnly"`, `calculate`-derived — see "authorizingFullName's derivation" note below) |
 | Section 7, Confirmation | `confirmationConfirmed`, `documents[].confirmationAttestation` (statement text taken verbatim from a `draw` element immediately following the confirmation checkbox: "confirm the accuracy of the information submitted.", combined with the checkbox's own caption fragment "I," and the auto-calculated contact-name field between them) |
 
 `maxChars` constraints on every `string` field were taken directly from the
@@ -136,25 +136,24 @@ corroborates the section numbering used throughout `sourceRef`.
   enum is deliberately locked to `["sole_proprietor"]`, the same
   single-value-lock convention already used for
   `ca/on/registration/business-incorporation`'s `registeredOfficeProvince`).
-- **`authorizingFullName`'s mandatory status.** Unlike almost every other
-  field on this form, the `fullName` field under the Sole Proprietor
-  authorization branch carries no red-asterisk caption and no "mandatory"
-  wording in its `assist.toolTip` (`"Section 6. Person authorizing
-  registration. Sole Proprietor. Full Name."`, no trailing "This field is
-  mandatory."). The form's own bound-data tree
-  (`authorization.optA.fullName`) sits directly alongside the independently-
-  observed pattern of other floating "full name" fields elsewhere in the
-  document being populated by a `calculate` script that concatenates
-  first/middle/last name from an earlier section (confirmed directly for
-  the Section 7 confirmation `TextField`, whose own `calculate` script
-  concatenates `contactInfo.firstName`/`middleName`/`lastName`) — strongly
-  suggesting `authorizingFullName` is likewise auto-derived from
-  `soleProprietorFirstName`/`MiddleName`/`LastName` on the live form rather
-  than typed independently, which would explain the absent asterisk. This
-  document nonetheless models `authorizingFullName` as a direct, `required:
-  true` input rather than inventing a derivation/`calculate` construct
-  GovSchema v0.3 has no field for — disclosed here rather than silently
-  assumed.
+- **`authorizingFullName`'s derivation.** Independently re-confirmed during
+  review-gate GOV-1949: the `fullName` field under the Sole Proprietor
+  authorization branch (bound to `authorization.optA.fullName`) carries
+  `access="readOnly"` in its XFA template definition, plus its own
+  `calculate` script that unconditionally concatenates
+  `soleProprietorFirstName`/`MiddleName`/`LastName` — the same pattern
+  already confirmed for the Section 7 confirmation `TextField` (whose
+  `calculate` script concatenates `contactInfo.firstName`/`middleName`/
+  `lastName`). This is why the field carries no red-asterisk caption or
+  "mandatory" wording in its `assist.toolTip`
+  (`"Section 6. Person authorizing registration. Sole Proprietor. Full
+  Name."`, no trailing "This field is mandatory.") despite always holding a
+  value on the live form: the user never types into it. `authorizingFullName`
+  is modelled as `required: false` with its description directing
+  implementers to compute it from `soleProprietorFirstName`/`MiddleName`/
+  `LastName` rather than collect it as independent input, since GovSchema
+  v0.3 has no dedicated calculated/derived-field construct
+  ([spec/v0.3/SPEC.md] §16, "Calculated / derived fields — deferred").
 - **NAICS code enumeration.** `primaryActivityCode` is modelled as a bounded
   free-text string (matching the source's own `maxChars="6"` constraint),
   not a closed `enum`; the live form links out to an external NAICS lookup
@@ -188,12 +187,23 @@ corroborates the section numbering used throughout `sourceRef`.
 
 To advance to `status: verified`, a reviewer drives the live Ontario Business
 Registry online filing flow (or the JavaScript-enabled PDF in Adobe Reader)
-with a mock filing, confirms `authorizingFullName`'s true mandatory status
-and derivation behaviour noted above, and records the outcome here —
-shipping a new schema version if discrepancies are found (VERSIONING.md §3,
-immutability).
+with a mock filing and records the outcome here — shipping a new schema
+version if discrepancies are found (VERSIONING.md §3, immutability).
+`authorizingFullName`'s derivation behaviour is already confirmed (see above);
+this step is about the online filing flow's end-to-end behaviour, not that
+specific open question.
 
 ## Re-verification
 
 Per the practice's Cadence, `nextReviewBy` is set to **2027-01-01** (6
 months).
+
+- **2026-07-09, review gate GOV-1949:** independent re-review re-decrypted
+  the XFA template from scratch and confirmed `authorizingFullName` is
+  `access="readOnly"` with a `calculate` script deriving it from
+  `soleProprietorFirstName`/`MiddleName`/`LastName` — not merely unmarked as
+  mandatory. `schema.json` updated: `authorizingFullName` changed from
+  `required: true` to `required: false`, with its description now directing
+  implementers to compute the value rather than collect it as independent
+  input. No other changes requested; all tooling (both validators,
+  `verify-sources.mjs`, `registry-index.json`) re-confirmed clean.
