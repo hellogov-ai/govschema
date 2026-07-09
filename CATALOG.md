@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **294 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **295 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1882): canton Zürich's Berufsorientierte Aus-
+> und Weiterbildungskosten** (career-oriented further-education and training
+> costs deduction) schedule is now published, with
+> `ch/zh/sta/aus-und-weiterbildungskosten` — the Kantonales Steueramt
+> Zürich's "Berufsorientierte Aus- und Weiterbildungskosten 2025" (Form 367),
+> the fifth companion schedule to `ch/zh/sta/steuererklaerung-natuerliche-personen`
+> (GOV-1847), used to compute the deductible further-education/training/
+> retraining costs referenced by the main return's own Ziffer 16.2 (line
+> 292). This picks the strongest remaining candidate off the open list
+> GOV-1875 left behind (Aus- und Weiterbildung, Liegenschaftenverzeichnis,
+> Schuldenverzeichnis, Hilfsblatt A/B/G). Sourced from a genuine, current,
+> unauthenticated, flat (non-AcroForm) 1-page PDF (`367 Aus- und
+> Weiterbildung ZH 2025 HA DEF.pdf`, 46,013 bytes, HTTP 200, no
+> login/CAPTCHA/WAF gate, confirmed via `pdfjs-dist`/`pdf-lib` to carry zero
+> AcroForm widgets), fetched from the same `zh.ch` tax-forms listing as the
+> main return and its four other companion schedules. Unlike the main
+> return, this form prints both statutory caps it depends on (CHF 12'400
+> state-tax, CHF 13'000 federal-tax, applied individually "je" — "each" — to
+> Person 1 and Person 2) directly on its own single page; the Kantonales
+> Steueramt's own Wegleitung was still fetched and cross-checked, confirming
+> the same two caps in prose. Unlike the two prior companion-schedule cycles
+> (Berufsauslagen GOV-1868, Versicherungsprämien GOV-1875), which each found
+> their own form's official worked specimen on Wegleitung PDF page 36, this
+> cycle found no such specimen for Form 367: PDF page 16 carries only a
+> blank reference facsimile of this exact form, and a coordinate-level
+> re-check of the Wegleitung's own worked specimen of the main return's page
+> 3 (PDF page 37) confirms its line 292 (this schedule's own transfer line)
+> is deliberately left blank — the Muster-Meister household in that official
+> specimen claimed no further-education deduction. Per the issue's own
+> contingency instruction, this cycle instead sourced the cap/logic directly
+> from the form's own printed text and the Wegleitung's prose, and
+> constructed and hand-recomputed its own worked mock-data example rather
+> than matching an official specimen. Modelled 16 fields (0 `documents[]`
+> entries) across 3 `steps`. This remains Switzerland's 2nd of 6 verticals
+> (DMV, Taxes) — a companion schedule, not a new vertical — but further
+> deepens Taxes-vertical coverage, leaving three companion schedules open.
+> See `registry/ch/zh/sta/aus-und-weiterbildungskosten/1.0.0/VERIFICATION.md`
+> for the full sourcing record, every disclosed scope decision, and a worked
+> mock-data example.
 
 > **Update (2026-07-09, GOV-1875): canton Zürich's Versicherungsprämien**
 > (insurance-premiums and savings-interest deduction) schedule is now
@@ -3208,6 +3248,23 @@ marital-status bracket are modelled with `validation.enum` rather than a
 continuous `minimum`/`maximum` range. See the Executive Summary update
 above and the document's own VERIFICATION.md.
 
+**The main return's own flagged Aus- und Weiterbildung gap is now also
+published** (`ch/zh/sta/aus-und-weiterbildungskosten`, GOV-1882) — the
+career-oriented further-education/training/retraining-costs deduction
+companion schedule (Form 367), used to compute the deduction referenced by
+the main return's own Ziffer 16.2 (line 292). Sourced the same way (genuine,
+current, unauthenticated, flat non-AcroForm PDF from the same `zh.ch`
+listing); unlike the main return, this 1-page form prints both statutory
+caps it depends on (CHF 12'400 state-tax, CHF 13'000 federal-tax, applied
+individually to each of Person 1/Person 2) directly on its own face. Unlike
+Berufsauslagen and Versicherungsprämien, no official worked specimen of this
+exact form exists in the Wegleitung — its own blank facsimile sits on PDF
+page 16, and the Wegleitung's worked specimen of the main return's own page
+3 (PDF page 37) leaves this schedule's own transfer line (292) blank — so
+this schema's worked mock-data example was sourced and hand-recomputed
+independently instead. See the Executive Summary update above and the
+document's own VERIFICATION.md.
+
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
 osob" (form 25 5405, MFin 5405), the annual personal income tax return under
@@ -4129,12 +4186,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    update above and the document's own VERIFICATION.md. **The
    Versicherungsprämien gap has since closed too (GOV-1875, 2026-07-09)**,
    via `ch/zh/sta/versicherungspraemien` — see the Executive Summary update
-   above and the document's own VERIFICATION.md. The remaining four
-   companion schedules (Aus- und Weiterbildung, Liegenschaftenverzeichnis,
-   Schuldenverzeichnis, Hilfsblatt A/B/G) remain open backlog candidates for
-   a future cycle; none has yet been screened for tractability. Switzerland's
-   other 25 cantons each likely publish their own equivalent tax-return form,
-   also unpursued.
+   above and the document's own VERIFICATION.md. **The Aus- und
+   Weiterbildung gap has since closed too (GOV-1882, 2026-07-09)**, via
+   `ch/zh/sta/aus-und-weiterbildungskosten` — see the Executive Summary
+   update above and the document's own VERIFICATION.md. The remaining three
+   companion schedules (Liegenschaftenverzeichnis, Schuldenverzeichnis,
+   Hilfsblatt A/B/G) remain open backlog candidates for a future cycle; none
+   has yet been screened for tractability. Switzerland's other 25 cantons
+   each likely publish their own equivalent tax-return form, also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
