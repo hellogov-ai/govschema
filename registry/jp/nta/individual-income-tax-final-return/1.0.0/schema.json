@@ -1,0 +1,446 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "jp/nta/individual-income-tax-final-return",
+  "version": "1.0.0",
+  "title": "Japan Individual Income Tax and Special Income Tax for Reconstruction Final Return (所得税及び復興特別所得税の申告書, 申告書第一表)",
+  "description": "The National Tax Agency (国税庁, NTA)'s annual final income tax return for individuals, filed under Article 120 of the Income Tax Act (所得税法) with the tax office having jurisdiction over the taxpayer's domicile. The current specimen is the 申告書第一表・第二表【令和７年用】 edition, covering tax year 2025 (Reiwa 7) and filed in the ordinary filing window (mid-February through mid-March 2026). This document models 第一表 (Form 1, the return's single summary page): the taxpayer's own identification and filing particulars, the two most common income-source line items (employment/salary income under 給与所得 and public-pension miscellaneous income under 雑所得-公的年金等 — by a wide margin the two income types most individual taxpayers, especially full-time employees and retirees, actually report), and the return's full set of 'deductions from income' line items (⑬ through ㉙: social insurance, small-business mutual aid, life insurance, earthquake insurance, widow/single-parent, working-student/disability, spouse, dependent, the specific-relative special deduction newly introduced for tax year 2025, basic deduction, casualty-loss deduction, medical-expense deduction, and donation deduction). It deliberately does NOT model: the seven other income-type line items on the same page (business, agriculture, real estate, interest, dividend, business-related miscellaneous, other miscellaneous, capital gains, and occasional income), each of which requires its own separate financial statement or capital-gains schedule and is a candidate for a future companion-schedule cycle; the entire downstream tax-computation chain (㉛ taxable income through 66 deferred-payment declaration — the progressive-bracket tax calculation, dividend/housing-loan/political-donation/anti-earthquake/foreign-tax credits, the 2.1% special income tax for reconstruction surtax, withholding-tax reconciliation, and the refund bank-account block), since every one of those figures is either a pure arithmetic function of unmodelled income-type totals or a standalone lookup-table credit computation outside this v1.0.0's scope; 第二表 (Form 2)'s own per-dependent/per-insurance-policy itemization (name, Individual Number, relationship, and date of birth for each spouse/dependent; insurance premiums broken out by policy type) in favor of the aggregate deduction amounts Form 1 itself carries; and 第三表 (separate self-assessment taxation, for income such as listed-share or real-estate capital gains) and 第四表 (the loss-return form), which apply only to taxpayers outside this schema's scope. This mirrors this registry's established pattern of authoring a base-case income tax return first and carving out its remaining income types, credits, and loss/separate-taxation variants as future companion-schedule candidates — see VERIFICATION.md for the full field-by-field source mapping, the position-based re-extraction that confirmed the current form's own line-number sequence, and every disclosed scope decision. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Japan or the National Tax Agency.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "JP",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Tax Agency (国税庁)",
+    "abbreviation": "NTA",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/shinkoku/syotoku/index.htm"
+  },
+  "process": {
+    "type": "filing",
+    "language": "ja"
+  },
+  "source": {
+    "url": "https://www.nta.go.jp/taxes/shiraberu/shinkoku/yoshiki/01/shinkokusho/pdf/r07/01.pdf",
+    "retrievedAt": "2026-07-09",
+    "documentRef": "申告書第一表・第二表【令和７年用】 (Form 1 and Form 2 of the Final Return for tax year 2025/Reiwa 7), from the NTA's own 確定申告書等の様式・手引き等 index at https://www.nta.go.jp/taxes/shiraberu/shinkoku/syotoku/r07.htm"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-09",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-09",
+    "notes": "GOV-2042: GovSchema Standard Research cycle. Re-scanned CATALOG.md's Known Gaps section fresh (per this registry's established pattern for this recurring issue's generic phased brief) and found Japan's Taxes vertical flagged as 'unscreened' since GOV-2005 (the cycle that opened Japan and screened DMV/Business Formation/National ID/Passport but left Taxes untouched); Japan's Business Formation and National ID gaps have since closed (GOV-2012/GOV-2019/GOV-2026/GOV-2035), leaving Taxes as Japan's clearest remaining open, well-documented candidate. Sourced the current blank Form 1/Form 2 template directly from the NTA's own annual index page (r07.htm, tax year 2025/Reiwa 7 edition) — a genuine print/reference facsimile PDF (4 pages, zero AcroForm/Widget annotations on every page, confirmed via pdfjs-dist getAnnotations()) — and cross-referenced it against the NTA's own official bilingual Japanese/English '2024 INCOME TAX AND SPECIAL INCOME TAX FOR RECONSTRUCTION GUIDE' (the most recent edition whose individual per-section PDFs extract as genuine selectable text; the matching 2025-edition guide's own individual-section PDFs at nta.go.jp/english/taxes/individual/pdf/incometax_2025/ were fetched too but their prose pages render as outline/vector glyphs with no extractable text layer — likely deliberate copy-protection — so only their embedded reference tables, which remain real text, were usable; the 2024 guide's own field-by-field explanations key each field to the Japanese bracketed label printed on the form itself, e.g. '[現在の住所]', which is stable across editions even where an edition's surrounding line numbers shift). Because tax year 2024 carried a one-time flat-amount income tax cut (定額減税) that does not recur in tax year 2025, and because tax year 2025 introduces a brand-new '特定親族特別控除' (specific-relative special deduction) box that did not exist in 2024, the two editions' own line-number sequences diverge from each other by exactly one box from that point on. Rather than trust either edition's own printed numbering by itself, every line number modelled in this document was independently confirmed via a position-based (x/y-coordinate) re-extraction of the actual current (r07/tax-year-2025) blank Form 1 template, reconstructing each row's own box-to-label adjacency directly — the same technique GOV-2005 used to confirm the Certificate of Eligibility's 34-option checkbox grid — rather than relying on the linear (visually-scrambled) text order a naive extraction returns for this densely-boxed, multi-column layout. `node tools/verify-sources.mjs registry/jp/nta/individual-income-tax-final-return/1.0.0` reports 0 warnings; see VERIFICATION.md for the full source list, the position-extraction transcript, the mock-data test run, and every disclosed scope decision. This closes Japan's Taxes vertical; Japan now stands at 4 of its 6 verticals (Visa, National ID, Business Formation, Taxes) — DMV and Passport remain confirmed dead ends (GOV-2005)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-09"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxOfficeName",
+      "label": "Tax Office",
+      "type": "string",
+      "required": true,
+      "description": "税務署長 — the name of the tax office having jurisdiction over the taxpayer's domicile (or residence/place of business, per taxpayerAddress) at the filing date.",
+      "sourceRef": "第一表, header row '税務署長'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "filingDate",
+      "label": "Filing Date",
+      "type": "date",
+      "required": true,
+      "description": "申告書を提出する日 — the date the return is filed, printed at the head of the form as '令和 年 月 日'.",
+      "sourceRef": "第一表, header row '令和　年　月　日'"
+    },
+    {
+      "name": "taxYear",
+      "label": "Tax Year",
+      "type": "integer",
+      "required": true,
+      "description": "The Gregorian calendar year this return covers (the form itself prints the corresponding Japanese era year, e.g. 令和７年分 for calendar year 2025), i.e. the year immediately preceding the ordinary filing window.",
+      "sourceRef": "第一表, header row '令和　年分の所得税及び復興特別所得税の申告書'",
+      "validation": { "minimum": 2020, "maximum": 2100 }
+    },
+    {
+      "name": "taxpayerAddress",
+      "label": "Taxpayer's Address (Tax Payment Location)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "納税地 / 現在の住所又は居所・事業所等 — the taxpayer's current domicile, residence, or place of business used as the tax payment location, including postal code.",
+      "sourceRef": "第一表, rows '納税地' and '現在の住所又は居所　事業所等'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "addressAsOfJan1Following",
+      "label": "Address as of January 1 of the Year Following the Tax Year",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "令和８年１月１日の住所 — the taxpayer's address as of January 1 of the calendar year immediately after taxYear (used to determine the municipality responsible for the taxpayer's resident/inhabitant tax); entered only if different from taxpayerAddress.",
+      "sourceRef": "第一表, row '令和８年１月１日の住所'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "individualNumber",
+      "label": "Individual Number (My Number)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "個人番号（マイナンバー）— the taxpayer's 12-digit Individual Number for Social Security and Tax.",
+      "sourceRef": "第一表, row '個人番号（マイナンバー）'",
+      "validation": { "pattern": "^[0-9]{12}$" }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "生年月日 — the taxpayer's date of birth.",
+      "sourceRef": "第一表, row '生年月日'"
+    },
+    {
+      "name": "nameKana",
+      "label": "Name — Furigana",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "フリガナ — the katakana reading of the taxpayer's name.",
+      "sourceRef": "第一表, row 'フリガナ'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "氏名 — the taxpayer's full name.",
+      "sourceRef": "第一表, row '氏名'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "description": "職業 — the taxpayer's occupation; self-employed filers describe their line of business (e.g. greengrocery, automobile repainting), and those running several kinds of business list all of them.",
+      "sourceRef": "第一表, row '職業'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "businessNameOrPenName",
+      "label": "Business Name / Pseudonym",
+      "type": "string",
+      "required": false,
+      "description": "屋号・雅号 — the taxpayer's business trade name or pseudonym, when applicable.",
+      "sourceRef": "第一表, row '屋号・雅号'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "householderName",
+      "label": "Householder's Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "世帯主の氏名 — the name of the head of the taxpayer's household, when different from the taxpayer.",
+      "sourceRef": "第一表, row '世帯主の氏名'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "relationshipToHouseholder",
+      "label": "Relationship to Householder",
+      "type": "string",
+      "required": false,
+      "description": "世帯主との続柄 — the taxpayer's relationship to the householder named in householderName.",
+      "sourceRef": "第一表, row '世帯主との続柄'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "電話番号 — the taxpayer's telephone number, including area code.",
+      "sourceRef": "第一表, row '電話番号'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "phoneNumberType",
+      "label": "Phone Number Type",
+      "type": "enum",
+      "required": true,
+      "description": "自宅・勤務先・携帯 — which of home, workplace, or mobile the phoneNumber above is.",
+      "sourceRef": "第一表, row '電話番号　自宅･勤務先･携帯'",
+      "validation": { "enum": ["home", "workplace", "mobile"] }
+    },
+    {
+      "name": "isBlueReturn",
+      "label": "Blue Return",
+      "type": "boolean",
+      "required": false,
+      "description": "種類 — '青色' checkbox: true when the taxpayer files under the Blue Return (青色申告) system, which requires maintaining prescribed books and records in exchange for expanded deductions.",
+      "sourceRef": "第一表, row '種類　青色'"
+    },
+    {
+      "name": "isAmendedReturn",
+      "label": "Amended Return",
+      "type": "boolean",
+      "required": false,
+      "description": "種類 — '修正' checkbox: true when this filing is a correction of a previously filed return for the same tax year.",
+      "sourceRef": "第一表, row '種類　修正'"
+    },
+    {
+      "name": "specialAgriculturalIncomeIndicator",
+      "label": "Special Agricultural Income Earner",
+      "type": "boolean",
+      "required": false,
+      "description": "特農の表示 — true when agricultural income accounted for over 70% of the taxpayer's total income in taxYear and over 70% of that agricultural income was earned after September 1.",
+      "sourceRef": "第一表, row '特農の表示'"
+    },
+    {
+      "name": "employmentEarnings",
+      "label": "Amount of Earnings from Employment (Before Deduction)",
+      "type": "number",
+      "required": false,
+      "description": "給与 収入金額 — the total amount of wages, salaries, bonuses, and allowances received in taxYear, before the statutory wage-income deduction (inclusive of tax withheld).",
+      "sourceRef": "第一表, 収入金額等 row '給与', box オ",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employmentIncome",
+      "label": "Amount of Employment Income",
+      "type": "number",
+      "required": false,
+      "description": "給与所得 — the amount of employment income, computed from employmentEarnings via the statutory wage-income deduction table (e.g. earnings up to 550,999 yen deduct to 0; 551,000-1,618,999 yen deduct a flat 550,000 yen; progressively smaller percentage-based deductions apply up to 8,500,000 yen, above which the deduction is a flat 1,950,000 yen), then reduced by the income amount adjustment exemption where applicable (e.g. earners with earnings over 8,500,000 yen who have a dependent under 23 or a family member with a special disability).",
+      "sourceRef": "第一表, 所得金額等 row '給与', box ⑥",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "publicPensionEarnings",
+      "label": "Amount of Earnings from Public Pensions (Before Deduction)",
+      "type": "number",
+      "required": false,
+      "description": "公的年金等 収入金額 — the total amount received from the National Pension, Employee Pension, and other public pensions in taxYear, before the statutory pension-income deduction (inclusive of tax withheld).",
+      "sourceRef": "第一表, 収入金額等 row '公的年金等', box カ",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "publicPensionIncome",
+      "label": "Amount of Miscellaneous Income from Public Pensions",
+      "type": "number",
+      "required": false,
+      "description": "雑所得（公的年金等）— the amount of miscellaneous income from public pensions, computed from publicPensionEarnings via a statutory deduction table with distinct brackets for individuals aged under 65 and 65 or older as of December 31 of taxYear (e.g. for those under 65, earnings up to 1,299,999 yen deduct a flat 600,000 yen when the taxpayer's other income is 10,000,000 yen or less, with progressively different percentage-based and higher deductions at greater earnings and other-income levels).",
+      "sourceRef": "第一表, 所得金額等 row '公的年金等', box ⑦",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "socialInsuranceDeduction",
+      "label": "Deduction for Social Insurance Premiums",
+      "type": "number",
+      "required": false,
+      "description": "社会保険料控除 — the total amount of premiums paid in taxYear for health insurance, National Health Insurance, long-term care insurance, National Pension, and employee pension insurance, for the taxpayer, their spouse, or relatives living in the same household, in full (no cap).",
+      "sourceRef": "第一表, box ⑬",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "smallBusinessMutualAidDeduction",
+      "label": "Deduction for Small Business Mutual Aid Premiums",
+      "type": "number",
+      "required": false,
+      "description": "小規模企業共済等掛金控除 — premiums paid under the Small Enterprise Mutual Relief Projects Act, corporate/individual-type Defined Contribution Pension Plan (iDeCo) contributions, or Mentally Retarded Persons Mutual Aid Program contributions, in full (no cap).",
+      "sourceRef": "第一表, box ⑭",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "lifeInsuranceDeduction",
+      "label": "Deduction for Life Insurance Premiums",
+      "type": "number",
+      "required": false,
+      "description": "生命保険料控除 — the deduction computed from premiums paid for new/old life insurance, individual annuity insurance, and long-term medical care insurance via the statutory sliding-scale table for each category (a maximum of 40,000-50,000 yen per category), capped at 120,000 yen in total.",
+      "sourceRef": "第一表, box ⑮",
+      "validation": { "minimum": 0, "maximum": 120000 }
+    },
+    {
+      "name": "earthquakeInsuranceDeduction",
+      "label": "Deduction for Earthquake Insurance Premiums",
+      "type": "number",
+      "required": false,
+      "description": "地震保険料控除 — the deduction computed from earthquake insurance premiums and, where applicable, former (pre-2007) long-term casualty insurance premiums, via the statutory sliding-scale table, capped at 50,000 yen in total.",
+      "sourceRef": "第一表, box ⑯",
+      "validation": { "minimum": 0, "maximum": 50000 }
+    },
+    {
+      "name": "widowSingleParentDeduction",
+      "label": "Exemption for Widows or Single Parents",
+      "type": "number",
+      "required": false,
+      "description": "寡婦、ひとり親控除 — a fixed exemption for taxpayers whose total income does not exceed 5,000,000 yen and who meet the statutory single-parent (350,000 yen) or widow (270,000 yen) criteria; the two categories are mutually exclusive.",
+      "sourceRef": "第一表, boxes ⑰〜⑱",
+      "validation": { "minimum": 0, "maximum": 350000 }
+    },
+    {
+      "name": "workingStudentOrDisabilityDeduction",
+      "label": "Exemption for Working Students or Persons with Disabilities",
+      "type": "number",
+      "required": false,
+      "description": "勤労学生、障害者控除 — a combined box for two stacking exemptions: the working-student exemption (a fixed 270,000 yen, for students whose total income does not exceed 750,000 yen and whose non-labor income does not exceed 100,000 yen), and the disability exemption (270,000 yen for a person with disabilities, 400,000 yen for a person with special disabilities, or 750,000 yen for a person with special disabilities living together with the taxpayer) for the taxpayer, their spouse living in the same household, or a dependent.",
+      "sourceRef": "第一表, boxes ⑲〜⑳",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "spouseDeduction",
+      "label": "Exemption or Special Exemption for Spouse",
+      "type": "number",
+      "required": false,
+      "description": "配偶者控除・配偶者特別控除 — an exemption computed from the taxpayer's own total income (up to 10,000,000 yen, above which no exemption applies) and the spouse's own total income (up to 480,000 yen for the ordinary exemption, or 480,001-1,330,000 yen on a sliding scale for the special exemption), capped at 480,000 yen; not available if the taxpayer's own total income exceeds 10,000,000 yen.",
+      "sourceRef": "第一表, boxes ㉑〜㉒",
+      "validation": { "minimum": 0, "maximum": 480000 }
+    },
+    {
+      "name": "dependentDeduction",
+      "label": "Exemption for Dependents",
+      "type": "number",
+      "required": false,
+      "description": "扶養控除 — a fixed exemption per qualifying dependent (relatives other than the spouse, aged 16 or older as of December 31 of taxYear, whose own total income does not exceed 480,000 yen): 380,000 yen for a general qualifying dependent, 630,000 yen for a specific qualifying dependent aged 19-22, or 480,000-580,000 yen for an elderly qualifying dependent aged 70 or over depending on whether they live with the taxpayer.",
+      "sourceRef": "第一表, box 23",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "specificRelativeSpecialDeduction",
+      "label": "Specific-Relative Special Deduction",
+      "type": "number",
+      "required": false,
+      "description": "特定親族特別控除 — a new deduction first available for tax year 2025, for a taxpayer's relative aged 19-22 whose own total income exceeds the 580,000 yen dependent-exemption threshold but remains within a further statutory band, computed via a sliding-scale table analogous to the spouse special exemption.",
+      "sourceRef": "第一表, box 24 (new for tax year 2025)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "basicDeduction",
+      "label": "Basic Deduction",
+      "type": "number",
+      "required": true,
+      "description": "基礎控除 — a deduction available to every taxpayer whose total income does not exceed 25,000,000 yen, on a sliding scale by the taxpayer's own total income: 480,000 yen at 24,000,000 yen or less, 320,000 yen at 24,000,001-24,500,000 yen, 160,000 yen at 24,500,001-25,000,000 yen, and 0 (not applicable) above 25,000,000 yen.",
+      "sourceRef": "第一表, box 25",
+      "validation": { "minimum": 0, "maximum": 480000 }
+    },
+    {
+      "name": "casualtyLossDeduction",
+      "label": "Deduction for Casualty Losses",
+      "type": "number",
+      "required": false,
+      "description": "雑損控除 — a deduction for losses from disaster, theft, or embezzlement to property (excluding non-essential assets such as paintings, antiques, or second homes) belonging to the taxpayer, their spouse, or relatives living in the same household whose own total income does not exceed 480,000 yen, computed via the statutory formula comparing the loss (net of insurance reimbursement) against 10% of the taxpayer's total income.",
+      "sourceRef": "第一表, box 27",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "medicalExpenseDeduction",
+      "label": "Deduction for Medical Expenses",
+      "type": "number",
+      "required": false,
+      "description": "医療費控除 — a deduction for medical expenses paid in taxYear for the taxpayer, their spouse, or relatives living in the same household, computed as (medical expenses paid, net of insurance reimbursement) minus the lesser of 100,000 yen or 5% of the taxpayer's total income, capped at 2,000,000 yen; mutually exclusive with the self-medication taxation system special treatment. Requires the medicalExpenseStatement document.",
+      "sourceRef": "第一表, box 28",
+      "validation": { "minimum": 0, "maximum": 2000000 }
+    },
+    {
+      "name": "donationDeduction",
+      "label": "Deduction for Donations",
+      "type": "number",
+      "required": false,
+      "description": "寄附金控除 — a deduction computed as the lesser of (total qualifying donations, e.g. to national/local government including hometown tax payments, social welfare corporations, or certified NPOs) or 40% of the taxpayer's total income, minus 2,000 yen; mutually exclusive, per donation, with the special tax credits for political-party contributions or NPO donations. Requires the donationReceipts document when claimed.",
+      "sourceRef": "第一表, box 29",
+      "validation": { "minimum": 0 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "medicalExpenseStatement",
+      "label": "Detailed Statement of Deduction for Medical Expenses (医療費控除の明細書)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "medicalExpenseDeduction", "greaterThan": 0 },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf"] },
+      "sourceRef": "2025 Income Tax and Special Income Tax for Reconstruction Guide (English edition), '13-1 Deduction for medical expenses', p.39: 'Please submit the \"Detailed statement of deduction for medical expenses\" with your final return.'"
+    },
+    {
+      "id": "donationReceipts",
+      "label": "Receipts for Qualifying Donations",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "donationDeduction", "greaterThan": 0 },
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["application/pdf", "image/jpeg", "image/png"] },
+      "sourceRef": "2025 Income Tax and Special Income Tax for Reconstruction Guide (English edition), '14 Deduction for donations', p.41-42"
+    }
+  ],
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Taxpayer identity, address, and filing particulars",
+      "fields": [
+        "taxOfficeName",
+        "filingDate",
+        "taxYear",
+        "taxpayerAddress",
+        "addressAsOfJan1Following",
+        "individualNumber",
+        "dateOfBirth",
+        "nameKana",
+        "name",
+        "occupation",
+        "businessNameOrPenName",
+        "householderName",
+        "relationshipToHouseholder",
+        "phoneNumber",
+        "phoneNumberType",
+        "isBlueReturn",
+        "isAmendedReturn",
+        "specialAgriculturalIncomeIndicator"
+      ],
+      "next": "income"
+    },
+    {
+      "id": "income",
+      "title": "Amounts of earnings and income",
+      "fields": [
+        "employmentEarnings",
+        "employmentIncome",
+        "publicPensionEarnings",
+        "publicPensionIncome"
+      ],
+      "next": "deductions"
+    },
+    {
+      "id": "deductions",
+      "title": "Deductions from income",
+      "fields": [
+        "socialInsuranceDeduction",
+        "smallBusinessMutualAidDeduction",
+        "lifeInsuranceDeduction",
+        "earthquakeInsuranceDeduction",
+        "widowSingleParentDeduction",
+        "workingStudentOrDisabilityDeduction",
+        "spouseDeduction",
+        "dependentDeduction",
+        "specificRelativeSpecialDeduction",
+        "basicDeduction",
+        "casualtyLossDeduction",
+        "medicalExpenseDeduction",
+        "donationDeduction"
+      ]
+    }
+  ]
+}

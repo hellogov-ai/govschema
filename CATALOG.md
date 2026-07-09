@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**28 jurisdictions** | **316 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**28 jurisdictions** | **317 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-2042): Japan's Taxes vertical is now published**,
+> with `jp/nta/individual-income-tax-final-return` v1.0.0 — the National Tax
+> Agency's 所得税及び復興特別所得税の申告書 (Income Tax and Special Income Tax
+> for Reconstruction Return), the candidate GOV-2005's own closing note had
+> flagged as "unscreened" and no subsequent Japan cycle (GOV-2012, GOV-2019,
+> GOV-2026, GOV-2035) had touched. Sourced the current tax-year-2025
+> (令和７年用) blank Form 1/Form 2 template directly from the NTA's own annual
+> index page, cross-referenced against the NTA's own official bilingual
+> English guide (the 2024 edition, since the matching 2025 edition's own
+> per-section PDFs render their prose pages as un-selectable outline/vector
+> glyphs with no extractable text layer — likely deliberate copy protection;
+> only its data tables remain genuine text). Because tax year 2024 carried a
+> one-time flat-amount tax cut (定額減税) absent from 2025, and tax year 2025
+> introduces a brand-new deduction box (特定親族特別控除, part of the 2025 tax
+> reform raising the "103万円 wall") absent from 2024, the two editions' own
+> line numbers diverge by one box from that point on in opposite directions —
+> reconciled by an independent position-based (x/y-coordinate) re-extraction
+> of the actual current form, the same technique GOV-2005 used for the
+> Certificate of Eligibility's checkbox grid, rather than trusting either
+> edition's own printed numbering. Models Form 1's taxpayer-identity fields,
+> its two most common income-source line items (employment income and
+> public-pension miscellaneous income — the same "two most common
+> income-source line items" scoping precedent `pl/mf/zeznanie-pit-37` used),
+> and its full deductions-from-income column (social insurance through
+> donations, 13 fields). Deliberately excludes the return's other seven
+> income-type line items (each requiring its own financial statement or
+> capital-gains schedule) and its entire downstream tax-computation chain
+> (progressive-bracket tax, all credits, the 2.1% reconstruction surtax,
+> withholding reconciliation, and refund banking) as future companion-schedule
+> candidates — every excluded figure is either a pure arithmetic function of
+> unmodelled totals or a standalone lookup-table credit computation, mirroring
+> how `pl/mf/zeznanie-pit-37` excludes its own downstream computed-arithmetic
+> sections wholesale. See
+> `registry/jp/nta/individual-income-tax-final-return/1.0.0/VERIFICATION.md`
+> for the full sourcing record, the position-extraction transcript, and the
+> mock-data test run (two scenarios plus four negative controls, all behaving
+> as expected). This closes Japan's Taxes vertical; Japan now stands at **4 of
+> its 6 verticals** (Visa, National ID, Business Formation, Taxes) — DMV and
+> Passport are confirmed dead ends (GOV-2005).
 
 > **Update (2026-07-09, GOV-2035): Japan's Seal Registration Notification**
 > (印鑑届書) is now published, as
@@ -4095,7 +4135,27 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (26/28 jurisdictions — 93%)
+### Taxes — Income Tax Return, Tax Filing (27/28 jurisdictions — 96%)
+
+**Japan's Taxes vertical is now published** (`jp/nta/individual-income-tax-final-return`,
+GOV-2042) — the National Tax Agency's 所得税及び復興特別所得税の申告書
+(Income Tax and Special Income Tax for Reconstruction Return), scoped to
+Form 1's own taxpayer-identity fields, its two most common income-source
+line items (employment income and public-pension miscellaneous income), and
+its full set of income deductions (social insurance through donations,
+including a brand-new tax-year-2025 specific-relative special deduction).
+Deliberately excludes the return's other seven income-type line items (each
+requiring its own financial statement or capital-gains schedule) and its
+entire downstream tax-computation chain (progressive-bracket tax, credits,
+the 2.1% reconstruction surtax, withholding reconciliation, and refund
+banking) as future companion-schedule candidates, mirroring how Poland's
+PIT-37 and the Czech Republic's base return are scoped in this registry. See
+the document's own VERIFICATION.md for the position-based re-extraction that
+reconciled a real edition-to-edition line-numbering shift (a 2024-only
+flat-amount tax cut, and a brand-new 2025 deduction box) against the current
+form. This closes Japan's Taxes vertical; Japan now stands at 4 of its 6
+verticals (Visa, National ID, Business Formation, Taxes) — DMV and Passport
+remain confirmed dead ends (GOV-2005).
 
 **The main return's own flagged Hilfsblatt B gap is now also published**
 (`ch/zh/sta/hilfsblatt-b`, GOV-1924) — Form 330, "Hilfsblatt B Fragebogen für
@@ -5421,7 +5481,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     corporate-representative-member (職務執行者) filing scenario was
     deliberately scoped out and remains an open companion-schedule candidate,
     alongside the three sibling Kabushiki Kaisha incorporation variants,
-    which remain this registry's sole open Japan candidates at this time.
+    which remain this registry's sole open Japan companion-schedule
+    candidates at this time. **Update (2026-07-09, GOV-2042): Japan's Taxes
+    vertical is now closed**, via `jp/nta/individual-income-tax-final-return`
+    — the National Tax Agency's Income Tax and Special Income Tax for
+    Reconstruction Return, the candidate this same item's own GOV-2005 entry
+    had flagged as "unscreened" and no subsequent Japan cycle had pursued;
+    see the Executive Summary update above and the document's own
+    VERIFICATION.md for the full sourcing record, including a position-based
+    re-extraction reconciling a real edition-to-edition line-numbering shift.
+    Japan now stands at **4 of its 6 verticals** (Visa, National ID, Business
+    Formation, Taxes); DMV and Passport remain confirmed dead ends. The
+    three sibling Kabushiki Kaisha incorporation variants, the Seal
+    Registration Notification's corporate-representative-member scenario,
+    and this new document's own excluded income types/tax-computation
+    chain/第二表 per-dependent itemization remain this registry's open
+    Japan companion-schedule candidates for a future cycle.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
