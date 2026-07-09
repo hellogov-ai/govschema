@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **299 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **300 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1917): canton Zürich's Hilfsblatt G**
+> (agricultural/forestry income worksheet, simplified statements) is now
+> published, with `ch/zh/sta/hilfsblatt-g` — the Kantonales Steueramt
+> Zürich's "Hilfsblatt G für Land- und Forstwirtschaft" (StA Form 331, 2020
+> edition), the tenth CH-ZH companion schedule to
+> `ch/zh/sta/steuererklaerung-natuerliche-personen`, used by smaller farms
+> (Talzone up to 8 ha, or hill/mountain zones up to 20
+> Rindergrossvieheinheiten, with limited special branches) that qualify to
+> report agricultural/forestry income from summed receipts rather than the
+> fuller Hilfsblatt B questionnaire (Form 330, still deferred — see below).
+> This cycle screened both of the GOV-1910 cycle's two remaining CH-ZH
+> backlog candidates, Hilfsblatt B and Hilfsblatt G, and pursued only
+> Hilfsblatt G, the narrower, single-computation-path variant, leaving
+> Hilfsblatt B (which forks into two structurally different bookkeeping/
+> records computation paths) as the sole remaining CH-ZH companion-schedule
+> backlog candidate. Sourced from a genuine, current, unauthenticated, flat
+> (non-AcroForm) 4-page PDF (95,074 bytes) from the same `zh.ch` "Formulare
+> für Selbständigerwerbende" listing; the listing page's own on-page label
+> (no "bis `<year>`" cutoff qualifier) confirms it is the current,
+> unsuperseded edition despite its 2020-dated filename. This cycle also
+> discovered a dedicated companion Wegleitung specific to Hilfsblatt B/G (StA
+> Form 332, "Wegleitung HiB HiG ZH 2025"), reached via a redirect sentence in
+> the main return's own Wegleitung rather than a worked specimen — it
+> independently corroborates this schema's own Ziffer 2.1/2.2 lettering, flat-
+> rate deduction schedules, and Naturalbezüge/depreciation valuation rates,
+> though (consistent with every prior CH-ZH cycle) it does not contain a
+> fully-numeric worked example. A residual discrepancy was also disclosed:
+> the Wegleitung's own embedded facsimile of Form 331's page 1 carries a
+> different print-date stamp ("(2024) 12.25") than the standalone PDF fetched
+> directly ("(2020) 12.20"), textually identical otherwise — flagged for a
+> future cycle to re-check. Modelled 117 fields across 7 steps — the letter-
+> lettered Ziffer 2.1(a-k)/2.2(a-i) farm income/expense computation is
+> considerably more itemized than either Hilfsblatt A variant. This gives
+> Switzerland its tenth Taxes-vertical document; Switzerland remains at 2 of
+> its 6 verticals (DMV, Taxes). See
+> `registry/ch/zh/sta/hilfsblatt-g/1.0.0/VERIFICATION.md` for the full
+> field-by-field source mapping, every disclosed scope decision, and the
+> worked mock-data example.
 
 > **Update (2026-07-09, GOV-1910): canton Zürich's Hilfsblatt A**
 > (self-employment worksheet, commercial bookkeeping) is now published, with
@@ -3363,6 +3402,24 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (26/27 jurisdictions — 96%)
 
+**The main return's own flagged Hilfsblatt G gap is now also published**
+(`ch/zh/sta/hilfsblatt-g`, GOV-1917) — Form 331, "Hilfsblatt G für Land- und
+Forstwirtschaft," a simplified agricultural/forestry income worksheet used by
+smaller farms (Talzone up to 8 ha, or hill/mountain zones up to 20
+Rindergrossvieheinheiten, with limited special branches) in lieu of the
+larger Hilfsblatt B questionnaire (Form 330, still deferred — the sole
+remaining CH-ZH companion-schedule backlog candidate). Sourced the same way
+(genuine, current, unauthenticated, flat non-AcroForm 4-page PDF from the
+same `zh.ch` listing); a dedicated companion Wegleitung specific to
+Hilfsblatt B/G (StA Form 332), reached via a redirect sentence in the main
+return's own Wegleitung rather than a worked specimen, independently
+corroborates this schema's Ziffer 2.1/2.2 lettering, flat-rate deduction
+schedules, and Naturalbezüge/depreciation valuation rates. Modelled 117
+fields across 7 steps — a considerably more itemized letter-lettered farm
+income/expense computation (Ziffer 2.1a-k, 2.2a-i) than either Hilfsblatt A
+variant. See the Executive Summary update above and the document's own
+VERIFICATION.md.
+
 **The main return's own flagged Hilfsblatt A (kaufmännische Buchführung) gap
 is now also published** (`ch/zh/sta/hilfsblatt-a-kaufmaennische-buchfuehrung`,
 GOV-1910) — Form 329, the direct sibling of the earlier-published Form 328
@@ -4441,15 +4498,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    since closed too (GOV-1910, 2026-07-09)**, via
    `ch/zh/sta/hilfsblatt-a-kaufmaennische-buchfuehrung` (Form 329) — see the
    Executive Summary update above and the document's own VERIFICATION.md.
-   Two companion-schedule gaps remain open backlog candidates for future
-   cycles, each a structurally distinct form: Hilfsblatt B (Form 330,
-   agricultural questionnaire) and Hilfsblatt G (Form 331,
-   agricultural/forestry); confirmed via this cycle's own re-fetch of the
-   `zh.ch` listing page that both are current, unsuperseded editions (their
-   own on-page labels carry no "bis `<year>`" cutoff qualifier, despite
-   filename date stamps of 2020), but neither has yet been screened in
-   depth for tractability beyond that currency check. Switzerland's other 25
-   cantons each likely publish their own equivalent tax-return form, also
+   **The Hilfsblatt G gap has since closed too (GOV-1917, 2026-07-09)**, via
+   `ch/zh/sta/hilfsblatt-g` (Form 331) — see the Executive Summary update
+   above and the document's own VERIFICATION.md. One companion-schedule gap
+   remains an open backlog candidate for a future cycle: Hilfsblatt B (Form
+   330, agricultural questionnaire), a structurally forked form (two
+   materially different bookkeeping/records computation paths) confirmed via
+   this cycle's own re-fetch of the `zh.ch` listing page to be a current,
+   unsuperseded edition (its own on-page label carries no "bis `<year>`"
+   cutoff qualifier, despite a filename date stamp of 2020), but not yet
+   screened in depth for tractability beyond that currency check.
+   Switzerland's other 25 cantons each likely publish their own equivalent
+   tax-return form, also
    unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
