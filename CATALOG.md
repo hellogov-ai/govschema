@@ -36,7 +36,7 @@
 > disclosed: an extra "Zwischenkulturen" land-use line, and a four-tier
 > (rather than three-tier) Bergzone production-zone selector — both flagged,
 > the latter as a possible follow-up for Hilfsblatt G's own field. Modelled
-> 136 fields across 12 steps — the largest CH-ZH companion schedule to date,
+> 136 fields across 11 steps — the largest CH-ZH companion schedule to date,
 > reflecting its own dual-computation-path structure. This gives Switzerland
 > its eleventh Taxes-vertical document; Switzerland remains at 2 of its 6
 > verticals (DMV, Taxes). This closes the CH-ZH companion-schedule backlog
@@ -3451,7 +3451,7 @@ confirmed by direct re-extraction, and are modelled in one schema via a
 required `berichtsart` discriminator field with `requiredWhen`-gated
 subtotal/total fields per path. Sourced the same way (genuine, current,
 unauthenticated, flat non-AcroForm 4-page PDF from the same `zh.ch` listing).
-Modelled 136 fields across 12 steps — the largest CH-ZH companion schedule to
+Modelled 136 fields across 11 steps — the largest CH-ZH companion schedule to
 date. This closes the CH-ZH companion-schedule backlog entirely. See the
 Executive Summary update above and the document's own VERIFICATION.md.
 
