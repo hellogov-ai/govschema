@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **308 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **309 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1984): Czech Republic's Příloha č. 2
+> rental/other-income annex** is now published, with
+> `cz/mf/priloha-2-vypocet-dilciho-zakladu-dane-najem-ostatni-prijmy` — form
+> 25 5405/P2, the rental-income (§9 zákona) and other-income (§10 zákona)
+> companion schedule to the already-published base return
+> (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`, GOV-1826), which the
+> already-published Příloha č. 1 (`cz/mf/priloha-1-vypocet-dilciho-zakladu-dane-samostatna-cinnost`,
+> GOV-1977) had flagged as the next open backlog candidate. Sourced from
+> `financnisprava.gov.cz`'s own "Daňové tiskopisy" listing page, confirming
+> the current edition is vzor č. 22
+> (`financnisprava.gov.cz/assets/tiskopisy/5405-P2_22.pdf`, a flat
+> print/reference facsimile with zero AcroForm/Widget fields, same shape as
+> Příloha č. 1), self-contained with its own embedded "POKYNY K PŘÍLOZE č. 2"
+> field-by-field instructions on its own page 2 — no separate instructions
+> document needed. A genuine, disclosed structural finding, in deliberate
+> contrast with Příloha č. 1: that annex's own ř. 104 line had a disclosed
+> full-accounting-method exception (an independently-entered accounting
+> result bypassing the printed subtraction); this annex's structurally
+> similar-looking ř. 203 line carries no equivalent instruction anywhere —
+> its own Pokyny text directs only "uveďte výpočet podle údajů v tiskopisu"
+> (compute per the form's own data), with no alternative-entry path
+> disclosed, and §9 zákona itself offers no účetnictví (accounting) option
+> the way §7 does. ř. 203 is therefore excluded as pure arithmetic, unlike
+> Příloha č. 1's ř. 104 — a deliberate, disclosed difference in treatment,
+> not an inconsistency. Models the §9 rental partial-tax-base computation
+> (ř. 201-206, including the immovable-property-only subset and a
+> flat-rate-expense/joint-marital-property checkbox pair), a rental-property
+> reserves disclosure, and the §10 other-income partial-tax-base computation
+> (ř. 207-209) over the annex's own bounded, 4-row, filer-composed
+> "type of other income" table — collapsed to a free-text summary field per
+> this registry's established convention for filer-named repeating rows,
+> unlike Příloha č. 1's own fixed-category 9-row balance-sheet worksheet,
+> which was modelled field-by-field. Modelled 12 fields across 2 `steps`.
+> See `registry/cz/mf/priloha-2-vypocet-dilciho-zakladu-dane-najem-ostatni-prijmy/1.0.0/VERIFICATION.md`
+> for the full field-by-field source mapping, the ř.104-vs-ř.203 comparison
+> in full, and every disclosed scope decision. This closes the rental/other-
+> income share of the Known Gaps section's Czech Republic Taxes item; the
+> Czech Republic remains at **4 of its 6 verticals** (Business Formation,
+> DMV, Visa, Taxes), with Příloha č. 3-4 (foreign-source income, separate
+> tax base) now the sole remaining open backlog candidates in this
+> companion-schedule sequence.
 
 > **Update (2026-07-09, GOV-1977): Czech Republic's Příloha č. 1
 > self-employment annex** is now published, with
@@ -4450,7 +4492,7 @@ now closed.
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **CZ** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -4888,7 +4930,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Formation, DMV, Visa, Taxes); Passport and National ID are confirmed dead
    ends, and Příloha č. 2-4 (rental/other, foreign-source, and
    separate-tax-base income) remain open backlog candidates for a future
-   cycle.
+   cycle. **Update (2026-07-09, GOV-1984): the rental/other-income annex,
+   Příloha č. 2, is now closed too**, via
+   `cz/mf/priloha-2-vypocet-dilciho-zakladu-dane-najem-ostatni-prijmy` (form
+   25 5405/P2) — a companion schedule to the base return, sourced the same
+   way as Příloha č. 1; see the Executive Summary update above and the
+   document's own VERIFICATION.md (which also discloses a deliberate
+   difference from Příloha č. 1's own ř. 104 treatment: this annex's
+   structurally similar ř. 203 line is pure arithmetic, not an
+   independently-entered accounting result). The Czech Republic remains at
+   **4 of its 6 verticals**; Příloha č. 3-4 (foreign-source income,
+   separate tax base) are now the sole remaining open backlog candidates in
+   this companion-schedule sequence.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
