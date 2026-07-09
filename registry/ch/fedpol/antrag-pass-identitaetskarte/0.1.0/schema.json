@@ -1,0 +1,583 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ch/fedpol/antrag-pass-identitaetskarte",
+  "version": "0.1.0",
+  "title": "Switzerland — Online Application for a Swiss Passport and/or Identity Card (fedpol Internetantrag)",
+  "description": "The Federal Office of Police (fedpol)'s online citizen-facing application tool for a Swiss passport, a Swiss identity card, or both together ('Combi'), hosted as a client-rendered single-page application at ch-edoc-passantrag.admin.ch and linked from fedpol.admin.ch/en/application. It models the entire online data-entry portion of the process: choosing a domicile (Switzerland, with a canton, or abroad), an initial applicant-contact card (title/surname/first name/e-mail) that triggers an e-mailed one-time verification link, and — once that link is opened in a fresh, separately-authenticated session — the document-type/printed-language choice, personal data, further personal data (parents/legal guardian, primarily relevant to minor applicants), residential address, delivery address, a responsible-representation choice (for applicants domiciled abroad only), and contact details, ending in a summary/confirmation screen. It does NOT model what happens after the online submission: fedpol's own process description states that, once the application is reviewed, the applicant is invited by e-mail to book an in-person appointment at a cantonal passport office (or a Swiss representation abroad) to capture biometric data (a facial photograph, a signature, and — for a passport only — fingerprints); no biometric capture, payment, or document-collection step happens online, and this schema does not model it. A single required 'documentType' discriminator field (passport / identity card / combi) gates document-specific description text, mirroring this registry's established pattern (see e.g. ch/zh/sta/hilfsblatt-b) for a single source that forks into multiple mutually-relevant paths rather than being split into per-document schemas, since fedpol's own tool asks for the two documents through one shared field set, not two separate flows. Two genuinely distinct verification depths compose this document, both disclosed field-by-field in VERIFICATION.md: the Domicile step and the initial Applicant-contact card were directly rendered in a real, headless-Chromium-driven browser session (screenshots and DOM `required`/`aria-required`/`maxlength` attributes captured this cycle); every field after the e-mailed verification link (which this cycle could not obtain, having no real inbox to receive it) is instead sourced from the running application's own live-fetched, canonical i18n resource bundle (`/rest/i18n/translations/en`, fetched directly this cycle, HTTP 200) — the exact string table the application itself downloads to render every step's labels, tooltips, and field-specific validation-error messages — rather than from a directly observed DOM. Requiredness for those later fields is inferred from the presence of a dedicated 'field is empty' validation-message key (e.g. `validate.nogeburtsdatum`), a strong but indirect signal, not a directly observed `required` attribute or a submitted-and-rejected empty field; this is a disclosed limitation, not a fabrication — every cited translation key and its exact string was independently re-verified this cycle by re-fetching the same endpoint (see VERIFICATION.md). It does not submit the application; the live source at ch-edoc-passantrag.admin.ch is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Switzerland, the Federal Department of Justice and Police, or fedpol.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Office of Police (fedpol) — Federal Department of Justice and Police (FDJP)",
+    "abbreviation": "fedpol",
+    "url": "https://www.fedpol.admin.ch/en/application"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.ch-edoc-passantrag.admin.ch/antrag/antrag_start.action?request_locale=en",
+    "retrievedAt": "2026-07-09",
+    "documentRef": "fedpol 'Internetantrag' online passport/identity-card application tool, Angular single-page application `antrag-service` (live-reported `appVersion` 3.19.11 per `/rest/appinfo/infos`, fetched this cycle), reached via fedpol.admin.ch/en/application's own link to ch-edoc-passantrag.admin.ch/antrag/antrag_start.action. The tool's top-level flow (Domicile / Application / Confirmation, per its own on-screen step tracker) was directly rendered this cycle in a headless-Chromium session (Playwright) through the Domicile step and the initial Applicant-contact card; the substantive multi-step 'Application' data-entry screens beyond that point are gated behind a one-time link e-mailed to the applicant, which this cycle could not obtain. Those screens' field labels, groupings, and validation-error text were instead sourced from the application's own live-fetched i18n resource, `https://www.ch-edoc-passantrag.admin.ch/rest/i18n/translations/en` (HTTP 200, 443 keys, fetched directly this cycle) — see VERIFICATION.md for the full source-by-source breakdown, every field's provenance, and every screenshot taken."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-09",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-09",
+    "notes": "GOV-1931: GovSchema Standard Research cycle, opening Switzerland's federal (fedpol) Passport and National ID (Identitätskarte) verticals — previously only cantonal DMV (ch/sg/stva) and cantonal Taxes (ch/zh/sta, 11 schemas) were modelled for Switzerland; CH Visa was already a confirmed dead end (SEM's own national/Schengen visa PDFs duplicate the EU-harmonized de/auswaertiges-amt template); CH Passport/National ID had previously only been screened at the level of 'no downloadable citizen-facing PDF exists' (GOV-1840) without ever rendering the live JS single-page application the process actually runs on. This cycle rendered that application directly with a headless-Chromium session and confirmed it is a genuine, non-trivial online data-entry tool (not a login-only shell) — but one that gates its own substantive personal-data screens behind an e-mailed one-time verification link no automated cycle without a real inbox can obtain. Rather than treating that gate as a hard dead end (which would have discarded a great deal of genuine, mechanically-sourced structure), this cycle additionally fetched the running application's own canonical i18n resource bundle directly, which discloses every subsequent step's field labels and validation-error text verbatim, and used it — clearly and separately disclosed from the directly-rendered portion — to model the full online application as one schema with a 'documentType' discriminator (passport / identity card / combi), per the issue brief's own single-schema guidance for a source that forks into related paths through one shared field set. See VERIFICATION.md for the complete field-by-field provenance table, every screenshot, and the disclosed judgment calls (custody/guardian conditional structure, reason-for-application code simplification, and the domestic ID-card-only online-ordering restriction fedpol's own tool describes). This opens 2 of Switzerland's remaining 4 open verticals (Passport, National ID) via one schema, since fedpol's own tool issues both documents through a shared application; Business Formation (easygov.swiss, previously confirmed a pure CH-Login-gated dead end, GOV-1840) remains Switzerland's last fully open vertical."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-09"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "domicile",
+      "title": "Domicile",
+      "fields": ["domicile", "canton"],
+      "next": "applicantContact"
+    },
+    {
+      "id": "applicantContact",
+      "title": "Applicant Contact & E-mail Verification",
+      "fields": ["title", "surname", "firstNames", "email"],
+      "next": "documentTypeAndLanguage"
+    },
+    {
+      "id": "documentTypeAndLanguage",
+      "title": "Identity Document Type & Language",
+      "fields": ["documentType", "printedLanguage"],
+      "next": "personalData"
+    },
+    {
+      "id": "personalData",
+      "title": "Personal Data",
+      "fields": [
+        "hyphenatedSurname",
+        "dateOfBirth",
+        "placeOfBirthAbroad",
+        "placeOfBirth",
+        "sex",
+        "height",
+        "placeOfOrigin",
+        "currentPassportNumber",
+        "currentIdCardNumber",
+        "reasonForApplication"
+      ],
+      "next": "furtherPersonalData"
+    },
+    {
+      "id": "furtherPersonalData",
+      "title": "Further Personal Data (Parents / Legal Guardian)",
+      "fields": [
+        "custodyType",
+        "motherSurname",
+        "motherFirstNames",
+        "fatherSurname",
+        "fatherFirstNames",
+        "guardianSurname",
+        "guardianFirstNames"
+      ],
+      "next": "residentialAddress"
+    },
+    {
+      "id": "residentialAddress",
+      "title": "Residential Address",
+      "fields": [
+        "residentialStreetAndNumber",
+        "residentialAddressLine1",
+        "residentialAddressLine2",
+        "residentialPostalCode",
+        "residentialCity"
+      ],
+      "next": "deliveryAddress"
+    },
+    {
+      "id": "deliveryAddress",
+      "title": "Delivery Address",
+      "fields": [
+        "deliveryOption",
+        "deliveryAddressLine1",
+        "deliveryAddressLine2",
+        "deliveryPostalCode",
+        "deliveryCity",
+        "deliveryCountry"
+      ],
+      "transitions": [
+        { "to": "responsibleRepresentation", "when": { "field": "domicile", "equals": "abroad" } },
+        { "to": "contactDetails" }
+      ]
+    },
+    {
+      "id": "responsibleRepresentation",
+      "title": "Responsible Representation",
+      "fields": ["responsibleRepresentationCountry", "responsibleRepresentation"],
+      "next": "contactDetails"
+    },
+    {
+      "id": "contactDetails",
+      "title": "Contact Details & Remarks",
+      "fields": ["privatePhone", "mobilePhone", "workPhone", "remarks"],
+      "next": "summary"
+    },
+    {
+      "id": "summary",
+      "title": "Summary & Submission",
+      "fields": []
+    }
+  ],
+  "fields": [
+    {
+      "name": "domicile",
+      "label": "Domicile",
+      "type": "string",
+      "required": true,
+      "description": "Whether the applicant is domiciled in Switzerland or abroad. Directly rendered and DOM-inspected this cycle: a `mat-radio-group` with `title=\"Select your place of residence.\"`, two options 'Switzerland' and 'Abroad'. Choosing 'Switzerland' immediately reveals a required Canton selector on the same screen; choosing 'Abroad' advances straight to the Applicant-contact card (a separate 'Responsible representation' selector for applicants abroad appears later, per the application's own i18n resource — see the `responsibleRepresentation` field).",
+      "sourceRef": "Step 1 (Domicile) — DOM-verified, screenshot evidence",
+      "validation": {
+        "enum": ["switzerland", "abroad"]
+      }
+    },
+    {
+      "name": "canton",
+      "label": "Canton",
+      "type": "string",
+      "classification": "pii",
+      "description": "The applicant's canton of domicile within Switzerland, chosen from an autocomplete listing all 26 cantons (confirmed against the application's own live `/rest/stammdaten/kanton` reference-data endpoint, which lists exactly 26 entries by `kuerzel` abbreviation, matching this enum). Enum values are the cantons' standard two-letter abbreviations (ISO 3166-2:CH minus the 'CH-' prefix).",
+      "sourceRef": "Step 1 (Domicile) — DOM-verified: `#cantonInput`, `aria-required=\"true\"`, autocomplete listbox with 26 `mat-option`s",
+      "requiredWhen": {
+        "field": "domicile",
+        "equals": "switzerland"
+      },
+      "validation": {
+        "enum": ["AG", "AI", "AR", "BE", "BL", "BS", "FR", "GE", "GL", "GR", "JU", "LU", "NE", "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "TI", "UR", "VD", "VS", "ZG", "ZH"]
+      }
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's title/salutation, used to determine how they are addressed in subsequent correspondence about this application.",
+      "sourceRef": "Step 2 (Applicant contact card) — DOM-verified: `mat-select[formcontrolname=anrede]`, `aria-required=\"true\"`, `title=\"Select title.\"`; options 'Mr'/'Ms' confirmed by opening the live dropdown",
+      "validation": {
+        "enum": ["Mr", "Ms"]
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's official surname, first captured on the pre-verification Applicant-contact card and reused on the Personal Data screen reached via the e-mailed verification link (per the i18n resource's `internet.schritt2.name` key, which repeats the same 'Surname:' label).",
+      "sourceRef": "Step 2 (Applicant contact card) — DOM-verified: `#mat-input-0[formcontrolname=name]`, `aria-required=\"true\"`, `maxlength=\"50\"`",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "firstNames",
+      "label": "Firstname/s",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first name(s), first captured on the pre-verification Applicant-contact card and reused on the Personal Data screen (per the i18n resource's `internet.schritt2.vorname` key).",
+      "sourceRef": "Step 2 (Applicant contact card) — DOM-verified: `#vorname[formcontrolname=vorname]`, `aria-required=\"true\"`, `maxlength=\"50\"`",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "email",
+      "label": "E-mail address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's own e-mail address, or one they share with a trusted person, used for every subsequent communication about this application. Entered twice on the live form for confirmation (`email` and a same-value `emailRepeat` field, `validate.email.repeat`: 'The e-mail addresses do not match.'); this document models the single logical value, not the UI's duplicate-entry confirmation control. Submitting this step sends a one-time verification link to this address; the substantive application-data screens that follow are only reachable by opening that link (this schema's `personalData` step onward).",
+      "sourceRef": "Step 2 (Applicant contact card) — DOM-verified: `#email[formcontrolname=email]`, `aria-required=\"true\"`, `maxlength=\"50\"`, `title=\"Enter an e-mail address.\"`",
+      "validation": {
+        "maxLength": 50,
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "documentType",
+      "label": "Identity document type",
+      "type": "string",
+      "required": true,
+      "description": "Which identity document(s) the applicant is ordering: a passport only, an identity card only, or both together ('Combi'). Per the application's own i18n resource: 'Do you need a passport, an ID card, or both (combi)? Select as appropriate' (`internet.schritt1.intro`), with a dedicated 'Select type of identity document.' validation message (`validate.dokument`) confirming this is mandatory. The same resource also discloses an online-ordering restriction as currently operated: 'You are presently only able to apply for a passport or combination offer (passport and identity card) via internet in your canton of residence. Kindly contact your municipality of residence if you only wish to apply for an identity card.' (`internet.schritt1.intro.pass`) — i.e. as of this cycle, a domestic (Switzerland-domiciled) applicant ordering an identity card alone, with no passport, may not be able to complete that specific combination through this online tool and may need to apply in person at their municipality instead; this schema does not encode that restriction as a hard validation rule (it is described by the source as a current operational state, not a permanent structural one), but discloses it here per the source's own wording. The live tool also varies the identity-card option's own wording depending on a 'chip' flag (`internet.schritt1.intro.chip.true`/`.false`, an ID card with vs. without an embedded data chip) that this cycle could not confirm is user-selectable or system-determined (e.g. by rollout date); it is not modelled as a separate field — see VERIFICATION.md.",
+      "sourceRef": "Step 3 (Identity document type & language, i18n key internet.schritt1.title) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle (behind the e-mailed verification link) — see VERIFICATION.md",
+      "validation": {
+        "enum": ["passport", "identityCard", "combi"]
+      }
+    },
+    {
+      "name": "printedLanguage",
+      "label": "Language to be used in the new identity papers",
+      "type": "string",
+      "required": true,
+      "description": "The language the applicant chooses for their place of origin and the issuing-authority wording to be printed in the new document(s). Per the i18n resource: 'Select the language to be used in your new identity papers:' (`internet.schritt1.sprache`), with a dedicated 'Select a language.' validation message (`validate.noAusweissprache`) confirming this is mandatory. A companion tooltip notes: 'The choice of language affects the way your place of origin and the issuing authority will be written in the identity papers.' (`internet.schritt1.auswahl`).",
+      "sourceRef": "Step 3 (Identity document type & language, i18n keys internet.ausweis.sprache.*) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "validation": {
+        "enum": ["german", "french", "italian", "romansh"]
+      }
+    },
+    {
+      "name": "hyphenatedSurname",
+      "label": "Hyphenated surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "An OPTIONAL hyphenated (double-barrelled) surname to appear in the document instead of the plain surname, demonstrating a marriage or registered partnership: the first part is the applicant's current official surname, joined by a hyphen to either the surname held immediately before the marriage/partnership or the birth name. Per the i18n resource's own tooltip (`internet.tooltip.allianzname`): 'Please only complete if you wish the hyphenated surname to appear in the document!'",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.allianzname) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth. Per the i18n resource's own validation message (`validate.nogeburtsdatum`), the live form accepts a non-standard partial-date format alongside a full date: 'dd.mm.yyyy or 00.mm.yyyy or 00.00.yyyy' — i.e. the day and/or month may be entered as '00' placeholders when genuinely unknown (e.g. for applicants with incomplete birth records), which this schema's `pattern` preserves rather than requiring a strict calendar date. Two further business rules are described by the source but not encoded in `validation` here (disclosed, not enforced structurally): the date may not be in the future (`validate.geburtsdatumzukunft`), and implied age may not exceed 150 years (`validate.geburtsdatumsgroesse`).",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.geburtsdatum) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "validation": {
+        "pattern": "^(00|[0-2][0-9]|3[01])\\.(00|0[1-9]|1[0-2])\\.[0-9]{4}$"
+      }
+    },
+    {
+      "name": "placeOfBirthAbroad",
+      "label": "Born abroad",
+      "type": "boolean",
+      "description": "Whether the applicant was born outside Switzerland, which switches the `placeOfBirth` autocomplete from a Swiss-municipality lookup to a country/foreign-place lookup. Per the i18n resource's own tooltip on the place-of-birth field: 'If you were born abroad, tick the box \"Abroad\".' (`internet.tooltip.geburtsort`).",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.tooltip.geburtsort) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's place of birth (e.g. 'Bern BE' for a Swiss place, or a foreign place/country when `placeOfBirthAbroad` is true), matched against the application's own places-of-birth reference directory. Per the i18n resource, an unmatched or ambiguous entry is rejected with a dedicated message ('There is no such place of birth.', `validate.geburtsort.notfound`; 'The place of birth entered is not explicit.', `validate.geburtsort.morefound`), and a renamed/merged Swiss municipality can be looked up via a linked external directory (`heimatort.list.link`).",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.geburtsort) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's sex, as printed in the document. Per the i18n resource, the live form's own enum offers exactly two values (`internet.geschlecht.frau`/`internet.geschlecht.mann`); this cycle found no third option in the application's own i18n resource.",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.geschlecht) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "validation": {
+        "enum": ["male", "female"]
+      }
+    },
+    {
+      "name": "height",
+      "label": "Height (cm)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's height in centimetres, valid from 50 to 250 (`validate.groesse.gueltigkeit`). Per the i18n resource's own tooltip (`internet.tooltip.groesse`), two categories of applicant may instead enter the literal placeholder '***': children who have not yet reached 14 years of age (for whom the site fills this in automatically), and applicants who are permanently dependent on a wheelchair. This schema's `pattern` accepts either a plain integer in range or the literal '***' sentinel.",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.groesse) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "validation": {
+        "pattern": "^([5-9][0-9]|1[0-9]{2}|2[0-4][0-9]|250|\\*\\*\\*)$"
+      }
+    },
+    {
+      "name": "placeOfOrigin",
+      "label": "Place of origin (Heimatort)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's Swiss place of origin (Heimatort/lieu d'origine) and its canton abbreviation (e.g. 'Bern BE') — the commune of citizenship recorded in the Swiss civil-status register, distinct from place of birth or residence, printed in the identity document. Per the i18n resource's own tooltip (`internet.tooltip.heimatort`), a renamed/merged municipality can be looked up via a linked external directory if it cannot be found directly.",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.heimatort) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "currentPassportNumber",
+      "label": "Current passport number",
+      "type": "string",
+      "classification": "pii",
+      "description": "The number of the applicant's current Swiss passport, if replacing one already held.",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.nummerpasses) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "currentIdCardNumber",
+      "label": "Current ID card number",
+      "type": "string",
+      "classification": "pii",
+      "description": "The number of the applicant's current Swiss identity card, if replacing one already held.",
+      "sourceRef": "Step 4 (Personal data, i18n key internet.schritt2.nummerIDK) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "reasonForApplication",
+      "label": "Reason for application",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's reason for applying, required per the i18n resource's own validation message (`validate.noantragsgrund`: 'Select the reason for your application.'). This schema models the plain citizen-facing reason set found in the i18n resource ('00 First time application (new client)', '00 New issuance (current document expired)', '00 New issuance (current document lost/stolen)', '00 New issuance (other reasons)'); the same resource also lists a further, document- and channel-specific set of internal reason codes (e.g. a distinct A/B/C code set specifically for identity-card applications, and separate EDA/consular-specific and data-entry-correction codes likely relevant only to applicants routed through a Swiss representation abroad or to back-office corrections) that this schema does not attempt to fully replicate structurally, as a disclosed scope decision — see VERIFICATION.md.",
+      "sourceRef": "Step 4 (Personal data, i18n keys internet.antrag.grund.ANTRAG_GRUND_NEU_Value / _ABGELAUFEN_Value / _VERLUST_Value / _DATENAENDERUNG_Value) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "validation": {
+        "enum": ["firstApplication", "currentDocumentExpired", "currentDocumentLostOrStolen", "otherReason"]
+      }
+    },
+    {
+      "name": "custodyType",
+      "label": "Parental custody / legal guardianship",
+      "type": "string",
+      "description": "Who holds parental custody over the applicant, or whether the applicant instead has a legal guardian, primarily relevant to a minor applicant. Per the i18n resource: 'Select who has the right of custody (mother and/or father) or a legal guardian.' (`validate.sorge`) and 'Select between parental custody or legal guardianship.' (`validate.sorge.bevormundet`). This cycle could not confirm the live trigger condition (e.g. an age threshold) that makes this section required/visible, so it is modelled here as an OPTIONAL field applicable to minor applicants rather than a globally required one — a disclosed judgment call.",
+      "sourceRef": "Step 5 (Further personal data, i18n keys internet.schritt3.sorge / validate.sorge / validate.sorge.bevormundet) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "validation": {
+        "enum": ["mother", "father", "both", "legalGuardian"]
+      }
+    },
+    {
+      "name": "motherSurname",
+      "label": "Mother's surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "The applicant's mother's surname, valid at the time of the applicant's birth; the live form allows the literal placeholder '***' if unknown (`internet.tooltip.mutter.name`).",
+      "sourceRef": "Step 5 (Further personal data, i18n key internet.schritt3.mutter.name) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "custodyType",
+        "in": ["mother", "both"]
+      }
+    },
+    {
+      "name": "motherFirstNames",
+      "label": "Mother's first name/s",
+      "type": "string",
+      "classification": "pii",
+      "description": "The applicant's mother's first name(s); the live form allows the literal placeholder '***' if unknown (`internet.tooltip.mutter.vornamen`).",
+      "sourceRef": "Step 5 (Further personal data, i18n key internet.schritt3.mutter.vornamen) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "custodyType",
+        "in": ["mother", "both"]
+      }
+    },
+    {
+      "name": "fatherSurname",
+      "label": "Father's surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "The applicant's father's surname; the live form allows the literal placeholder '***' if unknown (`internet.tooltip.vater.name`).",
+      "sourceRef": "Step 5 (Further personal data, i18n key internet.schritt3.vater.name) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "custodyType",
+        "in": ["father", "both"]
+      }
+    },
+    {
+      "name": "fatherFirstNames",
+      "label": "Father's first name/s",
+      "type": "string",
+      "classification": "pii",
+      "description": "The applicant's father's first name(s); the live form allows the literal placeholder '***' if unknown (`internet.tooltip.vater.vornamen`).",
+      "sourceRef": "Step 5 (Further personal data, i18n key internet.schritt3.vater.vornamen) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "custodyType",
+        "in": ["father", "both"]
+      }
+    },
+    {
+      "name": "guardianSurname",
+      "label": "Legal guardian's surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "The applicant's legal guardian's surname, per the i18n resource's own field (`internet.bevormundung.name`), applicable only when the applicant is under a legal guardian's care rather than parental custody.",
+      "sourceRef": "Step 5 (Further personal data, i18n key internet.bevormundung.name) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "custodyType",
+        "equals": "legalGuardian"
+      }
+    },
+    {
+      "name": "guardianFirstNames",
+      "label": "Legal guardian's first name/s",
+      "type": "string",
+      "classification": "pii",
+      "description": "The applicant's legal guardian's first name(s), per the i18n resource's own field (`internet.bevormundung.vornamen`).",
+      "sourceRef": "Step 5 (Further personal data, i18n key internet.bevormundung.vornamen) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "custodyType",
+        "equals": "legalGuardian"
+      }
+    },
+    {
+      "name": "residentialStreetAndNumber",
+      "label": "Street / House number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's residential street name and house number. Per the i18n resource's own tooltip (`internet.tooltip.wohnadresse`): 'Enter your complete residential address.'",
+      "sourceRef": "Step 6 (Residential address, i18n key internet.schritt4.strasseundnummer) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "residentialAddressLine1",
+      "label": "Address line 1",
+      "type": "string",
+      "classification": "pii",
+      "description": "OPTIONAL additional residential-address information, e.g. apartment number, P.O. Box, or c/o address, per the i18n resource's own tooltip (`internet.tooltip.adresszeile1`).",
+      "sourceRef": "Step 6 (Residential address, i18n key internet.schritt4.adressezeile1) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "residentialAddressLine2",
+      "label": "Address line 2",
+      "type": "string",
+      "classification": "pii",
+      "description": "OPTIONAL further additional residential-address information, per the i18n resource's own tooltip (`internet.tooltip.adresszeile2`).",
+      "sourceRef": "Step 6 (Residential address, i18n key internet.schritt4.adressezeile2) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "residentialPostalCode",
+      "label": "Postcode (ZIP code)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's residential postcode. Per the i18n resource, a Swiss postcode must consist of exactly four characters (`validate.plzlaenge`); the application also validates the postcode against a reference directory (`validate.plz.verzeichnis`).",
+      "sourceRef": "Step 6 (Residential address, i18n key internet.schritt4.PLZundstadt) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "residentialCity",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's residential city/locality.",
+      "sourceRef": "Step 6 (Residential address, i18n key internet.schritt4.PLZundstadt) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "deliveryOption",
+      "label": "Delivery address choice",
+      "type": "string",
+      "required": true,
+      "description": "Where the finished document(s) should be delivered: the applicant's own residential address, another address in Switzerland, or another address abroad. Required per the i18n resource's own validation message (`validate.nolieferoption`: 'Select a delivery address.').",
+      "sourceRef": "Step 7 (Delivery address, i18n keys internet.liefer.wohnadresse / internet.liefer.schweiz / internet.liefer.ausland) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "validation": {
+        "enum": ["residentialAddress", "otherAddressInSwitzerland", "otherAddressAbroad"]
+      }
+    },
+    {
+      "name": "deliveryAddressLine1",
+      "label": "Delivery address — line 1",
+      "type": "string",
+      "classification": "pii",
+      "description": "The first line of an alternate delivery address, required when `deliveryOption` is not 'residentialAddress'. Per the i18n resource's own tooltip (`internet.tooltip.liefer.adresszeile1`), additional information (apartment number, P.O. Box, c/o) may be entered here.",
+      "sourceRef": "Step 7 (Delivery address) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "deliveryOption",
+        "in": ["otherAddressInSwitzerland", "otherAddressAbroad"]
+      }
+    },
+    {
+      "name": "deliveryAddressLine2",
+      "label": "Delivery address — line 2",
+      "type": "string",
+      "classification": "pii",
+      "description": "OPTIONAL second line of an alternate delivery address, per the i18n resource's own tooltip (`internet.tooltip.liefer.adresszeile2`).",
+      "sourceRef": "Step 7 (Delivery address) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "deliveryPostalCode",
+      "label": "Delivery address — postcode",
+      "type": "string",
+      "classification": "pii",
+      "description": "The postcode of an alternate delivery address, required when `deliveryOption` is not 'residentialAddress'.",
+      "sourceRef": "Step 7 (Delivery address, i18n keys validate.noplz.lieferadresse / validate.gueltigplz) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "deliveryOption",
+        "in": ["otherAddressInSwitzerland", "otherAddressAbroad"]
+      }
+    },
+    {
+      "name": "deliveryCity",
+      "label": "Delivery address — city",
+      "type": "string",
+      "classification": "pii",
+      "description": "The city/locality of an alternate delivery address, required when `deliveryOption` is not 'residentialAddress'.",
+      "sourceRef": "Step 7 (Delivery address, i18n key validate.noort.lieferadresse) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "deliveryOption",
+        "in": ["otherAddressInSwitzerland", "otherAddressAbroad"]
+      }
+    },
+    {
+      "name": "deliveryCountry",
+      "label": "Delivery address — country",
+      "type": "string",
+      "classification": "pii",
+      "description": "The country of an alternate delivery address abroad, required when `deliveryOption` is 'otherAddressAbroad'. Per the i18n resource's own validation message (`validate.noland.lieferadresse`: 'Select your country.').",
+      "sourceRef": "Step 7 (Delivery address, i18n key validate.noland.lieferadresse) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "deliveryOption",
+        "equals": "otherAddressAbroad"
+      }
+    },
+    {
+      "name": "responsibleRepresentationCountry",
+      "label": "Country (for the responsible Swiss representation)",
+      "type": "string",
+      "classification": "pii",
+      "description": "The country of the Swiss diplomatic/consular representation the applicant is registered with, applicable only to applicants domiciled abroad.",
+      "sourceRef": "Step 8 (Responsible representation, i18n key internet.schritt6.land) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "domicile",
+        "equals": "abroad"
+      }
+    },
+    {
+      "name": "responsibleRepresentation",
+      "label": "Responsible representation",
+      "type": "string",
+      "classification": "pii",
+      "description": "The specific Swiss representation (embassy/consulate) at which the applicant is registered, chosen from a directory. Required for applicants abroad per the i18n resource's own validation message (`validate.noimmatrikulation`: 'Select your responsible representation.'). Corresponds to the same concept the Domicile step's i18n resource calls a 'Registration centre' (`internet.auslandch.passnureau`) for applicants abroad, though this cycle found no registration-centre selector rendered directly on the Domicile screen itself (see VERIFICATION.md) — it is modelled here, at the step the i18n resource's own step numbering (`internet.schritt6.title`: 'Responsible representation') places it.",
+      "sourceRef": "Step 8 (Responsible representation, i18n key internet.schritt6.title / internet.tooltip.immatrikulation) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md",
+      "requiredWhen": {
+        "field": "domicile",
+        "equals": "abroad"
+      }
+    },
+    {
+      "name": "privatePhone",
+      "label": "Private phone number",
+      "type": "string",
+      "classification": "pii",
+      "description": "OPTIONAL home phone number, in the format '+41 30 1234567' (example only) per the i18n resource's own tooltip (`internet.mainTips.kontakt`).",
+      "sourceRef": "Step 9 (Contact details, i18n key internet.schritt7.privat) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile phone number",
+      "type": "string",
+      "classification": "pii",
+      "description": "OPTIONAL mobile phone number, in the same format as `privatePhone`.",
+      "sourceRef": "Step 9 (Contact details, i18n key internet.schritt7.mobile) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "workPhone",
+      "label": "Work phone number",
+      "type": "string",
+      "classification": "pii",
+      "description": "OPTIONAL work phone number, in the same format as `privatePhone`.",
+      "sourceRef": "Step 9 (Contact details, i18n key internet.schritt7.geschaeft) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    },
+    {
+      "name": "remarks",
+      "label": "Remarks",
+      "type": "string",
+      "description": "OPTIONAL free-text remarks the applicant may add to the application.",
+      "sourceRef": "Step 9 (Contact details, i18n key internet.schritt7.bemerkung / internet.kommentar) — sourced from the application's own i18n resource; not independently DOM-rendered this cycle — see VERIFICATION.md"
+    }
+  ]
+}
