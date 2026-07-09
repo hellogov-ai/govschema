@@ -1,10 +1,46 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-08** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-09** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**27 jurisdictions** | **293 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **294 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1875): canton Zürich's Versicherungsprämien**
+> (insurance-premiums and savings-interest deduction) schedule is now
+> published, with `ch/zh/sta/versicherungspraemien` — the Kantonales
+> Steueramt Zürich's "Versicherungsprämien 2025" (Form 365), the fourth
+> companion schedule to `ch/zh/sta/steuererklaerung-natuerliche-personen`
+> (GOV-1847), used to compute the deductible insurance premiums and savings
+> interest referenced by the main return's own Ziffer 15 (line 270). This
+> picks the strongest remaining candidate off the open list GOV-1868/GOV-1871
+> left behind (Versicherungsprämien, Aus- und Weiterbildung,
+> Liegenschaftenverzeichnis, Schuldenverzeichnis, Hilfsblatt A/B/G): nearly
+> every Swiss resident carries mandatory basic health insurance, making this
+> schedule likely broader-reaching than either prior companion schedule.
+> Sourced from a genuine, current, unauthenticated, flat (non-AcroForm)
+> 1-page PDF (`365 Versicherung ZH 2025 HA DEF.pdf`, 56,091 bytes, HTTP 200,
+> no login/CAPTCHA/WAF gate, confirmed via `pdfjs-dist`/`pdf-lib` to carry
+> zero AcroForm widgets), fetched from the same `zh.ch` tax-forms listing as
+> the main return and its other companion schedules. Unlike the main return,
+> this form prints every statutory rate it depends on directly on its own
+> single page; the Kantonales Steueramt's own Wegleitung was still fetched
+> and cross-checked, and its PDF page 36 — the same page that carries the
+> Berufsauslagen worked specimen GOV-1868 used — carries an official worked
+> specimen of this exact form, cross-checked arithmetically (subtotal,
+> total, per-child deduction, maximum-deduction total, and final
+> lower-of-A-or-B figure all independently recomputed and matched) before
+> any field name was assigned. The two discrete statutory lookup values
+> printed for each marital-status bracket are modelled with
+> `validation.enum` rather than `minimum`/`maximum`, since the form permits
+> only those two exact figures, not a continuous range. Modelled 26 fields
+> (0 `documents[]` entries) across 4 `steps`. This remains Switzerland's 2nd
+> of 6 verticals (DMV, Taxes) — a companion schedule, not a new vertical —
+> but further deepens Taxes-vertical coverage, leaving four companion
+> schedules open. See
+> `registry/ch/zh/sta/versicherungspraemien/1.0.0/VERIFICATION.md` for the
+> full sourcing record, every disclosed scope decision, and a worked
+> mock-data example.
 
 > **Update (2026-07-08, GOV-1868): canton Zürich's Berufsauslagen**
 > (professional/work-related expense deductions) schedule is now published,
@@ -3157,6 +3193,21 @@ vehicle commuting worksheet is collapsed to one free-text field per person.
 See the Executive Summary update above and the document's own
 VERIFICATION.md.
 
+**The main return's own flagged Versicherungsprämien gap is now also
+published** (`ch/zh/sta/versicherungspraemien`, GOV-1875) — the
+insurance-premiums-and-savings-interest deduction companion schedule (Form
+365), used to compute the deduction referenced by the main return's own
+Ziffer 15 (line 270). Sourced the same way (genuine, current,
+unauthenticated, flat non-AcroForm PDF from the same `zh.ch` listing);
+unlike the main return, this 1-page form prints every statutory rate it
+depends on directly on its own face, and its Wegleitung's own worked
+specimen — PDF page 36, the same page as the Berufsauslagen specimen — was
+independently recomputed field-by-field to confirm this schema's own
+mock-data logic. The two discrete statutory lookup values printed for each
+marital-status bracket are modelled with `validation.enum` rather than a
+continuous `minimum`/`maximum` range. See the Executive Summary update
+above and the document's own VERIFICATION.md.
+
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
 osob" (form 25 5405, MFin 5405), the annual personal income tax return under
@@ -4075,12 +4126,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    the Executive Summary update above and the document's own
    VERIFICATION.md. **The Berufsauslagen gap has since closed too (GOV-1868,
    2026-07-08)**, via `ch/zh/sta/berufsauslagen` — see the Executive Summary
-   update above and the document's own VERIFICATION.md. The remaining five
-   companion schedules (Versicherungsprämien, Aus- und Weiterbildung,
-   Liegenschaftenverzeichnis, Schuldenverzeichnis, Hilfsblatt A/B/G) remain
-   open backlog candidates for a future cycle; none has yet been screened for
-   tractability. Switzerland's other 25 cantons each likely publish their own
-   equivalent tax-return form, also unpursued.
+   update above and the document's own VERIFICATION.md. **The
+   Versicherungsprämien gap has since closed too (GOV-1875, 2026-07-09)**,
+   via `ch/zh/sta/versicherungspraemien` — see the Executive Summary update
+   above and the document's own VERIFICATION.md. The remaining four
+   companion schedules (Aus- und Weiterbildung, Liegenschaftenverzeichnis,
+   Schuldenverzeichnis, Hilfsblatt A/B/G) remain open backlog candidates for
+   a future cycle; none has yet been screened for tractability. Switzerland's
+   other 25 cantons each likely publish their own equivalent tax-return form,
+   also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
