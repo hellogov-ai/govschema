@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **310 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **311 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1998): Czech Republic's Příloha č. 4
+> separate-tax-base annex** is now published, with
+> `cz/mf/priloha-4-vypocet-dane-ze-samostatneho-zakladu-dane` — form
+> 25 5405/P4, the §16a zákona flat-15%-rate companion schedule to the
+> already-published base return (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
+> GOV-1826), which the already-published Příloha č. 3
+> (`cz/mf/priloha-3-vypocet-dane-z-prijmu-ze-zdroju-v-zahranici`, GOV-1991)
+> had flagged as the sole remaining open backlog candidate in this
+> companion-schedule sequence. Sourced from `financnisprava.gov.cz`'s own
+> "Daňové tiskopisy" listing page, confirming the current edition is vzor
+> č. 13 (`financnisprava.gov.cz/assets/tiskopisy/5405-P4_13.pdf`, a flat
+> print/reference facsimile with zero AcroForm/Widget fields, same shape as
+> Přílohy č. 1-3), self-contained with its own embedded "POKYNY K PŘÍLOZE
+> č. 4" field-by-field instructions on its own page 2. Models the annex's
+> single computation: foreign-source §7/§8/§10 income (partnership shares,
+> capital income, settlement/liquidation shares, and specified other income)
+> combined into one separate tax base taxed at a flat 15% and relieved by an
+> ordinary foreign-tax-credit computation capped at 15% of the credit-eligible
+> portion. Two disclosed scope decisions depart from a pure-arithmetic default:
+> ř. 406 (the §7/§8 subtotal) names a further §8 odst. 9 zákona expense
+> reduction this registry has no field for, so it is modelled as its own
+> entered field rather than assumed derivable from ř. 401 + ř. 401a alone;
+> and ř. 411 (the credit-eligible income subset) is the taxpayer's own
+> selected portion of the combined base, not a printed sum, so it too is
+> modelled as its own field. The remaining six pure-sum/difference/rate/cap
+> lines (ř. 407, 408, 409, 410, 413, 414) are excluded as unconditionally
+> derivable from already-modelled fields on this same annex. Modelled 10
+> fields across 1 `steps` entry. See
+> `registry/cz/mf/priloha-4-vypocet-dane-ze-samostatneho-zakladu-dane/1.0.0/VERIFICATION.md`
+> for the full field-by-field source mapping, the line-by-line
+> pure-arithmetic-vs-input classification for every one of ř. 401-414, both
+> scope decisions in full, and the worked mock-data example. This closes the
+> separate-tax-base share of the Known Gaps section's Czech Republic Taxes
+> item and, with it, the base return's own companion-schedule backlog
+> (Přílohy č. 1-4) entirely; the Czech Republic remains at **4 of its 6
+> verticals** (Business Formation, DMV, Visa, Taxes) — Passport and National
+> ID are confirmed dead ends, per GOV-1819/GOV-1826's own findings.
 
 > **Update (2026-07-09, GOV-1991): Czech Republic's Příloha č. 3
 > foreign-source-income annex** is now published, with
@@ -4535,7 +4573,7 @@ now closed.
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CZ** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -4996,7 +5034,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    excludable pure arithmetic). The Czech Republic remains at **4 of its 6
    verticals**; Příloha č. 4 (separate tax base, §16a zákona) is now the
    sole remaining open backlog candidate in this companion-schedule
-   sequence.
+   sequence. **Update (2026-07-09, GOV-1998): the separate-tax-base annex,
+   Příloha č. 4, is now closed too**, via
+   `cz/mf/priloha-4-vypocet-dane-ze-samostatneho-zakladu-dane` (form
+   25 5405/P4) — a companion schedule to the base return, sourced the same
+   way as Přílohy č. 1-3; see the Executive Summary update above and the
+   document's own VERIFICATION.md (which discloses two scope decisions: one
+   line modelled as its own field despite a printed sum formula, because of
+   a further named statutory reduction this registry has no field for, and
+   another modelled as its own field because it is a taxpayer-selected
+   subset rather than a printed aggregate). This closes the base return's
+   own companion-schedule backlog (Přílohy č. 1-4) entirely. The Czech
+   Republic remains at **4 of its 6 verticals** (Business Formation, DMV,
+   Visa, Taxes); Passport and National ID remain confirmed dead ends, with
+   no further open backlog candidate in this companion-schedule sequence.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
