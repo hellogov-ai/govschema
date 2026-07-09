@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**28 jurisdictions** | **313 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**28 jurisdictions** | **314 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-2019): Japan's Business Formation vertical** is
+> now published, with
+> `jp/houmukyoku/stock-company-establishment-registration-application` v1.0.0
+> — the Legal Affairs Bureau's Stock Company Establishment Registration
+> Application (株式会社設立登記申請書), the candidate two prior cycles
+> (GOV-2005, GOV-2012) had already screened, found genuinely live, and
+> flagged but not pursued. The task brief's flagged PDF
+> (`houmukyoku.moj.go.jp/homu/content/001331002.pdf`) turned out on
+> inspection to be the Bureau's own filled-in worked example ("記載例") of
+> one specific procedural variant (取締役会を設置しない株式会社の発起設立 —
+> no board of directors, incorporation by promoters); traced back to its own
+> index page (`houmukyoku.moj.go.jp/homu/COMMERCE_11-1.html`) to find the
+> genuinely blank counterpart template (`001249317.pdf`) this document is
+> actually modelled from, confirming both are companion publications of the
+> same variant, one of four the Bureau separately publishes (the other
+> three — board-installed + promoter subscription, board-installed + public
+> subscription, no-board + public subscription — are each flagged as a
+> future companion-schedule candidate). No AcroForm layer, but a full
+> extractable Japanese text layer; diffing the blank template against the
+> worked example line-by-line revealed that the application's own
+> "matters to be registered" (登記すべき事項) passage is not written into
+> boxes on the printed page at all, but drafted separately and submitted via
+> an attached printout, a CD-R, or the Bureau's online filing system — both
+> PDFs merely print a worked example of that passage's required content and
+> format, which this document nonetheless models field-by-field since a real
+> submission needs every one of those data points regardless of channel.
+> Models 21 fields (company identity, the registered-matters content —
+> purposes, share capital structure, the transfer-restriction clause,
+> officer particulars — and the filing/agent block) plus 10 attachment
+> requirements (articles of incorporation, promoters' consents, capital-
+> payment proof, identity/seal certificates, and a conditional power of
+> attorney), several `requiredWhen`-gated per the source's own explanatory
+> notes. The registration-fee/tax computation (課税標準金額 and 登録免許税)
+> was excluded as purely arithmetic (0.7% of capital, ¥150,000 floor,
+> rounded to the nearest ¥100) per this registry's established
+> excludable-arithmetic-vs-input test. See
+> `registry/jp/houmukyoku/stock-company-establishment-registration-application/1.0.0/VERIFICATION.md`
+> for the full field-by-field source mapping, the worked-example/blank-
+> template diff, and the mock-data test run (two scenarios plus three
+> negative controls, all behaving as expected). This closes Japan's Business
+> Formation vertical; Japan now stands at **3 of its 6 verticals** (Visa,
+> National ID, Business Formation) — DMV and Passport are confirmed dead
+> ends (GOV-2005).
 
 > **Update (2026-07-09, GOV-2012): Japan's National ID vertical** is now
 > published, with `jp/j-lis/individual-number-card-issuing-application` v1.0.0
@@ -3703,7 +3747,18 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (25/28 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (26/28 jurisdictions — 93%)
+
+**Japan's Business Formation gap is now closed (GOV-2019)**, via
+`jp/houmukyoku/stock-company-establishment-registration-application` — the
+Legal Affairs Bureau's Stock Company Establishment Registration Application
+(株式会社設立登記申請書), the no-board-of-directors/incorporation-by-promoters
+variant. See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing story, including the worked-example/
+blank-template diff that revealed the application's own "matters to be
+registered" passage is submitted separately (attached printout, CD-R, or
+online filing system), not written into boxes on the printed page. This
+gives Japan 3 of its 6 verticals (Visa, National ID, Business Formation).
 
 **Malaysia's Business Formation gap is now closed (GOV-1938)**, via
 `my/ssm/sole-proprietorship-partnership-registration` — Form A (Borang A),
@@ -4675,7 +4730,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **JP** | 2 | ✗ | ✗ | ✗ | ✗ | ✓ | ✓ |
+| **JP** | 3 | ✗ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -5233,7 +5288,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Executive Summary update above and the document's own VERIFICATION.md.
     Japan now stands at **2 of its 6 verticals** (Visa, National ID);
     Business Formation (the Legal Affairs Bureau candidate above) is
-    Japan's sole remaining open backlog candidate.
+    Japan's sole remaining open backlog candidate. **Update (2026-07-09,
+    GOV-2019): Japan's Business Formation gap is now closed**, via
+    `jp/houmukyoku/stock-company-establishment-registration-application` —
+    see the Executive Summary update above and the document's own
+    VERIFICATION.md. Japan now stands at **3 of its 6 verticals** (Visa,
+    National ID, Business Formation); DMV and Passport are confirmed dead
+    ends, and this registry has no further open Japan vertical candidate at
+    this time — future cycles should consider the sibling incorporation
+    variants and the Seal Registration Notification flagged in that
+    document's own VERIFICATION.md as companion-schedule candidates instead.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
