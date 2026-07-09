@@ -4,7 +4,56 @@
 
 ## Executive Summary
 
-**28 jurisdictions** | **314 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**28 jurisdictions** | **315 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-2026): Japan's Business Formation vertical is
+> deepened** with a second company-type schema,
+> `jp/houmukyoku/limited-liability-company-establishment-registration-application`
+> v1.0.0 — the Legal Affairs Bureau's Godo Kaisha (合同会社, "Limited
+> Liability Company", e.g. Amazon Japan G.K., Apple Japan G.K.) Establishment
+> Registration Application. This `GovSchema Standard Research` cycle first
+> re-checked the task brief's own named National ID candidates (DE Steuer-ID,
+> SG NRIC loss/damage + re-registration, NZ RealMe) and "remaining voter
+> registration" against this catalog and confirmed all were already resolved
+> by prior cycles (`de/finanzamt/tax-identification-number`,
+> `sg/ica/identity-card-replacement` + `sg/ica/identity-card-reregistration`,
+> `nz/dia/realme-verified-identity`; every tracked voter-registration gap is
+> either published or a confirmed dead end/legally-closed window — see Known
+> Gaps below) — the recurring generic brief was treated as a prompt to
+> re-scan the catalog fresh, per this registry's established pattern, not a
+> literal to-do list. This catalog's own Known Gaps item 6 (GOV-2005/
+> GOV-2012/GOV-2019) had flagged Japan's three sibling Kabushiki Kaisha
+> incorporation variants and its Seal Registration Notification (印鑑届書) as
+> the next candidates on the same `houmukyoku.moj.go.jp` index page the
+> existing Stock Company schema was sourced from; this cycle instead found a
+> stronger, previously-unflagged candidate on that same page — a wholly
+> distinct company-type template (not a procedural variant of the Kabushiki
+> Kaisha form), mirroring how this registry already models more than one
+> company-formation entity type elsewhere (Germany's `business-registration`
+> and `gmbh-formation-musterprotokoll`). The first PDF found
+> (`001252889.pdf`) again turned out to be the Bureau's own filled-in worked
+> example, not the blank form — the identical trap GOV-2019 hit for the
+> Kabushiki Kaisha template — traced via the same index page to the genuine
+> blank template (`001249560.pdf`). A Godo Kaisha has no shareholders,
+> shares, directors, or board; it is run by 社員 ("members"), any of whom may
+> itself be a corporation, modelled via `representativeMemberIsCorporation`/
+> `hasCorporateManagingMember` booleans gating a `performingOfficer`
+> designation and a composite `any`-conditioned registered-matters-
+> certificate attachment (this registry's first use of GSP-0013's boolean
+> composition grammar in a Japan document). Two sourcing caveats disclosed:
+> the blank template's own `登記すべき事項` body is genuinely blank (unlike
+> the Kabushiki Kaisha sibling's, which retained worked-example placeholder
+> text), and the agent/proxy (代理人) filing pathway has no distinct labeled
+> row anywhere on this blank template at all (unlike the sibling, whose blank
+> template prints the row without its annotation) — modelled anyway on the
+> worked example's own evidence, disclosed rather than silently equated with
+> the sibling's finding. Models 19 fields plus 9 attachment requirements. See
+> the document's own VERIFICATION.md for the full sourcing trail, extraction
+> diff, and every disclosed scope decision. Japan's vertical count remains 3
+> of 6 (Visa, National ID, Business Formation) — this deepens rather than
+> widens Japan's coverage; the three sibling Kabushiki Kaisha variants and
+> the Seal Registration Notification remain open, flagged for a future
+> cycle.
 
 > **Update (2026-07-09, GOV-2019): Japan's Business Formation vertical** is
 > now published, with
@@ -3749,6 +3798,17 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (26/28 jurisdictions — 93%)
 
+**Japan's Business Formation vertical is deepened with a second company type
+(GOV-2026)**, via
+`jp/houmukyoku/limited-liability-company-establishment-registration-application`
+— the Legal Affairs Bureau's Godo Kaisha (合同会社, "Limited Liability
+Company") Establishment Registration Application, alongside the existing
+Kabushiki Kaisha schema. See the Executive Summary update above and the
+document's own VERIFICATION.md for the full sourcing story, including the
+worked-example/blank-template diff and this document's two disclosed sourcing
+caveats. Japan's vertical count remains 3 of 6 (Visa, National ID, Business
+Formation) — this deepens rather than widens coverage.
+
 **Japan's Business Formation gap is now closed (GOV-2019)**, via
 `jp/houmukyoku/stock-company-establishment-registration-application` — the
 Legal Affairs Bureau's Stock Company Establishment Registration Application
@@ -5298,6 +5358,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     this time — future cycles should consider the sibling incorporation
     variants and the Seal Registration Notification flagged in that
     document's own VERIFICATION.md as companion-schedule candidates instead.
+    **Update (2026-07-09, GOV-2026): a second Business Formation company type
+    is now published**, via
+    `jp/houmukyoku/limited-liability-company-establishment-registration-application`
+    — the Godo Kaisha (合同会社, "Limited Liability Company") Establishment
+    Registration Application, found on the same `houmukyoku.moj.go.jp` index
+    page and not one of the previously-flagged sibling variants/Seal
+    Registration Notification (both of those remain open, unpursued
+    candidates — see the document's own VERIFICATION.md). Japan's vertical
+    count remains 3 of 6 (Visa, National ID, Business Formation); this
+    deepens rather than widens its coverage.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
