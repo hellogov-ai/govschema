@@ -111,16 +111,28 @@ reading order — the same technique already used for
 `jp/isa/certificate-of-eligibility-application`.
 
 **The blank template and worked example were diffed line-by-line**, surfacing
-two distinctions from the Kabushiki Kaisha sibling schema's own extraction
-findings — both disclosed as sourcing caveats rather than silently resolved:
+one finding that reproduces the Kabushiki Kaisha sibling schema's own
+extraction finding and one genuine distinction from it — both disclosed as
+sourcing caveats rather than silently resolved:
 
-1. **The blank template's `登記すべき事項` body is genuinely blank**, unlike
-   the Kabushiki Kaisha blank template (whose `登記すべき事項` body retained
-   the worked example's placeholder content verbatim). This Godo Kaisha blank
-   template prints only the bare headers (「商号」「本店」「公告をする方法」
-   「目的」「資本金の額」「社員に関する事項」「職務執行者」「登記記録に関す
-   る事項」) with no placeholder text after any of them — a cleaner blank form
-   than its sibling, not a discrepancy.
+1. **The blank template's `登記すべき事項` body is byte-for-byte identical
+   placeholder content to the worked example**, not genuinely blank — the
+   same pattern already documented for the Kabushiki Kaisha sibling schema,
+   not a discrepancy from it. Both PDFs' `登記すべき事項` passages read
+   identically from 「商号」○○商事合同会社 through the same 「目的」 list,
+   the same `資本金の額` (金５００万円), and the same managing/representative
+   member and performing-officer names. The **only** difference between the
+   two PDFs' `登記すべき事項` bodies is the trailing `課税標準金額`/
+   `登録免許税` tax-computation line immediately after it: the blank template
+   leaves the amount unfilled (`金 円`), while the worked example fills it in
+   (`金５００万円`) with an explanatory annotation ("資本金の額を記載します。").
+   This is the same underlying feature the Kabushiki Kaisha sibling schema's
+   VERIFICATION.md already documents and explains: `登記すべき事項` is not
+   written into boxes on the printed page at all — it is drafted separately
+   and submitted as an attachment, on a CD-R, or via the Legal Affairs
+   Bureau's own online filing system, so the Bureau's blank template prints
+   the worked example's placeholder text as a drafting guide rather than
+   leaving the passage empty.
 2. **The agent/proxy (代理人) pathway has no distinct labeled row on the blank
    template at all.** The blank template's entire filing block — attachment
    list, signature block, destination Legal Affairs Bureau, and contact phone
