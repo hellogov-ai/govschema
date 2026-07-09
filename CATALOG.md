@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **296 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **297 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1896): canton Zürich's Schuldenverzeichnis**
+> (debts register) schedule is now published, with
+> `ch/zh/sta/schuldenverzeichnis` — the Kantonales Steueramt Zürich's
+> "Schuldenverzeichnis" (Form 355), the seventh companion schedule to
+> `ch/zh/sta/steuererklaerung-natuerliche-personen` (GOV-1847), used by a
+> taxpayer with one or more private debts (including mortgage debt) to
+> itemize, per creditor, the creditor's name/address, the year-end debt
+> balance, and the interest paid — referenced by the main return's own
+> Ziffer 12 (line 250, Schuldzinsen) and Ziffer 34 (line 470, Schulden).
+> This picks the simpler of the two remaining candidates off the open list
+> GOV-1889 left behind (Schuldenverzeichnis, Hilfsblatt A/B/G), passing over
+> Hilfsblatt A/B/G since it is, in substance, three separate self-employment
+> bookkeeping worksheets (Forms 328/329/330/331) rather than one schedule.
+> Sourced from a genuine, current, unauthenticated, flat (non-AcroForm)
+> 1-page PDF (`355_schulden_zh_2020_def.pdf`, 54,514 bytes, HTTP 200, no
+> login/CAPTCHA/WAF gate, confirmed via `pdfjs-dist` to carry zero AcroForm
+> widgets), fetched from the same `zh.ch` tax-forms listing as its sibling
+> schedules. Like the Liegenschaftenverzeichnis, this form is hosted at a
+> **year-independent** URL path and carries its own filer-entered "Jahr"
+> (tax year) box. A text-extraction artifact — each of the 30 table rows'
+> two money columns returning an identical repeating digit string instead
+> of a per-row code — was confirmed by rendering the page to PNG to be a
+> decorative digit-entry-box glyph, not a real per-row reference code; this
+> table carries no per-row codes at all, only the two headline Total boxes
+> (3200, 3201). The Kantonales Steueramt's own Wegleitung (pp.37-38) was
+> fetched and its worked household specimen rendered to PNG, confirming a
+> CHF 8'000 debt-interest figure entered identically in both the
+> Staatssteuer and Bundessteuer columns (the evidentiary basis for this
+> schema's `totalPrivateDebtInterest` field description) and a CHF 750'000
+> debt total — used only as an order-of-magnitude plausibility check, since
+> (as with Berufsauslagen/Aus- und Weiterbildung/Liegenschaftenverzeichnis)
+> no dedicated worked specimen of this form's own per-creditor rows exists
+> in the Wegleitung. The 30-row creditor table is collapsed to one free-text
+> field per this registry's established treatment of unbounded repeating
+> tables; unlike its Wertschriften/Liegenschaften siblings, no continuation-
+> sheet field is modelled since no source examined references one. Modelled
+> 7 fields across 3 `steps`. This remains Switzerland's 2nd of 6 verticals
+> (DMV, Taxes) — a companion schedule, not a new vertical — but further
+> deepens Taxes-vertical coverage, leaving Hilfsblatt A/B/G as the sole
+> remaining companion-schedule gap (now understood as three separate future
+> sub-cycle candidates). See
+> `registry/ch/zh/sta/schuldenverzeichnis/1.0.0/VERIFICATION.md` for the
+> full sourcing record, every disclosed scope decision, and the worked
+> mock-data example.
 
 > **Update (2026-07-09, GOV-1889): canton Zürich's Liegenschaftenverzeichnis**
 > (real-estate register) schedule is now published, with
@@ -3340,6 +3385,30 @@ hand-recomputed independently instead. The 10-property repeating table,
 spanning both of the form's pages, is collapsed to one free-text field. See
 the Executive Summary update above and the document's own VERIFICATION.md.
 
+**The main return's own flagged Schuldenverzeichnis gap is now also
+published** (`ch/zh/sta/schuldenverzeichnis`, GOV-1896) — the debts-register
+companion schedule (Form 355), used by a taxpayer with one or more private
+debts to itemize, per creditor, the creditor's name/address, the year-end
+debt balance, and the interest paid, referenced by the main return's own
+Ziffer 12 (line 250) and Ziffer 34 (line 470). Sourced the same way (genuine,
+current, unauthenticated, flat non-AcroForm PDF from the same `zh.ch`
+listing), and like Liegenschaftenverzeichnis this form is hosted at a
+year-independent URL with its own filer-entered "Jahr" box. The 30-row
+itemized table's two money columns each extracted as an identical repeating
+digit string rather than a per-row code; rendering the page to PNG confirmed
+this is a decorative digit-entry-box glyph artifact, not a real code — this
+table carries no per-row codes at all, only the two headline Total boxes.
+The Wegleitung's own worked household specimen (pp.37-38, rendered to PNG)
+confirms a CHF 8'000 debt-interest figure entered identically in both the
+Staatssteuer and Bundessteuer columns — the basis for this schema's own
+field description of how the combined total transfers — and a CHF 750'000
+debt total, used only as an order-of-magnitude check since no dedicated
+worked specimen of this form's own per-creditor rows exists in the
+Wegleitung. The 30-row creditor table is collapsed to one free-text field;
+unlike its Wertschriften/Liegenschaften siblings, no continuation-sheet
+field is modelled since no source references one. See the Executive
+Summary update above and the document's own VERIFICATION.md.
+
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
 osob" (form 25 5405, MFin 5405), the annual personal income tax return under
@@ -4268,10 +4337,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Liegenschaftenverzeichnis gap has since closed too (GOV-1889,
    2026-07-09)**, via `ch/zh/sta/liegenschaftenverzeichnis` — see the
    Executive Summary update above and the document's own VERIFICATION.md.
-   The remaining two companion schedules (Schuldenverzeichnis, Hilfsblatt
-   A/B/G) remain open backlog candidates for a future cycle; neither has yet
-   been screened for tractability. Switzerland's other 25 cantons each
-   likely publish their own equivalent tax-return form, also unpursued.
+   **The Schuldenverzeichnis gap has since closed too (GOV-1896,
+   2026-07-09)**, via `ch/zh/sta/schuldenverzeichnis` — see the Executive
+   Summary update above and the document's own VERIFICATION.md. The
+   remaining companion-schedule gap, Hilfsblatt A/B/G, remains an open
+   backlog candidate for a future cycle — in substance three separate
+   self-employment/agricultural bookkeeping worksheets (Forms 328/329 for
+   Hilfsblatt A, 330 for Hilfsblatt B, 331 for Hilfsblatt G) rather than one
+   schedule, so most likely three separate future sub-cycles rather than
+   one combined effort; none has yet been screened for tractability.
+   Switzerland's other 25 cantons each likely publish their own equivalent
+   tax-return form, also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
