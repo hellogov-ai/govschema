@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **295 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **296 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1889): canton Zürich's Liegenschaftenverzeichnis**
+> (real-estate register) schedule is now published, with
+> `ch/zh/sta/liegenschaftenverzeichnis` — the Kantonales Steueramt Zürich's
+> "Liegenschaftenverzeichnis" (Form 350), the sixth companion schedule to
+> `ch/zh/sta/steuererklaerung-natuerliche-personen` (GOV-1847), used by a
+> taxpayer who owns or holds a usufruct right over one or more properties to
+> declare each property's location/type, its two official assessed tax
+> values (an agricultural/forestry Ertragswert, or a Verkehrswert for every
+> other property), its imputed rental value and/or actual rent income, its
+> deductible maintenance costs, and the resulting net income — referenced by
+> the main return's own Ziffer 6 (line 188) and Ziffer 31.1/31.2 (lines
+> 421/422). This picks the strongest remaining candidate off the open list
+> GOV-1882 left behind (Liegenschaftenverzeichnis, Schuldenverzeichnis,
+> Hilfsblatt A/B/G). Sourced from a genuine, current, unauthenticated, flat
+> (non-AcroForm) 2-page PDF (`350 Liegensch ZH 2025 HA DEF.pdf`, 71,322
+> bytes, HTTP 200, no login/CAPTCHA/WAF gate, confirmed via
+> `pdfjs-dist`/`pdf-lib` to carry zero AcroForm widgets across both pages).
+> Unlike its four sibling companion schedules, this form is hosted at a
+> **year-independent** URL path (`jahrunabhaengig/`, not the yearly `2025/`
+> path) and carries its own filer-entered "Jahr" (tax year) box rather than a
+> year printed in its cover title — modelled as a dedicated required
+> `taxYear` field, unique among the five CH-ZH companion schedules. The
+> Kantonales Steueramt's own Wegleitung (pp.28-30) was fetched and
+> cross-checked, confirming both Steuerwert figures are, in the ordinary
+> case, transfer values from the Gemeindesteueramt's own property-valuation
+> notice rather than filer-computed, and confirming that a multi-family/
+> business building's own capitalization-formula-derived assessed value
+> (`Bruttojahresertrag x 100 / 7.05`) transfers into the Verkehrswert column/
+> Ziffer 31.1, not the Ertragswert/Land-oder-Forstwirtschaft column/Ziffer
+> 31.2, which is reserved strictly for genuinely agricultural/forestry-
+> classified land. Unlike Berufsauslagen and Versicherungsprämien, no
+> official worked specimen of this exact form's own per-property line items
+> exists in the Wegleitung — a disclosed negative finding, the same class of
+> finding the Aus- und Weiterbildung cycle (GOV-1882) made for Form 367 —
+> so this schema's worked mock-data example was constructed and
+> hand-recomputed independently instead. The 10-property repeating table
+> (spanning both of the form's pages, linked by property number) is
+> collapsed to one free-text field per this registry's established
+> treatment of unbounded repeating tables. Modelled 12 fields (3
+> `documents[]` entries) across 3 `steps`. This remains Switzerland's 2nd of
+> 6 verticals (DMV, Taxes) — a companion schedule, not a new vertical — but
+> further deepens Taxes-vertical coverage, leaving two companion schedules
+> open (Schuldenverzeichnis, Hilfsblatt A/B/G). See
+> `registry/ch/zh/sta/liegenschaftenverzeichnis/1.0.0/VERIFICATION.md` for
+> the full sourcing record, every disclosed scope decision, and the worked
+> mock-data example.
 
 > **Update (2026-07-09, GOV-1882): canton Zürich's Berufsorientierte Aus-
 > und Weiterbildungskosten** (career-oriented further-education and training
@@ -3265,6 +3312,34 @@ this schema's worked mock-data example was sourced and hand-recomputed
 independently instead. See the Executive Summary update above and the
 document's own VERIFICATION.md.
 
+**The main return's own flagged Liegenschaftenverzeichnis gap is now also
+published** (`ch/zh/sta/liegenschaftenverzeichnis`, GOV-1889) — the
+real-estate-register companion schedule (Form 350), used by a property
+owner to declare each property's location/type, its official assessed
+Ertragswert (agricultural/forestry) or Verkehrswert, its imputed rental
+value and/or actual rent income, its deductible maintenance costs, and the
+resulting net income, referenced by the main return's own Ziffer 6 (line
+188) and Ziffer 31.1/31.2 (lines 421/422). Sourced the same way (genuine,
+current, unauthenticated, flat non-AcroForm PDF from the same `zh.ch`
+listing), though unlike its four siblings this form is hosted at a
+year-independent URL and carries its own filer-entered "Jahr" box rather
+than a year printed in its cover title. The Wegleitung (pp.28-30) confirms
+both Steuerwert figures are ordinarily transfer values from the
+Gemeindesteueramt's own valuation notice, not filer-computed, and that a
+multi-family/business building's own capitalization-formula-derived
+assessed value transfers into the Verkehrswert column/Ziffer 31.1, not the
+Ertragswert/Land-oder-Forstwirtschaft column/Ziffer 31.2, which is reserved
+for genuinely agricultural/forestry-classified land. Unlike Berufsauslagen
+and Versicherungsprämien, no official worked specimen of this exact form's
+own per-property line items exists in the Wegleitung — its own blank
+facsimile sits behind explanatory prose on PDF pp.14/28/29/30, and the
+Wegleitung's worked household specimen shows only the two aggregate
+transfer figures this schedule would have produced, never a Form-350-level
+breakdown — so this schema's worked mock-data example was constructed and
+hand-recomputed independently instead. The 10-property repeating table,
+spanning both of the form's pages, is collapsed to one free-text field. See
+the Executive Summary update above and the document's own VERIFICATION.md.
+
 **The Czech Republic's Taxes gap is now closed** (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
 GOV-1826) — the Ministerstvo financí's "Přiznání k dani z příjmů fyzických
 osob" (form 25 5405, MFin 5405), the annual personal income tax return under
@@ -4189,11 +4264,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    above and the document's own VERIFICATION.md. **The Aus- und
    Weiterbildung gap has since closed too (GOV-1882, 2026-07-09)**, via
    `ch/zh/sta/aus-und-weiterbildungskosten` — see the Executive Summary
-   update above and the document's own VERIFICATION.md. The remaining three
-   companion schedules (Liegenschaftenverzeichnis, Schuldenverzeichnis,
-   Hilfsblatt A/B/G) remain open backlog candidates for a future cycle; none
-   has yet been screened for tractability. Switzerland's other 25 cantons
-   each likely publish their own equivalent tax-return form, also unpursued.
+   update above and the document's own VERIFICATION.md. **The
+   Liegenschaftenverzeichnis gap has since closed too (GOV-1889,
+   2026-07-09)**, via `ch/zh/sta/liegenschaftenverzeichnis` — see the
+   Executive Summary update above and the document's own VERIFICATION.md.
+   The remaining two companion schedules (Schuldenverzeichnis, Hilfsblatt
+   A/B/G) remain open backlog candidates for a future cycle; neither has yet
+   been screened for tractability. Switzerland's other 25 cantons each
+   likely publish their own equivalent tax-return form, also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
