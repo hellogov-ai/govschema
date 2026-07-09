@@ -1,0 +1,251 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "jp/j-lis/individual-number-card-issuing-application",
+  "version": "1.0.0",
+  "title": "Japan Individual Number Card Issuing Application (My Number Card)",
+  "description": "The generic, handwritten (手書用) Individual Number Card Issuing Application / Digital Certificate Issuance-or-Update Application Form (個人番号カード交付申請書 兼 電子証明書発行/更新申請書), published by the Japan Agency for Local Authority Information Systems (地方公共団体情報システム機構, J-LIS) for anyone registered in Japan's Basic Resident Register (Japanese nationals and registered foreign residents alike) who already has a 12-digit Individual Number ('My Number') and wants to apply for the physical photo IC card that carries it, whether for the first time, to renew an expiring card, or to reissue a lost/damaged one. Every resident is assigned an Individual Number automatically; this form is only the application for the physical card itself (and, optionally, its two electronic certificates used for e-Tax, convenience-store document issuance, and logging in to the Mynaportal). Most applicants instead use a personalized paper application mailed to them with a QR code and pre-printed Individual Number; this generic form exists specifically for anyone without that personalized mailer (e.g. it was lost, or the applicant needs a blank copy), and is submitted by post together with a passport-style photo to J-LIS's own P.O. box. J-LIS publishes this same two-page form in Japanese plus eleven other languages (English, Chinese, Korean, Portuguese, Spanish, Vietnamese, Thai, Tagalog, Indonesian, Nepali, and one more); this document is modelled from the official Japanese/English bilingual edition. See VERIFICATION.md for the full field-by-field source mapping, the mock-data test run against the source's own worked example, and every disclosed scope decision.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "JP",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Japan Agency for Local Authority Information Systems (地方公共団体情報システム機構)",
+    "abbreviation": "J-LIS",
+    "url": "https://www.kojinbango-card.go.jp/"
+  },
+  "process": {
+    "type": "application",
+    "language": "ja"
+  },
+  "source": {
+    "url": "https://www.kojinbango-card.go.jp/hpsv/wpmng/documents/tegaki-kofu-shinseisho-en.pdf",
+    "retrievedAt": "2026-07-09",
+    "documentRef": "個人番号カード交付申請書 兼 電子証明書発行/更新申請書【手書用】／INDIVIDUAL NUMBER CARD Issuing Application / Digital Certification Form [to be personally handwritten] — the Japanese/English bilingual edition of J-LIS's generic (non-personalized) mail-application form, linked from the 交付申請書等ダウンロード ('Application form downloads') page at https://www.kojinbango-card.go.jp/download/."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-09",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-09",
+    "notes": "GOV-2012: GovSchema Standard Research cycle. CATALOG.md's Known Gaps section (item 6, recorded by GOV-2005) had already screened and flagged this exact source as a genuine, live, bilingual candidate for Japan's National ID vertical, alongside a Business Formation candidate (houmukyoku.moj.go.jp stock-company registration) that remains open for a future cycle. Re-confirmed live this cycle: the PDF and its own download-listing page (https://www.kojinbango-card.go.jp/download/) both return HTTP 200 to a plain default-User-Agent request, a browser User-Agent, and this repository's own tools/verify-sources.mjs User-Agent alike — no bot mitigation on this host for these two URLs (unlike moj.go.jp's curl-UA-specific 403 noted in GOV-2005). By contrast, the pure-Japanese-only edition of the same form and the site's own apprec/apply/mail_apply/ walkthrough page sit behind an Incapsula bot-mitigation redirect loop regardless of User-Agent; neither was needed as a source since the bilingual EN edition (this document's citation) and the unblocked /download/ listing page already give a complete, independently-checkable field-by-field record. `node tools/verify-sources.mjs registry/jp/j-lis/individual-number-card-issuing-application/1.0.0` reports 0 warnings."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-09"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "individualNumber",
+      "label": "Individual Number (My Number)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "個人番号 — the applicant's existing 12-digit Individual Number, already assigned via the Basic Resident Register before this card application. The form's own instructions state this is mandatory ('ID Number is mandatory') because an incorrect or missing number can cause the wrong card to be issued.",
+      "sourceRef": "Individual Number Card Issuing Application, row '個人番号 (ID Number)'",
+      "validation": { "pattern": "^[0-9]{12}$" }
+    },
+    {
+      "name": "fullName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "氏名 — printed exactly as it appears on the applicant's Certificate of Residence (住民票).",
+      "sourceRef": "Individual Number Card Issuing Application, row '氏名 (Name)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "住所 — the applicant's registered address, matching the Certificate of Residence. The source form provides one free-text block (no structured street/city/postal-code sub-boxes).",
+      "sourceRef": "Individual Number Card Issuing Application, row '住所 (Address)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Individual Number Card Issuing Application, row '生年月日 (Date of Birth)'"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "validation": { "enum": ["male", "female"] },
+      "description": "性別 — printed as a binary 男・女 (Male･Female) choice, matching the Certificate of Residence.",
+      "sourceRef": "Individual Number Card Issuing Application, row '性別 (Gender)'"
+    },
+    {
+      "name": "previousNameOrNickname",
+      "label": "Previous last name or Nickname (Appellation)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "旧氏又は通称 — only applicable if the applicant has already completed the separate procedure to list a previous legal surname or a nickname/appellation on their Certificate of Residence; otherwise left blank.",
+      "sourceRef": "Individual Number Card Issuing Application, row '旧氏又は通称 (Previous last name or Nickname (Appellation))'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "電話番号 — a daytime contact number. The form's own footnote frames this as advisory ('if the information is insufficient, you may be contacted') rather than a stated mandatory item, unlike individualNumber's explicit 'mandatory' instruction, so this is modelled as optional.",
+      "sourceRef": "Individual Number Card Issuing Application, row '電話番号 (Phone Number)'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "foreignResidencyStatus",
+      "label": "Foreign Residency Status",
+      "type": "enum",
+      "required": false,
+      "validation": {
+        "enum": [
+          "mid-to-long-term-resident",
+          "special-permanent-resident",
+          "temporary-refugee-status",
+          "provisional-stay",
+          "transitional-stay-by-birth",
+          "transitional-stay-loss-of-nationality"
+        ]
+      },
+      "description": "外国人住民の区分 — applies only to registered foreign residents; left blank by Japanese-national applicants. The six enumerated categories printed in the form's own instructions page: mid- to long-term residents (中長期在留者), special permanent residents (特別永住者), persons permitted to enter under temporary refugee status (一時庇護許可者), persons permitted for provisional stay (仮滞在許可者), persons who may continue to stay transitionally in Japan by birth (出生による経過滞在者), and persons who have lost Japanese nationality and may continue to stay transitionally in Japan (国籍喪失による経過滞在者).",
+      "sourceRef": "Individual Number Card Issuing Application, row '外国人住民の区分 (Foreign Residency Status)' and its instructions-page gloss"
+    },
+    {
+      "name": "hasResidencyExpiryDate",
+      "label": "Residency expiry date available or not",
+      "type": "boolean",
+      "required": false,
+      "description": "在留期間等満了日の有無 — applies only to registered foreign residents whose residence card (在留カード) itself prints an expiration date; the form's own instructions direct such applicants to write '有' (Listed).",
+      "sourceRef": "Individual Number Card Issuing Application, row '在留期間等満了日の有無 (Residency expiry date available or not)'"
+    },
+    {
+      "name": "residencyExpiryDate",
+      "label": "Residency expiry date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hasResidencyExpiryDate", "equals": true },
+      "description": "在留期間等満了日 — the expiration date printed on the applicant's residence card, copied from that card.",
+      "sourceRef": "Individual Number Card Issuing Application, row '在留期間等満了日 (Residency expiry date)'"
+    },
+    {
+      "name": "requestBraille",
+      "label": "Request Braille name transcription",
+      "type": "boolean",
+      "required": false,
+      "description": "点字表記を希望する — an opt-in checkbox to have the applicant's furigana/katakana name (as already registered on the Basic Resident Registration Network System, up to 24 characters) transcribed into braille on the card. The applicant does not separately write the braille text themselves; J-LIS transcribes it from the name already on file once this box is checked.",
+      "sourceRef": "Individual Number Card Issuing Application, row '点字 (Braille Type)'"
+    },
+    {
+      "name": "applicationDate",
+      "label": "Application date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Individual Number Card Issuing Application, row '申請日 (Application)'"
+    },
+    {
+      "name": "applicantSignatureName",
+      "label": "Applicant's Name (signature)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "申請者氏名 — the applicant's own handwritten name in the declaration/signature block ('I herein certify the statement in this document is true and correct... I request to apply for an Individual Number Card and Digital Certificate'), printed as a distinct box from the fullName field above and required to be completed by the applicant personally.",
+      "sourceRef": "Individual Number Card Issuing Application, declaration block, row '申請者氏名 (Applicant's Name)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "declineSignatureCertificate",
+      "label": "Decline the electronic certificate of the bearer's signature",
+      "type": "boolean",
+      "required": false,
+      "description": "署名用電子証明書 — the form issues this Digital Certificate by default; the applicant blacks out this box only to opt out. By rule it is not issued to an applicant under 15 years of age or under adult guardianship regardless of this box.",
+      "sourceRef": "Individual Number Card Issuing Application, row '署名用電子証明書 (Electronic certificate of the bearer's signature)'"
+    },
+    {
+      "name": "declineUserAuthenticationCertificate",
+      "label": "Decline the electronic certificate of user proof",
+      "type": "boolean",
+      "required": false,
+      "description": "利用者証明用電子証明書 — issued by default (needed for e.g. health-insurance-card use, convenience-store document issuance, e-Tax filing, and Mynaportal login); the applicant blacks out this box only to opt out.",
+      "sourceRef": "Individual Number Card Issuing Application, row '利用者証明用電子証明書 (Electronic certificate of user proof)'"
+    },
+    {
+      "name": "representativeFurigana",
+      "label": "Statutory Representative — Furigana",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "代理人記載欄 ふりがな — only completed when the card bearer is under 15 years of age or an adult ward, in which case a statutory representative (parent or legal guardian) completes this whole section instead of the applicant. The form itself has no separate checkbox marking this condition; a consuming agent can already derive the under-15 branch from this document's own dateOfBirth field, though adult-ward status cannot be derived from any field this document models.",
+      "sourceRef": "Individual Number Card Issuing Application, 代理人記載欄 (Statutory Representative), row 'ふりがな (Furigana)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "representativeName",
+      "label": "Statutory Representative — Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "代理人氏名 — see representativeFurigana for when this section applies.",
+      "sourceRef": "Individual Number Card Issuing Application, 代理人記載欄 (Statutory Representative), row '代理人氏名 (Representative Name)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "representativeRelationToApplicant",
+      "label": "Statutory Representative — Relation to Applicant",
+      "type": "string",
+      "required": false,
+      "description": "本人との関係 — see representativeFurigana for when this section applies.",
+      "sourceRef": "Individual Number Card Issuing Application, 代理人記載欄 (Statutory Representative), row '本人との関係 (Relation To Applicant)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "representativeAddress",
+      "label": "Statutory Representative — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "代理人住所 — printed with its own postal-code (〒) box; see representativeFurigana for when this section applies.",
+      "sourceRef": "Individual Number Card Issuing Application, 代理人記載欄 (Statutory Representative), row '代理人住所 (Representative's Address)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "representativePhoneNumber",
+      "label": "Statutory Representative — Phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "電話番号 — the representative's own daytime contact number; see representativeFurigana for when this section applies.",
+      "sourceRef": "Individual Number Card Issuing Application, 代理人記載欄 (Statutory Representative), row '電話番号 (Phone Number)'",
+      "validation": { "maxLength": 30 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Applicant photo (4.5cm × 3.5cm, taken within 6 months, front-facing, no hat, no background)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Individual Number Card Issuing Application, photo box printed directly on the form's page 1, with the full photo-specification guide on page 2"
+    }
+  ]
+}
