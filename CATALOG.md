@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **304 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **305 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1953): a third Ontario schema**,
+> `ca/on/registration/general-limited-partnership-registration` — Form
+> 5298E, "Register a Business Name for a General Partnership or a Limited
+> Partnership" (Business Names Act), sourced directly from the same Ontario
+> Central Forms Repository (`forms.mgcs.gov.on.ca`) already used for
+> `ca/on/registration/sole-proprietorship-registration` (Form 5288E) and
+> `ca/on/registration/business-incorporation` (Form 5351E). This closes the
+> "partnership" half of the Known Gaps section's item 1
+> ("sub-national/state ... Business Formation expansion: CA/NZ/IE/IN
+> sole-trader/partnership/LLP formation"), which GOV-1947 closed the
+> "sole-trader" half of last cycle — Ontario's own share of this gap is now
+> fully closed. Form 5298E is the same encrypted (AES-128/R4, empty user
+> password) dynamic Adobe LiveCycle/XFA form family, decrypted from scratch
+> in Node against this PDF's own `/Encrypt` dictionary (this cycle's
+> decryption additionally had to locate and decompress a cross-reference-
+> stream-era object stream to recover the AcroForm dictionary naming the
+> `/XFA` array's packets, one layer deeper than the two sibling forms
+> needed). A structural surprise, not a guess: this form has **no** roster
+> of the partnership's individual partners at all — it is filed by an
+> *already-existing* partnership (which must already hold its own Business
+> Identification Number and ministry-issued company key) to register an
+> *additional* trade name, and the only place "partner" appears as data is
+> in Section 6's Authorization, where one partner (individual, corporation/
+> registered entity, or "other" entity) or a person acting under power of
+> attorney signs — each of those three types independently repeatable
+> (`<occur max="-1"/>`) in the source XFA with no bound cap. GovSchema v0.3
+> has no `array`/repeating-value field type (GSP-0009 remains an unaccepted
+> proposal), so this document narrows to the single most common path — one
+> partner, of type Individual, authorizing directly — the same scope-
+> narrowing convention `ca/on/registration/sole-proprietorship-registration`
+> already used for its own Power-of-Attorney exclusion. See the document's
+> own VERIFICATION.md for the full method, the complete field-by-field
+> sourcing, and every disclosed scope decision.
 
 > **Update (2026-07-09, GOV-1947): a second Ontario schema**,
 > `ca/on/registration/sole-proprietorship-registration` — Form 5288E,
@@ -3413,6 +3447,24 @@ sourcing story, including a from-scratch AES decryption of the form's own
 encrypted XFA packets. Ontario's own Form 5298E (general/limited partnership
 registration) remains an open sub-process candidate for a future cycle.
 
+**Ontario now has a third Business Formation schema, closing its own share
+of the CA/NZ/IE/IN gap (GOV-1953)**, via
+`ca/on/registration/general-limited-partnership-registration` — Form 5298E,
+"Register a Business Name for a General Partnership or a Limited
+Partnership," the partnership-side sibling to the sole-trader
+`ca/on/registration/sole-proprietorship-registration` (Form 5288E), both
+sourced from the same Ontario Central Forms Repository
+(`forms.mgcs.gov.on.ca`). Contrary to expectation, the form has **no**
+roster of the partnership's individual partners — it is filed by an
+already-existing partnership (already holding its own BIN and company key)
+to register an additional trade name, and "partner" only appears in Section
+6's Authorization, where the source XFA's own `<occur max="-1"/>` allows an
+unbounded number of co-authorizing partners with no counterpart in
+GovSchema v0.3 (no `array` type; GSP-0009 remains proposed only). This
+document narrows to one partner, of type Individual, authorizing directly —
+see the document's own VERIFICATION.md for the full method and every
+disclosed scope decision.
+
 **The Czech Republic opens as the registry's 26th jurisdiction with a
 Business Formation schema (GOV-1804)**, via
 `cz/mpo/jednotny-registracni-formular-fyzicka-osoba` — the Ministry of
@@ -4309,13 +4361,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
    closed**, via `ca/on/registration/sole-proprietorship-registration`
    (Form 5288E) — see the Executive Summary update above and the document's
-   own VERIFICATION.md. Ireland's RBN1 (individual business-name
-   registration) was screened first for the same gap but is blocked by a
-   Cloudflare JavaScript challenge across the entire `cro.ie` domain — a
-   genuine bot-mitigation gate, not a missing source; worth retrying with a
-   Cloudflare-workaround technique in a future cycle. NZ's, India's, and
-   Ireland's sole-trader/partnership candidates, plus Ontario's own Form
-   5298E (general/limited partnership), remain open.
+   own VERIFICATION.md. **Update (GOV-1953): Ontario's
+   general/limited-partnership half is now closed too**, via
+   `ca/on/registration/general-limited-partnership-registration` (Form
+   5298E) — see the Executive Summary update above and the document's own
+   VERIFICATION.md; Ontario's entire share of this gap is now fully closed.
+   Ireland's RBN1 (individual business-name registration) was screened
+   first for the same gap but is blocked by a Cloudflare JavaScript
+   challenge across the entire `cro.ie` domain — a genuine bot-mitigation
+   gate, not a missing source; worth retrying with a Cloudflare-workaround
+   technique in a future cycle. NZ's, India's, and Ireland's
+   sole-trader/partnership candidates remain open.
 2. **Corporate income tax**: IE corporation tax (Form CT1) still has no
    corporate-return schema (its individual return is covered) — re-examined
    fresh in GOV-1444 (2026-07-06): Revenue.ie's year-specific Tax and Duty
