@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **303 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **304 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1947): a second Ontario schema**,
+> `ca/on/registration/sole-proprietorship-registration` — Form 5288E,
+> "Register a Business Name for a Sole Proprietorship" (Business Names Act),
+> sourced directly from the Ontario Central Forms Repository
+> (`forms.mgcs.gov.on.ca`), the same source family already used for
+> `ca/on/registration/business-incorporation` (Form 5351E). This closes the
+> Known Gaps section's item 1 ("sub-national/state ... Business Formation
+> expansion: CA/NZ/IE/IN sole-trader/partnership/LLP formation") for
+> Canada's sole-trader half specifically. Ireland's own CRO Form RBN1 was
+> screened first for the same gap but the entire `cro.ie` domain sits behind
+> a Cloudflare JavaScript challenge that blocks both direct fetch and a real
+> headless-browser `networkidle` wait; this cycle pivoted to Ontario
+> instead. Form 5288E is itself a dynamic, **encrypted** (AES-128/R4, empty
+> user password) Adobe LiveCycle/XFA PDF — decrypted from scratch in Node
+> against the PDF's own `/Encrypt` dictionary (Algorithm 2 key derivation,
+> then per-object AES-128-CBC decryption) to recover the `/XFA` array's
+> `template`/`datasets` packets directly, a new technique beyond the
+> `pdfjs-dist` `enableXfa`/`allXfaHtml` method recorded for Form 5351E — see
+> the document's own VERIFICATION.md for the full method and every
+> disclosed scope decision (scoped to a standard Ontario business address,
+> a Canadian address for service, and direct sole-proprietor authorization;
+> the "Person Acting Under Power of Attorney" pathway and Form 5298E,
+> Ontario's sibling general/limited-partnership registration form, remain
+> open for a future cycle). Ontario's own sole-trader gap is now closed;
+> NZ's, Ireland's (pending a Cloudflare workaround), and India's
+> sole-trader/partnership candidates, plus Ontario's own partnership form,
+> remain open.
 
 > **Update (2026-07-09, GOV-1938): Malaysia's Business Formation gap is
 > now closed**, with `my/ssm/sole-proprietorship-partnership-registration`
@@ -3372,6 +3400,19 @@ statutory transactions and are out of scope; a single owner/partner
 partners). This gives Malaysia 4 of its 6 verticals (DMV, Passport, Visa,
 Business Formation).
 
+**Ontario now has a second Business Formation schema (GOV-1947)**, via
+`ca/on/registration/sole-proprietorship-registration` — Form 5288E,
+"Register a Business Name for a Sole Proprietorship," the sole-trader
+business-name registration sibling to the already-modelled
+`ca/on/registration/business-incorporation` (Form 5351E), both sourced from
+the same Ontario Central Forms Repository (`forms.mgcs.gov.on.ca`). This
+closes the Known Gaps section's item 1 ("CA/NZ/IE/IN sole-trader/
+partnership/LLP formation") for Canada's sole-trader half; see the Executive
+Summary update above and the document's own VERIFICATION.md for the full
+sourcing story, including a from-scratch AES decryption of the form's own
+encrypted XFA packets. Ontario's own Form 5298E (general/limited partnership
+registration) remains an open sub-process candidate for a future cycle.
+
 **The Czech Republic opens as the registry's 26th jurisdiction with a
 Business Formation schema (GOV-1804)**, via
 `cz/mpo/jednotny-registracni-formular-fyzicka-osoba` — the Ministry of
@@ -4224,7 +4265,7 @@ now closed.
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -4265,7 +4306,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
-   the US and GB.
+   the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
+   closed**, via `ca/on/registration/sole-proprietorship-registration`
+   (Form 5288E) — see the Executive Summary update above and the document's
+   own VERIFICATION.md. Ireland's RBN1 (individual business-name
+   registration) was screened first for the same gap but is blocked by a
+   Cloudflare JavaScript challenge across the entire `cro.ie` domain — a
+   genuine bot-mitigation gate, not a missing source; worth retrying with a
+   Cloudflare-workaround technique in a future cycle. NZ's, India's, and
+   Ireland's sole-trader/partnership candidates, plus Ontario's own Form
+   5298E (general/limited partnership), remain open.
 2. **Corporate income tax**: IE corporation tax (Form CT1) still has no
    corporate-return schema (its individual return is covered) — re-examined
    fresh in GOV-1444 (2026-07-06): Revenue.ie's year-specific Tax and Duty
