@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **305 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **306 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GovSchema Standard Research): India's first
+> sub-national schema**, `in/kl/registration/partnership-firm-registration`
+> — "Form I", the Indian Partnership Act, 1932's own statutory partnership
+> registration application under Section 58, as prescribed by Kerala's own
+> Partnership (Registration of Firms) Rules, 1959 (Rule 3) and filed with
+> Kerala's Registration Department (Registrar of Firms). This closes the
+> India half of the Known Gaps section's item 1 ("sub-national/state ...
+> Business Formation expansion: CA/NZ/IE/IN sole-trader/partnership/LLP
+> formation") — Ontario's own share was already closed in prior cycles
+> (GOV-1947, GOV-1953). Section 71 of the central Act expressly delegates
+> Section 58 form/fee/rule-making to each State Government, confirmed by
+> a live cross-read of Sections 4, 30, 58, 59, and 71 fetched directly
+> from indiacode.nic.in, and by Chapter VII's own "STATE AMENDMENT" notes
+> showing multiple states (Goa, Rajasthan, Uttarakhand, Maharashtra,
+> Karnataka) independently amending their own Section 58/59 rules and
+> fees — confirming this is genuinely a sub-national process, not a
+> uniform central form, and justifying the `in/kl/...` path (mirroring
+> `ca/on/...`, `ch/zh/...`, `us/ca/...`). Form I is a static, two-page,
+> non-fillable PDF (no AcroForm/XFA) with a fixed 5-partner table; since a
+> partnership requires at least two partners (Section 4) and GovSchema
+> v0.3 has no array/repeating-field type (GSP-0009), the first two
+> partners are modelled as required and the remaining three as the form's
+> own optional additional rows, following the same small-fixed-count
+> numbered-field pattern already used by `ca/ircc/passport-application-
+> first-adult`'s two required references. See the document's own
+> VERIFICATION.md for the full statutory citations, the Kerala-specific
+> legacy-TLS fetch workaround this host requires, and every scope
+> decision (including the closed-enum witness-category field and the
+> Section 30 minor-admitted-to-benefits field, modelled only on the
+> optional partner slots since a minor "may not be a partner" under the
+> Act).
 
 > **Update (2026-07-09, GOV-1953): a third Ontario schema**,
 > `ca/on/registration/general-limited-partnership-registration` — Form
@@ -4329,7 +4361,7 @@ now closed.
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IN** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -4366,12 +4398,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    `ca/on/registration/general-limited-partnership-registration` (Form
    5298E) — see the Executive Summary update above and the document's own
    VERIFICATION.md; Ontario's entire share of this gap is now fully closed.
-   Ireland's RBN1 (individual business-name registration) was screened
-   first for the same gap but is blocked by a Cloudflare JavaScript
-   challenge across the entire `cro.ie` domain — a genuine bot-mitigation
-   gate, not a missing source; worth retrying with a Cloudflare-workaround
-   technique in a future cycle. NZ's, India's, and Ireland's
-   sole-trader/partnership candidates remain open.
+   **Update (2026-07-09, GovSchema Standard Research): India's share is
+   now closed too**, via `in/kl/registration/partnership-firm-registration`
+   ("Form I", under Section 58 of the Indian Partnership Act, 1932, as
+   prescribed by Kerala's own Partnership Rules) — see the Executive
+   Summary update above and the document's own VERIFICATION.md. Ireland's
+   RBN1 (individual business-name registration) was screened first for the
+   same gap but is blocked by a Cloudflare JavaScript challenge across the
+   entire `cro.ie` domain — a genuine bot-mitigation gate, not a missing
+   source; re-confirmed this cycle as still Cloudflare-managed-challenge-
+   gated even against a real headless-browser session with a realistic
+   desktop UA, worth retrying with a different Cloudflare-workaround
+   technique in a future cycle. New Zealand's NZBN sole-trader/partnership
+   registration was also reconfirmed this cycle as a RealMe-SSO-gated
+   single-page application with no PDF/prose field-by-field fallback
+   found. NZ's and Ireland's sole-trader/partnership candidates remain
+   open.
 2. **Corporate income tax**: IE corporation tax (Form CT1) still has no
    corporate-return schema (its individual return is covered) — re-examined
    fresh in GOV-1444 (2026-07-06): Revenue.ie's year-specific Tax and Duty
