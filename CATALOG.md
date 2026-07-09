@@ -4,7 +4,34 @@
 
 ## Executive Summary
 
-**28 jurisdictions** | **312 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**28 jurisdictions** | **313 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-2012): Japan's National ID vertical** is now
+> published, with `jp/j-lis/individual-number-card-issuing-application` v1.0.0
+> — the Japan Agency for Local Authority Information Systems' (J-LIS)
+> generic, handwritten Individual Number Card (My Number Card) Issuing
+> Application, one of the two strong candidates the immediately preceding
+> cycle (GOV-2005) had screened and flagged below but not pursued. Sourced
+> from `kojinbango-card.go.jp`'s own officially bilingual Japanese/English
+> edition (`hpsv/wpmng/documents/tegaki-kofu-shinseisho-en.pdf`), confirmed
+> live and linked from the site's own "Application form downloads" page
+> alongside 10 other language editions of the identical form. No AcroForm
+> layer (a print-and-handwrite form), but a full extractable text layer plus
+> an annotated page-2 instructions/worked-example page used directly as the
+> mock-data test run's source. Models 19 fields (identity, contact,
+> foreign-residency status, the two opt-out Digital Certificate checkboxes,
+> and the conditional statutory-representative section for minor/adult-ward
+> applicants) plus 1 photo document requirement across 1 `steps` entry. See
+> `registry/jp/j-lis/individual-number-card-issuing-application/1.0.0/VERIFICATION.md`
+> for the full field-by-field source mapping, a bot-mitigation note (a
+> rate-limit-triggered Incapsula redirect distinct from `moj.go.jp`'s
+> curl-UA-specific 403), and the mock-data test run against the source's own
+> worked example. This closes Japan's National ID vertical; Japan now stands
+> at **2 of its 6 verticals** (Visa, National ID) — DMV and Passport are
+> confirmed dead ends (GOV-2005), and Business Formation (the Legal Affairs
+> Bureau's Stock Company Establishment Registration Application,
+> `houmukyoku.moj.go.jp`, also flagged by GOV-2005) remains Japan's sole
+> open backlog candidate.
 
 > **Update (2026-07-09, GOV-2005): Japan opens as GovSchema's 28th
 > jurisdiction**, with `jp/isa/certificate-of-eligibility-application` — the
@@ -4427,7 +4454,14 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (22/28 jurisdictions — 79%)
+### National ID & Civic Documents (23/28 jurisdictions — 82%)
+
+**Japan**'s National ID gap is now closed (GOV-2012), via
+`jp/j-lis/individual-number-card-issuing-application` — the Japan Agency for
+Local Authority Information Systems' (J-LIS) generic, handwritten Individual
+Number Card (My Number Card) Issuing Application, officially bilingual
+Japanese/English. See the Executive Summary update above and the document's
+own VERIFICATION.md for the full sourcing record.
 
 **Switzerland**'s National ID (Identitätskarte) gap is now closed (GOV-1931),
 via the same schema that closed its Passport gap,
@@ -4641,7 +4675,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **JP** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **JP** | 2 | ✗ | ✗ | ✗ | ✗ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -5193,7 +5227,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     the usual "pre-printed QR code, no blank form" dead-end pattern does
     *not* apply to Japan). Both remain open, well-sourced candidates for a
     future cycle. Japan's DMV vertical (driver's licence) and Passport
-    vertical are confirmed dead ends instead — see below.
+    vertical are confirmed dead ends instead — see below. **Update
+    (2026-07-09, GOV-2012): Japan's National ID gap is now closed**, via
+    `jp/j-lis/individual-number-card-issuing-application` — see the
+    Executive Summary update above and the document's own VERIFICATION.md.
+    Japan now stands at **2 of its 6 verticals** (Visa, National ID);
+    Business Formation (the Legal Affairs Bureau candidate above) is
+    Japan's sole remaining open backlog candidate.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
