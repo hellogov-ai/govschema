@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **306 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **307 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1970): Estonia's Visa vertical** is now
+> published, with `ee/vm/long-stay-visa-application` — Valisministeerium's
+> (Ministry of Foreign Affairs) 13-page online pre-application wizard for
+> Estonia's national (long-stay, category D) visa
+> (`eelviisataotlus.vm.ee/d/`), closing Estonia's last remaining vertical
+> gap and bringing it to **6 of 6**. Page 1/13 (email + CAPTCHA) is a
+> genuine bot-mitigation gate; this cycle used the `agent-browser` skill to
+> drive a real headless-browser session (via a persistent `--remote-
+> debugging-port` Chromium reached through Playwright's `connectOverCDP`,
+> since the wizard's session state does not survive a client disconnect
+> through Playwright's own multiplexed `connect()` protocol), read the
+> CAPTCHA image directly, and independently walk all 13 pages live with
+> mock data — capturing real field names, full enum option text, and two
+> live cross-field validation error messages, a stronger sourcing basis
+> than this registry's more typical single-PDF-fetch pattern. Compared
+> field-by-field against `de/auswaertiges-amt/national-visa-application`
+> (the EU-harmonized template Poland's, Portugal's, and Switzerland's own
+> national visa forms were found to duplicate): Estonia's wizard shares
+> only the opening Schengen-harmonized identity/travel-document item shape
+> with Germany's, then diverges with an EU/EEA/Swiss/UK-Withdrawal-
+> Agreement close-relative section, a mandatory employment/education-history
+> block with a full structured employer address, a two-column
+> (applicant/sponsor) means-of-support checkbox matrix, a host
+> organization/person section with its own registration code and contact
+> person, and its own 8-category purpose-of-journey taxonomy sharing no
+> labels with Germany's 6 categories — genuinely distinct, not a duplicate,
+> matching the Spain/Czech Republic precedent rather than the Poland/
+> Portugal/Switzerland one. Modelled 98 fields (10 `documents[]` entries)
+> across 11 steps. See `registry/ee/vm/long-stay-visa-application/1.0.0/VERIFICATION.md`
+> for the full field-by-field comparison, the live-walkthrough method, and
+> every disclosed scope decision (the host-natural-person variant of page 9
+> and a blog-only insurance-date field were not independently field-name-
+> verified live and are omitted rather than invented).
 
 > **Update (2026-07-09, GovSchema Standard Research): India's first
 > sub-national schema**, `in/kl/registration/partnership-firm-registration`
@@ -4014,7 +4048,27 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (18/27 jurisdictions — 67%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (21/27 jurisdictions — 78%)
+
+**Estonia's Visa gap is now closed** (`ee/vm/long-stay-visa-application`,
+GOV-1970) — sourced from Valisministeerium's (Ministry of Foreign Affairs)
+own 13-page online pre-application wizard (`eelviisataotlus.vm.ee/d/`) for
+Estonia's national (long-stay, category D) visa, independently walked live
+end-to-end with a real headless-browser session (via `agent-browser` +
+Playwright's `connectOverCDP`, to solve the page 1 CAPTCHA and preserve
+session state across tool calls) rather than relying solely on a secondary
+guide. Compared field-by-field against
+`de/auswaertiges-amt/national-visa-application`: shares only the opening
+Schengen-harmonized identity/travel-document shape, then diverges with an
+EU/EEA/Swiss/UK-Withdrawal-Agreement close-relative section, a mandatory
+employment/education-history block with a full structured employer
+address, a two-column applicant/sponsor means-of-support checkbox matrix,
+a host organization/person section with its own registration code and
+contact person, and its own 8-category purpose-of-journey taxonomy —
+genuinely distinct, not a duplicate. This gives Estonia 6 of its 6
+verticals, joining the registry's other fully-covered jurisdictions — see
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full sourcing record and every disclosed scope decision.
 
 **The Czech Republic's Visa gap is now closed** (`cz/mzv/zadost-o-udeleni-dlouhodobeho-viza`,
 GOV-1819) — sourced from the Ministry of Foreign Affairs' own bilingual
@@ -4355,7 +4409,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EE** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
