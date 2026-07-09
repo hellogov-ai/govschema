@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **311 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**28 jurisdictions** | **312 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-2005): Japan opens as GovSchema's 28th
+> jurisdiction**, with `jp/isa/certificate-of-eligibility-application` — the
+> shared applicant cover sheet ("For applicant, part 1") of the Immigration
+> Services Agency's (ISA, part of the Ministry of Justice) Application for
+> Certificate of Eligibility (在留資格認定証明書交付申請書), the standard
+> pre-clearance step nearly every non-tourist status of residence (work,
+> study, dependent, spouse, etc.) requires before the matching entry visa can
+> be applied for abroad. This cycle screened DMV (National Police Agency /
+> prefectural police — no downloadable home-fillable driver's-licence
+> application exists; it is an in-person, counter-issued process, a
+> confirmed dead end), Business Formation (Legal Affairs Bureau,
+> `houmukyoku.moj.go.jp` — a genuine, live stock-company registration-
+> application PDF found and flagged as a strong candidate for a future
+> cycle), National ID (J-LIS My Number Card, `kojinbango-card.go.jp` — a
+> genuine live bilingual generic application PDF found and also flagged for
+> a future cycle), and Passport (`mofa.go.jp` — reconfirmed fully
+> domain-blocked regardless of `User-Agent`, per GOV-1174, not retried).
+> Chose the Certificate of Eligibility because it is officially bilingual
+> Japanese/English (removing translation-fidelity risk), because its cover
+> sheet is independently confirmed byte-for-byte identical across three
+> unrelated status-of-residence category variants (Student, Religious
+> Activities, and Spouse or Child of Permanent Resident/Japanese National —
+> using a position-based `pdfjs-dist` x/y-coordinate re-extraction to
+> faithfully reconstruct the 34-option purpose-of-entry checkbox grid across
+> its 8-row, 6-column layout), and because it has the richest field set of
+> the candidates screened. `moj.go.jp` and its Legal Affairs Bureau
+> subdomain return HTTP 403 only to a request using curl's own default
+> `User-Agent` string, but HTTP 200 to both an ordinary browser `User-Agent`
+> and this repository's own `verify-sources.mjs` request — a narrow
+> bot-mitigation signature, materially different from `mofa.go.jp`'s
+> domain-wide block. This document scopes to the shared cover sheet only,
+> leaving each of the roughly 30 category-specific supplements (and the
+> separate sponsoring-organization pages many categories require) as
+> candidates for a future companion-schedule cycle, mirroring how this
+> registry already splits the Czech Republic's tax return from its Přílohy
+> annexes. Japan opens at **1 of its 6 verticals** (Visa); DMV and National
+> ID have strong unpursued candidates (see above); Passport is a confirmed
+> dead end; Business Formation and Taxes remain unscreened. See
+> `registry/jp/isa/certificate-of-eligibility-application/0.1.0/VERIFICATION.md`
+> for the full sourcing record and every disclosed scope decision.
 
 > **Update (2026-07-09, GOV-1998): Czech Republic's Příloha č. 4
 > separate-tax-base annex** is now published, with
@@ -3327,7 +3368,7 @@
 
 ## By Vertical
 
-### Passport (22/27 jurisdictions — 81%)
+### Passport (22/28 jurisdictions — 79%)
 
 **Switzerland**'s Passport gap is now closed (GOV-1931), via
 `ch/fedpol/antrag-pass-identitaetskarte` — fedpol's own online
@@ -3447,7 +3488,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (26/27 jurisdictions — 96%)
+### DMV — Vehicle Registration, Licensing, Permits (26/28 jurisdictions — 93%)
 
 **Switzerland opens as this registry's 27th jurisdiction via this vertical
 (GOV-1840)**, with `ch/sg/stva/gesuch-lernfahr-fuehrerausweis` — the canton
@@ -3635,7 +3676,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (25/27 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (25/28 jurisdictions — 89%)
 
 **Malaysia's Business Formation gap is now closed (GOV-1938)**, via
 `my/ssm/sole-proprietorship-partnership-registration` — Form A (Borang A),
@@ -3869,7 +3910,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (26/27 jurisdictions — 96%)
+### Taxes — Income Tax Return, Tax Filing (26/28 jurisdictions — 93%)
 
 **The main return's own flagged Hilfsblatt B gap is now also published**
 (`ch/zh/sta/hilfsblatt-b`, GOV-1924) — Form 330, "Hilfsblatt B Fragebogen für
@@ -4214,7 +4255,25 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (21/27 jurisdictions — 78%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (22/28 jurisdictions — 79%)
+
+**Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
+Japan as the registry's 28th jurisdiction, via the Immigration Services
+Agency's (ISA) Application for Certificate of Eligibility — the
+pre-clearance step nearly every non-tourist status of residence requires
+before the matching entry visa can be applied for abroad. This document
+models only the shared, category-agnostic applicant cover sheet ("For
+applicant, part 1"), confirmed byte-for-byte identical across three
+independently downloaded status-of-residence category variants (Student,
+Religious Activities, Spouse or Child of Permanent Resident/Japanese
+National); each category-specific supplement (roughly 30 lettered variants)
+and the separate sponsoring-organization pages are out of scope, left as
+candidates for a future companion-schedule cycle. Not a Schengen/EU-style
+visa form — Japan's immigration-law framework is sui generis, so no
+duplicate-detection comparison applies. See the Executive Summary update
+above and the document's own VERIFICATION.md for the full candidate
+screening (DMV, Business Formation, and National ID candidates found but
+not chosen this cycle) and sourcing record.
 
 **Estonia's Visa gap is now closed** (`ee/vm/long-stay-visa-application`,
 GOV-1970) — sourced from Valisministeerium's (Ministry of Foreign Affairs)
@@ -4368,7 +4427,7 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (22/27 jurisdictions — 81%)
+### National ID & Civic Documents (22/28 jurisdictions — 79%)
 
 **Switzerland**'s National ID (Identitätskarte) gap is now closed (GOV-1931),
 via the same schema that closed its Passport gap,
@@ -4582,6 +4641,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **JP** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -5120,6 +5180,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    ID); Business Formation (`easygov.swiss`, CH-Login-gated, GOV-1840) is
    Switzerland's sole remaining genuinely open vertical (Visa is a confirmed
    duplicate, not an open gap).
+6. **Japan's Business Formation and National ID verticals** (GOV-2005,
+    2026-07-09): both screened and found to have genuine, live,
+    unauthenticated candidates, but not pursued this cycle in favor of the
+    Visa/Certificate-of-Eligibility candidate (see the Executive Summary
+    update above). Business Formation:
+    `https://houmukyoku.moj.go.jp/homu/content/001331002.pdf` (株式会社設立
+    登記申請書 — Stock Company Establishment Registration Application, Legal
+    Affairs Bureau, no AcroForm but a rich extractable text layer). National
+    ID: `https://www.kojinbango-card.go.jp/hpsv/wpmng/documents/tegaki-kofu-shinseisho-en.pdf`
+    (an official bilingual generic My Number Card application, confirming
+    the usual "pre-printed QR code, no blank form" dead-end pattern does
+    *not* apply to Japan). Both remain open, well-sourced candidates for a
+    future cycle. Japan's DMV vertical (driver's licence) and Passport
+    vertical are confirmed dead ends instead — see below.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -5214,7 +5288,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   alternative.
 - **CA/ON `mto/vehicle-permit-renewal`** — real-plate-gated live wizard, reconfirmed 3× across cycles.
 - **US `gb/hmrc/national-insurance-number-application`**-style GB National Insurance/Marriage Allowance — IP-blocked, GOV-926.
-- **Japan MOFA** (`mofa.go.jp`) — fully IP-blocked.
+- **Japan MOFA** (`mofa.go.jp`, plus `emb-japan.go.jp` embassy subdomains) —
+  fully domain-blocked (HTTP 403) regardless of `User-Agent`; reconfirmed
+  GOV-1174's original finding this cycle (GOV-2005) rather than superseding
+  it. Distinct from the rest of the `moj.go.jp` family (Immigration
+  Services Agency, Legal Affairs Bureau), which is only narrowly
+  bot-mitigated (blocks curl's own default `User-Agent` specifically, not a
+  browser or this repo's own `verify-sources.mjs` user agent) — see the
+  Executive Summary GOV-2005 update.
+- **Japan driver's licence application (DMV)** — GOV-2005, 2026-07-09. No
+  jurisdiction's police site (National Police Agency, Tokyo Metropolitan
+  Police, or the Osaka/Ibaraki/Shiga prefectural police sites checked)
+  publishes a downloadable, home-fillable driver's-licence application PDF;
+  the licence is applied for/renewed entirely in person, with the paper
+  form filled at the licence-centre counter itself. The only genuinely
+  extractable-text PDFs found in this vertical (Shiga Prefectural Police's
+  proxy/power-of-attorney forms) cover only a narrow third-party-collection
+  sub-procedure, not the licence application itself.
 - **US federal CDL** (`us/fmcsa/cdl-application-class-a`) — GOV-1215's draft
   premise ("completely new, 0 existing") was wrong:
   `us/ca/dmv/commercial-drivers-license-application` already exists, and
