@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **309 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **310 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1991): Czech Republic's Příloha č. 3
+> foreign-source-income annex** is now published, with
+> `cz/mf/priloha-3-vypocet-dane-z-prijmu-ze-zdroju-v-zahranici` — form
+> 25 5405/P3, the §38f zákona double-taxation-relief companion schedule to
+> the already-published base return (`cz/mf/priznani-k-dani-z-prijmu-fyzickych-osob`,
+> GOV-1826), which the already-published Příloha č. 2
+> (`cz/mf/priloha-2-vypocet-dilciho-zakladu-dane-najem-ostatni-prijmy`,
+> GOV-1984) had flagged, alongside Příloha č. 4, as one of the two sole
+> remaining open backlog candidates. Sourced from `financnisprava.gov.cz`'s
+> own "Daňové tiskopisy" listing page, confirming the current edition is
+> vzor č. 22 (`financnisprava.gov.cz/assets/tiskopisy/5405-P3_22.pdf`, a flat
+> print/reference facsimile with zero AcroForm/Widget fields, same shape as
+> Přílohy č. 1-2), self-contained with its own embedded "POKYNY K PŘÍLOZE
+> č. 3" field-by-field instructions on its own page 2. Models both statutory
+> double-taxation-relief methods: the exemption-with-progression-reservation
+> method (§38f odst. 7 zákona, ř. 311-316, recomputing the tax base and
+> overall effective tax rate after excluding treaty-exempted foreign income)
+> and the ordinary tax-credit method (§38f odst. 8 zákona, ř. 321-330,
+> crediting foreign tax paid up to a per-country coefficient, aggregated
+> across this annex and any supplementary per-country sheets). A genuine
+> structural finding distinct from the prior two annexes: every formula on
+> this annex references either another field on this same annex or a line on
+> the **base return itself** (ř. 36, 41, 42, 44, 54, 56, 57) — and the base
+> return's own schema was confirmed, by grepping its `sourceRef` values, to
+> model none of those lines (they were excluded there as downstream computed
+> subtotals). This means a printed "A minus B" formula on this annex cannot
+> always be assumed to be excludable pure arithmetic the way ř. 203 was
+> on Příloha č. 2 — four lines (ř. 313, 316, 326, 327) are unconditionally
+> derivable from other fields already on this same annex and are excluded,
+> while seven lines (ř. 311, 312, 314, 315, 324, 325, 330) reference a
+> base-return line this registry never models (or branch "ř. X nebo ř. Y" to
+> one) and are therefore modelled as their own fields, computed off-schema by
+> the filer from the base return's own figures. Modelled 14 fields across 2
+> `steps`. See
+> `registry/cz/mf/priloha-3-vypocet-dane-z-prijmu-ze-zdroju-v-zahranici/1.0.0/VERIFICATION.md`
+> for the full field-by-field source mapping, the line-by-line
+> pure-arithmetic-vs-input classification for every one of ř. 311-330, and
+> the worked mock-data example. This closes the foreign-source-income share
+> of the Known Gaps section's Czech Republic Taxes item; the Czech Republic
+> remains at **4 of its 6 verticals** (Business Formation, DMV, Visa, Taxes),
+> with Příloha č. 4 (separate tax base, §16a zákona) now the sole remaining
+> open backlog candidate in this companion-schedule sequence.
 
 > **Update (2026-07-09, GOV-1984): Czech Republic's Příloha č. 2
 > rental/other-income annex** is now published, with
@@ -4941,7 +4984,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    independently-entered accounting result). The Czech Republic remains at
    **4 of its 6 verticals**; Příloha č. 3-4 (foreign-source income,
    separate tax base) are now the sole remaining open backlog candidates in
-   this companion-schedule sequence.
+   this companion-schedule sequence. **Update (2026-07-09, GOV-1991): the
+   foreign-source-income annex, Příloha č. 3, is now closed too**, via
+   `cz/mf/priloha-3-vypocet-dane-z-prijmu-ze-zdroju-v-zahranici` (form
+   25 5405/P3) — a companion schedule to the base return, sourced the same
+   way as Přílohy č. 1-2; see the Executive Summary update above and the
+   document's own VERIFICATION.md (which also discloses a structural finding
+   distinct from the prior two annexes: several of this annex's own printed
+   formulas reference base-return lines the base return's own schema never
+   models, and are modelled as their own fields rather than assumed to be
+   excludable pure arithmetic). The Czech Republic remains at **4 of its 6
+   verticals**; Příloha č. 4 (separate tax base, §16a zákona) is now the
+   sole remaining open backlog candidate in this companion-schedule
+   sequence.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
