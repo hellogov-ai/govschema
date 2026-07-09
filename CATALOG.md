@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **297 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **298 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1903): canton Zürich's Hilfsblatt A**
+> (self-employment worksheet, simplified bookkeeping) is now published, with
+> `ch/zh/sta/hilfsblatt-a-vereinfachte-buchfuehrung` — the Kantonales
+> Steueramt Zürich's "Hilfsblatt A für Selbständigerwerbende mit
+> vereinfachter Buchführung" (Form 328, 2024 edition), the eighth companion
+> schedule to `ch/zh/sta/steuererklaerung-natuerliche-personen` (GOV-1847),
+> used by a self-employed taxpayer who keeps simplified (non-commercial)
+> books to compute their self-employment income and business balance sheet —
+> referenced by the main return's own Ziffer 2 (self-employment income),
+> Ziffer 16.1 (a voluntary pension buy-in), and Ziffer 32 (business equity).
+> This picks up the sole remaining CH-ZH companion-schedule gap the GOV-1896
+> (Schuldenverzeichnis) cycle left open — Hilfsblatt A/B/G — but pursues only
+> Hilfsblatt A's current simplified-bookkeeping variant (Form 328), not its
+> kaufmännische-Buchhaltung sibling (Form 329) or the agricultural Hilfsblatt
+> B/G (Forms 330/331), each a structurally distinct form deliberately
+> deferred as its own future candidate. Sourced from a genuine, current,
+> unauthenticated, flat (non-AcroForm) 4-page PDF (`328 Hilfsblatt A mit
+> vereinfachter ZH 2024 DEF.pdf`, 95,591 bytes, HTTP 200, no login/CAPTCHA/WAF
+> gate, a byte-level scan confirming zero `/AcroForm`/`/Widget` matches),
+> fetched from the same `zh.ch` "Formulare für Selbständigerwerbende" listing
+> reached from the same tax-forms hub every prior CH-ZH cycle has used. Like
+> the Liegenschaftenverzeichnis and Schuldenverzeichnis, this form is hosted
+> at a year-independent URL path and carries its own filer-entered "Jahr"
+> box. This is a materially larger and structurally different document than
+> any of its seven prior CH-ZH siblings — a 4-page, 16-section business
+> income/balance-sheet computation rather than a 1-2 page single-topic
+> schedule — so its own 35-cell depreciation table and its creditor table
+> were each collapsed to a free-text summary field (the established
+> unbounded-repeating-table convention), and five same-page duplicate
+> re-prints of already-modelled figures were deliberately excluded. The
+> Kantonales Steueramt's own Wegleitung was searched exhaustively (a full
+> 6,477-line extraction) for a worked specimen of this form's own internal
+> lines: none was found — a disclosed negative finding, the same class of
+> finding several prior CH-ZH cycles have made — though the Wegleitung's own
+> reprints of the main return's Ziffer 2/16.1/32 rows independently confirm
+> every one of this schema's transfer-line claims. This schema's own worked
+> mock-data example was constructed independently and its arithmetic
+> hand-recomputed end-to-end (turnover, cost of goods, gross profit, business
+> expenses, AHV-basis and tax-basis income, total assets, and both equity
+> computations). Modelled 85 fields across 11 `steps`. This remains
+> Switzerland's 2nd of 6 verticals (DMV, Taxes) — a companion schedule, not a
+> new vertical — but further deepens Taxes-vertical coverage, leaving Form
+> 329 (Hilfsblatt A, kaufmännische Buchhaltung), Hilfsblatt B (Form 330), and
+> Hilfsblatt G (Form 331) as open backlog candidates. See
+> `registry/ch/zh/sta/hilfsblatt-a-vereinfachte-buchfuehrung/1.0.0/VERIFICATION.md`
+> for the full sourcing record, every disclosed scope decision, and the
+> worked mock-data example.
 
 > **Update (2026-07-09, GOV-1896): canton Zürich's Schuldenverzeichnis**
 > (debts register) schedule is now published, with
@@ -4339,15 +4387,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Executive Summary update above and the document's own VERIFICATION.md.
    **The Schuldenverzeichnis gap has since closed too (GOV-1896,
    2026-07-09)**, via `ch/zh/sta/schuldenverzeichnis` — see the Executive
-   Summary update above and the document's own VERIFICATION.md. The
-   remaining companion-schedule gap, Hilfsblatt A/B/G, remains an open
-   backlog candidate for a future cycle — in substance three separate
-   self-employment/agricultural bookkeeping worksheets (Forms 328/329 for
-   Hilfsblatt A, 330 for Hilfsblatt B, 331 for Hilfsblatt G) rather than one
-   schedule, so most likely three separate future sub-cycles rather than
-   one combined effort; none has yet been screened for tractability.
-   Switzerland's other 25 cantons each likely publish their own equivalent
-   tax-return form, also unpursued.
+   Summary update above and the document's own VERIFICATION.md. **The
+   Hilfsblatt A gap (simplified-bookkeeping variant only) has since closed
+   too (GOV-1903, 2026-07-09)**, via
+   `ch/zh/sta/hilfsblatt-a-vereinfachte-buchfuehrung` (Form 328) — see the
+   Executive Summary update above and the document's own VERIFICATION.md.
+   Three companion-schedule gaps remain open backlog candidates for future
+   cycles, each a structurally distinct form: Form 329 (Hilfsblatt A,
+   kaufmännische Buchhaltung variant — for filers with full commercial
+   books, whose own equity line is a differently-numbered Ziffer 10.4, not
+   14.4), Hilfsblatt B (Form 330, agricultural questionnaire), and
+   Hilfsblatt G (Form 331, agricultural/forestry); none of these three has
+   yet been screened for tractability. Switzerland's other 25 cantons each
+   likely publish their own equivalent tax-return form, also unpursued.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
