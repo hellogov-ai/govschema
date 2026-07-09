@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**27 jurisdictions** | **301 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**27 jurisdictions** | **302 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-09, GOV-1931): Switzerland's federal Passport and
+> National ID verticals** are now published, with
+> `ch/fedpol/antrag-pass-identitaetskarte` — the Federal Office of Police
+> (fedpol)'s online application tool for a Swiss passport, identity card, or
+> both ("Combi"), at `ch-edoc-passantrag.admin.ch` (linked from
+> `fedpol.admin.ch/en/application`). This is the first **federal** CH schema
+> in the registry (every prior CH schema was cantonal: DMV via
+> `ch/sg/stva/gesuch-lernfahr-fuehrerausweis`, Taxes via 11 `ch/zh/sta/*`
+> companion schedules). Prior cycles (GOV-1804/GOV-1774/GOV-1840) had only
+> ever screened this process at the level of "no downloadable citizen-facing
+> PDF exists," without rendering the live JavaScript single-page application
+> the process actually runs on; this cycle rendered it directly with a
+> headless-Chromium session (Playwright) and confirmed it is a genuine,
+> multi-step data-entry tool, not a login-only shell. It issues both
+> documents through one shared field set (a `documentType` discriminator:
+> passport / identity card / combi), so this registry models it as one
+> schema rather than two, per the established single-source/multi-path
+> pattern (see `ch/zh/sta/hilfsblatt-b`). The Domicile step (Switzerland vs.
+> Abroad, with a 26-canton selector cross-checked against the application's
+> own live `/rest/stammdaten/kanton` reference-data endpoint) and the initial
+> Applicant-contact card (title/surname/first name/e-mail) were directly
+> rendered and DOM-inspected (`required`/`aria-required`/`maxlength`
+> attributes, screenshots); the deeper personal-data screens sit behind a
+> one-time verification link e-mailed to the applicant, which this cycle
+> could not obtain (no real inbox) — those fields were instead sourced from
+> the running application's own live-fetched, canonical i18n resource bundle
+> (`/rest/i18n/translations/en`, 443 keys, fetched directly and re-verified
+> byte-for-byte immediately before opening the PR), a distinction disclosed
+> field-by-field in `schema.json` and in full in VERIFICATION.md. This gives
+> Switzerland 4 of its 6 verticals (DMV, Taxes, Passport, National ID); Visa
+> remains a confirmed duplicate of the EU-harmonized template (GOV-1774), and
+> Business Formation (`easygov.swiss`, CH-Login-gated, GOV-1840) is
+> Switzerland's sole remaining genuinely open vertical.
 
 > **Update (2026-07-09, GOV-1924): canton Zürich's Hilfsblatt B**
 > (agricultural/forestry income questionnaire) is now published, with
@@ -2971,7 +3005,25 @@
 
 ## By Vertical
 
-### Passport (21/27 jurisdictions — 78%)
+### Passport (22/27 jurisdictions — 81%)
+
+**Switzerland**'s Passport gap is now closed (GOV-1931), via
+`ch/fedpol/antrag-pass-identitaetskarte` — fedpol's own online
+`ch-edoc-passantrag.admin.ch` application tool (a federal, not cantonal,
+process — the first federal CH schema in the registry, alongside the
+cantonal DMV and Taxes schemas already modelled). The tool issues a
+passport, an identity card, or both ("Combi") through one shared field set,
+so this single schema also closes Switzerland's National ID gap in the same
+PR — see the National ID section and the Executive Summary update for the
+full sourcing story, including the disclosed distinction between the
+Domicile/Applicant-contact steps (directly rendered in a headless-browser
+session) and the deeper personal-data steps (sourced from the application's
+own live-fetched i18n resource bundle, since those screens sit behind a
+one-time e-mailed verification link this cycle could not obtain). This
+gives Switzerland 4 of its 6 verticals (DMV, Taxes, Passport, National ID);
+Visa is a confirmed duplicate of the EU-harmonized template (GOV-1774), not
+an open gap, and Business Formation (`easygov.swiss`, CH-Login-gated,
+GOV-1840) is Switzerland's sole remaining genuinely open vertical.
 
 **Malaysia**'s Passport gap is now closed (GOV-1783), via
 `my/jim/passport-travel-document-application` — see the Executive Summary
@@ -3914,7 +3966,16 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (21/27 jurisdictions — 78%)
+### National ID & Civic Documents (22/27 jurisdictions — 81%)
+
+**Switzerland**'s National ID (Identitätskarte) gap is now closed (GOV-1931),
+via the same schema that closed its Passport gap,
+`ch/fedpol/antrag-pass-identitaetskarte` — fedpol's federal
+`ch-edoc-passantrag.admin.ch` online application tool issues a passport, an
+identity card, or both through one shared field set and flow, so this
+registry models it as one schema with a `documentType` discriminator rather
+than splitting Passport/National ID into two documents. See the Passport
+section above and the Executive Summary update for the full sourcing story.
 
 **Portugal**'s National ID gap is now closed (GOV-1797), via
 `pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
@@ -4107,7 +4168,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CH** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -4562,6 +4623,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    above and the document's own VERIFICATION.md. This closes the CH-ZH
    companion-schedule backlog entirely; Switzerland's other 25 cantons each
    likely publish their own equivalent tax-return form, also unpursued.
+   **CH Passport — now published** (`ch/fedpol/antrag-pass-identitaetskarte`,
+   GOV-1931, 2026-07-09): fedpol's federal `ch-edoc-passantrag.admin.ch`
+   online application tool was rendered directly this cycle with a real
+   headless-browser session, superseding the earlier "no downloadable
+   citizen-facing PDF exists" finding (GOV-1840/GOV-1804/GOV-1774, true but
+   incomplete — it never rendered the live JS single-page application). The
+   tool issues a passport, an identity card, or both ("Combi") through one
+   shared field set, so this same schema also closes **CH National ID** in
+   the same PR — see the Executive Summary update and the Passport/National
+   ID vertical sections above for the full sourcing story, including the
+   disclosed distinction between the Domicile/Applicant-contact steps
+   (directly DOM-verified) and the deeper personal-data steps (sourced from
+   the application's own live-fetched i18n resource, gated behind a
+   one-time e-mailed verification link this cycle could not obtain). This
+   gives Switzerland 4 of its 6 verticals (DMV, Taxes, Passport, National
+   ID); Business Formation (`easygov.swiss`, CH-Login-gated, GOV-1840) is
+   Switzerland's sole remaining genuinely open vertical (Visa is a confirmed
+   duplicate, not an open gap).
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -4701,12 +4780,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   found GOV-1804/GOV-1774). `fedpol.admin.ch/de/beantragen` states
   applications are made online or by phone via `ch-edoc-passantrag.admin.ch`
   followed by a mandatory in-person biometric appointment; no downloadable
-  citizen-facing PDF exists anywhere in the flow.
+  citizen-facing PDF exists anywhere in the flow. **Superseded (GOV-1931,
+  2026-07-09):** this finding was true (no PDF exists) but incomplete — it
+  never rendered the live JS single-page application the process runs on.
+  GOV-1931 did, with a real headless-browser session, and found a genuine,
+  non-trivial online data-entry tool; see `ch/fedpol/antrag-pass-identitaetskarte`
+  and the Executive Summary/Passport-section updates above. No longer a dead
+  end.
 - **CH National ID (Identitätskarte)** — GOV-1840, 2026-07-08. Shares the
   exact same `fedpol.admin.ch`/`ch-edoc-passantrag.admin.ch` online-
   application-plus-biometric-appointment pathway as the passport (both are
   fedpol-issued documents processed through the same system) — no separate
   citizen-facing PDF application form exists for the ID card either.
+  **Superseded (GOV-1931, 2026-07-09):** same correction as CH Passport
+  above — `ch/fedpol/antrag-pass-identitaetskarte` closes this gap too,
+  through the same schema (the live tool issues both documents via one
+  shared field set). No longer a dead end.
 
 ---
 
