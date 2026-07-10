@@ -4,7 +4,63 @@
 
 ## Executive Summary
 
-**31 jurisdictions** | **329 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**31 jurisdictions** | **330 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2135, "GovSchema Standard Research"): Austria's
+> Visa vertical opens**, via `at/bmeia/schengen-visa-application` v1.0.0 —
+> the EU/Schengen uniform "Formular C1" short-stay visa application
+> (Annex I to Regulation (EC) No 810/2009, the Visa Code), as published by
+> BMEIA for use at Austrian embassies and consulates abroad. This candidate
+> was screened and confirmed viable (but left unauthored, as "a
+> comparatively thinner 'Austria' story") in the GOV-2121 cycle, since it is
+> the identical EU-wide template every Schengen state uses, not an
+> Austria-specific design; with Passport, National ID, Taxes, and Business
+> Formation now all live for Austria, Visa was the last remaining open,
+> screened backlog candidate, so this cycle authored it from a fresh,
+> from-scratch re-fetch and re-extraction rather than trusting the prior
+> cycle's byte count. Re-confirmed HTTP 200, exactly **285,208 bytes**
+> (matching GOV-2121's own independent record), with **0 AcroForm
+> widgets** across all 4 pages via a fresh `pdfjs-dist` extraction — a
+> genuine flat/print specimen, like this registry's `is/skatturinn`
+> numbered-line precedent. A registry-wide search confirmed no existing
+> schema models this literal EU-harmonised paper template under any
+> jurisdiction (the closest neighbours — `fr/france-visas/schengen-visa-application`
+> and four national/long-stay "D"-visa schemas — are a bespoke online
+> portal and non-harmonised long-stay designs, respectively, not the Annex I
+> short-stay template). The source's own printed numbering (fields 1-37) was
+> cross-walked against a fresh position-based text extraction to build **74
+> fields** (several numbered items expand into more than one field, e.g.
+> field 33's cost-of-travel selector and its two independent means-of-
+> support checklists). Two GSP-0013 constructs land in an `at/bmeia`/`at/bmi`
+> cycle for the first time: an `exclusivityGroups` entry over field 33's four
+> mutually-exclusive "who pays" checkboxes (independent booleans, since this
+> flat specimen carries no AcroForm radio layer to merge them into a true
+> enum), and two `crossFieldValidation` `compare` rules (departure not before
+> arrival; travel-document expiry not before its issue date). Disclosed
+> rather than machine-encoded: the source's own asterisked exemption
+> (fields 19, 20, 31, 32, and 33's payer-selector need not be filled in by
+> family members of EU/EEA/Swiss citizens exercising free movement, who
+> instead complete fields 34-35) is stated only as footnote prose tied to
+> the applicant's own status, not a structured rule keyed to an existing
+> field — each affected field's `description` discloses it instead, this
+> registry's established "disclosed rather than falsely encoded" pattern.
+> The lengthy pre-signature declaration (VIS/data-processing consent, fee
+> non-refundability, multi-entry travel-insurance requirement, the standard
+> accuracy declaration) is paraphrased into one `documents[]` attestation
+> rather than quoted verbatim or split into invented per-statement
+> checkboxes, since the source presents it as one continuous prose block
+> before a single signature line. See
+> `registry/at/bmeia/schengen-visa-application/1.0.0/VERIFICATION.md` for
+> the full sourcing record, every disclosed scope decision, and the mock
+> conformance test run (0 errors across two scenarios covering all 74
+> fields, plus 8 mutation/negative controls — including, for the first time
+> in an AT cycle, controls exercising `exclusivityGroups` and
+> `crossFieldValidation`). This gives Austria **5 of its 6 verticals**
+> (Business Formation, Taxes, National ID, Passport, Visa); DMV remains a
+> confirmed weak/dead-end candidate from a prior cycle (in-person/counter-
+> driven, no downloadable specimen) — the last item standing between Austria
+> and full 6/6 coverage, and one that would need a materially different kind
+> of source than the PDF-forms approach used so far.
 
 > **Update (2026-07-10, GOV-2128, "GovSchema Standard Research"): Austria's
 > Passport vertical opens**, via `at/bmeia/passport-or-identity-card-application`
