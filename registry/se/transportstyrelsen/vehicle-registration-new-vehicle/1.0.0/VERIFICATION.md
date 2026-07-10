@@ -68,8 +68,8 @@ DMV was the clear strongest candidate, so this cycle authored
   `getTextContent()` for the full text layer across all 4 pages — the same
   rigor already used for `se/bolagsverket/aktiebolag-formation`,
   `nl/kvk/bv-formation`, and `de/gewerbeamt/business-registration`. The PDF
-  carries **43 AcroForm fields** (23 text, 20 checkbox) across its 2 field
-  -bearing pages; programmatically checked all 43 annotations' `required`
+  carries **41 AcroForm fields** (23 text, 18 checkbox) across its 2 field
+  -bearing pages; programmatically checked all 41 annotations' `required`
   property exposed by pdfjs-dist (derived from PDF `fieldFlags` bit 2):
   **none** set it — the identical "form's own prose, not the PDF's Required
   bit, is the requiredness signal" pattern already documented for
@@ -101,7 +101,7 @@ DMV was the clear strongest candidate, so this cycle authored
 
 ## What is NOT independently confirmed / out of scope
 
-- **No PDF-level `Required` flags.** As noted above, none of the 43 AcroForm
+- **No PDF-level `Required` flags.** As noted above, none of the 41 AcroForm
   fields set the PDF's own Required bit; `required`/`requiredWhen`
   assignments in this document are derived from the form's own numbered
   prose instructions and standard registration necessity, not a confirmed

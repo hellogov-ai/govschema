@@ -18,14 +18,14 @@
 > biometric-only processes with no home-fillable form, and Visa is a
 > confirmed duplicate of the EU-harmonized Schengen template already
 > published as `fr/france-visas/schengen-visa-application`. TS8003 is a
-> genuine 43-field fillable AcroForm PDF (4 pages), unauthenticated and
+> genuine 41-field fillable AcroForm PDF (4 pages), unauthenticated and
 > directly downloadable with no BankID/CAPTCHA/login gate, carrying the
 > authority's own field-by-field guide on the same PDF's pages 3-4,
 > section-numbered to match the fields on pages 1-2 — the same
 > "self-documenting Swedish AcroForm" pattern `se/bolagsverket/aktiebolag-formation`
 > established for this jurisdiction. Extracted with `pdfjs-dist`
 > (`getFieldObjects()`/`getAnnotations()`/`getTextContent()`); programmatically
-> checked all 43 annotations' PDF-level `Required` flag — none set it, the
+> checked all 41 annotations' PDF-level `Required` flag — none set it, the
 > same "form's own prose, not the PDF's Required bit, is the requiredness
 > signal" pattern already documented for the Bolagsverket sibling. Models the
 > vehicle's origin (imported by a registered importer, or professionally
@@ -3837,7 +3837,7 @@ dense five-column physical-description ("Filiación") checkbox grid.
 
 **Sweden's DMV vertical opens (GOV-2063)**, via
 `se/transportstyrelsen/vehicle-registration-new-vehicle` — Transportstyrelsen
-Form TS8003, a genuine 43-field fillable AcroForm PDF with the authority's own
+Form TS8003, a genuine 41-field fillable AcroForm PDF with the authority's own
 field-by-field guide embedded in the same PDF, scoped to a genuinely new
 vehicle brought in by a registered importer or professionally manufactured in
 Sweden (the used-vehicle/origin-check path is out of scope, per the form's
