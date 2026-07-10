@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **337 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **338 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2204, "GovSchema Standard Research"): Argentina's
+> DMV vertical deepens**, via
+> `ar/dnrpa/solicitud-tipo-08-transferencia-motovehiculo` — the DNRPA's
+> Solicitud Tipo 08, motovehículo (motorcycle) variant, the sibling document
+> to the already-published `ar/dnrpa/solicitud-tipo-08-transferencia-automotor`
+> (GOV-2187). That prior cycle's own VERIFICATION.md had explicitly deferred
+> this specimen (`08M.pdf`) as a named follow-on candidate rather than
+> assuming it would match its automóvil sibling structurally. It was fetched
+> fresh and independently re-extracted this cycle: also a genuinely
+> flat/scanned image PDF (0 AcroForm fields, 0 widgets, 0 extractable text
+> across both pages, confirmed programmatically before any visual work
+> began), requiring the same rasterize-and-transcribe technique as its
+> sibling. A field-by-field Python diff against the published automóvil
+> schema (not a visual skim) confirmed the two documents are identical
+> across **81 of 83 fields** — same section lettering (A/D/E/F/H/I/J/K/L/M/O),
+> same enums, same `required`/`requiredWhen` structure. The **sole
+> substantive difference** is in sección "F" ("VEHICULO QUE SE TRANSFIERE"):
+> this form asks for the vehicle's **"MARCA DE CUADRO"/"N° DE CUADRO"**
+> (frame make/number — modelled as `frameMake`/`frameNumber`) rather than
+> the automóvil form's **"MARCA DE CHASIS"/"N° DE CHASIS"** (chassis
+> make/number), since a motorcycle's load-bearing structure is a "cuadro"
+> (frame), not a "chasis" (chassis) — the same substitution recurs verbatim
+> in the section's own left-margin completion instruction. Every other
+> scope decision from the automóvil sibling (registry-only boxes excluded,
+> the seller's own absent identity-document number, the apoderado-del-
+> cónyuge exclusion, composite address fields, etc.) was independently
+> re-verified against this specimen's own rendered pages, not assumed to
+> carry over, and holds unchanged. See the document's own VERIFICATION.md
+> for the full field-by-field reconciliation and the two-valid-mock/
+> four-negative-control conformance test run. Argentina remains at 3 of its
+> 6 verticals (Business Formation, Visa, DMV) — this document deepens DMV
+> coverage rather than widening vertical coverage. Argentina's Taxes
+> vertical (AFIP Ganancias/Bienes Personales) was screened this cycle
+> (GOV-2202) and confirmed a dead end: both F.711 and F.762 are output-only
+> artifacts generated after an authenticated Clave-Fiscal web declaration,
+> with no blank AcroForm or numbered instructivo anywhere. Argentina's
+> Passport and National ID verticals remain confirmed dead ends (RENAPER is
+> in-person/appointment-only).
 
 > **Update (2026-07-10, GOV-2195, "GovSchema Standard Research"): Argentina's
 > Business Formation vertical deepens**, via
@@ -4661,6 +4700,21 @@ dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (28/32 jurisdictions — 88%)
 
+**Argentina's DMV vertical deepens (GOV-2204)**, via
+`ar/dnrpa/solicitud-tipo-08-transferencia-motovehiculo` — the DNRPA's
+Solicitud Tipo 08, motovehículo (motorcycle) variant, the sibling document
+to `ar/dnrpa/solicitud-tipo-08-transferencia-automotor` below. Also a
+genuinely flat/scanned image PDF extracted entirely by visual
+rasterization, independently re-verified field-by-field against its
+automóvil sibling rather than assumed identical: 81 of 83 fields match
+exactly, with the sole substantive difference being sección "F"'s
+"MARCA DE CUADRO"/"N° DE CUADRO" (motorcycle frame, modelled as
+`frameMake`/`frameNumber`) in place of the automóvil form's "MARCA DE
+CHASIS"/"N° DE CHASIS" (chassis). See the Executive Summary update above
+and the document's own VERIFICATION.md for the full comparison record.
+Argentina remains at 3 of its 6 verticals (Business Formation, Visa, DMV)
+— this document deepens rather than widens DMV coverage.
+
 **Argentina's DMV vertical opens (GOV-2187)**, via
 `ar/dnrpa/solicitud-tipo-08-transferencia-automotor` — the DNRPA's Solicitud
 Tipo 08, the national vehicle title-transfer form, extracted entirely by
@@ -6130,7 +6184,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AR** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -6731,6 +6785,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    above and the Business Formation vertical section below for the full
    corrected record. Argentina's remaining verticals (Passport, Taxes,
    National ID) are still open, unscreened or dead-end backlog candidates.
+   **Update (2026-07-10, GOV-2204): the motovehículo candidate named above
+   is now resolved** — published as
+   `ar/dnrpa/solicitud-tipo-08-transferencia-motovehiculo`, deepening
+   Argentina's DMV vertical (remains 3/6 — deepens rather than widens).
+   Independently re-fetched and re-extracted rather than assumed to match
+   its automóvil sibling: also a genuinely flat/scanned specimen (0
+   AcroForm fields, 0 widgets, 0 extractable text on both pages), and
+   field-by-field identical to the automóvil schema in 81 of 83 fields —
+   the sole substantive difference is sección "F", which asks for the
+   vehicle's "MARCA DE CUADRO"/"N° DE CUADRO" (frame make/number,
+   modelled as `frameMake`/`frameNumber`) rather than the automóvil form's
+   "MARCA DE CHASIS"/"N° DE CHASIS" (chassis). See the Executive Summary
+   update above and the DMV vertical section below for the full
+   comparison record. AFIP's Formulario 460/F is fully resolved (GOV-2195)
+   and Argentina's Taxes vertical (AFIP Ganancias/Bienes Personales) was
+   screened this cycle (GOV-2202) and confirmed a dead end — no blank form
+   exists for either, both being output-only artifacts of an authenticated
+   web declaration. Argentina's remaining verticals (Passport, Taxes,
+   National ID) are confirmed dead ends or open, unscreened backlog with
+   no currently known candidate.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
@@ -7103,6 +7177,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   above — `ch/fedpol/antrag-pass-identitaetskarte` closes this gap too,
   through the same schema (the live tool issues both documents via one
   shared field set). No longer a dead end.
+- **AR Taxes (AFIP Ganancias/Bienes Personales)** — GOV-2202, 2026-07-10.
+  Impuesto a las Ganancias (Personas Humanas) and Bienes Personales are
+  both filed exclusively through Clave-Fiscal-login-gated web portals (or
+  an installable SIAP desktop aplicativo); F.711/F.762 are output-only
+  receipts printed *after* completing the online declaration, not blank
+  forms. No downloadable AcroForm or numbered casilla/instructivo guide
+  exists for either tax. Do not re-attempt without a genuinely new source
+  (e.g. a leaked/third-party-republished blank form with real line
+  numbers).
 
 ---
 
