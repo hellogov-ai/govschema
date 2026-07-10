@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**29 jurisdictions** | **320 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**29 jurisdictions** | **321 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2070, "GovSchema Standard Research"): Sweden's
+> Visa vertical opens**, via `se/migrationsverket/work-permit-application`
+> v1.0.0 — Migrationsverket (the Swedish Migration Agency) Form 149011,
+> "Application for a Swedish work permit". GOV-2063's own closing note had
+> flagged Sweden's remaining four verticals (Passport, Taxes, Visa, National
+> ID) as open backlog; this cycle re-screened all four. Taxes (Skatteverket
+> SKV 4314, the preliminary income tax declaration) looked like the
+> strongest candidate at first — a genuine 77-field AcroForm — but its only
+> directly-fetchable static copy proved on independent re-extraction to be a
+> stale c.2014/2015 edition (its own guidance text cites "beskattningsår
+> 2014" figures, and a web search confirmed the form has since been reissued
+> for tax years 2024/2025/2026 with real structural changes); Skatteverket's
+> live PDF-generation servlet resets the connection for both a direct fetch
+> and a real headless-Chromium session alike, a genuine server-side fault
+> rather than a bot gate. Rather than author against a demonstrably stale
+> source, this candidate was abandoned and Migrationsverket's work-permit
+> form was authored instead: its own Schengen short-stay visa form was
+> reconfirmed a duplicate of the EU-harmonized template already published
+> elsewhere in this registry, but Form 149011 is a genuinely Sweden-national,
+> non-harmonized 143-distinct-field AcroForm (159 widgets, collapsing radio
+> groups) with zero field overlap with the Schengen template, and its own
+> footer edition stamp reads "149011 2026-06-11" — one month old at the time
+> of review, the strongest recency signal found this cycle. Extracted with
+> `pdfjs-dist` (`getAnnotations()`/`getTextContent()` across all 9 pages,
+> reading-order-sorted by y/x coordinate); the form's own field names are
+> already descriptive English strings. Models four mutually-exclusive
+> top-level application categories (first-time, extension, new-employer/
+> assignment, student-employed), each with an artist/athlete-coach/other
+> profession sub-choice; personal, passport, and contact details; previous
+> Sweden/Schengen stays (up to 4 rows); family details (spouse plus up to 5
+> children); employer/salary/insurance details; previous Sweden work
+> history; education and work-experience history (school, university,
+> vocational, and prior-employer rows); comprehensive health insurance;
+> a Temporary-Protection-Directive residence-permit-revocation question; and
+> an attached permanent-residence-permit application path. Deliberately
+> scoped out the GDPR-processing appendix (the form's own pages 8-9, which
+> it states must not be submitted) and the separate companion form 133011 for
+> co-applicant family members — see the document's own VERIFICATION.md for
+> the full sourcing record, extraction transcript, and every disclosed scope
+> decision, including the mock conformance test run (0 errors across 143
+> fields and 13 documents, 4 mutation tests). Sweden now stands at 3 of its 6
+> verticals (Business Formation, DMV, Visa); Taxes remains a genuinely open
+> but currently source-blocked candidate, while Passport and National ID
+> are reconfirmed in-person/biometric-only dead ends.
 
 > **Update (2026-07-10, GOV-2063): Sweden's DMV vertical opens**, via
 > `se/transportstyrelsen/vehicle-registration-new-vehicle` v1.0.0 —
@@ -4688,7 +4733,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (22/29 jurisdictions — 76%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (23/29 jurisdictions — 79%)
 
 **Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
 Japan as the registry's 28th jurisdiction, via the Immigration Services
@@ -4859,6 +4904,29 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 `in/mha/evisa-estudent`); GB work/graduate visas (Home Office digital
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
+
+**Update (2026-07-10, GOV-2070, "GovSchema Standard Research"): Sweden's
+Visa vertical is now published**, via
+`se/migrationsverket/work-permit-application` v1.0.0 — the Swedish
+Migration Agency's (Migrationsverket) Form 149011, "Application for a
+Swedish work permit". This cycle re-screened Sweden's four remaining
+verticals after GOV-2063 (Passport, Taxes, Visa, National ID): Passport
+(Polisen) and National ID (Skatteverket/Polisen) were reconfirmed
+in-person/biometric-only dead ends; Taxes (Skatteverket SKV 4314) was
+initially the strongest-looking candidate but was abandoned after
+independent re-verification found its only fetchable static copy to be a
+stale c.2014/2015 edition, and Skatteverket's live PDF-generation servlet
+resets the connection for both a direct fetch and a real headless-browser
+session alike (a genuine server fault, not a bot gate) — see the document's
+own VERIFICATION.md for the full trail. Migrationsverket's own Schengen
+short-stay visa form was reconfirmed a duplicate of the EU-harmonized
+template already published elsewhere in this registry, but its separate
+work-permit form (149011, edition 2026-06-11 — one month old at the time of
+review) is a genuinely Sweden-national, non-harmonized 143-field AcroForm
+with zero overlap with the Schengen template. This is Sweden's third
+vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
+ID remain open — Taxes as a genuinely open but currently source-blocked
+candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (23/29 jurisdictions — 79%)
 
@@ -5090,7 +5158,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
-| **SE** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| **SE** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
