@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**28 jurisdictions** | **318 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**29 jurisdictions** | **319 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2056): Sweden opens as GovSchema's 29th
+> jurisdiction**, via `se/bolagsverket/aktiebolag-formation` v1.0.0 —
+> Bolagsverket (the Swedish Companies Registration Office) Form 816,
+> "Nyregistrering | Registration of a new company — Aktiebolag | Limited
+> company". This `GovSchema Standard Research` cycle's phase-1 catalog audit
+> found every remaining whole-jurisdiction-vertical gap in the Executive
+> Summary table already screened in a prior cycle and confirmed either a
+> dead end (JP Passport/DMV, CZ/ID/MX National ID, NL/ZA/PL/PT Visa
+> duplicates) or an already-flagged weak backlog candidate (CH/PT Business
+> Formation, India ITR-3's deferred shared schedules) — so this cycle
+> searched instead for a genuinely new jurisdiction, per the task brief's own
+> phase-2 instruction. Found a genuine 156-field fillable AcroForm PDF (8
+> pages), officially bilingual Swedish/English (the same
+> translation-fidelity strength that made
+> `jp/isa/certificate-of-eligibility-application` the strongest candidate in
+> its own opening cycle), unauthenticated and directly downloadable with no
+> CAPTCHA/login/WAF gate, with the government's own field-by-field guide on
+> the PDF's own pages 5-8. Extracted with `pdfjs-dist`
+> (`getTextContent()`/`getFieldObjects()`/`getAnnotations()`); programmatically
+> checked all 156 AcroForm annotations' PDF-level `Required` flag — none set
+> it, the same "form's own prose, not the PDF's Required bit, is the
+> requiredness signal" pattern already documented for `nl/kvk/bv-formation`.
+> Scoped to the single-founder/sole-ordinary-board-member case (the founder
+> is also the company's one ordinary board member, plus the deputy member
+> the Companies Act mandates whenever the board has fewer than three
+> ordinary members), an all-cash share-capital contribution, and the
+> small-company audit exemption — the same single-founder narrowing
+> `nl/kvk/bv-formation`, `de/handelsregister/gmbh-formation-musterprotokoll`,
+> and `za/cipc/private-company-incorporation` each apply to their own
+> jurisdiction's first true-limited-company schema. A mock
+> `conformance/se/bolagsverket/aktiebolag-formation/1.0.0/application-packet.json`
+> test run (single-founder Gothenburg IT-consultancy AB, all-cash SEK 25,000
+> share capital), checked with a from-scratch script re-implementing the
+> schema's own required/requiredWhen condition grammar, passed with 0
+> violations across 41 fields (35 collected, 6 correctly not-applicable);
+> two mutation tests confirmed the `signatoryPowerType` other-alternative
+> branch and the `boardMemberResidesAbroad`-gated country/passport-copy
+> branch both fire correctly. See
+> `registry/se/bolagsverket/aktiebolag-formation/1.0.0/VERIFICATION.md` for
+> the full sourcing record and every disclosed scope decision. Sweden opens
+> with 1 of its 6 verticals (Business Formation); its other five verticals
+> (Passport, DMV, Taxes, Visa, National ID) are open, unscreened backlog
+> candidates for a future cycle.
 
 > **Update (2026-07-10, GOV-2049): Japan's Business Formation vertical is
 > deepened with a third stock-company-incorporation variant**, via
@@ -3612,7 +3656,7 @@
 
 ## By Vertical
 
-### Passport (22/28 jurisdictions — 79%)
+### Passport (22/29 jurisdictions — 76%)
 
 **Switzerland**'s Passport gap is now closed (GOV-1931), via
 `ch/fedpol/antrag-pass-identitaetskarte` — fedpol's own online
@@ -3732,7 +3776,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (26/28 jurisdictions — 93%)
+### DMV — Vehicle Registration, Licensing, Permits (26/29 jurisdictions — 90%)
 
 **Switzerland opens as this registry's 27th jurisdiction via this vertical
 (GOV-1840)**, with `ch/sg/stva/gesuch-lernfahr-fuehrerausweis` — the canton
@@ -3920,7 +3964,17 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (26/28 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (27/29 jurisdictions — 93%)
+
+**Sweden opens as this registry's 29th jurisdiction via this vertical
+(GOV-2056)**, via `se/bolagsverket/aktiebolag-formation` — Bolagsverket Form
+816, scoped to a single founder who is also the company's sole ordinary board
+member (plus the deputy member Swedish company law mandates for a board that
+small), an all-cash share-capital contribution, and the small-company audit
+exemption. See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing story. Sweden opens with 1 of its 6
+verticals (Business Formation); its other five verticals are open, unscreened
+backlog candidates for a future cycle.
 
 **Japan's Business Formation vertical is deepened with a third
 stock-company-incorporation variant (GOV-2049)**, via
@@ -4198,7 +4252,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (27/28 jurisdictions — 96%)
+### Taxes — Income Tax Return, Tax Filing (27/29 jurisdictions — 93%)
 
 **Japan's Taxes vertical is now published** (`jp/nta/individual-income-tax-final-return`,
 GOV-2042) — the National Tax Agency's 所得税及び復興特別所得税の申告書
@@ -4563,7 +4617,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (22/28 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (22/29 jurisdictions — 76%)
 
 **Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
 Japan as the registry's 28th jurisdiction, via the Immigration Services
@@ -4735,7 +4789,7 @@ India's likely several visa categories — see `in/mha/evisa-etourist`,
 services not yet open-sourced); Mexico's own air/sea entry pathways (see
 above).
 
-### National ID & Civic Documents (23/28 jurisdictions — 82%)
+### National ID & Civic Documents (23/29 jurisdictions — 79%)
 
 **Japan**'s National ID gap is now closed (GOV-2012), via
 `jp/j-lis/individual-number-card-issuing-application` — the Japan Agency for
@@ -4965,6 +5019,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **SE** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
