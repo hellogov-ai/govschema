@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**31 jurisdictions** | **330 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**31 jurisdictions** | **331 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2143, "GovSchema Standard Research"): Portugal's
+> Business Formation vertical opens, closing Portugal to 6 of its 6
+> verticals**, via `pt/at/declaracao-inicio-atividade-pessoas-singulares`
+> v1.0.0 — the Autoridade Tributária e Aduaneira's (AT) "Declaração de
+> Início de Atividade," the declaration a natural person must file before
+> beginning a business or professional activity, per art.º 112.º/113.º do
+> Código do IRS and art.º 31.º do CIVA. This cycle's brief named the same
+> four National ID & Civic Documents candidates (DE Steuer-ID, SG NRIC, NZ
+> RealMe, "remaining voter registration") every recent cycle of this
+> recurring issue has named; all four were re-checked first and
+> re-confirmed already resolved (published or dead-ended), consistent with
+> every prior cycle's own finding, so this cycle re-scanned CATALOG.md's own
+> Known Gaps section fresh instead. Portugal's Business Formation gap — its
+> sole remaining open vertical after GOV-1833/GOV-1797, twice screened
+> (GOV-1750, GOV-1797) and twice set aside as "a real but comparatively weak
+> backlog candidate," never a confirmed dead end — was picked up directly.
+> IRN's "Empresa na Hora"/"Empresa Online" pacto-social specimens (the prior
+> cycles' own candidate) were re-verified from scratch rather than trusted:
+> a fresh fetch and `pdfjs-dist` extraction of the most common single-founder
+> specimen, SUQ-1-08 (Sociedade Unipessoal por Quotas), confirmed 0
+> characters of text and 0 annotations across all 7 pages — independently
+> re-confirming the "scanned image, no text layer" finding. This cycle found
+> a distinct, previously unidentified source instead: AT's own current
+> "Início de Atividade" informational leaflet (dated março 2026, a genuine
+> text-layer PDF, no login/CAPTCHA/WAF gate), which documents in AT's own
+> words the three categories of information a declarant must identify before
+> submitting the (still authenticated) online declaration — activity code(s),
+> estimated remainder-of-year turnover, and a bank account's IBAN/BIC —
+> the same "official leaflet documenting a gated wizard's field content"
+> pattern already used elsewhere in this registry (e.g.
+> `se/migrationsverket/work-permit-application`). Modelled 8 fields total
+> (`taxpayerNIF`, `anticipatedActivityStartDate`, `primaryActivityCode`,
+> `secondaryActivityCodes`, `hasMixedTaxedAndExemptActivities`,
+> `estimatedAnnualTurnover`, `bankAccountIBAN`, `bankAccountBIC`) — a
+> deliberately thin v1.0.0, since the leaflet itself states the resulting
+> IRS/IVA regime classifications are AT-computed outcomes of these declared
+> elements, not separate fields the declarant selects, and explicitly
+> attributes three further elections (waiving the art.º 9.º CIVA exemption;
+> the agricultural flat-rate regime; opting into Regime de Contabilidade
+> Organizada below the mandatory threshold) to a distinct, later
+> `declaração de alterações` filing, not to this initial declaration. See
+> `registry/pt/at/declaracao-inicio-atividade-pessoas-singulares/1.0.0/VERIFICATION.md`
+> for the full four-candidate sourcing comparison, every disclosed scope
+> decision, and the mock conformance test run (0 errors across two
+> scenarios covering all 8 fields, plus 4 mutation/negative controls).
+> Portugal is now the **second non-original jurisdiction in this registry
+> to reach 6/6** (after Colombia, GOV-1616).
 
 > **Update (2026-07-10, GOV-2135, "GovSchema Standard Research"): Austria's
 > Visa vertical opens**, via `at/bmeia/schengen-visa-application` v1.0.0 —
@@ -4518,7 +4566,19 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (29/31 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (30/31 jurisdictions — 97%)
+
+**Portugal's Business Formation gap closes (GOV-2143), giving Portugal 6 of
+its 6 verticals** — via
+`pt/at/declaracao-inicio-atividade-pessoas-singulares`, AT's "Declaração de
+Início de Atividade" for natural persons starting a business/professional
+activity, sourced from AT's own current informational leaflet after IRN's
+"Empresa na Hora"/"Empresa Online" pacto-social specimens were re-verified
+from scratch and re-confirmed scanned images with no text layer. See the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full four-candidate sourcing comparison. Portugal is now the second
+non-original jurisdiction in this registry to reach 6/6 (after Colombia,
+GOV-1616).
 
 **Austria opens as this registry's 31st jurisdiction via this vertical
 (GOV-2107)**, via `at/gewerbebehoerde/trade-licence-registration` —
@@ -5676,7 +5736,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AT** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -5701,7 +5761,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **PT** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -6419,14 +6479,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   (residence-permit request/renewal, ~30 fields, genuinely Portugal-specific,
   confirmed live) — a real, open backlog candidate for a future cycle, not a
   dead end for Portugal's Visa vertical as a whole.
-- **PT Business Formation** — GOV-1750, re-confirmed GOV-1797, 2026-07-08.
-  IRN's "Empresa na Hora" pacto-social specimen PDFs remain scanned images
-  with no extractable text layer (re-fetched and re-checked this cycle); the
-  sole-trader "Início de Atividade" self-service route remains a fully
-  authenticated `acesso.gov.pt` wizard with no PDF fallback found. Not a hard
-  dead end (the Código das Sociedades Comerciais statute itself enumerates a
-  thin ~14-16 field list, per GOV-1750's own note) — a real but comparatively
-  weak backlog candidate for a future cycle.
+- **PT Business Formation — now published** (GOV-2143, 2026-07-10), via
+  `pt/at/declaracao-inicio-atividade-pessoas-singulares`: this entry's own
+  history (GOV-1750, re-confirmed GOV-1797, 2026-07-08) had found IRN's
+  "Empresa na Hora" pacto-social specimen PDFs to be scanned images with no
+  extractable text layer, and the sole-trader "Início de Atividade"
+  self-service route a fully authenticated `acesso.gov.pt` wizard with no PDF
+  fallback — both re-confirmed from scratch this cycle (a fresh fetch and
+  `pdfjs-dist` extraction of the SUQ-1-08 pacto-social specimen found 0
+  characters of text and 0 annotations across all 7 pages). The gap closed
+  not via the CSC-statute route this entry's prior note had flagged as the
+  likely path (a thin ~14-16 field list), but via a distinct,
+  previously-unidentified source: AT's own current "Início de Atividade"
+  informational leaflet (março 2026 edition), an unauthenticated, genuine
+  text-layer PDF documenting the gated wizard's own field content. See the
+  Executive Summary update above and the document's own VERIFICATION.md for
+  the full four-candidate sourcing comparison. This gives Portugal 6 of its
+  6 verticals.
 - **PT Passport (domestic)** — GOV-1750, re-confirmed GOV-1797, 2026-07-08.
   Decreto-Lei n.º 83/2000 Art. 16 confirms ordinary Portuguese passport
   issuance is an in-person, biometric-only process; IRN's own forms library
