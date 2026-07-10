@@ -4,7 +4,64 @@
 
 ## Executive Summary
 
-**29 jurisdictions** | **319 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**29 jurisdictions** | **320 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2063): Sweden's DMV vertical opens**, via
+> `se/transportstyrelsen/vehicle-registration-new-vehicle` v1.0.0 —
+> Transportstyrelsen (the Swedish Transport Agency) Form TS8003, "Ansökan om
+> registrering av ett nytt fordon | Application for registration of a new
+> vehicle". `se/bolagsverket/aktiebolag-formation`'s own closing note (GOV-2056)
+> had flagged Sweden's other five verticals as open, unscreened backlog
+> candidates; this cycle scouted all five and found DMV the clear strongest —
+> Taxes (Skatteverket) has moved to e-service-only with its field-by-field
+> paper guide discontinued, Passport and National ID are both in-person/
+> biometric-only processes with no home-fillable form, and Visa is a
+> confirmed duplicate of the EU-harmonized Schengen template already
+> published as `fr/france-visas/schengen-visa-application`. TS8003 is a
+> genuine 41-field fillable AcroForm PDF (4 pages), unauthenticated and
+> directly downloadable with no BankID/CAPTCHA/login gate, carrying the
+> authority's own field-by-field guide on the same PDF's pages 3-4,
+> section-numbered to match the fields on pages 1-2 — the same
+> "self-documenting Swedish AcroForm" pattern `se/bolagsverket/aktiebolag-formation`
+> established for this jurisdiction. Extracted with `pdfjs-dist`
+> (`getFieldObjects()`/`getAnnotations()`/`getTextContent()`); programmatically
+> checked all 41 annotations' PDF-level `Required` flag — none set it, the
+> same "form's own prose, not the PDF's Required bit, is the requiredness
+> signal" pattern already documented for the Bolagsverket sibling. Models the
+> vehicle's origin (imported by a registered importer, or professionally
+> manufactured in Sweden), owner, vehicle details (coded vehicle-type and
+> colour enums), technical-data registration method (individual approval vs.
+> eCoC), number-plate combination, registration-certificate issuance,
+> putting-into-service/leasing/credit, and tractor/motorised-implement usage
+> classification. Deliberately scoped out the used-vehicle/origin-check
+> ("ursprungskontroll") path the form's own header excludes, multi-stage
+> type-approved vehicles' cross-field eCoC format-matching rule, and the
+> power of attorney needed for a transferred end-of-series dispensation — see
+> the document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scope decision. Two fields (`originType`/`ownerIsSameAsImporter`
+> gating `documents[].importOrManufacturerCertificate`) were deliberately
+> designed to avoid the "`notEquals` empty-string absent-field bug" a prior
+> cycle caught (GOV-1045/GOV-1047, generalized from GOV-763): every
+> `requiredWhen` here compares only against a required, always-populated enum
+> or an enum-gated boolean, never an optional field's absent-vs-sentinel
+> state; the one place that pattern would have applied
+> (`documents[].endOfSeriesDispensationDecision`, keyed off an optional
+> case-number field) instead folds its trigger condition into the document's
+> own `label` text, with no `requiredWhen` at all. A mock
+> `conformance/se/transportstyrelsen/vehicle-registration-new-vehicle/1.0.0/application-packet.json`
+> test run (a registered importer bringing a new Volvo into Sweden for a
+> customer who is not the importer, technical data via eCoC, credit
+> purchase) was checked with a from-scratch script re-implementing the
+> schema's own required/requiredWhen condition grammar, passing with 0
+> errors across all 40 fields (36 collected, 4 correctly not-applicable) and
+> all 4 documents (2 provided, 2 correctly not-applicable); three mutation
+> tests confirmed the `typeApprovalNumber`, `financierOrgNumber`, and
+> `documents[].importOrManufacturerCertificate` conditional branches all fire
+> correctly in both directions. Sweden now stands at **2 of its 6 verticals**
+> (Business Formation, DMV); Taxes remains a genuinely unscreened backlog
+> candidate (Skatteverket's e-service migration may still admit a companion
+> paper form in a future cycle), while Passport, National ID, and Visa are
+> now confirmed dead ends/duplicates for this jurisdiction.
 
 > **Update (2026-07-10, GOV-2056): Sweden opens as GovSchema's 29th
 > jurisdiction**, via `se/bolagsverket/aktiebolag-formation` v1.0.0 —
@@ -3776,7 +3833,18 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (26/29 jurisdictions — 90%)
+### DMV — Vehicle Registration, Licensing, Permits (27/29 jurisdictions — 93%)
+
+**Sweden's DMV vertical opens (GOV-2063)**, via
+`se/transportstyrelsen/vehicle-registration-new-vehicle` — Transportstyrelsen
+Form TS8003, a genuine 41-field fillable AcroForm PDF with the authority's own
+field-by-field guide embedded in the same PDF, scoped to a genuinely new
+vehicle brought in by a registered importer or professionally manufactured in
+Sweden (the used-vehicle/origin-check path is out of scope, per the form's
+own stated limits). See the Executive Summary update above and the document's
+own VERIFICATION.md for the full sourcing story, including why Taxes,
+Passport, National ID, and Visa were screened and set aside this cycle.
+Sweden now stands at 2 of its 6 verticals (Business Formation, DMV).
 
 **Switzerland opens as this registry's 27th jurisdiction via this vertical
 (GOV-1840)**, with `ch/sg/stva/gesuch-lernfahr-fuehrerausweis` — the canton
@@ -3972,9 +4040,12 @@ within an already-covered vertical:
 member (plus the deputy member Swedish company law mandates for a board that
 small), an all-cash share-capital contribution, and the small-company audit
 exemption. See the Executive Summary update above and the document's own
-VERIFICATION.md for the full sourcing story. Sweden opens with 1 of its 6
-verticals (Business Formation); its other five verticals are open, unscreened
-backlog candidates for a future cycle.
+VERIFICATION.md for the full sourcing story. Sweden opened with 1 of its 6
+verticals (Business Formation); its DMV vertical has since opened too
+(GOV-2063, see the DMV section below) — Sweden now stands at 2 of its 6
+verticals, with Passport, Taxes, Visa, and National ID as open backlog
+candidates (Passport/National ID/Visa confirmed dead ends/duplicates per
+GOV-2063's own research trail; Taxes remains genuinely unscreened).
 
 **Japan's Business Formation vertical is deepened with a third
 stock-company-incorporation variant (GOV-2049)**, via
@@ -5019,7 +5090,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
-| **SE** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **SE** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |

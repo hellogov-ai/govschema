@@ -1,0 +1,496 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "se/transportstyrelsen/vehicle-registration-new-vehicle",
+  "version": "1.0.0",
+  "title": "Sweden Application for Registration of a New Vehicle",
+  "description": "Apply to the Swedish Transport Agency (Transportstyrelsen) to register a brand-new vehicle in Sweden's road traffic register (vägtrafikregistret), using Transportstyrelsen Form TS8003 ('Ansökan om registrering av ett nytt fordon | Application for registration of a new vehicle'). This form is used only for a genuinely new vehicle: one brought into Sweden by a Transportstyrelsen-approved registered importer, or one professionally manufactured in Sweden; a used vehicle, or a new vehicle lacking either of those two permits, instead requires an 'ursprungskontroll' (origin-check) application, which this document does not model. This is Sweden's first DMV-vertical schema; Sweden's other verticals are se/bolagsverket/aktiebolag-formation (Business Formation) and Passport/Taxes/Visa/National ID (not yet modelled). It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Swedish Transport Agency",
+    "abbreviation": "Transportstyrelsen",
+    "url": "https://www.transportstyrelsen.se"
+  },
+  "process": {
+    "type": "registration",
+    "language": "sv-SE"
+  },
+  "source": {
+    "url": "https://www.transportstyrelsen.se/sv/vagtrafik/e-tjanster-och-blanketter/blanketter-for-vagtrafik/fordon/Ansokan-om-registrering-av-ett-nytt-fordon/",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "Transportstyrelsen Form TS8003, version 03.00, edition 2026-06-17 ('Ansökan om registrering av ett nytt fordon | Application for registration of a new vehicle'), the fillable AcroForm PDF linked from Transportstyrelsen's own vehicle-forms page"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2063 'GovSchema Standard Research' research cycle. CATALOG.md's own closing note on se/bolagsverket/aktiebolag-formation (GOV-2056) flagged Sweden's other five verticals (Passport, DMV, Taxes, Visa, National ID) as open, unscreened backlog candidates; this cycle scouted all five and found DMV the strongest: Transportstyrelsen's TS8003 is a genuine 41-field fillable AcroForm PDF (4 pages), unauthenticated and directly downloadable with no BankID/CAPTCHA/login gate, and — like se/bolagsverket/aktiebolag-formation's own bilingual guide pages — carries the authority's own field-by-field instructions on pages 3-4 of the identical PDF, section-numbered to match the form fields on pages 1-2. The other four Swedish verticals were confirmed weaker: Skatteverket's income-tax return has moved to e-service-only with no current downloadable blank form or field guide (its own 'Dags att deklarera' guide brochure was discontinued); Polisen's passport process and Skatteverket/Polisen's national-ID-card process are both in-person/biometric-only with no home-fillable application; Migrationsverket's Schengen visa form (nos. 118031 SV/119031 EN) is a confirmed duplicate of the EU-harmonized template already published as fr/france-visas/schengen-visa-application. Extracted with pdfjs-dist (getFieldObjects()/page.getAnnotations() for all 41 AcroForm fields across pages 1-2, getTextContent() for the full text layer across all 4 pages); programmatically checked every annotation's fieldFlags bit 2 (the PDF Required flag): none of the 41 fields set it, the same 'form's own prose, not the PDF's Required bit, is the requiredness signal' pattern documented for se/bolagsverket/aktiebolag-formation and nl/kvk/bv-formation. Opens Sweden's DMV vertical (2 of 6 verticals now open). A mock conformance/se/transportstyrelsen/vehicle-registration-new-vehicle/1.0.0/application-packet.json test run (a Transportstyrelsen-approved importer bringing a new car into Sweden) was checked with a from-scratch script re-implementing this document's own required/requiredWhen condition grammar and passed with 0 errors; three mutation tests confirmed the typeApprovalNumber, creditEndDate, and financierOrgNumber conditional branches all fire correctly. Status remains 'draft' pending independent field-by-field re-review; see VERIFICATION.md for the full source table, extraction transcript, and every disclosed scope decision."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "originType",
+      "label": "How was the vehicle brought into being as a Swedish-registrable new vehicle?",
+      "type": "enum",
+      "required": true,
+      "description": "This form covers only these two origin cases for a genuinely new vehicle; a used vehicle, or a new vehicle lacking either permit, instead requires a separate 'ursprungskontroll' (origin-check) application, not modelled here.",
+      "sourceRef": "TS8003 §1: '(1.A.) Fordonet är infört från utlandet av registrerad importör | Imported from abroad by a registered importer' / '(1.B.) Fordonet är yrkesmässigt tillverkat i Sverige | Professionally manufactured in Sweden'; p.3 guide, item 1",
+      "validation": {
+        "enum": ["imported_by_registered_importer", "manufactured_in_sweden"]
+      }
+    },
+    {
+      "name": "importerOrManufacturerOrgNumber",
+      "label": "Importer's or manufacturer's organisation number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "TS8003 §1: 'Importörens eller tillverkarens organisationsnummer'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "importerOrManufacturerEmail",
+      "label": "Importer's or manufacturer's email address, for contact if vehicle-technical details are unclear",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own guide states this email address is not stored in the road traffic register; it is used only for this case.",
+      "sourceRef": "TS8003 §1: 'Mejladress till importör eller tillverkare, för kontakt vid oklarheter om fordonstekniska uppgifter'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "importerOrManufacturerPhone",
+      "label": "Importer's or manufacturer's telephone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "TS8003 §1: 'Telefonnummer' (below the importer/manufacturer email field)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "ownerFullName",
+      "label": "Vehicle owner's surname and first name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "TS8003, 'Uppgifter om fordonsägaren': 'Efternamn och förnamn'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "ownerIdOrOrgNumber",
+      "label": "Vehicle owner's personal identity number, or organisation number if the owner is a legal entity",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "TS8003, 'Uppgifter om fordonsägaren': 'Person- eller organisationsnummer'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "ownerPhone",
+      "label": "Vehicle owner's telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "TS8003, 'Uppgifter om fordonsägaren': 'Telefonnummer'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "ownerIsSameAsImporter",
+      "label": "Is the vehicle owner the same party as the registered importer?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "originType", "equals": "imported_by_registered_importer" },
+      "description": "Only meaningful when the vehicle was imported by a registered importer; gates whether an import certificate or manufacturer's certificate must be attached (see documents[].importOrManufacturerCertificate).",
+      "sourceRef": "TS8003, p.3, item 1.A: 'Om ägaren är någon annan än den registrerade importören ska införselintyg eller tillverkarintyg bifogas (om inte CoC bifogats).'",
+      "validation": {}
+    },
+    {
+      "name": "vehicleType",
+      "label": "Vehicle type",
+      "type": "enum",
+      "required": true,
+      "description": "Coded per the form's own guide: Personbil (car) = PB, Lastbil (truck) = LB, Buss (bus) = BUSS, Släpvagn (trailer) = SLÄP, Traktor (tractor) = TR, Motorcykel (motorcycle) = MC, Moped klass I (class I moped) = MOPED, Motorredskap (motorised implement) = MRED, Terränghjuling (ATV) = TGHJUL, Snöskoter (snowmobile) = TGSNÖ, Terrängvagn (all-terrain vehicle/trailer) = TGV.",
+      "sourceRef": "TS8003 §2: 'Fordonsslag'; p.3 guide, item 2: 'Fordonsslag anges enligt följande'",
+      "validation": {
+        "enum": ["PB", "LB", "BUSS", "SLAP", "TR", "MC", "MOPED", "MRED", "TGHJUL", "TGSNO", "TGV"]
+      }
+    },
+    {
+      "name": "makeType",
+      "label": "Make/type (Fabrikat/typ)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "TS8003 §2: 'Fabrikat/typ'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "baseVehicleMake",
+      "label": "Base vehicle's make, for a multi-stage type-approved vehicle",
+      "type": "string",
+      "required": false,
+      "description": "Applies to vehicles approved for registration in multiple manufacturing stages (e.g. a chassis manufacturer's base vehicle later completed by a bodybuilder); out of scope for a single-stage vehicle.",
+      "sourceRef": "TS8003 §2: 'Grundfordonets fabrikat'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "tradeDesignation",
+      "label": "Trade designation (Handelsbeteckning)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "TS8003 §2: 'Handelsbeteckning'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "makeCode",
+      "label": "Make code (Fabrikatskod), assigned by the registered importer or professional manufacturer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "TS8003 §2: 'Fabrikatskod'; p.3 guide: 'Fabrikatskod och gruppnummer anges av registrerad importör eller yrkesmässig tillverkare.'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "groupNumber",
+      "label": "Group number (Gruppnummer), assigned by the registered importer or professional manufacturer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "TS8003 §2: 'Gruppnummer'; p.3 guide: 'Fabrikatskod och gruppnummer anges av registrerad importör eller yrkesmässig tillverkare.'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "identificationNumber",
+      "label": "Identification number (chassis/frame/manufacturing number, i.e. VIN)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "TS8003 §2: 'Identifieringsnummer (chassi-/ram-/tillverkningsnummer)'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "manufactureYearMonthOrModelYear",
+      "label": "Manufacturing year and month, or model year",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "vehicleType", "notEquals": "MRED" },
+      "description": "Required to establish the vehicle's model year for every vehicle type except motorised implements (motorredskap), for which the form's own guide states this information is not required. A model year may additionally be given for a vehicle without EC type-approval.",
+      "sourceRef": "TS8003 §2: 'Tillverkningsår och månad/ årsmodell'; p.4 guide: 'Uppgifterna krävs inte för motorredskap.'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "color",
+      "label": "Vehicle colour",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "TS8003 §2: 'Färg'; p.3 guide: 'Färg anges enligt följande alternativ'",
+      "validation": {
+        "enum": ["blue", "brown", "grey", "green", "yellow_orange", "red", "purple_silver", "white_black", "multicoloured"]
+      }
+    },
+    {
+      "name": "technicalDataViaIndividualApproval",
+      "label": "Should the vehicle's technical data be registered via a single/individual approval (enskilt godkännande)?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Registrera tekniska data': 'Tekniska data ska registreras genom en registreringsbesiktning eller via enskilt godkännande. Ja'",
+      "validation": {}
+    },
+    {
+      "name": "typeApprovalNumber",
+      "label": "Type-approval number for the vehicle's most recent manufacturing stage",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "technicalDataViaIndividualApproval", "equals": true },
+      "sourceRef": "TS8003, 'Registrera tekniska data': 'Om ja, ange typgodkännandenummer för fordonets senaste tillverkningssteg'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "technicalDataViaEcoc",
+      "label": "Should the vehicle's technical data be registered using an electronic Certificate of Conformity (eCoC/IVI)?",
+      "type": "boolean",
+      "required": false,
+      "description": "When true, Transportstyrelsen retrieves the eCoC itself; it must not be attached to the application. When false and the vehicle instead has a paper-format Certificate of Conformity, that document must be attached (see documents[].certificateOfConformity).",
+      "sourceRef": "TS8003, 'Registrera tekniska data': 'Tekniska data ska registreras med stöd av eCoC (IVI). Ja'; p.4 guide: 'Alla eCoC (IVI) hämtas av Transportstyrelsen och ska därför inte bifogas till ansökan.'",
+      "validation": {}
+    },
+    {
+      "name": "plateOrdinaryFront",
+      "label": "Ordinary plate (520×110 mm), front",
+      "type": "boolean",
+      "required": false,
+      "description": "Cars, trucks, and buses require two plates (front and back); other vehicle types require one plate of the size/format appropriate to the vehicle type.",
+      "sourceRef": "TS8003, 'Ordinarie skylt (520x110 mm)': 'Fram'; p.4 guide: 'Personbil, lastbil och buss ska ha två skyltar, övriga fordonsslag en skylt.'",
+      "validation": {}
+    },
+    {
+      "name": "plateOrdinaryBack",
+      "label": "Ordinary plate (520×110 mm), back",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Ordinarie skylt (520x110 mm)': 'Bak'",
+      "validation": {}
+    },
+    {
+      "name": "plateSmallFront",
+      "label": "Small plate (300×110 mm), front",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Liten skylt (300x110 mm)': 'Fram'",
+      "validation": {}
+    },
+    {
+      "name": "plateSmallBack",
+      "label": "Small plate (300×110 mm), back",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Liten skylt (300x110 mm)': 'Bak'",
+      "validation": {}
+    },
+    {
+      "name": "plateMcMoped",
+      "label": "Two-row plate (170×150 mm), for motorcycle/moped",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, '2-radig skylt (170x150mm)': 'MC/MOPED'",
+      "validation": {}
+    },
+    {
+      "name": "plateSnowmobileAtv",
+      "label": "Self-adhesive plate (260×70 mm), for snowmobile/ATV",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Självhäftande skylt (260x70 mm)': 'TGSNÖ/TGHJUL'",
+      "validation": {}
+    },
+    {
+      "name": "registrationCertificateRequested",
+      "label": "Should a registration certificate (registreringsbevis) be issued when this vehicle is registered?",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "TS8003, 'Registreringsbevis ska utfärdas vid registrering av detta fordon': 'Ja' / 'Nej'",
+      "validation": { "enum": ["yes", "no"] }
+    },
+    {
+      "name": "endOfSeriesDispensationCaseNumber",
+      "label": "Case number (diarienummer), if the vehicle has been granted an end-of-series dispensation by Transportstyrelsen",
+      "type": "string",
+      "required": false,
+      "description": "Applies only to a vehicle granted an end-of-series dispensation (slutseriedispens); a copy of Transportstyrelsen's decision must then be attached (see documents[].endOfSeriesDispensationDecision), and — if the dispensation was not issued to the applicant — a power of attorney is also required, which this document does not model.",
+      "sourceRef": "TS8003, 'Ange diarienummer om fordonet är beviljad slutseriedispens av Transporstyrelsen'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "putIntoServiceRequested",
+      "label": "Should the vehicle be put into service (påställd) upon registration?",
+      "type": "boolean",
+      "required": false,
+      "description": "A vehicle is automatically taken out of service (avställt) upon registration; this checkbox requests it be put into service instead. Putting a vehicle into service (other than a trailer) requires it to be covered by traffic insurance, evidenced physically by the insurer's self-adhesive proof-of-insurance mark on the paper form itself, which this document does not model as a separate field.",
+      "sourceRef": "TS8003, 'Anmälan om påställning': 'Fordonet ska ställas på'; p.4 guide §3: 'Fordonet är automatiskt avställt vid registrering... För att en påställning ska ske krävs att det finns en trafikförsäkring (gäller inte släpfordon).'",
+      "validation": {}
+    },
+    {
+      "name": "isLeasing",
+      "label": "Is the vehicle being registered under a leasing arrangement?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Anmälan om leasing eller kreditköp': 'Leasing'",
+      "validation": {}
+    },
+    {
+      "name": "isCreditPurchase",
+      "label": "Is the vehicle being registered under a credit (hire) purchase arrangement?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Anmälan om leasing eller kreditköp': 'Kredit'",
+      "validation": {}
+    },
+    {
+      "name": "creditEndDate",
+      "label": "Credit end date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "isCreditPurchase", "equals": true },
+      "sourceRef": "TS8003, 'Anmälan om leasing eller kreditköp': 'Slutdatum för kredit'",
+      "validation": {}
+    },
+    {
+      "name": "financierOrgNumber",
+      "label": "Lessor's or creditor's organisation number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [{ "field": "isLeasing", "equals": true }, { "field": "isCreditPurchase", "equals": true }] },
+      "classification": "financial",
+      "sourceRef": "TS8003, 'Anmälan om leasing eller kreditköp': 'Leasinggivarens eller kreditgivarens organisationsnummer'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "usedAsTrafficTractor",
+      "label": "Is the vehicle used as a traffic tractor (trafiktraktor)?",
+      "type": "boolean",
+      "required": false,
+      "description": "Applicable to tractors, motorised implements, and heavy all-terrain vehicles/trailers drawn by them, whose usage classification affects roadworthiness-testing and vehicle-tax obligations.",
+      "sourceRef": "TS8003, 'Övriga upplysningar och uppgifter om användningssätt (4)': 'Trafiktraktor'",
+      "validation": {}
+    },
+    {
+      "name": "usedAsClass1ImplementMobileCrane",
+      "label": "Is the vehicle a class 1 motorised implement (e.g. mobile crane)?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Övriga upplysningar och uppgifter om användningssätt (4)': 'Motorredskap klass 1 (mobilkranar mm)'",
+      "validation": {}
+    },
+    {
+      "name": "usedAsHeavyTerrainVehicleTrafficTractor",
+      "label": "Is the vehicle a motorised implement or heavy all-terrain vehicle used as a traffic tractor?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "TS8003, 'Övriga upplysningar och uppgifter om användningssätt (4)': 'Motorredskap eller tung terrängvagn som (används som trafiktraktor)'",
+      "validation": {}
+    },
+    {
+      "name": "otherInformation",
+      "label": "Other information for Transportstyrelsen",
+      "type": "string",
+      "required": false,
+      "description": "For a tractor, motorised implement, or heavy all-terrain vehicle (and trailers drawn by them), describe how the vehicle is used, what it transports, whether it operates on public roads, and which vehicles draw it.",
+      "sourceRef": "TS8003, 'Övriga upplysningar och uppgifter om användningssätt (4)': 'Övriga upplysningar'; p.2: 'Beskriv vad som transporteras, om transport äger rum på allmän väg och vilka fordon som dras av fordonet'",
+      "validation": { "maxLength": 1000 }
+    },
+    {
+      "name": "signerPrintedName",
+      "label": "Printed name of the signer",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form is signed by the importer or manufacturer (from §1), not necessarily the vehicle owner.",
+      "sourceRef": "TS8003, 'Underskrift': 'Namnförtydligande'; 'Importörens eller tillverkarens underskrift'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "signaturePlace",
+      "label": "Place of signature",
+      "type": "string",
+      "required": true,
+      "sourceRef": "TS8003, 'Underskrift': 'Ort'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "sourceRef": "TS8003, 'Underskrift': 'Datum'",
+      "validation": {}
+    }
+  ],
+  "documents": [
+    {
+      "id": "certificateOfConformity",
+      "label": "Certificate of Conformity (CoC), paper format, original issue from the vehicle manufacturer",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "technicalDataViaEcoc", "equals": false },
+      "belongsTo": "applicant",
+      "sourceRef": "TS8003, p.3: 'För övriga fordon, som har ett intyg om överensstämmelse (CoC) i pappersformat, ska detta bifogas till ansökan för att fordonet ska kunna registreras i vägtrafikregistret. CoC ska skickas in i originalutfärdande från fordonstillverkaren.'"
+    },
+    {
+      "id": "importOrManufacturerCertificate",
+      "label": "Import certificate or manufacturer's certificate, required when the owner is someone other than the registered importer, or whenever the vehicle was professionally manufactured in Sweden",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "all": [{ "field": "originType", "equals": "imported_by_registered_importer" }, { "field": "ownerIsSameAsImporter", "equals": false }] },
+          { "field": "originType", "equals": "manufactured_in_sweden" }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "TS8003, p.3, item 1.A: 'Om ägaren är någon annan än den registrerade importören ska införselintyg eller tillverkarintyg bifogas (om inte CoC bifogats).'; item 1.B: 'Bifoga ett tillverkarintyg som visar att fordonet är tillverkat av den som har tillstånd.'"
+    },
+    {
+      "id": "endOfSeriesDispensationDecision",
+      "label": "Copy of Transportstyrelsen's end-of-series dispensation decision, required only for a vehicle granted an end-of-series dispensation (i.e. whenever endOfSeriesDispensationCaseNumber is filled in)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "TS8003, p.4: 'Om fordonet är beviljad slutseriedispens av Transportstyrelsen, ska diarienumret för den godkända ansökan om dispens anges och en kopia av Transportstyrelsens beslut bifogas till denna ansökan.'"
+    },
+    {
+      "id": "signerHandwrittenSignature",
+      "label": "Signer's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "The importer's or manufacturer's signature, dated and placed, as printed on the form's signature block.",
+      "sourceRef": "TS8003, 'Underskrift': 'Importörens eller tillverkarens underskrift'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "vehicle_origin",
+      "title": "Vehicle origin",
+      "fields": [
+        "originType", "importerOrManufacturerOrgNumber", "importerOrManufacturerEmail",
+        "importerOrManufacturerPhone", "ownerIsSameAsImporter"
+      ],
+      "next": "vehicle_owner"
+    },
+    {
+      "id": "vehicle_owner",
+      "title": "Vehicle owner",
+      "fields": ["ownerFullName", "ownerIdOrOrgNumber", "ownerPhone"],
+      "next": "vehicle_details"
+    },
+    {
+      "id": "vehicle_details",
+      "title": "Vehicle details",
+      "fields": [
+        "vehicleType", "makeType", "baseVehicleMake", "tradeDesignation", "makeCode", "groupNumber",
+        "identificationNumber", "manufactureYearMonthOrModelYear", "color"
+      ],
+      "next": "technical_data_and_plates"
+    },
+    {
+      "id": "technical_data_and_plates",
+      "title": "Technical data registration and number plates",
+      "fields": [
+        "technicalDataViaIndividualApproval", "typeApprovalNumber", "technicalDataViaEcoc",
+        "plateOrdinaryFront", "plateOrdinaryBack", "plateSmallFront", "plateSmallBack",
+        "plateMcMoped", "plateSnowmobileAtv",
+        "registrationCertificateRequested", "endOfSeriesDispensationCaseNumber"
+      ],
+      "next": "service_and_financing"
+    },
+    {
+      "id": "service_and_financing",
+      "title": "Putting into service, leasing, and credit",
+      "fields": [
+        "putIntoServiceRequested", "isLeasing", "isCreditPurchase", "creditEndDate", "financierOrgNumber"
+      ],
+      "next": "usage_and_signature"
+    },
+    {
+      "id": "usage_and_signature",
+      "title": "Usage type and signature",
+      "fields": [
+        "usedAsTrafficTractor", "usedAsClass1ImplementMobileCrane", "usedAsHeavyTerrainVehicleTrafficTractor",
+        "otherInformation", "signerPrintedName", "signaturePlace", "signatureDate"
+      ]
+    }
+  ]
+}
