@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **340 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **341 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2226, "GovSchema Standard Research"): Iceland's
+> Passport vertical opens (5/6)**, via
+> `is/thjodskra/passport-issuance-consent-minor` — Þjóðskrá Íslands'
+> (Registers Iceland) Form V-901, "Samþykki vegna útgáfu vegabréfs fyrir
+> einstakling undir 18 ára aldri" (Consent for issuance of a passport for
+> an individual under 18 years of age). Iceland's actual passport
+> *application* remains a confirmed in-person, biometric, island.is-gated
+> process with no downloadable field-by-field form (GOV-2084, GOV-2219);
+> V-901 is a distinct, genuine standalone paper form within that process,
+> used when a child's custodian(s) cannot jointly attend in person — a
+> candidate the GOV-2219 cycle had already scouted and named
+> ("Þjóðskrá Form V-901 ..., skra.is forms index, 21 fields") but left
+> unauthored. Re-screened fresh this session rather than assumed still
+> valid: fetched directly from skra.is's own forms index (HTTP 200,
+> 193,261 bytes, SHA-256 `cb4fefe4...9baaed60`), with the server's own
+> `Content-Disposition` filename ("V-901-samthykki forsjarmanna vegna
+> utgafu vegabrefs undir 18 ara.pdf") independently corroborating the
+> document's true subject beyond its printed title. A from-scratch
+> `pdfjs-dist` re-extraction confirmed exactly **21 AcroForm widgets**
+> (all plain text fields — no checkbox/radio widgets at all), matching the
+> prior cycle's own field-count note exactly. Position-aware (x/y
+> proximity) cross-walking surfaced one non-obvious structural finding: a
+> printed two-option custody-type choice ("the child has two custodians" /
+> "the child has one custodian") has **no backing AcroForm widget
+> whatsoever** — both print as static, non-interactive checkbox glyphs in
+> the source PDF's own text layer — yet this choice is substantively
+> required to complete the form correctly, so it is modelled as a
+> semantic-only `enum` field (`custodyType`) with no widget to cite,
+> disclosed as such in VERIFICATION.md. Net **22 fields** (21 backed by a
+> widget, 1 semantic-only), with the second custodian's six fields gated
+> `requiredWhen custodyType equals two_custodians`. See the document's own
+> VERIFICATION.md for the full sourcing record, the structural finding,
+> every scope decision, and the mock conformance test run (0 errors across
+> 2 valid mocks — one one-custodian, one two-custodians-plus-witnesses —
+> and 2 negative controls both failing as expected). Iceland now stands at
+> 5 of its 6 verticals (Business Formation, Taxes, Visa, DMV, Passport);
+> National ID remains Iceland's sole open vertical — a prior cycle's
+> scouting note named Skatturinn Form RSK 3.30 (kerfiskennitala for
+> foreign nationals) as a viable, well-sourced backlog candidate, still
+> unauthored.
 
 > **Update (2026-07-10, GOV-2219, "GovSchema Standard Research"): Iceland's
 > DMV vertical opens (4/6)**, via
@@ -4642,7 +4683,15 @@
 
 ## By Vertical
 
-### Passport (23/32 jurisdictions — 72%)
+### Passport (25/32 jurisdictions — 78%)
+
+**Iceland's Passport vertical opens (GOV-2226)**, via
+`is/thjodskra/passport-issuance-consent-minor` — Þjóðskrá Íslands' Form
+V-901, the genuine standalone custodian-consent form embedded within
+Iceland's otherwise in-person/biometric passport-issuance process. See the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full sourcing record. Iceland now stands at 5 of its 6 verticals;
+National ID remains its sole open vertical.
 
 **Austria**'s Passport gap is now closed (GOV-2128), via
 `at/bmeia/passport-or-identity-card-application` — the bilingual
@@ -6316,7 +6365,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **IS** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
