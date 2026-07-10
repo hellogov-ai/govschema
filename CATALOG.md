@@ -4,7 +4,56 @@
 
 ## Executive Summary
 
-**31 jurisdictions** | **328 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**31 jurisdictions** | **329 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2128, "GovSchema Standard Research"): Austria's
+> Passport vertical opens**, via `at/bmeia/passport-or-identity-card-application`
+> v1.0.0 — the bilingual German/English "Antrag auf Ausstellung eines
+> österreichischen Reisepasses oder Personalausweis" (Application for an
+> Austrian passport or identity card), used principally through Austrian
+> embassies and consulates abroad. This candidate was screened and
+> confirmed real in the prior GOV-2121 cycle; this cycle re-verified it
+> from scratch (fresh fetch, fresh `pdfjs-dist` extraction) rather than
+> trusting the prior numbers, and authored it. Extracted **42 AcroForm
+> widgets** across the PDF's 2 pages with `pdfjs-dist`; `getFieldObjects()`
+> confirms all 42 are distinct, independently-named fields with **zero
+> shared field names anywhere in the document** — a materially different,
+> and more general, finding than the sibling `at/bmi/national-identity-card-application`
+> schema's 2 genuine PDF radio-button groups: every multi-option selector
+> on this specimen (document type; applicant-vs-named-child; gender;
+> existing-passport status; lost-vs-stolen; the 7-option
+> legal-representation basis) is independent, non-grouped checkboxes.
+> Modelled honestly per this issue's explicit instruction: each selector
+> is independent optional boolean fields, with a GSP-0013
+> `exclusivityGroups` entry declared wherever real-world mutual
+> exclusivity is evident (gender; applicant-vs-child; existing-passport
+> status; lost-vs-stolen; legal-representation basis) but deliberately
+> **not** for the document-type selector, since an applicant may
+> legitimately request more than one document type in a single filing.
+> Zero widgets were excluded as non-data controls and zero were
+> merged — unlike every prior AT cycle (`at/bmi`: 7/34 excluded; `at/bmf`:
+> 15/90; `at/gewerbebehoerde`: 5/101) — so all 42 widgets map 1:1 onto
+> **42 fields**. A specific font-encoding bug disclosed in the sibling
+> `at/bmi` cycle (dropped "F" glyphs) was explicitly checked for and
+> **not found** in this specimen. See
+> `registry/at/bmeia/passport-or-identity-card-application/1.0.0/VERIFICATION.md`
+> for the full sourcing record (including a disclosed mission-variant
+> finding: the Canberra embassy's own citizen-services pages point
+> passport applicants to their own locally-numbered forms and identity-card
+> applicants to the *other*, already-modelled dedicated Personalausweis
+> PDF, rather than to this session's central combined specimen), every
+> disclosed scope decision (the staff-only "Vorgelegte Nachweise"
+> checklist left unmodelled since it carries no applicant-facing AcroForm
+> widgets; the self/child asymmetry in existing-passport-status fields),
+> and the mock conformance test run (0 errors across two scenarios
+> covering all 42 fields and all 3 `documents[]` entries, plus 8
+> mutation/negative controls, including two exercising the new
+> `exclusivityGroups` construct for the first time in an AT cycle). This
+> gives Austria **4 of its 6 verticals** (Business Formation, Taxes,
+> National ID, Passport); Visa remains an open, screened-and-viable
+> backlog candidate (the EU-standard "Formular C1", identified in the
+> GOV-2121 cycle); DMV remains a confirmed weak/dead-end candidate from a
+> prior cycle.
 
 > **Update (2026-07-10, GOV-2121, "GovSchema Standard Research"): Austria's
 > National ID vertical opens**, via `at/bmi/national-identity-card-application`
@@ -4081,7 +4130,20 @@
 
 ## By Vertical
 
-### Passport (22/31 jurisdictions — 71%)
+### Passport (23/31 jurisdictions — 74%)
+
+**Austria**'s Passport gap is now closed (GOV-2128), via
+`at/bmeia/passport-or-identity-card-application` — the bilingual
+German/English combined passport-or-identity-card consular application,
+screened as viable in the GOV-2121 cycle and re-verified from scratch this
+cycle (42 AcroForm widgets, all distinct field names, zero exclusions,
+zero merges — modelled as independent optional booleans with GSP-0013
+`exclusivityGroups` disclosing real-world mutual exclusivity the PDF
+itself does not structurally enforce). See the Executive Summary update
+above and the document's own VERIFICATION.md. This gives Austria 4 of its
+6 verticals (Business Formation, Taxes, National ID, Passport); Visa
+remains an open, screened-and-viable backlog candidate; DMV remains a
+confirmed weak/dead-end candidate.
 
 **Switzerland**'s Passport gap is now closed (GOV-1931), via
 `ch/fedpol/antrag-pass-identitaetskarte` — fedpol's own online
@@ -5558,7 +5620,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AT** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **AT** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -6012,7 +6074,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    (Business Formation, Taxes, National ID); Passport and Visa remain open,
    screened-and-viable backlog candidates; DMV remains a confirmed weak/
    dead-end candidate. See the Executive Summary update above and the
-   document's own VERIFICATION.md. **The Czech Republic's Visa gap has since closed too
+   document's own VERIFICATION.md. **Austria's Passport gap has since
+   closed too (GOV-2128)**, via `at/bmeia/passport-or-identity-card-application`
+   — the bilingual German/English combined passport-or-identity-card
+   consular form the GOV-2121 cycle had already screened and found viable,
+   re-verified from scratch this cycle. Extracted 42 AcroForm widgets, all
+   distinct field names (zero shared names anywhere, confirmed via
+   `getFieldObjects()`), zero exclusions, zero merges — 42 widgets map 1:1
+   onto 42 fields, modelled as independent optional booleans (with
+   GSP-0013 `exclusivityGroups` disclosing real-world mutual exclusivity
+   where the PDF itself does not enforce it) rather than forced into the
+   radio-group shape the sibling `at/bmi` schema's true 2-option groups
+   have. See the Executive Summary update above and the document's own
+   VERIFICATION.md for the full sourcing record and every disclosed scope
+   decision. Austria now stands at **4 of its 6 verticals** (Business
+   Formation, Taxes, National ID, Passport); Visa remains an open,
+   screened-and-viable backlog candidate; DMV remains a confirmed
+   weak/dead-end candidate. **The Czech Republic's Visa gap has since closed too
    (GOV-1819)**, via `cz/mzv/zadost-o-udeleni-dlouhodobeho-viza` — the
    Ministry of Foreign Affairs' national long-stay (category D) visa
    application, confirmed genuinely distinct from the EU-harmonized template

@@ -1,0 +1,525 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "at/bmeia/passport-or-identity-card-application",
+  "version": "1.0.0",
+  "title": "Austria Application for a Passport or Identity Card (Antrag auf Ausstellung eines österreichischen Reisepasses oder Personalausweises)",
+  "description": "Austria's bilingual German/English combined application for an Austrian passport (regular, additional, or emergency) and/or a national identity card (Personalausweis), used principally through Austrian embassies and consulates abroad. Modelled from the current 2-page fillable-AcroForm PDF specimen hosted in BMEIA's own central 'Allgemein/Formulare' (General Forms) library. Domestically, and at most missions, applicants — including infants — must be personally present when applying (fingerprints are captured live for a passport). This document deliberately does not model: the mission-specific appointment-booking step; the staff-only 'Vorgelegte Nachweise' (evidence presented) checklist and consular-fee tariff table on page 2, both explicitly marked 'Vom Antragsteller nicht auszufüllen' (not to be filled out by the applicant) and carrying no AcroForm widgets of their own; and the separate, dedicated single-page 'Antrag auf Ausstellung eines Personalausweises' form used domestically and by some other missions for identity-card-only applications (already modelled as this registry's at/bmi/national-identity-card-application). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Austria, the Bundesministerium für europäische und internationale Angelegenheiten, or any Austrian embassy or consulate.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bundesministerium für europäische und internationale Angelegenheiten (BMEIA), acting through Austria's embassies and consulates abroad; domestic passport/identity-card issuance is administered by the Bundesministerium für Inneres (BMI) through each Land's Passbehörde",
+    "abbreviation": "BMEIA",
+    "url": "https://www.bmeia.gv.at/en/austrian-embassy-canberra/citizen-services/austrian-identity-papers-and-other-documents/austrian-passport"
+  },
+  "process": {
+    "type": "application",
+    "language": "de"
+  },
+  "source": {
+    "url": "https://www.bmeia.gv.at/fileadmin/user_upload/Allgemein/Formulare/Antrag_Reisepass_Personalausweis_Deutsch-Englisch.pdf",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "'Antrag auf Ausstellung eines österreichischen Reisepasses oder Personalausweis' / 'Application for an Austrian passport or identity card', a bilingual German/English 2-page fillable-AcroForm PDF hosted directly in BMEIA's central 'Allgemein/Formulare' forms library"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "Authored from a fresh curl fetch of the genuine fillable-AcroForm PDF directly from bmeia.gv.at (HTTP 200, application/pdf, 292,446 bytes, SHA-256 a54c77ef3bae9ace86a40bf8dcdfb8887c871eec64cbd16ce50d14bd541dcf56), re-confirmed live a second time before finalizing this record. All 42 AcroForm widgets across the PDF's 2 pages were extracted and enumerated with pdfjs-dist's getAnnotations()/getFieldObjects()/getTextContent(); getFieldObjects() confirms all 42 are distinct, independently-named fields with no shared field names anywhere in the document, and every Btn widget reports radioButton:false — unlike this registry's sibling at/bmi/national-identity-card-application (which has 2 genuine PDF radio-button groups), this specimen contains zero true radio groups. Every multi-option selector on the form (document type; applicant-vs-named-child; gender; existing-passport status; lost-vs-stolen; the 7-option legal-representation basis) is therefore modelled as independent optional boolean fields, with GSP-0013 exclusivityGroups declared wherever real-world mutual exclusivity is evident even though the PDF itself does not enforce it structurally — except the document-type selector (Notpass/weiterer Reisepass/Personalausweis), which is left ungrouped since an applicant may legitimately request more than one document type on a single filing. All 42 widgets map onto 42 fields with zero merges and zero exclusions (unlike prior AT cycles, this specimen's authoring included no stray, duplicate-heading, or footer-reference widgets to exclude). See VERIFICATION.md for the full sourcing record, the position-based methodology used to attribute the PDF's several generically-named 'TextN' widgets to their nearest printed label, and the mock conformance test run."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationForSelf",
+      "label": "This application is for the adult applicant themselves",
+      "type": "boolean",
+      "required": false,
+      "description": "A checkbox positioned immediately beside the form's own printed title/heading sentence, functioning as the first of two mutually-exclusive 'who is this document for' options (see 'applicationForNamedChild'). Its own PDF tooltip (/TU alternate text) is literally the full document title rather than a distinct short label — disclosed rather than silently rewritten; see VERIFICATION.md.",
+      "sourceRef": "'Antrag auf Ausstellung eines österreichischen Reisepasses oder Personalausweis' (checkbox beside the form's own title line)"
+    },
+    {
+      "name": "applicationForNamedChild",
+      "label": "This application is for the following child",
+      "type": "boolean",
+      "required": false,
+      "description": "Mutually exclusive with 'applicationForSelf' (see exclusivityGroups) — checked when the document holder is a minor child rather than the adult signing the form. When true, the page-2 legal-representative section becomes relevant (see 'legalRepresentativeConsent' in documents[]).",
+      "sourceRef": "'Ich beantrage die Ausstellung eines Reisepasses oder Personalausweises für das nachstehende Kind' / 'I am applying for a passport or identity card to be issued for the following child'"
+    },
+    {
+      "name": "emergencyPassportRequested",
+      "label": "Emergency passport requested (Notpass, § 4a)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of three independent, non-grouped PDF checkboxes for document type (confirmed via getFieldObjects(): 3 distinct field names, no shared group, radioButton:false) — left ungrouped since an applicant may legitimately request more than one document type in a single filing (e.g. an emergency passport now and a standing identity-card application); see VERIFICATION.md.",
+      "sourceRef": "'Notpass § 4a / Emergency Passport § 4a'"
+    },
+    {
+      "name": "additionalPassportRequested",
+      "label": "Additional passport requested (weiterer Reisepass)",
+      "type": "boolean",
+      "required": false,
+      "description": "A second, valid-simultaneously passport (e.g. for travel to a country/region that cannot bear a stamp/visa alongside another country's), distinct from a first/replacement passport.",
+      "sourceRef": "'weiterer Reisepass / additional Passport'"
+    },
+    {
+      "name": "identityCardRequested",
+      "label": "Identity card requested (Personalausweis)",
+      "type": "boolean",
+      "required": false,
+      "description": "There is no dedicated checkbox on this form for a first-time/regular standard passport request — that (most common) case is represented by leaving all three of these document-type boxes unchecked (relying on the general 'applicationForSelf'/'applicationForNamedChild' toggle above) or, for an identity-card-only request, by checking only this box.",
+      "sourceRef": "'Personalausweis / Identity Card'"
+    },
+    {
+      "name": "surname",
+      "label": "Family name / surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Familienname / Surname (max. 33 Zeichen / characters)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 33
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "academicDegree",
+      "label": "Academic degree (if entry on the document is desired)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'akademischer Grad falls Eintragung erwünscht/ Academic degree if entry is desired (max. 33 Zeichen / characters)'",
+      "validation": {
+        "maxLength": 33
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "surnameAtBirth",
+      "label": "Family name at time of birth",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Familienname zur Zeit der Geburt / Surname at time of birth'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "previousNames",
+      "label": "Previous names",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'frühere Namen / Previous names'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s) / given name(s)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Vorname(n) / Given names (max. 20 Zeichen / characters)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 20
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "specialPhysicalCharacteristics",
+      "label": "Special physical characteristics",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Besondere Kennzeichen / Special physical characteristics'",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "'Geburtsdatum / Date of birth'",
+      "classification": "pii"
+    },
+    {
+      "name": "genderFemale",
+      "label": "Gender: female",
+      "type": "boolean",
+      "required": false,
+      "description": "One of two independent, non-grouped checkbox widgets (PDF field names 'undefined'/'undefined_2' — neither carries its own /TU tooltip; both were attributed to the printed 'Weiblich / Female' and 'Männlich / Male' options by x/y position under the 'Geschlecht / Sex' heading, not by widget name — see VERIFICATION.md). Mutually exclusive with 'genderMale' (see exclusivityGroups); unlike this registry's sibling at/bmi/national-identity-card-application, this pair is not a true PDF radio-button group.",
+      "sourceRef": "'Geschlecht / Sex': 'Weiblich / Female' (positional match to the first of two checkboxes)"
+    },
+    {
+      "name": "genderMale",
+      "label": "Gender: male",
+      "type": "boolean",
+      "required": false,
+      "description": "See 'genderFemale'.",
+      "sourceRef": "'Geschlecht / Sex': 'Männlich / Male' (positional match to the second of two checkboxes)"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Ort der Geburt / Place of birth'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "heightCm",
+      "label": "Height (cm)",
+      "type": "integer",
+      "required": false,
+      "description": "A generically-named PDF widget ('Text1', no /TU tooltip) attributed by x/y position to the entry box between the 'Körpergröße / Height' label and the 'cm' unit marker printed just after it — see VERIFICATION.md.",
+      "sourceRef": "'Körpergröße / Height' (label) ... 'cm' (unit marker; positional match, widget 'Text1')",
+      "validation": {
+        "minimum": 0,
+        "maximum": 300
+      }
+    },
+    {
+      "name": "addressLine1",
+      "label": "Permanent residence address — line 1",
+      "type": "string",
+      "required": true,
+      "description": "The form provides three stacked blank lines under the single heading 'Adresse / Permanent residence:' with no further sub-labels (no separate street/town/country lines) — attributed by position to generically-named widgets 'Text3'/'Text4'/'Text5'; see VERIFICATION.md and 'addressLine2'/'addressLine3'.",
+      "sourceRef": "'Adresse / Permanent residence:' (first of three stacked blank lines, widget 'Text3')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressLine2",
+      "label": "Permanent residence address — line 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Adresse / Permanent residence:' (second of three stacked blank lines, widget 'Text4')",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressLine3",
+      "label": "Permanent residence address — line 3",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Adresse / Permanent residence:' (third of three stacked blank lines, widget 'Text5')",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "phone",
+      "label": "Telephone number",
+      "type": "string",
+      "required": false,
+      "description": "Generically-named widget 'Text2' attributed by position to the 'TELEFON / PHONE' label; see VERIFICATION.md.",
+      "sourceRef": "'TELEFON / PHONE' (positional match, widget 'Text2')",
+      "validation": {
+        "maxLength": 40
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "description": "This widget's own PDF field name combines the neighbouring 'TELEFON / PHONE' and 'E-MAIL' labels ('TELEFON  PHONE EMAIL') even though it is positioned only under 'E-MAIL' (confirmed by rect position, immediately right of the 'E-MAIL' label and containing the printed '@' hint character) — disclosed rather than presented as a single contiguous printed phrase; see VERIFICATION.md.",
+      "sourceRef": "'E-MAIL' (label); widget's own internal field name reads 'TELEFON  PHONE EMAIL'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "hasNoPassportYet",
+      "label": "I do not have a passport yet",
+      "type": "boolean",
+      "required": false,
+      "description": "Mutually exclusive with 'hasExistingPassport' (see exclusivityGroups) — both are independent, non-grouped checkboxes.",
+      "sourceRef": "'Ich besitze noch keinen Reisepass (I do not have a passport yet)'"
+    },
+    {
+      "name": "hasExistingPassport",
+      "label": "I am the holder of an existing Austrian passport",
+      "type": "boolean",
+      "required": false,
+      "description": "When true, the accompanying passport reference fields become relevant: 'existingPassportNumber', 'existingPassportIssuingAuthority', 'existingPassportIssuedOn', 'existingPassportValidUntil'.",
+      "sourceRef": "'Ich besitze den Reisepass Nr.' / 'I am the holder of Austrian passport number:'"
+    },
+    {
+      "name": "existingPassportNumber",
+      "label": "Existing passport number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasExistingPassport",
+        "equals": true
+      },
+      "description": "Generically-named widget 'Text7', attributed by position to the blank following 'Ich besitze den Reisepass Nr.'; see VERIFICATION.md.",
+      "sourceRef": "'Ich besitze den Reisepass Nr.' (positional match, widget 'Text7')",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "existingPassportIssuingAuthority",
+      "label": "Existing passport issuing authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasExistingPassport",
+        "equals": true
+      },
+      "description": "Generically-named widget 'Text8', attributed by position to the 'ausgestellt von / issued by' line; see VERIFICATION.md.",
+      "sourceRef": "'ausgestellt von' / 'issued by' (positional match, widget 'Text8')",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "existingPassportIssuedOn",
+      "label": "Existing passport issue date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasExistingPassport",
+        "equals": true
+      },
+      "description": "Generically-named widget 'Text10', attributed by position to the 'ausgestellt am / valid from' line; see VERIFICATION.md.",
+      "sourceRef": "'ausgestellt am' / 'valid from' (positional match, widget 'Text10')"
+    },
+    {
+      "name": "existingPassportValidUntil",
+      "label": "Existing passport expiry date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasExistingPassport",
+        "equals": true
+      },
+      "description": "Generically-named widget 'Text9', attributed by position to the 'gültig bis / valid until' line; see VERIFICATION.md.",
+      "sourceRef": "'gültig bis' / 'valid until' (positional match, widget 'Text9')"
+    },
+    {
+      "name": "childHasNoPassportYet",
+      "label": "The child does not have a passport yet",
+      "type": "boolean",
+      "required": false,
+      "description": "Unlike the self branch, the form has no mirrored 'the child already holds passport no. X' checkbox/reference fields — only the negative case is captured for a child; see VERIFICATION.md.",
+      "sourceRef": "'Das Kind besitzt noch keinen Reisepass (The child does not have a passport yet)'"
+    },
+    {
+      "name": "previousDocumentWasLostOrStolen",
+      "label": "A previous passport/identity card was lost or stolen",
+      "type": "boolean",
+      "required": false,
+      "description": "Preamble checkbox to the sentence completed by 'previousDocumentLost'/'previousDocumentStolen'. When true, 'lossOrTheftDetails' becomes relevant.",
+      "sourceRef": "'Mein Reisepass (Personalausweis) wurde / My passport (ID card) was'"
+    },
+    {
+      "name": "previousDocumentLost",
+      "label": "...was lost",
+      "type": "boolean",
+      "required": false,
+      "description": "Mutually exclusive with 'previousDocumentStolen' (see exclusivityGroups).",
+      "sourceRef": "'verloren / lost'"
+    },
+    {
+      "name": "previousDocumentStolen",
+      "label": "...was stolen",
+      "type": "boolean",
+      "required": false,
+      "description": "Mutually exclusive with 'previousDocumentLost' (see exclusivityGroups).",
+      "sourceRef": "'gestohlen / stolen'"
+    },
+    {
+      "name": "lossOrTheftDetails",
+      "label": "Details of loss/theft (date, place, circumstances)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "previousDocumentWasLostOrStolen",
+        "equals": true
+      },
+      "sourceRef": "'Angaben zu Verlust/Diebstahl (Datum, Ort, Umstände) / Details of loss/theft (Date, Place, Circumstances):'",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "description": "The paper form's own signature is a handwritten signature; this field captures only the accompanying date, matching this registry's established convention (see the 'applicantOrRepresentativeSignature' document entry). Signed either by the applicant or, for a minor document holder, by the legal representative.",
+      "sourceRef": "'Datum / Date' (adjacent to 'Unterschrift des Antragstellers / Signature of applicant')"
+    },
+    {
+      "name": "legalBasisMarriageWithOtherParent",
+      "label": "Legal representation basis: subsisting marriage with the other parent",
+      "type": "boolean",
+      "required": false,
+      "description": "One of seven independent, non-grouped PDF checkboxes for the legal-representation basis (confirmed via getFieldObjects(): 7 distinct field names, radioButton:false throughout) — grouped via exclusivityGroups since exactly one basis logically applies, even though the PDF does not enforce this structurally. Only relevant when 'applicationForNamedChild' is true.",
+      "sourceRef": "'infolge aufrechter Ehe mit dem anderen Elternteil / legal marriage with the other parent'"
+    },
+    {
+      "name": "legalBasisBirthMotherCustodySection177",
+      "label": "Legal representation basis: birth mother entrusted with custody under § 177 Abs 2 ABGB",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'gemäß § 177 Abs 2 ABGB, weil ich als leibliche Mutter gesetzlich mit der Obsorge betraut bin / in accordance with § 177 (2) ABGB, as the birth mother I am legally entrusted with custody'"
+    },
+    {
+      "name": "legalBasisGuardianshipCourtDecision",
+      "label": "Legal representation basis: guardianship-court decision",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'infolge des Beschlusses des Pflegschaftsgerichtes (pflegschaftsbehördliche Genehmigung) / as a result of the decision of a guardianship court (approval by the guardianship authority)'"
+    },
+    {
+      "name": "legalBasisOtherParentDeceased",
+      "label": "Legal representation basis: other parent has died (§ 178 ABGB)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'gem § 178 ABGB, weil der andere Elternteil gestorben ist / according to § 178 ABGB, because the other parent has died'"
+    },
+    {
+      "name": "legalBasisOtherParentWhereaboutsUnknown",
+      "label": "Legal representation basis: other parent's whereabouts unknown for 6+ months (§ 178 ABGB)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'gem § 178 ABGB, weil der Aufenthalt des anderen Elternteiles seit mind. 6 Monaten unbekannt ist / according to § 178 ABGB, the residence of the other parent is unknown for at least 6 months'"
+    },
+    {
+      "name": "legalBasisGuardianWrittenConsent",
+      "label": "Legal representation basis: guardian's written consent and presentation of official photo ID",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'laut schriftlicher Zustimmungserklärung des Obsorgeberechtigten und Vorlage dessen amtlichen Lichtbildausweises / according to the written consent of the guardian and presentation of their official photo ID'"
+    },
+    {
+      "name": "legalBasisOther",
+      "label": "Legal representation basis: other (see transcript)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'Weil ………………………………………………………………. (siehe Niederschrift) / Because ………………………………………………………………. (see transcript)' (checkbox)"
+    },
+    {
+      "name": "legalBasisOtherReasonDe",
+      "label": "Description of the other legal-representation basis (German blank)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "legalBasisOther",
+        "equals": true
+      },
+      "description": "The bilingual sentence 'Weil ... (siehe Niederschrift) / Because ... (see transcript)' carries two separate blank underlines, one per language, implemented as two distinct PDF widgets ('Text11' for the German 'Weil ___' blank, 'Text12' for the English 'Because ___' blank) rather than one shared field — see VERIFICATION.md and 'legalBasisOtherReasonEn'.",
+      "sourceRef": "'Weil ………………………………………………………………. (siehe Niederschrift)' (first blank, widget 'Text11')",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "legalBasisOtherReasonEn",
+      "label": "Description of the other legal-representation basis (English blank)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Because ………………………………………………………………. (see transcript)' (second blank, widget 'Text12')",
+      "validation": {
+        "maxLength": 300
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportPhoto",
+      "label": "EU-format passport photograph",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "'EU-Passbild' ('Bitte das Passbild NICHT zuschneiden. NICHT aufkleben.' / 'Please do not cut / stick photographs.')"
+    },
+    {
+      "id": "applicantOrRepresentativeSignature",
+      "label": "Signature of the applicant or legal representative",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Signed in person at the embassy/consulate, in the presence of a consular official, within the officially marked signature field on the application.",
+      "sourceRef": "'Eigenhändige Unterschrift des Dokumenteninhabers/der Dokumenteninhaberin' / 'Bitte erst vor dem Sachbearbeiter/der Sachbearbeiterin unterschreiben' / 'Please sign this application at the Embassy in the presence of a consular official.'"
+    },
+    {
+      "id": "legalRepresentativeConsent",
+      "label": "Legal representative's (parent/guardian) signed consent",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicationForNamedChild",
+        "equals": true
+      },
+      "belongsTo": "responsible-party",
+      "statement": "I agree to the processing of the application and the issuance of a passport.",
+      "sourceRef": "'Ich stimme der antragsgemäßen Erledigung zu. / I agree to the processing of the application and the issuance of a passport.'; 'Unterschrift des gesetzlichen Vertreters (Eltern). Sie muß vor dem Referenten/der Referentin geleistet werden. / Signature of parent or legal guardian. Must be signed at the Embassy in the presence of a consular official.'"
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "who_the_application_is_for",
+      "fields": [
+        "applicationForSelf",
+        "applicationForNamedChild"
+      ]
+    },
+    {
+      "id": "gender",
+      "fields": [
+        "genderFemale",
+        "genderMale"
+      ]
+    },
+    {
+      "id": "existing_passport_status",
+      "fields": [
+        "hasNoPassportYet",
+        "hasExistingPassport"
+      ]
+    },
+    {
+      "id": "lost_or_stolen",
+      "fields": [
+        "previousDocumentLost",
+        "previousDocumentStolen"
+      ]
+    },
+    {
+      "id": "legal_representation_basis",
+      "fields": [
+        "legalBasisMarriageWithOtherParent",
+        "legalBasisBirthMotherCustodySection177",
+        "legalBasisGuardianshipCourtDecision",
+        "legalBasisOtherParentDeceased",
+        "legalBasisOtherParentWhereaboutsUnknown",
+        "legalBasisGuardianWrittenConsent",
+        "legalBasisOther"
+      ]
+    }
+  ]
+}
