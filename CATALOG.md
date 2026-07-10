@@ -4,7 +4,67 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **336 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **337 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2195, "GovSchema Standard Research"): Argentina's
+> Business Formation vertical deepens**, via
+> `ar/afip/inscripcion-cuit-personas-fisicas` — AFIP's Formulario 460/F,
+> "Solicitud de Inscripción / Modificación de Datos — Personas Físicas y
+> Sucesiones Indivisas," the natural-person/undivided-estate analogue of
+> the already-published `ar/afip/inscripcion-cuit-personas-juridicas`
+> (F.460/J, GOV-2169). **This corrects a factual error in this catalog's
+> own GOV-2179 update below**, which had claimed F.460/F was "re-confirmed
+> ... to be a flat/printed 0-widget form, like its 460/J sibling, requiring
+> box-by-box visual extraction" — that claim does not hold up: this
+> session's own fresh, hash-verified `curl` fetch
+> (SHA-256 `be2465f8e8...9b699`) and independent `pdfjs-dist` extraction
+> found a genuine, fully interactive fillable AcroForm with **148 raw
+> widgets across 2 pages** (48 p.1, 100 p.2) — text fields, dropdowns, and
+> checkboxes all present and extractable via `getFieldObjects()`/
+> `getAnnotations()`, not a scanned image. `getFieldObjects()` returns 180
+> distinct keys, but 41 of those are non-terminal parent/grouping nodes
+> with zero widget instances of their own (an artifact of how `pdfjs-dist`
+> disambiguates same-named sibling fields in the AcroForm's own hierarchy,
+> confirmed programmatically for all 180 keys, not assumed) — 139 keys
+> carry at least one real widget. Of those, 130 have exactly 1 terminal
+> widget and 9 have exactly 2, the latter confirmed via shared `kidIds` to
+> be genuine **PDF radio-button groups** (trámite type, nationality,
+> residency, phone type, employer type, and 4 per-activity-row "sociedad de
+> hecho"/"otras" choices) — a materially different structure from F.460/J's
+> visually similar Sí/No checkbox pairs, which that sibling's own AcroForm
+> implements as independent, non-grouped checkboxes needing
+> `exclusivityGroups`; here the PDF itself enforces single-choice via a
+> real radio group, so each is modelled as a single `enum` field instead,
+> and this document needs no `exclusivityGroups` at all. Also unlike
+> F.460/J, this specimen carries **no Original/Duplicado mirrored-copy
+> structure** (only 2 pages total, not 4) and **no split-digit-box
+> fields at all** (confirmed programmatically: none of the 148 widgets
+> carries a `maxLen` restriction consistent with a single-digit box; its
+> CUIT field, for example, is one plain unrestricted text box, not 11
+> single-digit boxes like F.460/J's). Net: **139 final fields**, the
+> cleanest widget-to-field reconciliation of any Argentina schema in this
+> registry to date. Every dropdown's option list (6 dropdowns, from 2 to 24
+> options each, including Argentina's 24 provinces/autonomous city and an
+> 8-option filer-capacity catalog) was read verbatim from
+> `getAnnotations()`'s own `options` array rather than re-transcribed by
+> hand, eliminating transcription risk on long/accented lists. Two
+> PDF-authoring quirks are disclosed rather than silently corrected: the
+> "Tipo de empleador/a" radio group's own exportValues ('hecho'/'otras')
+> are copy-pasted from an unrelated radio group elsewhere on the same page
+> even though its printed labels read "Común"/"Personal de casas
+> particulares"; and the field behind the printed "Nombres (completo)"
+> label carries the confusing raw AcroForm name `Apellido.0.1` (resolved
+> by on-page position, not by its own misleading name). See the document's
+> own VERIFICATION.md for the full reconciliation arithmetic, every
+> judgment call (this specimen also carries no `/Ff` Required bit or
+> asterisk convention, making every `required` value a structurally-inferred
+> judgment call, as with F.460/J), and the two-valid-mock/four-negative-control
+> conformance test run. Argentina remains at 3 of its 6 verticals (Business
+> Formation, Visa, DMV) — this document deepens rather than widens vertical
+> coverage; its remaining three verticals (Passport, Taxes, National ID)
+> are still open, unscreened-or-dead-end backlog candidates (Passport and
+> National ID both route through RENAPER, confirmed in-person/appointment-only
+> per GOV-2187's own research trail).
 
 > **Update (2026-07-10, GOV-2187, "GovSchema Standard Research"): Argentina's
 > DMV vertical opens (3/6)**, via
@@ -131,10 +191,15 @@
 > printed conditional-applicability note), and the two-valid-mock/
 > three-negative-control conformance test run. Argentina now stands at
 > 2 of its 6 verticals (Business Formation, Visa); AFIP's Formulario 460/F
-> (individual/persona física CUIT registration, confirmed this cycle to be
-> a flat/printed form with 0 AcroForm widgets, like its already-modelled
-> 460/J sibling) remains the sole named Argentina follow-on candidate — see
-> "Known Gaps" below.
+> (individual/persona física CUIT registration) remains the sole named
+> Argentina follow-on candidate — see "Known Gaps" below. **Correction
+> (2026-07-10, GOV-2195): the claim below that F.460/F was "re-confirmed
+> ... to be a flat/printed form with 0 AcroForm widgets" does not hold up
+> against a fresh, independent re-fetch and re-extraction — see the
+> Executive Summary's GOV-2195 update above for the corrected record (148
+> genuine AcroForm widgets, a fully interactive fillable form). Left here
+> unedited, struck through only by this note, per this registry's practice
+> of disclosing rather than silently rewriting a prior session's claim.**
 
 > **Update (2026-07-10, "GovSchema Standard Research"): Japan's Legal Affairs
 > Bureau stock-company-incorporation set is now complete — the fourth and
@@ -4804,6 +4869,32 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (31/32 jurisdictions — 97%)
 
+**Argentina's Business Formation vertical deepens with the individual/
+persona física analogue (GOV-2195)**, via
+`ar/afip/inscripcion-cuit-personas-fisicas` — AFIP's Formulario 460/F,
+"Solicitud de Inscripción / Modificación de Datos — Personas Físicas y
+Sucesiones Indivisas," the natural-person/undivided-estate counterpart to
+`ar/afip/inscripcion-cuit-personas-juridicas` (F.460/J) below. A fresh,
+hash-verified re-fetch and independent `pdfjs-dist` extraction found a
+genuine, fully interactive fillable AcroForm — 148 raw widgets across 2
+pages resolving to 139 real distinct fields (130 single-widget fields plus
+9 genuine PDF radio-button groups, confirmed via shared `kidIds`) — **not**
+the flat/0-widget form this catalog's own GOV-2179 update had previously
+(and incorrectly) claimed; see the Executive Summary's GOV-2195 update
+above for the correction. Structurally simpler than its F.460/J sibling in
+two ways: no Original/Duplicado mirrored-copy structure (2 pages, not 4)
+and no split-digit-box fields at all (its CUIT box, for instance, is one
+unrestricted text field, not 11 single-digit boxes); but it needed no
+`exclusivityGroups`, since its 9 Sí/No-style choices are genuine PDF radio
+groups (a single `enum` field each) rather than F.460/J's independent,
+non-grouped checkbox pairs. See the document's own VERIFICATION.md for the
+full reconciliation record, every judgment call (including two disclosed
+PDF-authoring quirks — a radio group with copy-pasted exportValues, and a
+field named `Apellido.0.1` that actually holds the "Nombres (completo)"
+value), and the mock conformance test run. Argentina remains at 3 of its 6
+verticals (Business Formation, Visa, DMV); its remaining three (Passport,
+Taxes, National ID) are open, unscreened-or-dead-end backlog candidates.
+
 **Argentina opens as this registry's 32nd jurisdiction via this vertical
 (GOV-2169)**, via `ar/afip/inscripcion-cuit-personas-juridicas` — AFIP's
 Formulario 460/J, "Solicitud de Inscripción / Modificación de Datos —
@@ -4813,11 +4904,8 @@ sourced from a genuine, unauthenticated, no-WAF fillable-AcroForm PDF
 directly on `serviciosweb.afip.gob.ar`. See the Executive Summary update
 above and the document's own VERIFICATION.md for the full sourcing and
 widget/field-reconciliation record. Argentina opened with 1 of its 6
-verticals (Business Formation); its remaining five (Passport, DMV, Taxes,
-Visa, National ID) are open, unscreened backlog candidates — two
-candidates are already identified for Visa and for the individual/persona
-física analogue of this same Business Formation form (see "Known Gaps"
-below).
+verticals (Business Formation); its individual/persona física analogue has
+since been published too (GOV-2195, see above).
 
 **Portugal's Business Formation gap closes (GOV-2143), giving Portugal 6 of
 its 6 verticals** — via
@@ -6042,7 +6130,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AR** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **AR** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -6611,8 +6699,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    no split-box or duplicate-copy reconciliation. See the Executive Summary
    update above and the Visa vertical section below for the full record.
    AFIP's Formulario 460/F remains the sole open Argentina follow-on
-   candidate (re-confirmed this cycle to be a flat/printed 0-widget form,
-   like its 460/J sibling, requiring box-by-box visual extraction);
+   candidate (**this claim of a "flat/printed 0-widget form ... requiring
+   box-by-box visual extraction" was corrected in GOV-2195, see below — it
+   does not hold up against a fresh re-fetch and re-extraction**);
    Argentina's remaining verticals (Passport, DMV, Taxes, National ID)
    are still open, unscreened backlog candidates.
    **Update (2026-07-10, GOV-2187): Argentina's DMV vertical is now
@@ -6629,6 +6718,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    ID) are still open, unscreened or dead-end backlog candidates (Passport
    and National ID both route through RENAPER, confirmed in-person/
    appointment-only with no downloadable field-level form).
+   **Update (2026-07-10, GOV-2195): the F.460/F candidate named above is
+   now resolved** — published as `ar/afip/inscripcion-cuit-personas-fisicas`,
+   deepening Argentina's Business Formation vertical (remains 3/6 —
+   deepens rather than widens). A fresh re-fetch and independent
+   `pdfjs-dist` re-extraction found this specimen is a genuine, fully
+   interactive fillable AcroForm — **not** the flat/0-widget form the
+   GOV-2179 update above had claimed — with 148 raw widgets across 2 pages
+   resolving to 139 real distinct fields (130 single-widget fields plus 9
+   genuine PDF radio-button groups), no Original/Duplicado mirroring, and
+   no split-digit-box fields at all. See the Executive Summary update
+   above and the Business Formation vertical section below for the full
+   corrected record. Argentina's remaining verticals (Passport, Taxes,
+   National ID) are still open, unscreened or dead-end backlog candidates.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other

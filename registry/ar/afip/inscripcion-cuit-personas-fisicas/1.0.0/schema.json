@@ -1,0 +1,1414 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ar/afip/inscripcion-cuit-personas-fisicas",
+  "version": "1.0.0",
+  "title": "Argentina CUIT Registration / Data Modification for Individuals and Undivided Estates (Solicitud de Inscripción / Modificación de Datos — Personas Físicas y Sucesiones Indivisas, F.460/F)",
+  "description": "AFIP's (Administración Federal de Ingresos Públicos) combined request form for individuals (personas físicas / personas humanas) and undivided estates (sucesiones indivisas) to either newly register for a CUIT (Clave Única de Identificación Tributaria — Argentina's federal tax identifier) or to update previously-registered data, using the same 2-page fillable-AcroForm specimen, Formulario 460/F — the natural-person analogue of ar/afip/inscripcion-cuit-personas-juridicas (F.460/J, GOV-2169), and a sibling candidate explicitly scoped out of that session's brief for a later cycle. Structurally simpler than F.460/J: this specimen has no Original/Duplicado mirrored-copy structure (only 2 pages total, not 4) and no split-digit-box fields at all (its CUIT box, for example, is one plain text field, not 11 single-digit boxes) — but it does use 9 genuine PDF radio-button groups (confirmed via getFieldObjects() kidIds/shared-parent grouping) for its Sí/No-style choices (trámite type, nationality, residency, employer type, phone type, and 4 per-activity-row 'sociedad de hecho'/'otras' choices), each modelled here as a single required-or-optional `enum` field rather than a pair of independent booleans — unlike F.460/J's visually similar checkbox pairs, which the PDF itself implements as independent, non-grouped checkboxes requiring `exclusivityGroups`. This document therefore needs no `exclusivityGroups` at all. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Argentine Republic, the Ministerio de Economía, or AFIP.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Administración Federal de Ingresos Públicos",
+    "abbreviation": "AFIP",
+    "url": "https://www.afip.gob.ar"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es-AR"
+  },
+  "source": {
+    "url": "https://serviciosweb.afip.gob.ar/genericos/formularios/pdf/interactivos/f460f.pdf",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "F. 460/F 'Solicitud de Inscripción / Modificación de Datos — Personas Físicas y Sucesiones Indivisas', Administración Federal de Ingresos Públicos (AFIP), 2-page fillable-AcroForm PDF"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2195: deepens Argentina's Business Formation vertical via the natural-person analogue of ar/afip/inscripcion-cuit-personas-juridicas (F.460/J, GOV-2169). Fetched fresh with a browser User-Agent (HTTP 200, application/pdf, 208,143 bytes, genuine %PDF-1.6, SHA-256 be2465f8e8c52ef6cde52df6e8a0365c2a6575724a10c210d43396433829b699) directly from serviciosweb.afip.gob.ar with no login/CAPTCHA/WAF gate encountered, independently re-confirming a prior scouting lead (~148 widgets) from scratch rather than trusting its numbers. Extracted with pdfjs-dist (getFieldObjects()/getAnnotations()/getTextContent(), x/y-position-based label attribution): 148 raw AcroForm widgets across 2 pages (48 p.1, 100 p.2) — matching the prior scouting lead exactly. getFieldObjects() resolves the full field-name hierarchy to 180 distinct keys, but 41 of those are non-terminal parent/grouping nodes with zero widget instances of their own (an artifact of pdfjs's dotted-suffix disambiguation of same-named sibling fields, confirmed by checking every key's terminal `rect`-bearing entries programmatically, not assumed); 139 keys carry at least one real widget. Of those 139: 130 have exactly 1 terminal widget (simple text/checkbox/dropdown fields), and 9 have exactly 2 (genuine PDF radio-button groups, confirmed via each pair's shared `kidIds` under one non-terminal parent — arithmetic check: 130×1 + 9×2 = 148, matching the raw widget count exactly). Net: 139 real distinct logical fields, with zero split-digit-box merges needed (no field in this specimen carries a `maxLen` restriction consistent with a single-digit box, confirmed programmatically across all 148 widgets) — a materially simpler reconciliation than F.460/J's Original+Duplicado mirroring and 5 split-box merges. No AcroForm field in this specimen carries the `/Ff` Required bit and no asterisk-required convention is used (checked programmatically and by scanning all extracted text items for '*'); every field's `required` value is therefore a structurally-inferred judgment call, not a source-asserted claim, flagged as such in VERIFICATION.md. One PDF-authoring quirk is disclosed rather than silently corrected: the 'Tipo de empleador/a' radio group's own exportValues ('hecho'/'otras') are copy-pasted from the unrelated 'Componente de sociedad' ('De hecho'/'Otras') radio groups elsewhere on the same page, even though its own printed labels read 'Común'/'Personal de casas particulares' — the enum preserves the true source exportValues with the discrepancy documented on the field. A second quirk: the field capturing the printed 'Nombres (completo)' label carries the confusing raw AcroForm name 'Apellido.0.1' (evidently duplicated from the neighbouring Apellido paterno/materno fields without a full rename) — resolved by on-page position, not by field name, and disclosed on the field's own description. See VERIFICATION.md for the full sourcing record, every judgment call, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestType",
+      "label": "Trámite",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this filing is a new CUIT registration ('Solic' = Solicitud de inscripción) or an update to already-registered data ('modif' = Modificación de datos). Confirmed a genuine PDF radio-button group via getFieldObjects() (a single non-terminal parent field 'Tramite' with 2 kids sharing kidIds, each carrying its own exportValue, radioButton semantics) — unlike this registry's sibling ar/afip/inscripcion-cuit-personas-juridicas (F.460/J), whose visually similar 'Solicitud de Inscripción'/'Modificación de Datos' pair are two independent, non-grouped checkboxes. Because this specimen's version is a real single-choice radio group, it is modelled here as one required `enum` field rather than two independent optional booleans.",
+      "sourceRef": "F.460/F p.1, header — 'Trámite' radio group (raw AcroForm field name 'Tramite')",
+      "validation": {
+        "enum": [
+          "Solic",
+          "modif"
+        ]
+      }
+    },
+    {
+      "name": "cuit",
+      "label": "CUIT",
+      "type": "string",
+      "required": false,
+      "description": "The individual's (or undivided estate's) 11-digit CUIT (Clave Única de Identificación Tributaria). A single free-text AcroForm box (no maxLen restriction, no split-digit boxes) — unlike the sibling F.460/J specimen, which splits its CUIT box into 11 single-digit boxes (CUIT1..CUIT11); this specimen needed no such merge. Left blank on a first-time 'Solic' (Solicitud de inscripción) filing (no CUIT yet exists); expected to be populated on a 'modif' (Modificación de Datos) filing (see crossFieldValidation).",
+      "sourceRef": "F.460/F p.1, header — 'CUIT'",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^\\d{11}$"
+      }
+    },
+    {
+      "name": "requestReason",
+      "label": "Motivo del trámite",
+      "type": "enum",
+      "required": false,
+      "description": "Reason/channel for this filing, selected from a dropdown (AcroForm combobox 'motivo').",
+      "sourceRef": "F.460/F p.1, header — 'Motivo del trámite'",
+      "validation": {
+        "enum": [
+          "Espontáneo",
+          "Convenio migratorio",
+          "Oficio"
+        ]
+      }
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Tipo de documento",
+      "type": "enum",
+      "required": true,
+      "description": "Type of identity document presented, selected from a dropdown (AcroForm combobox 'tipodocumento').",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Tipo de documento'",
+      "validation": {
+        "enum": [
+          "DNI",
+          "LE",
+          "LC",
+          "Pasaporte",
+          "Certificado de Migraciones",
+          "C. I. país limítrofe"
+        ]
+      }
+    },
+    {
+      "name": "identityDocumentNumber",
+      "label": "N° de documento",
+      "type": "string",
+      "required": true,
+      "description": "Identity document number, corresponding to the type selected in identityDocumentType.",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'N° de documento'"
+    },
+    {
+      "name": "birthDate",
+      "label": "Fecha de nacimiento",
+      "type": "date",
+      "required": true,
+      "description": "The individual's date of birth.",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Fecha de nacimiento'"
+    },
+    {
+      "name": "sex",
+      "label": "Sexo",
+      "type": "string",
+      "required": true,
+      "description": "Sex as it appears on the identity document ('tal como figura en documento'). Modelled as an open string rather than a closed enum: unlike ar/cancilleria/formulario-solicitud-visado's 'sex' field (which cites an explicit 'M o F' footnote), this specimen's AcroForm box is a plain, unrestricted text field with no footnote or dropdown enumerating accepted values, so no enum is asserted here (disclosed rather than assumed).",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Sexo (tal como figura en documento)'"
+    },
+    {
+      "name": "deathDate",
+      "label": "Fecha de fallecimiento",
+      "type": "date",
+      "required": false,
+      "description": "Date of death, applicable only when the filer is a 'sucesión indivisa' (undivided estate/inheritance-in-probate) rather than a living individual — this specimen's own title ('Personas humanas / Sucesiones indivisas') and this field's own caption ('de corresponder', i.e. 'if applicable') confirm both filer types share this one form.",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Fecha de fallecimiento (de corresponder)'"
+    },
+    {
+      "name": "nationality",
+      "label": "Argentino/a o Extranjero/a",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the individual is Argentine or foreign. Confirmed a genuine PDF radio-button group (parent field 'argentino o extranjero', 2 kids, shared kidIds) — a single required enum, not two independent booleans.",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Argentino/a' / 'Extranjero/a' radio group",
+      "validation": {
+        "enum": [
+          "argentino",
+          "extranjero"
+        ]
+      }
+    },
+    {
+      "name": "countryOfOrigin",
+      "label": "País de origen",
+      "type": "string",
+      "required": false,
+      "description": "Country of origin, relevant when nationality is 'extranjero' (foreign) — see crossFieldValidation.",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'País de origen'"
+    },
+    {
+      "name": "residencyStatus",
+      "label": "Residente / No residente",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the (foreign) individual is resident or non-resident in Argentina. Confirmed a genuine PDF radio-button group (parent field 'residenteonoresidente', 2 kids, shared kidIds).",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Residente' / 'No residente' radio group",
+      "validation": {
+        "enum": [
+          "residente",
+          "no residente"
+        ]
+      }
+    },
+    {
+      "name": "residencePermitType",
+      "label": "Tipo de residencia",
+      "type": "enum",
+      "required": false,
+      "description": "Type of residence permit held, relevant when nationality is 'extranjero', selected from a dropdown (AcroForm combobox 'tiporesidencia').",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Tipo de residencia'",
+      "validation": {
+        "enum": [
+          "Permanente",
+          "Transitoria",
+          "Temporaria",
+          "Precaria"
+        ]
+      }
+    },
+    {
+      "name": "residencePermitValidUntil",
+      "label": "Vigencia residencia (hasta)",
+      "type": "date",
+      "required": false,
+      "description": "Expiry date of the residence permit named in residencePermitType.",
+      "sourceRef": "F.460/F p.1, Datos de Identificación — 'Vigencia residencia (hasta)'"
+    },
+    {
+      "name": "paternalSurname",
+      "label": "Apellido paterno",
+      "type": "string",
+      "required": true,
+      "description": "The individual's (paternal) surname.",
+      "sourceRef": "F.460/F p.1, Datos Referenciales — 'Apellido paterno'",
+      "classification": "pii"
+    },
+    {
+      "name": "givenNames",
+      "label": "Nombres (completo)",
+      "type": "string",
+      "required": true,
+      "description": "The individual's given name(s) in full. NOTE on source-fidelity: this field's own raw AcroForm field name is 'Apellido.0.1' — a PDF-authoring naming quirk (the widget appears to have been duplicated from the neighbouring 'Apellido paterno'/'Apellido materno' fields without the field name being fully updated) confirmed by its on-page position directly beside the printed 'Nombres (completo)' label, not by its own field name; modelled here by position, not by the misleading raw name.",
+      "sourceRef": "F.460/F p.1, Datos Referenciales — 'Nombres (completo)' (raw AcroForm field name 'Apellido.0.1')",
+      "classification": "pii"
+    },
+    {
+      "name": "maternalSurname",
+      "label": "Apellido materno",
+      "type": "string",
+      "required": false,
+      "description": "The individual's maternal surname, where applicable (not every individual uses one).",
+      "sourceRef": "F.460/F p.1, Datos Referenciales — 'Apellido materno'",
+      "classification": "pii"
+    },
+    {
+      "name": "fiscalAddressStreet",
+      "label": "Calle (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Calle'"
+    },
+    {
+      "name": "fiscalAddressNumber",
+      "label": "Número (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Número'"
+    },
+    {
+      "name": "fiscalAddressSector",
+      "label": "Sector (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Sector'"
+    },
+    {
+      "name": "fiscalAddressTower",
+      "label": "Torre (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Torre'"
+    },
+    {
+      "name": "fiscalAddressFloor",
+      "label": "Piso (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Piso'"
+    },
+    {
+      "name": "fiscalAddressUnit",
+      "label": "Dpto./Of./Loc. (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Dpto./Of./Loc.'"
+    },
+    {
+      "name": "fiscalAddressBlock",
+      "label": "Manzana (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Manzana'"
+    },
+    {
+      "name": "fiscalAddressAdditional",
+      "label": "Dato adicional (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Dato adicional'"
+    },
+    {
+      "name": "fiscalAddressLocality",
+      "label": "Localidad (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Localidad'"
+    },
+    {
+      "name": "fiscalAddressDistrict",
+      "label": "Partido/dpto. (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio fiscal.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Partido/dpto.'"
+    },
+    {
+      "name": "fiscalAddressProvince",
+      "label": "Provincia (domicilio fiscal)",
+      "type": "enum",
+      "required": true,
+      "description": "Province of the individual's domicilio fiscal, selected from a dropdown listing Argentina's 24 provinces/autonomous city (AcroForm combobox 'provincias.0').",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Provincia'",
+      "validation": {
+        "enum": [
+          "Buenos Aires",
+          "Capital Federal",
+          "Catamarca",
+          "Chaco",
+          "Chubut",
+          "Córdoba",
+          "Corrientes",
+          "Entre Ríos",
+          "Formosa",
+          "Jujuy",
+          "La Pampa",
+          "La Rioja",
+          "Mendoza",
+          "Misiones",
+          "Neuquén",
+          "Río Negro",
+          "Salta",
+          "San Juan",
+          "San Luis",
+          "Santa Cruz",
+          "Santa Fe",
+          "Santiago del Estero",
+          "Tierra del Fuego",
+          "Tucumán"
+        ]
+      }
+    },
+    {
+      "name": "fiscalAddressPostalCode",
+      "label": "Código postal (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Postal code of the individual's domicilio fiscal. Modelled as an open string, not a fixed-length numeric pattern: the AcroForm box carries no maxLen restriction, wide enough for either a legacy 4-digit postal code or a modern alphanumeric CPA (Código Postal Argentino) code; the specimen does not disambiguate which is expected.",
+      "sourceRef": "F.460/F p.1, Domicilio fiscal — 'Código postal'"
+    },
+    {
+      "name": "realAddressStreet",
+      "label": "Calle (domicilio real)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Calle'"
+    },
+    {
+      "name": "realAddressNumber",
+      "label": "Número (domicilio real)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Número'"
+    },
+    {
+      "name": "realAddressSector",
+      "label": "Sector (domicilio real)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Sector'"
+    },
+    {
+      "name": "realAddressTower",
+      "label": "Torre (domicilio real)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Torre'"
+    },
+    {
+      "name": "realAddressFloor",
+      "label": "Piso (domicilio real)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Piso'"
+    },
+    {
+      "name": "realAddressUnit",
+      "label": "Dpto./Of./Loc. (domicilio real)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Dpto./Of./Loc.'"
+    },
+    {
+      "name": "realAddressBlock",
+      "label": "Manzana (domicilio real)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Manzana'"
+    },
+    {
+      "name": "realAddressAdditional",
+      "label": "Dato adicional (domicilio real)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Dato adicional'"
+    },
+    {
+      "name": "realAddressLocality",
+      "label": "Localidad (domicilio real)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Localidad'"
+    },
+    {
+      "name": "realAddressDistrict",
+      "label": "Partido/dpto. (domicilio real)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the individual's domicilio real.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Partido/dpto.'"
+    },
+    {
+      "name": "realAddressProvince",
+      "label": "Provincia (domicilio real)",
+      "type": "enum",
+      "required": true,
+      "description": "Province of the individual's domicilio real, selected from a dropdown listing Argentina's 24 provinces/autonomous city (AcroForm combobox 'provincias.1').",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Provincia'",
+      "validation": {
+        "enum": [
+          "Buenos Aires",
+          "Capital Federal",
+          "Catamarca",
+          "Chaco",
+          "Chubut",
+          "Córdoba",
+          "Corrientes",
+          "Entre Ríos",
+          "Formosa",
+          "Jujuy",
+          "La Pampa",
+          "La Rioja",
+          "Mendoza",
+          "Misiones",
+          "Neuquén",
+          "Río Negro",
+          "Salta",
+          "San Juan",
+          "San Luis",
+          "Santa Cruz",
+          "Santa Fe",
+          "Santiago del Estero",
+          "Tierra del Fuego",
+          "Tucumán"
+        ]
+      }
+    },
+    {
+      "name": "realAddressPostalCode",
+      "label": "Código postal (domicilio real)",
+      "type": "string",
+      "required": true,
+      "description": "Postal code of the individual's domicilio real. Modelled as an open string, not a fixed-length numeric pattern: the AcroForm box carries no maxLen restriction, wide enough for either a legacy 4-digit postal code or a modern alphanumeric CPA (Código Postal Argentino) code; the specimen does not disambiguate which is expected.",
+      "sourceRef": "F.460/F p.1, Domicilio real — 'Código postal'"
+    },
+    {
+      "name": "phoneType",
+      "label": "Teléfono: tipo",
+      "type": "enum",
+      "required": false,
+      "description": "Type of the contact phone number. Confirmed a genuine PDF radio-button group (parent field 'Telefonotipo', 2 kids, shared kidIds).",
+      "sourceRef": "F.460/F p.1, Otros Datos — 'Teléfono: tipo' radio group",
+      "validation": {
+        "enum": [
+          "Fijo",
+          "Celular"
+        ]
+      }
+    },
+    {
+      "name": "phoneAreaCode",
+      "label": "Teléfono: Código de área",
+      "type": "string",
+      "required": false,
+      "description": "Area code of the contact phone number.",
+      "sourceRef": "F.460/F p.1, Otros Datos — 'Teléfono: Código de área / Número' (area-code box)"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Teléfono: Número",
+      "type": "string",
+      "required": false,
+      "description": "Contact phone number (without area code).",
+      "sourceRef": "F.460/F p.1, Otros Datos — 'Teléfono: Código de área / Número' (number box)"
+    },
+    {
+      "name": "email",
+      "label": "Correo electrónico",
+      "type": "string",
+      "required": false,
+      "description": "Contact email address.",
+      "sourceRef": "F.460/F p.1, Otros Datos — 'Correo electrónico'",
+      "validation": {
+        "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$"
+      }
+    },
+    {
+      "name": "principalActivityDescription",
+      "label": "Actividad principal — Denominación",
+      "type": "string",
+      "required": true,
+      "description": "Description of the individual's economic activity, of a fixed, bounded 4-row table (1 principal + 3 secondary rows — not an open-ended repeating structure) per this specimen's own AcroForm layer.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Denominación' column, actividad principal row"
+    },
+    {
+      "name": "principalActivityCode",
+      "label": "Actividad principal — Código",
+      "type": "string",
+      "required": true,
+      "description": "AFIP Nomenclador (economic-activity classification) code for this activity. The classification catalog itself is not reproduced here (not shown in full on the specimen).",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Código' column, actividad principal row"
+    },
+    {
+      "name": "principalActivityStartDate",
+      "label": "Actividad principal — Fecha inicio",
+      "type": "date",
+      "required": true,
+      "description": "Start date of this activity.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Fecha inicio' column, actividad principal row"
+    },
+    {
+      "name": "secondaryActivity1Description",
+      "label": "Actividad secundaria 1 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the individual's economic activity, of a fixed, bounded 4-row table (1 principal + 3 secondary rows — not an open-ended repeating structure) per this specimen's own AcroForm layer.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Denominación' column, actividad secundaria 1 row"
+    },
+    {
+      "name": "secondaryActivity1Code",
+      "label": "Actividad secundaria 1 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador (economic-activity classification) code for this activity. The classification catalog itself is not reproduced here (not shown in full on the specimen).",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Código' column, actividad secundaria 1 row"
+    },
+    {
+      "name": "secondaryActivity1StartDate",
+      "label": "Actividad secundaria 1 — Fecha inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of this activity.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Fecha inicio' column, actividad secundaria 1 row"
+    },
+    {
+      "name": "secondaryActivity2Description",
+      "label": "Actividad secundaria 2 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the individual's economic activity, of a fixed, bounded 4-row table (1 principal + 3 secondary rows — not an open-ended repeating structure) per this specimen's own AcroForm layer.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Denominación' column, actividad secundaria 2 row"
+    },
+    {
+      "name": "secondaryActivity2Code",
+      "label": "Actividad secundaria 2 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador (economic-activity classification) code for this activity. The classification catalog itself is not reproduced here (not shown in full on the specimen).",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Código' column, actividad secundaria 2 row"
+    },
+    {
+      "name": "secondaryActivity2StartDate",
+      "label": "Actividad secundaria 2 — Fecha inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of this activity.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Fecha inicio' column, actividad secundaria 2 row"
+    },
+    {
+      "name": "secondaryActivity3Description",
+      "label": "Actividad secundaria 3 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the individual's economic activity, of a fixed, bounded 4-row table (1 principal + 3 secondary rows — not an open-ended repeating structure) per this specimen's own AcroForm layer.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Denominación' column, actividad secundaria 3 row"
+    },
+    {
+      "name": "secondaryActivity3Code",
+      "label": "Actividad secundaria 3 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador (economic-activity classification) code for this activity. The classification catalog itself is not reproduced here (not shown in full on the specimen).",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Código' column, actividad secundaria 3 row"
+    },
+    {
+      "name": "secondaryActivity3StartDate",
+      "label": "Actividad secundaria 3 — Fecha inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of this activity.",
+      "sourceRef": "F.460/F p.2, Datos Económicos — 'Fecha inicio' column, actividad secundaria 3 row"
+    },
+    {
+      "name": "fiscalYearEndMonth",
+      "label": "Mes de cierre del ejercicio",
+      "type": "enum",
+      "required": false,
+      "description": "Month in which the individual's fiscal/accounting year closes (relevant mainly for individuals conducting a business activity with its own accounting cycle), selected from a dropdown (AcroForm combobox 'Mes cierre ej 2').",
+      "sourceRef": "F.460/F p.2, Datos Comerciales — 'Mes de cierre del ejercicio'",
+      "validation": {
+        "enum": [
+          "Enero",
+          "Febrero",
+          "Marzo",
+          "Abril",
+          "Mayo",
+          "Junio",
+          "Julio",
+          "Agosto",
+          "Septiembre",
+          "Octubre",
+          "Noviembre",
+          "Diciembre"
+        ]
+      }
+    },
+    {
+      "name": "fileNumber",
+      "label": "N° Expediente",
+      "type": "string",
+      "required": false,
+      "description": "Administrative file/docket number associated with this filing, if applicable.",
+      "sourceRef": "F.460/F p.2, Datos Comerciales — 'N° Expediente'"
+    },
+    {
+      "name": "commercialJurisdictionLocality",
+      "label": "Jurisdicción/localidad",
+      "type": "string",
+      "required": false,
+      "description": "Jurisdiction and locality of the individual's commercial registration, captured as one combined free-text field on this specimen (unlike the sibling F.460/J specimen, which splits an analogous row into separate 'Jurisdicción' and 'Provincia' AcroForm boxes with a printed-but-unfillable 'Localidad' gap) — confirmed a single AcroForm box ('jurisdicc.0') beneath the single combined printed caption 'Jurisdicción/localidad'.",
+      "sourceRef": "F.460/F p.2, Datos Comerciales — 'Jurisdicción/localidad'"
+    },
+    {
+      "name": "commercialProvince",
+      "label": "Provincia (datos comerciales)",
+      "type": "string",
+      "required": false,
+      "description": "Province associated with the commercial-registration row above. Modelled as an open string (plain AcroForm text box, not a dropdown) — distinct from fiscalAddressProvince/realAddressProvince, which are dropdowns.",
+      "sourceRef": "F.460/F p.2, Datos Comerciales — 'Provincia'"
+    },
+    {
+      "name": "filerCapacityCode",
+      "label": "Carácter",
+      "type": "enum",
+      "required": false,
+      "description": "Capacity in which the individual is registering for the taxes/regimes below, selected from a dropdown (AcroForm combobox 'caracter3') — unlike the sibling F.460/J specimen, whose analogous 'Carácter' box is a plain free-text field citing the same catalog only in a footnote, this specimen implements it as an actual bounded dropdown.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios — 'Carácter'",
+      "validation": {
+        "enum": [
+          "Importador/a",
+          "Productor/a",
+          "Comercializador/a de Combustibles Líquidos - Ley 23.966 Título III Cap. I)",
+          "Bs. Personales: Resp. de Deuda Ajena",
+          "Resp. Sustitutos",
+          "Administrador/a Fiduciario/a",
+          "Ganancias y Gcia. Mínima Presunta: Resp. de Deuda Ajena",
+          "Administrador/a Fiduciario/a - Sociedad Gerente"
+        ]
+      }
+    },
+    {
+      "name": "taxName1",
+      "label": "Impuestos — Denominación 1",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 1 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Denominación' column, row 1"
+    },
+    {
+      "name": "taxCode1",
+      "label": "Impuestos — Código 1",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 1.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Código' column, row 1"
+    },
+    {
+      "name": "taxRegistrationDate1",
+      "label": "Impuestos — Fecha alta 1",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 1.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Fecha alta' column, row 1"
+    },
+    {
+      "name": "taxName2",
+      "label": "Impuestos — Denominación 2",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 2 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Denominación' column, row 2"
+    },
+    {
+      "name": "taxCode2",
+      "label": "Impuestos — Código 2",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 2.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Código' column, row 2"
+    },
+    {
+      "name": "taxRegistrationDate2",
+      "label": "Impuestos — Fecha alta 2",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 2.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Fecha alta' column, row 2"
+    },
+    {
+      "name": "taxName3",
+      "label": "Impuestos — Denominación 3",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 3 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Denominación' column, row 3"
+    },
+    {
+      "name": "taxCode3",
+      "label": "Impuestos — Código 3",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 3.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Código' column, row 3"
+    },
+    {
+      "name": "taxRegistrationDate3",
+      "label": "Impuestos — Fecha alta 3",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 3.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Fecha alta' column, row 3"
+    },
+    {
+      "name": "taxName4",
+      "label": "Impuestos — Denominación 4",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 4 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Denominación' column, row 4"
+    },
+    {
+      "name": "taxCode4",
+      "label": "Impuestos — Código 4",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 4.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Código' column, row 4"
+    },
+    {
+      "name": "taxRegistrationDate4",
+      "label": "Impuestos — Fecha alta 4",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 4.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Impuestos — 'Fecha alta' column, row 4"
+    },
+    {
+      "name": "regimeName1",
+      "label": "Régimen de Retención/Percepción — Régimen 1",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 1 of a fixed 4-row table.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Denominación' column, row 1"
+    },
+    {
+      "name": "regimeTaxCode1",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 1",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 1 applies to.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código impuesto' column, row 1"
+    },
+    {
+      "name": "regimeCode1",
+      "label": "Régimen de Retención/Percepción — Código Régimen 1",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 1.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código régimen' column, row 1"
+    },
+    {
+      "name": "regimeResolutionNumber1",
+      "label": "Régimen de Retención/Percepción — R.G. N° 1",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 1.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'R.G. N°' column, row 1"
+    },
+    {
+      "name": "regimeRegistrationDate1",
+      "label": "Régimen de Retención/Percepción — Fecha alta 1",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 1.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Fecha alta' column, row 1"
+    },
+    {
+      "name": "regimeName2",
+      "label": "Régimen de Retención/Percepción — Régimen 2",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 2 of a fixed 4-row table.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Denominación' column, row 2"
+    },
+    {
+      "name": "regimeTaxCode2",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 2",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 2 applies to.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código impuesto' column, row 2"
+    },
+    {
+      "name": "regimeCode2",
+      "label": "Régimen de Retención/Percepción — Código Régimen 2",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 2.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código régimen' column, row 2"
+    },
+    {
+      "name": "regimeResolutionNumber2",
+      "label": "Régimen de Retención/Percepción — R.G. N° 2",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 2.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'R.G. N°' column, row 2"
+    },
+    {
+      "name": "regimeRegistrationDate2",
+      "label": "Régimen de Retención/Percepción — Fecha alta 2",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 2.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Fecha alta' column, row 2"
+    },
+    {
+      "name": "regimeName3",
+      "label": "Régimen de Retención/Percepción — Régimen 3",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 3 of a fixed 4-row table.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Denominación' column, row 3"
+    },
+    {
+      "name": "regimeTaxCode3",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 3",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 3 applies to.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código impuesto' column, row 3"
+    },
+    {
+      "name": "regimeCode3",
+      "label": "Régimen de Retención/Percepción — Código Régimen 3",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 3.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código régimen' column, row 3"
+    },
+    {
+      "name": "regimeResolutionNumber3",
+      "label": "Régimen de Retención/Percepción — R.G. N° 3",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 3.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'R.G. N°' column, row 3"
+    },
+    {
+      "name": "regimeRegistrationDate3",
+      "label": "Régimen de Retención/Percepción — Fecha alta 3",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 3.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Fecha alta' column, row 3"
+    },
+    {
+      "name": "regimeName4",
+      "label": "Régimen de Retención/Percepción — Régimen 4",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 4 of a fixed 4-row table.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Denominación' column, row 4"
+    },
+    {
+      "name": "regimeTaxCode4",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 4",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 4 applies to.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código impuesto' column, row 4"
+    },
+    {
+      "name": "regimeCode4",
+      "label": "Régimen de Retención/Percepción — Código Régimen 4",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 4.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Código régimen' column, row 4"
+    },
+    {
+      "name": "regimeResolutionNumber4",
+      "label": "Régimen de Retención/Percepción — R.G. N° 4",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 4.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'R.G. N°' column, row 4"
+    },
+    {
+      "name": "regimeRegistrationDate4",
+      "label": "Régimen de Retención/Percepción — Fecha alta 4",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 4.",
+      "sourceRef": "F.460/F p.2, Datos Tributarios, Regímenes de Retención/Percepción — 'Fecha alta' column, row 4"
+    },
+    {
+      "name": "autonomousCategoryAssigned",
+      "label": "Categoría autónoma asignada",
+      "type": "string",
+      "required": false,
+      "description": "The self-employment ('autónomo') social-security category assigned to the individual.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social — 'Categoría autónoma asignada'"
+    },
+    {
+      "name": "retiredUnderLaw24241",
+      "label": "Jubilado/a ley 24.241",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating the individual is retired/receiving a pension under Ley 24.241 (Argentina's national pension-system law). An independent checkbox, not part of any radio group.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social — 'Jubilado/a ley 24.241'"
+    },
+    {
+      "name": "activityStartMonthYear1",
+      "label": "Actividad 1 — Inicio (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 1 of this fixed 4-row 'Actividad' (self-employment activity) table began. AcroForm box captioned 'Mes/año'; represented as an MM/AAAA string.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Inicio' / 'Mes/año' column, row 1",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityEndMonthYear1",
+      "label": "Actividad 1 — Baja (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 1 ended ('baja'), if applicable. Same MM/AAAA box format as activityStartMonthYear1.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Baja' / 'Mes/año' column, row 1",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityName1",
+      "label": "Actividad 1 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Name/description of the self-employment activity in row 1.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Denominación' column, row 1"
+    },
+    {
+      "name": "activityCode1",
+      "label": "Actividad 1 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code for the self-employment activity in row 1.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Código' column, row 1"
+    },
+    {
+      "name": "activityProfessionalRegistrationNumber1",
+      "label": "Actividad 1 — Matr. Prof.",
+      "type": "string",
+      "required": false,
+      "description": "Professional registration/license number ('Matrícula Profesional') associated with the activity in row 1, where applicable.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Matr. Prof.' column, row 1"
+    },
+    {
+      "name": "activityEmployeeCount1",
+      "label": "Actividad 1 — Cant. personal ocupado",
+      "type": "integer",
+      "required": false,
+      "description": "Number of employees occupied in the activity in row 1.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Cant. personal ocupado' column, row 1",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "activityOptionalCategory1",
+      "label": "Actividad 1 — Categoría opcional",
+      "type": "string",
+      "required": false,
+      "description": "Optional social-security category selected for the activity in row 1.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Categoría opcional' column, row 1"
+    },
+    {
+      "name": "activityCompanyType1",
+      "label": "Actividad 1 — Componente de sociedad",
+      "type": "enum",
+      "required": false,
+      "description": "Whether, for the activity in row 1, the individual participates via a 'sociedad de hecho' (de facto partnership, exportValue 'hecho') or another company form (exportValue 'otras'). Confirmed a genuine PDF radio-button group (parent field 'comp soc', 2 kids, shared kidIds).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Componente de sociedad' / 'De hecho'-'Otras' column, row 1",
+      "validation": {
+        "enum": [
+          "hecho",
+          "otras"
+        ]
+      }
+    },
+    {
+      "name": "activitySoleProprietor1",
+      "label": "Actividad 1 — Titular emp. unipersonal",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating the individual is the sole-proprietor titleholder ('titular') of a one-person business ('empresa unipersonal') for the activity in row 1. An independent checkbox (not part of the row's radio group).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Titular emp. unipersonal' column, row 1"
+    },
+    {
+      "name": "activityStartMonthYear2",
+      "label": "Actividad 2 — Inicio (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 2 of this fixed 4-row 'Actividad' (self-employment activity) table began. AcroForm box captioned 'Mes/año'; represented as an MM/AAAA string.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Inicio' / 'Mes/año' column, row 2",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityEndMonthYear2",
+      "label": "Actividad 2 — Baja (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 2 ended ('baja'), if applicable. Same MM/AAAA box format as activityStartMonthYear2.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Baja' / 'Mes/año' column, row 2",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityName2",
+      "label": "Actividad 2 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Name/description of the self-employment activity in row 2.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Denominación' column, row 2"
+    },
+    {
+      "name": "activityCode2",
+      "label": "Actividad 2 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code for the self-employment activity in row 2.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Código' column, row 2"
+    },
+    {
+      "name": "activityProfessionalRegistrationNumber2",
+      "label": "Actividad 2 — Matr. Prof.",
+      "type": "string",
+      "required": false,
+      "description": "Professional registration/license number ('Matrícula Profesional') associated with the activity in row 2, where applicable.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Matr. Prof.' column, row 2"
+    },
+    {
+      "name": "activityEmployeeCount2",
+      "label": "Actividad 2 — Cant. personal ocupado",
+      "type": "integer",
+      "required": false,
+      "description": "Number of employees occupied in the activity in row 2.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Cant. personal ocupado' column, row 2",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "activityOptionalCategory2",
+      "label": "Actividad 2 — Categoría opcional",
+      "type": "string",
+      "required": false,
+      "description": "Optional social-security category selected for the activity in row 2.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Categoría opcional' column, row 2"
+    },
+    {
+      "name": "activityCompanyType2",
+      "label": "Actividad 2 — Componente de sociedad",
+      "type": "enum",
+      "required": false,
+      "description": "Whether, for the activity in row 2, the individual participates via a 'sociedad de hecho' (de facto partnership, exportValue 'hecho') or another company form (exportValue 'otras'). Confirmed a genuine PDF radio-button group (parent field 'comp soc' 2, 2 kids, shared kidIds).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Componente de sociedad' / 'De hecho'-'Otras' column, row 2",
+      "validation": {
+        "enum": [
+          "hecho",
+          "otras"
+        ]
+      }
+    },
+    {
+      "name": "activitySoleProprietor2",
+      "label": "Actividad 2 — Titular emp. unipersonal",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating the individual is the sole-proprietor titleholder ('titular') of a one-person business ('empresa unipersonal') for the activity in row 2. An independent checkbox (not part of the row's radio group).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Titular emp. unipersonal' column, row 2"
+    },
+    {
+      "name": "activityStartMonthYear3",
+      "label": "Actividad 3 — Inicio (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 3 of this fixed 4-row 'Actividad' (self-employment activity) table began. AcroForm box captioned 'Mes/año'; represented as an MM/AAAA string.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Inicio' / 'Mes/año' column, row 3",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityEndMonthYear3",
+      "label": "Actividad 3 — Baja (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 3 ended ('baja'), if applicable. Same MM/AAAA box format as activityStartMonthYear3.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Baja' / 'Mes/año' column, row 3",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityName3",
+      "label": "Actividad 3 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Name/description of the self-employment activity in row 3.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Denominación' column, row 3"
+    },
+    {
+      "name": "activityCode3",
+      "label": "Actividad 3 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code for the self-employment activity in row 3.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Código' column, row 3"
+    },
+    {
+      "name": "activityProfessionalRegistrationNumber3",
+      "label": "Actividad 3 — Matr. Prof.",
+      "type": "string",
+      "required": false,
+      "description": "Professional registration/license number ('Matrícula Profesional') associated with the activity in row 3, where applicable.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Matr. Prof.' column, row 3"
+    },
+    {
+      "name": "activityEmployeeCount3",
+      "label": "Actividad 3 — Cant. personal ocupado",
+      "type": "integer",
+      "required": false,
+      "description": "Number of employees occupied in the activity in row 3.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Cant. personal ocupado' column, row 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "activityOptionalCategory3",
+      "label": "Actividad 3 — Categoría opcional",
+      "type": "string",
+      "required": false,
+      "description": "Optional social-security category selected for the activity in row 3.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Categoría opcional' column, row 3"
+    },
+    {
+      "name": "activityCompanyType3",
+      "label": "Actividad 3 — Componente de sociedad",
+      "type": "enum",
+      "required": false,
+      "description": "Whether, for the activity in row 3, the individual participates via a 'sociedad de hecho' (de facto partnership, exportValue 'hecho') or another company form (exportValue 'otras'). Confirmed a genuine PDF radio-button group (parent field 'comp soc' 3, 2 kids, shared kidIds).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Componente de sociedad' / 'De hecho'-'Otras' column, row 3",
+      "validation": {
+        "enum": [
+          "hecho",
+          "otras"
+        ]
+      }
+    },
+    {
+      "name": "activitySoleProprietor3",
+      "label": "Actividad 3 — Titular emp. unipersonal",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating the individual is the sole-proprietor titleholder ('titular') of a one-person business ('empresa unipersonal') for the activity in row 3. An independent checkbox (not part of the row's radio group).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Titular emp. unipersonal' column, row 3"
+    },
+    {
+      "name": "activityStartMonthYear4",
+      "label": "Actividad 4 — Inicio (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 4 of this fixed 4-row 'Actividad' (self-employment activity) table began. AcroForm box captioned 'Mes/año'; represented as an MM/AAAA string.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Inicio' / 'Mes/año' column, row 4",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityEndMonthYear4",
+      "label": "Actividad 4 — Baja (Mes/año)",
+      "type": "string",
+      "required": false,
+      "description": "Month/year the activity in row 4 ended ('baja'), if applicable. Same MM/AAAA box format as activityStartMonthYear4.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Baja' / 'Mes/año' column, row 4",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "activityName4",
+      "label": "Actividad 4 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Name/description of the self-employment activity in row 4.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Denominación' column, row 4"
+    },
+    {
+      "name": "activityCode4",
+      "label": "Actividad 4 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code for the self-employment activity in row 4.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Código' column, row 4"
+    },
+    {
+      "name": "activityProfessionalRegistrationNumber4",
+      "label": "Actividad 4 — Matr. Prof.",
+      "type": "string",
+      "required": false,
+      "description": "Professional registration/license number ('Matrícula Profesional') associated with the activity in row 4, where applicable.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Matr. Prof.' column, row 4"
+    },
+    {
+      "name": "activityEmployeeCount4",
+      "label": "Actividad 4 — Cant. personal ocupado",
+      "type": "integer",
+      "required": false,
+      "description": "Number of employees occupied in the activity in row 4.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Cant. personal ocupado' column, row 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "activityOptionalCategory4",
+      "label": "Actividad 4 — Categoría opcional",
+      "type": "string",
+      "required": false,
+      "description": "Optional social-security category selected for the activity in row 4.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Categoría opcional' column, row 4"
+    },
+    {
+      "name": "activityCompanyType4",
+      "label": "Actividad 4 — Componente de sociedad",
+      "type": "enum",
+      "required": false,
+      "description": "Whether, for the activity in row 4, the individual participates via a 'sociedad de hecho' (de facto partnership, exportValue 'hecho') or another company form (exportValue 'otras'). Confirmed a genuine PDF radio-button group (parent field 'comp soc' 4, 2 kids, shared kidIds).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Componente de sociedad' / 'De hecho'-'Otras' column, row 4",
+      "validation": {
+        "enum": [
+          "hecho",
+          "otras"
+        ]
+      }
+    },
+    {
+      "name": "activitySoleProprietor4",
+      "label": "Actividad 4 — Titular emp. unipersonal",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating the individual is the sole-proprietor titleholder ('titular') of a one-person business ('empresa unipersonal') for the activity in row 4. An independent checkbox (not part of the row's radio group).",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social, Actividad — 'Titular emp. unipersonal' column, row 4"
+    },
+    {
+      "name": "employerType",
+      "label": "Tipo de empleador/a",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the individual is a 'Común' (ordinary/general) employer or employs 'Personal de casas particulares' (private household/domestic staff). Confirmed a genuine PDF radio-button group (parent field 'Tipo empleador', 2 kids, shared kidIds) — but flagged as a source-fidelity judgment call: this group's own exportValues are literally 'hecho'/'otras', identical to the unrelated 'comp soc'/'De hecho'-'Otras' groups above, while the printed on-page labels actually read 'Común'/'Personal de casas particulares'. This is a PDF-authoring quirk (the widget pair was evidently duplicated from the 'comp soc' radio group without updating its export values) — disclosed here rather than silently relabelled; the enum below preserves the true source exportValues, and this description records what they actually display as.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social — 'Tipo de empleador/a' radio group (raw exportValues 'hecho'='Común', 'otras'='Personal de casas particulares')",
+      "validation": {
+        "enum": [
+          "hecho",
+          "otras"
+        ]
+      }
+    },
+    {
+      "name": "employerStartMonthYear",
+      "label": "Fecha de inicio como empleador/a",
+      "type": "date",
+      "required": false,
+      "description": "Date the individual began acting as an employer.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social — 'Fecha de inicio' (employer)"
+    },
+    {
+      "name": "employeeCount",
+      "label": "Cantidad de personal",
+      "type": "integer",
+      "required": false,
+      "description": "Number of employees the individual has.",
+      "sourceRef": "F.460/F p.2, Datos de la Seguridad Social — 'Cantidad de personal'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "swornDeclarationAcknowledgement",
+      "label": "Declaración Jurada",
+      "type": "boolean",
+      "required": true,
+      "description": "Checkbox acknowledging the sworn declaration ('Declaro que los datos consignados en este formulario son correctos y completos...') printed immediately below it. Positioned directly under the '10- DECLARACIÓN JURADA' section heading and above the declaration paragraph, with no separate caption of its own beyond that paragraph — modelled as the affirmation checkbox for that paragraph (a judgment call, disclosed here since the specimen provides no other label for this specific box).",
+      "sourceRef": "F.460/F p.2, Declaración Jurada — checkbox beside 'Declaro que los datos consignados en este formulario son correctos y completos...'"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Fecha",
+      "type": "date",
+      "required": true,
+      "description": "Date of signing the sworn declaration.",
+      "sourceRef": "F.460/F p.2, Declaración Jurada — 'Fecha'"
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Lugar",
+      "type": "string",
+      "required": true,
+      "description": "Place of signing the sworn declaration.",
+      "sourceRef": "F.460/F p.2, Declaración Jurada — 'Lugar'"
+    },
+    {
+      "name": "signerCapacity",
+      "label": "Carácter",
+      "type": "enum",
+      "required": true,
+      "description": "Capacity in which the declarant signs: 'Titular' (the individual themself) or 'Apoderado/a' (an attorney-in-fact/representative acting on their behalf), selected from a dropdown (AcroForm combobox 'Caracter').",
+      "sourceRef": "F.460/F p.2, Declaración Jurada — 'Carácter'",
+      "validation": {
+        "enum": [
+          "Titular",
+          "Apoderado/a"
+        ]
+      }
+    },
+    {
+      "name": "attorneyName",
+      "label": "Apellido y nombre (en caso de ser apoderado/a)",
+      "type": "string",
+      "required": false,
+      "description": "Full name of the attorney-in-fact/representative signing on the individual's behalf, applicable only when signerCapacity is 'Apoderado/a' (see crossFieldValidation).",
+      "sourceRef": "F.460/F p.2, Declaración Jurada — 'Apellido y nombre (en caso de ser apoderado/a)'",
+      "classification": "pii"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "cuitRequiredForModification",
+      "when": {
+        "field": "requestType",
+        "equals": "modif"
+      },
+      "requirePresent": [
+        "cuit"
+      ]
+    },
+    {
+      "id": "foreignNationalRequiresOriginAndResidency",
+      "when": {
+        "field": "nationality",
+        "equals": "extranjero"
+      },
+      "requirePresent": [
+        "countryOfOrigin",
+        "residencyStatus",
+        "residencePermitType"
+      ]
+    },
+    {
+      "id": "attorneySignerRequiresName",
+      "when": {
+        "field": "signerCapacity",
+        "equals": "Apoderado/a"
+      },
+      "requirePresent": [
+        "attorneyName"
+      ]
+    }
+  ]
+}
