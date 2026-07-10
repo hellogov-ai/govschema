@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **334 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **335 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2179, "GovSchema Standard Research"): Argentina's
+> Visa vertical opens (2nd of 6 verticals)**, via
+> `ar/cancilleria/formulario-solicitud-visado` — the Ministerio de
+> Relaciones Exteriores, Comercio Internacional y Culto (Cancillería)'s
+> "Formulario de Solicitud de Visado" (FSV), the candidate identified but
+> deliberately left unfetched by the same-day GOV-2169 cycle that opened
+> Argentina as the registry's 32nd jurisdiction. Fetched fresh directly from
+> `cancilleria.gob.ar` (HTTP 200, `application/pdf`, 311,233 bytes, no
+> login/CAPTCHA/WAF gate) and cross-checked against a byte-different but
+> structurally identical 2026 edition mirrored at an Argentine consulate's
+> own domain, `cmila.cancilleria.gob.ar` (HTTP 200, 378,338 bytes) —
+> confirming the form is stable across editions rather than trusting the
+> prior scouting pass's numbers. `pdfjs-dist` independently reconfirmed
+> `getFieldObjects()` resolves exactly 50 distinct field names on both
+> editions, all plain `/Tx` text widgets (no checkboxes/radio groups
+> anywhere in this specimen), split 29/21/0 across the form's 3 pages; the
+> form's own printed numbering (1-50, plus an un-widgeted signature line at
+> 51) maps one-to-one onto these 50 widgets, cross-walked by rectangle
+> position against the page's own text layer. Eleven yes/no
+> security/background-declaration questions are modelled as `boolean`
+> fields with a disclosed caveat: the underlying widget is a free-text
+> field carrying a "SI o NO" hint, not an actual checkbox. Nine fields
+> inherently inapplicable to a real subset of applicants (other
+> names/aliases; a Lebanese-origin-only family registry number;
+> employer/work-phone/activity-and-position for the non-employed;
+> references, spouse, children, and relatives residing in Argentina) are
+> modelled as optional despite the form's own "complete up to field 50"
+> instruction — a disclosed scope judgment, not a source-asserted
+> exemption, except for the Lebanese-registry field, whose narrow scope the
+> source states directly. Page 3 (consular-officer-only fields — visa
+> category, migratory criteria, entry type, the consul's own opinion)
+> carries zero AcroForm widgets, independently confirmed, and is out of
+> scope. See the Visa vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record, every field's citation, and
+> the mock conformance test run.
 
 > **Update (2026-07-10, GOV-2169, "GovSchema Standard Research"): Argentina
 > opens as the registry's 32nd jurisdiction**, via
@@ -4713,10 +4749,16 @@ directly on `serviciosweb.afip.gob.ar`. See the Executive Summary update
 above and the document's own VERIFICATION.md for the full sourcing and
 widget/field-reconciliation record. Argentina opened with 1 of its 6
 verticals (Business Formation); its remaining five (Passport, DMV, Taxes,
-Visa, National ID) are open, unscreened backlog candidates — two
-candidates are already identified for Visa and for the individual/persona
+Visa, National ID) were open, unscreened backlog candidates — two
+candidates were already identified for Visa and for the individual/persona
 física analogue of this same Business Formation form (see "Known Gaps"
-below).
+below). **Update (2026-07-10, GOV-2179): Argentina's Visa vertical is now
+open too**, via `ar/cancilleria/formulario-solicitud-visado` — see the
+Executive Summary update, the Visa vertical section, and "Known Gaps"
+below. Argentina now has 2 of its 6 verticals (Business Formation, Visa);
+AFIP's sibling Formulario 460/F remains the sole still-identified,
+not-yet-fetched candidate, and Passport, DMV, Taxes, and National ID
+remain open, unscreened backlog candidates.
 
 **Portugal's Business Formation gap closes (GOV-2143), giving Portugal 6 of
 its 6 verticals** — via
@@ -5521,7 +5563,34 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (23/32 jurisdictions — 72%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (24/32 jurisdictions — 75%)
+
+**Argentina's Visa vertical is now open** (`ar/cancilleria/formulario-solicitud-visado`,
+GOV-2179) — sourced from the Ministerio de Relaciones Exteriores, Comercio
+Internacional y Culto (Cancillería)'s "Formulario de Solicitud de Visado"
+(FSV), a genuine 3-page fillable-AcroForm PDF fetched unauthenticated,
+without any login/CAPTCHA/WAF gate, directly from `cancilleria.gob.ar`, and
+cross-checked against a byte-different but structurally identical 2026
+edition mirrored at an Argentine consulate's own domain
+(`cmila.cancilleria.gob.ar`). `pdfjs-dist` independently reconfirmed the 50
+distinct AcroForm field names identified by a prior scouting pass (29/21/0
+Widget annotations across the 3 pages), every one a plain `/Tx` text field
+(no checkboxes/radio groups in this specimen, unlike the sibling
+`ar/afip` cycle's F.460/J). The form's own printed numbering (1-50, plus an
+un-widgeted signature line at 51) maps one-to-one onto the 50 widgets. Eleven
+yes/no security/background-declaration questions are modelled as `boolean`
+fields with a disclosed caveat: the underlying widget is free text carrying
+a "SI o NO" hint, not an actual checkbox. Nine fields inherently inapplicable
+to a real subset of applicants (other names/aliases, a Lebanese-origin-only
+family registry number, employer/work-phone/activity details for the
+non-employed, references/spouse/children/relatives-in-Argentina) are
+modelled as optional despite the form's own "complete up to field 50"
+instruction — a disclosed scope judgment, not a source-asserted exemption
+(only the Lebanese-registry field carries a literal source-stated
+exemption). This gives Argentina 2 of its 6 verticals (Business Formation,
+Visa) — see the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record, every field's citation, and
+the mock conformance test run.
 
 **Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
 Japan as the registry's 28th jurisdiction, via the Immigration Services
@@ -5922,7 +5991,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AR** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **AR** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -6482,6 +6551,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Solicitud de Visado (FSV, ~50 widgets, not yet fetched or verified) for
    Argentina's Visa vertical. Argentina's remaining verticals (Passport,
    DMV, Taxes, Visa, National ID) are open, unscreened backlog candidates.
+   **Update (2026-07-10, GOV-2179, "GovSchema Standard Research"): the FSV
+   candidate is now resolved**, via
+   `ar/cancilleria/formulario-solicitud-visado` — Cancillería's "Formulario
+   de Solicitud de Visado," fetched fresh from `cancilleria.gob.ar` and
+   cross-checked against a byte-different but structurally identical 2026
+   edition mirrored at an Argentine consulate's own domain
+   (`cmila.cancilleria.gob.ar`), independently reconfirming the prior
+   scouting pass's 50-widget count rather than trusting it. This gives
+   Argentina 2 of its 6 verticals (Business Formation, Visa); see the
+   Executive Summary update above, the Visa vertical section below, and the
+   document's own VERIFICATION.md for the full sourcing record. AFIP's
+   sibling Formulario 460/F remains the sole still-open, not-yet-fetched
+   candidate from the GOV-2169 cycle; Argentina's Passport, DMV, Taxes, and
+   National ID verticals remain open, unscreened backlog candidates.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
