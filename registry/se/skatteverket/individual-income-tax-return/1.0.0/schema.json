@@ -1,0 +1,237 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "se/skatteverket/individual-income-tax-return",
+  "version": "1.0.0",
+  "title": "Sweden Individual Income Tax Return (Inkomstdeklaration 1, SKV 2000)",
+  "description": "File Skatteverket (Swedish Tax Agency) Form SKV 2000, 'Inkomstdeklaration 1' ('Income Tax Return 1'), the annual individual income tax return covering the identifying taxpayer, aggregate employment income and deductions, general deductions, the basis for the ROT/RUT tax reduction, the basis for the residential property charge and property tax, aggregate capital income, capital deductions for secured/unsecured loan interest (boxes 8.1 and 8.8), and foreign-insurance yield-tax bases. This opens Sweden's Taxes vertical (4/6). Large parts of the return arrive pre-printed by Skatteverket from employer, bank, and other third-party reports; a filer verifies, corrects, and supplements those amounts rather than completing the form from a blank slate. Scoped strictly to the categories the cited source describes at an aggregate level (see VERIFICATION.md) — the form's own more granular numbered sub-boxes (e.g. 1.1-1.7, 4.1-4.5) are not independently confirmed by any source examined and are deliberately not modelled in this version. It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Swedish Tax Agency",
+    "abbreviation": "Skatteverket",
+    "url": "https://www.skatteverket.se"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.skatteverket.se/servicelankar/otherlanguages/englishengelska/individualsandemployees/declaringtaxesforindividuals/howtofileyourtaxreturn/thecontentsoftheincometaxreturn.4.7be5268414bea064694c76b.html",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "Skatteverket's official English-language 'The contents of the income tax return' page (SKV 2000, 'Inkomstdeklaration 1'). Corrected 2026-07-10: this page's real content is nine short aggregate-category paragraphs in English only (no Swedish text, no per-sub-box numbering) — it names explicit box numbers only for section 8 ('box 8.1' and 'box 8.8', Deductions - Capital) and section headers '8.' and '9.'. A prior draft of this document incorrectly attributed granular §x.y bilingual Swedish/English box quotes (sections 1-7, 9.1-9.2, 17, 18) to this page; those quotes do not appear on it and have been removed. See VERIFICATION.md for the full correction record."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2091 'GovSchema Standard Research' cycle, corrected under GOV-2093 review gate. The review gate's independent re-fetch of the cited primary source found that ~40 of the original 48 fields' sourceRefs quoted specific paired Swedish/English box text that does not exist on that page: the real page is nine short English-only paragraphs, with no per-sub-box (1.1-9.2) numbering and no mention at all of sections 17-18. This version corrects the error by rescoping to only the aggregate income/deduction/disclosure categories the source genuinely describes (Income/Deductions from employment, General deductions, Tax-reduction basis for ROT/RUT work, Property charge/tax basis, Capital income, and the two explicitly-numbered Capital-deduction boxes 8.1/8.8 and Foreign-insurance yield tax), each field's sourceRef quoting only the real English prose that supports it. Sections 17 (additional disclosures) and 18 (signature/contact footer) are removed entirely: no source examined mentions either. A signature requirement is retained, sourced instead to the corroborating SKV 2000 order/distribution page's own Swedish instruction to sign and mail the paper return. Sweden's Passport and National ID verticals remain screened-and-weak dead ends (in-person/eID-login flows, no field-by-field source; unchanged from the original research trail)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerPersonalIdentityNumber",
+      "label": "Personal identity number (personnummer)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Swedish personnummer, either 10-digit (YYMMDD-XXXX) or 12-digit (YYYYMMDD-XXXX) form. Not itself enumerated on Skatteverket's own 'contents of the income tax return' page (see VERIFICATION.md); included because the return is personalized and addressed to a specific taxpayer's personnummer.",
+      "sourceRef": "Skatteverket general guidance on personalized, pre-printed individual tax returns; not confirmed against a specimen image of SKV 2000's own header",
+      "validation": { "pattern": "^(19|20)?[0-9]{6}[-+]?[0-9]{4}$" }
+    },
+    {
+      "name": "taxpayerName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "description": "Pre-printed by Skatteverket from the population register; not itself enumerated on Skatteverket's own 'contents of the income tax return' page (see VERIFICATION.md).",
+      "sourceRef": "Skatteverket general guidance on personalized, pre-printed individual tax returns; not confirmed against a specimen image of SKV 2000's own header",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "taxpayerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "description": "The registered address the return is mailed to. Not itself enumerated on Skatteverket's own 'contents of the income tax return' page (see VERIFICATION.md).",
+      "sourceRef": "Skatteverket general guidance ('Tax returns are sent to your registered address'); not confirmed against a specimen image of SKV 2000's own header",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "employmentIncomeTotal",
+      "label": "Income from employment (total)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Pre-printed by Skatteverket as the sum of amounts reported to it by employers and other payers (e.g. salary, sickness benefit, other benefits); verified/corrected by the filer.",
+      "sourceRef": "SKV 2000, 'Income — Income from employment': 'The pre-printed amount is the sum total of the amounts in the information the Swedish Tax Agency has received, e.g., salary, sickness benefits or other benefits.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employmentDeductionsTotal",
+      "label": "Deductions for income from employment (total)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Deductions for expenses with a direct connection to employment (e.g. journeys to/from work, business trips, temporary work); the source page links to a general 'common deductions' guide rather than enumerating individual sub-boxes.",
+      "sourceRef": "SKV 2000, 'Deductions — Income from employment': 'This is where you can claim deductions for expenses which have a direct connection to your work.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "socialInsuranceChargesEuRegulation",
+      "label": "Social insurance charges according to the EU Regulation etc.",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000, 'General deductions': 'Social insurance charges according to the EU regulation etc.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "rotRutTaxReductionBasis",
+      "label": "Basis for ROT/RUT tax reduction",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Combined basis for a preliminary tax reduction already received for RUT work (household services) or ROT work (construction/repair/extension work on the filer's own property); the source does not separate these into distinct numbered boxes.",
+      "sourceRef": "SKV 2000, 'Tax reductions': 'If you have received a preliminary tax reduction for rut work (household services) or rot work (construction services in your property), these details are pre-printed.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "propertyChargeBasis",
+      "label": "Basis for municipal property charge",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Pre-printed basis for the municipal property charge on houses. Maximum SEK 10,074 per building or 0.75% of the assessed value for 2025, whichever is lower, per the source's own figures for that tax year.",
+      "sourceRef": "SKV 2000, 'Property charge': 'A municipal property charge is payable on houses. The maximum amount is SEK 10,074 for each building or 0.75% of the assessed value for 2025, depending on which is the lower. The basis for the property charge is pre-printed on your tax return.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "propertyTaxBasis",
+      "label": "Basis for state property tax",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Pre-printed basis for the state property tax payable on certain properties (e.g. undeveloped plots, buildings under construction).",
+      "sourceRef": "SKV 2000, 'Property tax': 'For certain properties you need to pay a state property tax. The basis for the property tax is pre-printed on your tax return.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "capitalIncomeTotal",
+      "label": "Income — Capital (total)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Pre-printed by Skatteverket as the sum of amounts in the income statements it has received (e.g. interest income, share dividends, profits on sold shares in interest funds). The source states the filer must separately fill in profits from the sale of shares, property, or a cooperative flat, but does not attach those to any specific numbered box, so they are not modelled here.",
+      "sourceRef": "SKV 2000, 'Income — Capital': 'The pre-printed amount is the sum total of the amounts in the income statements the Swedish Tax Agency has received, e.g., interest income, share dividends and profits on sold shares in interest funds. You must yourself fill in details such as profits from the sale of shares, property or a cooperative flat.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "capitalDeductionsInterestExpensesSecuredLoans",
+      "label": "Interest expenses on secured loans (box 8.1)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000, 'Deductions — Capital': 'You'll find the information that the Swedish Tax Agency has about your interest expenses in section 8.1 (Interest expenses on secured loans)...'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "capitalDeductionsInterestExpensesUnsecuredLoans",
+      "label": "Interest expenses on unsecured loans (box 8.8)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "For income year 2025, a new box (8.8) separates unsecured-loan interest expenses from secured-loan interest expenses (box 8.1). Per the source, from income year 2026 this deduction is no longer available at all.",
+      "sourceRef": "SKV 2000, 'Deductions — Capital': '...and in section 8.8 (Interest expenses on unsecured loans). From income year 2026, you will not be entitled to interest deductions for unsecured loans.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "foreignEndowmentPolicyYieldTaxBase",
+      "label": "Tax base — foreign endowment policy (yield tax)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "The source does not attach this to a specific numbered box; it only states the general liability rule for individuals (a separate section on the back of the paper form applies to business proprietors, out of scope here).",
+      "sourceRef": "SKV 2000, 'Foreign insurance — Yield tax': 'If you have a foreign endowment policy or a foreign pension insurance you may be liable to pay yield tax.'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "foreignPensionInsuranceYieldTaxBase",
+      "label": "Tax base — foreign pension insurance (yield tax)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "The source does not attach this to a specific numbered box; it only states the general liability rule for individuals.",
+      "sourceRef": "SKV 2000, 'Foreign insurance — Yield tax': 'If you have a foreign endowment policy or a foreign pension insurance you may be liable to pay yield tax.'",
+      "validation": { "minimum": 0 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "taxpayerSignature",
+      "label": "Taxpayer's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "By signing, the taxpayer submits the paper tax return to Skatteverket's Inläsningscentralen (an alternative to digital filing via e-identification, SMS, or phone approval, none of which require a handwritten signature).",
+      "sourceRef": "SKV 2000 order/distribution page ('Vart skickar jag pappersblanketten?'): 'Skriv under deklarationen och skicka den till: Skatteverket, Inläsningscentralen, Inkomstdeklaration 1, FE 8000, 107 75 Stockholm.' ('Sign the declaration and send it to: the Swedish Tax Agency, Scanning Centre, Income Tax Return 1, FE 8000, 107 75 Stockholm.')"
+    }
+  ],
+  "steps": [
+    {
+      "id": "taxpayer_identity",
+      "title": "Taxpayer identity",
+      "fields": ["taxpayerPersonalIdentityNumber", "taxpayerName", "taxpayerAddress"],
+      "next": "employment_income_and_deductions"
+    },
+    {
+      "id": "employment_income_and_deductions",
+      "title": "Income and deductions from employment",
+      "fields": ["employmentIncomeTotal", "employmentDeductionsTotal"],
+      "next": "general_deductions_and_tax_reductions"
+    },
+    {
+      "id": "general_deductions_and_tax_reductions",
+      "title": "General deductions and basis for tax reductions",
+      "fields": ["socialInsuranceChargesEuRegulation", "rotRutTaxReductionBasis"],
+      "next": "property_charge_and_tax"
+    },
+    {
+      "id": "property_charge_and_tax",
+      "title": "Basis for property charge and property tax",
+      "fields": ["propertyChargeBasis", "propertyTaxBasis"],
+      "next": "capital_income_and_deductions"
+    },
+    {
+      "id": "capital_income_and_deductions",
+      "title": "Capital income and deductions",
+      "fields": [
+        "capitalIncomeTotal",
+        "capitalDeductionsInterestExpensesSecuredLoans",
+        "capitalDeductionsInterestExpensesUnsecuredLoans"
+      ],
+      "next": "foreign_insurance_yield_tax"
+    },
+    {
+      "id": "foreign_insurance_yield_tax",
+      "title": "Foreign insurance, yield tax",
+      "fields": ["foreignEndowmentPolicyYieldTaxBase", "foreignPensionInsuranceYieldTaxBase"]
+    }
+  ]
+}
