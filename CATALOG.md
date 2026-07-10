@@ -4,7 +4,57 @@
 
 ## Executive Summary
 
-**30 jurisdictions** | **323 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**30 jurisdictions** | **324 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2091, "GovSchema Standard Research"): Sweden's
+> Taxes vertical opens**, via `se/skatteverket/individual-income-tax-return`
+> v1.0.0 — Skatteverket (Swedish Tax Agency) Form SKV 2000,
+> "Inkomstdeklaration 1" ("Income Tax Return 1"). The task brief's own named
+> National ID candidates (DE Steuer-ID, SG NRIC, NZ RealMe, "remaining voter
+> registration") were re-checked first and confirmed already resolved or
+> dead-ended in prior cycles (GOV-651, GOV-634/GOV-641, GOV-660), so this
+> cycle instead deepened Sweden (3 of 6 verticals: Business Formation,
+> DMV, Visa) toward its next vertical. Screened Polisen's passport
+> application (eID-login "Mina sidor" booking, entirely in-person identity
+> verification, no downloadable form) and Skatteverket's national ID card
+> (id-kort; staff-assisted in-person application, no pre-fillable form)
+> first and found both weak, then found Sweden's individual tax return is,
+> unusually for this registry, a **personalized document with no publicly
+> downloadable blank specimen** — Skatteverket pre-prints each taxpayer's own
+> copy from third-party reports and mails it to their registered address; a
+> blank paper copy can only be ordered through an authenticated e-service or
+> printed after an eID login. In place of a specimen PDF, Skatteverket
+> maintains a dedicated, officially bilingual "contents of the income tax
+> return" page stating verbatim "Here you will find the headlines in the
+> form... in English", giving the exact Swedish box text and its own official
+> English translation for every numbered box (1.1 through 9.2, plus sections
+> 17-18) — fetched directly via `curl` and parsed from the raw HTML rather
+> than summarized by a fetch tool. Models employment income and deductions
+> (§1-2), general deductions (§3), the basis for common tax reductions —
+> ROT/RUT work, renewable electricity, donations, sustainable-technology
+> installation (§4) — the basis for the residential property charge and
+> property tax (§5-6), capital income and deductions (§7-8), foreign
+> insurance yield tax (§9), additional disclosures — foreign income, foreign
+> tax settlement, ROT/RUT reallocation requests, income-data corrections,
+> free-text other information (§17) — and the signature/contact footer
+> (§18). Deliberately excludes the return's business-activity sections
+> (10-16: Business activities, Interest allocation, Expansion funds tax,
+> Reduction of social security contributions, General deductions for
+> business, and business-rental-property charge/tax bases), which apply only
+> to filers who also run a sole-proprietorship business (referencing separate
+> Forms NE/N3A) or own rental/industrial property and reference further
+> un-modelled K-annexes (K4 through K15A/B) — consistent with this registry's
+> existing convention of deferring repeating/complex annex-referenced blocks.
+> The taxpayer identity header (personnummer/name/address) is disclosed
+> honestly in VERIFICATION.md as not itself enumerated on Skatteverket's
+> numbered-box source page and not independently confirmed against a
+> specimen image, since none was available. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scope
+> decision, including the mock conformance test run (0 errors across 48
+> fields, 4 mutation tests). Sweden now stands at 4 of its 6 verticals
+> (Business Formation, DMV, Visa, Taxes); its remaining two verticals
+> (Passport, National ID) were screened this cycle and confirmed in-person/
+> eID-login dead ends with no field-by-field source found.
 
 > **Update (2026-07-10, GOV-2084, "GovSchema Standard Research"): Iceland's
 > Taxes vertical opens**, via
@@ -4478,7 +4528,33 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (28/30 jurisdictions — 93%)
+### Taxes — Income Tax Return, Tax Filing (29/30 jurisdictions — 97%)
+
+**Sweden's Taxes vertical opens** (`se/skatteverket/individual-income-tax-return`,
+GOV-2091) — Skatteverket Form SKV 2000, "Inkomstdeklaration 1" ("Income Tax
+Return 1"), the annual individual income tax return. Unlike most of this
+registry's individual returns, Sweden's has no publicly downloadable blank
+specimen (it is personalized and pre-printed per taxpayer, mailed to their
+registered address); sourced instead from Skatteverket's own dedicated
+bilingual "contents of the income tax return" page, which states verbatim it
+publishes "the headlines in the form... in English" for every numbered box.
+Models employment income and deductions, general deductions, the basis for
+common tax reductions (ROT/RUT work, renewable electricity, donations,
+sustainable-technology installation), the basis for the residential property
+charge and property tax, capital income and deductions, foreign insurance
+yield tax, additional disclosures (foreign income, foreign tax settlement,
+ROT/RUT reallocation, income-data corrections), and the signature/contact
+footer. Deliberately excludes the return's business-activity sections
+(10-16, referencing separate Forms NE/N3A and further K-annexes), consistent
+with how this registry already defers repeating/complex annex-referenced
+blocks elsewhere. See the document's own VERIFICATION.md for the full
+sourcing record, including the disclosed limitation that the taxpayer
+identity header (personnummer/name/address) could not be independently
+confirmed against a specimen image, and the mock conformance test run (0
+errors across 48 fields, 4 mutation tests). This closes Sweden's Taxes gap;
+Sweden now stands at 4 of its 6 verticals (Business Formation, DMV, Visa,
+Taxes) — Passport and National ID were screened this cycle and confirmed
+in-person/eID-login dead ends with no field-by-field source found.
 
 **Iceland's Taxes vertical opens** (`is/skatturinn/simplified-individual-tax-return`,
 GOV-2084) — Skatturinn Form RSK 1.13, "Tax return | simplified", the
@@ -5280,7 +5356,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
-| **SE** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **SE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
