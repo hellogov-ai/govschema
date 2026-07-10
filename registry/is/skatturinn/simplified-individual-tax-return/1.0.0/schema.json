@@ -1,0 +1,531 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "is/skatturinn/simplified-individual-tax-return",
+  "version": "1.0.0",
+  "title": "Iceland Simplified Tax Return for Individuals (RSK 1.13)",
+  "description": "File Skatturinn (Iceland Revenue and Customs) Form RSK 1.13, 'Tax return | simplified', the short-form annual individual income tax return for individuals who have lived in Iceland for less than three years. The form itself states it must not be used by couples, filers with dependent children, owners of real estate/securities/shares, or self-employed individuals — all of whom must file the full RSK 1.10/1.01 return instead. Covers the filer's identity and duration of stay in Iceland; salary and other employment-related payments (with up to four employer entries); car allowance, per diem payments, and fringe benefits; other income (reimbursed pension fund premiums and a free-text 'other' category); deductions (pension fund premiums, car allowance and travel allowance deductions); the computed tax base for income taxes; taxes withheld at source; status/balance in savings and bank accounts (with up to two account entries and their totals); a bank account for any refund; a foreign tax identification number and address abroad for filers who leave Iceland before assessment; and the signature/telephone footer. This deepens Iceland's registry coverage into a second vertical (Taxes). It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IS",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Iceland Revenue and Customs",
+    "abbreviation": "Skatturinn",
+    "url": "https://www.skatturinn.is"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.skatturinn.is/media/rsk01/rsk_0113.en.pdf",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "RSK 1.13, edition 22-3-2021 ('Tax return | simplified'), the English-language PDF linked from Skatturinn's own public forms index (skatturinn.is/english/forms/), where it is listed without a specific tax year, alongside translations in Polish, Russian, and Spanish"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2084 'GovSchema Standard Research' cycle. The task brief's own named National ID candidates (DE Steuer-ID, SG NRIC, NZ RealMe, 'remaining voter registration') were re-checked first against CATALOG.md and confirmed already resolved or dead-ended in prior cycles. Rather than re-attempt a closed gap, this cycle deepened Iceland (opened GOV-2077, 1 of 6 verticals) into a second vertical. Screened Iceland's driving-licence (Samgöngustofa, applications submitted electronically through the sýslumaður/District Commissioner portal with no standalone downloadable form found), passport (Þjóðskrá, an in-person/pre-registration process via island.is with no field-by-field paper form), and residence-permit (Útlendingastofnun Form D-110, a genuine 251-widget AcroForm PDF but spanning 9 pages and many permit-type branches — set aside as too broad for one session without a comparably strong scoping precedent) candidates, and instead found Skatturinn's own RSK 1.13, a compact single-purpose simplified return for short-term (<3 year) resident individuals, directly downloadable and unauthenticated with no login/CAPTCHA/WAF gate. Unlike RSK 5.02 (GOV-2077), RSK 1.13 has no AcroForm field layer at all (`getFieldObjects()` returned none); extracted via `pdfjs-dist`'s position-tagged `getTextContent()` across both pages, then cross-checked by rendering the PDF with a real full-build headless Chromium (Playwright `chrome-linux64` under `/paperclip/.cache/ms-playwright`, with `LD_LIBRARY_PATH` pointed at `/paperclip/chrome-sysroot/usr/lib/x86_64-linux-gnu`) and visually re-inspecting both pages at high zoom — the same visual-confirmation discipline GOV-2070/GOV-2077 established for this registry, needed here because the form's own printed reference numbers are the only field identifiers (there are no AcroForm field names to cross-check against). This visual pass caught a genuine discrepancy disclosed in full in VERIFICATION.md: the box actually printed on page 1 for the savings-account interest-income total reads '12', but the back-page instructions prose refers to the same box as '312' — a real inconsistency in the source document itself, not an extraction artifact (confirmed by re-reading the raw text layer, which extracts '312' verbatim from the instructions sentence). This schema follows the number printed on the fillable box itself. Modelled the repeating salary/employer table (4 blank rows feeding one total, line 21) and the repeating savings/bank-account table (2 blank rows feeding three totals: 301, 12, 11) as flat numbered field sets (`employer1Name`/`employer1Amount` ... `employer4Name`/`employer4Amount`; `bankAccount1Name`/`bankAccount1InterestIncome`/`bankAccount1Status`, `bankAccount2Name`/`bankAccount2InterestIncome`/`bankAccount2Status`), the same convention `is/skatturinn/business-employer-vat-registration`'s own two-shareholder rows use, rather than a JSON array. Mock conformance test run: 0 errors across 47 fields, 3 mutation tests (see VERIFICATION.md for the full transcript)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "filerIdNumber",
+      "label": "Id.no. of the filer",
+      "type": "string",
+      "required": true,
+      "description": "Icelandic kennitala, 10 digits (DDMMYY-XXCC), optionally printed with a hyphen after the 6th digit.",
+      "sourceRef": "RSK 1.13 p.1, header: 'Id.no. of the filer'",
+      "validation": { "pattern": "^[0-9]{6}-?[0-9]{4}$" }
+    },
+    {
+      "name": "filerName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "RSK 1.13 p.1, header: 'Name'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "filerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "RSK 1.13 p.1, header: 'Address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "filerMunicipality",
+      "label": "Municipality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "RSK 1.13 p.1, header, same row as 'Address': 'Municipality'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "incomeYear",
+      "label": "Income year",
+      "type": "number",
+      "required": true,
+      "description": "The form prints 'Income year 20' followed by a blank two-digit box for the last two digits of the calendar year covered; a separate tax return must be filed for each calendar year.",
+      "sourceRef": "RSK 1.13 p.1, header: 'Income year 20___'",
+      "validation": { "minimum": 2000, "maximum": 2099 }
+    },
+    {
+      "name": "arrivalDateInIceland",
+      "label": "Date of arrival to Iceland (if in income year)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, 'Duration of stay in Iceland': 'Date of arrival to Iceland if in income year'",
+      "validation": {}
+    },
+    {
+      "name": "departureDateFromIceland",
+      "label": "Date of departure from Iceland (if in income year)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, 'Duration of stay in Iceland': 'Date of departure from Iceland if in income year'",
+      "validation": {}
+    },
+    {
+      "name": "employer1Name",
+      "label": "Employer name (entry 1)",
+      "type": "string",
+      "required": false,
+      "description": "One of four identical blank employer/amount rows the form provides under section 1, all feeding into the section total (line 21).",
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 1",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employer1Amount",
+      "label": "Amount (entry 1)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 1",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employer2Name",
+      "label": "Employer name (entry 2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 2",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employer2Amount",
+      "label": "Amount (entry 2)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 2",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employer3Name",
+      "label": "Employer name (entry 3)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 3",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employer3Amount",
+      "label": "Amount (entry 3)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employer4Name",
+      "label": "Employer name (entry 4)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 4",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employer4Amount",
+      "label": "Amount (entry 4)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', row 4",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "salaryAndEmploymentPaymentsTotal",
+      "label": "Salary and other employment related payments, total",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §1 'Salary and other employment related payments', total box '21'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "carAllowance",
+      "label": "Car allowance",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §2 'Car allowance. Per diem payments, fringe benefits': 'Car allowance', box '22'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "perDiemPayments",
+      "label": "Per diem payments",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §2 'Car allowance. Per diem payments, fringe benefits': 'Per diem payments', box '23'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "carBenefits",
+      "label": "Car benefits",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Fringe benefit for an employer-supplied car for the employee's personal use.",
+      "sourceRef": "RSK 1.13 p.1, §2 'Car allowance. Per diem payments, fringe benefits': 'Car benefits', box '134'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherFringeBenefits",
+      "label": "Other benefits",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Other fringe benefits such as meals, clothes, and housing.",
+      "sourceRef": "RSK 1.13 p.1, §2 'Car allowance. Per diem payments, fringe benefits': 'Other benefits', box '135'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "reimbursedPensionFundPremiums",
+      "label": "Reimbursed pension fund premiums",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Includes reimbursement from a pension fund upon departure from Iceland, per the form's own back-page instructions.",
+      "sourceRef": "RSK 1.13 p.1, §3 'Other income': 'Reimbursed pension fund premiums', box '43'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherIncomeDescription",
+      "label": "Other income, what?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, §3 'Other income': 'Other, what?'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "otherIncomeAmount",
+      "label": "Other income, amount",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "The amount corresponding to otherIncomeDescription, if that field was filled in.",
+      "sourceRef": "RSK 1.13 p.1, §3 'Other income': 'Other, what?' amount box",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "deductiblePensionFundPremiums",
+      "label": "Deductible premiums to a pension fund (4% max)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Maximum 4% of the amount stated in line 21 (salary/employment payments total); combined with additionalPrivatePensionFundPayments, the total deduction may not exceed 8% of total salary per the form's own back-page instructions.",
+      "sourceRef": "RSK 1.13 p.1, §4 'Deductions': 'Deductible premiums to a pension fund (4% max)', box '162'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "additionalPrivatePensionFundPayments",
+      "label": "Additional payments to a private pension fund (4% max)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §4 'Deductions': 'Additional payments to a private pension fund (4% max)', box '160'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "carAllowanceDeduction",
+      "label": "Deduction of car allowance acc. to RSK 3.04",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §4 'Deductions': 'Deduction of car allowance acc. to RSK 3.04', box '32'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "travelAllowanceDeduction",
+      "label": "Deduction of travel allowance (per diem payments) acc. to RSK 3.11",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §4 'Deductions': 'Deduction of travel allowance (per diem payments) acc. to RSK 3.11', box '33'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "taxBaseForIncomeTaxes",
+      "label": "Tax base for income taxes",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed as the sum of sections 1+2+3 minus section 4 (printed on the form as 'Sum of 1+2+3-4'); the form itself does not assign this total its own reference-number box.",
+      "sourceRef": "RSK 1.13 p.1, §5 'Tax base for income taxes': 'Sum of 1+2+3-4'",
+      "validation": {}
+    },
+    {
+      "name": "taxesWithheldAtSource",
+      "label": "Taxes withheld at source",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §6 'Taxes withheld at source', box '296'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "bankAccount1Name",
+      "label": "Bank/savings institution (entry 1)",
+      "type": "string",
+      "required": false,
+      "description": "One of two identical blank rows the form provides under section 7, paired with an Interest income and a Status column; the row's own institution-name column has no printed header of its own beyond the section title.",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', row 1",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "bankAccount1InterestIncome",
+      "label": "Interest income (entry 1)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', row 1, 'Interest income' column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "bankAccount1Status",
+      "label": "Status (entry 1)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', row 1, 'Status' column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "bankAccount2Name",
+      "label": "Bank/savings institution (entry 2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', row 2",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "bankAccount2InterestIncome",
+      "label": "Interest income (entry 2)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', row 2, 'Interest income' column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "bankAccount2Status",
+      "label": "Status (entry 2)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', row 2, 'Status' column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "taxesWithheldOnInterestTotal",
+      "label": "Taxes withheld on interest, total",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', 'Total' row, 'Taxes withheld on interest', box '301'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "interestIncomeTotal",
+      "label": "Interest income, total",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "The box printed on the form itself reads '12'. The back-page 'Filling out the form - instructions' text refers to this same box as '312' (verified by re-reading the raw text layer, which extracts '312' verbatim from that instruction sentence) — a genuine inconsistency in the source document, not an extraction artifact; this field follows the number actually printed on the fillable box (see VERIFICATION.md).",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', 'Total' row, 'Interest income' column, box '12' (printed on the form; instructions text says '312')",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "savingsStatusTotal",
+      "label": "Status, total",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 1.13 p.1, §7 'Status/balance in savings and bank accounts', 'Total' row, 'Status' column, box '11'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "refundBankName",
+      "label": "Bank/savings fund",
+      "type": "string",
+      "required": false,
+      "description": "Only an Icelandic bank account in the filer's own name may be listed, per the form's own instructions.",
+      "sourceRef": "RSK 1.13 p.2, 'Bank account': 'Bank/savings fund'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "refundBankBranchOrService",
+      "label": "Branch/service",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.2, 'Bank account': 'Branch/service'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "refundBankAccountType",
+      "label": "Account type",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.2, 'Bank account': 'Account type'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "refundBankAccountNumber",
+      "label": "Account number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.2, 'Bank account': 'Account number'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "contactEmail",
+      "label": "My e-mail",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.2, 'Notices and comments can be sent to:': 'My e-mail:'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "foreignTaxIdNumber",
+      "label": "Foreign tax identification number (TIN)",
+      "type": "string",
+      "required": false,
+      "description": "The identification number used for filing a tax return in the filer's home country.",
+      "sourceRef": "RSK 1.13 p.2: 'Foreign tax identification number (TIN)'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "addressAbroad",
+      "label": "Your address abroad (or your representative in Iceland)",
+      "type": "string",
+      "required": false,
+      "description": "To be stated if the filer intends to leave the country before the tax assessment takes place.",
+      "sourceRef": "RSK 1.13 p.2: 'Your address abroad (or your representative in Iceland)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, footer: 'Telephone number'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 1.13 p.1, footer: 'Date/signature'",
+      "validation": {}
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantSignature",
+      "label": "Filer's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "With this signature the filer verifies that all information filed on the tax return is, to the best of his or her knowledge, correct.",
+      "sourceRef": "RSK 1.13 p.1, footer: 'Date/signature'; attestation statement above the signature block"
+    }
+  ],
+  "steps": [
+    {
+      "id": "filer_identity",
+      "title": "Filer identity and duration of stay",
+      "fields": [
+        "filerIdNumber", "filerName", "filerAddress", "filerMunicipality", "incomeYear",
+        "arrivalDateInIceland", "departureDateFromIceland"
+      ],
+      "next": "salary_and_benefits"
+    },
+    {
+      "id": "salary_and_benefits",
+      "title": "Salary, car allowance, per diem, and fringe benefits",
+      "fields": [
+        "employer1Name", "employer1Amount", "employer2Name", "employer2Amount",
+        "employer3Name", "employer3Amount", "employer4Name", "employer4Amount",
+        "salaryAndEmploymentPaymentsTotal",
+        "carAllowance", "perDiemPayments", "carBenefits", "otherFringeBenefits"
+      ],
+      "next": "other_income_and_deductions"
+    },
+    {
+      "id": "other_income_and_deductions",
+      "title": "Other income and deductions",
+      "fields": [
+        "reimbursedPensionFundPremiums", "otherIncomeDescription", "otherIncomeAmount",
+        "deductiblePensionFundPremiums", "additionalPrivatePensionFundPayments",
+        "carAllowanceDeduction", "travelAllowanceDeduction",
+        "taxBaseForIncomeTaxes", "taxesWithheldAtSource"
+      ],
+      "next": "savings_and_bank_accounts"
+    },
+    {
+      "id": "savings_and_bank_accounts",
+      "title": "Status/balance in savings and bank accounts",
+      "fields": [
+        "bankAccount1Name", "bankAccount1InterestIncome", "bankAccount1Status",
+        "bankAccount2Name", "bankAccount2InterestIncome", "bankAccount2Status",
+        "taxesWithheldOnInterestTotal", "interestIncomeTotal", "savingsStatusTotal"
+      ],
+      "next": "refund_and_contact"
+    },
+    {
+      "id": "refund_and_contact",
+      "title": "Refund bank account, contact, and foreign details",
+      "fields": [
+        "refundBankName", "refundBankBranchOrService", "refundBankAccountType", "refundBankAccountNumber",
+        "contactEmail", "foreignTaxIdNumber", "addressAbroad"
+      ],
+      "next": "signature"
+    },
+    {
+      "id": "signature",
+      "title": "Telephone and signature",
+      "fields": ["telephoneNumber", "signatureDate"]
+    }
+  ]
+}
