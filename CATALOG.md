@@ -34,9 +34,11 @@
 > Hebrew caption) were found and explicitly set aside as less canonical.
 > Extracted 34 AcroForm widgets with `pdfjs-dist` (7 non-data controls
 > excluded: two duplicate heading-label widgets whose own default value
-> equals their printed heading, two near-zero-area stray widgets with no
-> label of their own, and two footer widgets carrying the form's internal
-> reference code and page count); the two confirmed radio groups were
+> equals their printed heading, one near-zero-area stray widget with no
+> label of its own, two further stray unlabeled widgets overlapping other
+> content's label/box boundaries, and two footer widgets carrying the
+> form's internal reference code and page count); the two confirmed radio
+> groups were
 > merged into enum fields rather than split into independent unconstrained
 > booleans, yielding 23 fields. A specific font used for this PDF's
 > heading/note text was found to drop the letter "F" from certain rendered

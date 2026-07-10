@@ -367,7 +367,7 @@ The schema was also validated against the GovSchema v0.3 meta-schema with
 `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (both pass),
 and against
 `node tools/verify-sources.mjs registry/at/bmi/national-identity-card-application/1.0.0`
-(0 warnings, 3 URLs checked, 0 allowlisted).
+(0 warnings, 6 URLs checked, 0 allowlisted).
 
 ## Pre-PR re-verification
 
