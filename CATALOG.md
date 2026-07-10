@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**31 jurisdictions** | **326 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**31 jurisdictions** | **327 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2114, "GovSchema Standard Research"): Austria's
+> Taxes vertical opens**, via `at/bmf/employee-tax-assessment` v1.0.0 —
+> Bundesministerium für Finanzen (BMF) Form L 1, "Erklärung L1 zur
+> ArbeitnehmerInnenveranlagung 2025," the annual employee/pensioner income
+> tax assessment reconciling wage tax withheld during the year against final
+> liability. Austria (opened last cycle via GOV-2107, at 1 of 6 verticals)
+> was deepened per this registry's existing Iceland/Sweden sequencing
+> precedent (Taxes right after a jurisdiction opens). Screened Austria's
+> Kfz-Zulassung (vehicle registration) as the other strong candidate first
+> and found it an in-person, counter-driven process with no downloadable
+> specimen at `oesterreich.gv.at`, `bmimi.gv.at`, or any Land host — deferred,
+> not pursued. The L 1 form was reached via BMF's own "Formular öffnen"
+> download endpoint (`formulare.bmf.gv.at/service/formulare/inter-Steuern/pdfs/2025/L1.pdf?open=download`),
+> itself linked from oesterreich.gv.at's federal form-search index (form 47);
+> BMF's own ASP-based `service.bmf.gv.at` forms-search pages returned only a
+> generic navigation shell to a non-browser `curl` fetch and were not usable
+> as a source. Extracted 90 AcroForm widgets with `pdfjs-dist` (15 non-data
+> controls excluded: PDF-generator metadata, an FDF-send/import toolbar, a
+> repeated running tax-number display header, and a reset button); a
+> 3-option gender selector, a 6-option marital-status selector, a 2-option
+> sole-earner/single-parent-credit selector, and a visually-split 10-digit
+> partner social security number were each merged into one field rather than
+> modelled as independent unconstrained booleans/fields, yielding 66 fields.
+> A programmatic verbatim-quote cross-check against a fresh `pdfjs-dist` text
+> extraction caught 9 near-miss quotes carrying PDF line-wrap-hyphenation or
+> run-boundary spacing artifacts (the same category of issue this registry's
+> prior `at/gewerbebehoerde` cycle flagged) — each corrected by shortening
+> the quoted span or paraphrasing, never presented as a false verbatim quote.
+> See `registry/at/bmf/employee-tax-assessment/1.0.0/VERIFICATION.md` for
+> the full sourcing record, every disclosed scope decision (7 named
+> companion attachments not modelled as their own schemas; optional,
+> non-gated partner/residence-country/BIC fields whose source-stated
+> conditional rules this spec's Condition grammar cannot precisely encode),
+> and the mock conformance test run (0 errors across two scenarios covering
+> all 66 fields, plus 10 mutation/negative controls). This gives Austria
+> **2 of its 6 verticals** (Business Formation, Taxes); DMV was screened this
+> cycle and found weak (in-person/counter-driven, no form); Passport, Visa,
+> and National ID remain open, unscreened backlog candidates.
 
 > **Update (2026-07-10, GOV-2107, "GovSchema Standard Research"): Austria
 > opens as the registry's 31st jurisdiction**, via
@@ -4622,7 +4661,46 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (29/31 jurisdictions — 94%)
+### Taxes — Income Tax Return, Tax Filing (30/31 jurisdictions — 97%)
+
+**Austria's Taxes vertical opens** (`at/bmf/employee-tax-assessment`,
+GOV-2114) — Bundesministerium für Finanzen (BMF) Form L 1, "Erklärung L1 zur
+ArbeitnehmerInnenveranlagung 2025" ("Employee/pensioner tax assessment
+declaration"), the annual reconciliation of wage tax withheld during the
+year against final liability for employees and pensioners. Screened
+Austria's Kfz-Zulassung (vehicle registration) as the other strong DMV
+candidate first and found it an in-person, counter-driven process at a
+Zulassungsstelle with no downloadable specimen, so deepened Taxes instead —
+the same sequencing this registry already used for freshly-opened Iceland
+and Sweden. Sourced from BMF's own genuine fillable-AcroForm PDF for the
+2025 assessment year (reached via a "Formular öffnen" download endpoint,
+itself linked from oesterreich.gv.at's federal form-search index), not the
+ASP-based `service.bmf.gv.at` forms-search pages, which return only a
+generic navigation shell to a non-browser fetch. Extracted 90 AcroForm
+widgets with `pdfjs-dist` (15 non-data controls excluded; a 3-option gender
+selector, a 6-option marital-status selector, a 2-option sole-earner/
+single-parent-credit selector, and a visually-split 10-digit partner social
+security number were each merged into one field rather than split into
+independent unconstrained booleans/fields), modelling 66 fields covering
+personal/address/partner identity, employer count, sole-earner/single-
+parent/pensioner/multi-child tax credits, the commuter allowance/euro,
+work-related expense deductions (Werbungskosten), bank details, allowance
+notices, and companion-attachment tracking, plus one signature attestation
+document. A programmatic verbatim-quote cross-check against a fresh
+`pdfjs-dist` text extraction caught 9 near-miss quotes with PDF
+line-wrap-hyphenation or run-boundary spacing artifacts (the same category
+of issue flagged in the prior `at/gewerbebehoerde` cycle), each corrected
+by shortening the quoted span or paraphrasing rather than presenting an
+inexact reconstruction as verbatim. See the document's own VERIFICATION.md
+for the full sourcing record, every disclosed scope decision (companion
+attachments L 1ab/L 1d/L 1i/L 1k/L 1k-bF not modelled as their own schemas;
+optional, non-gated partner/residence-country/BIC fields whose conditional
+rules the source states in prose but this spec's Condition grammar cannot
+precisely encode), and the mock conformance test run (0 errors across two
+scenarios covering all 66 fields, plus 10 mutation/negative controls). This
+deepens Austria to **2 of its 6 verticals** (Business Formation, Taxes);
+DMV was screened this cycle and found weak (see above); Passport, Visa,
+and National ID remain open, unscreened backlog candidates.
 
 **Sweden's Taxes vertical opens** (`se/skatteverket/individual-income-tax-return`,
 GOV-2091) — Skatteverket Form SKV 2000, "Inkomstdeklaration 1" ("Income Tax
@@ -5425,7 +5503,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AT** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **AT** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -5857,7 +5935,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    `bmaw.gv.at`, timed out identically, confirming the earlier symptom was a
    narrow host-specific network gap rather than a country-wide block. See
    the Executive Summary update above and the document's own
-   VERIFICATION.md. **The Czech Republic's Visa gap has since closed too
+   VERIFICATION.md. **Austria's Taxes gap has since closed too (GOV-2114)**,
+   via `at/bmf/employee-tax-assessment` — BMF's Form L 1 employee/pensioner
+   tax assessment; that same cycle screened Austria's Kfz-Zulassung vehicle
+   registration and confirmed it an in-person, counter-driven process with
+   no downloadable form. Austria now stands at **2 of its 6 verticals**
+   (Business Formation, Taxes); Passport, DMV, Visa, and National ID remain
+   open, unscreened (DMV: screened and confirmed weak, see above) backlog
+   candidates. See the Executive Summary update above and the document's
+   own VERIFICATION.md. **The Czech Republic's Visa gap has since closed too
    (GOV-1819)**, via `cz/mzv/zadost-o-udeleni-dlouhodobeho-viza` — the
    Ministry of Foreign Affairs' national long-stay (category D) visa
    application, confirmed genuinely distinct from the EU-harmonized template
