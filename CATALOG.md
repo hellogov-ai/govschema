@@ -1,10 +1,61 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-09** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-10** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**28 jurisdictions** | **317 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**28 jurisdictions** | **318 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2049): Japan's Business Formation vertical is
+> deepened with a third stock-company-incorporation variant**, via
+> `jp/houmukyoku/stock-company-establishment-registration-application-board-of-directors`
+> v1.0.0 — the Legal Affairs Bureau's Stock Company Establishment Registration
+> Application (株式会社設立登記申請書), this time the "board of directors
+> installed, incorporation by promoters" (取締役会を設置する株式会社の発起
+>設立) variant, row 1-1 of the same `houmukyoku.moj.go.jp` index page the
+> already-published no-board sibling (row 1-3) is sourced from — one of the
+> three remaining sibling incorporation variants CATALOG.md's own Known Gaps
+> item 6 has flagged as Japan's sole open companion-schedule candidates since
+> GOV-2019. This recurring "GovSchema Standard Research" cycle first
+> re-checked the task brief's own named National ID candidates (DE Steuer-ID,
+> SG NRIC loss/damage/re-registration, NZ RealMe, "remaining voter
+> registration") against this catalog and confirmed all were already resolved
+> by prior cycles — the recurring generic brief was again treated as a prompt
+> to re-scan the catalog fresh, not a literal to-do list, per this registry's
+> established pattern. Of the three remaining sibling variants (board
+> installed + promoter subscription, board installed + public subscription,
+> no board + public subscription), this cycle picked the board-installed +
+> promoter-subscription variant as the strongest candidate: unlike the
+> public-subscription axis (which the application form itself does not
+> surface as any distinct field, only affecting the internal content of
+> already-out-of-scope supporting documents), installing a board of directors
+> changes two things the form itself genuinely surfaces — a board-elected,
+> rather than directly-designated, representative director, and a Companies
+> Act art. 327(2)-mandated auditor (`hasAuditor`/`auditorNames` are therefore
+> `required: true` on this document, versus optionally `requiredWhen`-gated on
+> the no-board sibling, a deliberate, disclosed departure reflecting the two
+> variants' genuinely different legal requirements) plus a new
+> `auditorScopeLimitedToAccounting` field with no counterpart on the sibling.
+> Sourced the blank template (`001249314.pdf`) and its companion worked
+> example (`001331097.pdf`) directly from row 1-1, extracted with the same
+> pdfjs-dist x/y-coordinate technique used throughout this registry's Japan
+> documents, and cross-checked line-by-line against the no-board sibling's own
+> re-fetched source PDFs to isolate every genuine difference between the two
+> variants. Reuses the no-board sibling's own ten `documents[]` attachment
+> `id`s rather than re-specifying them, per this registry's composability/
+> reuse convention, with two disclosed `required`/wording changes (the
+> representative-director-selection document becomes unconditionally required;
+> two attachment labels drop their parenthetical "if any" auditor phrasing).
+> See
+> `registry/jp/houmukyoku/stock-company-establishment-registration-application-board-of-directors/1.0.0/VERIFICATION.md`
+> for the full sourcing record, extraction diff, and every disclosed scope
+> decision, including the mock-data test run (two scenarios plus five negative
+> controls, all behaving as expected). This deepens rather than widens Japan's
+> Business Formation vertical coverage — Japan remains at **4 of its 6
+> verticals** (Visa, National ID, Business Formation, Taxes); the two
+> remaining sibling incorporation variants (board installed + public
+> subscription; no board + public subscription) remain this registry's open
+> Japan companion-schedule candidates.
 
 > **Update (2026-07-09, GOV-2042): Japan's Taxes vertical is now published**,
 > with `jp/nta/individual-income-tax-final-return` v1.0.0 — the National Tax
@@ -3871,6 +3922,18 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (26/28 jurisdictions — 93%)
 
+**Japan's Business Formation vertical is deepened with a third
+stock-company-incorporation variant (GOV-2049)**, via
+`jp/houmukyoku/stock-company-establishment-registration-application-board-of-directors`
+— the "board of directors installed, incorporation by promoters" variant,
+alongside the existing no-board-of-directors Kabushiki Kaisha schema and the
+Godo Kaisha (LLC) schema. See the Executive Summary update above and the
+document's own VERIFICATION.md for the full sourcing story, including the
+line-by-line diff against the no-board sibling that grounds this variant's
+mandatory (rather than optional) auditor. Japan's vertical count remains 4 of
+6 (Visa, National ID, Business Formation, Taxes) — this deepens rather than
+widens coverage.
+
 **Japan's Seal Registration Notification companion filing is now published
 (GOV-2035)**, via `jp/houmukyoku/seal-registration-notification` — the Legal
 Affairs Bureau's generic seal-registration/seal-change notification (印鑑届書),
@@ -4893,7 +4956,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **JP** | 3 | ✗ | ✗ | ✓ | ✗ | ✓ | ✓ |
+| **JP** | 7 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -5496,7 +5559,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Registration Notification's corporate-representative-member scenario,
     and this new document's own excluded income types/tax-computation
     chain/第二表 per-dependent itemization remain this registry's open
-    Japan companion-schedule candidates for a future cycle.
+    Japan companion-schedule candidates for a future cycle. **Update
+    (2026-07-10, GOV-2049): one of the three sibling Kabushiki Kaisha
+    incorporation variants is now published**, via
+    `jp/houmukyoku/stock-company-establishment-registration-application-board-of-directors`
+    — the board-installed, incorporation-by-promoters variant, picked over
+    the other two (board installed + public subscription; no board + public
+    subscription) because the board-of-directors axis genuinely changes
+    fields the application form itself surfaces (a board-elected
+    representative director; a Companies Act art. 327(2)-mandated auditor),
+    unlike the public-subscription axis, which does not; see the Executive
+    Summary update above and the document's own VERIFICATION.md for the full
+    sourcing record and line-by-line diff against the already-published
+    no-board sibling. Japan's vertical count remains 4 of 6 (Visa, National
+    ID, Business Formation, Taxes) — this deepens rather than widens
+    coverage. The two remaining sibling incorporation variants (board
+    installed + public subscription; no board + public subscription), the
+    Seal Registration Notification's corporate-representative-member
+    scenario, and the Taxes document's own excluded income types/
+    tax-computation chain/第二表 per-dependent itemization remain this
+    registry's open Japan companion-schedule candidates for a future cycle.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
