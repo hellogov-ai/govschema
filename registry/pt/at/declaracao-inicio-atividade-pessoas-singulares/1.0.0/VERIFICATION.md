@@ -147,9 +147,8 @@ The leaflet's own "DECLARAÇÕES DE ATIVIDADE" section states verbatim, under
 até ao final do ano... 3. IBAN e BIC/SWIFT de uma conta bancária em seu
 nome..."* — this schema models exactly those three enumerated items, plus
 two supporting facts the same section explicitly ties to item 2's own
-computation, and the anticipated start date the surrounding prose and the
-leaflet's own FAQ (§13.1) both confirm is a distinct, correctable declared
-value:
+computation, and the anticipated start date the surrounding prose ties to
+the declaration's own filing deadline:
 
 - **Item 1 ("Código(s) de atividade")** → `primaryActivityCode` (required)
   and `secondaryActivityCodes` (optional, comma-separated — GovSchema v0.3
@@ -181,10 +180,7 @@ value:
   account.
 - **The declaration's own filing deadline framing** ("deve apresentar a
   declaração de início de atividade, antes de começar a trabalhar por conta
-  própria") plus the leaflet's own FAQ 13.1 ("Indiquei uma data errada na
-  declaração de início de atividade. Como posso corrigir?", confirming this
-  is a distinct, correctable declared value, not merely the filing date
-  itself) → `anticipatedActivityStartDate` (required, `date`).
+  própria") → `anticipatedActivityStartDate` (required, `date`).
 - **The authentication channel** ("após autenticação com o número de
   identificação fiscal e senha de acesso, ou Cartão do Cidadão ou Chave
   Móvel Digital") → `taxpayerNIF` (required, `classification:
