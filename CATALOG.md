@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **334 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **335 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-10, GOV-2169, "GovSchema Standard Research"): Argentina
 > opens as the registry's 32nd jurisdiction**, via
@@ -42,6 +42,47 @@
 > (individual/persona física registration, ~148 widgets) and Cancillería's
 > Formulario de Solicitud de Visado (FSV, ~50 widgets, a Visa candidate)
 > were both identified but deliberately left unfetched this cycle — see
+> "Known Gaps" below.
+
+> **Update (2026-07-10, GOV-2179, "GovSchema Standard Research"): Argentina's
+> Visa vertical opens (2/6)**, via `ar/cancilleria/formulario-solicitud-visado`
+> — the Cancillería's (Ministerio de Relaciones Exteriores, Comercio
+> Internacional y Culto) Formulario de Solicitud de Visado (FSV), the
+> standard cover application used at Argentine consulates worldwide for
+> most visa categories. This picks up the exact FSV lead GOV-2169 had
+> identified but left unfetched. Two independent specimens were fetched
+> fresh this cycle (the Cancillería's own 2024 edition and a 2026
+> consulate-mirrored edition from `cmila.cancilleria.gob.ar`) with no
+> login/CAPTCHA/WAF gate on either — both genuine `%PDF-1.6`, both
+> resolving via `pdfjs-dist`'s `getFieldObjects()` to exactly **50 distinct
+> field names** (`Texto1`-`Texto50`) across 50 widgets total (29 on page 1,
+> 21 on page 2, 0 on page 3), a clean 1:1 widget:field ratio with no
+> split-box or mirrored-copy structure — the simplest reconciliation of any
+> Argentina schema in this registry to date. The two specimens were
+> diffed field-by-field and found structurally identical (same field
+> names, same widget geometry, same printed labels); the only textual
+> difference anywhere in either PDF is the page-margin form-code/edition
+> stamp, confirming the form is stable rather than stale. The raw AcroForm
+> field names carry no tooltip text, so every field's label was recovered
+> via `pdfjs-dist` `getTextContent()` x/y-position correlation against the
+> form's own printed numbered "campo" structure (1-50, with campo 51 — the
+> wet-ink signature line — carrying no widget, consistent with the form's
+> own instruction "Firmar y aclarar en campo 51"); the field-name numeric
+> suffix was independently confirmed to match the printed campo numbering
+> exactly for all 50 fields. Campos 32-38 (prior-Argentine-visa history)
+> are modelled as a cascading `requiredWhen` chain — campo 32 gates 33/34/35,
+> and campo 35 in turn gates 36/37/38 — mirroring the same
+> `requiredWhen` convention `at/bmeia/schengen-visa-application` already
+> established in this registry. See the document's own VERIFICATION.md
+> for the full sourcing record, every judgment call (no `/Ff` Required bit
+> or asterisk convention on either specimen — `required` values are
+> structurally inferred except campo 11, which carries its own explicit
+> printed conditional-applicability note), and the two-valid-mock/
+> three-negative-control conformance test run. Argentina now stands at
+> 2 of its 6 verticals (Business Formation, Visa); AFIP's Formulario 460/F
+> (individual/persona física CUIT registration, confirmed this cycle to be
+> a flat/printed form with 0 AcroForm widgets, like its already-modelled
+> 460/J sibling) remains the sole named Argentina follow-on candidate — see
 > "Known Gaps" below.
 
 > **Update (2026-07-10, "GovSchema Standard Research"): Japan's Legal Affairs
@@ -5521,7 +5562,26 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (23/32 jurisdictions — 72%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (24/32 jurisdictions — 75%)
+
+**Argentina's Visa vertical is now open** (`ar/cancilleria/formulario-solicitud-visado`,
+GOV-2179), via the Cancillería's (Ministerio de Relaciones Exteriores,
+Comercio Internacional y Culto) Formulario de Solicitud de Visado (FSV) —
+the standard cover application used at Argentine consulates worldwide for
+most visa categories, with the specific category and its supporting-
+documentation checklist determined by the consular officer from the
+applicant's stated purpose of travel. Sourced from two independently
+fetched specimens (the Cancillería's own 2024 edition and a 2026
+consulate-mirrored edition), diffed field-by-field and found
+structurally identical — only the page-margin form-code/edition stamp
+differs, confirming stability. A genuine 50-widget/50-field AcroForm PDF
+with a clean 1:1 widget:field ratio (no split-box or mirrored-copy
+structure, unlike this registry's other Argentina schema); campos 32-38
+(prior-Argentine-visa history) model a cascading `requiredWhen` chain, the
+same convention `at/bmeia/schengen-visa-application` established. This
+brings Argentina to 2 of its 6 verticals (Business Formation, Visa). See
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full sourcing record and every judgment call.
 
 **Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
 Japan as the registry's 28th jurisdiction, via the Immigration Services
@@ -6482,6 +6542,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Solicitud de Visado (FSV, ~50 widgets, not yet fetched or verified) for
    Argentina's Visa vertical. Argentina's remaining verticals (Passport,
    DMV, Taxes, Visa, National ID) are open, unscreened backlog candidates.
+   **Update (2026-07-10, GOV-2179): the FSV candidate named above is now
+   resolved** — published as `ar/cancilleria/formulario-solicitud-visado`,
+   opening Argentina's Visa vertical (2/6). Two independent specimens
+   (2024 edition and a 2026 consulate mirror) were fetched fresh and diffed
+   field-by-field, confirming the form is stable; `pdfjs-dist` resolved
+   exactly 50 distinct fields from 50 widgets, a clean 1:1 ratio requiring
+   no split-box or duplicate-copy reconciliation. See the Executive Summary
+   update above and the Visa vertical section below for the full record.
+   AFIP's Formulario 460/F remains the sole open Argentina follow-on
+   candidate (re-confirmed this cycle to be a flat/printed 0-widget form,
+   like its 460/J sibling, requiring box-by-box visual extraction);
+   Argentina's remaining verticals (Passport, DMV, Taxes, National ID)
+   are still open, unscreened backlog candidates.
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
