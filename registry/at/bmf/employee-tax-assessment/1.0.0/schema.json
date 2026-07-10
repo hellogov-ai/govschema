@@ -1,0 +1,766 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "at/bmf/employee-tax-assessment",
+  "version": "1.0.0",
+  "title": "Austria Employee Tax Assessment (Arbeitnehmerveranlagung), Form L 1 — 2025",
+  "description": "Austria's annual employee/pensioner income tax assessment (Arbeitnehmerinnenveranlagung beziehungsweise Arbeitnehmerveranlagung), filed with the Bundesministerium für Finanzen (BMF) via Finanzamt Österreich on form L 1, 'Erklärung L1 zur ArbeitnehmerInnenveranlagung 2025' (Version vom 09.10.2025), by an employee or pensioner reconciling wage-tax withheld during the year against final tax liability, claiming personal tax credits (sole-earner/single-parent, increased pensioner, multi-child supplement), commuter allowances, and work-related expense deductions (Werbungskosten). This document is modelled from BMF's own current fillable-AcroForm PDF edition of the L 1 for the 2025 assessment year (obtained via the barrier-free-form 'öffnen' download endpoint on formulare.bmf.gv.at, the same PDF oesterreich.gv.at's own official form-search index links to for this process). Deliberately excludes: the seven companion attachments the form itself names (L 1ab extraordinary burdens, L 1k per-child credits, L 1k-bF Familienbonus Plus special cases, L 1d special expenses, L 1i foreign/non-payroll income, L 16 wage slip, L 17/E 1/E 7 loss carryforward) — each a real, open companion-schedule candidate for a future cycle, mirroring this registry's existing CZ příloha pattern; the fully electronic FinanzOnline e-filing channel; and the annual paper-order channel for a blank physical copy. A new assessment year's edition of this same form (e.g. for 2026) would be authored as a separate schema version, per this registry's established practice for annual tax-return forms (see VERIFICATION.md). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Austria, the Bundesministerium für Finanzen, or Finanzamt Österreich.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bundesministerium für Finanzen (BMF), administered by Finanzamt Österreich",
+    "abbreviation": "BMF",
+    "url": "https://www.oesterreich.gv.at/de/formsearch/form/47"
+  },
+  "process": {
+    "type": "filing",
+    "language": "de-AT"
+  },
+  "source": {
+    "url": "https://formulare.bmf.gv.at/service/formulare/inter-Steuern/pdfs/2025/L1.pdf?open=download",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "L 1 — 'Erklärung L1 zur ArbeitnehmerInnenveranlagung 2025' (Version vom 09.10.2025), BMF's current fillable-AcroForm edition for the 2025 assessment year, linked from oesterreich.gv.at's own official form-search index (form 47, 'Arbeitnehmerveranlagung - Antrag - L1')"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "Authored from a fresh curl fetch of the genuine fillable-AcroForm PDF (HTTP 200, application/pdf, 380,990 bytes), reached via BMF's own 'Öffnen des Formulars L1 2025 (ohne Formularimport)' download endpoint, itself linked from oesterreich.gv.at's official form-search index for 'Arbeitnehmerveranlagung - Antrag - L1' (form id 47). All 90 AcroForm widgets across the PDF's 4 pages were extracted and enumerated with pdfjs-dist's getAnnotations()/getTextContent(); 15 are non-data controls (PDF-generator metadata fields, an FDF-send/PDF-import toolbar, a repeated running tax-number display header on pages 2-4, and a 'reset form' button) excluded from the field model. The remaining 75 data widgets map onto this document's 66 fields: three multi-widget checkbox groups (a 3-option gender selector, a 6-option marital-status selector, and a 2-option sole-earner-credit/single-parent-credit selector) were each merged into a single enum field rather than modelled as independent unconstrained booleans, and one 10-digit number visually split across two adjacent text widgets (the partner's social security number) was merged into one logical field, for a total of 9 widgets folded into fewer fields (75 - 9 = 66). Cross-checked against oesterreich.gv.at's own form-search listing confirming this is the current 2025-assessment-year edition, still the one linked from the federal government's own official forms index at the time of this session's retrieval."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "naturalPersonLastName",
+      "label": "Family name / surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "1.1 'FAMILIEN- ODER NACHNAME'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "naturalPersonFirstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "1.2 'VORNAME'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "naturalPersonTitle",
+      "label": "Academic/professional title",
+      "type": "string",
+      "required": false,
+      "sourceRef": "1.3 'TITEL'",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "socialSecurityNumber",
+      "label": "10-digit social security number (per e-card)",
+      "type": "string",
+      "required": false,
+      "description": "The filer's 10-digit Austrian Sozialversicherungsnummer as printed on the e-card. Required whenever the filer has one; if not, 'birthDate' must be filled in instead (see 1.6).",
+      "sourceRef": "1.4 '10-stellige Sozialversicherungsnummer laut e-card'",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "description": "Merges three mutually exclusive checkbox widgets sharing PDF field name 'Checkboy_1_1' into one enum (never modelled as independent unconstrained booleans — see VERIFICATION.md).",
+      "sourceRef": "1.5 'Geschlecht': 'weiblich' (export value 1) / 'männlich' (export value 2) / third option, printed as a two-line label 'inter/divers/' + 'offen' (export value 3)",
+      "validation": {
+        "enum": [
+          "female",
+          "male",
+          "unspecified"
+        ]
+      }
+    },
+    {
+      "name": "birthDate",
+      "label": "Date of birth",
+      "type": "date",
+      "required": false,
+      "description": "Only required to be filled in when the filer has no social security number (see 'socialSecurityNumber').",
+      "sourceRef": "1.6 Geburtsdatum, labelled (paraphrased: only required to fill in when no social security number is available) — see VERIFICATION.md for the extraction-order caveat on this label"
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status on 31 December 2025",
+      "type": "enum",
+      "required": true,
+      "description": "Merges six mutually exclusive checkbox widgets sharing PDF field name 'Checkbox508' into one enum (never modelled as independent unconstrained booleans — see VERIFICATION.md). Only one box may be ticked, per the form's own instruction (see sourceRef).",
+      "sourceRef": "1.7 'Personenstand am 31.12.2025 (nur ein Kästchen ankreuzen)': 'verheiratet/in eingetragener Partnerschaft' (export value 4) / 'in Lebensgemeinschaft' (export value 3) / 'ledig' (export value 5) / 'dauernd getrennt' (export value 8) / 'geschieden' (export value 7) / 'verwitwet' (export value 6)",
+      "validation": {
+        "enum": [
+          "married_or_registered_partnership",
+          "cohabiting",
+          "single",
+          "permanently_separated",
+          "divorced",
+          "widowed"
+        ]
+      }
+    },
+    {
+      "name": "maritalStatusSinceDate",
+      "label": "Marital status in effect since (not required if single)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "1.7 'seit (Datum bei ledig nicht erforderlich)'",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "in": [
+          "married_or_registered_partnership",
+          "cohabiting",
+          "permanently_separated",
+          "divorced",
+          "widowed"
+        ]
+      }
+    },
+    {
+      "name": "addressStreet",
+      "label": "Street",
+      "type": "string",
+      "required": true,
+      "sourceRef": "2.1 'STRASSE'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressHouseNumber",
+      "label": "House number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "2.2 'Hausnummer'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressStaircase",
+      "label": "Staircase (Stiege)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "2.3 'Stiege'",
+      "validation": {
+        "maxLength": 50
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressDoorNumber",
+      "label": "Door/unit number (Türnummer)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "2.4 'Türnummer'",
+      "validation": {
+        "maxLength": 50
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressResidenceCountryCode",
+      "label": "Residence country's vehicle nationality code (if not resident in Austria)",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when the filer's current residence is outside Austria: the residence country's Kfz-Nationalitätszeichen (car nationality code, e.g. D for Germany, H for Hungary, SK for Slovakia, SLO for Slovenia), per the form's own footnote 2.",
+      "sourceRef": "2.5 'WOHNSITZSTAAT'; footnote 2) 'Nur wenn der derzeitige Wohnsitz nicht in Österreich liegt, geben Sie das Kfz-Nationalitätszeichen des Wohnsitzstaates an (z.B. D für Deutschland, H für Ungarn, SK für Slowakei, SLO für Slowenien)'",
+      "validation": {
+        "maxLength": 10
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressCity",
+      "label": "City/town (Ort)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "2.6 'ORT'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Postal code (Postleitzahl)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "2.7 'Postleitzahl'",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "addressPhone",
+      "label": "Telephone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "2.8 'Telefonnummer'",
+      "validation": {
+        "maxLength": 50
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "partnerLastName",
+      "label": "Partner — family name / surname",
+      "type": "string",
+      "required": false,
+      "description": "See 'Partner*in' definition. A 'Partner*in' is defined by the form as a spouse, a registered partner, or (for at least one child for whom family allowance was received for at least seven months) a cohabiting partner. The source form does not gate this block behind an explicit required-if rule tied to a specific credit claim; it is left optional here and its completion is recommended whenever the filer claims the sole-earner tax credit (5.1.1), which itself asks the filer to declare that the partner does not also claim it (see VERIFICATION.md).",
+      "sourceRef": "3.1 'FAMILIEN- ODER NACHNAME'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "partnerFirstName",
+      "label": "Partner — first name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "3.2 'VORNAME'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "partnerTitle",
+      "label": "Partner — academic/professional title",
+      "type": "string",
+      "required": false,
+      "sourceRef": "3.3 'TITEL'",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "partnerSocialSecurityNumber",
+      "label": "Partner — 10-digit social security number (per e-card)",
+      "type": "string",
+      "required": false,
+      "description": "Merges two adjacent PDF text widgets ('Zahl_3_4_01' + 'Zahl_3_4_01_02') that together form one visually split 10-digit number box (unlike the filer's own single-box equivalent in 1.4) into one logical field — see VERIFICATION.md.",
+      "sourceRef": "3.4 '10-stellige Sozialversicherungsnummer laut e-card'",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "partnerBirthDate",
+      "label": "Partner — date of birth",
+      "type": "date",
+      "required": false,
+      "sourceRef": "3.5 Geburtsdatum, labelled (paraphrased: only required to fill in when no social security number is available)"
+    },
+    {
+      "name": "numberOfPayers",
+      "label": "Number of (domestic) employers/pension-paying offices in 2025",
+      "type": "integer",
+      "required": true,
+      "description": "If none, enter 0. No Lohnzettel (wage slip) attachment is required — it is transmitted electronically by the payer.",
+      "sourceRef": "4.1 'Anzahl der (inländischen) gehalts- oder pensionsauszahlenden Stellen im Jahr 2025'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "internationalOrgIncomeExempt",
+      "label": "Tax-exempt income under international agreements (e.g. UNO, UNIDO) — KZ 725",
+      "type": "number",
+      "required": false,
+      "sourceRef": "4.2 'Steuerfreie Einkünfte auf Grund völkerrechtlicher Vereinbarungen (z.B. UNO, UNIDO)', Kennzahl 725",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "soleEarnerOrSingleParentCreditClaim",
+      "label": "Sole-earner credit / single-parent credit claimed",
+      "type": "enum",
+      "required": false,
+      "description": "Merges two mutually exclusive checkbox widgets ('Checkbox_5_1' sole-earner, 'Checkbox_5_2' single-parent) into one enum, since the source's own hint text at 6.1/6.2 treats them as alternatives ('the sole-earner credit (5.1.1) or the single-parent credit (5.1.2)'). Requires at least one qualifying child (5.1.3).",
+      "sourceRef": "5.1.1 'Alleinverdienerabsetzbetrag ... wird beantragt und ich erkläre, dass mein*e Partner*in diesen nicht in Anspruch nimmt' / 5.1.2 'Alleinerzieherabsetzbetrag ... wird beantragt'",
+      "validation": {
+        "enum": [
+          "sole_earner_credit",
+          "single_parent_credit",
+          "none"
+        ]
+      }
+    },
+    {
+      "name": "numberOfChildrenForFamilyAllowance",
+      "label": "Number of children for whom family allowance was received for at least seven months",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "soleEarnerOrSingleParentCreditClaim",
+        "in": [
+          "sole_earner_credit",
+          "single_parent_credit"
+        ]
+      },
+      "sourceRef": "5.1.3, labelled (paraphrased due to a PDF text-extraction line-wrap spacing artifact around the comma and word break): the number of children for whom the filer or partner received family allowance for at least seven months",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "childBonusDeclarationSoleEarnerOrSingleParent",
+      "label": "Child-bonus declaration — sole-earner/single-parent credit already claimed at 5.1.1/5.1.2",
+      "type": "boolean",
+      "required": false,
+      "description": "Declares that in 2025 the filer had at least 30 days of business/employment income, or received only childcare-allowance/maternity/care-leave benefits for the whole year, for a possible Kindermehrbetrag (child bonus).",
+      "sourceRef": "6.1 'Ich habe den Alleinverdienerabsetzbetrag (Punkt 5.1.1) oder den Alleinerzieherabsetzbetrag (Punkt 5.1.2) beantragt' (paraphrased from here on due to PDF text-extraction spacing/hyphenation artifacts before the colon and in 'Pflegekarenzgeld'): Ich erkläre für einen allfälligen Kindermehrbetrag, dass ich 2025 an zumindest 30 Tagen betriebliche oder nichtselbständige Einkünfte oder im gesamten Kalenderjahr nur Leistungen nach dem Kinderbetreuungsgeldgesetz, Wochengeld oder Pflegekarenzgeld bezogen habe."
+    },
+    {
+      "name": "childBonusDeclarationFamilyAllowanceRecipient",
+      "label": "Child-bonus declaration — no sole-earner/single-parent credit, family allowance recipient",
+      "type": "boolean",
+      "required": false,
+      "description": "Alternative declaration for the child bonus when the sole-earner/single-parent credit was not claimed: the filer receives family allowance and had qualifying income/benefits, and the partner's own income tax before credits is below 700 EUR (plus 700 EUR per additional child).",
+      "sourceRef": "6.2 'Ich habe den Alleinverdienerabsetzbetrag (Punkt 5.1.1.) oder den Alleinerzieherabsetzbetrag (Punkt 5.1.2) nicht beantragt und beziehe die Familienbeihilfe' (paraphrased from here on due to a PDF text-extraction spacing artifact before the following colon): Ich erkläre für einen allfälligen Kindermehrbetrag, dass ich 2025 an zumindest 30 Tagen betriebliche oder nichtselbständige Einkünfte oder im gesamten Kalenderjahr nur Leistungen nach dem Kinderbetreuungsgeldgesetz, Wochengeld oder Pflegekarenzgeld bezogen habe und mein*e (Ehe-)Partner*in 2025 aus betrieblichen und/oder nichtselbständigen Einkünften ein Einkommen erzielt hat, aus dem sich eine Einkommensteuer vor Abzug der Absetzbeträge von weniger als 700 Euro ergibt. Dieser Betrag erhöht sich für jedes weitere Kind um 700 Euro."
+    },
+    {
+      "name": "increasedPensionerCreditClaimed",
+      "label": "Increased pensioner tax credit (erhöhter Pensionistenabsetzbetrag) claimed",
+      "type": "boolean",
+      "required": false,
+      "description": "Requires: own pension income of no more than 30,957 EUR, no entitlement to the sole-earner credit, and (if married/in a registered partnership) the (registered) partner's own income of no more than 2,673 EUR per year.",
+      "sourceRef": "7. 'Ich beantrage den erhöhten Pensionistenabsetzbetrag.' Voraussetzungen (paraphrased due to a PDF text-extraction line-wrap hyphenation artifact in 'Alleinverdienerabsetzbetrag'): own pension income of no more than 30,957 EUR, no entitlement to the sole-earner credit, and if married/in a registered partnership, the partner's own income of no more than 2,673 EUR yearly."
+    },
+    {
+      "name": "multiChildSupplementClaimed",
+      "label": "Multi-child supplement (Mehrkindzuschlag) for 2026 claimed",
+      "type": "boolean",
+      "required": false,
+      "description": "Requires family allowance for at least 3 children received at least intermittently during 2025, and household income not exceeding 55,000 EUR (partner's income counted toward this threshold when living together more than 6 months of the year).",
+      "sourceRef": "8., labelled (paraphrased due to a PDF text-extraction spacing artifact before the comma after '2026'): the Mehrkindzuschlag is requested for 2026 because family allowance was received at least intermittently in 2025 for at least 3 children and household income did not exceed 55,000 EUR"
+    },
+    {
+      "name": "commuterAllowanceAmount",
+      "label": "Commuter allowance (Pendlerpauschale) — actual annual entitlement, net of public-transport-ticket reimbursement — KZ 718",
+      "type": "number",
+      "required": false,
+      "description": "Only completed when not already correctly accounted for by the employer; calculated via the official Pendlerrechner (bmf.gv.at/pendlerrechner).",
+      "sourceRef": "9.1 'Pendlerpauschale - tatsächlich zustehender Gesamtjahresbetrag abzüglich eines Kostenersatzes für ein Öffi-Ticket', Kennzahl 718",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "commuterEuroAmount",
+      "label": "Commuter euro (Pendlereuro) — actual annual entitlement — KZ 916",
+      "type": "number",
+      "required": false,
+      "sourceRef": "9.2 'Pendlereuro (Absetzbetrag) - tatsächlich zustehender' Gesamtjahresbetrag (this last word is hyphenated across a line wrap in the source, so left outside the quoted span), Kennzahl 916",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "professionalAssociationDuesAmount",
+      "label": "Dues to professional associations and interest groups (excl. works-council levy) — KZ 717",
+      "type": "number",
+      "required": false,
+      "description": "Only completed when not already correctly accounted for by the employer.",
+      "sourceRef": "10.1, labelled (paraphrased due to a PDF text-extraction line-wrap hyphenation artifact splitting 'ausgenommen'): dues to professional associations and interest groups, actual annual total, excluding the works-council levy, Kennzahl 717",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "homeOfficeErgonomicFurnitureAmount",
+      "label": "Ergonomic teleworking furniture expenses for the assessment year (min. 26 telework days) — KZ 158",
+      "type": "number",
+      "required": false,
+      "description": "Only current-year expenses in full; prior-year expenses over the 300 EUR cap that carry forward are applied automatically and must not be re-entered here. Must not also be claimed at Kennzahl 159 and/or 9275 (form E 1a/E 1a-K).",
+      "sourceRef": "10.1.2 'Gesamte Ausgaben im Veranlagungsjahr für ergonomisch geeignetes Mobiliar für Telearbeit (z.B. Schreibtisch, Drehstuhl, Schreibtischlampe) bei zumindest 26 Telearbeitstagen', Kennzahl 158",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "marginalEmploymentAndVoluntaryInsuranceContributionsAmount",
+      "label": "Mandatory contributions from marginal employment, and voluntary social-insurance contributions for co-insured dependants — KZ 274",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.1.3, labelled (paraphrased due to a PDF text-extraction line-wrap hyphenation artifact splitting 'Sozialversicherungsbeiträge'): mandatory contributions from marginal employment and mandatory contributions for co-insured dependants, plus self-paid social-insurance contributions, Kennzahl 274",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "occupationDescription",
+      "label": "Exact description of your occupation",
+      "type": "string",
+      "required": false,
+      "description": "e.g. COOK, SALESPERSON; a generic label like 'EMPLOYEE' is explicitly stated as not sufficient.",
+      "sourceRef": "10.2.1 'Genaue Bezeichnung Ihrer beruflichen Tätigkeit (z.B. KOCH, VERKÄUFERIN; nicht ausreichend ist ANGESTELLTE, ARBEITER)'",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "digitalWorkEquipmentAmount",
+      "label": "Digital work equipment (e.g. computer, internet), net of any telework flat rate — KZ 169",
+      "type": "number",
+      "required": false,
+      "description": "For acquisitions over 1,000 EUR incl. VAT, enter only the annual depreciation.",
+      "sourceRef": "10.2.2, labelled (paraphrased due to a PDF text-extraction line-wrap hyphenation artifact splitting 'Umsatzsteuer'): digital work equipment (e.g. computer, internet) without deduction for any telework flat rate; for acquisitions over 1,000 EUR incl. VAT enter only the annual depreciation, Kennzahl 169",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "otherWorkEquipmentAmount",
+      "label": "Other work equipment not covered by Kennzahl 169 — KZ 719",
+      "type": "number",
+      "required": false,
+      "description": "For acquisitions over 1,000 EUR incl. VAT, enter only the annual depreciation.",
+      "sourceRef": "10.2.3 'Andere Arbeitsmittel, die nicht in Kennzahl 169 zu erfassen sind (bei Anschaffungen über 1.000 Euro inkl. Umsatzsteuer tragen Sie hier nur die jährliche Abschreibung ein)', Kennzahl 719",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "professionalLiteratureAmount",
+      "label": "Professional literature (excl. general-interest works) — KZ 720",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.2.4 'Fachliteratur (keine allgemein bildenden Werke wie Lexika, Nachschlagewerke, Zeitungen etc.)', Kennzahl 720",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "businessTravelExpensesAmount",
+      "label": "Work-related travel expenses (excl. home/workplace commute and family-home trips) — KZ 721",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.2.5 'Beruflich veranlasste Reisekosten' (paraphrased due to a PDF text-extraction spacing artifact after the following opening parenthesis): work-related travel costs excluding home/workplace commute and family-home trips, Kennzahl 721",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "trainingEducationRetrainingAmount",
+      "label": "Further-training, education, and retraining costs — KZ 722",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.2.6 'Fortbildungs-, Ausbildungs- und Umschulungskosten', Kennzahl 722",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "familyHomeTripsAmount",
+      "label": "Costs of family-home trips — KZ 300",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.2.7 'Kosten für Familienheimfahrten', Kennzahl 300",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "doubleHouseholdCostsAmount",
+      "label": "Costs of maintaining two households — KZ 723",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.2.8 'Kosten für doppelte Haushaltsführung', Kennzahl 723",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "homeOfficeStudyRoomAmount",
+      "label": "Home office/study room (Arbeitszimmer) — KZ 159",
+      "type": "number",
+      "required": false,
+      "description": "Only deductible when the study room is the centre of the filer's entire occupational activity. Must not also be claimed at Kennzahl 158.",
+      "sourceRef": "10.2.9 'Arbeitszimmer ... Nur abzugsfähig, wenn das Arbeitszimmer Mittelpunkt der gesamten beruflichen Tätigkeit ist.', Kennzahl 159",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "otherWorkRelatedExpensesAmount",
+      "label": "Other work-related expenses not covered by 10.2.2-10.2.9 (e.g. works-council levy) — KZ 724",
+      "type": "number",
+      "required": false,
+      "description": "A telework flat rate creditable as a work-related expense is applied automatically from the wage slip(s) and must not be re-entered here.",
+      "sourceRef": "10.2.10 'Sonstige Werbungskosten, die nicht unter 10.2.2 bis 10.2.9 fallen (z.B. Betriebsratsumlage)', Kennzahl 724",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "occupationalFlatRateCode1",
+      "label": "Occupational flat-rate code — row 1",
+      "type": "string",
+      "required": false,
+      "description": "Single-letter/code identifying the occupational group flat rate claimed (e.g. A=Artist, B=Stage/film performer, F=Broadcast professional, J=Journalist, M=Musician, HE=Home worker, FM/FO=Forestry worker, HA=Caretaker, V=Sales representative, P=Municipal/local-council member, E=Expatriate).",
+      "sourceRef": "10.2.11 'Zur Geltendmachung eines Berufsgruppenpauschales tragen Sie ein' (first of two repeatable rows)",
+      "validation": {
+        "maxLength": 5
+      }
+    },
+    {
+      "name": "occupationalFlatRatePeriodStart1",
+      "label": "Occupational flat-rate period start (TTMM) — row 1",
+      "type": "string",
+      "required": false,
+      "sourceRef": "10.2.11 'Zeiträume der Tätigkeiten: Beginn (TTMM)' (row 1)",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "occupationalFlatRatePeriodEnd1",
+      "label": "Occupational flat-rate period end (TTMM) — row 1",
+      "type": "string",
+      "required": false,
+      "sourceRef": "10.2.11 'Zeiträume der Tätigkeiten ... Ende (TTMM)' (row 1)",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "occupationalFlatRateReimbursementsAmount1",
+      "label": "Cost reimbursements received, excluding expatriate travel costs — row 1",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.2.11 'Erhaltene Kostenersätze ausgenommen [Reisekosten iSd § 26 Z 4 EStG 1988 für Expatriates]' (row 1)",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "occupationalFlatRateCode2",
+      "label": "Occupational flat-rate code — row 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "10.2.11 'Zur Geltendmachung eines Berufsgruppenpauschales tragen Sie ein' (second of two repeatable rows)",
+      "validation": {
+        "maxLength": 5
+      }
+    },
+    {
+      "name": "occupationalFlatRatePeriodStart2",
+      "label": "Occupational flat-rate period start (TTMM) — row 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "10.2.11 'Zeiträume der Tätigkeiten: Beginn (TTMM)' (row 2)",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "occupationalFlatRatePeriodEnd2",
+      "label": "Occupational flat-rate period end (TTMM) — row 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "10.2.11 'Zeiträume der Tätigkeiten ... Ende (TTMM)' (row 2)",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "occupationalFlatRateReimbursementsAmount2",
+      "label": "Cost reimbursements received, excluding expatriate travel costs — row 2",
+      "type": "number",
+      "required": false,
+      "sourceRef": "10.2.11 'Erhaltene Kostenersätze ausgenommen [Reisekosten iSd § 26 Z 4 EStG 1988 für Expatriates]' (row 2)",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "victimCertificateHolder",
+      "label": "Holder of a certificate of political persecution (1938-1945)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "13. 'Ich besitze auf Grund meiner politischen Verfolgung in der Zeit von 1938 bis 1945 einen Opferausweis und/oder eine Amtsbescheinigung.'"
+    },
+    {
+      "name": "bankIban",
+      "label": "IBAN",
+      "type": "string",
+      "required": false,
+      "description": "Only needed if the tax office does not already hold the filer's bank details, or these have changed. If provided and refund conditions are met, any credit balance is paid to this account rather than by cash.",
+      "sourceRef": "14.1 'IBAN (nur ausfüllen, wenn Sie dem Finanzamt noch keine Bankverbindung bekanntgegeben haben oder Sie diese geändert haben)'",
+      "validation": {
+        "pattern": "^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$"
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "bankBic",
+      "label": "BIC",
+      "type": "string",
+      "required": false,
+      "description": "The form states this is only to be completed 'wenn IBAN nicht mit AT beginnt und die Empfängerbank nicht am einheitlichen Euro-Zahlungsverkehrsraum SEPA teilnimmt' (if the IBAN does not begin with AT and the recipient bank does not participate in SEPA) — a conditional exemption expressed in prose, not encoded as a requiredWhen here since the Condition grammar has no string-prefix operator (see VERIFICATION.md).",
+      "sourceRef": "14.2 'BIC (nur auszufüllen, wenn IBAN nicht mit AT beginnt und die Empfängerbank nicht am einheitlichen Euro-Zahlungsverkehrsraum SEPA teilnimmt)'",
+      "validation": {
+        "pattern": "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "cashPayoutRequested",
+      "label": "Cash payout requested",
+      "type": "boolean",
+      "required": false,
+      "description": "Cash amounts can then only be collected in person at the post office.",
+      "sourceRef": "14.3 'Ich beantrage die Barauszahlung' (paraphrased due to a PDF text-extraction spacing artifact before the closing parenthesis): cash amounts can then only be collected in person at the post office"
+    },
+    {
+      "name": "allowanceNoticeRequested",
+      "label": "Allowance notice (Freibetragsbescheid) requested",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "15.1 'Ich beantrage einen Freibetragsbescheid.'"
+    },
+    {
+      "name": "lowerAllowanceNoticeRequested",
+      "label": "Lower allowance notice requested (specific annual amount)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "15.2 checkbox alongside 'Ich beantrage einen niedrigeren Freibetragsbescheid in Höhe von jährlich'"
+    },
+    {
+      "name": "lowerAllowanceNoticeAmount",
+      "label": "Requested lower allowance notice amount (annual)",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "lowerAllowanceNoticeRequested",
+        "equals": true
+      },
+      "sourceRef": "15.2 'Ich beantrage einen niedrigeren Freibetragsbescheid in Höhe von jährlich'",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "attachmentL1abIncluded",
+      "label": "Attachment L 1ab (extraordinary burdens) enclosed",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "16. 'Beilage L 1ab für außergewöhnliche Belastungen'"
+    },
+    {
+      "name": "attachmentL1dIncluded",
+      "label": "Attachment L 1d (special expenses) enclosed",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "16. 'Beilage L 1d zur Berücksichtigung von Sonderausgaben'"
+    },
+    {
+      "name": "attachmentL1iIncluded",
+      "label": "Attachment L 1i (foreign/non-payroll-withheld income) enclosed",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "16. 'Beilage L 1i für Einkünfte aus nichtselbständiger Arbeit ohne Lohnsteuerabzug bzw. mit Auslandsbezug'"
+    },
+    {
+      "name": "attachmentL1kCount",
+      "label": "Number of L 1k attachments (one per child)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "16. 'Anzahl der Beilagen L 1k für ein Kind (für jedes Kind ist eine eigene Beilage L 1k zu verwenden)'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentL1kbFCount",
+      "label": "Number of L 1k-bF attachments (Familienbonus Plus special cases, one per child)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "16. 'Anzahl der Beilagen L 1k-bF für den Familienbonus Plus in besonderen Fällen (für jedes Kind ist eine eigene Beilage L 1k-bF zu verwenden)'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxRepresentativeContact",
+      "label": "Tax representative (name, address, telephone)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Steuerliche Vertretung (Name, Anschrift, Telefon)'",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "description": "The paper form's own signature is a handwritten signature made after printing; this field captures only the accompanying date, matching this registry's established convention for paper-form fields that require a physical signature GovSchema cannot itself capture (see VERIFICATION.md and the 'attestation' document entry below).",
+      "sourceRef": "'Datum, Unterschrift'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "accuracyAndCompletenessDeclaration",
+      "label": "Declaration of accuracy and completeness",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "By signing, I confirm that all information given is true. I acknowledge that incorrect or incomplete information is punishable.",
+      "sourceRef": "'Richtigkeits- und Vollständigkeitserklärung' (heading) followed by 'Ich bestätige mit meiner Unterschrift, dass alle Angaben der Wahrheit entsprechen. Ich nehme zur Kenntnis, dass unrichtige oder unvollständige Angaben strafbar sind.' (declaration text; not source-adjacent with a colon as earlier drafted — see VERIFICATION.md). English rendering in the statement above."
+    }
+  ]
+}
