@@ -45,8 +45,8 @@
 > it states must not be submitted) and the separate companion form 133011 for
 > co-applicant family members — see the document's own VERIFICATION.md for
 > the full sourcing record, extraction transcript, and every disclosed scope
-> decision, including the mock conformance test run (0 errors across 143
-> fields and 13 documents, 4 mutation tests). Sweden now stands at 3 of its 6
+> decision, including the mock conformance test run (0 errors across 142
+> fields and 13 documents, 5 mutation tests). Sweden now stands at 3 of its 6
 > verticals (Business Formation, DMV, Visa); Taxes remains a genuinely open
 > but currently source-blocked candidate, while Passport and National ID
 > are reconfirmed in-person/biometric-only dead ends.

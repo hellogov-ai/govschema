@@ -124,7 +124,7 @@ re-verified) across all four remaining verticals found:
 | p.4, §8 'Work in Sweden' | `employerOrClientName`…`employerProvidesPensionInsurance` (18 fields) |
 | p.4, §9 'Previous work in Sweden' | `previousEmployerInSweden`, `previousEmploymentPeriod`, `reasonForEndingPreviousEmployment` |
 | p.5, §10 'Previous studies and work experience' | school rows 1-2, university rows 1-3, vocational rows 1-2, previous-employer rows 1-3 (30 fields) |
-| p.5, §11 'Comprehensive health insurance' | `registeredInSwedishPopulationRegister`, `hasComprehensiveHealthInsurance`, `healthInsuranceCompany`, `healthInsuranceValidPeriod` |
+| p.5, §11 'Comprehensive health insurance' | `healthCoverageBasis`, `healthInsuranceCompany`, `healthInsuranceValidPeriod` |
 | p.5, §12 'Temporary Protection Directive' | `requestRevokeCurrentResidencePermit` |
 | p.6, §13 'Other information' | `otherInformationForApplication` |
 | p.6, §14 'Decision delivery' | `decisionDeliveryAddress` |
@@ -240,11 +240,11 @@ was checked with a from-scratch Node.js script
 (`/tmp/gov2070-mig149011/check_conformance.mjs`, not committed to the
 repository) re-implementing this document's own `required`/`requiredWhen`
 condition grammar (GSP-0013: `equals`/`notEquals`/`in`/`greaterThan`/
-`lessThan`/`all`/`any`/`not`). Result: **0 errors** across all 143 fields (45
+`lessThan`/`all`/`any`/`not`). Result: **0 errors** across all 142 fields (45
 collected, 10 conditionally-gated fields correctly marked not-applicable,
 the remainder genuinely optional and left blank) and all 13 documents (6
 provided, 7 correctly marked not-applicable), with every conditionally-gated
-field and document accounted for exactly once. Four mutation tests confirmed
+field and document accounted for exactly once. Five mutation tests confirmed
 the condition grammar fires correctly in both directions:
 
 1. Setting `passportType` to `other` correctly required `otherPassportType`.
@@ -259,6 +259,19 @@ the condition grammar fires correctly in both directions:
    scenario correctly left it not required; setting
    `applyingForPermanentResidence` to `true` correctly required
    `documents[].permanentResidenceSupportingDocuments`.
+5. Switching `healthCoverageBasis` from `private_insurance` to
+   `population_register` correctly flipped `healthInsuranceCompany` and
+   `healthInsuranceValidPeriod` from required to not-applicable — the fix for
+   this cycle's requested-changes finding (GOV-2073/PR #336 review): the
+   source's §11 health-coverage question is one mutually-exclusive
+   radio-button field, structurally identical to `sex`/`maritalStatus`/
+   `passportType` elsewhere in this document, but an initial draft had split
+   it into two independent, unconstrained booleans
+   (`registeredInSwedishPopulationRegister` /
+   `hasComprehensiveHealthInsurance`) that could both be set `true`
+   simultaneously — a state the real form cannot produce. Collapsed into the
+   single `healthCoverageBasis` enum (`population_register` /
+   `private_insurance`) before merge.
 
 The schema was also validated against the GovSchema v0.3 meta-schema with
 `tools/validate-ajv.mjs` (pass, 321/321 documents) and `tools/validate.mjs`
