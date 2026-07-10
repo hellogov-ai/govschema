@@ -1,0 +1,1432 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ar/afip/inscripcion-cuit-personas-juridicas",
+  "version": "1.0.0",
+  "title": "Argentina CUIT Registration / Data Modification for Legal Entities (Solicitud de Inscripción / Modificación de Datos — Personas Jurídicas, F.460/J)",
+  "description": "AFIP's (Administración Federal de Ingresos Públicos) combined request form for legal entities (personas jurídicas) to either newly register for a CUIT (Clave Única de Identificación Tributaria — Argentina's federal tax identifier) or to update previously-registered data, using the same 4-page fillable-AcroForm specimen, Formulario 460/J. The specimen's own AcroForm layer is structured as two mirrored copies: an 'Original' (pages 1-2, retained by AFIP) and an 'Acuse de Recibo'/'Duplicado' (pages 3-4, stamped and returned to the taxpayer as proof of filing) — 170 of the specimen's 177 distinct AcroForm field names carry two linked widget instances, one per copy, confirmed via pdfjs-dist's getFieldObjects() kidIds/shared-name grouping; this document models each logical field once, not twice (see VERIFICATION.md). Two field names (inscripciond, modificaciond) exist only on the duplicate page as an unlinked, separate instance of the same request-type checkbox already captured by requestTypeNewRegistration/requestTypeDataModification, and are excluded as receipt-page artifacts rather than genuine additional data. This document deliberately does not model: the AFIP-staff-only reception-date stamp ('Sello fechador de recepción') and its certifying text on page 4; the wet-ink 'Firma y Sello' (signature and seal) line, which carries no AcroForm widget; and the in-person/postal submission process itself (this specimen is a paper AcroForm meant to be printed, signed, and physically filed — there is no live online wizard for this specific form). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Argentine Republic, the Ministerio de Economía, or AFIP.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Administración Federal de Ingresos Públicos",
+    "abbreviation": "AFIP",
+    "url": "https://www.afip.gob.ar"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es-AR"
+  },
+  "source": {
+    "url": "https://serviciosweb.afip.gob.ar/genericos/formularios/pdf/interactivos/f460J.pdf",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "F. 460/J 'Solicitud de Inscripción / Modificación de Datos — Personas Jurídicas', Administración Federal de Ingresos Públicos (AFIP), 4-page fillable-AcroForm PDF"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2169: opens Argentina as the registry's 32nd jurisdiction. Fetched fresh with a browser User-Agent (HTTP 200, application/pdf, 224,536 bytes, genuine %PDF-1.6, SHA-256 20acb44b3bcf8bbcd14d2c08b2da16c93c71ad349826b6f685cc12eca27205f8) directly from serviciosweb.afip.gob.ar with no login/CAPTCHA/WAF gate encountered, independently re-confirming a prior scouting lead from scratch rather than trusting its numbers. Extracted with pdfjs-dist (getAnnotations()/getFieldObjects()/getTextContent(), x/y-position-based label attribution): 351 raw AcroForm widgets across 4 pages (73/104/73/101 per page). getFieldObjects() resolves these to 177 distinct field names — pages 1-2 form a complete 'Original' copy (177 distinct fields between them) and pages 3-4 an AFIP-generated 'Acuse de Recibo'/'Duplicado' copy that mirrors 170 of those fields via shared/linked AcroForm field names (confirmed via kidIds), plus the 2 request-type checkboxes which are shared across 3 widget instances each (pages 1, 2, and 4). 2 field names (inscripciond, modificaciond) exist only on the duplicate page as an unlinked extra instance of the same request-type concept and are excluded; 3 field names (suscribe, caracter, 'lugar y fecha' — the signature block) exist only on the Original with no duplicate mirror. Net: 175 real distinct field names, 5 split-digit/split-component box groups merged into single logical fields (CUIT1-11 → cuit, dependencia1-3 → afipOfficeCode, dd/mm/aaaa → corporateContractDate, mesan/anio → employerStartMonthYear, pers1-5 → employeeCount; 24 raw boxes merged into 5 fields), yielding 156 final fields — mechanically reconciled (175 - 19 net merge reduction = 156, matching len(fields) after parsing schema.json). No AcroForm field in this specimen carries the /Ff Required bit (checked programmatically across all 351 widgets), and the specimen uses no asterisk-required convention either, unlike several sibling AT/MX specimens; every field's `required` value in this document is therefore a structurally-inferred judgment call, not a source-asserted claim, and is flagged as such in VERIFICATION.md. The 28-checkbox 'FORMA JURÍDICA' legal-form grid's own column-header text is printed as narrow rotated/vertical multi-word labels that pdfjs's text layer returns as loose same-baseline runs; these were reconstructed by nearest-neighbor x-coordinate assignment to each checkbox's known column position (verified against AFIP's own well-documented legal-form code catalog) rather than left as an unreadable jumble — 2 of the 28 columns (codes 087 and 241) have a genuinely blank header in the source PDF itself (confirmed by inspecting every text item in that column's coordinate range), disclosed rather than fabricated. See VERIFICATION.md for the full sourcing record, every judgment call, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestTypeNewRegistration",
+      "label": "Solicitud de Inscripción",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating this filing is a request to newly register (obtain a CUIT for) the legal entity, as opposed to updating data for an entity already registered. Mutually exclusive with requestTypeDataModification in practice (see exclusivityGroups), though the PDF's own AcroForm layer models both as independent, non-grouped checkboxes (getFieldObjects() confirms radioButton:false). This checkbox's own AcroForm field is shared/linked across three widget instances in the source PDF (top of page 1, top of page 2, and top of page 4's duplicate/receipt copy) — a single logical field, not three.",
+      "sourceRef": "F.460/J p.1/p.2/p.4, form title block — 'SOLICITUD DE INSCRIPCIÓN' checkbox, footnote (1) 'Marcar con una X según corresponda'"
+    },
+    {
+      "name": "requestTypeDataModification",
+      "label": "Modificación de Datos",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating this filing updates data for an already-registered entity (which already holds a CUIT) rather than requesting a new one. See requestTypeNewRegistration. Also a single logical field shared across three widget instances (pages 1, 2, and 4).",
+      "sourceRef": "F.460/J p.1/p.2/p.4, form title block — 'MODIFICACIÓN DE DATOS' checkbox, footnote (1)"
+    },
+    {
+      "name": "afipOfficeCode",
+      "label": "Dependencia AFIP",
+      "type": "string",
+      "required": false,
+      "description": "The AFIP office/dependency code that will process this filing. Merged from 3 adjacent single-digit AcroForm text boxes (dependencia1, dependencia2, dependencia3 — each maxLen 1) into one 3-digit code, per this registry's split-digit-box convention (see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, header — 'DEPENDENCIA AFIP' (3 single-digit boxes, fields dependencia1-3)",
+      "validation": {
+        "pattern": "^\\d{3}$"
+      }
+    },
+    {
+      "name": "cuit",
+      "label": "CUIT",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The entity's 11-digit CUIT (Clave Única de Identificación Tributaria). Merged from 11 adjacent single-digit AcroForm text boxes (CUIT1..CUIT11, each maxLen 1) into one field, per this registry's split-digit-box convention (see VERIFICATION.md, and the notEquals-empty-string pitfall note re: conditional requiredness). Left blank on a first-time SOLICITUD DE INSCRIPCIÓN (a CUIT does not yet exist for the entity being registered); expected to be populated on a MODIFICACIÓN DE DATOS filing (see crossFieldValidation).",
+      "sourceRef": "F.460/J p.1, header — 'CUIT' (11 single-digit boxes, fields CUIT1-11)",
+      "validation": {
+        "pattern": "^\\d{11}$"
+      }
+    },
+    {
+      "name": "requestReasonSpontaneous",
+      "label": "Motivo del trámite: Espontáneo",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating this filing is made spontaneously (on the entity's own initiative) rather than in response to an official AFIP order. Mutually exclusive with requestReasonOfficialOrder in practice (see exclusivityGroups); modeled as an independent checkbox per the PDF's own AcroForm layer (radioButton:false).",
+      "sourceRef": "F.460/J p.1 — 'MOTIVO DEL TRÁMITE: ESPONTÁNEO'"
+    },
+    {
+      "name": "requestReasonOfficialOrder",
+      "label": "Motivo del trámite: Oficio",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating this filing is made in response to an official AFIP order (de oficio) rather than spontaneously. See requestReasonSpontaneous.",
+      "sourceRef": "F.460/J p.1 — 'MOTIVO DEL TRÁMITE: ... OFICIO'"
+    },
+    {
+      "name": "entityName",
+      "label": "Denominación de la Entidad",
+      "type": "string",
+      "required": true,
+      "description": "The legal entity's registered name/denomination.",
+      "sourceRef": "F.460/J p.1, Datos de Identificación — 'DENOMINACIÓN DE LA ENTIDAD:'"
+    },
+    {
+      "name": "fiscalAddressStreet",
+      "label": "CALLE (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'CALLE:'"
+    },
+    {
+      "name": "fiscalAddressNumber",
+      "label": "Nº (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'Nº:'"
+    },
+    {
+      "name": "fiscalAddressSector",
+      "label": "SECTOR (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'SECTOR:'"
+    },
+    {
+      "name": "fiscalAddressTower",
+      "label": "TORRE (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'TORRE:'"
+    },
+    {
+      "name": "fiscalAddressFloor",
+      "label": "PISO (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'PISO:'"
+    },
+    {
+      "name": "fiscalAddressUnit",
+      "label": "DPTO/ OFIC/ LOCAL (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'DPTO/ OFIC/ LOCAL:'"
+    },
+    {
+      "name": "fiscalAddressBlock",
+      "label": "MANZANA (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'MANZANA:'"
+    },
+    {
+      "name": "fiscalAddressAdditional",
+      "label": "DATO ADICIONAL (domicilio fiscal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'DATO ADICIONAL:'"
+    },
+    {
+      "name": "fiscalAddressLocality",
+      "label": "LOCALIDAD (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'LOCALIDAD:'"
+    },
+    {
+      "name": "fiscalAddressDistrict",
+      "label": "PARTIDO/ DEPARTAMENTO (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'PARTIDO/ DEPARTAMENTO:'"
+    },
+    {
+      "name": "fiscalAddressProvince",
+      "label": "PROVINCIA (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'PROVINCIA:'"
+    },
+    {
+      "name": "fiscalAddressPostalCode",
+      "label": "CÓDIGO POSTAL (domicilio fiscal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's fiscal address (domicilio fiscal), the address AFIP uses for tax purposes. Modelled as an open string: the AcroForm box (maxLen 0, width matching roughly 8 characters) accommodates either a legacy 4-digit postal code or a modern alphanumeric CPA (Código Postal Argentino) code; the specimen does not disambiguate which format is expected.",
+      "sourceRef": "F.460/J p.1, Domicilio Fiscal — 'CÓDIGO POSTAL:'"
+    },
+    {
+      "name": "legalAddressStreet",
+      "label": "CALLE (domicilio legal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'CALLE:'"
+    },
+    {
+      "name": "legalAddressNumber",
+      "label": "Nº (domicilio legal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'Nº:'"
+    },
+    {
+      "name": "legalAddressSector",
+      "label": "SECTOR (domicilio legal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'SECTOR:'"
+    },
+    {
+      "name": "legalAddressTower",
+      "label": "TORRE (domicilio legal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'TORRE:'"
+    },
+    {
+      "name": "legalAddressFloor",
+      "label": "PISO (domicilio legal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'PISO:'"
+    },
+    {
+      "name": "legalAddressUnit",
+      "label": "DPTO/ OFIC/ LOCAL (domicilio legal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'DPTO/ OFIC/ LOCAL:'"
+    },
+    {
+      "name": "legalAddressBlock",
+      "label": "MANZANA (domicilio legal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'MANZANA:'"
+    },
+    {
+      "name": "legalAddressAdditional",
+      "label": "DATO ADICIONAL (domicilio legal)",
+      "type": "string",
+      "required": false,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'DATO ADICIONAL:'"
+    },
+    {
+      "name": "legalAddressLocality",
+      "label": "LOCALIDAD (domicilio legal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'LOCALIDAD:'"
+    },
+    {
+      "name": "legalAddressDistrict",
+      "label": "PARTIDO/ DEPARTAMENTO (domicilio legal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'PARTIDO/ DEPARTAMENTO:'"
+    },
+    {
+      "name": "legalAddressProvince",
+      "label": "PROVINCIA (domicilio legal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'PROVINCIA:'"
+    },
+    {
+      "name": "legalAddressPostalCode",
+      "label": "CÓDIGO POSTAL (domicilio legal)",
+      "type": "string",
+      "required": true,
+      "description": "Part of the entity's legal address (domicilio legal), the address on the entity's incorporation/constitutive instrument — structurally identical field set to the fiscal address, mirrored lower on the same page. Same open-string treatment as fiscalAddressPostalCode; see VERIFICATION.md.",
+      "sourceRef": "F.460/J p.1, Domicilio Legal — 'CÓDIGO POSTAL:'"
+    },
+    {
+      "name": "phoneType",
+      "label": "Tipo de Teléfono",
+      "type": "string",
+      "required": false,
+      "description": "Type of the contact phone number provided (e.g. landline/mobile) — no closed catalog is shown on the specimen.",
+      "sourceRef": "F.460/J p.1, Otros Datos — 'TIPO DE TELÉFONO:'"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Número de Teléfono",
+      "type": "string",
+      "required": false,
+      "description": "Contact phone number.",
+      "sourceRef": "F.460/J p.1, Otros Datos — 'Nº:' (phone)"
+    },
+    {
+      "name": "email",
+      "label": "Dirección de E-mail",
+      "type": "string",
+      "required": false,
+      "description": "Contact email address.",
+      "sourceRef": "F.460/J p.1, Otros Datos — 'DIRECCIÓN DE E-MAIL:'",
+      "validation": {
+        "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$"
+      }
+    },
+    {
+      "name": "principalActivityDescription",
+      "label": "Actividad Principal — Denominación",
+      "type": "string",
+      "required": true,
+      "description": "Description of the entity's principal economic activity, per AFIP's current 'Nomenclador' (economic-activity classification) in force. The classification catalog itself is not reproduced here (not shown in full on the specimen).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividad Principal — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "principalActivityCode",
+      "label": "Actividad Principal — Código",
+      "type": "string",
+      "required": true,
+      "description": "AFIP Nomenclador code for the principal activity.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividad Principal — 'CÓDIGO' column"
+    },
+    {
+      "name": "principalActivityStartDate",
+      "label": "Actividad Principal — Fecha de Inicio",
+      "type": "date",
+      "required": true,
+      "description": "Start date of the principal activity. The AcroForm box (maxLen 8) accepts an unseparated DDMMAAAA digit string; represent as an ISO 8601 full-date.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividad Principal — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity1Description",
+      "label": "Actividad Secundaria 1 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #1 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity1Code",
+      "label": "Actividad Secundaria 1 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #1.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity1StartDate",
+      "label": "Actividad Secundaria 1 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #1. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity2Description",
+      "label": "Actividad Secundaria 2 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #2 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity2Code",
+      "label": "Actividad Secundaria 2 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #2.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity2StartDate",
+      "label": "Actividad Secundaria 2 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #2. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity3Description",
+      "label": "Actividad Secundaria 3 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #3 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity3Code",
+      "label": "Actividad Secundaria 3 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #3.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity3StartDate",
+      "label": "Actividad Secundaria 3 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #3. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity4Description",
+      "label": "Actividad Secundaria 4 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #4 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity4Code",
+      "label": "Actividad Secundaria 4 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #4.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity4StartDate",
+      "label": "Actividad Secundaria 4 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #4. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity5Description",
+      "label": "Actividad Secundaria 5 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #5 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity5Code",
+      "label": "Actividad Secundaria 5 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #5.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity5StartDate",
+      "label": "Actividad Secundaria 5 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #5. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity6Description",
+      "label": "Actividad Secundaria 6 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #6 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity6Code",
+      "label": "Actividad Secundaria 6 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #6.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity6StartDate",
+      "label": "Actividad Secundaria 6 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #6. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity7Description",
+      "label": "Actividad Secundaria 7 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #7 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity7Code",
+      "label": "Actividad Secundaria 7 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #7.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity7StartDate",
+      "label": "Actividad Secundaria 7 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #7. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "secondaryActivity8Description",
+      "label": "Actividad Secundaria 8 — Denominación",
+      "type": "string",
+      "required": false,
+      "description": "Description of the entity's secondary economic activity #8 of up to 8 fixed rows the specimen provides (a bounded, pre-printed table — not an open-ended repeating structure — so all 8 rows are modelled directly rather than scoped down to one; see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "secondaryActivity8Code",
+      "label": "Actividad Secundaria 8 — Código",
+      "type": "string",
+      "required": false,
+      "description": "AFIP Nomenclador code for secondary activity #8.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'CÓDIGO' column"
+    },
+    {
+      "name": "secondaryActivity8StartDate",
+      "label": "Actividad Secundaria 8 — Fecha de Inicio",
+      "type": "date",
+      "required": false,
+      "description": "Start date of secondary activity #8. Same DDMMAAAA box format as principalActivityStartDate.",
+      "sourceRef": "F.460/J p.1, Datos Económicos, Actividades Secundarias — 'FECHA DE INICIO DÍA/ MES/ AÑO' column"
+    },
+    {
+      "name": "fiscalYearEndMonth",
+      "label": "Mes de Cierre del Ejercicio",
+      "type": "string",
+      "required": false,
+      "description": "Month in which the entity's fiscal/accounting year closes.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'MES DE CIERRE DEL EJERCICIO:'"
+    },
+    {
+      "name": "corporateContractDate",
+      "label": "Fecha Contrato Social",
+      "type": "date",
+      "required": false,
+      "description": "Date of the corporate/partnership constitutive instrument (contrato social). Merged from 3 adjacent AcroForm text boxes (dd, mm, aaaa) into one ISO 8601 full-date, per this registry's split-box-date convention.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'FECHA CONTRATO SOCIAL (DD/MM/AAAA):'"
+    },
+    {
+      "name": "capitalNationalPercentage",
+      "label": "Porcentaje de Capital — Nacional",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of the entity's capital that is of national (Argentine) origin. The specimen shows this alongside capitalForeignPercentage as a pair that together describe the capital's origin split; the two are not enforced to sum to 100 by any visible AcroForm/JS logic in this specimen.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'PORCENTAJE DE CAPITAL: NACIONAL: %'",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "capitalForeignPercentage",
+      "label": "Porcentaje de Capital — Extranjero",
+      "type": "number",
+      "required": false,
+      "description": "Percentage of the entity's capital that is of foreign origin. See capitalNationalPercentage.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'EXTRANJERO: %'",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "controllingBodyCode",
+      "label": "Organismo de Contralor",
+      "type": "string",
+      "required": false,
+      "description": "Code identifying the regulatory/controlling body overseeing this entity (e.g. a corporate registry or securities regulator), per the form's own footnote (2): '01-IGJ. 02-RPC. 03-INAC Y M. 04-Comisión Nacional de Valores. 05-Otros'. The AcroForm box itself is a plain text field (not a dropdown); modelled as an open string since a fifth 'Otros' (other) option exists and the box also accepts free text in practice.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'ORGANISMO DE CONTRALOR:', footnote (2)"
+    },
+    {
+      "name": "fileNumber",
+      "label": "Expediente Nº",
+      "type": "string",
+      "required": false,
+      "description": "Administrative file/docket number associated with the controlling body's own registration of this entity, if applicable.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'EXPEDIENTE Nº:'"
+    },
+    {
+      "name": "jurisdiction",
+      "label": "Jurisdicción",
+      "type": "string",
+      "required": false,
+      "description": "Jurisdiction of registration before the controlling body named in controllingBodyCode.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'JURISDICCIÓN:'"
+    },
+    {
+      "name": "province",
+      "label": "Provincia (registro)",
+      "type": "string",
+      "required": false,
+      "description": "Province associated with the controlling-body registration above. Note: the specimen's own printed caption for this row also includes a 'LOCALIDAD:' (locality) label immediately after 'JURISDICCIÓN:', but no corresponding AcroForm widget exists anywhere near it — a genuine gap in the interactive layer versus the static print layout, not an extraction omission; see VERIFICATION.md. No 'locality' field is modelled for this specific row as a result.",
+      "sourceRef": "F.460/J p.2, Datos Comerciales — 'PROVINCIA:' (row also captioned 'JURISDICCIÓN: LOCALIDAD:' but with no fillable box under 'LOCALIDAD:')"
+    },
+    {
+      "name": "legalFormCode019",
+      "label": "Forma Jurídica — Sociedad Anónima (código 019)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 019"
+    },
+    {
+      "name": "legalFormCode027",
+      "label": "Forma Jurídica — Sociedad en Comandita por Acciones (código 027)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 027"
+    },
+    {
+      "name": "legalFormCode035",
+      "label": "Forma Jurídica — Sociedad de Responsabilidad Limitada (código 035)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 035"
+    },
+    {
+      "name": "legalFormCode043",
+      "label": "Forma Jurídica — Sociedad Colectiva (código 043)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 043"
+    },
+    {
+      "name": "legalFormCode051",
+      "label": "Forma Jurídica — Sociedad de Capital e Industria (código 051)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 051"
+    },
+    {
+      "name": "legalFormCode067",
+      "label": "Forma Jurídica — Sociedad en Comandita Simple (código 067)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 067"
+    },
+    {
+      "name": "legalFormCode078",
+      "label": "Forma Jurídica — Sociedad de Hecho (código 078)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 078"
+    },
+    {
+      "name": "legalFormCode086",
+      "label": "Forma Jurídica — Asociación / Fundación (código 086)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 086"
+    },
+    {
+      "name": "legalFormCode087",
+      "label": "Forma Jurídica — código 087",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid (see legalFormCode019's description for the grid's general modelling). This specific column (code 087) has no header text at all in the source PDF — the column header cell above/around this checkbox is genuinely blank in the specimen, not an extraction artifact (confirmed by inspecting all text items in that column's coordinate range); disclosed rather than fabricated. The entity's legal form for this checkbox is therefore identifiable only by its official AFIP code, not by a descriptive name.",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 087"
+    },
+    {
+      "name": "legalFormCode094",
+      "label": "Forma Jurídica — Sociedad Cooperativa (código 094)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 094"
+    },
+    {
+      "name": "legalFormCode108",
+      "label": "Forma Jurídica — Sociedad de Economía Mixta (código 108)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 108"
+    },
+    {
+      "name": "legalFormCode116",
+      "label": "Forma Jurídica — Empresa del Estado (código 116)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 116"
+    },
+    {
+      "name": "legalFormCode124",
+      "label": "Forma Jurídica — Sociedad de Participación Estatal Mayoritaria (código 124)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 124"
+    },
+    {
+      "name": "legalFormCode125",
+      "label": "Forma Jurídica — Organismo Público (código 125)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 125"
+    },
+    {
+      "name": "legalFormCode132",
+      "label": "Forma Jurídica — Sucursal de Empresa Extranjera (código 132)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 132"
+    },
+    {
+      "name": "legalFormCode159",
+      "label": "Forma Jurídica — Unión Transitoria de Empresas (código 159)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 159"
+    },
+    {
+      "name": "legalFormCode167",
+      "label": "Forma Jurídica — Consorcio de Propietarios (código 167)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 167"
+    },
+    {
+      "name": "legalFormCode175",
+      "label": "Forma Jurídica — Dirección Administrativa Estatal (código 175)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 175"
+    },
+    {
+      "name": "legalFormCode183",
+      "label": "Forma Jurídica — Sociedad de Garantía Recíproca (código 183)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 183"
+    },
+    {
+      "name": "legalFormCode191",
+      "label": "Forma Jurídica — Sociedad en Formación (código 191)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 191"
+    },
+    {
+      "name": "legalFormCode203",
+      "label": "Forma Jurídica — Mutual (código 203)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 203"
+    },
+    {
+      "name": "legalFormCode215",
+      "label": "Forma Jurídica — Cooperadora (código 215)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 215"
+    },
+    {
+      "name": "legalFormCode223",
+      "label": "Forma Jurídica — Otras Entidades Civiles (código 223)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 223"
+    },
+    {
+      "name": "legalFormCode237",
+      "label": "Forma Jurídica — Otras Sociedades (código 237)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 237"
+    },
+    {
+      "name": "legalFormCode238",
+      "label": "Forma Jurídica — Fondo Común de Inversión (código 238)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 238"
+    },
+    {
+      "name": "legalFormCode239",
+      "label": "Forma Jurídica — Fideicomiso (código 239)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 239"
+    },
+    {
+      "name": "legalFormCode240",
+      "label": "Forma Jurídica — Fideicomiso Financiero (código 240)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid identifying the entity's legal form; getFieldObjects() confirms radioButton:false for every checkbox in this grid (no PDF radio-group layer), so each is modelled as an independent optional boolean, with a GSP-0013 exclusivityGroup declared since exactly one legal form applies in practice. Column header label reconstructed from the PDF's own rotated/vertical column-header text (see VERIFICATION.md for the extraction technique).",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 240"
+    },
+    {
+      "name": "legalFormCode241",
+      "label": "Forma Jurídica — código 241",
+      "type": "boolean",
+      "required": false,
+      "description": "One of 28 independent checkboxes in the 'FORMA JURÍDICA' grid (see legalFormCode019's description for the grid's general modelling). This specific column (code 241) has no header text at all in the source PDF — the column header cell above/around this checkbox is genuinely blank in the specimen, not an extraction artifact (confirmed by inspecting all text items in that column's coordinate range); disclosed rather than fabricated. The entity's legal form for this checkbox is therefore identifiable only by its official AFIP code, not by a descriptive name.",
+      "sourceRef": "F.460/J p.2, Forma Jurídica grid — código 241"
+    },
+    {
+      "name": "taxCode1",
+      "label": "Impuestos — Código 1",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 1 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'CÓDIGO' column"
+    },
+    {
+      "name": "taxName1",
+      "label": "Impuestos — Denominación 1",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 1.",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "taxRegistrationDate1",
+      "label": "Impuestos — Fecha Alta 1",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 1. AcroForm box maxLen 8 (unseparated DDMMAAAA).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "taxCode2",
+      "label": "Impuestos — Código 2",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 2 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'CÓDIGO' column"
+    },
+    {
+      "name": "taxName2",
+      "label": "Impuestos — Denominación 2",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 2.",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "taxRegistrationDate2",
+      "label": "Impuestos — Fecha Alta 2",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 2. AcroForm box maxLen 8 (unseparated DDMMAAAA).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "taxCode3",
+      "label": "Impuestos — Código 3",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 3 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'CÓDIGO' column"
+    },
+    {
+      "name": "taxName3",
+      "label": "Impuestos — Denominación 3",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 3.",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "taxRegistrationDate3",
+      "label": "Impuestos — Fecha Alta 3",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 3. AcroForm box maxLen 8 (unseparated DDMMAAAA).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "taxCode4",
+      "label": "Impuestos — Código 4",
+      "type": "string",
+      "required": false,
+      "description": "AFIP tax code for tax registration row 4 of a fixed 4-row table (bounded, pre-printed — not an open-ended repeating structure).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'CÓDIGO' column"
+    },
+    {
+      "name": "taxName4",
+      "label": "Impuestos — Denominación 4",
+      "type": "string",
+      "required": false,
+      "description": "Name of the tax being registered for row 4.",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'DENOMINACIÓN' column"
+    },
+    {
+      "name": "taxRegistrationDate4",
+      "label": "Impuestos — Fecha Alta 4",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for tax row 4. AcroForm box maxLen 8 (unseparated DDMMAAAA).",
+      "sourceRef": "F.460/J p.2, Datos Tributarios, Impuestos — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "taxesNotes",
+      "label": "Impuestos",
+      "type": "string",
+      "required": false,
+      "description": "Free-text AcroForm field positioned directly beneath the 'IMPUESTOS' section heading and to the left of 'CARÁCTER:' (filerCapacityCode), above the itemized 4-row taxes table. The specimen carries no instructional text elaborating this specific box's intended content beyond the bare section heading; disclosed as a judgment call rather than guessed at — see VERIFICATION.md.",
+      "sourceRef": "F.460/J p.2, Datos Tributarios — 'IMPUESTOS' heading, footnote (3)"
+    },
+    {
+      "name": "filerCapacityCode",
+      "label": "Carácter",
+      "type": "string",
+      "required": false,
+      "description": "Code describing the capacity in which the entity is registering for the taxes/regimes below, per the form's own footnote (3): 'Importador, Productor, Comercializador de Combustibles Líquidos-Ley 23.966 Título III Cap. I)-Bs. Personales: Resp. de Deuda Ajena-Resp. Sustitutos-Administrador Fiduciario. Ganancias y Gcia. Mínima Presunta: Resp. de Deuda Ajena-Administrador Fiduciario-Sociedad Gerente.' A plain text box, not a dropdown; modelled as an open string.",
+      "sourceRef": "F.460/J p.2, Datos Tributarios — 'CARÁCTER:', footnote (3)"
+    },
+    {
+      "name": "regimeName1",
+      "label": "Régimen de Retención/Percepción — Régimen 1",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 1 of a fixed 4-row table.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'RÉGIMEN' column"
+    },
+    {
+      "name": "regimeTaxCode1",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 1",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 1 applies to. AcroForm field name continues this specimen's shared codimp numbering sequence from the taxes table above (codimp5-8) rather than starting a new one — a naming-only continuity, not a shared/merged value.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — first 'CÓDIGO' column (impuesto)"
+    },
+    {
+      "name": "regimeCode1",
+      "label": "Régimen de Retención/Percepción — Código Régimen 1",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 1.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — second 'CÓDIGO' column (régimen)"
+    },
+    {
+      "name": "regimeResolutionNumber1",
+      "label": "Régimen de Retención/Percepción — R.G. Nº 1",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 1.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'R.G. Nº' column"
+    },
+    {
+      "name": "regimeRegistrationDate1",
+      "label": "Régimen de Retención/Percepción — Fecha Alta 1",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 1. Same DDMMAAAA box format.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "regimeName2",
+      "label": "Régimen de Retención/Percepción — Régimen 2",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 2 of a fixed 4-row table.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'RÉGIMEN' column"
+    },
+    {
+      "name": "regimeTaxCode2",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 2",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 2 applies to. AcroForm field name continues this specimen's shared codimp numbering sequence from the taxes table above (codimp5-8) rather than starting a new one — a naming-only continuity, not a shared/merged value.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — first 'CÓDIGO' column (impuesto)"
+    },
+    {
+      "name": "regimeCode2",
+      "label": "Régimen de Retención/Percepción — Código Régimen 2",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 2.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — second 'CÓDIGO' column (régimen)"
+    },
+    {
+      "name": "regimeResolutionNumber2",
+      "label": "Régimen de Retención/Percepción — R.G. Nº 2",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 2.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'R.G. Nº' column"
+    },
+    {
+      "name": "regimeRegistrationDate2",
+      "label": "Régimen de Retención/Percepción — Fecha Alta 2",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 2. Same DDMMAAAA box format.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "regimeName3",
+      "label": "Régimen de Retención/Percepción — Régimen 3",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 3 of a fixed 4-row table.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'RÉGIMEN' column"
+    },
+    {
+      "name": "regimeTaxCode3",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 3",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 3 applies to. AcroForm field name continues this specimen's shared codimp numbering sequence from the taxes table above (codimp5-8) rather than starting a new one — a naming-only continuity, not a shared/merged value.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — first 'CÓDIGO' column (impuesto)"
+    },
+    {
+      "name": "regimeCode3",
+      "label": "Régimen de Retención/Percepción — Código Régimen 3",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 3.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — second 'CÓDIGO' column (régimen)"
+    },
+    {
+      "name": "regimeResolutionNumber3",
+      "label": "Régimen de Retención/Percepción — R.G. Nº 3",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 3.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'R.G. Nº' column"
+    },
+    {
+      "name": "regimeRegistrationDate3",
+      "label": "Régimen de Retención/Percepción — Fecha Alta 3",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 3. Same DDMMAAAA box format.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "regimeName4",
+      "label": "Régimen de Retención/Percepción — Régimen 4",
+      "type": "string",
+      "required": false,
+      "description": "Name of the withholding/collection regime (régimen de retención/percepción) for row 4 of a fixed 4-row table.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'RÉGIMEN' column"
+    },
+    {
+      "name": "regimeTaxCode4",
+      "label": "Régimen de Retención/Percepción — Código Impuesto 4",
+      "type": "string",
+      "required": false,
+      "description": "Tax code the regime in row 4 applies to. AcroForm field name continues this specimen's shared codimp numbering sequence from the taxes table above (codimp5-8) rather than starting a new one — a naming-only continuity, not a shared/merged value.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — first 'CÓDIGO' column (impuesto)"
+    },
+    {
+      "name": "regimeCode4",
+      "label": "Régimen de Retención/Percepción — Código Régimen 4",
+      "type": "string",
+      "required": false,
+      "description": "AFIP code identifying the regime itself for row 4.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — second 'CÓDIGO' column (régimen)"
+    },
+    {
+      "name": "regimeResolutionNumber4",
+      "label": "Régimen de Retención/Percepción — R.G. Nº 4",
+      "type": "string",
+      "required": false,
+      "description": "General Resolution (Resolución General) number governing the regime in row 4.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'R.G. Nº' column"
+    },
+    {
+      "name": "regimeRegistrationDate4",
+      "label": "Régimen de Retención/Percepción — Fecha Alta 4",
+      "type": "date",
+      "required": false,
+      "description": "Registration ('alta') date for regime row 4. Same DDMMAAAA box format.",
+      "sourceRef": "F.460/J p.2, Regímenes de Retención/ Percepción — 'FECHA ALTA DIA/ MES/ AÑO' column"
+    },
+    {
+      "name": "employerStartMonthYear",
+      "label": "Fecha de Inicio como Empleador (MM/AAAA)",
+      "type": "string",
+      "required": false,
+      "description": "Month and year the entity began acting as an employer. Merged from 2 adjacent AcroForm text boxes (mesan, anio) into one MM/AAAA string, per this registry's split-box-date convention; modelled as a string rather than `date` since no day component exists on the source form.",
+      "sourceRef": "F.460/J p.2, Datos de la Seguridad Social — 'FECHA DE INICIO COMO EMPLEADOR (MM/AAAA):'",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/\\d{4}$"
+      }
+    },
+    {
+      "name": "employeeCount",
+      "label": "Cantidad de Personal que Ocupa",
+      "type": "integer",
+      "required": false,
+      "description": "Number of employees the entity has. Merged from 5 adjacent single-digit AcroForm text boxes (pers1..pers5, each maxLen 1) into one field, per this registry's split-digit-box convention.",
+      "sourceRef": "F.460/J p.2, Datos de la Seguridad Social — 'CANTIDAD DE PERSONAL QUE OCUPA' (5 single-digit boxes)",
+      "validation": {
+        "minimum": 0,
+        "maximum": 99999
+      }
+    },
+    {
+      "name": "officerName1",
+      "label": "Componentes — Apellido y Nombres 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of officer/partner/authority-in-office row 1 of a fixed 4-row table. Row 1 modelled as required on the grounds that a legal entity filing must identify at least one such person; rows 2-4 are optional (present only if applicable). This is a lower-confidence, structurally-inferred requiredness judgment, not a source-asserted asterisk/required-flag (this specimen carries none anywhere — see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'APELLIDO Y NOMBRES' column"
+    },
+    {
+      "name": "officerTaxId1",
+      "label": "Componentes — CUIT/ CUIL/ CDI 1",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Tax identifier (CUIT, CUIL, or CDI) of officer/partner row 1. Modelled as an open string rather than a fixed-length pattern since all three identifier kinds share the same 11-digit shape but the AcroForm box itself (a single wide text field, maxLen 0) does not distinguish which was entered.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CUIT/ CUIL/ CDI' column",
+      "validation": {
+        "pattern": "^\\d{11}$"
+      }
+    },
+    {
+      "name": "officerCapacityCode1",
+      "label": "Componentes — Carácter 1",
+      "type": "string",
+      "required": true,
+      "description": "Code describing officer/partner row 1's capacity, per the form's own footnote (4): '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Plain text box, not a dropdown; modelled as an open string since a text box could in principle carry a value outside this enumerated list.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CARÁCTER' column, footnote (4)"
+    },
+    {
+      "name": "officerResidentInCountry1Yes",
+      "label": "Componentes — Residente en el País: Sí (1)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 1 is resident in Argentina. Mutually exclusive with officerResidentInCountry1No (see exclusivityGroups); independent, non-grouped checkbox per the PDF's own AcroForm layer.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'SI' column"
+    },
+    {
+      "name": "officerResidentInCountry1No",
+      "label": "Componentes — Residente en el País: No (1)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 1 is not resident in Argentina. See officerResidentInCountry1Yes.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'NO' column"
+    },
+    {
+      "name": "officerName2",
+      "label": "Componentes — Apellido y Nombres 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Full name of officer/partner/authority-in-office row 2 of a fixed 4-row table. Row 1 modelled as required on the grounds that a legal entity filing must identify at least one such person; rows 2-4 are optional (present only if applicable). This is a lower-confidence, structurally-inferred requiredness judgment, not a source-asserted asterisk/required-flag (this specimen carries none anywhere — see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'APELLIDO Y NOMBRES' column"
+    },
+    {
+      "name": "officerTaxId2",
+      "label": "Componentes — CUIT/ CUIL/ CDI 2",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Tax identifier (CUIT, CUIL, or CDI) of officer/partner row 2. Modelled as an open string rather than a fixed-length pattern since all three identifier kinds share the same 11-digit shape but the AcroForm box itself (a single wide text field, maxLen 0) does not distinguish which was entered.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CUIT/ CUIL/ CDI' column",
+      "validation": {
+        "pattern": "^\\d{11}$"
+      }
+    },
+    {
+      "name": "officerCapacityCode2",
+      "label": "Componentes — Carácter 2",
+      "type": "string",
+      "required": false,
+      "description": "Code describing officer/partner row 2's capacity, per the form's own footnote (4): '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Plain text box, not a dropdown; modelled as an open string since a text box could in principle carry a value outside this enumerated list.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CARÁCTER' column, footnote (4)"
+    },
+    {
+      "name": "officerResidentInCountry2Yes",
+      "label": "Componentes — Residente en el País: Sí (2)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 2 is resident in Argentina. Mutually exclusive with officerResidentInCountry2No (see exclusivityGroups); independent, non-grouped checkbox per the PDF's own AcroForm layer.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'SI' column"
+    },
+    {
+      "name": "officerResidentInCountry2No",
+      "label": "Componentes — Residente en el País: No (2)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 2 is not resident in Argentina. See officerResidentInCountry2Yes.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'NO' column"
+    },
+    {
+      "name": "officerName3",
+      "label": "Componentes — Apellido y Nombres 3",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Full name of officer/partner/authority-in-office row 3 of a fixed 4-row table. Row 1 modelled as required on the grounds that a legal entity filing must identify at least one such person; rows 2-4 are optional (present only if applicable). This is a lower-confidence, structurally-inferred requiredness judgment, not a source-asserted asterisk/required-flag (this specimen carries none anywhere — see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'APELLIDO Y NOMBRES' column"
+    },
+    {
+      "name": "officerTaxId3",
+      "label": "Componentes — CUIT/ CUIL/ CDI 3",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Tax identifier (CUIT, CUIL, or CDI) of officer/partner row 3. Modelled as an open string rather than a fixed-length pattern since all three identifier kinds share the same 11-digit shape but the AcroForm box itself (a single wide text field, maxLen 0) does not distinguish which was entered.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CUIT/ CUIL/ CDI' column",
+      "validation": {
+        "pattern": "^\\d{11}$"
+      }
+    },
+    {
+      "name": "officerCapacityCode3",
+      "label": "Componentes — Carácter 3",
+      "type": "string",
+      "required": false,
+      "description": "Code describing officer/partner row 3's capacity, per the form's own footnote (4): '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Plain text box, not a dropdown; modelled as an open string since a text box could in principle carry a value outside this enumerated list.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CARÁCTER' column, footnote (4)"
+    },
+    {
+      "name": "officerResidentInCountry3Yes",
+      "label": "Componentes — Residente en el País: Sí (3)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 3 is resident in Argentina. Mutually exclusive with officerResidentInCountry3No (see exclusivityGroups); independent, non-grouped checkbox per the PDF's own AcroForm layer.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'SI' column"
+    },
+    {
+      "name": "officerResidentInCountry3No",
+      "label": "Componentes — Residente en el País: No (3)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 3 is not resident in Argentina. See officerResidentInCountry3Yes.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'NO' column"
+    },
+    {
+      "name": "officerName4",
+      "label": "Componentes — Apellido y Nombres 4",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Full name of officer/partner/authority-in-office row 4 of a fixed 4-row table. Row 1 modelled as required on the grounds that a legal entity filing must identify at least one such person; rows 2-4 are optional (present only if applicable). This is a lower-confidence, structurally-inferred requiredness judgment, not a source-asserted asterisk/required-flag (this specimen carries none anywhere — see VERIFICATION.md).",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'APELLIDO Y NOMBRES' column"
+    },
+    {
+      "name": "officerTaxId4",
+      "label": "Componentes — CUIT/ CUIL/ CDI 4",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Tax identifier (CUIT, CUIL, or CDI) of officer/partner row 4. Modelled as an open string rather than a fixed-length pattern since all three identifier kinds share the same 11-digit shape but the AcroForm box itself (a single wide text field, maxLen 0) does not distinguish which was entered.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CUIT/ CUIL/ CDI' column",
+      "validation": {
+        "pattern": "^\\d{11}$"
+      }
+    },
+    {
+      "name": "officerCapacityCode4",
+      "label": "Componentes — Carácter 4",
+      "type": "string",
+      "required": false,
+      "description": "Code describing officer/partner row 4's capacity, per the form's own footnote (4): '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Plain text box, not a dropdown; modelled as an open string since a text box could in principle carry a value outside this enumerated list.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'CARÁCTER' column, footnote (4)"
+    },
+    {
+      "name": "officerResidentInCountry4Yes",
+      "label": "Componentes — Residente en el País: Sí (4)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 4 is resident in Argentina. Mutually exclusive with officerResidentInCountry4No (see exclusivityGroups); independent, non-grouped checkbox per the PDF's own AcroForm layer.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'SI' column"
+    },
+    {
+      "name": "officerResidentInCountry4No",
+      "label": "Componentes — Residente en el País: No (4)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checkbox indicating officer/partner row 4 is not resident in Argentina. See officerResidentInCountry4Yes.",
+      "sourceRef": "F.460/J p.2, Componentes de la Sociedad o Autoridad en Ejercicio — 'RESIDENTE EN EL PAÍS' / 'NO' column"
+    },
+    {
+      "name": "declarantName",
+      "label": "El que suscribe Don...",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the person signing the sworn declaration (declaración jurada) on the entity's behalf.",
+      "sourceRef": "F.460/J p.2, Declaración Jurada — 'El que suscribe Don'"
+    },
+    {
+      "name": "declarantCapacity",
+      "label": "En su carácter de...",
+      "type": "string",
+      "required": true,
+      "description": "The declarant's capacity/title when signing, per the form's own footnote (5): 'Presidente, Socio Representante Legal o Apoderado' (President, Partner, Legal Representative, or Attorney-in-fact). Plain text box; modelled as an open string rather than a closed enum since the footnote reads as illustrative guidance, not an exhaustive picklist enforced by the box itself.",
+      "sourceRef": "F.460/J p.2, Declaración Jurada — 'en su carácter de', footnote (5)"
+    },
+    {
+      "name": "placeAndDate",
+      "label": "Lugar y Fecha",
+      "type": "string",
+      "required": true,
+      "description": "Place and date of signing, entered as free text on a single AcroForm box (not split into separate place/date fields on this specimen).",
+      "sourceRef": "F.460/J p.2, Declaración Jurada — 'Lugar y Fecha:'"
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "requestType",
+      "fields": [
+        "requestTypeNewRegistration",
+        "requestTypeDataModification"
+      ]
+    },
+    {
+      "id": "requestReason",
+      "fields": [
+        "requestReasonSpontaneous",
+        "requestReasonOfficialOrder"
+      ]
+    },
+    {
+      "id": "legalForm",
+      "fields": [
+        "legalFormCode019",
+        "legalFormCode027",
+        "legalFormCode035",
+        "legalFormCode043",
+        "legalFormCode051",
+        "legalFormCode067",
+        "legalFormCode078",
+        "legalFormCode086",
+        "legalFormCode087",
+        "legalFormCode094",
+        "legalFormCode108",
+        "legalFormCode116",
+        "legalFormCode124",
+        "legalFormCode125",
+        "legalFormCode132",
+        "legalFormCode159",
+        "legalFormCode167",
+        "legalFormCode175",
+        "legalFormCode183",
+        "legalFormCode191",
+        "legalFormCode203",
+        "legalFormCode215",
+        "legalFormCode223",
+        "legalFormCode237",
+        "legalFormCode238",
+        "legalFormCode239",
+        "legalFormCode240",
+        "legalFormCode241"
+      ]
+    },
+    {
+      "id": "officerResidentInCountry1",
+      "fields": [
+        "officerResidentInCountry1Yes",
+        "officerResidentInCountry1No"
+      ]
+    },
+    {
+      "id": "officerResidentInCountry2",
+      "fields": [
+        "officerResidentInCountry2Yes",
+        "officerResidentInCountry2No"
+      ]
+    },
+    {
+      "id": "officerResidentInCountry3",
+      "fields": [
+        "officerResidentInCountry3Yes",
+        "officerResidentInCountry3No"
+      ]
+    },
+    {
+      "id": "officerResidentInCountry4",
+      "fields": [
+        "officerResidentInCountry4Yes",
+        "officerResidentInCountry4No"
+      ]
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "cuitRequiredForModification",
+      "when": {
+        "field": "requestTypeDataModification",
+        "equals": true
+      },
+      "requirePresent": [
+        "cuit"
+      ]
+    }
+  ]
+}
