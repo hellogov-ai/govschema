@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**30 jurisdictions** | **325 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**31 jurisdictions** | **326 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2107, "GovSchema Standard Research"): Austria
+> opens as the registry's 31st jurisdiction**, via
+> `at/gewerbebehoerde/trade-licence-registration` v1.0.0 — the Gewerbeanmeldung
+> (trade-licence registration) under the federal Gewerbeordnung 1994 (GewO
+> §§13, 14, 39, 333a, 339-348). A prior cycle had flagged Austria's regional
+> `tirol.gv.at` host as a TCP-level connection timeout/reset (not a confirmed
+> bot block) and left it untested for a future cycle with different network
+> access. This cycle retried Austria against **federal** hosts instead
+> (`usp.gv.at`, `help.gv.at`/`oesterreich.gv.at` — both reachable, HTTP 200)
+> and confirmed the earlier symptom is a genuine narrow host-level gap, not a
+> blanket Austrian block: a second federal host, `bmaw.gv.at`, timed out
+> identically (`curl` exit 6 / HTTP 000) on three separate attempts this
+> session. `usp.gv.at`'s own federal Gewerbeanmeldung explainer page (content
+> owned by the Bundesministerium für Wirtschaft, Energie und Tourismus,
+> "Letzte Aktualisierung: 20. März 2026") pointed to Land Oberösterreich's own
+> current fillable-AcroForm PDF implementation of the same nationally-legislated
+> process, form LWLD-Wi/E-8 ("Stand: Juli 2021") — confirmed as the current
+> edition still linked from the Land's own forms index (an older LWLD-Wi/E-7
+> edition remains reachable by direct URL but is no longer linked). This
+> mirrors the pattern already established for
+> `de/gewerbeamt/business-registration` (a nationally-standardized process
+> published and hosted per-Land/municipality, not by one central federal
+> PDF). Extracted 101 AcroForm widgets with `pdfjs-dist` (5 non-data
+> controls excluded; 10 radio/checkbox groups merged into single enum/boolean
+> fields rather than split into independent unconstrained booleans), modelling
+> 86 fields and 5 `documents[]` entries (two identity-document requirements,
+> a conditionally-exempt qualification-proof requirement, and two attestation
+> declarations under GewO §§13 and 39 Abs. 2). Scoped to Land Oberösterreich's
+> edition and its 17 district trade authorities; a filer in a different
+> Bundesland would use that Land's own edition of the same process — a real,
+> open fast-follow candidate for a future cycle, along with cross-checking a
+> second Land's edition to reach the same three-edition verification standard
+> `de/gewerbeamt` already meets. This opens Austria with **1 of its 6
+> verticals** (Business Formation); its other five (Passport, DMV, Taxes,
+> Visa, National ID) are open, unscreened backlog candidates. See
+> `registry/at/gewerbebehoerde/trade-licence-registration/1.0.0/VERIFICATION.md`
+> for the full sourcing record, extraction technique, every disclosed scope
+> decision, and the mock conformance test run (0 errors across two happy-path
+> scenarios covering all 86 fields, plus 5 mutation/negative controls that
+> each correctly failed with exactly one error).
 
 > **Update (2026-07-10, GOV-2096, "GovSchema Standard Research"): full
 > box-level coverage restored** for `se/skatteverket/individual-income-tax-return`,
@@ -1628,7 +1669,15 @@
 > with different network access, possibly via the Wayback Machine workaround
 > this registry has used for similarly-blocked sources elsewhere. See the
 > document's own VERIFICATION.md for the full candidate comparison and every
-> disclosed judgment call.
+> disclosed judgment call. **Austria's own Gewerbeanmeldung candidate has
+> since opened as a full jurisdiction (GOV-2107)** — see the Executive
+> Summary update above; the `tirol.gv.at` symptom noted here turned out to be
+> a narrow regional/host-specific network gap, not a blanket Austrian block
+> (federal `usp.gv.at`/`oesterreich.gv.at` were reachable in that later
+> session; a second federal host, `bmaw.gv.at`, timed out identically to
+> `tirol.gv.at`, confirming the pattern is host-specific rather than
+> country-wide). Sweden's Skatteverket/Transportstyrelsen candidates have
+> also since opened (GOV-2056, GOV-2063, GOV-2091).
 
 > **Update (2026-07-08, GOV-1797): Portugal's National ID gap closes**, with
 > `pt/mne/requerimento-cartao-cidadao-passaporte-consular` — the
@@ -3938,7 +3987,7 @@
 
 ## By Vertical
 
-### Passport (22/30 jurisdictions — 73%)
+### Passport (22/31 jurisdictions — 71%)
 
 **Switzerland**'s Passport gap is now closed (GOV-1931), via
 `ch/fedpol/antrag-pass-identitaetskarte` — fedpol's own online
@@ -4058,7 +4107,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (27/30 jurisdictions — 90%)
+### DMV — Vehicle Registration, Licensing, Permits (27/31 jurisdictions — 87%)
 
 **Sweden's DMV vertical opens (GOV-2063)**, via
 `se/transportstyrelsen/vehicle-registration-new-vehicle` — Transportstyrelsen
@@ -4257,7 +4306,18 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (28/30 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (29/31 jurisdictions — 94%)
+
+**Austria opens as this registry's 31st jurisdiction via this vertical
+(GOV-2107)**, via `at/gewerbebehoerde/trade-licence-registration` —
+the Gewerbeanmeldung (trade-licence registration) under the federal
+Gewerbeordnung 1994, sourced from Land Oberösterreich's current fillable
+AcroForm PDF (LWLD-Wi/E-8) and cross-checked against the federal USP
+portal's own process explainer. See the Executive Summary update above and
+the document's own VERIFICATION.md for the full sourcing story. Austria
+opened with 1 of its 6 verticals (Business Formation); its remaining five
+(Passport, DMV, Taxes, Visa, National ID) are open, unscreened backlog
+candidates for a future cycle.
 
 **Iceland opens as this registry's 30th jurisdiction via this vertical
 (GOV-2077)**, via `is/skatturinn/business-employer-vat-registration` —
@@ -4562,7 +4622,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (29/30 jurisdictions — 97%)
+### Taxes — Income Tax Return, Tax Filing (29/31 jurisdictions — 94%)
 
 **Sweden's Taxes vertical opens** (`se/skatteverket/individual-income-tax-return`,
 GOV-2091) — Skatteverket Form SKV 2000, "Inkomstdeklaration 1" ("Income Tax
@@ -4964,7 +5024,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (23/30 jurisdictions — 77%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (23/31 jurisdictions — 74%)
 
 **Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
 Japan as the registry's 28th jurisdiction, via the Immigration Services
@@ -5159,7 +5219,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (23/30 jurisdictions — 77%)
+### National ID & Civic Documents (23/31 jurisdictions — 74%)
 
 **Japan**'s National ID gap is now closed (GOV-2012), via
 `jp/j-lis/individual-number-card-issuing-application` — the Japan Agency for
@@ -5365,6 +5425,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **AT** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -5784,10 +5845,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    WAF/CAPTCHA block) — both remain untested, not confirmed dead, for a
    future cycle with different network access or a Wayback Machine
    workaround — and confirmed Switzerland's domestic passport process is
-   cantonal/appointment-based with no downloadable application form. The
-   Czech Republic's DMV gap has since closed too (GOV-1804 follow-up)**, via
+   cantonal/appointment-based with no downloadable application form.
+   **The Czech Republic's DMV gap has
+   since closed too (GOV-1804 follow-up)**, via
    `cz/md/zadost-o-zapis-silnicniho-vozidla` — see the Executive Summary
-   update above. **The Czech Republic's Visa gap has since closed too
+   update above. **Austria has since opened as the registry's 31st
+   jurisdiction (GOV-2107)**, via
+   `at/gewerbebehoerde/trade-licence-registration` — retried against federal
+   hosts (`usp.gv.at`, `oesterreich.gv.at`, both reachable) rather than the
+   regional `tirol.gv.at` host that had timed out; a second federal host,
+   `bmaw.gv.at`, timed out identically, confirming the earlier symptom was a
+   narrow host-specific network gap rather than a country-wide block. See
+   the Executive Summary update above and the document's own
+   VERIFICATION.md. **The Czech Republic's Visa gap has since closed too
    (GOV-1819)**, via `cz/mzv/zadost-o-udeleni-dlouhodobeho-viza` — the
    Ministry of Foreign Affairs' national long-stay (category D) visa
    application, confirmed genuinely distinct from the EU-harmonized template
