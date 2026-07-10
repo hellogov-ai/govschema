@@ -1,0 +1,717 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "se/skatteverket/individual-income-tax-return",
+  "version": "2.0.0",
+  "title": "Sweden Individual Income Tax Return (Inkomstdeklaration 1, SKV 2000)",
+  "description": "File Skatteverket (Swedish Tax Agency) Form SKV 2000, 'Inkomstdeklaration 1' ('Income Tax Return 1'), the annual individual income tax return covering the identifying taxpayer, employment income and deductions (sections 1-2), general deductions (section 3), the basis for common tax reductions (ROT/RUT work, renewable electricity, donations, sustainable-technology installation; section 4), the basis for the residential property charge and property tax (sections 5-6), capital income and deductions (sections 7-8), foreign insurance yield tax (section 9), additional disclosures (foreign income, foreign tax settlement, ROT/RUT reallocation requests, income-data corrections, free-text other information; section 17), and the signature/contact footer (section 18). This restores full box-level coverage of Sweden's Taxes vertical (superseding the narrower v1.0.0, which cited the wrong source page for this content — see VERIFICATION.md). Large parts of the return arrive pre-printed by Skatteverket from employer, bank, and other third-party reports; a filer verifies, corrects, and supplements those amounts rather than completing the form from a blank slate. It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Swedish Tax Agency",
+    "abbreviation": "Skatteverket",
+    "url": "https://www.skatteverket.se"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.skatteverket.se/servicelankar/otherlanguages/englishengelska/individualsandemployees/declaringtaxesforindividuals/howtofileyourtaxreturn/incometaxreturn12026.4.5c281c7015abecc2e20911b.html",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "Skatteverket's official bilingual 'Income Tax Return 1, 2026 (income year 2025)' page (SKV 2000, 'Inkomstdeklaration 1'), which publishes the exact Swedish box text and its own official English translation for every numbered box on the form ('Here you will find the headlines in the form \"Inkomstdeklaration 1, 2026\" (\"Income Tax Return 1, 2026\") in English'), cross-checked against the companion SKV 2000 order/distribution page and the e-service filing guide. This is a distinct page from v1.0.0's cited source (the thinner 'contents of the income tax return' page, which does not carry this granular content) — see VERIFICATION.md's correction record."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2096 follow-up to GOV-2091/GOV-2093. v1.0.0's original draft (commit e5d9057) modelled this same 48-field granular content, genuinely fetched via curl in that authoring session, but mistakenly wrote a different, thinner page's URL into source.url. GOV-2093's review gate independently re-fetched the cited URL, found it did not contain this content, and correctly rescoped v1.0.0 down to 14 aggregate fields against what that URL actually supports. This version (v2.0.0) restores the full 48-field granular model by citing the correct page (see source.url) instead of rescoping around a citation error. The correct URL was independently re-fetched live twice more after the original authoring session (once during GOV-2093/GOV-2096 close-out, once during this v2.0.0 authoring session) and confirmed each time, via a from-scratch curl + tag-stripped text extraction, to contain the exact bilingual per-box breakdown this schema's fields cite. v1.0.0 is marked deprecated in favor of this version, per VERSIONING.md's immutability + deprecation convention; both directories remain in the registry."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerPersonalIdentityNumber",
+      "label": "Personal identity number (personnummer)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Swedish personnummer, either 10-digit (YYMMDD-XXXX) or 12-digit (YYYYMMDD-XXXX) form. Not itself enumerated on Skatteverket's own numbered-box 'contents' page (see VERIFICATION.md); included because the return is personalized and addressed to a specific taxpayer's personnummer.",
+      "sourceRef": "Skatteverket general guidance on personalized, pre-printed individual tax returns; not confirmed against a specimen image of SKV 2000's own header",
+      "validation": {
+        "pattern": "^(19|20)?[0-9]{6}[-+]?[0-9]{4}$"
+      }
+    },
+    {
+      "name": "taxpayerName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "description": "Pre-printed by Skatteverket from the population register; not itself enumerated on Skatteverket's own numbered-box 'contents' page (see VERIFICATION.md).",
+      "sourceRef": "Skatteverket general guidance on personalized, pre-printed individual tax returns; not confirmed against a specimen image of SKV 2000's own header",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "taxpayerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "description": "The registered address the return is mailed to. Not itself enumerated on Skatteverket's own numbered-box 'contents' page (see VERIFICATION.md).",
+      "sourceRef": "Skatteverket general guidance ('Tax returns are sent to your registered address'); not confirmed against a specimen image of SKV 2000's own header",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "salariesBenefitsSicknessBenefits",
+      "label": "Salaries, benefits, sickness benefits etc.",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Pre-printed by Skatteverket as the sum of amounts reported to it by employers and other payers (e.g. salary, sickness benefit, other benefits); verified/corrected by the filer.",
+      "sourceRef": "SKV 2000 §1.1 'Lön, förmåner, sjukpenning m.m.' / 'Salaries, benefits, sickness benefits etc.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "compensationForExpenses",
+      "label": "Compensation for expenses",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §1.2 'Kostnadsersättning' / 'Compensation for expenses'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nationalRetirementAndOccupationalPension",
+      "label": "National retirement pension and occupational pension etc.",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §1.3 'Allmän pension och tjänstepension' / 'National retirement pension and occupational pension etc.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "privatePensionAndAnnuity",
+      "label": "Private pension and annuity",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §1.4 'Privat pension och livränta' / 'Private pension and annuity'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherNonPensionableIncome",
+      "label": "Other non-pensionable income",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §1.5 'Andra inkomster som inte är pensionsgrundande' / 'Other non pensionable income'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "hobbyOrOtherSelfEmployedIncome",
+      "label": "Income (e.g. hobby activities) on which you must pay your own individual social security contributions",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §1.6 'Inkomster, till exempel hobby, som du ska betala egenavgifter för' / 'Incomes, e.g. on hobby activities, on which you must pay your own individual social security contributions'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeFromAnnexesK10K10AK13",
+      "label": "Income in accordance with annexe K10, K10A and K13",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Aggregate amount carried in from separate K10/K10A/K13 annexes (qualified-shares-in-close-companies computations), which are not themselves modelled here.",
+      "sourceRef": "SKV 2000 §1.7 'Inkomst från bilaga K10, K10 A och K13' / 'Income in accordance with annexe K10, K10A and K13'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "journeysToAndFromWork",
+      "label": "Journeys to and from work",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Total amount of travel costs to/from work; a deduction is only given for the part exceeding SEK 11,000 (the filer fills in the total amount, not the already-reduced deduction).",
+      "sourceRef": "SKV 2000 §2.1 'Resor till och från arbetet' / 'Journeys to and from work. You can only claim a deduction for the amount exceeding SEK 11,000 Fill in the total amount.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "businessTrips",
+      "label": "Business trips",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §2.2 'Tjänsteresor' / 'Business trips'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "temporaryWorkDualResidenceAndJourneysHome",
+      "label": "Temporary work, dual residence and journeys home",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §2.3 'Tillfälligt arbete, dubbel bosättning och hemresor' / 'Temporary work, dual residence and journeys home'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherWorkRelatedExpenses",
+      "label": "Other work-related expenses",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Total amount of other work-related expenses; a deduction is only given for the part exceeding SEK 5,000 (the filer fills in the total amount, not the already-reduced deduction).",
+      "sourceRef": "SKV 2000 §2.4 'Övriga utgifter för ditt arbete' / 'Other work-related expenses You may only deduct the part exceeding SEK 5 000. Fill in the total amount.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "socialInsuranceChargesEuRegulation",
+      "label": "Social insurance charges according to the EU Regulation etc.",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §3.1 'Socialförsäkringsutgifter enligt EU förordningen med mera' / 'Social insurance charges according to the EU Regulation etc.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "rotWork",
+      "label": "\"ROT\" work (repairs, modification and extension)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §4.1 'Rotarbete' / “ROT” work (repairs, modification and extension)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "rutWork",
+      "label": "\"RUT\" work (cleaning, maintenance and laundry)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §4.2 'Rutarbete' / “RUT” work (cleaning, maintenance and laundry)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "renewableElectricity",
+      "label": "Renewable electricity",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §4.3 'Förnybar el' / 'Renewable electricity'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "donations",
+      "label": "Donations",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §4.4 'Gåva' / 'Donations'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "sustainableTechnologyInstallation",
+      "label": "Installation of sustainable technology",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §4.5 'Installation av grön teknik' / 'Installation of sustainable technology'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "propertyChargeBasisHouses",
+      "label": "Houses/owner-occupied apartments, property charge basis (0.75%)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §5 'Småhus / Ägarlägenhet 0,75 %' / 'Houses/owner-ocupied apartments 0.75%' (source's own spelling)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "propertyTaxBasisHousesUndevelopedPlots",
+      "label": "Houses/owner-occupied apartments, undeveloped plots, building under construction, property tax basis (1.0%)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §6 'Småhus/ägarlägenhet, tomtmark, byggnad under uppförande 1,0 %' / 'Houses/owner-ocupied apartments: undeveloped plots of land, building under construction 1.0%' (source's own spelling)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "standardRateOfCapitalIncome",
+      "label": "Standard rate of capital income (schablonintäkt)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §7.1 'Schablonintäkt' / 'Standard rate of capital income'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "interestDividendsProfitK4SectionC",
+      "label": "Interest incomes, dividends, profit in accordance with Enclosure K4 Section C etc.",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §7.2 'Ränteinkomster, utdelningar, vinst från bilaga K4 avsnitt C m.m.' / 'Interest incomes, dividends, profit in accordance with Enclosure K4 Section C etc.'",
+      "validation": {}
+    },
+    {
+      "name": "surplusFromRentalOfPrivateHousing",
+      "label": "Surplus from rental of private housing",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §7.3 'Överskott vid uthyrning av privatbostad' / 'Surplus from rental of private housing'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitOnInvestmentFundShares",
+      "label": "Profit on shares in investment funds etc. (annexes K4 A/B, K9 B, K10, K10A, K11, K12 B, K13)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §7.4 'Vinst fondandelar, Vinst från bilaga K4 avsnitt A och B, K9 avsnitt B, K10, K10 A, K11, K12 avsnitt b och K13' / 'Profit on shares in investment funds, etc.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitFromUnlistedInvestmentFundShares",
+      "label": "Profit from unlisted shares in investment funds etc. (annexes K4 D, K9 B, K12 C, K15A/B)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §7.5 'Vinst ej marknadsnoterade fondandelar' / 'Profit from unlisted shares in investment funds etc.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitK5K6ReversedDeferralK2",
+      "label": "Profit in accordance with Enclosure K5 and K6; reversed deferral from annexe K2",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §7.6 'Vinst från bilaga K5 och K6. Återfört uppskov från bilaga K2' / 'Profit in accordance with Enclosure K5 and K6. Reversed deferral from annexe K2.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitK7K8",
+      "label": "Profit in accordance with annexes K7 and K8",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §7.7 'Vinst från bilaga K7 och K8' / 'Profit in accordance with annexes K7 and K8'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "interestExpensesLossK4SectionC",
+      "label": "Interest expenses etc.; loss in accordance with annexe K4 (Section C) etc.",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §8.1 'Ränteutgifter m.m. Förlust från bilaga K4 avsnitt C' / 'Interest expenses, etc. Loss in accordance with annexe K4 (Section C) etc.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "lossOnInvestmentFundShares",
+      "label": "Loss on shares in investment funds etc. (annexes K4 A, K9 B, K10, K12 B, K13)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §8.3 'Förlust fondandelar m.m.' / 'Loss on shares in investment funds, etc.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "lossOnUnlistedInvestmentFundShares",
+      "label": "Loss on unlisted shares in investment funds (annexes K4 D, K9 B, K10A, K12 C, K15A/B)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §8.4 'Förlust ej marknadsnoterade andelar' / 'Loss unlisted shares in investment funds.'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "lossK5K6",
+      "label": "Loss in accordance with annexes K5 and K6",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §8.5 'Förlust enligt bilaga K5/K6' / 'Loss in accordance with annexes K5 and K6'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "lossK7K8",
+      "label": "Loss in accordance with annexes K7 and K8",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §8.6 'Förlust enligt bilaga K7 och K8' / 'Loss in accordance with annexes K7 and K8'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investorsDeductionK11",
+      "label": "Investors' deduction from annexe K11",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §8.7 'Investeraravdrag från bilaga K11' / 'Investors deductions from annexe K11'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "interestExpensesUnsecuredLoans",
+      "label": "Interest expenses on unsecured loans",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §8.8 'Ränteutgifter för lån utan säkerhet' / 'Interest expenses on unsecured loans'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxBaseEndowmentPolicyOrPepp",
+      "label": "Tax base for endowment policies/capital insurance or PEPPs",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §9.1 'Skatteunderlag för kapitalförsäkring och Pepp-produkter' / 'Tax base for endowment policies/capital insurance or PEPPs'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxBasePensionInsurance",
+      "label": "Tax base for endowment policies/pension insurance",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "SKV 2000 §9.2 'Skatteunderlag för pensionsförsäkring' / 'Tax base for endowment policies/pension insurance'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "hasForeignIncome",
+      "label": "Have you received income from abroad?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "SKV 2000 §17 'Kryssa här om du har haft utländsk inkomst' / 'Put an X in this box if you have received income from abroad'",
+      "validation": {}
+    },
+    {
+      "name": "foreignIncomeCategory",
+      "label": "Category of foreign income",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasForeignIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasForeignIncome",
+        "equals": true
+      },
+      "sourceRef": "SKV 2000 §17: 'Arbete' / 'Work', 'Pension' / 'Pension', 'Kapital' / 'Capital'",
+      "validation": {
+        "enum": [
+          "work",
+          "pension",
+          "capital"
+        ]
+      }
+    },
+    {
+      "name": "foreignIncomeCountry",
+      "label": "Country from which the income was received",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasForeignIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasForeignIncome",
+        "equals": true
+      },
+      "sourceRef": "SKV 2000 §17 'Land som inkomsten kommer från' / 'The country from which the income was received'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "foreignIncomeAmountSek",
+      "label": "Amount in SEK (foreign income)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "hasForeignIncome",
+        "equals": true
+      },
+      "visibleWhen": {
+        "field": "hasForeignIncome",
+        "equals": true
+      },
+      "description": "If the foreign income is taxable in Sweden, it must also be added to the relevant box for its income category on page one (per the form's own instructions), which this document does not automate.",
+      "sourceRef": "SKV 2000 §17 'Belopp i SEK' / 'Amount in SEK'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignTaxSettlementAmountSek",
+      "label": "Settlement of foreign tax, amount in SEK",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Only entered if requesting a new deduction to offset foreign tax; the form's own instructions say not to fill this in if a deduction has already been granted.",
+      "sourceRef": "SKV 2000 §17 'Avräkning utländsk skatt' / 'Settlement of foreign tax: If you wish to request a deduction to offset foreign tax, enter the amount here (if you have already been granted a deduction, you must not fill in the amount, see the specification for income tax return 1). Amount in SEK'",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "requestsRotRutReallocation",
+      "label": "Requests reallocation of ROT/RUT/sustainable-technology tax reduction",
+      "type": "boolean",
+      "required": false,
+      "description": "Detail on the amount, direction (to/from), and counterparty personal identity number is provided in the free-text otherInformation field, per the form's own instructions.",
+      "sourceRef": "SKV 2000 §17 'Kryssa här om du begär omfördelning av skattereduktion för rot/rutarbete eller installation av grön teknik' / 'Put an X in this box if you wish to request reallocation of a tax reduction for ROT (repairs, conversion and extension) and RUT (cleaning, maintenance and laundry) work, or installation of sustainable technology.'",
+      "validation": {}
+    },
+    {
+      "name": "incomeDataIncorrectOrMissing",
+      "label": "Income details are incorrect or missing",
+      "type": "boolean",
+      "required": false,
+      "description": "Detail on the payer's name, address, compensation amount, and tax deductions is provided in the free-text otherInformation field, per the form's own instructions.",
+      "sourceRef": "SKV 2000 §17 'Kryssa här om någon inkomstuppgift är felaktig/saknas' / 'Put an x in this box if any income details are incorrect or missing'",
+      "validation": {}
+    },
+    {
+      "name": "otherInformation",
+      "label": "Other information",
+      "type": "string",
+      "required": false,
+      "description": "Free-text field for information not otherwise captured on the form, e.g. accumulated income; the form's own instructions say attachments sent by post or submitted digitally do not need to be mentioned here.",
+      "sourceRef": "SKV 2000 §17 'Övrigt' / 'Other information'",
+      "validation": {
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "signatureEmail",
+      "label": "E-mail address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "SKV 2000 §18 'Namnteckning, e-postadress, telefonnummer' / 'Signature, e-mail address and telephone number'",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "signatureTelephone",
+      "label": "Telephone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "SKV 2000 §18 'Namnteckning, e-postadress, telefonnummer' / 'Signature, e-mail address and telephone number'",
+      "validation": {
+        "maxLength": 30
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "taxpayerSignature",
+      "label": "Taxpayer's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "By signing, the taxpayer submits the paper tax return to Skatteverket (an alternative to digital filing via e-identification, SMS, or phone approval, none of which require a handwritten signature).",
+      "sourceRef": "SKV 2000 §18 'Namnteckning, e-postadress, telefonnummer' / 'Signature, e-mail address and telephone number'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "taxpayer_identity",
+      "title": "Taxpayer identity",
+      "fields": [
+        "taxpayerPersonalIdentityNumber",
+        "taxpayerName",
+        "taxpayerAddress"
+      ],
+      "next": "employment_income_and_deductions"
+    },
+    {
+      "id": "employment_income_and_deductions",
+      "title": "Income and deductions from employment",
+      "fields": [
+        "salariesBenefitsSicknessBenefits",
+        "compensationForExpenses",
+        "nationalRetirementAndOccupationalPension",
+        "privatePensionAndAnnuity",
+        "otherNonPensionableIncome",
+        "hobbyOrOtherSelfEmployedIncome",
+        "incomeFromAnnexesK10K10AK13",
+        "journeysToAndFromWork",
+        "businessTrips",
+        "temporaryWorkDualResidenceAndJourneysHome",
+        "otherWorkRelatedExpenses"
+      ],
+      "next": "general_deductions_and_tax_reductions"
+    },
+    {
+      "id": "general_deductions_and_tax_reductions",
+      "title": "General deductions and basis for tax reductions",
+      "fields": [
+        "socialInsuranceChargesEuRegulation",
+        "rotWork",
+        "rutWork",
+        "renewableElectricity",
+        "donations",
+        "sustainableTechnologyInstallation"
+      ],
+      "next": "property_charge_and_tax"
+    },
+    {
+      "id": "property_charge_and_tax",
+      "title": "Basis for property charge and property tax",
+      "fields": [
+        "propertyChargeBasisHouses",
+        "propertyTaxBasisHousesUndevelopedPlots"
+      ],
+      "next": "capital_income_and_deductions"
+    },
+    {
+      "id": "capital_income_and_deductions",
+      "title": "Capital income and deductions",
+      "fields": [
+        "standardRateOfCapitalIncome",
+        "interestDividendsProfitK4SectionC",
+        "surplusFromRentalOfPrivateHousing",
+        "profitOnInvestmentFundShares",
+        "profitFromUnlistedInvestmentFundShares",
+        "profitK5K6ReversedDeferralK2",
+        "profitK7K8",
+        "interestExpensesLossK4SectionC",
+        "lossOnInvestmentFundShares",
+        "lossOnUnlistedInvestmentFundShares",
+        "lossK5K6",
+        "lossK7K8",
+        "investorsDeductionK11",
+        "interestExpensesUnsecuredLoans"
+      ],
+      "next": "foreign_insurance_yield_tax"
+    },
+    {
+      "id": "foreign_insurance_yield_tax",
+      "title": "Foreign insurance, yield tax",
+      "fields": [
+        "taxBaseEndowmentPolicyOrPepp",
+        "taxBasePensionInsurance"
+      ],
+      "next": "additional_information"
+    },
+    {
+      "id": "additional_information",
+      "title": "Additional information",
+      "fields": [
+        "hasForeignIncome",
+        "foreignIncomeCategory",
+        "foreignIncomeCountry",
+        "foreignIncomeAmountSek",
+        "foreignTaxSettlementAmountSek",
+        "requestsRotRutReallocation",
+        "incomeDataIncorrectOrMissing",
+        "otherInformation"
+      ],
+      "next": "signature"
+    },
+    {
+      "id": "signature",
+      "title": "Signature and contact details",
+      "fields": [
+        "signatureEmail",
+        "signatureTelephone"
+      ]
+    }
+  ]
+}
