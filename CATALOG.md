@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **338 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **339 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2210, "GovSchema Standard Research"): Iceland's
+> Visa vertical opens (3/6)**, via
+> `is/utl/other-residence-permit-application` — Útlendingastofnun's (the
+> Directorate of Immigration, ÚTL) Form D-110, "Other Residence Permits"
+> (Umsókn um dvalarleyfi — annað), the Directorate's catch-all/generic
+> residence-permit application used whenever no dedicated category-specific
+> form exists. This closes a Visa-vertical gap this catalog's own "Known
+> Gaps & Opportunities" notes had flagged as worth a dedicated future
+> session; that flag is now resolved. Unlike this registry's
+> `jp/isa/certificate-of-eligibility-application` precedent (which sits atop
+> dozens of category-specific supplements), D-110 is a single bounded
+> 9-page, 13-numbered-section AcroForm — confirmed via a from-scratch
+> `pdfjs-dist` re-extraction at **251 widgets across 9 pages**, exactly
+> matching a prior same-session extraction pass byte-for-byte and
+> widget-for-widget, per this registry's "own re-extraction, not trusting a
+> prior pass" convention. A second, differently-hashed Contentful CDN URL
+> for a same-named file was also fetched and diffed: it turned out to be a
+> genuinely different, 256-widget, 14-section document — resolved as a
+> stale/superseded intermediate CDN artifact (a live web search found the
+> same asset slot has since been overwritten again with an unrelated
+> Icelandic-language file), not the current live form; see the document's
+> own VERIFICATION.md for the full byte/date evidence. Every AcroForm
+> widget was cross-walked to a field name/label with a position-aware (x/y
+> proximity) mapping script rather than manual eyeballing — the same
+> technique this registry's `at/bmeia/schengen-visa-application` and
+> `se/migrationsverket/work-permit-application` schemas' own VERIFICATION.md
+> records describe using — which caught and corrected an initial
+> column-major misreading of the page-1 residence-permit category
+> checkboxes (the true order is row-major). Net **185 fields**, 9
+> `documents[]` entries (8 checklist items plus one paraphrased
+> pre-signature declaration), 14 `steps`, and 6 `crossFieldValidation`
+> rules (residence-abroad date-range ordering, one per repeating row); this
+> document deliberately uses **0 `exclusivityGroups`**, after checking that
+> `at/bmeia` and `se/migrationsverket` both actually model their own
+> equivalent single-select checkbox grids as a plain `enum` field rather
+> than an `exclusivityGroups` set — see VERIFICATION.md for the full
+> reasoning, flagged there for reviewer double-check. Repeating rows
+> (residence abroad, children under 18, relatives in Iceland) are bounded
+> to the 6 rows the source form itself visibly provides, matching this
+> registry's established convention. Iceland now stands at 3 of its 6
+> verticals (Business Formation, Taxes, Visa); Passport, National ID, and
+> DMV remain open, unscreened-or-dead-end backlog.
 
 > **Update (2026-07-10, GOV-2204, "GovSchema Standard Research"): Argentina's
 > DMV vertical deepens**, via
@@ -758,7 +801,9 @@
 > backlog candidates — DMV and Passport were screened this cycle and found
 > e-service-only/in-person with no field-by-field form; Visa has a real but
 > broad-scoped candidate (Form D-110) worth a dedicated future session;
-> National ID remains unscreened.
+> National ID remains unscreened. **[This Visa candidate was authored at
+> GOV-2210, "Iceland's Visa vertical opens (3/6)" — see the Executive
+> Summary update above; it is no longer open backlog.]**
 
 > **Update (2026-07-10, GOV-2077, "GovSchema Standard Research"): Iceland
 > opens as GovSchema's 30th jurisdiction**, via
@@ -4991,12 +5036,15 @@ notification. See the Executive Summary update above and the document's own
 VERIFICATION.md for the full sourcing story. Iceland opened with 1 of its 6
 verticals (Business Formation); **its Taxes vertical has since opened too
 (GOV-2084)**, via `is/skatturinn/simplified-individual-tax-return` — see the
-Taxes vertical section below and the Executive Summary update above. Iceland
-now stands at 2 of its 6 verticals; its remaining four (Passport, DMV, Visa,
+Taxes vertical section below and the Executive Summary update above.
+**Iceland's Visa vertical has since opened too (GOV-2210)**, via
+`is/utl/other-residence-permit-application` — Útlendingastofnun Form D-110,
+"Other Residence Permits" — see the Visa vertical section below and the
+Executive Summary update above. Iceland now stands at 3 of its 6 verticals
+(Business Formation, Taxes, Visa); its remaining three (Passport, DMV,
 National ID) are open backlog candidates — Passport and DMV were screened in
 the GOV-2084 cycle and found e-service-only/in-person with no field-by-field
-form; Visa has a real but broad-scoped candidate (Útlendingastofnun Form
-D-110) worth a dedicated future session; National ID remains unscreened.
+form; National ID remains unscreened.
 
 **Sweden opens as this registry's 29th jurisdiction via this vertical
 (GOV-2056)**, via `se/bolagsverket/aktiebolag-formation` — Bolagsverket Form
@@ -5764,7 +5812,35 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (24/32 jurisdictions — 75%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (25/32 jurisdictions — 78%)
+
+**Iceland's Visa vertical is now open** (`is/utl/other-residence-permit-application`,
+GOV-2210), via Útlendingastofnun's (the Directorate of Immigration, ÚTL)
+Form D-110, "Other Residence Permits" (Umsókn um dvalarleyfi — annað) — the
+Directorate's catch-all/generic residence-permit application, used
+whenever no dedicated category-specific form exists for the applicant's
+situation (Working Holiday/Youth Mobility, volunteers, missionaries,
+legitimate-and-special-purpose grounds, special ties to Iceland, or an
+"Other, what?" free-text category). A single bounded 9-page,
+13-numbered-section AcroForm — confirmed via a from-scratch `pdfjs-dist`
+re-extraction at 251 widgets, exactly matching a prior same-session
+extraction pass. A second, differently-hashed Contentful CDN URL for a
+same-named file proved to be a genuinely different, 256-widget, 14-section
+document; resolved as a stale/superseded intermediate CDN artifact, not the
+current live form — see the document's own VERIFICATION.md for the full
+byte/date evidence. Every widget was cross-walked to a field name/label
+with a position-aware (x/y proximity) mapping script, the same technique
+`at/bmeia/schengen-visa-application` and
+`se/migrationsverket/work-permit-application` describe using. Net 185
+fields, 9 `documents[]` entries, 14 `steps`, and 6 `crossFieldValidation`
+rules; deliberately uses 0 `exclusivityGroups`, after confirming that
+`at/bmeia` and `se/migrationsverket` both model their own equivalent
+single-select checkbox grids as a plain `enum` field, reserving
+`exclusivityGroups` for a narrower case neither present here — see
+VERIFICATION.md for the full reasoning. This brings Iceland to 3 of its 6
+verticals (Business Formation, Taxes, Visa). See the Executive Summary
+update above and the document's own VERIFICATION.md for the full sourcing
+record and every judgment call.
 
 **Argentina's Visa vertical is now open** (`ar/cancilleria/formulario-solicitud-visado`,
 GOV-2179), via the Cancillería's (Ministerio de Relaciones Exteriores,
@@ -6201,7 +6277,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IS** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **IS** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
