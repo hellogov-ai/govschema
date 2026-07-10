@@ -4775,7 +4775,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (29/32 jurisdictions — 91%)
+### DMV — Vehicle Registration, Licensing, Permits (30/32 jurisdictions — 94%)
 
 **Iceland's DMV vertical opens (GOV-2219)**, via
 `is/samgongustofa/vehicle-ownership-transfer` — Samgöngustofa's Form
