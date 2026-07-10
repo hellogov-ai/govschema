@@ -1,0 +1,1501 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "se/migrationsverket/work-permit-application",
+  "version": "1.0.0",
+  "title": "Sweden Application for a Swedish Work Permit",
+  "description": "Apply to the Swedish Migration Agency (Migrationsverket) for a work permit to work in Sweden, using Migrationsverket Form 149011 ('Ansökan om arbetstillstånd | Application for a Swedish work permit'). Covers first-time applications, extensions of an existing permit, a new-employer/new-assignment permit, a student-in-Sweden employment permit, and an attached application for a permanent residence permit after four years of work-based residence. For citizens of a country outside the EU/EEA area or Switzerland who plan to work in Sweden; if the applicant plans to work more than three months the application also concerns a residence permit, and if less than three months and a visa is otherwise required, a separate visa application is also needed (not modelled here). This is Sweden's first Visa-vertical schema, distinct from the EU-harmonized Schengen short-stay visa template already published elsewhere in this registry (e.g. fr/france-visas/schengen-visa-application); Sweden's other verticals are se/bolagsverket/aktiebolag-formation (Business Formation) and se/transportstyrelsen/vehicle-registration-new-vehicle (DMV). It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Swedish Migration Agency",
+    "abbreviation": "Migrationsverket",
+    "url": "https://www.migrationsverket.se"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.migrationsverket.se/en/contact-us/you-need-documents-from-us/forms.html",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "Migrationsverket Form 149011, edition 2026-06-11 ('Application for a Swedish work permit' / 'Ansökan om arbetstillstånd'), the English-language fillable AcroForm PDF linked from Migrationsverket's own forms page"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2070 'GovSchema Standard Research' research cycle. Sweden was opened at GOV-2056 (Business Formation) and deepened at GOV-2063 (DMV, 2 of 6 verticals). This cycle scouted Sweden's four remaining verticals (Passport, Taxes, Visa, National ID): Passport (Polisen) is confirmed in-person/biometric-only with no downloadable fillable form; National ID (Skatteverket samordningsnummer / Polisen national ID card) is likewise in-person-verification-only with no recoverable direct-binary fillable-PDF URL; Skatteverket's Taxes candidate (SKV 4314, preliminary income tax declaration) was initially the strongest-looking candidate — a genuine 77-field AcroForm — but its only directly-fetchable static copy (`4314_46.pdf`) proved to be a stale c.2014/2015 edition (its own guidance text cites 'beskattningsår 2014' figures), and Skatteverket's live PDF-generation servlet (`www1.skatteverket.se/lcmp2/lc_webapp/secure/PdfServlet.do`) resets the connection for both a direct `curl` fetch and a real headless-Chromium session alike (a genuine server-side fault, not a bot gate) — confirmed via web search that SKV 4314 has since been reissued for tax years 2024, 2025, and 2026 with real capital-section changes, making the cached copy an unsafe source-fidelity risk; this candidate was therefore abandoned rather than authored against a demonstrably stale source. Migrationsverket's Visa-vertical candidate, Form 149011 (Swedish work permit application), was confirmed instead: directly downloadable (HTTP 200, no login/CAPTCHA/WAF gate), a genuine 143-distinct-field AcroForm with self-documenting English field names, and its own footer edition stamp reads '149011 2026-06-11' — one month old at the time of this review, the strongest recency signal found this cycle. Distinct from the EU-harmonized Schengen visa template (Migrationsverket's own separate Schengen visa form, nos. 118031 SV/119031 EN, was already confirmed a duplicate of that template in the prior DMV-cycle's research trail)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationCategory",
+      "label": "What are you applying for?",
+      "type": "enum",
+      "required": true,
+      "description": "The form's own four mutually-exclusive top-level application categories (page 1): a first-time work permit, an extension of an existing permit, a new permit following a change of employer/assignment, or a permit for a student in Sweden who has taken employment.",
+      "sourceRef": "149011 p.1, 'Your application'",
+      "validation": {
+        "enum": ["first_time", "extension", "new_employer_or_assignments", "student_employed"]
+      }
+    },
+    {
+      "name": "firstTimeProfessionType",
+      "label": "First-time applicant: profession type",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "applicationCategory", "equals": "first_time" },
+      "sourceRef": "149011 p.1: 'I have not previously had a work permit, and I apply for a permit to work in Sweden as' — an artist (CU) / a professional athlete or coach (CI) / (state the profession) (CA0, CA8, CAS)",
+      "validation": { "enum": ["artist", "athlete_or_coach", "other"] }
+    },
+    {
+      "name": "firstTimeOtherProfession",
+      "label": "First-time applicant: state the profession, if not an artist or professional athlete/coach",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "firstTimeProfessionType", "equals": "other" },
+      "sourceRef": "149011 p.1: 'I have not previously had a work permit, but have received an offer to work as - State the profession'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "extensionProfessionType",
+      "label": "Extension applicant: profession type",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "applicationCategory", "equals": "extension" },
+      "sourceRef": "149011 p.1: 'I already have a permit in Sweden, and wish to extend it to work as' — an artist (CUX) / a professional athlete or coach (CIX) / (state the profession) (CAX, CASX)",
+      "validation": { "enum": ["artist", "athlete_or_coach", "other"] }
+    },
+    {
+      "name": "extensionOtherProfession",
+      "label": "Extension applicant: state the profession, if not an artist or professional athlete/coach",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "extensionProfessionType", "equals": "other" },
+      "sourceRef": "149011 p.1: 'State your profession, I wish to extend my current permit in Sweden'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "newEmployerProfession",
+      "label": "New-employer/new-assignment applicant: state the profession",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicationCategory", "equals": "new_employer_or_assignments" },
+      "sourceRef": "149011 p.1: 'I have a new employer or new work assignments and wish to receive a new work permit to work as' (CAX, CASX, CIX)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "studentEmployedProfession",
+      "label": "Student-in-Sweden applicant: state the profession of the offered employment",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicationCategory", "equals": "student_employed" },
+      "sourceRef": "149011 p.1: 'I am a student in Sweden and have received an offer to work as - State the profession' (CA9)",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "applyingForPermanentResidence",
+      "label": "Are you also applying for a permanent residence permit (having held a residence permit for work in Sweden for four years during a seven-year period)?",
+      "type": "boolean",
+      "required": false,
+      "description": "Can only be granted in connection with the examination of an application for an extended residence permit; the form's own guidance notes exceptions to the self-support requirement for pensioners or on special grounds.",
+      "sourceRef": "149011 p.2: 'I have had a residence permit for work in Sweden for four years during a seven-year period and am applying for a permanent residence permit.'",
+      "validation": {}
+    },
+    {
+      "name": "plannedEntryDate",
+      "label": "Planned date of entry into Sweden",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.2, §1 'Stay in Sweden': 'I plan to enter Sweden on'",
+      "validation": {}
+    },
+    {
+      "name": "workInSwedenFromDate",
+      "label": "Planned start date of work in Sweden",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.2, §1: 'I am planning to work in Sweden from'",
+      "validation": {}
+    },
+    {
+      "name": "workUntilFurtherNotice",
+      "label": "Is the planned work in Sweden until further notice (no end date)?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.2, §1: 'I am planning to stay in Sweden until further notice'",
+      "validation": {}
+    },
+    {
+      "name": "workInSwedenUntilDate",
+      "label": "Planned end date of work in Sweden",
+      "type": "date",
+      "required": false,
+      "description": "Left blank when the applicant instead indicates work is planned until further notice (workUntilFurtherNotice); the source form does not expose a PDF-level required flag distinguishing these two mutually-exclusive sub-fields.",
+      "sourceRef": "149011 p.2, §1: 'I am planning to work in Sweden ... until'",
+      "validation": {}
+    },
+    {
+      "name": "inSwedenSinceDate",
+      "label": "Date since which the applicant has already been in Sweden, if applicable",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.2, §1: 'I have been in Sweden since'",
+      "validation": {}
+    },
+    {
+      "name": "reasonForBeingInSweden",
+      "label": "The reason why the applicant is in Sweden, if already in Sweden",
+      "type": "string",
+      "required": false,
+      "description": "Applies, among other cases, to an applicant who travelled to Sweden to visit an employer and was offered employment (source §15.1.6), which additionally requires an employer certificate attachment (see documents[].employerVisitCertificate).",
+      "sourceRef": "149011 p.2, §1: 'The reason why I am in Sweden'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname (family name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.2, §2 'Personal details': 'Surname (family name)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "previousSurname",
+      "label": "Previous surname, if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.2, §2: 'Previous surname, if any'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.2, §2: 'First name(s)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "dateOfBirthOrPersonalId",
+      "label": "Date of birth / Personal ID No.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "149011 p.2, §2: 'Date of birth/Personal ID No. (YYYYMMDD-NNNN)'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "citizenship",
+      "label": "Citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.2, §2: 'Citizenship'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "previousCitizenship",
+      "label": "Previous citizenship, if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.2, §2: 'Previous citizenship, if any'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.2, §2: 'Place of birth'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.2, §2: 'Country of birth'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nativeLanguage",
+      "label": "Native language",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.2, §2: 'Native language'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "otherLanguagesSpoken",
+      "label": "Other languages the applicant speaks",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.2, §2: 'I also speak (languages)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex (as specified in the passport)",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The form's own footnote states that if a different sex is specified in the passport, the applicant must still choose male or female, because only these two genders are used in Swedish legislation.",
+      "sourceRef": "149011 p.2, §2: 'Sex (specified in the passport)' — Male / Female",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "149011 p.2, §2: 'Marital status' — Unmarried / Married or registered partner / Divorced / Widowed",
+      "validation": { "enum": ["unmarried", "married_or_registered_partner", "divorced", "widowed"] }
+    },
+    {
+      "name": "relativesApplyingWithYou",
+      "label": "Are any of your relatives applying for a permit with you?",
+      "type": "boolean",
+      "required": false,
+      "description": "The form's own footnote states that all co-applicants must submit their own separate application.",
+      "sourceRef": "149011 p.2, §2: 'Are any of your relatives applying for a permit with you?' — Yes / No",
+      "validation": {}
+    },
+    {
+      "name": "passportType",
+      "label": "Type of passport",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "149011 p.2, §3 'Passport details': 'National passport' / 'Other passport (state type)'",
+      "validation": { "enum": ["national", "other"] }
+    },
+    {
+      "name": "otherPassportType",
+      "label": "State the type of passport, if not a national passport",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "passportType", "equals": "other" },
+      "sourceRef": "149011 p.2, §3: 'If other, state type'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "passportIssuedBy",
+      "label": "Passport issued by",
+      "type": "string",
+      "required": true,
+      "sourceRef": "149011 p.2, §3: 'Passport issued by'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "149011 p.2, §3: 'Passport number'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "passportIssuedDate",
+      "label": "Passport issued date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "149011 p.2, §3: 'Issued date (YYYY-MM-DD)'",
+      "validation": {}
+    },
+    {
+      "name": "passportValidUntil",
+      "label": "Passport valid until",
+      "type": "date",
+      "required": true,
+      "sourceRef": "149011 p.2, §3: 'Valid until (YYYY-MM-DD)'",
+      "validation": {}
+    },
+    {
+      "name": "hasResidencePermitInOtherCountry",
+      "label": "Do you have a permit to live (reside) in a country other than your home country?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.2, §3: 'Do you have a permit to live (reside) in a country other than your home country?' — Yes / No",
+      "validation": {}
+    },
+    {
+      "name": "residencePermitOtherCountry",
+      "label": "Country where you have a permit to live, if applicable",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasResidencePermitInOtherCountry", "equals": true },
+      "sourceRef": "149011 p.2, §3: 'If yes, state country where you have a permit to live'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "residencePermitOtherCountryValidPeriod",
+      "label": "Period the other country's residence permit is valid (from – until)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasResidencePermitInOtherCountry", "equals": true },
+      "sourceRef": "149011 p.2, §3: 'The permit is valid from – until'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "contactEmail",
+      "label": "Email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4 'Contact details': 'Email address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "contactPhone",
+      "label": "Telephone number, with country code (for example +46 or 0046)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4: 'Telephone number with country code'",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "contactStreetAddress",
+      "label": "Street address (street, street number, and apartment number)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's own address in the country where they live, or their Swedish address if already in Sweden.",
+      "sourceRef": "149011 p.3, §4: 'Street address (street, street number and apartment number)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "contactPostcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4: 'Postcode'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "contactPlace",
+      "label": "Place (city/town)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4: 'Place'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "contactCountry",
+      "label": "Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4: 'Country'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "representativeEmail",
+      "label": "Representative's email address, if a representative acts on the applicant's behalf",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The form's own §4.1 states a power of attorney must be enclosed whenever a representative is used (see documents[].representativePowerOfAttorney).",
+      "sourceRef": "149011 p.3, §4.1 'Contact details for a representative': 'Email address'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "representativeName",
+      "label": "Representative's name (first name and surname, or name of organisation)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4.1: 'Name (First name and surname or name of organisation)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "representativeStreetAddress",
+      "label": "Representative's street address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4.1: 'Street address'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "representativePostcode",
+      "label": "Representative's postcode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4.1: 'Postcode'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "representativePlace",
+      "label": "Representative's place (city/town)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §4.1: 'Place'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previouslyAppliedToComeToSweden",
+      "label": "Have you previously applied to come to Sweden?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.3, §5 'Previous applications for permits in Sweden': 'Have you previously applied to come to Sweden?' — No / Yes, year",
+      "validation": {}
+    },
+    {
+      "name": "previousApplicationYear",
+      "label": "Year of the previous application to come to Sweden",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previouslyAppliedToComeToSweden", "equals": true },
+      "sourceRef": "149011 p.3, §5: 'If yes, Year you previously applied to come to Sweden.'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "previousStay1Country",
+      "label": "Previous stay in Sweden/Schengen area, row 1: country",
+      "type": "string",
+      "required": false,
+      "description": "The form's own §6 asks for the most recent stay first, across up to 4 rows.",
+      "sourceRef": "149011 p.3, §6 'Previous stays in Sweden and other Schengen countries': 'Country Row 1'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousStay1EntryDate",
+      "label": "Previous stay row 1: entry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Entry date Country 1'",
+      "validation": {}
+    },
+    {
+      "name": "previousStay1DepartureDate",
+      "label": "Previous stay row 1: departure date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Departure date Country 1'",
+      "validation": {}
+    },
+    {
+      "name": "previousStay2Country",
+      "label": "Previous stay in Sweden/Schengen area, row 2: country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Country Row 2'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousStay2EntryDate",
+      "label": "Previous stay row 2: entry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Entry date Country 2'",
+      "validation": {}
+    },
+    {
+      "name": "previousStay2DepartureDate",
+      "label": "Previous stay row 2: departure date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Departure date Country 2'",
+      "validation": {}
+    },
+    {
+      "name": "previousStay3Country",
+      "label": "Previous stay in Sweden/Schengen area, row 3: country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Country Row 3'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousStay3EntryDate",
+      "label": "Previous stay row 3: entry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Entry date Country 3'",
+      "validation": {}
+    },
+    {
+      "name": "previousStay3DepartureDate",
+      "label": "Previous stay row 3: departure date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Departure date Country 3'",
+      "validation": {}
+    },
+    {
+      "name": "previousStay4Country",
+      "label": "Previous stay in Sweden/Schengen area, row 4: country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Country Row 4'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousStay4EntryDate",
+      "label": "Previous stay row 4: entry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Entry date Country 4'",
+      "validation": {}
+    },
+    {
+      "name": "previousStay4DepartureDate",
+      "label": "Previous stay row 4: departure date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "149011 p.3, §6: 'Departure date Country 4'",
+      "validation": {}
+    },
+    {
+      "name": "spouseSurname",
+      "label": "Spouse/cohabitant/registered partner: surname (family name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The form's own §7 states co-applicants (e.g. a spouse applying for their own permit) must submit their own separate application, using form 133011; this section instead collects the applicant's family details for the applicant's own application.",
+      "sourceRef": "149011 p.3, §7.1 'Spouse, cohabitant or registered partner – personal details': 'Surname (family name)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "spousePreviousSurname",
+      "label": "Spouse/cohabitant/registered partner: previous surname(s), if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §7.1: 'Previous surname(s), if any'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "spouseFirstNames",
+      "label": "Spouse/cohabitant/registered partner: first name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §7.1: 'First name(s)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "spouseDateOfBirthOrPersonalId",
+      "label": "Spouse/cohabitant/registered partner: date of birth / Personal ID No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "149011 p.3, §7.1: 'Date of birth/Personal ID No. (YYYYMMDD-NNNN)'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "spouseCitizenship",
+      "label": "Spouse/cohabitant/registered partner: citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §7.1: 'Citizenship'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spousePreviousCitizenship",
+      "label": "Spouse/cohabitant/registered partner: previous citizenship, if any",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §7.1: 'Previous citizenship, if any'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseCurrentAddress",
+      "label": "Spouse/cohabitant/registered partner: current address (street, place, and country)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.3, §7.1: 'Current address (street, place and country)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "spouseSex",
+      "label": "Spouse/cohabitant/registered partner: sex",
+      "type": "enum",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "149011 p.3, §7.1: 'Sex' — Male / Female",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "child1SurnameFirstName",
+      "label": "Child 1: surname, first name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2 'Children – personal details': 'Surname, first name Child 1'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "child1DateOfBirth",
+      "label": "Child 1: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Date of birth (YYYYMMDD) Child 1'",
+      "validation": {}
+    },
+    {
+      "name": "child1Citizenship",
+      "label": "Child 1: citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Citizenship Child 1'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "child2SurnameFirstName",
+      "label": "Child 2: surname, first name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Surname, first name Child 2'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "child2DateOfBirth",
+      "label": "Child 2: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Date of birth (YYYYMMDD) child 2'",
+      "validation": {}
+    },
+    {
+      "name": "child2Citizenship",
+      "label": "Child 2: citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Citizenship Child 2'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "child3SurnameFirstName",
+      "label": "Child 3: surname, first name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Surname, first name Child 3'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "child3DateOfBirth",
+      "label": "Child 3: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Date of birth (YYYYMMDD) child 3'",
+      "validation": {}
+    },
+    {
+      "name": "child3Citizenship",
+      "label": "Child 3: citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Citizenship Child 3'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "child4SurnameFirstName",
+      "label": "Child 4: surname, first name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Surname, first name Child 4'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "child4DateOfBirth",
+      "label": "Child 4: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Date of birth (YYYYMMDD) child 4'",
+      "validation": {}
+    },
+    {
+      "name": "child4Citizenship",
+      "label": "Child 4: citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Citizenship Child 4'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "child5SurnameFirstName",
+      "label": "Child 5: surname, first name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Surname, first name Child 5'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "child5DateOfBirth",
+      "label": "Child 5: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Date of birth (YYYYMMDD) child 5'",
+      "validation": {}
+    },
+    {
+      "name": "child5Citizenship",
+      "label": "Child 5: citizenship",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "149011 p.4, §7.2: 'Citizenship Child 5'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "employerOrClientName",
+      "label": "Employer or client in Sweden",
+      "type": "string",
+      "required": true,
+      "sourceRef": "149011 p.4, §8 'Work in Sweden': 'Employer or client in Sweden'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "employerContactPerson",
+      "label": "Contact person at the employer/client in Sweden",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Contact person at the employer/client in Swden'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employerPhone",
+      "label": "Telephone number of the employer or client in Sweden",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Telephone number of employer or client in Sweden'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "employerStreetAddress",
+      "label": "Street address of the employer or client in Sweden",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Street address of employer or client in Sweden'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employerPostcodeAndPlace",
+      "label": "Postcode and place of the employer or client in Sweden",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Postcode and place of employer or client in Sweden'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "employerEmail",
+      "label": "Email address of the employer or client in Sweden",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Email address to employer or client in Sweden'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "workplaceAddress",
+      "label": "Workplace address, if different from the employer's address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Workplace address (if different)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "howLearnedAboutWork",
+      "label": "How did you learn about the work in Sweden?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'How did you learn about the work in Sweden?'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "workAssignmentsDescription",
+      "label": "Describe your work assignments",
+      "type": "string",
+      "required": true,
+      "sourceRef": "149011 p.4, §8: 'Describe your work assignments'",
+      "validation": { "minLength": 1, "maxLength": 1000 }
+    },
+    {
+      "name": "salaryPayingEmployer",
+      "label": "From which employer (in Sweden or abroad) will you receive your salary?",
+      "type": "string",
+      "required": true,
+      "sourceRef": "149011 p.4, §8: 'From which employer will you receive your salary?'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "monthlySalaryBeforeTax",
+      "label": "Monthly salary before taxes",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "149011 p.4, §8: 'How much will you receive in salary (before taxes) each month?'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "weeklyWorkingHours",
+      "label": "How many hours will you be working per week?",
+      "type": "number",
+      "required": true,
+      "sourceRef": "149011 p.4, §8: 'How many hours will you be working per week?'",
+      "validation": { "minimum": 0, "maximum": 168 }
+    },
+    {
+      "name": "receivesOtherCompensationOrAllowances",
+      "label": "Will you receive any other compensation or allowances?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Will you receive any other compensation or allowances?' — No / Yes",
+      "validation": {}
+    },
+    {
+      "name": "otherCompensationMonthlyAmount",
+      "label": "Monthly amount of other compensation or allowances, if applicable",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Filled in only when the applicant will receive other compensation or allowances (receivesOtherCompensationOrAllowances).",
+      "sourceRef": "149011 p.4, §8: 'If yes, please state the monthly amount'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employerProvidesHealthcareInsurance",
+      "label": "Employer provides: healthcare insurance",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Which insurances have your employer taken out or will be taking out on your behalf?' — Healthcare insurance",
+      "validation": {}
+    },
+    {
+      "name": "employerProvidesNoFaultLiabilityInsurance",
+      "label": "Employer provides: no-fault liability insurance",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'No-fault liability insurance'",
+      "validation": {}
+    },
+    {
+      "name": "employerProvidesLifeInsurance",
+      "label": "Employer provides: life insurance",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Life insurance'",
+      "validation": {}
+    },
+    {
+      "name": "employerProvidesPensionInsurance",
+      "label": "Employer provides: pension insurance",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "149011 p.4, §8: 'Pension insurance'",
+      "validation": {}
+    },
+    {
+      "name": "previousEmployerInSweden",
+      "label": "Previous employer in Sweden",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §9 'Previous work in Sweden': 'Employer'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmploymentPeriod",
+      "label": "Length of previous employment (from – until)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §9: 'Length of employment (from – until)'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "reasonForEndingPreviousEmployment",
+      "label": "Reason for ending previous employment",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.4, §9: 'Reason for ending employment'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "school1Name",
+      "label": "School education up to and including secondary school level, row 1",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10 'Previous studies and work experience': 'School education up to and including secondary school level Row 1'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "school1Years",
+      "label": "School row 1: number of years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Number of years in school Row 1'",
+      "validation": { "minimum": 0, "maximum": 30 }
+    },
+    {
+      "name": "school1GraduatedYear",
+      "label": "School row 1: year graduated",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Graduated from school in the year Row 1'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "school2Name",
+      "label": "School education up to and including secondary school level, row 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'School education up to secondary school level Row 2'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "school2Years",
+      "label": "School row 2: number of years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Number of years in school Row 2'",
+      "validation": { "minimum": 0, "maximum": 30 }
+    },
+    {
+      "name": "school2GraduatedYear",
+      "label": "School row 2: year graduated",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Graduated from school in the year Row 2'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "university1Name",
+      "label": "University/college education (state the level), row 1",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'University/college education Row 1'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "university1Years",
+      "label": "University/college row 1: number of years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Number of years University/college education Row 1'",
+      "validation": { "minimum": 0, "maximum": 30 }
+    },
+    {
+      "name": "university1GraduatedYear",
+      "label": "University/college row 1: year graduated",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Graduated in the year University/college education Row 1'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "university2Name",
+      "label": "University/college education (state the level), row 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'University/college education Row 2'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "university2Years",
+      "label": "University/college row 2: number of years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Number of years at University/college education Row 2'",
+      "validation": { "minimum": 0, "maximum": 30 }
+    },
+    {
+      "name": "university2GraduatedYear",
+      "label": "University/college row 2: year graduated",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Graduated in the year University/college education Row 2'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "university3Name",
+      "label": "University/college education (state the level), row 3",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'University/college education Row 3'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "university3Years",
+      "label": "University/college row 3: number of years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Number of years at University/college education Row 3'",
+      "validation": { "minimum": 0, "maximum": 30 }
+    },
+    {
+      "name": "university3GraduatedYear",
+      "label": "University/college row 3: year graduated",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Graduated in the year University/college education Row 3'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "vocational1Name",
+      "label": "Vocational education, row 1",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Vocational education Row 1'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "vocational1Years",
+      "label": "Vocational education row 1: number of years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Number of years in vocational education Row 1'",
+      "validation": { "minimum": 0, "maximum": 30 }
+    },
+    {
+      "name": "vocational1GraduatedYear",
+      "label": "Vocational education row 1: year graduated",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Graduated from vocational education in the year Row 1'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "vocational2Name",
+      "label": "Vocational education, row 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Vocational education Row 2'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "vocational2Years",
+      "label": "Vocational education row 2: number of years",
+      "type": "number",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Number of years in vocational education Row 2'",
+      "validation": { "minimum": 0, "maximum": 30 }
+    },
+    {
+      "name": "vocational2GraduatedYear",
+      "label": "Vocational education row 2: year graduated",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Graduated from vocational education in the year Row 2'",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "previousEmployer1Name",
+      "label": "Previous employers, row 1: employer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Previous employers Row 1'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployer1WorkAs",
+      "label": "Previous employers, row 1: work as",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Work as Row 1'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployer1Length",
+      "label": "Previous employers, row 1: length of employment",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Length of employment Row 1'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "previousEmployer2Name",
+      "label": "Previous employers, row 2: employer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Previous employers Row 2'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployer2WorkAs",
+      "label": "Previous employers, row 2: work as",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Work as Row 2'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployer2Length",
+      "label": "Previous employers, row 2: length of employment",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Length of employment Row 2'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "previousEmployer3Name",
+      "label": "Previous employers, row 3: employer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Previous employers Row 3'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployer3WorkAs",
+      "label": "Previous employers, row 3: work as",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Work as Row 3'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployer3Length",
+      "label": "Previous employers, row 3: length of employment",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.5, §10: 'Length of employment Row 3'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "healthCoverageBasis",
+      "label": "Comprehensive health insurance valid for care in Sweden",
+      "type": "enum",
+      "required": false,
+      "description": "Relevant only when the applicant will be staying in Sweden for no more than one year; the private-insurance option must cover emergency and other medical care, dental care, hospitalization, and eventual repatriation for medical reasons.",
+      "sourceRef": "149011 p.5, §11 'Comprehensive health insurance valid for care in Sweden' — mutually exclusive: 'I am registered in the Swedish Population Register and therefore already have coverage equivalent to a comprehensive health insurance.' / 'I have signed or applied for a comprehensive health insurance to cover my stay in Sweden.'",
+      "validation": { "enum": ["population_register", "private_insurance"] }
+    },
+    {
+      "name": "healthInsuranceCompany",
+      "label": "Health insurance company",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "healthCoverageBasis", "equals": "private_insurance" },
+      "sourceRef": "149011 p.5, §11: 'Insurance company'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "healthInsuranceValidPeriod",
+      "label": "Period the health insurance is valid (from – until)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "healthCoverageBasis", "equals": "private_insurance" },
+      "sourceRef": "149011 p.5, §11: 'Period the insurance is valid (YYYY-MM-DD – YYYY-MM-DD)'",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "requestRevokeCurrentResidencePermit",
+      "label": "Do you request that the Swedish Migration Agency revoke your current residence permit if we grant you a work permit?",
+      "type": "enum",
+      "required": false,
+      "description": "Applies only to an applicant who holds a valid residence permit in Sweden under (or following) the EU Temporary Protection Directive; not applicable to professional athletes and coaches. Answering 'yes' means the applicant receives the new work-based residence permit as soon as it is granted; answering 'no' means the applicant keeps their current permit until it expires, and may need to reapply.",
+      "sourceRef": "149011 p.5, §12 'If you have a residence permit linked to the Temporary Protection Directive (excluding professional athletes and coaches)': 'Do you request that the Swedish Migration Agency revoke your current residence permit if we grant you a work permit?' — Yes / No",
+      "validation": { "enum": ["yes", "no"] }
+    },
+    {
+      "name": "otherInformationForApplication",
+      "label": "Other information you would like to submit regarding your application",
+      "type": "string",
+      "required": false,
+      "sourceRef": "149011 p.6, §13 'Other information you would like to submit regarding your application'",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "decisionDeliveryAddress",
+      "label": "State the Swedish embassy, consulate-general, or the address in Sweden you would like us to send your decision to",
+      "type": "string",
+      "required": true,
+      "description": "The Swedish Migration Agency's own form states it cannot send a decision by email.",
+      "sourceRef": "149011 p.6, §14 'The decision should be sent to'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "placeAndDateOfSignature",
+      "label": "Place and date of signature",
+      "type": "string",
+      "required": true,
+      "sourceRef": "149011 p.7, §16 'Signature': 'Place and date'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportCopyPages",
+      "label": "Copies of the passport pages showing personal information, photograph, signature, passport number, issuing country, validity period, the identification page's barcode, and (if applicable) any permission to live in a country other than the country of origin; the passport must be signed",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.6, §15 'Enclose the following documents with your application'"
+    },
+    {
+      "id": "employmentContract",
+      "label": "Employment contract",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.6, §15"
+    },
+    {
+      "id": "employmentInformation",
+      "label": "Information about the employment, per Migrationsverket's own published template (does not apply to professional athletes and coaches)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.6, §15: 'information about the employment, www.migrationsverket.se. (Does not apply to professional athletes and coaches.)'"
+    },
+    {
+      "id": "unionOpinion",
+      "label": "Opinion from the relevant trade union (does not apply to professional athletes and coaches)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "other",
+      "sourceRef": "149011 p.6, §15: 'opinion from relevant union, www.migrationsverket.se. (Does not apply to professional athletes and coaches.)'"
+    },
+    {
+      "id": "healthInsuranceProof",
+      "label": "Copies of documents showing comprehensive health insurance valid in Sweden for a stay of no more than one year (not required if registered in the Swedish Population Register)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.6, §15"
+    },
+    {
+      "id": "extensionSupportingDocuments",
+      "label": "For an extension application: a summary of the applicant's PAYE tax return from the Swedish Tax Agency for each year worked in Sweden, this year's payslips, a certificate of employment from each Swedish employer, and a certified statement of any work absences",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "applicationCategory", "equals": "extension" },
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.6, §15.1.1 'are applying for an extension'"
+    },
+    {
+      "id": "artistContract",
+      "label": "Contract with information on fees, tour plan, and the length of the contract, signed by both the organizer and the applicant",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "all": [{ "field": "applicationCategory", "equals": "first_time" }, { "field": "firstTimeProfessionType", "equals": "artist" }] },
+          { "all": [{ "field": "applicationCategory", "equals": "extension" }, { "field": "extensionProfessionType", "equals": "artist" }] }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.6, §15.1.2 'are an artist'"
+    },
+    {
+      "id": "athleteOrCoachContract",
+      "label": "Contract with information on compensation, insurance, and the length of the contract, signed by both the sports association and the applicant",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "all": [{ "field": "applicationCategory", "equals": "first_time" }, { "field": "firstTimeProfessionType", "equals": "athlete_or_coach" }] },
+          { "all": [{ "field": "applicationCategory", "equals": "extension" }, { "field": "extensionProfessionType", "equals": "athlete_or_coach" }] }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.6, §15.1.3 'are a professional athlete or coach'"
+    },
+    {
+      "id": "studentSupportingDocuments",
+      "label": "For a student-in-Sweden applicant: proof of at least two completed semesters of higher education (or a certificate confirming two completed semesters of doctoral studies) in Sweden, a summary of the Swedish Tax Agency income statement for this year and the previous year if worked in Sweden, and this year's payslips",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "applicationCategory", "equals": "student_employed" },
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.7, §15.1.4 'are a student who has had a residence permit for university or college studies in Sweden'"
+    },
+    {
+      "id": "permanentResidenceSupportingDocuments",
+      "label": "For a permanent-residence-permit application: documents showing the applicant can support themselves or is exempt from the maintenance requirement (employment certificate and salary specifications; or company registration/tax documents if self-employed; or a pension-entitlement decision if a pensioner; or documents evidencing a functional impairment, illness, or other qualifying limitation), plus documents showing housing costs",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "applyingForPermanentResidence", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.7, §15.1.5 'are applying for a permanent residence permit'"
+    },
+    {
+      "id": "employerVisitCertificate",
+      "label": "Certificate from the employer showing they would experience substantial problems if the applicant had to leave the country to apply for a permit, for an applicant who travelled to Sweden to visit employers and was offered employment while there",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.7, §15.1.6 'have travelled to Sweden to visit employers and been offered employment'"
+    },
+    {
+      "id": "representativePowerOfAttorney",
+      "label": "Power of attorney, required whenever a representative acts on the applicant's behalf",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "149011 p.3, §4.1 'Contact details for a representative': 'Fill in if a representative is acting on your behalf. If you have a representative, you need to enclose a power of attorney.'"
+    },
+    {
+      "id": "applicantSignature",
+      "label": "Applicant's handwritten signature, declaring that the information provided is true and complete and that the applicant has read the appendix on personal-data processing",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I hereby solemnly declare that the information that I have provided is true and that I have not knowingly left out anything that may be of significance in the examination of the case and that I have read the information about the processing of personal data in the appendix.",
+      "sourceRef": "149011 p.7, §16 'Signature'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "application_type",
+      "title": "Application type",
+      "fields": [
+        "applicationCategory", "firstTimeProfessionType", "firstTimeOtherProfession",
+        "extensionProfessionType", "extensionOtherProfession", "newEmployerProfession",
+        "studentEmployedProfession", "applyingForPermanentResidence"
+      ],
+      "next": "stay_in_sweden"
+    },
+    {
+      "id": "stay_in_sweden",
+      "title": "Stay in Sweden",
+      "fields": [
+        "plannedEntryDate", "workInSwedenFromDate", "workUntilFurtherNotice",
+        "workInSwedenUntilDate", "inSwedenSinceDate", "reasonForBeingInSweden"
+      ],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal details",
+      "fields": [
+        "surname", "previousSurname", "firstNames", "dateOfBirthOrPersonalId", "citizenship",
+        "previousCitizenship", "placeOfBirth", "countryOfBirth", "nativeLanguage",
+        "otherLanguagesSpoken", "sex", "maritalStatus", "relativesApplyingWithYou"
+      ],
+      "next": "passport_details"
+    },
+    {
+      "id": "passport_details",
+      "title": "Passport details",
+      "fields": [
+        "passportType", "otherPassportType", "passportIssuedBy", "passportNumber",
+        "passportIssuedDate", "passportValidUntil", "hasResidencePermitInOtherCountry",
+        "residencePermitOtherCountry", "residencePermitOtherCountryValidPeriod"
+      ],
+      "next": "contact_details"
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact details",
+      "fields": [
+        "contactEmail", "contactPhone", "contactStreetAddress", "contactPostcode",
+        "contactPlace", "contactCountry", "representativeEmail", "representativeName",
+        "representativeStreetAddress", "representativePostcode", "representativePlace"
+      ],
+      "next": "previous_applications_and_stays"
+    },
+    {
+      "id": "previous_applications_and_stays",
+      "title": "Previous applications and stays",
+      "fields": [
+        "previouslyAppliedToComeToSweden", "previousApplicationYear",
+        "previousStay1Country", "previousStay1EntryDate", "previousStay1DepartureDate",
+        "previousStay2Country", "previousStay2EntryDate", "previousStay2DepartureDate",
+        "previousStay3Country", "previousStay3EntryDate", "previousStay3DepartureDate",
+        "previousStay4Country", "previousStay4EntryDate", "previousStay4DepartureDate"
+      ],
+      "next": "family"
+    },
+    {
+      "id": "family",
+      "title": "Family",
+      "fields": [
+        "spouseSurname", "spousePreviousSurname", "spouseFirstNames",
+        "spouseDateOfBirthOrPersonalId", "spouseCitizenship", "spousePreviousCitizenship",
+        "spouseCurrentAddress", "spouseSex",
+        "child1SurnameFirstName", "child1DateOfBirth", "child1Citizenship",
+        "child2SurnameFirstName", "child2DateOfBirth", "child2Citizenship",
+        "child3SurnameFirstName", "child3DateOfBirth", "child3Citizenship",
+        "child4SurnameFirstName", "child4DateOfBirth", "child4Citizenship",
+        "child5SurnameFirstName", "child5DateOfBirth", "child5Citizenship"
+      ],
+      "next": "work_in_sweden"
+    },
+    {
+      "id": "work_in_sweden",
+      "title": "Work in Sweden",
+      "fields": [
+        "employerOrClientName", "employerContactPerson", "employerPhone",
+        "employerStreetAddress", "employerPostcodeAndPlace", "employerEmail",
+        "workplaceAddress", "howLearnedAboutWork", "workAssignmentsDescription",
+        "salaryPayingEmployer", "monthlySalaryBeforeTax", "weeklyWorkingHours",
+        "receivesOtherCompensationOrAllowances", "otherCompensationMonthlyAmount",
+        "employerProvidesHealthcareInsurance", "employerProvidesNoFaultLiabilityInsurance",
+        "employerProvidesLifeInsurance", "employerProvidesPensionInsurance",
+        "previousEmployerInSweden", "previousEmploymentPeriod", "reasonForEndingPreviousEmployment"
+      ],
+      "next": "studies_and_work_experience"
+    },
+    {
+      "id": "studies_and_work_experience",
+      "title": "Previous studies and work experience",
+      "fields": [
+        "school1Name", "school1Years", "school1GraduatedYear",
+        "school2Name", "school2Years", "school2GraduatedYear",
+        "university1Name", "university1Years", "university1GraduatedYear",
+        "university2Name", "university2Years", "university2GraduatedYear",
+        "university3Name", "university3Years", "university3GraduatedYear",
+        "vocational1Name", "vocational1Years", "vocational1GraduatedYear",
+        "vocational2Name", "vocational2Years", "vocational2GraduatedYear",
+        "previousEmployer1Name", "previousEmployer1WorkAs", "previousEmployer1Length",
+        "previousEmployer2Name", "previousEmployer2WorkAs", "previousEmployer2Length",
+        "previousEmployer3Name", "previousEmployer3WorkAs", "previousEmployer3Length"
+      ],
+      "next": "health_insurance_and_final_details"
+    },
+    {
+      "id": "health_insurance_and_final_details",
+      "title": "Health insurance and final details",
+      "fields": [
+        "healthCoverageBasis",
+        "healthInsuranceCompany", "healthInsuranceValidPeriod",
+        "requestRevokeCurrentResidencePermit", "otherInformationForApplication",
+        "decisionDeliveryAddress", "placeAndDateOfSignature"
+      ]
+    }
+  ]
+}
