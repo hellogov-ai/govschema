@@ -4,7 +4,58 @@
 
 ## Executive Summary
 
-**30 jurisdictions** | **322 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**30 jurisdictions** | **323 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2084, "GovSchema Standard Research"): Iceland's
+> Taxes vertical opens**, via
+> `is/skatturinn/simplified-individual-tax-return` v1.0.0 — Skatturinn Form
+> RSK 1.13, "Tax return | simplified", the short-form annual individual
+> income tax return the form itself scopes to individuals who have lived in
+> Iceland for less than three years (excluding couples, filers with
+> dependent children, owners of real estate/securities/shares, and the
+> self-employed, who must file the full RSK 1.10/1.01 return instead). The
+> task brief's own named National ID candidates (DE Steuer-ID, SG NRIC, NZ
+> RealMe, "remaining voter registration") were re-checked first and confirmed
+> already resolved or dead-ended in prior cycles, so this cycle instead
+> deepened Iceland (opened GOV-2077 with one vertical, Business Formation).
+> Screened Samgöngustofa's driving-licence process (DMV; e-service only, no
+> downloadable form found), Þjóðskrá's passport process (Passport/National
+> ID; in-person biometric issuance via `island.is` pre-registration, no
+> field-by-field paper form found), and Útlendingastofnun's Form D-110
+> residence-permit application (Visa; a genuine 251-widget, 9-page AcroForm,
+> set aside this cycle as too broad for one session) before finding RSK 1.13:
+> directly downloadable, unauthenticated, and listed on Skatturinn's own
+> forms index alongside Polish/Russian/Spanish translations, confirming it is
+> a currently-maintained, actively used form. Unlike RSK 5.02 (GOV-2077), this
+> form has no AcroForm field layer at all — extracted via `pdfjs-dist`'s
+> position-tagged `getTextContent()` using the form's own printed reference
+> numbers (21, 22, 134, 162, 296, 301, etc.) as the field-identity anchor,
+> then cross-checked by rendering the PDF with a real full-build headless
+> Chromium (Playwright `chrome-linux64`, `/paperclip/chrome-sysroot` shared
+> libraries) and visually re-inspecting both pages at high zoom — the same
+> visual-confirmation discipline GOV-2070/GOV-2077 established for this
+> registry. That visual pass caught a genuine inconsistency in the source
+> document itself: the box printed on page 1 for the savings-account
+> interest-income total reads "12", but the back-page instructions prose
+> refers to the same box as "312" (confirmed via the raw text layer, which
+> extracts "312" verbatim from the instructions sentence) — not an extraction
+> artifact. This document follows the number actually printed on the
+> fillable box; the discrepancy is disclosed in the field's own description
+> and in VERIFICATION.md. Models the filer's identity and duration of stay;
+> salary and employment payments (up to four employer entries); car
+> allowance/per diem/fringe benefits; other income; deductions; the computed
+> tax base; taxes withheld at source; savings/bank-account status (up to two
+> account entries and their totals); a refund bank account; and a foreign TIN
+> and address abroad for filers who leave Iceland before assessment — see the
+> document's own VERIFICATION.md for the full sourcing record, extraction
+> transcript, and every disclosed scope decision, including the mock
+> conformance test run (0 errors across 47 fields, 4 mutation tests). Iceland
+> now stands at 2 of its 6 verticals (Business Formation, Taxes); its
+> remaining four verticals (DMV, Passport, Visa, National ID) are open
+> backlog candidates — DMV and Passport were screened this cycle and found
+> e-service-only/in-person with no field-by-field form; Visa has a real but
+> broad-scoped candidate (Form D-110) worth a dedicated future session;
+> National ID remains unscreened.
 
 > **Update (2026-07-10, GOV-2077, "GovSchema Standard Research"): Iceland
 > opens as GovSchema's 30th jurisdiction**, via
@@ -4129,8 +4180,14 @@ within an already-covered vertical:
 Skatturinn Form RSK 5.02, a combined business/employer/VAT registration
 notification. See the Executive Summary update above and the document's own
 VERIFICATION.md for the full sourcing story. Iceland opened with 1 of its 6
-verticals (Business Formation); its other five verticals (Passport, DMV,
-Taxes, Visa, National ID) are open, unscreened backlog candidates.
+verticals (Business Formation); **its Taxes vertical has since opened too
+(GOV-2084)**, via `is/skatturinn/simplified-individual-tax-return` — see the
+Taxes vertical section below and the Executive Summary update above. Iceland
+now stands at 2 of its 6 verticals; its remaining four (Passport, DMV, Visa,
+National ID) are open backlog candidates — Passport and DMV were screened in
+the GOV-2084 cycle and found e-service-only/in-person with no field-by-field
+form; Visa has a real but broad-scoped candidate (Útlendingastofnun Form
+D-110) worth a dedicated future session; National ID remains unscreened.
 
 **Sweden opens as this registry's 29th jurisdiction via this vertical
 (GOV-2056)**, via `se/bolagsverket/aktiebolag-formation` — Bolagsverket Form
@@ -4421,7 +4478,18 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (27/30 jurisdictions — 90%)
+### Taxes — Income Tax Return, Tax Filing (28/30 jurisdictions — 93%)
+
+**Iceland's Taxes vertical opens** (`is/skatturinn/simplified-individual-tax-return`,
+GOV-2084) — Skatturinn Form RSK 1.13, "Tax return | simplified", the
+short-form annual individual income tax return the form itself scopes to
+individuals who have lived in Iceland for less than three years (couples,
+filers with dependent children, owners of real estate/securities/shares, and
+the self-employed must file the full RSK 1.10/1.01 return instead, not
+modelled here). See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record, including a disclosed
+box-number inconsistency in the source PDF itself (printed "12" vs. the
+back-page instructions' "312").
 
 **Japan's Taxes vertical is now published** (`jp/nta/individual-income-tax-final-return`,
 GOV-2042) — the National Tax Agency's 所得税及び復興特別所得税の申告書
@@ -5202,7 +5270,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IS** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **IS** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **JP** | 7 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
