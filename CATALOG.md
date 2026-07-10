@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **339 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **340 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2219, "GovSchema Standard Research"): Iceland's
+> DMV vertical opens (4/6)**, via
+> `is/samgongustofa/vehicle-ownership-transfer` — Samgöngustofa's (the
+> Icelandic Transport Authority) Form US.140, "Tilkynning um eigendaskipti
+> að ökutæki" (Notification of Change of Vehicle Ownership), a single-page
+> notification both buyer and seller jointly complete to record a private
+> vehicle ownership transfer. Fetched fresh from the CDN URL the brief
+> named (`assets.ctfassets.net`, 137,237 bytes, SHA-256
+> `1aaea347...0ed136a`) rather than a same-named flagged mirror the brief
+> warned was flat/scanned; a from-scratch `pdfjs-dist` re-extraction
+> confirmed exactly **31 AcroForm widgets** on the document's single page,
+> matching the brief's own field-count claim exactly. Position-aware (x/y
+> proximity) cross-walking surfaced two non-obvious structural findings:
+> (1) 5 named-insurer checkboxes and 2 further checkboxes literally named
+> `TRAILER`/`OUT_OF_USE` share one continuous two-column layout — all 7 are
+> a single flat select-one list ("declare your insurer, or that the
+> vehicle is a trailer covered under its towing vehicle's insurance, or
+> that it's being taken out of use"), modelled as one `enum` field rather
+> than a 5-option group with 2 unrelated boxes bolted on; (2) two
+> checkboxes carry no field name at all in the source PDF's own AcroForm
+> (a genuine upstream authoring omission, not an extraction artifact),
+> tagging whether two numbered name lines below them name a co-owner or an
+> operator — modelled as a single enum per this registry's established
+> preference for true single-select grids over `exclusivityGroups`. Net
+> **22 fields** covering all 31 widgets (the insurance-status enum alone
+> accounts for 7). See the document's own VERIFICATION.md for the full
+> sourcing record, both structural findings, and the mock conformance test
+> run (0 errors across 2 valid mocks, 2 negative controls both failing as
+> expected). Iceland now stands at 4 of its 6 verticals (Business
+> Formation, Taxes, Visa, DMV); Passport and National ID remain open,
+> unscreened-or-dead-end backlog.
 
 > **Update (2026-07-10, GOV-2210, "GovSchema Standard Research"): Iceland's
 > Visa vertical opens (3/6)**, via
