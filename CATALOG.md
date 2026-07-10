@@ -4,7 +4,58 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **335 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **336 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2187, "GovSchema Standard Research"): Argentina's
+> DMV vertical opens (3/6)**, via
+> `ar/dnrpa/solicitud-tipo-08-transferencia-automotor` — the Registro
+> Nacional de la Propiedad del Automotor's (DNRPA, Ministerio de Justicia y
+> Derechos Humanos) Solicitud Tipo 08 (automóvil variant), the standard
+> national request form used to record a private motor-vehicle title
+> transfer ("Contrato de Transferencia - Inscripción de Dominio"). This is
+> this registry's first genuinely **widget-free and text-layer-free** flat
+> PDF: `pdfjs-dist` confirmed 0 AcroForm fields, 0 widgets, and 0
+> `getTextContent()` items across both of the specimen's pages — stricter
+> than this registry's other "flat" AR specimens (AFIP's 460/J and 460/F),
+> which at least carry some PDF structure. Every field was therefore
+> catalogued by rasterizing both pages to PNG at 3x scale
+> (`pdfjs-dist` + `node-canvas`) and visually transcribing each printed box
+> against the form's own left/right-margin section labels ("A" through
+> "O"). DNRPA's own general completion rules for Solicitudes Tipo (Digesto,
+> Título I, Cap. I, Sec. 2ª, arts. 1-13, fetched fresh alongside the PDF)
+> resolved several judgment calls: art. 3 confirms the form's own "D"/"E"
+> and "I"/"J" column pairs are exactly the first-two-co-owners structure
+> DNRPA's carbon-form design allows on one set of forms (a third co-owner
+> needs an entirely separate set, out of scope here); art. 13 confirms the
+> buyer/adquirente's CUIT-CUIL-CDI is a source-asserted mandatory
+> requirement (modelled `required: true`), distinct from every other
+> `required` value in this document, which is a structural judgment call.
+> Notably, the seller's own national-identity-document number is absent
+> from the form entirely (only their name, ownership share, and marital
+> status are asked, plus their attorney-in-fact's document if a proxy is
+> used) — confirmed by inspecting the rendered page at high resolution, not
+> assumed — consistent with the seller already being the registry's
+> on-file titular, verified at signing via notarized signature
+> certification rather than re-declared here. This document models **83
+> fields** — the largest in this registry to date — spanning contract
+> terms, primary and co-buyer (natural-person and legal-entity branches),
+> the vehicle itself, seller-declared prior liens, primary and co-seller,
+> and four independent attorney-in-fact sub-blocks (buyer/co-buyer/
+> seller/co-seller), while excluding every wet-ink signature line, every
+> notary/certifying-official block, and every registry-only box (the
+> pre-printed serial number, "B"/"C"/"OPTA"/"N"). One `requiredWhen`
+> pattern this registry has previously flagged as unsafe — gating an
+> optional field on a sentinel-value `notEquals` comparison against another
+> optional field — was deliberately avoided for
+> `authorizedAgentDocumentTypeAndNumber`; the conditional relationship is
+> stated in the field's `description` instead. See the document's own
+> VERIFICATION.md for the full sourcing record, every scope decision, and
+> the two-valid-mock/four-negative-control conformance test run. Argentina
+> now stands at 3 of its 6 verticals (Business Formation, Visa, DMV); the
+> sibling motovehículo variant (`08M.pdf`) is a named follow-on candidate,
+> and AFIP's Formulario 460/F (individual/persona física CUIT
+> registration) remains the sole other open Argentina candidate — see
+> "Known Gaps" below.
 
 > **Update (2026-07-10, GOV-2169, "GovSchema Standard Research"): Argentina
 > opens as the registry's 32nd jurisdiction**, via
@@ -4543,7 +4594,16 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (27/32 jurisdictions — 84%)
+### DMV — Vehicle Registration, Licensing, Permits (28/32 jurisdictions — 88%)
+
+**Argentina's DMV vertical opens (GOV-2187)**, via
+`ar/dnrpa/solicitud-tipo-08-transferencia-automotor` — the DNRPA's Solicitud
+Tipo 08, the national vehicle title-transfer form, extracted entirely by
+visual rasterization since the specimen has 0 AcroForm fields, 0 widgets,
+and 0 extractable text (this registry's first fully flat/scanned PDF). See
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full sourcing story and every scope decision. Argentina now stands
+at 3 of its 6 verticals (Business Formation, Visa, DMV).
 
 **Sweden's DMV vertical opens (GOV-2063)**, via
 `se/transportstyrelsen/vehicle-registration-new-vehicle` — Transportstyrelsen
@@ -6555,6 +6615,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    like its 460/J sibling, requiring box-by-box visual extraction);
    Argentina's remaining verticals (Passport, DMV, Taxes, National ID)
    are still open, unscreened backlog candidates.
+   **Update (2026-07-10, GOV-2187): Argentina's DMV vertical is now
+   resolved** — published as `ar/dnrpa/solicitud-tipo-08-transferencia-automotor`
+   (DNRPA Solicitud Tipo 08, automóvil variant), opening Argentina's DMV
+   vertical (3/6). Unlike every other AR specimen so far, this one carries
+   0 AcroForm fields, 0 widgets, and 0 extractable text — a genuinely flat
+   scanned image, requiring full visual rasterization rather than any
+   widget-based extraction. See the Executive Summary update above and the
+   DMV vertical section below for the full record. The sibling
+   motovehículo variant (`08M.pdf`, explicitly deferred this cycle) and
+   AFIP's Formulario 460/F remain the two open Argentina follow-on
+   candidates; Argentina's remaining verticals (Passport, Taxes, National
+   ID) are still open, unscreened or dead-end backlog candidates (Passport
+   and National ID both route through RENAPER, confirmed in-person/
+   appointment-only with no downloadable field-level form).
 4. **India ITR-3's deferred shared schedules**: a future version of
    `in/incometax/individual-tax-return-itr3` could re-derive Schedule S
    (salary), House Property, Schedule CG (capital gains), OS (other
