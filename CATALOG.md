@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**30 jurisdictions** | **324 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**30 jurisdictions** | **325 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2096, "GovSchema Standard Research"): full
+> box-level coverage restored** for `se/skatteverket/individual-income-tax-return`,
+> via a new `2.0.0` (MAJOR — restructures the field set versus `1.0.0`,
+> not a backward-compatible addition). GOV-2093's review gate (below) had
+> correctly corrected GOV-2091's original 48-field draft down to 14 aggregate
+> fields, because the URL it cited (`.../thecontentsoftheincometaxreturn...html`)
+> does not carry the granular §1.1-9.2/17/18 bilingual box content the draft
+> modelled. That granular content is nevertheless real, current, official
+> Skatteverket content — it was genuinely fetched via `curl` in the original
+> authoring session, just from a *different* page
+> (`.../howtofileyourtaxreturn/incometaxreturn12026.4.5c281c7015abecc2e20911b.html`,
+> "Income Tax Return 1, 2026") that was never written into `source.url`. This
+> cycle independently re-fetched that correct URL live (fresh `curl`, HTTP
+> 200, third independent confirmation after the original session and the
+> GOV-2093/GOV-2096 close-out), mechanically cross-checked every one of the
+> 48 fields' `sourceRef` quotes against the freshly extracted page text, and
+> patched 9 fields whose quotes had drifted from the source's exact wording
+> (added punctuation, curly-vs-straight quotes, and — in two cases — a
+> silently "corrected" typo the source itself makes, `owner-ocupied` for
+> `owner-occupied`, now quoted verbatim with that misspelling disclosed).
+> `1.0.0` is **not edited** — VERSIONING.md §3 states a published version
+> directory is "never edited or deleted," which sits in tension with the same
+> document's "Status interaction" note that a superseded version's `status`
+> "may move to deprecated"; this cycle resolved that tension conservatively
+> by leaving `1.0.0`'s bytes untouched and recording the supersession here
+> instead, flagging the wording contradiction to the Founding Engineer for a
+> future clarifying edit. See
+> `registry/se/skatteverket/individual-income-tax-return/2.0.0/VERIFICATION.md`
+> for the full correction record, verbatim cross-check methodology, and the
+> mock conformance test run (0 errors across 48 fields, 3 mutation tests).
+> Sweden's vertical count is unchanged (4 of 6: Business Formation, DMV,
+> Visa, Taxes) — this deepens the Taxes vertical's existing schema rather
+> than opening a new vertical.
 
 > **Update (2026-07-10, GOV-2091, "GovSchema Standard Research"): Sweden's
 > Taxes vertical opens**, via `se/skatteverket/individual-income-tax-return`
