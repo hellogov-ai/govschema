@@ -272,7 +272,11 @@
 > "may move to deprecated"; this cycle resolved that tension conservatively
 > by leaving `1.0.0`'s bytes untouched and recording the supersession here
 > instead, flagging the wording contradiction to the Founding Engineer for a
-> future clarifying edit. See
+> future clarifying edit — resolved in GOV-2102: superseding a version never
+> edits the prior directory's `status`; `deprecated` is reserved for a newly
+> published version signaling its own source process was retired, and
+> ordinary supersession is tracked here in `CATALOG.md`/the registry index,
+> exactly as this cycle already did. See
 > `registry/se/skatteverket/individual-income-tax-return/2.0.0/VERIFICATION.md`
 > for the full correction record, verbatim cross-check methodology, and the
 > mock conformance test run (0 errors across 48 fields, 3 mutation tests).

@@ -53,7 +53,31 @@ agents to pin.
 A re-verification that finds the source unchanged is a PATCH that refreshes
 `verification.lastVerifiedAt` (and `status` to `verified`). A source change that
 alters fields is a MINOR or MAJOR per the rules above; the prior version's
-directory stays in place and its `status` may move to `deprecated`.
+directory stays in place, byte-for-byte, per the immutability rule in §3 — its
+`status` is **not** edited retroactively.
+
+**Supersession is not the same claim as deprecation.** Publishing `2.0.0`
+because a field changed makes `1.0.0` no longer the *latest* version; it says
+nothing about whether `1.0.0`'s own `status` should read `deprecated`. Per SPEC
+§11.1, `deprecated` means "the source process changed or was retired" — a claim
+about whether *that specific document* still describes a live process, not
+about whether a newer version exists. Most version bumps supersede without
+deprecating: the prior version remains an accurate historical record of a
+process that is simply now versioned further, and consumers pinned to it keep
+getting the same valid bytes.
+
+If a document's underlying government process is itself discontinued and a
+maintainer wants to warn consumers away from building against that line, that
+is expressed by **publishing a new immutable version** (typically a PATCH,
+since no field changes) whose own `status` is `deprecated` and whose
+`verification.notes` explains why — never by reaching back into an already-published
+directory and flipping its `status` in place. "The directory stays in place" in
+the sentence above means exactly that: nothing about it, including `status`,
+changes after publication.
+
+Tracking *which* version of a schema is current, and any narrative about why a
+version was superseded, belongs to the registry index and `CATALOG.md`, not to
+mutating a published document's own fields.
 
 ## 2. Specification versioning
 
