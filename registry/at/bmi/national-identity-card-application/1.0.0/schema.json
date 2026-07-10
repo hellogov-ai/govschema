@@ -1,0 +1,322 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "at/bmi/national-identity-card-application",
+  "version": "1.0.0",
+  "title": "Austria National Identity Card Application (Personalausweis)",
+  "description": "Austria's application for issuance of a national identity card (Personalausweis), 'Antrag auf Ausstellung eines Personalausweises' — a valid photo-ID document usable as an EU/Schengen-area travel document and as domestic proof of identity and Austrian citizenship. This document is modelled from the current single-page fillable-AcroForm PDF specimen ('persausw.pdf'), obtained directly from oesterreich.gv.at's own federal content-delivery host and byte-identical to the copy hosted by the Bundesministerium für europäische und internationale Angelegenheiten (BMEIA) in its central forms library and linked by name ('Application Form Identity Card (Personalausweis)') from a live Austrian embassy citizen-services page. Domestically, the application must be made in person at the competent Passbehörde (the Bezirkshauptmannschaft, a Land capital's Magistrat, or — in Vienna — a Magistratisches Bezirksamt); for Austrian citizens resident abroad, the same form is submitted through an Austrian embassy or consulate. Deliberately excludes: the domestic-only appointment-booking step and the specific list of which supporting original documents are required in each of the source's four alternative identity-proof scenarios (old ID present / passport present / other official photo ID present / no document present, requiring an identity witness) — captured here only as free-text reference fields per the form's own layout, not as separate structured document requirements, since the form itself asks for descriptive reference details (issuing authority, number, date) rather than a simple presence flag; and the separate, distinct 'Antrag auf Ausstellung eines österreichischen Reisepasses oder Personalausweises' consular form used by some individual Austrian missions abroad, which bundles passport and identity-card issuance into one bilingual document with a different field layout (a related, open companion-schema candidate for a future cycle — see VERIFICATION.md). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Austria, the Bundesministerium für Inneres, the Bundesministerium für europäische und internationale Angelegenheiten, or any Austrian Passbehörde.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Bundesministerium für Inneres (BMI), the Personalausweis issuing authority administered through each Land's Passbehörde; consular intake for Austrians living abroad is handled through the Bundesministerium für europäische und internationale Angelegenheiten (BMEIA) and its embassies/consulates",
+    "abbreviation": "BMI",
+    "url": "https://www.oesterreich.gv.at/de/themen/persoenliche_dokumente_und_bestaetigungen/personalausweis"
+  },
+  "process": {
+    "type": "filing",
+    "language": "de-AT"
+  },
+  "source": {
+    "url": "https://www.oesterreich.gv.at/dam/jcr:97e7a2ac-f901-4956-af98-65e114194c1b/persausw.pdf",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "'Antrag auf Ausstellung eines Personalausweises' ('Application for issuance of an identity card'), a single-page fillable-AcroForm PDF hosted directly on oesterreich.gv.at's own federal content-delivery ('dam') host, byte-identical (SHA-256 match) to the copy at bmeia.gv.at's central forms library, itself linked from a live Austrian embassy citizen-services page as 'Application Form Identity Card (Personalausweis)'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "Authored from a fresh curl fetch of the genuine fillable-AcroForm PDF directly from oesterreich.gv.at (HTTP 200, application/pdf, 2,036,464 bytes), independently re-fetched a second time from bmeia.gv.at's central 'Allgemein/Formulare' library and confirmed SHA-256-identical to the oesterreich.gv.at copy. All 34 AcroForm widgets on the PDF's single page were extracted and enumerated with pdfjs-dist's getAnnotations()/getTextContent(); 7 are non-data controls (two duplicate heading-label text widgets whose own default value equals their printed heading text; one near-zero-area stray text widget with no adjacent label of its own; two further stray, unlabeled text widgets overlapping other content's label/box boundaries; and two footer widgets carrying only the form's internal reference code and page-count stamp) excluded from the field model. The remaining 27 data widgets map onto this document's 23 fields: one genuine 2-option radio-button group (gender) and one genuine 4-option radio-button group (legal-representation basis) — both implemented as true shared-name PDF radio fields, confirmed via getAnnotations()'s radioButton:true flag, unlike a prior AT cycle's independent (non-grouped) checkboxes — were each merged into a single enum field rather than modelled as independent unconstrained booleans, for a total of 4 widgets folded into 2 fields (27 - 4 = 23). Two other, distinct PDF specimens found this session for the same general topic were screened and set aside: a bilingual German/English 42-widget combined passport-or-identity-card form used by some individual Austrian missions abroad (structurally sound but a materially different, less-current-looking specimen with independent, non-grouped checkboxes for its own document-type selector), and a trilingual German/English/Hebrew 74-widget consular variant specific to one mission with a stray, apparently miscopied Hebrew caption — see VERIFICATION.md for the full comparison and why the dedicated, oesterreich.gv.at-hosted Personalausweis-only specimen was preferred."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "surnameLine1",
+      "label": "Family name / surname — line 1",
+      "type": "string",
+      "required": true,
+      "description": "The form provides two stacked entry lines for the family name (each with its own printed 'Familien-/Nachname' heading directly above it), allowing a long or compound surname to continue onto a second line — see 'surnameLine2'.",
+      "sourceRef": "'Familien-/Nachname' (first of two stacked surname entry lines)",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "surnameLine2",
+      "label": "Family name / surname — line 2 (continuation)",
+      "type": "string",
+      "required": false,
+      "description": "Continuation of a long or compound family name onto the form's second surname line, when line 1 alone is insufficient. Left blank otherwise.",
+      "sourceRef": "'Familien-/Nachname' (second of two stacked surname entry lines)",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "surnameAtBirth",
+      "label": "Family name at time of birth",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Familienname zur Zeit der Geburt'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "previousNames",
+      "label": "Previous names",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'frühere Namen'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Vorname(n)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "academicDegreeOrEngineerTitle",
+      "label": "Academic degree or protected 'Ingenieur' title (if entry desired)",
+      "type": "string",
+      "required": false,
+      "description": "Austria's protected professional title 'Ingenieur' (engineer) may be entered on the identity card alongside an academic degree; see 'academicDegreeProofReference' for the corresponding supporting-evidence reference field.",
+      "sourceRef": "'akademischer Grad/Standesbezeichnung Ingenieur'",
+      "validation": {
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "'Geburtsdatum'",
+      "classification": "pii"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Ort der Geburt'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "description": "Merges a genuine 2-option PDF radio-button group (getAnnotations() reports radioButton:true, a single shared field name) into one enum — see VERIFICATION.md. The printed page shows the heading as 'Geschlecht *)', referring to the page's own footnote '*) Zutreffendes ankreuzen' ('mark the applicable option'); the PDF widget group's own internal field name expands this to 'Geschlecht (zutreffendes ankreuzen)' — both are disclosed rather than presenting the expanded form as a single contiguous printed phrase (see VERIFICATION.md).",
+      "sourceRef": "'Geschlecht *)' (heading, with page footnote '*) Zutreffendes ankreuzen'): 'weiblich' / 'männlich'",
+      "validation": {
+        "enum": [
+          "female",
+          "male"
+        ]
+      }
+    },
+    {
+      "name": "mainResidenceAddress",
+      "label": "Main residence (postal code / town / street / house no. / staircase / door no.)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Hauptwohnsitz (Postleitzahl/Ort/Straße/Hausnummer/Stiege/Türnummer)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "heightCm",
+      "label": "Height (cm)",
+      "type": "integer",
+      "required": true,
+      "description": "Height is printed on the issued identity card, matching this registry's precedent for a physical characteristic that becomes part of the finished document's content. Printed on the page as a label 'Körpergröße' with a separate 'cm' unit marker beside the entry box (not one contiguous printed phrase); the PDF widget's own internal field name combines them as 'Körpergröße in cm', which is what this sourceRef paraphrases into a single label (see VERIFICATION.md).",
+      "sourceRef": "'Körpergröße' (label) ... 'cm' (unit marker beside the entry box)",
+      "validation": {
+        "minimum": 0,
+        "maximum": 300
+      }
+    },
+    {
+      "name": "deliveryAddress",
+      "label": "Delivery address (postal code / town / street / house no. / staircase / door no.), if different from main residence",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Zustelladresse (Postleitzahl/Ort/Straße/Hausnummer/Stiege/Türnummer)'",
+      "validation": {
+        "maxLength": 300
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "birthCertificateReference",
+      "label": "Birth certificate reference (issuing authority, number, date)",
+      "type": "string",
+      "required": false,
+      "description": "One of several alternative supporting-evidence reference fields under the form's 'Beizubringende Nachweise' (supporting evidence to be brought) heading; which of these is actually needed depends on which identity document(s) the applicant already holds — a four-way branch described in prose by the issuing authority's own guidance rather than encoded as a single machine-checkable condition here (see VERIFICATION.md).",
+      "sourceRef": "'Geburtsurkunde (Ausstellungsbehörde, Zahl, Datum)'",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "marriageCertificateReference",
+      "label": "Marriage certificate reference (issuing authority, number, date)",
+      "type": "string",
+      "required": false,
+      "description": "Only relevant when the applicant's name changed through marriage.",
+      "sourceRef": "'Heiratsurkunde (Ausstellungsbehörde, Zahl, Datum)'",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "citizenshipProofReference",
+      "label": "Proof of Austrian citizenship (type of proof, issuing authority, number, date)",
+      "type": "string",
+      "required": false,
+      "description": "Austrian citizenship is a precondition for issuance; see VERIFICATION.md for the four-way branch determining which specific proofs are required for a given applicant.",
+      "sourceRef": "'Nachweis der österreichischen Staatsbürgerschaft (Art des Nachweises, Ausstellungsbehörde, Zahl, Datum)'",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "academicDegreeProofReference",
+      "label": "Proof of academic degree and/or protected 'Ingenieur' title",
+      "type": "string",
+      "required": false,
+      "description": "Only relevant when 'academicDegreeOrEngineerTitle' is being entered on the card.",
+      "sourceRef": "'Nachweis des akademischen Grades und/oder der Standesbezeichnung Ingenieur'",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "identityProofProvidedBy",
+      "label": "Identity proof provided via (passport, official photo ID, or identity witness)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Identitätsnachweis erbracht durch (Reisepass, amtlicher Lichtbildausweis, Zeuge/Zeugin)'",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "description": "The paper form's own signature is a handwritten signature made in person before the responsible caseworker; this field captures only the accompanying date, matching this registry's established convention for paper-form fields that require a physical signature GovSchema cannot itself capture (see the 'applicantOrRepresentativeSignature' document entry below). Signed either by the applicant or, for a minor document holder, by the legal representative.",
+      "sourceRef": "'Datum' (adjacent to 'Unterschrift des Antragstellers/der Antragstellerin')"
+    },
+    {
+      "name": "legalRepresentativeName",
+      "label": "Name of the legal representative",
+      "type": "string",
+      "required": false,
+      "description": "Only applicable when the identity-card holder is a minor under 18; the form has no separate 'applying for a minor' flag distinct from filling in this legal-representative block.",
+      "sourceRef": "'Name des gesetzlichen Vertreters/der gesetzlichen Vertreterin'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "legalRepresentativeIdProofType",
+      "label": "Legal representative's own identity proof (passport or official photo ID)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Ausgewiesen durch (Reisepass, amtlicher Lichtbildausweis)'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "legalRepresentativeAddress",
+      "label": "Legal representative's address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Anschrift' (within the legal-representative block)",
+      "validation": {
+        "maxLength": 300
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "legalRepresentativeBasis",
+      "label": "Basis for legal representation authority",
+      "type": "enum",
+      "required": false,
+      "description": "Merges a genuine 4-option PDF radio-button group (getAnnotations() reports radioButton:true, a single shared field name) into one enum — see VERIFICATION.md.",
+      "sourceRef": "'Gesetzliche Vertretungsbefugnis ist gegeben *)': 'infolge aufrechter Ehe mit dem anderen Elternteil;' / 'gemäß § 166 ABGB, weil ich die leibliche Mutter bin und bestätige, dass seitens des Gerichts kein anderer gesetzlicher Vertreter oder keine andere gesetzliche Vertreterin für mein Kind bestellt worden ist;' / 'trotz nicht mehr aufrechter Ehe, weil eine gerichtlich genehmigte Vereinbarung oder eine gerichtliche Entscheidung noch nicht vorliegt;' / 'weil' (free-text catch-all, see 'legalRepresentativeBasisOtherDescription')",
+      "validation": {
+        "enum": [
+          "marriage_with_other_parent",
+          "birth_mother_custody_section166",
+          "court_agreement_or_decision_pending",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "legalRepresentativeBasisOtherDescription",
+      "label": "Description of the other basis for legal representation authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "legalRepresentativeBasis",
+        "equals": "other"
+      },
+      "sourceRef": "'weil' (free-text continuation of the fourth 'Gesetzliche Vertretungsbefugnis' option)",
+      "validation": {
+        "maxLength": 500
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportPhoto",
+      "label": "EU-format passport photograph",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "'EU-Passbild'"
+    },
+    {
+      "id": "applicantOrRepresentativeSignature",
+      "label": "Signature of the applicant or legal representative",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Signed in person, in the presence of the responsible caseworker, within the officially marked signature field on the application (paraphrased; see VERIFICATION.md for a font-extraction artifact in the source instruction's exact wording).",
+      "sourceRef": "'Eigenhändige Unterschrift des Dokumenteninhabers/der Dokumenteninhaberin' followed by (paraphrased from here due to a font-extraction artifact dropping the letter 'F' from certain words in this instruction, disclosed in VERIFICATION.md): an instruction to sign only in front of the caseworker, within the officially marked field"
+    }
+  ]
+}
