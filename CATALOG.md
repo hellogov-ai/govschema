@@ -6,8 +6,8 @@
 
 **31 jurisdictions** | **328 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
-> **Update (2026-07-10, "GovSchema Standard Research"): Austria's National
-> ID vertical opens**, via `at/bmi/national-identity-card-application`
+> **Update (2026-07-10, GOV-2121, "GovSchema Standard Research"): Austria's
+> National ID vertical opens**, via `at/bmi/national-identity-card-application`
 > v1.0.0 — the "Antrag auf Ausstellung eines Personalausweises"
 > (Application for issuance of an identity card), a valid EU/Schengen
 > travel document and domestic proof of identity and citizenship. This
