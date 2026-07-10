@@ -1,0 +1,899 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "is/skatturinn/business-employer-vat-registration",
+  "version": "1.0.0",
+  "title": "Iceland Notification to Tax Authorities — Employer's Registry / VAT Registration",
+  "description": "Notify Skatturinn (Iceland Revenue and Customs) of a new business, a change, or a temporary/dormant status affecting registration in the Employer's Registry (launagreiðendaskrá) and/or the Value Added Tax Registry (virðisaukaskattsskrá), using Form RSK 5.02. Filed by a private operator/sole trader, a legal entity (company), or a bankrupt estate before starting to invoice or pay wages in Iceland. Covers the operator/company's own identifying details; VAT-taxable activity, estimated turnover and development costs, and income-registration method; an optional business-takeover (wholly or in part) declaration; Employer's Registry classification (class of activity, position, and special employer categories such as a foreign-resident employer or foreign temporary employment agency); a legal entity's estimated wage payments and shareholder details; an independent operator's estimated calculated remuneration (including for a spouse or third party); and a foreign employer's Iceland-registered contact details. This is Iceland's first GovSchema schema, opening Iceland as the standard's 30th jurisdiction (Business Formation vertical). It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IS",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Iceland Revenue and Customs",
+    "abbreviation": "Skatturinn",
+    "url": "https://www.skatturinn.is"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.skatturinn.is/media/rsk05/rsk_0502.en.pdf",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "RSK 5.02, edition 12-3-2021 ('Notification to tax authorities, registration in the employer's registry and/or value added tax registry'), the English-language fillable AcroForm PDF linked from Skatturinn's own public forms index (skatturinn.is/english/forms/)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "GOV-2077 'GovSchema Standard Research' cycle. Sweden's own backlog (opened GOV-2056, deepened GOV-2063/GOV-2070 to 3 of 6 verticals) is now largely mined out — its remaining Passport/National ID candidates are confirmed in-person/biometric-only dead ends and its Taxes candidate (Skatteverket SKV 4314) remains genuinely source-blocked by a live PDF-generation servlet that resets the connection for both a direct fetch and a real headless-Chromium session. A scouting pass instead found Iceland's Skatturinn RSK 5.02 (a combined business/employer/VAT registration notification): a genuine AcroForm (101 distinct fields across 2 pages), unauthenticated and directly downloadable with no login/CAPTCHA/bot-mitigation gate, and its file-modification history (Aug 2023/Sep 2024) shows the same edition still actively served, not superseded by a newer numbered revision. Extracted with pdfjs-dist (getFieldObjects()/getAnnotations()/getTextContent()); because this form's field names are short Icelandic abbreviations (not self-documenting English strings, unlike Sweden's Migrationsverket/Transportstyrelsen forms) and several checkbox groups are printed as visually-grouped single choices while implemented as independent same-type AcroForm widgets, coordinate-only field-to-label matching was judged too error-prone on its own (per the GOV-2070 review-fix precedent of a mutually-exclusive radio group having been mismodeled as unconstrained booleans); the form was additionally rendered with a real headless Chromium (Playwright, full chrome-linux64 build with the /paperclip/chrome-sysroot shared libraries, not the lighter headless_shell which lacks a PDF viewer) and visually re-inspected page-by-page to confirm every checkbox grouping before mapping. Confirmed three true single-choice groups, each collapsed to a schema enum rather than left as independent booleans: 'Form of operation' (private operation / legal entity / bankrupt estate), 'Class of activity, reference groups A-H', and 'Position' (Manager/Skilled expert/.../Other). Two checkbox clusters that are visually grouped but semantically independent (an employer could plausibly tick more than one) were kept as separate booleans: the four Employer's Registry special-category declarations (resident abroad, foreign temporary employment agency, construction-for-own-use salary payments, domestic-care salary payments) and the six income-registration methods (cash register, product deposit, pre-numbered invoices, electronic invoices per reg. 505/2013, pre-numbered giro slip, other). Two scope/interpretation decisions are disclosed here for transparency: (1) Section B prints two consecutive, identically-labelled 'E-mail address'/'Cellphone number' row pairs with no further qualifying text distinguishing them; modelled as a primary and a secondary contact entry (operatorEmail/operatorCellphone and operatorEmail2/operatorCellphone2) rather than assuming a distinction the source does not state. (2) The 'Icelandic identification number' field paired with the alternate-business-name question is modelled as the ID number associated with that alternate name (plausible under Icelandic business-name registration practice) rather than omitted, since the source form's own table layout pairs every named party with an adjacent ID-number column. The ISAT-number box in section C is explicitly marked 'filled in by RSK' on the form itself and is therefore excluded as an agency-assigned output, not applicant input. Deliberately scoped out the physical, unfillable signature line (modelled instead as an attestation document, consistent with the sibling se/transportstyrelsen/vehicle-registration-new-vehicle schema's own signature-as-document pattern) and the companion form RSK 5.04 ('End of business activity'), a plausible fast-follow candidate for a future cycle. Mock conformance test run: 0 errors across 85 fields and 3 documents, 5 mutation tests (see VERIFICATION.md for the full transcript)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-10"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "operationForm",
+      "label": "Form of operation",
+      "type": "enum",
+      "required": true,
+      "description": "The form's own three mutually-exclusive top-level operation types, boxed together under one 'Form of operation' header at the top of page 1.",
+      "sourceRef": "RSK 5.02 p.1, header 'Form of operation': 'Private operation' / 'Legal entity' / 'Bankrupt estate'",
+      "validation": { "enum": ["private_operation", "legal_entity", "bankrupt_estate"] }
+    },
+    {
+      "name": "vatNewRegistrationFromDate",
+      "label": "VAT registration: new registration from and incl. (dd.mm.yy)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §A 'VAT registration': 'New registration from and incl.(dd.mm.yy)'",
+      "validation": {}
+    },
+    {
+      "name": "vatAlterationFromDate",
+      "label": "VAT registration: alteration from and incl.",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §A 'VAT registration': 'Alteration from and incl.'",
+      "validation": {}
+    },
+    {
+      "name": "vatTemporaryFromUntil",
+      "label": "VAT registration: temporary from and until",
+      "type": "string",
+      "required": false,
+      "description": "A single fillable box covering both the start and end date of a temporary VAT registration, as printed.",
+      "sourceRef": "RSK 5.02 p.1, §A 'VAT registration': 'Temporary from and until'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "vatBusinessDormantFromDate",
+      "label": "VAT registration: business dormant from",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §A 'VAT registration': 'Business dormant from'",
+      "validation": {}
+    },
+    {
+      "name": "employerNewRegistrationFromDate",
+      "label": "Registration for employers: new registration from and incl. (dd.mm.yy)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §A 'Registration for employers': 'New registration from and incl.(dd.mm.yy)'",
+      "validation": {}
+    },
+    {
+      "name": "employerAlterationFromDate",
+      "label": "Registration for employers: alteration from and incl.",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §A 'Registration for employers': 'Alteration from and incl.'",
+      "validation": {}
+    },
+    {
+      "name": "employerTemporaryFromUntil",
+      "label": "Registration for employers: temporary from and until",
+      "type": "string",
+      "required": false,
+      "description": "A single fillable box covering both the start and end date of a temporary employer registration, as printed.",
+      "sourceRef": "RSK 5.02 p.1, §A 'Registration for employers': 'Temporary from and until'",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "employerChangeDueToUnemploymentBenefitsDate",
+      "label": "Registration for employers: change because of unemployment benefits",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §A 'Registration for employers': 'Change because of unemployment benefits'",
+      "validation": {}
+    },
+    {
+      "name": "workingForSingleOrFewClients",
+      "label": "Working for a single client or a few?",
+      "type": "boolean",
+      "required": false,
+      "description": "A standalone checkbox note directing the filer to also submit form RSK 10.31, an assessment of employment relationship, when the operator works for only one or a small number of clients (a common test of genuine self-employment vs. disguised employment).",
+      "sourceRef": "RSK 5.02 p.1: 'If working for a single client or a few - turn in form RSK 10.31 \"könnun á starfssambandi\"'",
+      "validation": {}
+    },
+    {
+      "name": "operatorName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "RSK 5.02 p.1, §B 'Operator/employer/employee who pays own withholding tax': 'Name'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "operatorIdNumber",
+      "label": "Icelandic identification number",
+      "type": "string",
+      "required": true,
+      "description": "Icelandic kennitala, 10 digits (DDMMYY-XXCC), optionally printed with a hyphen after the 6th digit.",
+      "sourceRef": "RSK 5.02 p.1, §B: 'Icelandic identification number'",
+      "validation": { "pattern": "^[0-9]{6}-?[0-9]{4}$" }
+    },
+    {
+      "name": "operatorAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "RSK 5.02 p.1, §B: 'Address'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "operatorPostcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": true,
+      "sourceRef": "RSK 5.02 p.1, §B: 'Postcode'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "operatorTelephone",
+      "label": "Telephone",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §B: 'Telephone'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "operatorEmail",
+      "label": "E-mail address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §B: 'E-mail address' (first of two identically-labelled rows)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "operatorCellphone",
+      "label": "Cellphone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §B: 'Cellphone number' (first of two identically-labelled rows)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "operatorEmail2",
+      "label": "E-mail address (second entry)",
+      "type": "string",
+      "required": false,
+      "description": "The form prints a second, identically-labelled 'E-mail address' row directly below the first with no further qualifying text; modelled as a secondary contact entry (see VERIFICATION.md).",
+      "sourceRef": "RSK 5.02 p.1, §B: 'E-mail address' (second of two identically-labelled rows)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "operatorCellphone2",
+      "label": "Cellphone number (second entry)",
+      "type": "string",
+      "required": false,
+      "description": "The form prints a second, identically-labelled 'Cellphone number' row directly below the first with no further qualifying text; modelled as a secondary contact entry (see VERIFICATION.md).",
+      "sourceRef": "RSK 5.02 p.1, §B: 'Cellphone number' (second of two identically-labelled rows)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "alternateBusinessNames",
+      "label": "Does the company operate under alternate name/names? What name/names?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §B: 'Does the company operate under alternate name/names? What name/names?'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "alternateNameIdNumber",
+      "label": "Icelandic identification number (of the alternate name)",
+      "type": "string",
+      "required": false,
+      "description": "The Icelandic identification number associated with the alternate business name, if the alternate name is itself separately registered.",
+      "sourceRef": "RSK 5.02 p.1, §B, same row as 'Does the company operate under alternate name/names?': 'Icelandic identification number'",
+      "validation": { "pattern": "^[0-9]{6}-?[0-9]{4}$" }
+    },
+    {
+      "name": "agentRepresentingForeignEntityName",
+      "label": "Agent representing a foreign business entity in the VAT registry",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §B: 'Agent representing a foreign business entity in the VAT registry'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "agentRepresentingForeignEntityIdNumber",
+      "label": "Icelandic identification number (of the agent)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §B, same row as 'Agent representing a foreign business entity in the VAT registry': 'Icelandic identification number'",
+      "validation": { "pattern": "^[0-9]{6}-?[0-9]{4}$" }
+    },
+    {
+      "name": "bankruptEstateExecutorName",
+      "label": "Bankrupt estate/name of executor",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "operationForm", "equals": "bankrupt_estate" },
+      "sourceRef": "RSK 5.02 p.1, §B: 'Bankrupt estate/name of executor'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "vatTaxableGoodsOrServicesCategories",
+      "label": "Which are the primary categories of VAT-taxable goods, work or services?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Information on VAT-taxable activity/base of operations'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "vatExemptBusinessOperations",
+      "label": "VAT-exempt business operations",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C: 'VAT-exempt business operations'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "baseOfOperationsAddress",
+      "label": "Base of operations, address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C: 'Base of operations, address'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "baseOfOperationsMunicipality",
+      "label": "Municipality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C, same row as 'Base of operations, address': 'Municipality'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "estimatedFirstVatTaxableTurnoverDate",
+      "label": "Estimated date of first VAT-taxable turnover (dd.mm.yy)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Estimated income and costs': 'Estimated date of first VAT-taxable turnover (dd.mm.yy)'",
+      "validation": {}
+    },
+    {
+      "name": "estimatedVatTaxableIncomeFirst12MonthsIsk",
+      "label": "Estimated income from VAT-taxable turnover, first 12 months (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.1, §C 'Estimated income and costs': 'Estimated income from VAT-taxable turnover, first 12 months'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "estimatedDevelopmentCostsFirst12MonthsIsk",
+      "label": "Estimated development costs, first 12 months (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.1, §C 'Estimated income and costs': 'Estimated development costs, first 12 months'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "registersIncomeViaCashRegister",
+      "label": "Registers income via: cash register",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Information on registration of income': 'Cash register'",
+      "validation": {}
+    },
+    {
+      "name": "registersIncomeViaProductDeposit",
+      "label": "Registers income via: deposit of product (statement of account)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Information on registration of income': 'Deposit of product (statement of account)'",
+      "validation": {}
+    },
+    {
+      "name": "registersIncomeViaPrenumberedInvoices",
+      "label": "Registers income via: pre-numbered invoices",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Information on registration of income': 'Pre-numbered invoices'",
+      "validation": {}
+    },
+    {
+      "name": "registersIncomeViaElectronicInvoices",
+      "label": "Registers income via: electronic invoices, according to reg. 505/2013",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Information on registration of income': 'Electronic invoices, according to reg. 505/2013'",
+      "validation": {}
+    },
+    {
+      "name": "registersIncomeViaPrenumberedGiroSlip",
+      "label": "Registers income via: pre-numbered giro slip",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Information on registration of income': 'Pre-numbered giro slip'",
+      "validation": {}
+    },
+    {
+      "name": "registersIncomeViaOtherMethod",
+      "label": "Registers income via: other method",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, §C 'Information on registration of income': 'Other, what?'",
+      "validation": {}
+    },
+    {
+      "name": "registersIncomeOtherMethodDescription",
+      "label": "Other income-registration method, description",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registersIncomeViaOtherMethod", "equals": true },
+      "sourceRef": "RSK 5.02 p.1, §C: 'Other, what?'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "activityTakenOverWhollyOrPart",
+      "label": "Is the activity of another enterprise taken over wholly or in part?",
+      "type": "boolean",
+      "required": false,
+      "description": "Gates the 'Use only in case of takeover of business operations' subsection. When true, the seller is forbidden from levying VAT on the sale (in whole or in part) and the purchaser cannot claim input VAT on the purchase.",
+      "sourceRef": "RSK 5.02 p.1, 'Use only in case of takeover of business operations': 'Is the activity of another enterprise taken over wholly or in part?'",
+      "validation": {}
+    },
+    {
+      "name": "takeoverDate",
+      "label": "Date of takeover",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "activityTakenOverWhollyOrPart", "equals": true },
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Date of takeover'",
+      "validation": {}
+    },
+    {
+      "name": "takeoverEnterpriseName",
+      "label": "Name of enterprise taken over",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "activityTakenOverWhollyOrPart", "equals": true },
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Name of enterprise taken over'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "takeoverEnterpriseIdNumber",
+      "label": "ID-no. of enterprise taken over",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "activityTakenOverWhollyOrPart", "equals": true },
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'ID-no. of enterprise taken over'",
+      "validation": { "pattern": "^[0-9]{6}-?[0-9]{4}$" }
+    },
+    {
+      "name": "takeoverInventoryIncluded",
+      "label": "Is inventory taken over?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Is inventory taken over?'",
+      "validation": {}
+    },
+    {
+      "name": "takeoverInventoryValueIsk",
+      "label": "Value of inventory (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "requiredWhen": { "field": "takeoverInventoryIncluded", "equals": true },
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Value of inventory'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "takeoverMachineryOrAssetsIncluded",
+      "label": "Are machinery or other operational assets taken over?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Are machinery or other operational assets taken over?'",
+      "validation": {}
+    },
+    {
+      "name": "takeoverAssetsValueExcludingInventoryIsk",
+      "label": "Value of operational assets excluding inventory (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "requiredWhen": { "field": "takeoverMachineryOrAssetsIncluded", "equals": true },
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Value of operational assets excluding inventory'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "takeoverRealEstateIncluded",
+      "label": "Is real estate taken over?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Is real estate taken over?'",
+      "validation": {}
+    },
+    {
+      "name": "takeoverRealEstateProperties",
+      "label": "Which properties?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "takeoverRealEstateIncluded", "equals": true },
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Which properties?'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "takeoverAdjustmentObligationOvertaken",
+      "label": "Is adjustment obligation overtaken?",
+      "type": "boolean",
+      "required": false,
+      "description": "Transfer of the adjustment obligation must be reported to RSK, with relevant documentation enclosed (see the accompanying document requirement).",
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Is adjustment obligation overtaken? Transfer of adjustment obligation must be reported to RSK. Relevant documentation must be enclosed.'",
+      "validation": {}
+    },
+    {
+      "name": "classOfActivity",
+      "label": "Class of activity",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §D 'Class of activity'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employerResidentAbroadOrEmbassy",
+      "label": "Employer resident abroad or embassy in Iceland",
+      "type": "boolean",
+      "required": false,
+      "description": "One of four independent special-employer-category checkboxes grouped under §D; more than one may plausibly apply at once, so each is modelled as its own boolean rather than collapsed into a single choice.",
+      "sourceRef": "RSK 5.02 p.2, §D: 'Employer resident abroad or embassy in Iceland'",
+      "validation": {}
+    },
+    {
+      "name": "foreignTemporaryEmploymentAgency",
+      "label": "Foreign temporary employment agency",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §D: 'Foreign temporary employment agency'",
+      "validation": {}
+    },
+    {
+      "name": "salaryPaymentsConstructionRealEstateOwnUse",
+      "label": "Salary payments for construction of real estate for own use",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §D: 'Salary payments for construction of real estate for own use'",
+      "validation": {}
+    },
+    {
+      "name": "salaryPaymentsDomesticCare",
+      "label": "Salary payments for domestic care",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §D: 'Salary payments for domestic care'",
+      "validation": {}
+    },
+    {
+      "name": "classOfActivityReferenceGroup",
+      "label": "Class of activity, reference group",
+      "type": "enum",
+      "required": false,
+      "description": "The form's own eight mutually-exclusive reference-group letters (A-H), printed as a single labelled list.",
+      "sourceRef": "RSK 5.02 p.2, §D 'Class of activity, reference groups': A 'Expert services' / B 'Activities and services (not included in class A)' / C 'Media, publishing etc. (with or without qualifications)' / D 'Certified craft' / E 'Various business of unskilled labourers (not included in classes A-D)' / F 'Seamanship' / G 'Agriculture' / H 'Other, describe activity'",
+      "validation": {
+        "enum": ["expert_services", "activities_and_services", "media_publishing", "certified_craft", "unskilled_labour", "seamanship", "agriculture", "other"]
+      }
+    },
+    {
+      "name": "classOfActivityReferenceGroupOtherDescription",
+      "label": "Other, describe activity",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "classOfActivityReferenceGroup", "equals": "other" },
+      "sourceRef": "RSK 5.02 p.2, §D 'Class of activity, reference groups': 'H Other, describe activity:'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "position",
+      "label": "Position",
+      "type": "enum",
+      "required": false,
+      "description": "The form's own eight mutually-exclusive position options, printed as a single labelled list alongside the reference groups.",
+      "sourceRef": "RSK 5.02 p.2, §D 'Position': 'Manager' / 'Skilled expert' / 'General employee' / 'Captain' / 'Mate/engineer' / 'Deckhand/small boat seaman' / 'Farmer' / 'Other, describe position'",
+      "validation": {
+        "enum": ["manager", "skilled_expert", "general_employee", "captain", "mate_or_engineer", "deckhand_or_small_boat_seaman", "farmer", "other"]
+      }
+    },
+    {
+      "name": "positionOtherDescription",
+      "label": "Other, describe position",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "position", "equals": "other" },
+      "sourceRef": "RSK 5.02 p.2, §D 'Position': 'Other, describe position:'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "legalEntityFirstPaymentDate",
+      "label": "Estimated date of first payment",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "operationForm", "equals": "legal_entity" },
+      "sourceRef": "RSK 5.02 p.2, §E 'Legal entity - Estimated wage payments and/or calculated remuneration in operations of legal entity': 'Estimated date of first payment'",
+      "validation": {}
+    },
+    {
+      "name": "legalEntityAverageMonthlyWagePaymentsIsk",
+      "label": "Estimated average monthly wage payments (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §E: 'Estimated average monthly wage payments'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "shareholder1NameAndId",
+      "label": "Name and Icelandic identification number of shareholder (if an individual)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §E, first shareholder row: 'Name and Icelandic identification number of shareholder (if an individual)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "shareholder1OwnershipPercent",
+      "label": "Ownership of shares %",
+      "type": "number",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §E, first shareholder row: 'Ownership of shares %'",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "shareholder2NameAndId",
+      "label": "Name and Icelandic identification number of shareholder (if an individual)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §E, second shareholder row: 'Name and Icelandic identification number of shareholder (if an individual)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "shareholder2OwnershipPercent",
+      "label": "Ownership of shares %",
+      "type": "number",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §E, second shareholder row: 'Ownership of shares %'",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "legalEntityRemunerationReferenceCategory",
+      "label": "Reference category",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §E: 'Reference category'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "legalEntityEstimatedAnnualRemunerationIsk",
+      "label": "Estimated annual remuneration (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §E: 'Estimated annual remuneration'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "legalEntityEstimatedMonthlyRemunerationIsk",
+      "label": "Estimated monthly remuneration (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §E: 'Estimated monthly remuneration'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "legalEntityRemunerationFromMonth",
+      "label": "From and incl. which month?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §E: 'From and incl. which month?'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "independentOperatorReferenceCategory",
+      "label": "Reference category",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §F 'Independent business operations - estimated calculated remuneration and/or paid wages': 'Reference category'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "independentOperatorEstimatedAnnualRemunerationIsk",
+      "label": "Estimated annual remuneration (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §F: 'Estimated annual remuneration'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "independentOperatorEstimatedMonthlyRemunerationIsk",
+      "label": "Estimated monthly remuneration (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §F: 'Estimated monthly remuneration'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "independentOperatorRemunerationFromMonth",
+      "label": "From and incl. which month?",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §F: 'From and incl. which month?'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "spouseEstimatedAnnualRemunerationIsk",
+      "label": "Estimated annual remuneration of spouse (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §F: 'Estimated annual remuneration of spouse'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "spouseEstimatedMonthlyRemunerationIsk",
+      "label": "Estimated monthly remuneration of spouse (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §F: 'Estimated monthly remuneration of spouse'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "spouseRemunerationFromMonth",
+      "label": "From and incl. which month? (spouse)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §F, same row as spouse remuneration: 'From and incl. which month?'",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "thirdPartyFirstWagePaymentDate",
+      "label": "Estimated date of first wage payment to third party",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §F: 'Estimated date of first wage payment to third party'",
+      "validation": {}
+    },
+    {
+      "name": "thirdPartyEstimatedMonthlyWagePaymentsIsk",
+      "label": "Estimated monthly wage payments to third party (ISK)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "RSK 5.02 p.2, §F: 'Estimated monthly wage payments to third party'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "noWagePaymentsOnlyCalculatedRemuneration",
+      "label": "No wage payments to others. Only calculated remuneration (wages) at own business.",
+      "type": "boolean",
+      "required": false,
+      "description": "Those who calculate their own remuneration must keep in mind that they are required to pay premiums into a pension fund (both employer's and employee's contribution) and social security payments. Social security payments grant rights to payments from the Directorate of Labour and the Maternity/paternity leave fund.",
+      "sourceRef": "RSK 5.02 p.2, §F: 'No wage payments to others. Only calculated remuneration (wages) at own business.'",
+      "validation": {}
+    },
+    {
+      "name": "calculatedRemunerationSupportingDocumentation",
+      "label": "Documentation supporting statement of calculated remuneration",
+      "type": "string",
+      "required": false,
+      "description": "May be omitted if there is no deviation from reference groups or minimum amounts. See also the accompanying document requirement for any physical documentation enclosed.",
+      "sourceRef": "RSK 5.02 p.2, §F: 'Documentation supporting statement of calculated remuneration (may be omitted if there is no deviation from reference groups or minimum amounts)'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "foreignEmployerName",
+      "label": "Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "employerResidentAbroadOrEmbassy", "equals": true },
+      "sourceRef": "RSK 5.02 p.2, §G 'Employer resident abroad or embassy': 'Name'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "foreignEmployerIdNumber",
+      "label": "Id-number (of those registered in Iceland)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §G: 'Id-number (of those registered in Iceland)'",
+      "validation": { "pattern": "^[0-9]{6}-?[0-9]{4}$" }
+    },
+    {
+      "name": "foreignEmployerAddressAndPostcode",
+      "label": "Address and postcode",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §G: 'Address and postcode'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "foreignEmployerEmail",
+      "label": "E-mail address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, §G: 'E-mail address'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "comments",
+      "label": "Comments",
+      "type": "string",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2: 'Comments'",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "RSK 5.02 p.2, footer: 'Date'",
+      "validation": {}
+    }
+  ],
+  "documents": [
+    {
+      "id": "adjustmentObligationTransferDocumentation",
+      "label": "Documentation supporting the transfer of adjustment obligation taken over with the business",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "takeoverAdjustmentObligationOvertaken", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "RSK 5.02 p.1, takeover subsection: 'Transfer of adjustment obligation must be reported to RSK. Relevant documentation must be enclosed.'"
+    },
+    {
+      "id": "calculatedRemunerationDocumentation",
+      "label": "Documentation supporting the statement of calculated remuneration (may be omitted if there is no deviation from reference groups or minimum amounts)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "RSK 5.02 p.2, §F: 'Documentation supporting statement of calculated remuneration (may be omitted if there is no deviation from reference groups or minimum amounts)'"
+    },
+    {
+      "id": "applicantSignature",
+      "label": "Applicant's or authorized signatory's handwritten signature and Id-number",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I hereby state that the above given information is provided to the best of my knowledge and in full accordance with pertinent documents.",
+      "sourceRef": "RSK 5.02 p.2, footer: 'Signature and Id-number'; attestation statement above the signature block"
+    }
+  ],
+  "steps": [
+    {
+      "id": "form_type",
+      "title": "Form of operation",
+      "fields": ["operationForm"],
+      "next": "registration_details"
+    },
+    {
+      "id": "registration_details",
+      "title": "VAT and employer registration",
+      "fields": [
+        "vatNewRegistrationFromDate", "vatAlterationFromDate", "vatTemporaryFromUntil", "vatBusinessDormantFromDate",
+        "employerNewRegistrationFromDate", "employerAlterationFromDate", "employerTemporaryFromUntil", "employerChangeDueToUnemploymentBenefitsDate",
+        "workingForSingleOrFewClients"
+      ],
+      "next": "operator_details"
+    },
+    {
+      "id": "operator_details",
+      "title": "Operator/employer/employee details",
+      "fields": [
+        "operatorName", "operatorIdNumber", "operatorAddress", "operatorPostcode",
+        "operatorTelephone", "operatorEmail", "operatorCellphone", "operatorEmail2", "operatorCellphone2",
+        "alternateBusinessNames", "alternateNameIdNumber",
+        "agentRepresentingForeignEntityName", "agentRepresentingForeignEntityIdNumber",
+        "bankruptEstateExecutorName"
+      ],
+      "next": "vat_taxable_activity"
+    },
+    {
+      "id": "vat_taxable_activity",
+      "title": "VAT-taxable activity and base of operations",
+      "fields": [
+        "vatTaxableGoodsOrServicesCategories", "vatExemptBusinessOperations",
+        "baseOfOperationsAddress", "baseOfOperationsMunicipality",
+        "estimatedFirstVatTaxableTurnoverDate", "estimatedVatTaxableIncomeFirst12MonthsIsk", "estimatedDevelopmentCostsFirst12MonthsIsk",
+        "registersIncomeViaCashRegister", "registersIncomeViaProductDeposit", "registersIncomeViaPrenumberedInvoices",
+        "registersIncomeViaElectronicInvoices", "registersIncomeViaPrenumberedGiroSlip", "registersIncomeViaOtherMethod",
+        "registersIncomeOtherMethodDescription"
+      ],
+      "next": "business_takeover"
+    },
+    {
+      "id": "business_takeover",
+      "title": "Takeover of business operations (if applicable)",
+      "fields": [
+        "activityTakenOverWhollyOrPart", "takeoverDate", "takeoverEnterpriseName", "takeoverEnterpriseIdNumber",
+        "takeoverInventoryIncluded", "takeoverInventoryValueIsk",
+        "takeoverMachineryOrAssetsIncluded", "takeoverAssetsValueExcludingInventoryIsk",
+        "takeoverRealEstateIncluded", "takeoverRealEstateProperties",
+        "takeoverAdjustmentObligationOvertaken"
+      ],
+      "next": "employer_registry_classification"
+    },
+    {
+      "id": "employer_registry_classification",
+      "title": "Employer's Registry: class of activity and position",
+      "fields": [
+        "classOfActivity",
+        "employerResidentAbroadOrEmbassy", "foreignTemporaryEmploymentAgency",
+        "salaryPaymentsConstructionRealEstateOwnUse", "salaryPaymentsDomesticCare",
+        "classOfActivityReferenceGroup", "classOfActivityReferenceGroupOtherDescription",
+        "position", "positionOtherDescription"
+      ],
+      "next": "legal_entity_wages"
+    },
+    {
+      "id": "legal_entity_wages",
+      "title": "Legal entity: estimated wage payments and shareholders",
+      "fields": [
+        "legalEntityFirstPaymentDate", "legalEntityAverageMonthlyWagePaymentsIsk",
+        "shareholder1NameAndId", "shareholder1OwnershipPercent",
+        "shareholder2NameAndId", "shareholder2OwnershipPercent",
+        "legalEntityRemunerationReferenceCategory", "legalEntityEstimatedAnnualRemunerationIsk",
+        "legalEntityEstimatedMonthlyRemunerationIsk", "legalEntityRemunerationFromMonth"
+      ],
+      "next": "independent_operations"
+    },
+    {
+      "id": "independent_operations",
+      "title": "Independent business operations: estimated calculated remuneration",
+      "fields": [
+        "independentOperatorReferenceCategory", "independentOperatorEstimatedAnnualRemunerationIsk",
+        "independentOperatorEstimatedMonthlyRemunerationIsk", "independentOperatorRemunerationFromMonth",
+        "spouseEstimatedAnnualRemunerationIsk", "spouseEstimatedMonthlyRemunerationIsk", "spouseRemunerationFromMonth",
+        "thirdPartyFirstWagePaymentDate", "thirdPartyEstimatedMonthlyWagePaymentsIsk",
+        "noWagePaymentsOnlyCalculatedRemuneration", "calculatedRemunerationSupportingDocumentation"
+      ],
+      "next": "foreign_employer_and_comments"
+    },
+    {
+      "id": "foreign_employer_and_comments",
+      "title": "Foreign employer contact and comments",
+      "fields": [
+        "foreignEmployerName", "foreignEmployerIdNumber", "foreignEmployerAddressAndPostcode", "foreignEmployerEmail",
+        "comments", "signatureDate"
+      ]
+    }
+  ]
+}

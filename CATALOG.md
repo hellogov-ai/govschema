@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**29 jurisdictions** | **321 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**30 jurisdictions** | **322 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2077, "GovSchema Standard Research"): Iceland
+> opens as GovSchema's 30th jurisdiction**, via
+> `is/skatturinn/business-employer-vat-registration` v1.0.0 — Skatturinn
+> (Iceland Revenue and Customs) Form RSK 5.02, "Notification to tax
+> authorities, registration in the employer's registry and/or value added
+> tax registry". Sweden's own backlog (opened GOV-2056, deepened through
+> GOV-2063/GOV-2070 to 3 of 6 verticals) is now largely mined out: its
+> remaining Passport/National ID candidates are confirmed in-person/
+> biometric-only dead ends, and its Taxes candidate (Skatteverket SKV 4314)
+> remains genuinely source-blocked by a live PDF-generation servlet that
+> resets the connection for both a direct fetch and a real headless-Chromium
+> session — re-confirmed this cycle, with the Wayback Machine also
+> unreachable as a fallback. A scouting pass instead found Iceland's
+> Skatturinn publishing RSK 5.02 as a genuine 101-field AcroForm (2 pages),
+> bilingual (Icelandic/English), unauthenticated and directly downloadable
+> with no CAPTCHA/login/WAF gate, its file-modification history (Aug 2023,
+> Sep 2024) showing the edition still actively served rather than
+> superseded. Extracted with `pdfjs-dist` (`getFieldObjects()`/
+> `getAnnotations()`/`getTextContent()`); because the field names are short
+> Icelandic abbreviations rather than self-documenting English strings, and
+> several checkbox groups are printed as visually-grouped single choices
+> while implemented as independent same-type AcroForm widgets, the PDF was
+> additionally rendered with a real full-build headless Chromium (Playwright,
+> `chrome-linux64`, not the lighter `headless_shell` build which has no PDF
+> viewer) and visually re-inspected page-by-page before finalizing the
+> field-to-label mapping — the same "confirm a checkbox group's true
+> exclusivity before modelling it" discipline GOV-2070's own review fix
+> established for this registry. Collapsed three genuinely single-choice
+> checkbox groups into enums ('Form of operation'; 'Class of activity,
+> reference groups A-H'; 'Position'), while keeping two visually-grouped but
+> semantically independent checkbox clusters (four special-employer
+> categories; six income-registration methods) as separate booleans. Models
+> the operator/company's identifying details; VAT-taxable activity,
+> estimated turnover, and income-registration method; an optional
+> business-takeover declaration; Employer's Registry classification; a legal
+> entity's estimated wage payments and shareholders; an independent
+> operator's estimated calculated remuneration; and a foreign employer's
+> Iceland-registered contact details — see the document's own VERIFICATION.md
+> for the full sourcing record, extraction transcript, and every disclosed
+> scope decision, including the mock conformance test run (0 errors across
+> 85 fields and 3 documents, 5 mutation tests). Iceland now stands at 1 of
+> its 6 verticals (Business Formation); its other five verticals (Passport,
+> DMV, Taxes, Visa, National ID) are open, unscreened backlog candidates for
+> a future cycle.
 
 > **Update (2026-07-10, GOV-2070, "GovSchema Standard Research"): Sweden's
 > Visa vertical opens**, via `se/migrationsverket/work-permit-application`
@@ -3758,7 +3803,7 @@
 
 ## By Vertical
 
-### Passport (22/29 jurisdictions — 76%)
+### Passport (22/30 jurisdictions — 73%)
 
 **Switzerland**'s Passport gap is now closed (GOV-1931), via
 `ch/fedpol/antrag-pass-identitaetskarte` — fedpol's own online
@@ -3878,7 +3923,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (27/29 jurisdictions — 93%)
+### DMV — Vehicle Registration, Licensing, Permits (27/30 jurisdictions — 90%)
 
 **Sweden's DMV vertical opens (GOV-2063)**, via
 `se/transportstyrelsen/vehicle-registration-new-vehicle` — Transportstyrelsen
@@ -4077,7 +4122,15 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (27/29 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (28/30 jurisdictions — 93%)
+
+**Iceland opens as this registry's 30th jurisdiction via this vertical
+(GOV-2077)**, via `is/skatturinn/business-employer-vat-registration` —
+Skatturinn Form RSK 5.02, a combined business/employer/VAT registration
+notification. See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing story. Iceland opened with 1 of its 6
+verticals (Business Formation); its other five verticals (Passport, DMV,
+Taxes, Visa, National ID) are open, unscreened backlog candidates.
 
 **Sweden opens as this registry's 29th jurisdiction via this vertical
 (GOV-2056)**, via `se/bolagsverket/aktiebolag-formation` — Bolagsverket Form
@@ -4368,7 +4421,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (27/29 jurisdictions — 93%)
+### Taxes — Income Tax Return, Tax Filing (27/30 jurisdictions — 90%)
 
 **Japan's Taxes vertical is now published** (`jp/nta/individual-income-tax-final-return`,
 GOV-2042) — the National Tax Agency's 所得税及び復興特別所得税の申告書
@@ -4733,7 +4786,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (23/29 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (23/30 jurisdictions — 77%)
 
 **Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
 Japan as the registry's 28th jurisdiction, via the Immigration Services
@@ -4928,7 +4981,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (23/29 jurisdictions — 79%)
+### National ID & Civic Documents (23/30 jurisdictions — 77%)
 
 **Japan**'s National ID gap is now closed (GOV-2012), via
 `jp/j-lis/individual-number-card-issuing-application` — the Japan Agency for
@@ -5149,6 +5202,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **IS** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **JP** | 7 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
