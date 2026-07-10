@@ -4775,7 +4775,14 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (28/32 jurisdictions — 88%)
+### DMV — Vehicle Registration, Licensing, Permits (29/32 jurisdictions — 91%)
+
+**Iceland's DMV vertical opens (GOV-2219)**, via
+`is/samgongustofa/vehicle-ownership-transfer` — Samgöngustofa's Form
+US.140, "Tilkynning um eigendaskipti að ökutæki" (Notification of Change
+of Vehicle Ownership). See the Executive Summary update above and the
+document's own VERIFICATION.md for the full sourcing record. Iceland now
+stands at 4 of its 6 verticals (Business Formation, Taxes, Visa, DMV).
 
 **Argentina's DMV vertical deepens (GOV-2204)**, via
 `ar/dnrpa/solicitud-tipo-08-transferencia-motovehiculo` — the DNRPA's
@@ -6309,7 +6316,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IS** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **IS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
