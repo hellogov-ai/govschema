@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**31 jurisdictions** | **332 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **333 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, GOV-2169, "GovSchema Standard Research"): Argentina
+> opens as the registry's 32nd jurisdiction**, via
+> `ar/afip/inscripcion-cuit-personas-juridicas` v1.0.0 — Administración
+> Federal de Ingresos Públicos (AFIP) Formulario 460/J, "Solicitud de
+> Inscripción — Personas Jurídicas", the CUIT (Clave Única de Identificación
+> Tributaria) registration/data-modification form for legal entities.
+> Re-verified from scratch: a fresh `curl` fetch with a browser User-Agent
+> confirmed the source PDF at exactly 224,536 bytes
+> (SHA-256 `20acb44b3bcf8bbcd14d2c08b2da16c93c71ad349826b6f685cc12eca27205f8`),
+> and a fresh `pdfjs-dist` extraction confirmed 4 pages, 351 total `Widget`
+> annotations, and 177 unique `getFieldObjects()` keys. This is a genuine
+> AcroForm printing the same 2-page form twice: pages 1-2 are the "ORIGINAL"
+> copy AFIP retains, and pages 3-4 are a "DUPLICADO" receipt-of-filing copy
+> stamped and returned to the taxpayer (carrying AFIP's own disclaimer that
+> the receipt stamp does not signify the Administration's agreement with the
+> content) — this collapses the 351 widgets to 177 field names, 2 of which
+> (`inscripciond`/`modificaciond`) are non-editable checkboxes mirrored by a
+> JS `Action` off the real `inscripcion`/`modificacion` fields, leaving 175
+> real independent inputs. All 175 are modeled once, as **152 GovSchema
+> fields**, in the document's own field order (transaction type; tax/AFIP
+> office identifiers; entity name; fiscal and legal addresses; contact
+> details; main and up to 8 secondary economic activities; incorporation
+> date and capital split; a 28-option legal-form checkbox grid; registered
+> taxes and withholding/collection regimes; employer/social-security
+> registration; up to 4 officers/members; and the sworn declaration and
+> signature block). Three judgment calls are disclosed in the document's own
+> VERIFICATION.md rather than resolved by invention: a 28th legal-form
+> checkbox (code `241`) that this session's own text-content extraction
+> confirmed carries no printed label anywhere in the source, modeled as an
+> honestly-unlabeled field rather than a guessed one; a "Jurisdicción:
+> Localidad:" row confirmed (via the underlying field's own rect) to share a
+> single blank despite printing two labels; and a national/foreign
+> capital-percentage pair left as two independent fields rather than a
+> sum-to-100 `crossFieldValidation` rule, since GovSchema v0.3's
+> cross-field-validation grammar has no arithmetic-sum operator to express
+> that constraint even if the source clearly intended it. This opens
+> Argentina with **1 of its 6 verticals** (Business Formation); its
+> remaining five (Passport, DMV, Taxes, Visa, National ID) are open,
+> unscreened backlog candidates for a future cycle. See the document's own
+> VERIFICATION.md for the full sourcing record and the mock conformance test
+> run (0 errors across two happy-path scenarios covering all 152 fields,
+> plus 10 mutation/negative controls that each correctly failed with exactly
+> one error).
 
 > **Update (2026-07-10, GOV-2152, "GovSchema Standard Research"): a second
 > Japan Business Formation companion variant is now published**, via
@@ -4287,7 +4331,7 @@
 
 ## By Vertical
 
-### Passport (23/31 jurisdictions — 74%)
+### Passport (23/32 jurisdictions — 72%)
 
 **Austria**'s Passport gap is now closed (GOV-2128), via
 `at/bmeia/passport-or-identity-card-application` — the bilingual
@@ -4420,7 +4464,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (27/31 jurisdictions — 87%)
+### DMV — Vehicle Registration, Licensing, Permits (27/32 jurisdictions — 84%)
 
 **Sweden's DMV vertical opens (GOV-2063)**, via
 `se/transportstyrelsen/vehicle-registration-new-vehicle` — Transportstyrelsen
@@ -4619,7 +4663,28 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (30/31 jurisdictions — 97%)
+### Business Formation — Incorporation, LLC, Company Registration (31/32 jurisdictions — 97%)
+
+**Argentina opens as this registry's 32nd jurisdiction via this vertical
+(GOV-2169)**, via `ar/afip/inscripcion-cuit-personas-juridicas` — AFIP
+Formulario 460/J, "Solicitud de Inscripción — Personas Jurídicas", the
+standard AcroForm PDF a legal entity uses to request a fresh CUIT (Clave
+Única de Identificación Tributaria) registration or to notify AFIP of a
+modification to previously registered data. Confirmed by a fresh
+`pdfjs-dist` extraction as a genuine 4-page, 351-widget AcroForm that prints
+the same 2-page form twice — an "ORIGINAL" copy (pages 1-2) AFIP retains and
+a "DUPLICADO" receipt-of-filing copy (pages 3-4) returned to the taxpayer,
+collapsing to 177 unique field names (175 real independent inputs, plus 2
+non-editable JS-mirrored header checkboxes) — modeled once as 152 GovSchema
+fields, not duplicated. See the document's own VERIFICATION.md for the full
+sourcing story, the disclosed original/duplicate structural finding, an
+unlabeled legal-form checkbox (code 241) confirmed genuinely blank in the
+source rather than invented, and the mock conformance test run (0 errors
+across two happy-path scenarios covering all 152 fields, plus 10
+mutation/negative controls that each correctly failed with exactly one
+error). Argentina opens with **1 of its 6 verticals** (Business Formation);
+its remaining five (Passport, DMV, Taxes, Visa, National ID) are open,
+unscreened backlog candidates for a future cycle.
 
 **Portugal's Business Formation gap closes (GOV-2143), giving Portugal 6 of
 its 6 verticals** — via
@@ -4963,7 +5028,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (30/31 jurisdictions — 97%)
+### Taxes — Income Tax Return, Tax Filing (30/32 jurisdictions — 94%)
 
 **Austria's Taxes vertical opens** (`at/bmf/employee-tax-assessment`,
 GOV-2114) — Bundesministerium für Finanzen (BMF) Form L 1, "Erklärung L1 zur
@@ -5404,7 +5469,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (23/31 jurisdictions — 74%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (23/32 jurisdictions — 72%)
 
 **Japan** (`jp/isa/certificate-of-eligibility-application`, GOV-2005) opens
 Japan as the registry's 28th jurisdiction, via the Immigration Services
@@ -5599,7 +5664,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (23/31 jurisdictions — 74%)
+### National ID & Civic Documents (23/32 jurisdictions — 72%)
 
 **Japan**'s National ID gap is now closed (GOV-2012), via
 `jp/j-lis/individual-number-card-issuing-application` — the Japan Agency for
@@ -5805,6 +5870,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **AR** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |

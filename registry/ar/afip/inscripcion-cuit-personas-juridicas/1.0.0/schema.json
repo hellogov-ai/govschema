@@ -1,0 +1,1536 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ar/afip/inscripcion-cuit-personas-juridicas",
+  "version": "1.0.0",
+  "title": "Argentina CUIT Registration / Data Modification for Legal Entities (Formulario 460/J)",
+  "description": "Argentina's Administración Federal de Ingresos Públicos (AFIP) Formulario 460/J — 'Solicitud de Inscripción — Personas Jurídicas' — the standard AcroForm PDF used by a legal entity (company, association, foundation, cooperative, or similar) to request a fresh CUIT (Clave Única de Identificación Tributaria) registration, or to notify AFIP of a modification to previously registered data, including its fiscal and legal addresses, main and secondary economic activities, legal form, registered taxes and withholding/collection regimes, employer registration for social-security purposes, and the natural persons acting as its officers or authorities. The source PDF prints the same 2-page form twice — pages 1-2 are the 'ORIGINAL' copy retained by AFIP and pages 3-4 are the 'DUPLICADO' copy (a stamped receipt-of-filing acknowledgement returned to the taxpayer, carrying AFIP's own disclaimer that the receipt stamp does not signify the Administration's agreement with the content) — so this document models the 175 distinct underlying fields once, not the 351 total widget instances across all 4 pages; see VERIFICATION.md for the full structural disclosure. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Administración Federal de Ingresos Públicos or the Argentine government.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Administración Federal de Ingresos Públicos (AFIP)",
+    "abbreviation": "AFIP",
+    "url": "https://www.afip.gob.ar/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://serviciosweb.afip.gob.ar/genericos/formularios/pdf/interactivos/f460J.pdf",
+    "retrievedAt": "2026-07-10",
+    "documentRef": "Formulario 460/J, 'Solicitud de Inscripción — Personas Jurídicas', AFIP's own interactive-forms library"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-10",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-10",
+    "notes": "Authored from a fresh curl fetch of the source directly from serviciosweb.afip.gob.ar with a browser User-Agent (HTTP 200, content-type application/pdf, exactly 224,536 bytes, SHA-256 20acb44b3bcf8bbcd14d2c08b2da16c93c71ad349826b6f685cc12eca27205f8). Confirmed with a fresh pdfjs-dist extraction (getDocument().numPages === 4; getFieldObjects() returns 177 keys; page.getAnnotations() returns 351 total Widget-subtype annotations across the 4 pages, 73/104/73/101 per page) that this is a genuine 4-page AcroForm carrying the same 2-page form printed twice (an 'ORIGINAL' copy on pages 1-2 and a 'DUPLICADO' copy on pages 3-4), collapsing to 177 unique field names of which 2 ('inscripciond'/'modificaciond') are non-editable JS-driven mirror checkboxes, leaving 175 real independent input fields — all modeled here, none omitted. See VERIFICATION.md for the full sourcing record, the disclosed original/duplicate structural finding, and the mock conformance test run."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isNewRegistrationRequest",
+      "label": "Request type: new CUIT registration",
+      "type": "boolean",
+      "required": false,
+      "description": "One of two mutually exclusive request-type checkboxes (see 'exclusivityGroups': 'requestTypeSelection'). The source's footnote (1) reads 'Marcar con una X según corresponda' (mark with an X as applicable).",
+      "sourceRef": "'SOLICITUD DE INSCRIPCIÓN' checkbox (field 'inscripcion'), Hoja 1, footnote (1)"
+    },
+    {
+      "name": "isDataModificationRequest",
+      "label": "Request type: modification of existing registration data",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'MODIFICACIÓN DE DATOS' checkbox (field 'modificacion'), Hoja 1, footnote (1)"
+    },
+    {
+      "name": "existingCuit",
+      "label": "Existing CUIT (Clave Única de Identificación Tributaria)",
+      "type": "string",
+      "required": false,
+      "description": "Combines 11 single-digit boxes ('CUIT1' through 'CUIT11' in the source AcroForm) into the entity's existing Argentine tax identifier, standardly displayed hyphenated as NN-NNNNNNNN-N. Required only when this is a data-modification filing, since a fresh registration has no CUIT yet.",
+      "sourceRef": "'CUIT' (11 single-digit boxes), Hoja 1, below the transaction-type checkboxes",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      },
+      "requiredWhen": {
+        "field": "isDataModificationRequest",
+        "equals": true
+      }
+    },
+    {
+      "name": "afipOfficeCode",
+      "label": "Assigned AFIP office code (Dependencia AFIP)",
+      "type": "string",
+      "required": false,
+      "description": "Combines 3 single-digit boxes ('dependencia1'..'dependencia3') into the 3-digit code of the taxpayer's assigned local AFIP office.",
+      "sourceRef": "'DEPENDENCIA AFIP' (3 single-digit boxes), Hoja 1",
+      "validation": {
+        "pattern": "^[0-9]{3}$"
+      }
+    },
+    {
+      "name": "isSpontaneousFiling",
+      "label": "Reason for filing: spontaneous (voluntary)",
+      "type": "boolean",
+      "required": false,
+      "description": "One of two mutually exclusive reason-for-filing checkboxes (see 'exclusivityGroups': 'motivoDelTramiteSelection'). Same footnote (1) as the request-type checkboxes.",
+      "sourceRef": "'MOTIVO DEL TRÁMITE: ESPONTÁNEO' checkbox (field 'espontaneo'), Hoja 1, footnote (1)"
+    },
+    {
+      "name": "isOfficialOrderFiling",
+      "label": "Reason for filing: by administrative order (de oficio)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'OFICIO' checkbox (field 'oficio'), Hoja 1, footnote (1)"
+    },
+    {
+      "name": "entityLegalName",
+      "label": "Legal name of the entity",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'DATOS DE IDENTIFICACIÓN' > 'DENOMINACIÓN DE LA ENTIDAD:' (field 'denominacion'), Hoja 1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "fiscalAddressStreet",
+      "label": "Tax address (domicilio fiscal): street",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'DOMICILIO FISCAL' > 'CALLE:' (field 'callefiscal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "fiscalAddressNumber",
+      "label": "Tax address (domicilio fiscal): number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Nº:' (field 'numerofiscal')",
+      "validation": {
+        "maxLength": 6
+      }
+    },
+    {
+      "name": "fiscalAddressSector",
+      "label": "Tax address (domicilio fiscal): sector",
+      "type": "string",
+      "required": false,
+      "description": "Not marked mandatory on the source form; applies conditionally to the building type (e.g. a sectored complex).",
+      "sourceRef": "'SECTOR:' (field 'sectorfiscal')",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "fiscalAddressTower",
+      "label": "Tax address (domicilio fiscal): tower",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'TORRE:' (field 'torrefiscal')",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "fiscalAddressFloor",
+      "label": "Tax address (domicilio fiscal): floor",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'PISO:' (field 'pisofiscal')",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "fiscalAddressUnit",
+      "label": "Tax address (domicilio fiscal): unit/department/office/local",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DPTO/ OFIC/ LOCAL:' (field 'deptofiscal')",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "fiscalAddressBlock",
+      "label": "Tax address (domicilio fiscal): block (manzana)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'MANZANA:' (field 'manzanafiscal')",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "fiscalAddressAdditionalData",
+      "label": "Tax address (domicilio fiscal): additional address data",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DATO ADICIONAL:' (field 'adicionalfiscal')",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "fiscalAddressCity",
+      "label": "Tax address (domicilio fiscal): city/locality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'LOCALIDAD:' (field 'localidadfiscal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "fiscalAddressDistrict",
+      "label": "Tax address (domicilio fiscal): district (partido/departamento)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'PARTIDO/ DEPARTAMENTO:' (field 'partidofiscal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "fiscalAddressProvince",
+      "label": "Tax address (domicilio fiscal): province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'PROVINCIA:' (field 'provinciafiscal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fiscalAddressPostalCode",
+      "label": "Tax address (domicilio fiscal): postal code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'CÓDIGO POSTAL:' (field 'cpfiscal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "legalAddressStreet",
+      "label": "Registered/legal address (domicilio legal): street",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'DOMICILIO LEGAL' > 'CALLE:' (field 'callelegal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "legalAddressNumber",
+      "label": "Registered/legal address (domicilio legal): number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Nº:' (field 'numerolegal')",
+      "validation": {
+        "maxLength": 6
+      }
+    },
+    {
+      "name": "legalAddressSector",
+      "label": "Registered/legal address (domicilio legal): sector",
+      "type": "string",
+      "required": false,
+      "description": "Not marked mandatory on the source form; applies conditionally to the building type (e.g. a sectored complex).",
+      "sourceRef": "'SECTOR:' (field 'sectorlegal')",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "legalAddressTower",
+      "label": "Registered/legal address (domicilio legal): tower",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'TORRE:' (field 'torrelegal')",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "legalAddressFloor",
+      "label": "Registered/legal address (domicilio legal): floor",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'PISO:' (field 'pisolegal')",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "legalAddressUnit",
+      "label": "Registered/legal address (domicilio legal): unit/department/office/local",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DPTO/ OFIC/ LOCAL:' (field 'deptolegal')",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "legalAddressBlock",
+      "label": "Registered/legal address (domicilio legal): block (manzana)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'MANZANA:' (field 'manzanalegal')",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "legalAddressAdditionalData",
+      "label": "Registered/legal address (domicilio legal): additional address data",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DATO ADICIONAL:' (field 'adicionallegal')",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "legalAddressCity",
+      "label": "Registered/legal address (domicilio legal): city/locality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'LOCALIDAD:' (field 'localidadlegal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "legalAddressDistrict",
+      "label": "Registered/legal address (domicilio legal): district (partido/departamento)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'PARTIDO/ DEPARTAMENTO:' (field 'partidolegal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "legalAddressProvince",
+      "label": "Registered/legal address (domicilio legal): province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'PROVINCIA:' (field 'provincialegal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "legalAddressPostalCode",
+      "label": "Registered/legal address (domicilio legal): postal code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'CÓDIGO POSTAL:' (field 'cplegal')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "phoneType",
+      "label": "Phone type",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'OTROS DATOS' > 'TIPO DE TELÉFONO:' (field 'tipotelefono'), Hoja 1",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'Nº:' (field 'numerotelefono'), Hoja 1",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DIRECCIÓN DE E-MAIL:' (field 'email'), Hoja 1",
+      "validation": {
+        "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$"
+      }
+    },
+    {
+      "name": "mainActivityDescription",
+      "label": "Main economic activity (description)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'DATOS ECONÓMICOS' > 'ACTIVIDAD PRINCIPAL' > 'DENOMINACIÓN' (field 'principal'), Hoja 1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "mainActivityCode",
+      "label": "Main economic activity (nomenclator code)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'ACTIVIDAD SEGÚN NOMENCLADOR VIGENTE' > 'CÓDIGO' (field 'codigo 1'), Hoja 1",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "mainActivityStartDate",
+      "label": "Main economic activity start date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "'FECHA DE INICIO' 'DÍA/ MES/ AÑO' (field 'FECHA10'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity1Description",
+      "label": "Secondary economic activity 1 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 1 (field 'secundaria'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity1Code",
+      "label": "Secondary economic activity 1 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity1Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 1 (field 'codigo 2'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity1StartDate",
+      "label": "Secondary economic activity 1 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity1Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 1 (field 'FECHA11'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity2Description",
+      "label": "Secondary economic activity 2 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 2 (field 'secundaria1'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity2Code",
+      "label": "Secondary economic activity 2 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity2Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 2 (field 'codigo 3'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity2StartDate",
+      "label": "Secondary economic activity 2 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity2Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 2 (field 'FECHA12'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity3Description",
+      "label": "Secondary economic activity 3 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 3 (field 'secundaria2'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity3Code",
+      "label": "Secondary economic activity 3 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity3Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 3 (field 'codigo 4'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity3StartDate",
+      "label": "Secondary economic activity 3 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity3Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 3 (field 'FECHA13'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity4Description",
+      "label": "Secondary economic activity 4 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 4 (field 'secundaria3'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity4Code",
+      "label": "Secondary economic activity 4 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity4Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 4 (field 'codigo 5'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity4StartDate",
+      "label": "Secondary economic activity 4 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity4Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 4 (field 'FECHA14'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity5Description",
+      "label": "Secondary economic activity 5 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 5 (field 'secundaria4'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity5Code",
+      "label": "Secondary economic activity 5 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity5Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 5 (field 'codigo 6'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity5StartDate",
+      "label": "Secondary economic activity 5 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity5Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 5 (field 'FECHA15'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity6Description",
+      "label": "Secondary economic activity 6 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 6 (field 'secundaria5'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity6Code",
+      "label": "Secondary economic activity 6 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity6Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 6 (field 'codigo 7'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity6StartDate",
+      "label": "Secondary economic activity 6 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity6Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 6 (field 'FECHA16'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity7Description",
+      "label": "Secondary economic activity 7 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 7 (field 'secundaria6'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity7Code",
+      "label": "Secondary economic activity 7 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity7Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 7 (field 'codigo 8'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity7StartDate",
+      "label": "Secondary economic activity 7 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity7Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 7 (field 'FECHA17'), Hoja 1"
+    },
+    {
+      "name": "secondaryActivity8Description",
+      "label": "Secondary economic activity 8 (description)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'ACTIVIDADES SECUNDARIAS' > 'DENOMINACIÓN', row 8 (field 'secundaria7'), Hoja 1",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "secondaryActivity8Code",
+      "label": "Secondary economic activity 8 (nomenclator code)",
+      "type": "string",
+      "required": false,
+      "description": "The source presents description/code/start-date as one logical row, but its own AcroForm places no conditional-requiredness rule on any of the three, and GovSchema's 'requiredWhen' condition grammar (GSP-0013) has no safe leaf-comparison for \"the sibling field was filled in\" against an optional string field without risking a false-positive on an absent (as opposed to empty-string) value (see this registry's 'notEquals empty-string absent-field bug' precedent) — so this field is left unconditionally optional, with the expectation that it is filled in together with 'secondaryActivity8Description' stated here in prose rather than as a machine-checkable rule.",
+      "sourceRef": "'CÓDIGO', row 8 (field 'codigo 9'), Hoja 1",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "secondaryActivity8StartDate",
+      "label": "Secondary economic activity 8 start date",
+      "type": "date",
+      "required": false,
+      "description": "Same conditional-in-prose-only treatment as 'secondaryActivity8Code' (see its description).",
+      "sourceRef": "'FECHA DE INICIO', row 8 (field 'FECHA18'), Hoja 1"
+    },
+    {
+      "name": "articlesOfIncorporationDate",
+      "label": "Date of the articles of incorporation / company formation contract",
+      "type": "date",
+      "required": false,
+      "description": "Combines 3 boxes ('dd'/'mm'/'aaaa') printed under 'FECHA CONTRATO SOCIAL (DD/MM/AAAA)'.",
+      "sourceRef": "'DATOS COMERCIALES' > 'FECHA CONTRATO SOCIAL (DD/MM/AAAA):' (fields 'dd'/'mm'/'aaaa'), Hoja 2"
+    },
+    {
+      "name": "fiscalYearEndMonth",
+      "label": "Fiscal year-end month",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'MES DE CIERRE DEL EJERCICIO:' (field 'mescierre'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "nationalCapitalPercentage",
+      "label": "Percentage of capital: national",
+      "type": "integer",
+      "required": false,
+      "description": "The source prints this alongside 'foreignCapitalPercentage' under one shared header, 'PORCENTAJE DE CAPITAL:', suggesting the two figures are meant to describe a single capital-ownership split. However, the form does not print any explicit statement that the two must sum to 100, and GovSchema v0.3's 'crossFieldValidation' grammar (§8.3) supports only direct field-to-field comparisons (equals/notEquals/greaterThan[OrEqual]/lessThan[OrEqual]), not arithmetic sum constraints — so even a confirmed sum-to-100 rule could not be expressed with a 'compare' rule today. Both percentage fields are therefore modeled as independent optional integers; see VERIFICATION.md for the full disclosure of this judgment call.",
+      "sourceRef": "'PORCENTAJE DE CAPITAL: NACIONAL:' (field '%nacional'), Hoja 2",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "foreignCapitalPercentage",
+      "label": "Percentage of capital: foreign",
+      "type": "integer",
+      "required": false,
+      "description": "See 'nationalCapitalPercentage' description for the disclosed sum-to-100 judgment call.",
+      "sourceRef": "'EXTRANJERO:' (field '%extranjero'), Hoja 2",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "controllingBody",
+      "label": "Controlling/regulatory body (Organismo de Contralor)",
+      "type": "string",
+      "required": false,
+      "description": "Free text; no separate code sub-field is present on the source. The form's own footnote (2) lists illustrative codes: '01-IGJ. 02-RPC. 03-INAC Y M. 04-Comisión Nacional de Valores. 05-Otros' (Inspección General de Justicia; Registro Público de Comercio; Instituto Nacional de Asociativismo y Economía Social; National Securities Commission; Other) — quoted here for reference, not encoded as a fixed 'enum' since the field itself is unconstrained free text on the source.",
+      "sourceRef": "'ORGANISMO DE CONTRALOR:' (field 'contralor'), Hoja 2, footnote (2)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "caseFileNumber",
+      "label": "File/case number (Expediente Nº)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'EXPEDIENTE Nº:' (field 'expediente'), Hoja 2",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "jurisdictionAndLocality",
+      "label": "Jurisdiction / locality (of the controlling body)",
+      "type": "string",
+      "required": false,
+      "description": "The source prints two stacked labels, 'JURISDICCIÓN:' and 'LOCALIDAD:', immediately followed by a single shared blank — confirmed by this document's own pdfjs-dist extraction of the underlying AcroForm: exactly one field ('jurisdiccion') occupies that row, with a rect spanning from just after 'LOCALIDAD:' to just before the adjacent 'PROVINCIA:' label. There is no second, distinct field for 'Localidad' anywhere in this document's 175-field extraction. Modeled as one combined field; see VERIFICATION.md.",
+      "sourceRef": "'JURISDICCIÓN: LOCALIDAD:' (field 'jurisdiccion'), Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "controllingBodyProvince",
+      "label": "Province (of the controlling body / jurisdiction)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'PROVINCIA:' (field 'pcia'), same row as 'jurisdiccion', Hoja 2",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "legalFormSociedadAnonima",
+      "label": "Legal form: Sociedad Anónima",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD ANÓNIMA' checkbox, code '019' (field '019'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormComanditaPorAcciones",
+      "label": "Legal form: Sociedad en Comandita por Acciones",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD EN COMANDITA POR ACCIONES' checkbox, code '027' (field '027'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormResponsabilidadLimitada",
+      "label": "Legal form: Sociedad de Responsabilidad Limitada",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD DE RESPONSABILIDAD LIMITADA' checkbox, code '035' (field '035'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormColectiva",
+      "label": "Legal form: Sociedad Colectiva",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD COLECTIVA' checkbox, code '043' (field '043'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormCapitalEIndustria",
+      "label": "Legal form: Sociedad de Capital e Industria",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD DE CAPITAL E INDUSTRIA' checkbox, code '051' (field '051'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormComanditaSimple",
+      "label": "Legal form: Sociedad en Comandita Simple",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD EN COMANDITA SIMPLE' checkbox, code '067' (field '067'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormDeHecho",
+      "label": "Legal form: Sociedad de Hecho",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD DE HECHO' checkbox, code '078' (field '078'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormAsociacionCivil",
+      "label": "Legal form: Asociación (Civil)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'ASOCIACIÓN (CIVIL)' checkbox, code '086' (field '086'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormFundacion",
+      "label": "Legal form: Fundación",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'FUNDACIÓN' checkbox, code '087' (field '087'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormCooperativa",
+      "label": "Legal form: Cooperativa",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'COOPERATIVA' checkbox, code '094' (field '094'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormEconomiaMixta",
+      "label": "Legal form: Sociedad de Economía Mixta",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD DE ECONOMÍA MIXTA' checkbox, code '108' (field '108'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormEmpresaDelEstado",
+      "label": "Legal form: Empresa del Estado",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'EMPRESA DEL ESTADO' checkbox, code '116' (field '116'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormParticipacionEstatalMayoritaria",
+      "label": "Legal form: Sociedad de Participación Estatal Mayoritaria",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD DE PARTICIPACIÓN ESTATAL MAYORITARIA' checkbox, code '124' (field '124'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormOrganismoPublico",
+      "label": "Legal form: Organismo Público",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'ORGANISMO PÚBLICO' checkbox, code '125' (field '125'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormSucursalEmpresaExtranjera",
+      "label": "Legal form: Sucursal de Empresa Extranjera",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SUCURSAL DE EMPRESA EXTRANJERA' checkbox, code '132' (field '132'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormUnionTransitoriaDeEmpresas",
+      "label": "Legal form: Unión Transitoria de Empresas",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'UNIÓN TRANSITORIA DE EMPRESAS' checkbox, code '159' (field '159'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormConsorcioDePropietarios",
+      "label": "Legal form: Consorcio de Propietarios",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'CONSORCIO DE PROPIETARIOS' checkbox, code '167' (field '167'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormDireccionAdministrativaEstatal",
+      "label": "Legal form: Dirección Administrativa Estatal",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'DIRECCIÓN ADMINISTRATIVA ESTATAL' checkbox, code '175' (field '175'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormGarantiaReciproca",
+      "label": "Legal form: Sociedad de Garantía Recíproca",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD DE GARANTÍA RECÍPROCA' checkbox, code '183' (field '183'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormSociedadEnFormacion",
+      "label": "Legal form: Sociedad en Formación",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'SOCIEDAD EN FORMACIÓN' checkbox, code '191' (field '191'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormMutual",
+      "label": "Legal form: Mutual",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'MUTUAL' checkbox, code '203' (field '203'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormCooperadora",
+      "label": "Legal form: Cooperadora",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'COOPERADORA' checkbox, code '215' (field '215'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormOtrasEntidadesCiviles",
+      "label": "Legal form: Otras Entidades Civiles",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'OTRAS ENTIDADES CIVILES' checkbox, code '223' (field '223'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormOtrasSociedades",
+      "label": "Legal form: Otras Sociedades",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'OTRAS SOCIEDADES' checkbox, code '237' (field '237'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormFondoComunDeInversion",
+      "label": "Legal form: Fondo Común de Inversión",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'FONDO COMÚN DE INVERSIÓN' checkbox, code '238' (field '238'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormFideicomiso",
+      "label": "Legal form: Fideicomiso",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'FIDEICOMISO' checkbox, code '239' (field '239'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormFideicomisoFinanciero",
+      "label": "Legal form: Fideicomiso Financiero",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "'FIDEICOMISO FINANCIERO' checkbox, code '240' (field '240'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "legalFormOther241",
+      "label": "Legal form: unlabeled checkbox (code 241)",
+      "type": "boolean",
+      "required": false,
+      "description": "The source PDF's 'FORMA JURÍDICA' grid prints checkbox code '241' as the 28th and final option, positioned immediately after code '240' (Fideicomiso Financiero) in the same row — but this document's own pdfjs-dist getTextContent() extraction of the surrounding header block (approximately y=487-505 in PDF points, spanning every other column's stacked multi-line label) found no printed text of any kind above or near this column. Every other one of the 27 sibling checkboxes carries a clear label; this one does not. This may be a genuinely blank or reserved catch-all column in AFIP's own form design. No label is invented for it; see VERIFICATION.md for the full disclosure.",
+      "sourceRef": "unlabeled checkbox, code '241' (field '241'), 'FORMA JURÍDICA' table, Hoja 2"
+    },
+    {
+      "name": "taxCharacterSubject",
+      "label": "Taxes (subject of the character/role declaration)",
+      "type": "string",
+      "required": false,
+      "description": "Printed under the header 'IMPUESTOS CARÁCTER :' alongside 'taxCharacterRole' — this blank (field 'impuestos') sits directly beneath the 'IMPUESTOS' half of that header, distinct from the 'CARÁCTER' blank. Modeled as free text naming which tax(es) the accompanying character/role declaration applies to; see VERIFICATION.md for the full disclosure of this row's structure.",
+      "sourceRef": "'DATOS TRIBUTARIOS' > 'IMPUESTOS CARÁCTER :' — 'IMPUESTOS' blank (field 'impuestos'), Hoja 2",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "taxCharacterRole",
+      "label": "Character/role for tax purposes",
+      "type": "string",
+      "required": false,
+      "description": "The 'CARÁCTER' blank of the same row (field 'caracter3'), annotated with footnote (3): 'Importador, Productor, Comercializador de Combustibles Líquidos-Ley 23.966 Título III Cap. I)-Bs. Personales: Resp. de Deuda Ajena-Resp. Sustitutos-Administrador Fiduciario. Ganancias y Gcia. Mínima Presunta: Resp. de Deuda Ajena-Administrador Fiduciario-Sociedad Gerente.' Quoted here as the source's own illustrative list of roles; not encoded as a fixed 'enum' since the underlying AcroForm field is unconstrained free text, and it cannot be confirmed the field is meant to hold exactly one verbatim token from that list.",
+      "sourceRef": "'CARÁCTER :' blank (field 'caracter3'), Hoja 2, footnote (3)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "registeredTax1Name",
+      "label": "Registered tax 1: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN', row 1 (field 'denomina1'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "registeredTax1Code",
+      "label": "Registered tax 1: code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 1 (field 'codimp1'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "registeredTax1RegistrationDate",
+      "label": "Registered tax 1: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 1 (field 'alta1'), impuestos table, Hoja 2"
+    },
+    {
+      "name": "registeredTax2Name",
+      "label": "Registered tax 2: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN', row 2 (field 'denomina2'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "registeredTax2Code",
+      "label": "Registered tax 2: code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 2 (field 'codimp2'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "registeredTax2RegistrationDate",
+      "label": "Registered tax 2: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 2 (field 'alta2'), impuestos table, Hoja 2"
+    },
+    {
+      "name": "registeredTax3Name",
+      "label": "Registered tax 3: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN', row 3 (field 'denomina3'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "registeredTax3Code",
+      "label": "Registered tax 3: code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 3 (field 'codimp3'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "registeredTax3RegistrationDate",
+      "label": "Registered tax 3: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 3 (field 'alta3'), impuestos table, Hoja 2"
+    },
+    {
+      "name": "registeredTax4Name",
+      "label": "Registered tax 4: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN', row 4 (field 'denomina4'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "registeredTax4Code",
+      "label": "Registered tax 4: code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 4 (field 'codimp4'), impuestos table, Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "registeredTax4RegistrationDate",
+      "label": "Registered tax 4: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 4 (field 'alta4'), impuestos table, Hoja 2"
+    },
+    {
+      "name": "withholdingRegime1Name",
+      "label": "Withholding/collection regime 1: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN RÉGIMEN', row 1 (field 'regimen1'), Regímenes de Retención/Percepción table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "withholdingRegime1TaxCode",
+      "label": "Withholding/collection regime 1: tax code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 1 (field 'codimp5'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime1RegimeCode",
+      "label": "Withholding/collection regime 1: regime code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO RÉGIMEN', row 1 (field 'codreg1'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime1RgNumber",
+      "label": "Withholding/collection regime 1: R.G. (General Resolution) number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'R.G. Nº', row 1 (field 'rgn1'), Hoja 2",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "withholdingRegime1RegistrationDate",
+      "label": "Withholding/collection regime 1: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 1 (field 'alta5'), Hoja 2"
+    },
+    {
+      "name": "withholdingRegime2Name",
+      "label": "Withholding/collection regime 2: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN RÉGIMEN', row 2 (field 'regimen2'), Regímenes de Retención/Percepción table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "withholdingRegime2TaxCode",
+      "label": "Withholding/collection regime 2: tax code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 2 (field 'codimp6'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime2RegimeCode",
+      "label": "Withholding/collection regime 2: regime code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO RÉGIMEN', row 2 (field 'codreg2'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime2RgNumber",
+      "label": "Withholding/collection regime 2: R.G. (General Resolution) number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'R.G. Nº', row 2 (field 'rgn2'), Hoja 2",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "withholdingRegime2RegistrationDate",
+      "label": "Withholding/collection regime 2: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 2 (field 'alta6'), Hoja 2"
+    },
+    {
+      "name": "withholdingRegime3Name",
+      "label": "Withholding/collection regime 3: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN RÉGIMEN', row 3 (field 'regimen3'), Regímenes de Retención/Percepción table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "withholdingRegime3TaxCode",
+      "label": "Withholding/collection regime 3: tax code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 3 (field 'codimp7'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime3RegimeCode",
+      "label": "Withholding/collection regime 3: regime code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO RÉGIMEN', row 3 (field 'codreg3'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime3RgNumber",
+      "label": "Withholding/collection regime 3: R.G. (General Resolution) number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'R.G. Nº', row 3 (field 'rgn3'), Hoja 2",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "withholdingRegime3RegistrationDate",
+      "label": "Withholding/collection regime 3: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 3 (field 'alta7'), Hoja 2"
+    },
+    {
+      "name": "withholdingRegime4Name",
+      "label": "Withholding/collection regime 4: name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'DENOMINACIÓN RÉGIMEN', row 4 (field 'regimen4'), Regímenes de Retención/Percepción table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "withholdingRegime4TaxCode",
+      "label": "Withholding/collection regime 4: tax code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO IMPUESTO', row 4 (field 'codimp8'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime4RegimeCode",
+      "label": "Withholding/collection regime 4: regime code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CÓDIGO RÉGIMEN', row 4 (field 'codreg4'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "withholdingRegime4RgNumber",
+      "label": "Withholding/collection regime 4: R.G. (General Resolution) number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'R.G. Nº', row 4 (field 'rgn4'), Hoja 2",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "withholdingRegime4RegistrationDate",
+      "label": "Withholding/collection regime 4: registration date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "'FECHA ALTA DIA/ MES/ AÑO', row 4 (field 'alta8'), Hoja 2"
+    },
+    {
+      "name": "employerRegistrationStartMonthYear",
+      "label": "Start date as an employer (month/year)",
+      "type": "string",
+      "required": false,
+      "description": "Combines 2 boxes ('mesan'/'anio') printed under 'FECHA DE INICIO COMO EMPLEADOR (MM/AAAA)'. Modeled as a pattern-constrained string, since GovSchema's 'date' type (§6.2) requires a full RFC 3339 date and the source only captures month and year.",
+      "sourceRef": "'DATOS DE LA SEGURIDAD SOCIAL' > 'FECHA DE INICIO COMO EMPLEADOR (MM/AAAA):' (fields 'mesan'/'anio'), Hoja 2",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      }
+    },
+    {
+      "name": "numberOfEmployees",
+      "label": "Number of employees (Cantidad de Personal que Ocupa)",
+      "type": "integer",
+      "required": false,
+      "description": "Combines 5 single-digit boxes ('pers1'..'pers5').",
+      "sourceRef": "'CANTIDAD DE PERSONAL QUE OCUPA' (5 single-digit boxes), Hoja 2",
+      "validation": {
+        "minimum": 0,
+        "maximum": 99999
+      }
+    },
+    {
+      "name": "officer1FullName",
+      "label": "Officer/member 1: full name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'APELLIDO Y NOMBRES', row 1 (field 'componentes1'), 'COMPONENTES DE LA SOCIEDAD O AUTORIDAD EN EJERCICIO' table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "officer1TaxId",
+      "label": "Officer/member 1: tax ID (CUIT/CUIL/CDI)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CUIT/ CUIL/ CDI', row 1 (field 'CDDD1'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "officer1Role",
+      "label": "Officer/member 1: role/character",
+      "type": "string",
+      "required": false,
+      "description": "The source's own footnote (4) lists illustrative role codes: '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Quoted for reference, not encoded as a fixed 'enum' since the underlying field is free text.",
+      "sourceRef": "'CARÁCTER', row 1 (field 'carac1'), Hoja 2, footnote (4)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "officer1ResidentInCountry",
+      "label": "Officer/member 1: resident in the country",
+      "type": "boolean",
+      "required": false,
+      "description": "Collapses the row's 'SI'/'NO' checkbox pair ('si1'/'no1') into a single boolean, following this registry's established convention for a genuine binary yes/no question (as distinct from the multi-option 'exclusivityGroups' construct used elsewhere in this document).",
+      "sourceRef": "'RESIDENTE EN EL PAÍS' SI/NO checkboxes, row 1 (fields 'si1'/'no1'), Hoja 2, footnote (1)"
+    },
+    {
+      "name": "officer2FullName",
+      "label": "Officer/member 2: full name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'APELLIDO Y NOMBRES', row 2 (field 'componentes2'), 'COMPONENTES DE LA SOCIEDAD O AUTORIDAD EN EJERCICIO' table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "officer2TaxId",
+      "label": "Officer/member 2: tax ID (CUIT/CUIL/CDI)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CUIT/ CUIL/ CDI', row 2 (field 'CDDD2'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "officer2Role",
+      "label": "Officer/member 2: role/character",
+      "type": "string",
+      "required": false,
+      "description": "The source's own footnote (4) lists illustrative role codes: '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Quoted for reference, not encoded as a fixed 'enum' since the underlying field is free text.",
+      "sourceRef": "'CARÁCTER', row 2 (field 'carac2'), Hoja 2, footnote (4)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "officer2ResidentInCountry",
+      "label": "Officer/member 2: resident in the country",
+      "type": "boolean",
+      "required": false,
+      "description": "Collapses the row's 'SI'/'NO' checkbox pair ('si2'/'no2') into a single boolean, following this registry's established convention for a genuine binary yes/no question (as distinct from the multi-option 'exclusivityGroups' construct used elsewhere in this document).",
+      "sourceRef": "'RESIDENTE EN EL PAÍS' SI/NO checkboxes, row 2 (fields 'si2'/'no2'), Hoja 2, footnote (1)"
+    },
+    {
+      "name": "officer3FullName",
+      "label": "Officer/member 3: full name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'APELLIDO Y NOMBRES', row 3 (field 'componentes3'), 'COMPONENTES DE LA SOCIEDAD O AUTORIDAD EN EJERCICIO' table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "officer3TaxId",
+      "label": "Officer/member 3: tax ID (CUIT/CUIL/CDI)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CUIT/ CUIL/ CDI', row 3 (field 'CDDD3'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "officer3Role",
+      "label": "Officer/member 3: role/character",
+      "type": "string",
+      "required": false,
+      "description": "The source's own footnote (4) lists illustrative role codes: '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Quoted for reference, not encoded as a fixed 'enum' since the underlying field is free text.",
+      "sourceRef": "'CARÁCTER', row 3 (field 'carac3'), Hoja 2, footnote (4)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "officer3ResidentInCountry",
+      "label": "Officer/member 3: resident in the country",
+      "type": "boolean",
+      "required": false,
+      "description": "Collapses the row's 'SI'/'NO' checkbox pair ('si3'/'no3') into a single boolean, following this registry's established convention for a genuine binary yes/no question (as distinct from the multi-option 'exclusivityGroups' construct used elsewhere in this document).",
+      "sourceRef": "'RESIDENTE EN EL PAÍS' SI/NO checkboxes, row 3 (fields 'si3'/'no3'), Hoja 2, footnote (1)"
+    },
+    {
+      "name": "officer4FullName",
+      "label": "Officer/member 4: full name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'APELLIDO Y NOMBRES', row 4 (field 'componentes4'), 'COMPONENTES DE LA SOCIEDAD O AUTORIDAD EN EJERCICIO' table, Hoja 2",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "officer4TaxId",
+      "label": "Officer/member 4: tax ID (CUIT/CUIL/CDI)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "'CUIT/ CUIL/ CDI', row 4 (field 'CDDD4'), Hoja 2",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "officer4Role",
+      "label": "Officer/member 4: role/character",
+      "type": "string",
+      "required": false,
+      "description": "The source's own footnote (4) lists illustrative role codes: '01-Director. 02-Presidente. 03-Socio. 04-Representantes. 05-Administrador Fiduciario.' Quoted for reference, not encoded as a fixed 'enum' since the underlying field is free text.",
+      "sourceRef": "'CARÁCTER', row 4 (field 'carac4'), Hoja 2, footnote (4)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "officer4ResidentInCountry",
+      "label": "Officer/member 4: resident in the country",
+      "type": "boolean",
+      "required": false,
+      "description": "Collapses the row's 'SI'/'NO' checkbox pair ('si4'/'no4') into a single boolean, following this registry's established convention for a genuine binary yes/no question (as distinct from the multi-option 'exclusivityGroups' construct used elsewhere in this document).",
+      "sourceRef": "'RESIDENTE EN EL PAÍS' SI/NO checkboxes, row 4 (fields 'si4'/'no4'), Hoja 2, footnote (1)"
+    },
+    {
+      "name": "signerName",
+      "label": "Name of the person signing (El que suscribe)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'DECLARACIÓN JURADA' > 'El que suscribe Don' (field 'suscribe'), Hoja 2",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "signerRoleOrCapacity",
+      "label": "Signer's role/capacity",
+      "type": "string",
+      "required": true,
+      "description": "The source's own footnote (5) lists the expected roles: 'Presidente, Socio Representante Legal o Apoderado' (President, Partner Legal Representative, or Attorney-in-fact).",
+      "sourceRef": "'en su carácter de' (field 'caracter'), Hoja 2, footnote (5)",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "placeAndDateOfSigning",
+      "label": "Place and date of signing",
+      "type": "string",
+      "required": true,
+      "sourceRef": "'Lugar y Fecha:' (field 'lugar y fecha'), Hoja 2",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "dataAccuracyDeclaration",
+      "label": "Sworn declaration of data accuracy and completeness",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "afirma que los datos consignados en este formulario son correctos y completos y que ha confeccionado esta declaración jurada sin omitir ni falsear dato alguno que deba contener, siendo fiel expresión de la verdad. (Translation: affirms that the data recorded on this form is correct and complete, and that this sworn declaration was prepared without omitting or misrepresenting any data it must contain, being a faithful expression of the truth.)",
+      "sourceRef": "'DECLARACIÓN JURADA' attestation prose preceding the 'Firma y Sello' line, Hoja 2"
+    },
+    {
+      "id": "signatureAndSeal",
+      "label": "Signature and seal (Firma y Sello)",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "'Firma y Sello:' line, Hoja 2. A separate 'Reservado para certificación de firma:' box on the same line is an AFIP-administrative signature-certification stamp, not modeled here as an input."
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "requestTypeSelection",
+      "fields": [
+        "isNewRegistrationRequest",
+        "isDataModificationRequest"
+      ]
+    },
+    {
+      "id": "motivoDelTramiteSelection",
+      "fields": [
+        "isSpontaneousFiling",
+        "isOfficialOrderFiling"
+      ]
+    },
+    {
+      "id": "legalFormSelection",
+      "fields": [
+        "legalFormSociedadAnonima",
+        "legalFormComanditaPorAcciones",
+        "legalFormResponsabilidadLimitada",
+        "legalFormColectiva",
+        "legalFormCapitalEIndustria",
+        "legalFormComanditaSimple",
+        "legalFormDeHecho",
+        "legalFormAsociacionCivil",
+        "legalFormFundacion",
+        "legalFormCooperativa",
+        "legalFormEconomiaMixta",
+        "legalFormEmpresaDelEstado",
+        "legalFormParticipacionEstatalMayoritaria",
+        "legalFormOrganismoPublico",
+        "legalFormSucursalEmpresaExtranjera",
+        "legalFormUnionTransitoriaDeEmpresas",
+        "legalFormConsorcioDePropietarios",
+        "legalFormDireccionAdministrativaEstatal",
+        "legalFormGarantiaReciproca",
+        "legalFormSociedadEnFormacion",
+        "legalFormMutual",
+        "legalFormCooperadora",
+        "legalFormOtrasEntidadesCiviles",
+        "legalFormOtrasSociedades",
+        "legalFormFondoComunDeInversion",
+        "legalFormFideicomiso",
+        "legalFormFideicomisoFinanciero",
+        "legalFormOther241"
+      ]
+    }
+  ]
+}
