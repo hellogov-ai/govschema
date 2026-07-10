@@ -7177,6 +7177,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   above — `ch/fedpol/antrag-pass-identitaetskarte` closes this gap too,
   through the same schema (the live tool issues both documents via one
   shared field set). No longer a dead end.
+- **AR Taxes (AFIP Ganancias/Bienes Personales)** — GOV-2202, 2026-07-10.
+  Impuesto a las Ganancias (Personas Humanas) and Bienes Personales are
+  both filed exclusively through Clave-Fiscal-login-gated web portals (or
+  an installable SIAP desktop aplicativo); F.711/F.762 are output-only
+  receipts printed *after* completing the online declaration, not blank
+  forms. No downloadable AcroForm or numbered casilla/instructivo guide
+  exists for either tax. Do not re-attempt without a genuinely new source
+  (e.g. a leaked/third-party-republished blank form with real line
+  numbers).
 
 ---
 
