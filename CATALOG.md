@@ -4,7 +4,60 @@
 
 ## Executive Summary
 
-**31 jurisdictions** | **327 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**31 jurisdictions** | **328 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-10, "GovSchema Standard Research"): Austria's National
+> ID vertical opens**, via `at/bmi/national-identity-card-application`
+> v1.0.0 — the "Antrag auf Ausstellung eines Personalausweises"
+> (Application for issuance of an identity card), a valid EU/Schengen
+> travel document and domestic proof of identity and citizenship. This
+> cycle's brief was to screen Austria's three remaining unscreened
+> verticals — Passport, Visa, and National ID — and author the strongest.
+> All three screened as real, usable candidates (none a dead end), a first
+> for this registry's recent Austria cycles: a bilingual German/English
+> combined "passport or identity card" consular form (42 AcroForm widgets,
+> `bmeia.gv.at`) for Passport; the EU-standard 37-field "Formular C1"
+> Schengen visa application (no AcroForm layer, numbered fields, `bmeia.gv.at`)
+> for Visa; and the dedicated Personalausweis application (34 AcroForm
+> widgets, one page) for National ID — selected as the strongest of the
+> three for containing two genuine PDF radio-button groups (gender;
+> legal-representation basis), a materially cleaner structure than the
+> combined passport form's own document-type selector, which is
+> implemented as three independent, non-grouped checkboxes rather than a
+> true radio group. Sourced directly from `oesterreich.gv.at`'s own
+> federal content-delivery host and cross-confirmed **SHA-256-byte-identical**
+> to the copy in BMEIA's central "Allgemein/Formulare" library, itself
+> linked by name from a live Austrian embassy citizen-services page — a
+> stronger sourcing chain than a single mission's own local copy, two of
+> which (a bilingual 42-widget and a trilingual German/English/Hebrew
+> 74-widget variant, the latter carrying a stray, apparently miscopied
+> Hebrew caption) were found and explicitly set aside as less canonical.
+> Extracted 34 AcroForm widgets with `pdfjs-dist` (7 non-data controls
+> excluded: two duplicate heading-label widgets whose own default value
+> equals their printed heading, two near-zero-area stray widgets with no
+> label of their own, and two footer widgets carrying the form's internal
+> reference code and page count); the two confirmed radio groups were
+> merged into enum fields rather than split into independent unconstrained
+> booleans, yielding 23 fields. A specific font used for this PDF's
+> heading/note text was found to drop the letter "F" from certain rendered
+> words in `pdfjs-dist`'s text-layer extraction (confirmed against
+> reliably-encoded field-dictionary strings elsewhere in the same PDF) —
+> disclosed in full in `VERIFICATION.md` together with two cases where a
+> widget's internal PDF field name paraphrases text actually printed as
+> separate, non-contiguous runs on the page (the gender field's heading
+> and footnote; the height field's label and unit marker), neither
+> presented as one contiguous printed phrase. See
+> `registry/at/bmi/national-identity-card-application/1.0.0/VERIFICATION.md`
+> for the full sourcing record, every disclosed scope decision (the
+> four-way identity-proof branch left unencoded as a `requiredWhen` matrix
+> since the source states it only in prose; the still-open bilingual
+> combined passport/identity-card form as a companion-schema candidate),
+> and the mock conformance test run (0 errors across two scenarios
+> covering all 23 fields, plus 6 mutation/negative controls). This gives
+> Austria **3 of its 6 verticals** (Business Formation, Taxes, National
+> ID); Passport and Visa are now confirmed-viable, screened, open backlog
+> candidates (not dead ends) for a future cycle; DMV remains a confirmed
+> weak/dead-end candidate from a prior cycle.
 
 > **Update (2026-07-10, GOV-2114, "GovSchema Standard Research"): Austria's
 > Taxes vertical opens**, via `at/bmf/employee-tax-assessment` v1.0.0 —
@@ -5503,7 +5556,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AT** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **AT** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -5943,7 +5996,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    (Business Formation, Taxes); Passport, DMV, Visa, and National ID remain
    open, unscreened (DMV: screened and confirmed weak, see above) backlog
    candidates. See the Executive Summary update above and the document's
-   own VERIFICATION.md. **The Czech Republic's Visa gap has since closed too
+   own VERIFICATION.md. **Austria's National ID gap has since closed too**,
+   via `at/bmi/national-identity-card-application` — the dedicated
+   Personalausweis application form, sourced directly from
+   `oesterreich.gv.at`'s own federal content host and confirmed
+   SHA-256-byte-identical to BMEIA's central-library copy; that same cycle
+   also screened Passport and Visa and found both genuinely viable, open
+   (not dead-end) candidates for a future cycle — a bilingual
+   German/English combined passport-or-identity-card consular form
+   (42 AcroForm widgets) for Passport, and the EU-standard 37-field
+   "Formular C1" Schengen visa application (no AcroForm layer, numbered
+   fields) for Visa. Austria now stands at **3 of its 6 verticals**
+   (Business Formation, Taxes, National ID); Passport and Visa remain open,
+   screened-and-viable backlog candidates; DMV remains a confirmed weak/
+   dead-end candidate. See the Executive Summary update above and the
+   document's own VERIFICATION.md. **The Czech Republic's Visa gap has since closed too
    (GOV-1819)**, via `cz/mzv/zadost-o-udeleni-dlouhodobeho-viza` — the
    Ministry of Foreign Affairs' national long-stay (category D) visa
    application, confirmed genuinely distinct from the EU-harmonized template
