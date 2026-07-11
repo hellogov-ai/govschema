@@ -31,7 +31,7 @@
 > names are page-navigation/utility controls, clustered once on page 4
 > only, excluded as non-data-collecting UI chrome. A disposable
 > reconciliation script mapped all 126 unique widget names to exactly
-> one `fields[]` entry (0 unmapped), consolidating — via 32 euro/cent
+> one `fields[]` entry (0 unmapped), consolidating — via 31 euro/cent
 > split-widget merges and two bounded repeating groups flattened by
 > ordinal suffix (2 wages-income rows; 3 custody-of-children-outside-
 > Finland rows, matching this registry's `dk/cpr` precedent) — to **92
@@ -5993,7 +5993,7 @@ cycle's own count was independently reproduced twice against the same
 byte-size-matching PDF. 3 of the 126 names are page-navigation/utility
 controls, clustered once on page 4 only. Every widget name was mapped to
 exactly one `fields[]` entry via a disposable reconciliation script (0
-unmapped), consolidating — via 32 euro/cent split-widget merges (this
+unmapped), consolidating — via 31 euro/cent split-widget merges (this
 registry's established convention) and two bounded repeating groups
 flattened by ordinal suffix (2 wages-income rows; 3 custody-of-children-
 outside-Finland rows, matching this registry's `dk/cpr` precedent) — to
