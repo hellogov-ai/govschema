@@ -4,8 +4,51 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **356 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **357 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-11, GOV-2346, "GovSchema Standard Research"): Denmark's
+> DMV vertical is now closed — Denmark stands at 6 of 6 verticals**, the
+> third jurisdiction in this registry to reach full vertical coverage, after
+> Colombia (GOV-1616) and Norway (GOV-2340), via
+> `dk/fstyr/samtykkeerklaering-koerekort-under-18` — Færdselsstyrelsen's (the
+> Danish Road Traffic Authority) form P23T, "Samtykkeerklæring ved ansøgning
+> om kørekort — Under 18 år" (Consent Declaration for a Driving Licence
+> Application, under 18). A prior cycle (GOV-2253) had screened and rejected
+> Denmark's DMV vertical twice over: the primary P23 driving-licence
+> application is a genuine AcroForm but a shared, multi-party 397-field
+> record card filled progressively by driving schools/police/kommune staff,
+> not a citizen-facing intake form; Motorstyrelsen's vehicle-registration/
+> re-registration flow is exclusively MitID/TastSelv-login-gated. P23T is a
+> distinct, narrowly-scoped companion form P23's own under-18 branch
+> references, capturing only the parent/legal-guardian consent declaration
+> required whenever a driving-licence applicant is a minor — with no
+> kommune/kørelærer/syn institutional fill-in section of any kind, unlike
+> every previously-rejected DMV candidate. Fetched fresh from `fstyr.dk`
+> (its own resolving URL encodes a double space, `%20%20`, between
+> "kørekort -" and "Under 18" — the single-space variant 404s): HTTP 200,
+> 61,834 bytes, genuine `%PDF-1.7` header, no login/CAPTCHA/WAF gate. A
+> `pdfjs-dist` extraction confirmed exactly 14 `/Widget` annotations, all
+> distinct field names, on the form's single page — an exact match to this
+> cycle's own pre-authoring scouting count. All 14 widgets map 1:1 to this
+> schema's 14 fields (applicant name/personnummer header; two parallel
+> "Part 1"/"Part 2" guardian-consent columns, each with name, personnummer,
+> a sole-vs-joint-custody checkbox pair, and date-and-signature). The
+> custody-branching structure reuses this registry's own precedent from
+> `dk/um/application-for-danish-passport@1.1.0`'s structurally identical
+> two-column consent pattern: a first consent-holder's declared **sole**
+> custody means no second consent-holder exists, so the second column's
+> core fields are `requiredWhen` the first column instead declares **joint**
+> custody, not unconditionally required. Two mock conformance scenarios (a
+> sole-custody single-guardian consent; a joint-custody two-guardian
+> consent) found **0 errors**, plus 4 mutation controls (a plain missing-
+> required field, a `requiredWhen` conditional violation, an
+> `exclusivityGroups` violation, and a `validation.pattern` violation) each
+> correctly raised exactly 1 error. This schema carries no `documents[]`
+> array — a disclosed structural fact, not an oversight — so this
+> registry's previously-found conformance-checker documents[] blind spot has
+> no surface to hide in here. See the document's own VERIFICATION.md for
+> the full sourcing record.
+>
 > **Update (2026-07-11, GOV-2340, "GovSchema Standard Research"): Norway's
 > Visa vertical is now closed — Norway stands at 6 of 6 verticals**, the
 > registry's first Nordic jurisdiction with every vertical modelled, via
@@ -5472,17 +5515,26 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (31/35 jurisdictions — 89%)
+### DMV — Vehicle Registration, Licensing, Permits (32/35 jurisdictions — 91%)
 
-**Denmark** has no DMV schema yet. GOV-2253 screened this vertical fresh
-and set it aside as a poor candidate: Færdselsstyrelsen's P23
-driving-licence application is a genuine, current AcroForm but a shared,
-multi-party 397-field record card filled progressively by driving
-schools/police/kommune over the licence's lifetime, not a citizen intake
-form; Motorstyrelsen's vehicle-registration/re-registration flow is
-exclusively MitID/TastSelv-login-gated with no static-form fallback; two
-further downloadable Motorstyrelsen forms (21.063, 21.115) are current but
-carry zero AcroForm fields. See "Known Gaps" below.
+**Denmark's DMV vertical is now closed (GOV-2346)**, via
+`dk/fstyr/samtykkeerklaering-koerekort-under-18` — Færdselsstyrelsen's form
+P23T, "Samtykkeerklæring ved ansøgning om kørekort — Under 18 år" (Consent
+Declaration for a Driving Licence Application, under 18), the parent/legal-
+guardian consent declaration required whenever a driving-licence applicant
+is a minor. GOV-2253 had screened this vertical fresh and set it aside as a
+poor candidate: Færdselsstyrelsen's P23 driving-licence application is a
+genuine, current AcroForm but a shared, multi-party 397-field record card
+filled progressively by driving schools/police/kommune over the licence's
+lifetime, not a citizen intake form; Motorstyrelsen's
+vehicle-registration/re-registration flow is exclusively
+MitID/TastSelv-login-gated with no static-form fallback; two further
+downloadable Motorstyrelsen forms (21.063, 21.115) are current but carry
+zero AcroForm fields. This cycle found P23T instead: a distinct, narrowly
+scoped companion form P23's own under-18 branch references, with no
+kommune/kørelærer/syn institutional fill-in section — see the Executive
+Summary update above and the document's own VERIFICATION.md. This closes
+Denmark to 6 of 6 verticals.
 
 **Iceland's DMV vertical opens (GOV-2219)**, via
 `is/samgongustofa/vehicle-ownership-transfer` — Samgöngustofa's Form
@@ -7193,7 +7245,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DK** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **DK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -8074,7 +8126,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    Motorstyrelsen's re-registration flow is exclusively login-gated) — a
    future cycle should look for a different DMV candidate (e.g. a dedicated
    new-vehicle-registration or learner's-permit form) rather than
-   re-attempting either.
+   re-attempting either. **Update (2026-07-11, GOV-2346): DMV is now closed
+   too**, via `dk/fstyr/samtykkeerklaering-koerekort-under-18` (form P23T,
+   "Samtykkeerklæring ved ansøgning om kørekort — Under 18 år," the
+   parent/legal-guardian consent declaration required whenever a
+   driving-licence applicant is a minor) — a distinct, narrowly scoped
+   companion form P23's own under-18 branch references, found rather than
+   re-attempting either previously-rejected candidate as this entry's own
+   prior note advised. See the Executive Summary update above and the
+   document's own VERIFICATION.md. **Denmark now stands at 6 of 6
+   verticals** — no verticals remain open for this jurisdiction.
 7. **Finland's remaining verticals** (opened GOV-2276 via its Visa vertical,
    `fi/migri/residence-permit-employed-person`): the parent scouting cycle
    (three parallel scouts across Norway, Finland, Belgium) found Finland's
