@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**33 jurisdictions** | **344 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**33 jurisdictions** | **345 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2253, "GovSchema Standard Research"): Denmark's
+> Taxes vertical opens**, via `dk/skattestyrelsen/oplysningsskemaet` —
+> Skattestyrelsen's form 04.003, "Oplysningsskemaet," the personal income
+> tax return issued to taxpayers exempt from the digital-filing duty.
+> Screened alongside Denmark's DMV vertical this cycle (Færdselsstyrelsen's
+> P23 driving-licence form is a genuine current AcroForm but a shared,
+> multi-party 397-field record card filled progressively by driving
+> schools/police/kommune, not a citizen intake form; Motorstyrelsen's
+> vehicle-registration flow is MitID/TastSelv-login-gated with no static
+> fallback) and picked as the stronger candidate. Fetched fresh from
+> `skat.dk` (HTTP 200, 461,975 bytes), no login/CAPTCHA/WAF gate. A
+> `pdfjs-dist` re-extraction resolved **109 distinct AcroForm field names**
+> across 4 pages; a coordinate-based cross-reference (widget rects against
+> clustered printed text lines, not mere field-name order — this
+> specimen's field names are demonstrably out of visual sequence) confirmed
+> an exact, exhaustive finding: every rubrik row printed with a "Felt låst"
+> (locked) or "Anvend blanket ..." (use companion form) annotation has no
+> corresponding fillable widget anywhere on the document, because
+> Skattestyrelsen pre-fills those from third-party data or routes them to a
+> dedicated companion form (04.071/04.072) instead. This schema models
+> pages 1-2 in full (34 fields: name/address, CPR, spouse CPR, every
+> genuinely fillable personal-income, capital-income, and itemized-deduction
+> rubrik, plus the two ejendomsværdiskat confirmation checkboxes) and
+> deliberately excludes pages 3-4 (the self-employment/sole-proprietorship
+> Virksomhedsbeløb/Virksomhedsordning/Kapitalafkastordning sections), left
+> as an open backlog candidate for a future companion schema — the same
+> treatment already given the Czech Republic's own base-return-plus-Přílohy
+> sequence. See the document's own VERIFICATION.md for the full rubrik/
+> felt-nr/widget mapping and the mock conformance test run (0 errors across
+> 2 valid scenarios and 4 mutation controls). **Denmark now stands at 2 of
+> 6 verticals** (Passport, Taxes); DMV was screened this cycle and set
+> aside as a poor candidate; Business Formation, Visa, and National ID
+> remain open, unscreened backlog candidates — see "Known Gaps" below.
 
 > **Update (2026-07-11, GOV-2242, "GovSchema Standard Research"):
 > `dk/um/application-for-danish-passport` 1.1.0 corrects a real gating
@@ -4943,10 +4977,15 @@ dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (30/33 jurisdictions — 91%)
 
-**Denmark**, opened this cycle (GOV-2244) via its Passport vertical, has
-no DMV schema yet — the GOV-2242 scouting cycle flagged a genuine, fresh,
-unauthenticated AcroForm-PDF candidate for this vertical as an open
-backlog item for a future cycle; see "Known Gaps" below.
+**Denmark** has no DMV schema yet. GOV-2253 screened this vertical fresh
+and set it aside as a poor candidate: Færdselsstyrelsen's P23
+driving-licence application is a genuine, current AcroForm but a shared,
+multi-party 397-field record card filled progressively by driving
+schools/police/kommune over the licence's lifetime, not a citizen intake
+form; Motorstyrelsen's vehicle-registration/re-registration flow is
+exclusively MitID/TastSelv-login-gated with no static-form fallback; two
+further downloadable Motorstyrelsen forms (21.063, 21.115) are current but
+carry zero AcroForm fields. See "Known Gaps" below.
 
 **Iceland's DMV vertical opens (GOV-2219)**, via
 `is/samgongustofa/vehicle-ownership-transfer` — Samgöngustofa's Form
@@ -5586,12 +5625,21 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (30/33 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (31/33 jurisdictions — 94%)
 
-**Denmark**, opened this cycle (GOV-2244) via its Passport vertical, has
-no Taxes schema yet — the GOV-2242 scouting cycle flagged a genuine,
-fresh, unauthenticated AcroForm-PDF candidate for this vertical as an
-open backlog item for a future cycle; see "Known Gaps" below.
+**Denmark's Taxes vertical opens** (`dk/skattestyrelsen/oplysningsskemaet`,
+GOV-2253) — Skattestyrelsen's form 04.003, "Oplysningsskemaet," scoped to
+the employee/pensioner filer profile (pages 1-2 of the 4-page return: name/
+address, CPR, spouse CPR, every genuinely fillable personal-income,
+capital-income, and itemized-deduction rubrik, plus the ejendomsværdiskat
+confirmation checkboxes). A coordinate-based `pdfjs-dist` extraction found
+every "Felt låst"/"Anvend blanket ..." rubrik row has no corresponding
+AcroForm widget on this specimen at all — a hard structural fact, not an
+editorial exclusion. Pages 3-4 (self-employment/sole-proprietorship
+sections) are deferred as an open companion-schedule candidate, the same
+treatment already given the Czech Republic's base-return-plus-Přílohy
+sequence. Denmark now stands at 2 of 6 verticals (Passport, Taxes); see the
+Executive Summary update above and the document's own VERIFICATION.md.
 
 **Austria's Taxes vertical opens** (`at/bmf/employee-tax-assessment`,
 GOV-2114) — Bundesministerium für Finanzen (BMF) Form L 1, "Erklärung L1 zur
@@ -6512,7 +6560,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DK** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **DK** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -7316,20 +7364,36 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     the Taxes document's own excluded income types/tax-computation
     chain/第二表 per-dependent itemization remain this registry's only open
     Japan companion-schedule candidates for a future cycle.
-4. **Denmark's remaining 5 verticals** (opened this cycle, GOV-2244, via
-   its Passport vertical, `dk/um/application-for-danish-passport`): the
-   parent GOV-2242 scouting cycle flagged genuine, fresh, unauthenticated
-   AcroForm-PDF candidates for **DMV** and **Taxes** as strong enough to
-   author in a future cycle, but did not itself name specific agencies or
-   form numbers beyond the Passport source used here — a future cycle
-   should re-screen both from scratch rather than assume a specific
-   source. **Business Formation** (Danish Business Authority / Erhvervsstyrelsen,
-   `virk.dk`), **Visa** (Denmark is a Schengen member and may share the
-   EU-harmonized national-visa template already modelled for other
-   Schengen jurisdictions in this registry), and **National ID & Civic
-   Documents** (Denmark's CPR system, whose 10-digit personnummer already
-   appears throughout the new Passport schema) are open, unscreened
-   backlog candidates not yet confirmed viable.
+4. **Denmark's remaining verticals** (opened GOV-2244 via its Passport
+   vertical, `dk/um/application-for-danish-passport`): the parent GOV-2242
+   scouting cycle flagged genuine, fresh, unauthenticated AcroForm-PDF
+   candidates for **DMV** and **Taxes** as strong enough to author in a
+   future cycle. **Update (2026-07-11, GOV-2253): Taxes is now closed**,
+   via `dk/skattestyrelsen/oplysningsskemaet` (Skattestyrelsen form 04.003,
+   scoped to the employee/pensioner filer, pages 1-2 of 4) — see the
+   Executive Summary update above and the document's own VERIFICATION.md.
+   **DMV was screened this same cycle and set aside as a poor candidate**:
+   Færdselsstyrelsen's P23 driving-licence application is a genuine,
+   current AcroForm but a shared 397-field multi-party record card filled
+   progressively by driving schools/police/kommune over the licence's
+   lifetime, not a citizen-facing intake form; Motorstyrelsen's
+   vehicle-registration/re-registration flow is exclusively
+   MitID/TastSelv-login-gated with no static-form fallback; two further
+   downloadable Motorstyrelsen forms (21.063, 21.115) are current but carry
+   zero AcroForm fields. A future cycle should look for a different DMV
+   candidate (e.g. a dedicated new-vehicle-registration or learner's-permit
+   form) rather than re-attempting P23 or the login-gated re-registration
+   flow. **Business Formation** (Danish Business Authority /
+   Erhvervsstyrelsen, `virk.dk`), **Visa** (Denmark is a Schengen member and
+   may share the EU-harmonized national-visa template already modelled for
+   other Schengen jurisdictions in this registry), and **National ID &
+   Civic Documents** (Denmark's CPR system, whose 10-digit personnummer
+   already appears throughout the Passport and Taxes schemas) are open,
+   unscreened backlog candidates not yet confirmed viable. Denmark's own
+   page 3-4 self-employment/sole-proprietorship tax sections
+   (Virksomhedsbeløb/Virksomhedsordning/Kapitalafkastordning) are a further
+   open companion-schedule candidate — see the Taxes vertical section
+   above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
