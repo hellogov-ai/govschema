@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **360 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **361 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2372, "GovSchema Standard Research"): Sweden's
+> National ID & Civic Documents vertical is now closed — Sweden stands at
+> 6 of 6 verticals**, joining a set of 18 jurisdictions in this registry
+> (per the "By Jurisdiction" table below) now at full 6/6 vertical coverage,
+> via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's (the
+> Swedish Tax Agency) form SKV 7540, "Samordningsnummer – Ansökan"
+> (Coordination Number — Application), the citizen-facing route by which a
+> person with a connection to Sweden but not registered as a resident (a
+> foreign worker, student, or property owner, for example) requests a
+> samordningsnummer, Sweden's personnummer-equivalent identifier for
+> non-residents. A prior pass had pre-scouted this form; every figure was
+> independently re-verified this cycle rather than trusted, and one genuine
+> discrepancy surfaced: the task's literal direct-PDF query string 302'd to
+> a login page when fetched fresh, but the servlet actually just required a
+> `formPageURL` parameter the info page's own embedded download form
+> submits — not a login/BankID gate. Replaying that parameter fetched a
+> genuine `%PDF-1.7`, 125,496 bytes (sha256
+> `8f24e223…085352f2`). Independent `pdfjs-dist` extraction confirmed 82
+> AcroForm widgets across 2 pages (33 on the applicant-facing page 1, 49 on
+> page 2), and independently confirmed page 2's own printed heading reads
+> "Skatteverkets anteckningar (fylls i av myndigheten)" ("The Tax Agency's
+> notes, completed by the authority") — an in-person identity-check
+> checklist filled in by Skatteverket staff, matching this registry's
+> `dk/cpr`/`no/skatteetaten`/`fi/dvv` precedent for excluding an
+> authority-completed section. Page 1's 33 widgets collapse to 30
+> applicant-facing fields: a genuine 2-option radio group for sex, two
+> `Tx` signature-line widgets that are marked `readOnly` (present but
+> non-fillable, a distinct variant of this registry's usual "no widget at
+> all for a wet-ink signature" finding), and a non-exclusive 4-option
+> "connection to Sweden" checkbox group (family/student/owns-or-rents-
+> housing/other) modelled as four independent optional booleans with no
+> `exclusivityGroups` entry, since more than one can genuinely apply. The
+> Swedish and foreign contact-address blocks are both left optional
+> field-by-field — Skatteverket's own guidance requires at least one, but
+> unlike Norway's `addressType` choice this form prints no selector field
+> to gate a condition on, so the constraint is disclosed in prose rather
+> than invented as a synthetic field. Two `documents[]` entries (an
+> identity document, always required; a Swedish residence-permit card,
+> conditionally required but with no form field to key a `requiredWhen`
+> gate on) were sourced from Skatteverket's own published guidance, not the
+> PDF's text layer. Two mock conformance scenarios found 0 errors each,
+> plus 4 mutation controls (missing required field, missing required
+> document, enum violation, maxLength violation) each correctly raised
+> exactly 1 error. **Sweden now stands at 6 of 6 verticals** (Business
+> Formation, DMV, Visa, Taxes, Passport, National ID) — no vertical remains
+> open for Sweden.
 
 > **Update (2026-07-11, GOV-2363, "GovSchema Standard Research"): Sweden's
 > Passport vertical is now closed — Sweden stands at 5 of 6 verticals**, via
@@ -7152,7 +7199,21 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (27/35 jurisdictions — 77%)
+### National ID & Civic Documents (28/35 jurisdictions — 80%)
+
+**Sweden**'s National ID & Civic Documents gap is now closed (GOV-2372),
+via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
+SKV 7540, "Samordningsnummer – Ansökan" (Coordination Number —
+Application), used by a person with a connection to Sweden but not
+registered as a resident to request a samordningsnummer, Sweden's
+personnummer-equivalent identifier for non-residents. This was Sweden's
+sole remaining open vertical (Business Formation, DMV, Visa, Taxes, and
+Passport were already closed); see the Executive Summary update above and
+the document's own VERIFICATION.md for the full sourcing record,
+including a disclosed servlet-routing quirk in the direct-PDF URL (a
+missing `formPageURL` parameter, not a login/BankID gate) and the
+form's own confirmed authority-completed page 2. **Sweden now stands at 6
+of 6 verticals** — no vertical remains open for Sweden.
 
 **Norway**'s National ID & Civic Documents gap is now closed (GOV-2323),
 via `no/skatteetaten/notification-of-move-within-norway` — Skatteetaten's
@@ -7436,7 +7497,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **SE** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -8415,10 +8476,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    registry has repeatedly confirmed dead-end in other Nordic/EU
    jurisdictions (Finland, Norway, Estonia, Poland — see above). See the
    Executive Summary update above and the document's own VERIFICATION.md
-   for the full sourcing record. **Sweden now stands at 5 of 6 verticals**
-   (Business Formation, DMV, Visa, Taxes, Passport). **National ID remains
-   Sweden's sole open, unscreened vertical** — not screened this cycle, a
-   genuine candidate for a future one.
+   for the full sourcing record. Sweden's National ID & Civic Documents
+   vertical, Sweden's sole remaining open vertical after this item, **has
+   since closed too (GOV-2372)**, via
+   `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
+   SKV 7540, "Samordningsnummer – Ansökan" — see the Executive Summary
+   update above and that document's own VERIFICATION.md. **Sweden now
+   stands at 6 of 6 verticals — this item is fully closed, no verticals
+   remain open for Sweden.**
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
