@@ -4,8 +4,69 @@
 
 ## Executive Summary
 
-**34 jurisdictions** | **351 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**34 jurisdictions** | **352 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-11, GOV-2308): Finland's Taxes vertical opens**, via
+> `fi/vero/50a-earned-income-and-deductions` — Verohallinto's (Vero, the
+> Finnish Tax Administration) form 3023e, "50A — Earned income and
+> deductions," a child of the recurring "GovSchema Standard Research"
+> routine (GOV-2306). The form reports earned income (wages and salary,
+> pension income, benefits, and other earned income) and related
+> deductions (union/unemployment-fund dues, work-related expenses,
+> donations, a reduction in the taxable value of an employer-provided car
+> benefit) and child support payments missing from, or correcting, an
+> individual's pre-completed/MyTax-e-filed annual tax return — the
+> citizen-facing paper alternative to Finland's normally prefilled return.
+> Fetched fresh this session with a plain HTTP GET: HTTP 200, 233,558
+> bytes, SHA-256
+> `d9c1c1141be4e7ead1a464bd2ddb6ee48498b00cbf9cc1077447727ee3343608`,
+> genuine `%PDF-1.7`, 4 pages, no login/CAPTCHA/WAF gate — reproducing this
+> cycle's own pre-scouted figures exactly. A `pdfjs-dist` extraction found
+> 127 distinct field names across 141 field-object entries (6 non-terminal
+> placeholder nodes for fields spanning multiple widgets/pages); cross-
+> referencing `page.getAnnotations()`/`getTextContent()` across all 4 pages
+> confirmed exactly 135 real rendered `/Widget` annotations (115 `Tx`, 17
+> `Btn` checkbox — all `radioButton: false`, 0 `Ch` fields) and 3 excluded
+> non-data push-buttons (Print, To-first-page, Reset), leaving 132
+> substantive widgets. One of the 127 field names (`"8"`) is a genuine
+> dead/orphan AcroForm field entry with zero real widgets anywhere,
+> disclosed rather than silently mapped. Every one of the 132 substantive
+> widgets was mapped to exactly one `fields[]` entry via a disposable
+> reconciliation script asserting zero unmapped and zero double-mapped
+> widgets: 132/132 accounted for, consolidating (2 repeated-header fields
+> printed identically on all 4 pages, each merged into 1 logical field; 31
+> visually-split euro-box+cent-box amount pairs, each merged into 1 decimal
+> `number` field; 3 same-named two-option checkbox pairs for child-custody
+> type, each merged into 1 `enum` field) down to **92 `fields[]` entries**
+> and **0 `documents[]` entries** — this form's own introductory text
+> explicitly instructs filers not to enclose receipts or free-form
+> clarifications, unlike this registry's other recent Finnish specimen
+> (`fi/prh`), so no supporting-document checklist exists on the specimen to
+> model. A widget-rect-vs-text-line coordinate cross-reference (this
+> registry's established technique for out-of-order generic field names)
+> was needed to correctly pair three "8.1 special tax deduction"
+> checkbox/cost-box rows whose raw AcroForm field-name numeric order does
+> not match their visual layout. Four `crossFieldValidation` rules assert
+> each of 4 non-resident employment-period slots' end date is not before
+> its start date. Four disclosed quirks: the dead/orphan field noted above;
+> two fields with left-over Finnish text embedded in their internal
+> AcroForm names on an otherwise English-labelled form; and one bounded
+> repeating group (child-support personal-identity-code slots) with
+> inconsistent comma/semicolon punctuation across its internal field names.
+> A mock conformance run (a simple wage-earner with union dues; a fuller
+> scenario covering pension income, benefits, a car-benefit reduction,
+> work-related expenses, child support to 2 children, and a non-resident
+> tax-at-source employment period) found 0 errors across both scenarios and
+> 6 mutation controls (4 dropped required fields, 1 `requiredWhen`
+> violation, 1 `crossFieldValidation` date-ordering violation), each
+> correctly and individually flagged. **This closes Finland's Taxes
+> vertical: Finland now stands at 4 of 6 verticals** (Visa, Business
+> Formation, National ID, Taxes) — its maximum achievable count short of
+> DMV, since Passport is a confirmed permanent dead end; **DMV is Finland's
+> only remaining open vertical**, already confirmed weak/gated in a prior
+> cycle and not re-attempted here. See "Known Gaps" below and the
+> document's own VERIFICATION.md.
+>
 > **Update (2026-07-11, GOV-2299, "GovSchema Standard Research"): Finland's
 > National ID & Civic Documents vertical opens**, via
 > `fi/dvv/registration-of-foreigner` — the Digital and Population Data
@@ -5914,7 +5975,29 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (31/34 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (32/34 jurisdictions — 94%)
+
+**Finland's Taxes vertical opens** (`fi/vero/50a-earned-income-and-deductions`,
+GOV-2308) — Verohallinto's (Vero, Finnish Tax Administration) form 3023e,
+"50A — Earned income and deductions," the citizen-facing paper form used to
+report earned income (wages, pensions, benefits, other earned income) and
+related deductions (union/unemployment-fund dues, work-related expenses,
+donations, a car-benefit-value reduction) missing from, or correcting, an
+individual's pre-completed/MyTax-e-filed annual tax return; the form's own
+text explicitly tells filers not to enclose receipts, so this schema has 0
+`documents[]` entries. Fetched fresh (233,558 bytes, SHA-256
+`d9c1c1141be4e7ead1a464bd2ddb6ee48498b00cbf9cc1077447727ee3343608`) and
+extracted with `pdfjs-dist`: 135 real `/Widget` annotations across 127
+distinct field names (1 a disclosed dead/orphan field with zero real
+widgets), consolidated to 92 `fields[]` entries (2 repeated-header fields
+spanning all 4 pages merged to 1 each, 31 euro/cent split-amount pairs
+merged to 1 decimal field each, 3 same-named checkbox pairs merged to 1
+enum field each) plus 4 `crossFieldValidation` employment-period
+date-ordering rules. A coordinate cross-reference was needed to correctly
+pair three "special tax deduction" checkbox/cost-box rows whose raw
+AcroForm field-name order does not match their visual layout. This closes
+Finland's Taxes vertical; see the Executive Summary update above and the
+document's own VERIFICATION.md.
 
 **Denmark's Taxes vertical opens** (`dk/skattestyrelsen/oplysningsskemaet`,
 GOV-2253) — Skattestyrelsen's form 04.003, "Oplysningsskemaet," scoped to
@@ -6895,7 +6978,7 @@ now closed.
 | **DK** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **FI** | 3 | ✗ | ✗ | ✓ | ✗ | ✓ | ✓ |
+| **FI** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -7783,12 +7866,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    pre-scout's own 110-widget count was independently re-derived exactly
    (102 substantive after excluding 8 navigation/utility controls); see the
    Executive Summary update above and the document's own VERIFICATION.md.
-   **Taxes**: Vero's form 3023e/
-   "50A" (earned income and deductions correction/supplement form),
-   `vero.fi`, 135 Widget/126 FT fields across 4 pages, no login required for
-   the PDF itself (the pre-filled return proper is generated per-taxpayer
-   and typically e-filed via MyTax, but this correction form is a genuine
-   citizen-facing paper alternative). **National ID & Civic Documents has
+   **Taxes has since closed too (GOV-2308)**, via
+   `fi/vero/50a-earned-income-and-deductions` — Vero's form 3023e/"50A"
+   (earned income and deductions correction/supplement form), `vero.fi`,
+   no login required for the PDF itself (the pre-filled return proper is
+   generated per-taxpayer and typically e-filed via MyTax, but this
+   correction form is a genuine citizen-facing paper alternative). This
+   cycle's own from-scratch `pdfjs-dist` extraction found 135 real
+   `/Widget` annotations across 127 distinct field names (126 with at
+   least one real widget, matching the pre-scout's own "135 Widget/126 FT
+   fields" figure exactly, plus 1 disclosed dead/orphan field with zero
+   real widgets), consolidating down to 92 `fields[]` entries (2
+   repeated-header fields, 31 euro/cent amount-box pairs, and 3 same-named
+   checkbox pairs each merged into one field) and 0 `documents[]` entries
+   (the form's own text explicitly tells filers not to enclose receipts) —
+   see the Executive Summary update above and the document's own
+   VERIFICATION.md. **National ID & Civic Documents has
    since closed too (GOV-2299)**, via `fi/dvv/registration-of-foreigner` —
    DVV's "Ulkomaalaisen rekisteröinti" (foreign national's registration
    into the Population Information System, i.e. henkilötunnus/personal
@@ -7799,8 +7892,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    form, so this DVV registration form remains the strongest available
    National ID candidate for this jurisdiction) — see the Executive Summary
    update above and the document's own VERIFICATION.md. **Finland now stands
-   at 3 of 6 verticals** (Visa, Business Formation, National ID); **DMV and
-   Taxes remain Finland's only open verticals**. **Passport** is a confirmed dead end:
+   at 4 of 6 verticals** (Visa, Business Formation, National ID, Taxes) —
+   its maximum achievable count short of DMV, since Passport is a permanent,
+   confirmed dead end (see below) rather than an open backlog item; **DMV is
+   Finland's only remaining open vertical**.
+   **Passport** is a confirmed dead end:
    Finland eliminated paper passport applications in 2006 — `poliisi.fi`
    offers only online (`asiointi.poliisi.fi`) or in-person appointment
    channels, with a digital photo pre-uploaded separately
@@ -7810,8 +7906,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    (via Ajovarma); only companion forms are downloadable — F122 (a doctor's
    statement on driving fitness, not an applicant-facing intake form) and
    B527 (a paperless-vehicle registration notice, narrow-scope). A future
-   cycle should pick Business Formation, Taxes, or National ID next rather
-   than DMV or Passport.
+   cycle should not re-attempt DMV without a genuinely new source.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
