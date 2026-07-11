@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**33 jurisdictions** | **343 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**33 jurisdictions** | **344 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2242, "GovSchema Standard Research"):
+> `dk/um/application-for-danish-passport` 1.1.0 corrects a real gating
+> defect in 1.0.0** (immediately below): 1.0.0 modelled the second
+> parent/guardian consent-holder's four core Section D fields
+> (`secondParentName`, `secondParentCivilRegistrationNumber`,
+> `secondParentSectionChildName`, `secondParentDateAndSignature`) as
+> `requiredWhen: applicantIsMinor equals true` — meaning any minor
+> applicant, including the common case of a single parent/guardian with
+> **sole** legal custody, would incorrectly be forced to supply a second
+> consent-holder's details. Caught by an independent, concurrently-authored
+> mock-conformance pass on the same GOV-2242 candidate (a duplicate
+> same-issue collision — see this registry's established pattern of two
+> sessions racing one freshly-scouted candidate) and confirmed against a
+> distinct Ministry of Foreign Affairs source the original authoring
+> session had not consulted
+> (`um.dk/storbritannien/.../passports-for-children-under-18-years-old/`):
+> *"If one parent has acquired sole custody/parental responsibility, ...
+> only one consent must be given."* 1.1.0 re-gates those four fields on
+> `requiredWhen: firstParentHasJointCustody equals true` instead — a
+> validation-loosening MINOR bump per VERSIONING.md §1, published
+> alongside 1.0.0 rather than editing it (VERSIONING.md §3 immutability).
+> See the document's own 1.1.0 VERIFICATION.md for the full record,
+> including a new sole-custody conformance fixture that reproduces the
+> defect against 1.0.0 directly and confirms the fix against 1.1.0. Does
+> not change Denmark's vertical count (still 1 of 6, Passport).
 
 > **Update (2026-07-11, GOV-2244, "GovSchema Standard Research"): Denmark
 > opens as GovSchema's 33rd jurisdiction**, via
