@@ -1,0 +1,377 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "dk/skattestyrelsen/oplysningsskemaet",
+  "version": "1.0.0",
+  "title": "Denmark Personal Income Tax Return (Oplysningsskemaet) — Employee/Pensioner Filer",
+  "description": "Denmark's annual personal income tax return, \"Oplysningsskemaet\" (form 04.003), issued by Skattestyrelsen (the Danish Tax Agency) to taxpayers exempt from the digital-filing duty (e.g. exempt from Digital Post, or not subject to VAT/payroll-tax registration). This schema is deliberately bounded to the single most common filer profile — an employee or pensioner with no self-employment/business income — and models the return's own page 1-2 content in full: the applicant's name/address and CPR identification, the spouse's CPR, every personal-income and personal-income-deduction rubrik that carries its own fillable box on this paper specimen, every capital-income and capital-income-deduction rubrik with its own fillable box, the ligningsmæssige fradrag (itemized deductions) section, and the owner-occupied-housing (ejendomsværdiskat) information-confirmation checkboxes. It deliberately does NOT model: any rubrik marked \"Felt låst\" (locked) or \"Anvend blanket ...\" (use a separate companion form) on the source PDF — this registry's coordinate-based extraction (see VERIFICATION.md) confirmed these rubrikker carry no corresponding AcroForm widget on this specimen at all, because Skattestyrelsen pre-fills them from third-party data (employer/bank/pension reports) or routes them to a dedicated companion form (04.071, 04.072) instead; and it does not model pages 3-4 (Virksomhedsbeløb / Virksomhedsoplysninger — the self-employment, sole-proprietorship accounting, and virksomhedsordning/kapitalafkastordning sections), which are open backlog candidates for a future companion schema, the same treatment this registry has already given the Czech Republic's own base-return-plus-Přílohy sequence. It does not submit the return; the live source (skat.dk / TastSelv) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Denmark or Skattestyrelsen.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Skattestyrelsen (Danish Tax Agency)",
+    "abbreviation": "Skattestyrelsen",
+    "url": "https://skat.dk",
+    "operatedBy": {
+      "name": "Skatteforvaltningen (Danish Tax Administration)",
+      "abbreviation": "SKTST",
+      "url": "https://skat.dk",
+      "basis": "The form's own printed instructions and rubrik/felt-nr numbering; filing deadline and paper-mail fallback address stated directly on the form (Postboks 9, Nykøbingvej 76, 4990 Sakskøbing)."
+    }
+  },
+  "process": {
+    "type": "filing",
+    "language": "da-DK"
+  },
+  "source": {
+    "url": "https://skat.dk/media/ftiduwhm/04003_januar2026-t.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Blanket 04.003 \"Oplysningsskemaet\" (January 2026 edition, for indkomstår 2025), a 4-page fillable AcroForm PDF published unauthenticated at skat.dk's own blanket library, self-documenting via printed \"Rubrik\" and \"Felt nr.\" numbers next to every input row."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2253: GovSchema Standard Research cycle. Deepens Denmark (opened as the registry's 33rd jurisdiction via GOV-2244's dk/um/application-for-danish-passport, 1/6 verticals at the time) by opening its Taxes vertical (2/6). CATALOG.md's own Known Gaps item 4 (from GOV-2242's scouting cycle) had flagged a genuine, fresh, unauthenticated AcroForm-PDF candidate for Denmark's Taxes vertical as strong enough to author without naming a specific form; this cycle independently screened both Denmark's DMV vertical (Færdselsstyrelsen's P23 driving-licence form is a genuine current AcroForm but a shared multi-party record card spanning 18 repeated licence-category blocks, ~397 raw fields, mostly filled progressively by driving schools/police/kommune rather than the applicant; Motorstyrelsen's vehicle-registration/re-registration flow is MitID/TastSelv-login-gated with no static-form fallback; the two downloadable border-plate/import-vehicle forms, 21.063 and 21.115, are current but not AcroForms at all, 0 extractable fields) and Taxes (Skattestyrelsen's 04.003 Oplysningsskemaet), and picked Taxes as the stronger candidate. Fetched fresh (HTTP 200, 461,975 bytes, no login/CAPTCHA/WAF gate) and independently re-extracted with pdfjs-dist rather than trusting the screening pass's own numbers: getFieldObjects() resolved 109 distinct field names across 4 pages (99 text fields, ~10 button/radio widgets). A coordinate-based cross-reference (matching each widget's own rect y-range against the page's clustered text lines, not mere document order — the field-name sequence itself is not a reliable proxy for page position, since e.g. 'Text field #93' and '#94' are interleaved out of numeric order but fall in the correct visual position) established a clean, disclosed structural finding: every rubrik row printed with a 'Felt låst' (locked) or 'Anvend blanket 04.071/04.072' (use companion form) annotation has NO corresponding AcroForm widget anywhere on the specimen — confirmed by exhaustively walking every widget rect on pages 1-2 against the full ordered line list and finding a 1:1 match between the 11 (page 1) + 20 (page 2, including the 2 ejendomsværdiskat confirmation checkboxes) fillable widgets and the 11 + 20 rubrik rows that carry no such annotation, with zero unaccounted-for widgets and zero unaccounted-for un-annotated rows. This is a hard PDF-structural fact rather than a judgment call: Skattestyrelsen's own paper specimen does not give the taxpayer a box to write in for any pre-filled/third-party-reported or companion-form-redirected line. The 3 header widgets were similarly rect-matched rather than assumed: a wide, multi-line box (Text field #1, x 56.7-307.4, y 669.9-745.5) matches the left-column 'Navn og adresse' free-text block; two narrow single-line right-column boxes (Text field #2, y 766.6-779.8; Text field #3, y 740.4-753.6) match 'Personnummer' and 'Ægtefællens personnummer' respectively — leaving Skattekommune/Skatteprocenter/Kommune/Kirke/Personfradrag/Indregnet restskat 2023 as pure Skattestyrelsen-supplied reference figures with no widget at all, not modelled. Pages 3-4 (Virksomhedsbeløb/Virksomhedsoplysninger, the self-employment/sole-proprietorship accounting and virksomhedsordning/kapitalafkastordning sections) were confirmed present and well-populated with their own fillable widgets but deliberately deferred as a future companion-schema candidate, consistent with this registry's existing cz/mf base-return-plus-Přílohy precedent; page 1's own text explicitly cross-references a further companion form for foreign-business income ('Resultat af udenlandsk virksomhed skal angives på blanket 04.011'), reinforcing that this form's own designers already route business income elsewhere. Money amounts are modelled as type 'number' representing whole Danish kroner (DKK), matching this registry's established convention for jurisdictions whose own forms print unlabelled currency-unit boxes (e.g. cz/mf, pt/at). See the full rubrik/felt-nr/widget mapping and mock conformance run in this document's own VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantNameAndAddress",
+      "label": "Navn og adresse",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The taxpayer's full name and postal address, as printed/corrected on the return. On the source PDF this is one wide, multi-line free-text box (Text field #1) occupying the left column of the page 1 header.",
+      "sourceRef": "Page 1 header — Navn og adresse",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "applicantCivilRegistrationNumber",
+      "label": "Personnummer",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The taxpayer's 10-digit Danish CPR number (personnummer), a single-line text box in the page 1 header's right column.",
+      "sourceRef": "Page 1 header — Personnummer",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "spouseCivilRegistrationNumber",
+      "label": "Ægtefællens personnummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The 10-digit Danish CPR number (personnummer) of the taxpayer's spouse, if married, a single-line text box directly below the applicant's own CPR box in the page 1 header.",
+      "sourceRef": "Page 1 header — Ægtefællens personnummer",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "otherPersonalIncomeSubjectToLaborMarketContribution",
+      "label": "Anden personlig indkomst, fx fra privat dagpleje (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Other personal income subject to the 8% labour-market contribution (AM-bidrag), e.g. income from private childminding (privat dagpleje). The sole fillable rubrik in the 'Personlig indkomst, hvoraf der skal betales AM-bidrag' section on this specimen; every other rubrik in that section (11, 12, 14) is Skattestyrelsen-prefilled/redirected and carries no widget.",
+      "sourceRef": "Rubrik 15 / Felt nr. 207"
+    },
+    {
+      "name": "maintenancePaymentsReceived",
+      "label": "Modtaget underholdsbidrag (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Maintenance/alimony payments received (underholdsbidrag), personal income not subject to the labour-market contribution.",
+      "sourceRef": "Rubrik 19 / Felt nr. 212"
+    },
+    {
+      "name": "returnOnHybridBonds",
+      "label": "Afkast på hybride obligationer (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Return on hybrid bonds (afkast på hybride obligationer), personal income not subject to the labour-market contribution.",
+      "sourceRef": "Rubrik 251 / Felt nr. 251"
+    },
+    {
+      "name": "otherPersonalIncomeNotSubjectToLaborMarketContribution",
+      "label": "Anden personlig indkomst (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Other personal income not subject to the labour-market contribution, e.g. minor employee benefits with a combined value over DKK 1,400, income from long-term subletting of a rented or cooperative housing unit, or income from renting out a car or boat.",
+      "sourceRef": "Rubrik 20 / Felt nr. 250"
+    },
+    {
+      "name": "employeeInvestmentCompanyDividend",
+      "label": "Udbytte fra medarbejderinvesteringsselskab (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Dividend received from an employee investment company (medarbejderinvesteringsselskab).",
+      "sourceRef": "Rubrik 784 / Felt nr. 784"
+    },
+    {
+      "name": "employeeInvestmentCompanyDisposalGain",
+      "label": "Udlodning og fortjeneste ved afståelse af andele fra medarbejderinvesteringsselskab (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Distribution and gain on disposal of shares in an employee investment company.",
+      "sourceRef": "Rubrik 785 / Felt nr. 785"
+    },
+    {
+      "name": "investmentDeductionRecapture",
+      "label": "Genbeskatning af investorfradrag (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Recapture (re-taxation) of a previously claimed investor deduction (investorfradrag).",
+      "sourceRef": "Rubrik 786 / Felt nr. 068"
+    },
+    {
+      "name": "lifelongPensionContribution",
+      "label": "Bidrag og præmie til privattegnede livsvarige pensionsordninger med løbende udbetalinger (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Contributions and premiums paid to privately-taken-out lifelong pension schemes with recurring payouts, including cessation pension schemes (ophørspensionsordninger) for self-employed persons; see rubrik 24 in relation to rubrik 21 (Skattestyrelsen-prefilled, not modelled here).",
+      "sourceRef": "Rubrik 24 / Felt nr. 436"
+    },
+    {
+      "name": "startupAccountDeductibleDeposit",
+      "label": "Fradragsberettiget indbetaling på iværksætterkonto (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Deductible deposit paid into a start-up account (iværksætterkonto).",
+      "sourceRef": "Rubrik 27 / Felt nr. 426"
+    },
+    {
+      "name": "foreignGuestStudentDeduction",
+      "label": "Fradrag for visse udenlandske gæstestuderende begyndt efter 2010 (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Deduction for certain foreign guest students who began their studies after 2010.",
+      "sourceRef": "Rubrik 437 / Felt nr. 437"
+    },
+    {
+      "name": "otherPersonalIncomeDeductions",
+      "label": "Øvrige fradrag i din personlige indkomst (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Other deductions in personal income not covered by a more specific rubrik on this return.",
+      "sourceRef": "Rubrik 29 / Felt nr. 425"
+    },
+    {
+      "name": "bondGainLossRegulatedMarket",
+      "label": "Gevinst/tab på danske obligationer, der er optaget til handel på et reguleret marked (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Gain or loss on Danish bonds admitted to trading on a regulated market. Deductible losses are entered with a minus sign.",
+      "sourceRef": "Rubrik 32 / Felt nr. 327"
+    },
+    {
+      "name": "creditAssociationRefundDistribution",
+      "label": "Reservefondsudlodninger fra kreditforeninger mv. (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Reserve-fund distributions from credit associations, amounts passed on by an adviser from bond-based investment institutions/investment companies, capital-value increases on pension schemes, and customer-scheme amounts.",
+      "sourceRef": "Rubrik 33 / Felt nr. 249"
+    },
+    {
+      "name": "shippingPartnershipResult",
+      "label": "Over-/underskud ved visse skibsprojekter. Overskud ved anden anpartsvirksomhed (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Surplus/deficit from certain shipping projects (deficit entered with a minus sign), and surplus from other limited-partnership business activity (anpartsvirksomhed).",
+      "sourceRef": "Rubrik 35 / Felt nr. 217"
+    },
+    {
+      "name": "shippingPartnershipDisposalGain",
+      "label": "Fortjeneste eller tab ved ophør af visse skibsprojekter. Fortjeneste ved ophør anden anpartsvirksomhed (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Gain or loss on cessation of certain shipping projects, and gain on cessation of other limited-partnership business activity.",
+      "sourceRef": "Rubrik 36 / Felt nr. 254"
+    },
+    {
+      "name": "partYearRentalIncome",
+      "label": "Indtægt ved udleje af helårsbolig en del af året mv. (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Income from renting out a year-round residence for part of the year; summer-house and room rental; income from renting out one flat in a two-family house; and income from renting out housing generally (owner-occupied, rental, or cooperative housing).",
+      "sourceRef": "Rubrik 37 / Felt nr. 218"
+    },
+    {
+      "name": "financialContractsIncome",
+      "label": "Indkomst vedrørende finansielle kontrakter (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Income relating to financial contracts.",
+      "sourceRef": "Rubrik 346 / Felt nr. 346"
+    },
+    {
+      "name": "otherCapitalIncome",
+      "label": "Anden kapitalindkomst (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Other capital income not covered by a more specific rubrik on this return.",
+      "sourceRef": "Rubrik 39 / Felt nr. 214"
+    },
+    {
+      "name": "bondGainLossUnregulatedMarket",
+      "label": "Gevinst/tab på danske obligationer, der ikke er optaget til handel på et reguleret marked (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Gain or loss on Danish bonds not admitted to trading on a regulated market.",
+      "sourceRef": "Rubrik 40 / Felt nr. 328"
+    },
+    {
+      "name": "commutingDeduction",
+      "label": "Befordringsfradrag (kørselsfradrag) (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Commuting deduction (transport between home and workplace).",
+      "sourceRef": "Rubrik 51 / Felt nr. 417"
+    },
+    {
+      "name": "travelExpensesDeduction",
+      "label": "Rejseudgifter (fradrag for kost og logi på rejser) - højst 32.800 kr. (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Travel-expense deduction (deduction for meals and lodging while travelling for work), capped at DKK 32,800 per the form's own printed limit.",
+      "sourceRef": "Rubrik 53 / Felt nr. 429",
+      "validation": {
+        "maximum": 32800
+      }
+    },
+    {
+      "name": "fishermenDISIncomeDeduction",
+      "label": "Fradrag for fiskere og DIS indkomst (begrænset fart) (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Deduction for fishermen, and for DIS (Danish International Ship Register) income on vessels in limited/restricted trade.",
+      "sourceRef": "Rubrik 54 / Felt nr. 419"
+    },
+    {
+      "name": "investorDeduction",
+      "label": "Investorfradrag (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Investor deduction (investorfradrag) claimed under the itemized-deductions section.",
+      "sourceRef": "Rubrik 449 / Felt nr. 067"
+    },
+    {
+      "name": "establishmentAccountDeductibleDeposit",
+      "label": "Fradragsberettiget indskud på etableringskonto (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Deductible deposit paid into an establishment account (etableringskonto).",
+      "sourceRef": "Rubrik 57 / Felt nr. 472"
+    },
+    {
+      "name": "otherEmployeeExpenses",
+      "label": "Øvrige lønmodtagerudgifter (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Other employee expenses. Per the form's own instruction, the first DKK 7,300 of such expenses must already be deducted before entering the remaining amount here.",
+      "sourceRef": "Rubrik 58 / Felt nr. 449"
+    },
+    {
+      "name": "protectedBuildingExpenses",
+      "label": "Udgifter til fredede bygninger (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Expenses relating to listed/protected buildings (fredede bygninger).",
+      "sourceRef": "Rubrik 59 / Felt nr. 456"
+    },
+    {
+      "name": "tradesmenDeduction",
+      "label": "Håndværkerfradrag - højst 8.600 kr. (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Tradesmen's/craftsmen's deduction (håndværkerfradrag), capped at DKK 8,600 per the form's own printed limit.",
+      "sourceRef": "Rubrik 460 / Felt nr. 460",
+      "validation": {
+        "maximum": 8600
+      }
+    },
+    {
+      "name": "serviceDeduction",
+      "label": "Servicefradrag – højst 17.500 kr. (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Household-service deduction (servicefradrag), capped at DKK 17,500 per the form's own printed limit.",
+      "sourceRef": "Rubrik 461 / Felt nr. 461",
+      "validation": {
+        "maximum": 17500
+      }
+    },
+    {
+      "name": "sicknessOccupationalInjuryInsuranceForCoWorkingSpouse",
+      "label": "Fradrag for syge- og arbejdsskadeforsikringer, for personer der modtager indkomst som medarbejdende ægtefælle (kr.)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Deduction for sickness and occupational-injury insurance, for persons who receive income as a co-working spouse (medarbejdende ægtefælle).",
+      "sourceRef": "Rubrik 961 / Felt nr. 497"
+    },
+    {
+      "name": "ownerOccupiedPropertyInfoAgreed",
+      "label": "Er du enig i, at de anførte oplysninger om dine ejendomme er fyldestgørende og korrekte?",
+      "type": "boolean",
+      "required": false,
+      "description": "Confirms the taxpayer agrees that the property information Skattestyrelsen already holds about their owner-occupied property/properties, used to calculate ejendomsværdiskat (property value tax), is complete and correct.",
+      "sourceRef": "Rubrik 166 / Felt nr. 129 — Hvis ja, markér her"
+    },
+    {
+      "name": "ownerOccupiedPropertyInfoDisputed",
+      "label": "Er du uenig i oplysningerne, eller har du ejerbolig, som Skattestyrelsen ikke har oplysninger om?",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates the taxpayer disagrees with the property information Skattestyrelsen holds, or has an owner-occupied property Skattestyrelsen has no information about. Per the form's own instruction, checking this box requires enclosing supporting documents (bilag) about ejendomsværdiskat for the property/properties concerned.",
+      "sourceRef": "Rubrik 167 / Felt nr. 130 — Hvis ja, markér her og indsend bilag"
+    }
+  ]
+}
