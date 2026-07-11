@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**37 jurisdictions** | **366 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**38 jurisdictions** | **367 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2419, "GovSchema Standard Research"): Peru opens
+> as this registry's 38th jurisdiction**, via `pe/cancilleria/solicitud-visa-dgc-005`
+> v1.0.0, sourced from Formulario DGC-005, "Solicitud de Visa," published by
+> the Ministerio de Relaciones Exteriores (Cancillería). A prior cycle
+> (GOV-2404) had screened this same form and set it aside as a genuine but
+> AcroForm-less static text-layer PDF, weaker than the Vietnam TK01 candidate
+> ultimately picked that cycle. This cycle re-fetched the form from three
+> independent `gob.pe` mirrors instead of trusting the single mirror
+> previously examined, and found the prior assessment rested on an outdated
+> 2013 revision (Barcelona consulate mirror, Microsoft Word 2007,
+> `IsAcroFormPresent: false`, 0 widgets). The Ministry's own institutional
+> page (`gob.pe/institucion/rree`) and the Guayaquil consulate's page both
+> serve a byte-identical, materially different 2019 revision (Microsoft Word
+> 2016, `IsAcroFormPresent: true`, 63 real AcroForm widgets with
+> self-documenting `alternativeText` tooltips) — a genuinely stronger
+> candidate than previously scouted, not a re-confirmation. The 2019 revision
+> also differs in content: a seven-way visa-subtype checkbox group (Turista,
+> Negocios, Transeúnte, Artista, Tripulante, Otro, Residente) replaces the
+> older binary Temporal/Residente split, a Correo Electrónico field is new,
+> and an entirely new conditional Grupo Artístico section applies only when
+> Artista is selected. All 21 `fields[]` and 1 `documents[]` entry are cited
+> to their own numbered Sección 2 item or section heading; 8 single-character
+> AcroForm boxes for date of birth are consolidated into one `date` field per
+> established registry convention. Two mock conformance scenarios (a first-time
+> tourist applicant; an artist applicant with a Grupo Artístico) found **0
+> errors** each, plus 3 mutation controls (missing required field, an email
+> pattern violation, a `requiredWhen`-gated Grupo Artístico field left absent)
+> each correctly raised exactly 1 error. **Peru now stands at 1 of 6
+> verticals** (Visa); Business Formation and DMV have strong pre-scouted
+> unauthenticated static-PDF leads from the GOV-2404 cycle, Taxes is
+> Clave-SOL-login-gated, and Passport/National ID are appointment/biometric-gated
+> — see the Known Gaps section below.
 
 > **Update (2026-07-11, GOV-2411, "GovSchema Standard Research"): Vietnam's
 > Taxes vertical opens (2 of 6)**, via `vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`
@@ -5768,7 +5801,7 @@
 
 ## By Vertical
 
-### Passport (29/37 jurisdictions — 78%)
+### Passport (29/38 jurisdictions — 76%)
 
 **Vietnam opens as this registry's 37th jurisdiction (GOV-2404)**, via
 `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc` — the current
@@ -5985,7 +6018,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (33/37 jurisdictions — 89%)
+### DMV — Vehicle Registration, Licensing, Permits (33/38 jurisdictions — 87%)
 
 **Finland's DMV vertical is now closed (GOV-2356)**, via
 `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — Traficom's
@@ -6269,7 +6302,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (34/37 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (34/38 jurisdictions — 89%)
 
 **Norway opens as this registry's 35th jurisdiction via this vertical
 (GOV-2316)**, via `no/brreg/samordnet-registermelding` —
@@ -6714,7 +6747,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (34/37 jurisdictions — 92%)
+### Taxes — Income Tax Return, Tax Filing (34/38 jurisdictions — 89%)
 
 **Vietnam's Taxes vertical opens** (`vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`,
 GOV-2411) — Mẫu số 02/QTT-TNCN, "Tờ khai quyết toán thuế thu nhập cá nhân"
@@ -7250,7 +7283,19 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (28/37 jurisdictions — 76%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (29/38 jurisdictions — 76%)
+
+**Peru opens as this registry's 38th jurisdiction (GOV-2419)**, via
+`pe/cancilleria/solicitud-visa-dgc-005` — Formulario DGC-005, "Solicitud de
+Visa," published by the Ministerio de Relaciones Exteriores (Cancillería). A
+prior cycle (GOV-2404) had screened this same form from a single mirror and
+found it AcroForm-less; this cycle re-fetched it from three independent
+`gob.pe` mirrors and found the Ministry's own current copy is a materially
+different, genuinely stronger 2019 AcroForm revision (63 widgets) that the
+prior single-mirror check had missed by landing on a superseded 2013 copy.
+See the Executive Summary update above and the document's own VERIFICATION.md
+for the full sourcing record, including the byte-identity comparison between
+the two revisions.
 
 **Norway's Visa vertical is now open (GOV-2340), closing Norway's last open
 vertical (6/6)** — see the Executive Summary update above and the
@@ -7528,7 +7573,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (28/37 jurisdictions — 76%)
+### National ID & Civic Documents (28/38 jurisdictions — 74%)
 
 **Sweden**'s National ID & Civic Documents gap is now closed (GOV-2372),
 via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
@@ -7824,6 +7869,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **PE** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -8865,6 +8911,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     VERIFICATION.md for the full three-way candidate comparison, and
     `vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`'s own VERIFICATION.md
     for the Taxes-vertical sourcing record.
+12. **Peru opens as the registry's 38th jurisdiction (GOV-2419)**, via its
+    Visa vertical, `pe/cancilleria/solicitud-visa-dgc-005` (Formulario
+    DGC-005, "Solicitud de Visa"). **Corrects the GOV-2404 cycle's own
+    characterization above**: DGC-005 is not, in fact, AcroForm-less — that
+    finding rested on a single mirror (the Barcelona consulate's own `gob.pe`
+    page) serving a superseded 2013 revision. The Ministry's own
+    institutional page and the Guayaquil consulate's page both serve a
+    byte-identical 2019 revision with 63 genuine AcroForm widgets, a
+    seven-way visa-subtype checkbox group, a new email field, and a new
+    conditional Grupo Artístico section — see the Executive Summary update
+    above and the document's own VERIFICATION.md for the full byte-identity
+    comparison. Peru now stands at 1 of 6 verticals (Visa); Business
+    Formation (SUNAT RUC registration, Formulario 2119) and DMV (MTC
+    driver's-licence application) remain the strongest pre-scouted,
+    unauthenticated static-PDF backlog candidates from the GOV-2404 cycle
+    (not re-screened this cycle for a possible AcroForm revision of their
+    own — worth checking in a future cycle, given this cycle's own finding);
+    Taxes (SUNAT) is Clave-SOL-login-gated; Passport (Migraciones) and
+    National ID (RENIEC DNI) are appointment/biometric-gated.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
