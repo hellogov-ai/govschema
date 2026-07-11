@@ -22,19 +22,29 @@ session rather than trusted at face value — see below.
   this session's sandbox with a plain GET — a genuine discrepancy from the
   pre-scout's claim of "no login/BankID needed", disclosed here rather than
   silently reconciled or worked around invisibly.
-- Investigating: the info page itself embeds a GET `<form>` targeting the
-  same `PdfServlet.do` endpoint, with a **required hidden parameter**,
-  `formPageURL` (the info page's own canonical URL), that the bare
-  query-string the task supplied omitted. Replaying the request with the
-  full parameter set the info page's own form actually submits —
-  `formularID=7540&sprak=sv&format=sform&formPageURL=<info page URL>` —
-  against the same servlet succeeded: **HTTP 200, `application/pdf`,
-  125,496 bytes**, genuine `%PDF-1.7` header (no BankID/session cookie was
-  needed once the correct parameter set was sent — a handful of `Set-Cookie`
-  headers are issued by the servlet's session/WAF layer but are not
-  required for the request to succeed). This is a servlet-routing quirk
-  (a missing required parameter causing a redirect to a generic login
-  landing page), not a genuine authentication gate.
+- **Correction from GOV-2375's independent review re-derivation:** the
+  original hypothesis here — that the info page's embedded GET `<form>`'s
+  hidden `formPageURL` parameter (the info page's own canonical URL) is
+  what the bare query string omitted, and that replaying it is what makes
+  the fetch succeed — does **not** hold up under a fresh, cold re-fetch.
+  Replaying the exact `formularID=7540&sprak=sv&format=sform&formPageURL=<info
+  page URL>` parameter set on a brand-new connection still 302s to
+  `login.do`, identically to the bare query string. What actually gates
+  access is a **two-request session/WAF cookie handshake**: *any* first
+  `GET` to `PdfServlet.do` — with or without `formPageURL` — receives a
+  `JSESSIONID` plus three F5/BIG-IP-style `TS...` cookies (and `cw1`/
+  `ZiAnonymous`); a *second* `GET` reusing those cookies then succeeds —
+  **HTTP 200, `application/pdf`** — independently of whether `formPageURL`
+  is present (confirmed by replaying the plain bare-parameter URL as the
+  second request and getting an identical successful result). This is
+  anti-automation cookie-bootstrapping at the WAF layer, not a
+  missing-parameter servlet-routing quirk as originally described, and
+  still not a genuine BankID/login authentication gate — no credentials
+  are ever exchanged either way. The practical conclusion is unchanged
+  (this form is genuinely fetchable unauthenticated once the session
+  cookies are primed, with a genuine `%PDF-1.7` header and the same 82
+  widgets / field structure documented below); only the causal
+  explanation is corrected here.
 - **SHA-256:** `8f24e223860b73c9b93fbd3d82321c3448fa55213de4a01c2ef4dc19085352f2`
 - **Byte size:** 125,496 bytes — close to but not identical to the
   pre-scout's ~125,387-byte estimate. Both figures are consistent with the
@@ -45,10 +55,11 @@ session rather than trusted at face value — see below.
   rather than silently reconciled to the pre-scout's number.
 - `tools/verify-sources.mjs` flags this same bare-parameter URL with a
   transient-failure **warning** (not a hard failure) when re-checked without
-  a browser session, for the same reason: the CI-side check does not
-  replay the `formPageURL` parameter either. This is expected and disclosed
-  here so a reviewer does not mistake it for a dead link — the form remains
-  live and fetchable, as demonstrated above.
+  a browser session, for the same underlying reason: the CI-side check
+  makes a single request and does not perform the two-request
+  session-cookie handshake described above (regardless of `formPageURL`).
+  This is expected and disclosed here so a reviewer does not mistake it for
+  a dead link — the form remains live and fetchable, as demonstrated above.
 
 ## Extraction technique
 

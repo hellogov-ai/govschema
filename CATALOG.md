@@ -19,11 +19,17 @@
 > non-residents. A prior pass had pre-scouted this form; every figure was
 > independently re-verified this cycle rather than trusted, and one genuine
 > discrepancy surfaced: the task's literal direct-PDF query string 302'd to
-> a login page when fetched fresh, but the servlet actually just required a
-> `formPageURL` parameter the info page's own embedded download form
-> submits — not a login/BankID gate. Replaying that parameter fetched a
-> genuine `%PDF-1.7`, 125,496 bytes (sha256
-> `8f24e223…085352f2`). Independent `pdfjs-dist` extraction confirmed 82
+> a login page when fetched fresh. A subsequent independent re-derivation
+> (GOV-2375 review) found the actual cause is a two-request WAF
+> session-cookie handshake, not the info page's embedded `formPageURL`
+> parameter as first hypothesized — a cold first request to the servlet
+> always 302s regardless of parameters, and a second request reusing the
+> resulting session cookies succeeds either way, with no BankID/login or
+> credential exchange involved. Once past that handshake the servlet
+> serves a genuine `%PDF-1.7`, ~125.4KB (sha256
+> `8f24e223…085352f2` for one fetch instance; byte size varies slightly
+> per fetch due to embedded request-tracking metadata). Independent
+> `pdfjs-dist` extraction confirmed 82
 > AcroForm widgets across 2 pages (33 on the applicant-facing page 1, 49 on
 > page 2), and independently confirmed page 2's own printed heading reads
 > "Skatteverkets anteckningar (fylls i av myndigheten)" ("The Tax Agency's
