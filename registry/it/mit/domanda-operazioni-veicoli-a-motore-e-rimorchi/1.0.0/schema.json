@@ -1,0 +1,455 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "it/mit/domanda-operazioni-veicoli-a-motore-e-rimorchi",
+  "version": "1.0.0",
+  "title": "Italy Application for Operations Relating to Motor Vehicles and Their Trailers (Modulario TT 2119)",
+  "description": "TT 2119, 'Domanda per operazioni relative ai veicoli a motore e loro rimorchi (esclusi i ciclomotori)' (Application for operations relating to motor vehicles and their trailers, excluding mopeds), published by the Ministero delle infrastrutture e dei trasporti (MIT)'s Direzione Generale per la Motorizzazione via ilportaledellautomobilista.it. This is the single generic intake form Italy's Provincial Motorizzazione Civile offices use for the great majority of citizen-facing vehicle-registry operations against vehicles NOT enrolled in the Pubblico Registro Automobilistico (PRA) — i.e. everything except cars/trucks (which register instead via ACI-PRA): motorcycles, agricultural machines/trailers, operating machines, atypical vehicles, and non-PRA trailers. A single two-letter operationCode (drawn from the form's own closed 'Tabella riassuntiva delle operazioni') selects which of 36 distinct operations is being requested — first registration, renewal, plate reissue/duplicate, carta di circolazione updates, and several narrower issuances. This document models the applicant-facing core: the operation-selection code, the requesting party's own declared capacity, the vehicle owner's registry/identity data, the vehicle's own identification data, the previous-plate block (renewal/nationalization only), the goods-transport/rental-licence block, and the agricultural-machine-company block. It deliberately does NOT model: the extensive vehicle technical-specification block (dimensions, masses, axles, tyres, brakes, engine figures, tow-hook/fuel-type checkboxes, 'REVISIONE' inspection date) that occupies the lower half of the form and its own dedicated 'SPAZIO RISERVATO ALL'UFFICIO PER LA VISITA DEL VEICOLO' (space reserved for the office for the vehicle inspection) counterpart on page 2/8, both explicitly completed and signed by the office's own 'Funzionario Tecnico' (technical official), not the applicant; the 'CAUSALE AGGIORNAM.' box (explicitly 'Riservato all'Ufficio' per the form's own numbered note 16); the 'COD. USO' box (explicitly 'riservato all'Ufficio' per note 23a); the two large external lookup tables the form itself prints on its closing page (a ~50-entry 'Tabella denominazioni' of legal-form/ownership-interest codes, and a ~25-entry 'Tabella codici categorie macchine agricole' of agricultural-machine category codes), which are referenced by pattern/description rather than fully reproduced as enums; and the wet-ink signature lines (the form carries zero AcroForm widgets of any kind, including for its two signature blocks). See VERIFICATION.md for the full scope rationale, the form's own construction (a 4-ply scanned carbon form, not a fillable PDF), and every disclosed judgment call, including two genuine same-code-different-meaning duplicates the source table itself prints ('D A' and 'R V', each used for two distinct operations). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Italy or the Ministero delle infrastrutture e dei trasporti.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministero delle infrastrutture e dei trasporti — Direzione Generale per la Motorizzazione, per i Servizi ai Cittadini e alle Imprese in materia di Trasporti e Navigazione",
+    "abbreviation": "MIT",
+    "url": "https://www.ilportaledellautomobilista.it/documents/56611/128846273/TT2119.pdf",
+    "operatedBy": {
+      "name": "Ministero delle infrastrutture e dei trasporti",
+      "abbreviation": "MIT",
+      "url": "https://www.mit.gov.it",
+      "basis": "Decreto Legislativo 30 aprile 1992, n. 285 (Nuovo Codice della Strada) and D.P.R. 495/1992 (Regolamento di esecuzione e di attuazione del Codice della Strada), governing registration/registry documents for vehicles not enrolled in the Pubblico Registro Automobilistico; the form itself is a 'Modulario' (Mod. 29OTT010045, TT 2119) published by MIT's own Direzione Generale per la Motorizzazione."
+    }
+  },
+  "process": {
+    "type": "request",
+    "language": "it-IT"
+  },
+  "source": {
+    "url": "https://www.ilportaledellautomobilista.it/documents/56611/128846273/TT2119.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Modulario TT 2119 (Mod. 29OTT010045)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GovSchema Standard Research cycle (GOV-2389), authoring Italy's own pre-scouted DMV follow-on candidate flagged by the prior cycle's (GOV-2382) Known Gaps entry. Fetched fresh via direct curl from ilportaledellautomobilista.it: HTTP 200, 998,509 bytes, genuine %PDF-1.7 header, sha256 e12e797d3ee167e397e7f2d240b04807cf9b1b04f4366263243aaf06c1d98c07, no login/CAPTCHA/WAF gate. A pdfjs-dist extraction found 0 AcroForm/Widget annotations across all 13 pages, correcting the prior cycle's optimistic characterization ('a genuine embedded text layer... self-documenting sections'): pages 1-3 (cover, operation-code table, PagoPA-attachment instruction) and 8 (numbered field-notes legend plus two lookup tables) and 9-13 (GDPR privacy notice) do carry a genuine extractable text layer, but the four core data-entry pages (4-7, labelled 4/8 through 7/8) are pure embedded DCTDecode/FlateDecode JPEG scans (1239x1754px each) with zero extractable text and zero widgets — confirmed both by an empty getTextContent() result and by an operator-list dump showing only paintImageXObject calls on those pages. The four scanned pages were extracted directly from the PDF's own object stream (objects 151/162/172/178, each inflate-then-JPEG) and visually read: they are four identical carbon-copy layers of the SAME single-page form ('COPIA INPUT', 'COPIA UFFICIO', and two further copies), each numbered 1-40 with a footnote legend on page 8/8 explaining every applicant-relevant field — so this schema models the field layout once. The operation-code table on page 2/8 (two side-by-side columns, 'Tabella riassuntiva delle operazioni') was transcribed via coordinate-clustered text extraction (grouping getTextContent() items by y-position with a tolerance band, since simple reading-order concatenation interleaves the two columns) rather than trusted verbatim, surfacing two genuine same-code-different-meaning duplicates the source itself prints: code 'D A' names both 'Cambio destinazione o uso' (right column) and 'Aggiornamento carta di circolazione per variazioni riguardanti l'intestatario' (left column); code 'R V' names both 'Rinnovo immatricolazione rimorchi agricoli' and 'Rinnovo immatricolazione veicoli atipici' (both right column) — both independently re-verified via per-glyph codepoint dumps at the specific coordinates, not a rendering artifact. All 36 distinct codes are modelled as a closed enum (operationCode), each documented in the field's own description; the two duplicates are disclosed rather than silently resolved, matching this registry's established practice for genuine source-print irregularities (e.g. se/polisen's font-encoding artifact, GOV-2363). Two large external lookup tables the source itself prints on page 8/8 (Tabella denominazioni, ~50 legal-form/ownership-interest codes; Tabella codici categorie macchine agricole, ~25 codes) are referenced by pattern/description on their respective fields (ownerLegalFormCode, agriculturalMachineCategory) rather than fully reproduced as enums, a disclosed scope decision given their size relative to the rest of the form. The extensive vehicle technical-specification block occupying the lower half of pages 4-7 (dimensions, masses, axle counts, tyre/brake data, tow-hook and dual-fuel checkboxes, 'REVISIONE' inspection date) is a near-exact field-for-field match to page 2/8's own explicitly labelled 'SPAZIO RISERVATO ALL'UFFICIO PER LA VISITA DEL VEICOLO' (space reserved for the office for the vehicle inspection), signed by a 'FIRMA DEL FUNZIONARIO TECNICO' (technical official's signature) — excluded on the same office-reserved-content basis as this registry's dk/cpr and se/skatteverket precedents. Two mock conformance scenarios (a private individual's motorcycle first-registration under operationCode IM, and a company's agricultural-tractor renewal with the agricultural-company block populated under operationCode RG) found 0 errors each, plus 4 mutation controls (missing required field, operationCode enum violation, province-code pattern violation, and a documents[] payment-requirement violation) each correctly raised exactly 1 error."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "operationCode",
+      "label": "Operazione richiesta",
+      "type": "enum",
+      "required": true,
+      "description": "Two-letter code identifying which of the form's 36 distinct operations is being requested, entered into two single-character boxes directly after 'Il sottoscritto chiede:'. Codes and meanings, transcribed from the form's own 'Tabella riassuntiva delle operazioni': IA=Immatricolazione autoveicoli con targa di tipo A; IB=Immatricolazione autoveicoli con targa di tipo B; IR=Immatricolazione rimorchi di autoveicoli; IM=Immatricolazione motoveicoli; IG=Immatricolazione macchine agricole semoventi; IV=Immatricolazione rimorchi agricoli; IX=Immatricolazione macchine operatrici trainate; IY=Immatricolazione veicoli atipici; IE=Rilascio targhe di identificazione autoveicoli EE/CD; ID=Rilascio targhe EE per rimorchi; IZ=Rilascio targhe EE per motoveicoli; TE=Rilascio targhe ripetitrici EE per veicoli trainati; TR=Rilascio targhe ripetitrici di Tipo A per veicoli trainati da autoveicoli; TS=Rilascio targhe ripetitrici di Tipo B per veicoli trainati da autoveicoli; TA=Rilascio targhe ripetitrici per rimorchi agricoli e per macchine operatrici trainate; TD=Rilascio duplicato di targa; DA=Aggiornamento carta di circolazione per variazioni riguardanti l'intestatario, OR (a genuine second meaning the source table also prints under the same code) Cambio destinazione o uso; DC=Aggiornamento carta di circolazione per modifiche riguardanti il veicolo; VA=Rilascio contrassegno identificativo del potenziale inquinante dei veicoli (verdone); RA=Rinnovo immatricolazione autoveicoli con targa di Tipo A; RB=Rinnovo immatricolazione autoveicoli con targa di Tipo B; RR=Rinnovo immatricolazione rimorchi autoveicoli; RM=Rinnovo immatricolazione motoveicoli CC/UN/UNP/UNT; RG=Rinnovo immatricolazione macchine agricole semoventi; RO=Rinnovo immatricolazione macchine operatrici semoventi; RV=Rinnovo immatricolazione rimorchi agricoli, OR (a genuine second meaning the source table also prints under the same code) Rinnovo immatricolazione veicoli atipici; RX=Rinnovo immatricolazione macchine operatrici trainate; PA=Rilascio targa prova per autoveicoli e loro rimorchi; PM=Rilascio targa prova per motoveicoli; PG=Rilascio targa prova per macchine agricole; PX=Rilascio targa prova per macchine operatrici; AA=Rilascio del certificato di approvazione; TP=Rilascio targa provvisoria con foglio di via; EE=Rilascio dell'estratto della carta di circolazione (Tipo A o B); CP=Rilascio della carta provvisoria di circolazione; GG=Riservato all'Ufficio (altre operazioni). The DA and RV duplicates are printed as-is in the source table (see VERIFICATION.md); this schema does not attempt to silently resolve them.",
+      "sourceRef": "TT2119 p.4/8 (campi 3-4); operation-code definitions from p.2/8, Tabella riassuntiva delle operazioni",
+      "validation": {
+        "enum": ["IA","IB","IR","IM","IG","IV","IX","IY","IE","ID","IZ","TE","TR","TS","TA","TD","DA","DC","VA","RA","RB","RR","RM","RG","RO","RV","RX","PA","PM","PG","PX","AA","TP","EE","CP","GG"]
+      }
+    },
+    {
+      "name": "requestCapacity",
+      "label": "di essere",
+      "type": "string",
+      "required": true,
+      "description": "The capacity/title in which the applicant requests the operation (e.g. proprietario/owner, erede/heir, procuratore/proxy-holder), completing the declaration '... dichiara ... (1) di essere ___', made under the criminal-liability warning of art. 76 D.P.R. 445/2000 for false declarations.",
+      "sourceRef": "TT2119 p.4/8, campo (1); nota 1"
+    },
+    {
+      "name": "consultancyFirmCode",
+      "label": "Timbro o codice impresa di consulenza",
+      "type": "string",
+      "required": false,
+      "description": "Four-digit code assigned by the Ufficio Provinciale D.T.T. to the vehicle-consultancy firm (agenzia pratiche auto) submitting the request on the owner's behalf, when one is used. Left blank for a direct citizen submission.",
+      "sourceRef": "TT2119 p.4/8; nota 2",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "existingPlateNumber",
+      "label": "Targa",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's current registration plate number, when the operation concerns an already-registered vehicle (e.g. a renewal, carta di circolazione update, or duplicate-plate request). Left blank for a first registration. Unlike most fields on this form, this box carries no cross-reference to a numbered note in the page 8/8 legend; its inclusion here as an optional field is a disclosed judgment call — see VERIFICATION.md.",
+      "sourceRef": "TT2119 p.4/8, header box 'TARGA'"
+    },
+    {
+      "name": "ownerSurnameOrCompanyName",
+      "label": "Cognome o denominazione / Soc. Enti ecc.",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle owner's full surname (natural person) or full legal-entity name (company/ministry/region/province/comune), written in full — the two-line cognome/nome fields are never used for SPA/SRL/SNC or public-body denominazioni.",
+      "sourceRef": "TT2119 p.4/8, campo 5; nota 6"
+    },
+    {
+      "name": "ownerFirstNameOrCompanyNameContinuation",
+      "label": "Nome / Oppure segue denominazione",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle owner's first name (natural person), or the continuation of a legal-entity name too long for campo 5.",
+      "sourceRef": "TT2119 p.4/8, campo 6; nota 6"
+    },
+    {
+      "name": "ownerLegalFormCode",
+      "label": "Codice denom.",
+      "type": "string",
+      "required": false,
+      "description": "Three-letter code identifying the owner's legal form/ownership-interest, drawn from the form's own 'Tabella denominazioni' printed on p.8/8 (e.g. SPA, SRL, SNC, MIN, REG, COM, LOC=locatario/lessee, USU=usufruttuario, RSD=acquisto con patto di riservato dominio, and ~45 further codes covering leasing/usufruct/reserved-domain variants of each legal form). Left blank for an ordinary natural-person owner. This ~50-entry lookup table is referenced here by pattern rather than fully reproduced as an enum — see VERIFICATION.md.",
+      "sourceRef": "TT2119 p.4/8, campo 7; nota 7; Tabella denominazioni, p.8/8",
+      "validation": {
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    {
+      "name": "ownerDateOfBirth",
+      "label": "Data di nascita (gg/mm/aa)",
+      "type": "date",
+      "required": false,
+      "description": "The owner's date of birth. Per the form's own nota 8, campi 8-11 are completed only for natural-person owners (ownerLegalFormCode blank, or LOC/USU/RSD).",
+      "sourceRef": "TT2119 p.4/8, campo 8; nota 8"
+    },
+    {
+      "name": "ownerForeignBirthCountry",
+      "label": "Stato est. nasc.",
+      "type": "string",
+      "required": false,
+      "description": "Foreign-country code for the owner's place of birth, from the 'sigle stati esteri' volume. Left blank if born in Italy.",
+      "sourceRef": "TT2119 p.4/8, campo 9; nota 9"
+    },
+    {
+      "name": "ownerBirthProvince",
+      "label": "Prov.",
+      "type": "string",
+      "required": false,
+      "description": "Italian vehicle-registration-style two-letter province code of the owner's municipality of birth (e.g. RM for Roma). Only applicable when born in Italy.",
+      "sourceRef": "TT2119 p.4/8, campo 10; nota 10",
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      }
+    },
+    {
+      "name": "ownerBirthMunicipality",
+      "label": "Comune di nascita",
+      "type": "string",
+      "required": false,
+      "description": "Full name of the owner's municipality of birth.",
+      "sourceRef": "TT2119 p.4/8, campo 11; nota 11"
+    },
+    {
+      "name": "ownerResidenceMunicipality",
+      "label": "Residente nel comune di",
+      "type": "string",
+      "required": true,
+      "description": "Municipality of the owner's residence as of the application date (or, for companies/entities, the municipality of their registered seat as it appears in their founding document).",
+      "sourceRef": "TT2119 p.4/8, campo 12; nota 12"
+    },
+    {
+      "name": "ownerResidenceProvince",
+      "label": "Prov. di resid.",
+      "type": "string",
+      "required": true,
+      "description": "Two-letter vehicle-registration-style province code of the owner's residence (e.g. RM for the Provincia di Roma).",
+      "sourceRef": "TT2119 p.4/8, campo 13; nota 13",
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      }
+    },
+    {
+      "name": "ownerResidenceAddress",
+      "label": "Numero, via",
+      "type": "string",
+      "required": true,
+      "description": "Street address of the owner's residence as of the application date, house number first, with slashes/punctuation excluded.",
+      "sourceRef": "TT2119 p.4/8, campo 14; nota 14"
+    },
+    {
+      "name": "otherOwnersCount",
+      "label": "N. altri prop.",
+      "type": "integer",
+      "required": false,
+      "description": "Count of ADDITIONAL co-owners beyond the one named above, each detailed on a separate 'modello 16' (additional-owners form). Left blank when the named owner is the sole owner.",
+      "sourceRef": "TT2119 p.4/8, campo 15; nota 15",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "vehicleManufacturerAndType",
+      "label": "Fabbrica e tipo",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's manufacturer and type/model designation.",
+      "sourceRef": "TT2119 p.4/8, DATI DEL VEICOLO section"
+    },
+    {
+      "name": "usageType",
+      "label": "Uso",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the vehicle is for the owner's own use (proprio) or for third-party use (terzi, e.g. hire/rental/goods-for-hire), per the form's own notes 17-18.",
+      "sourceRef": "TT2119 p.4/8, campo 17-18; note 17-18",
+      "validation": {
+        "enum": ["proprio", "terzi"]
+      }
+    },
+    {
+      "name": "thirdPartyUsageDetail",
+      "label": "(se \"T\" specificare)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "usageType",
+        "equals": "terzi"
+      },
+      "description": "Specification of the third-party-use case, per comma 5 dell'art. 82 del Codice della Strada (e.g. noleggio con conducente, locazione senza conducente).",
+      "sourceRef": "TT2119 p.4/8, campo 18; nota 18"
+    },
+    {
+      "name": "vehicleClassification",
+      "label": "Classificazione",
+      "type": "string",
+      "required": true,
+      "description": "One of the vehicle classifications set out in artt. 53-54-55-56-57-58-59-60 of the Codice della Strada (e.g. autovettura, autocarro, motociclo, rimorchio). The Codice della Strada's own article text, not this form, is the authoritative list of permitted values.",
+      "sourceRef": "TT2119 p.4/8, campo 19; nota 19"
+    },
+    {
+      "name": "typeApprovalNumber",
+      "label": "N. omologazione",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's type-approval (omologazione) number, when one applies.",
+      "sourceRef": "TT2119 p.4/8, campo 20"
+    },
+    {
+      "name": "chassisNumber",
+      "label": "N. di telaio",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's chassis/frame identification number.",
+      "sourceRef": "TT2119 p.4/8, campo 21"
+    },
+    {
+      "name": "yearOfFirstRegistration",
+      "label": "Anno 1ª imm.",
+      "type": "integer",
+      "required": false,
+      "description": "The vehicle's year of first registration. Left blank for a vehicle undergoing its first-ever registration; completed for other operations only when unambiguously determinable from the submitted documentation.",
+      "sourceRef": "TT2119 p.4/8, campo 22; nota 22"
+    },
+    {
+      "name": "agriculturalMachineCategory",
+      "label": "Cat/MA",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter agricultural-machine category code from the form's own 'Tabella codici categorie macchine agricole' printed on p.8/8 (e.g. ST=trattrice agricola 2 RM, SB=mietitrebbiatrice, TC=rimorchio agricolo-cassone, VC=motocoltivatore, and ~20 further codes), completed only when applicable and only when it differs from the type-approval category. This ~25-entry lookup table is referenced here by pattern rather than fully reproduced as an enum — see VERIFICATION.md.",
+      "sourceRef": "TT2119 p.4/8, campo 23; nota 23; Tabella codici categorie macchine agricole, p.8/8",
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      }
+    },
+    {
+      "name": "vehicleCode",
+      "label": "Codice veicolo",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle code entered in the Dichiarazione di conformità (declaration of conformity), when present.",
+      "sourceRef": "TT2119 p.4/8, campo 24; nota 24"
+    },
+    {
+      "name": "previousPlateNumber",
+      "label": "Targa precedente - Numero",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's previous registration plate number. Completed only for a renewal of registration or nationalization; for an Italian plate, the province-code prefix is followed by enough leading zeros to fill six boxes.",
+      "sourceRef": "TT2119 p.4/8, campo 25; nota 25"
+    },
+    {
+      "name": "previousPlateForeignFlag",
+      "label": "Naz.",
+      "type": "string",
+      "required": false,
+      "description": "Left blank for an Italian-issued previous plate; entered as 'E' when the previous plate was foreign-issued.",
+      "sourceRef": "TT2119 p.4/8, campo 26; nota 26",
+      "validation": {
+        "pattern": "^E$"
+      }
+    },
+    {
+      "name": "previousPlateForeignStateCode",
+      "label": "Stato est.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "previousPlateForeignFlag",
+        "equals": "E"
+      },
+      "description": "Foreign-state code for the previous plate's issuing country, from the 'sigle stati esteri' volume.",
+      "sourceRef": "TT2119 p.4/8, campo 27; nota 27"
+    },
+    {
+      "name": "previousOwnerSurnameInitials",
+      "label": "Iniz. cognome",
+      "type": "string",
+      "required": false,
+      "description": "First four initial characters of the previous owner's surname, for the plate referenced in previousPlateNumber. Repeat the initials from ownerSurnameOrCompanyName when the owner is unchanged.",
+      "sourceRef": "TT2119 p.4/8, campo 28; nota 28",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "previousOwnerTaxIdType",
+      "label": "Tipo cod.",
+      "type": "enum",
+      "required": false,
+      "description": "F for codice fiscale (tax code) or V for partita IVA (VAT number), identifying which kind of identifier previousOwnerTaxIdOrVatNumber holds.",
+      "sourceRef": "TT2119 p.4/8, campo 29; nota 29",
+      "validation": {
+        "enum": ["F", "V"]
+      }
+    },
+    {
+      "name": "previousOwnerTaxIdOrVatNumber",
+      "label": "Codice fiscale o partita IVA",
+      "type": "string",
+      "required": false,
+      "description": "The previous owner's codice fiscale or partita IVA, per the type flagged in previousOwnerTaxIdType.",
+      "sourceRef": "TT2119 p.4/8, campo 30; nota 30"
+    },
+    {
+      "name": "goodsTransportExemptionOrLicenseNumber",
+      "label": "Esente - N. autoriz. o n. licenza",
+      "type": "string",
+      "required": false,
+      "description": "Exemption reference, or the authorization/licence number, for a vehicle used in goods transport, hire-with-driver services, or agricultural-machine rental. Applicable only to that narrower class of operation.",
+      "sourceRef": "TT2119 p.4/8, TRASPORTO COSE - NOLEGGI E SERVIZI PUBBLICI - LICENZA NOLEGGIO MACCHINE AGRICOLE section"
+    },
+    {
+      "name": "goodsTransportLicenseIssueDate",
+      "label": "Data rilascio",
+      "type": "date",
+      "required": false,
+      "description": "Issue date of the authorization/licence referenced in goodsTransportExemptionOrLicenseNumber.",
+      "sourceRef": "TT2119 p.4/8, TRASPORTO COSE - NOLEGGI E SERVIZI PUBBLICI - LICENZA NOLEGGIO MACCHINE AGRICOLE section"
+    },
+    {
+      "name": "goodsTransportActivityOrGrantingAuthority",
+      "label": "Attività trasporto cose o autorità concedente il titolo",
+      "type": "string",
+      "required": false,
+      "description": "The goods-transport activity itself, or the authority that granted the licence/authorization.",
+      "sourceRef": "TT2119 p.4/8, TRASPORTO COSE - NOLEGGI E SERVIZI PUBBLICI - LICENZA NOLEGGIO MACCHINE AGRICOLE section"
+    },
+    {
+      "name": "agriculturalCompanyName",
+      "label": "Denominazione azienda",
+      "type": "string",
+      "required": false,
+      "description": "The agricultural business's name, omitting any legal-form wording captured instead in agriculturalCompanyTypeCode (e.g. for 'Azienda agricola La Stella', write only 'La Stella' here).",
+      "sourceRef": "TT2119 p.4/8, campo 31; nota 31-32"
+    },
+    {
+      "name": "agriculturalCompanyNameContinuation",
+      "label": "Segue denominazione azienda",
+      "type": "string",
+      "required": false,
+      "description": "Continuation of agriculturalCompanyName when it does not fit in campo 31.",
+      "sourceRef": "TT2119 p.4/8, campo 32; nota 32"
+    },
+    {
+      "name": "agriculturalCompanyTypeCode",
+      "label": "Tipo azienda",
+      "type": "enum",
+      "required": false,
+      "description": "AA = azienda agricola (farming business); IM = impresa per lavorazioni meccaniche agrarie (agricultural mechanical-works contractor); IL = impresa per locazione macchine agricole (agricultural-machine rental business). When IM or IL applies, the business's own identifying details are captured instead via the owner fields (campi 5-15), per nota 33.",
+      "sourceRef": "TT2119 p.4/8, campo 33; nota 33",
+      "validation": {
+        "enum": ["AA", "IM", "IL"]
+      }
+    },
+    {
+      "name": "agriculturalCompanyMunicipality",
+      "label": "Comune sede dell'azienda",
+      "type": "string",
+      "required": false,
+      "description": "Municipality where the agricultural business's seat is located.",
+      "sourceRef": "TT2119 p.4/8, campo 34; nota 34"
+    },
+    {
+      "name": "agriculturalCompanyProvince",
+      "label": "Prov./Di res.",
+      "type": "string",
+      "required": false,
+      "description": "Two-letter vehicle-registration-style province code of the agricultural business's seat (e.g. RM for the Provincia di Roma).",
+      "sourceRef": "TT2119 p.4/8, campo 35; nota 35",
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      }
+    },
+    {
+      "name": "agriculturalCompanyAddress",
+      "label": "Numero via",
+      "type": "string",
+      "required": false,
+      "description": "Street address of the agricultural business's seat, house number first, slashes/punctuation excluded.",
+      "sourceRef": "TT2119 p.4/8, campo 36; nota 36"
+    },
+    {
+      "name": "umaDeclarationPre1979Flag",
+      "label": "Dichiarazione di titolarità (U)",
+      "type": "boolean",
+      "required": false,
+      "description": "True only when the ownership declaration was issued by the UMA (Utenti Motori Agricoli) before 31 March 1979.",
+      "sourceRef": "TT2119 p.4/8, campo 37; nota 37"
+    },
+    {
+      "name": "umaDeclarationNumber",
+      "label": "Dichiarazione di titolarità - Numero",
+      "type": "string",
+      "required": false,
+      "description": "The UMA ownership declaration's own reference number, when one was assigned.",
+      "sourceRef": "TT2119 p.4/8, campo 38; nota 38"
+    },
+    {
+      "name": "umaDeclarationDate",
+      "label": "Dichiarazione di titolarità - Data",
+      "type": "date",
+      "required": false,
+      "description": "Date of the UMA ownership declaration.",
+      "sourceRef": "TT2119 p.4/8, campo 39; nota 39"
+    }
+  ],
+  "documents": [
+    {
+      "id": "pagopaPaymentReceipt",
+      "label": "Attestazione di versamento PagoPA",
+      "category": "payment",
+      "required": true,
+      "sourceRef": "TT2119 p.3/8 (Copia Consegna): 'ALLEGARE A QUESTO DOCUMENTO L'ATTESTAZIONE DI VERSAMENTO PAGOPA'"
+    },
+    {
+      "id": "falseDeclarationLiabilityAttestation",
+      "label": "Attestation of criminal liability for false declarations (art. 76 D.P.R. 445/2000)",
+      "category": "attestation",
+      "required": true,
+      "statement": "Il sottoscritto chiede: ___ e, consapevole delle sanzioni penali previste dall'art. 76 del D.P.R. 28 dicembre 2000, n. 445, per le ipotesi di falsità in atti e dichiarazioni mendaci, dichiara, ai sensi degli artt. 46 e 47 del medesimo D.P.R. n. 445/2000: (1) di essere ___",
+      "sourceRef": "TT2119 p.4/8"
+    }
+  ]
+}

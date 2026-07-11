@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**36 jurisdictions** | **362 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**36 jurisdictions** | **363 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2389, "GovSchema Standard Research"): Italy's DMV
+> vertical is now open**, via `it/mit/domanda-operazioni-veicoli-a-motore-e-rimorchi`
+> — Modulario TT 2119, "Domanda per operazioni relative ai veicoli a motore e
+> loro rimorchi (esclusi i ciclomotori)", published by the Ministero delle
+> infrastrutture e dei trasporti (MIT)'s Direzione Generale per la
+> Motorizzazione via `ilportaledellautomobilista.it`. This is the pre-scouted
+> follow-on candidate the prior cycle (GOV-2382) flagged in this section.
+> Fetched fresh via direct `curl`: HTTP 200, 998,509 bytes, genuine `%PDF-1.7`
+> header, sha256 `e12e797d3ee167e397e7f2d240b04807cf9b1b04f4366263243aaf06c1
+> d98c07`, no login/CAPTCHA/WAF gate. This cycle corrects the prior cycle's
+> pre-scouting note: `pdfjs-dist` confirmed zero AcroForm widgets across all
+> 13 pages (as noted before), but the four core applicant data-entry pages
+> (4/8-7/8) are pure scanned JPEG images with **zero extractable text**, not
+> a genuine text layer as previously characterized — only the surrounding
+> cover/operation-table/notes/privacy pages carry real text. Since on-screen
+> rendering of image-bearing pages failed in this sandbox (the same
+> `node-canvas`/pdfjs limitation GOV-2316 hit), the four scanned pages were
+> extracted directly from the PDF's own object stream (inflate, then a raw
+> JPEG) and read visually — a new extraction technique for this registry.
+> All four scans are identical carbon-copy layers of one form, numbered 1-40
+> against a footnote legend on page 8/8, so the field layout was modelled
+> once. The two-column operation-code table (36 distinct codes) was
+> reconstructed via coordinate-clustered text extraction, surfacing two
+> genuine same-code-different-meaning duplicates the source itself prints
+> (`DA` and `RV`, each naming two distinct operations) — disclosed in the
+> field's own description rather than silently resolved. 36 `fields[]` plus
+> 2 `documents[]` (a required PagoPA payment receipt, and the form's own
+> art. 76 D.P.R. 445/2000 false-declaration attestation) model the
+> operation-selection code, requesting-party capacity, vehicle-owner
+> registry data, vehicle identification, the previous-plate block, the
+> goods-transport/rental block, and the agricultural-machine-company block —
+> deliberately excluding the extensive vehicle technical-inspection block
+> (explicitly a "SPAZIO RISERVATO ALL'UFFICIO" office/technical-official
+> section on page 2/8), the two large external lookup tables the source
+> itself prints in full (referenced by pattern instead), and both wet-ink
+> signature lines (the document carries zero widgets of any kind). Two mock
+> conformance scenarios (a private individual's first-time motorcycle
+> registration; a farming business's agricultural-tractor renewal) found
+> **0 errors** each, plus 4 mutation controls (missing required field, enum
+> violation, pattern violation, and a `documents[]` required-document
+> violation) each correctly raised exactly 1 error. **Italy now stands at 2
+> of 6 verticals** (Taxes, DMV); Passport, Business Formation, National ID,
+> and Visa remain open — see this cycle's own re-confirmation of GOV-2382's
+> dead-end findings for all four in the Known Gaps section below.
 
 > **Update (2026-07-11, GOV-2382, "GovSchema Standard Research"): Italy opens
 > as the registry's 36th jurisdiction**, via its Taxes vertical, sourced from
@@ -7555,7 +7600,7 @@ now closed.
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IT** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -8553,17 +8598,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    update above and that document's own VERIFICATION.md. **Sweden now
    stands at 6 of 6 verticals — this item is fully closed, no verticals
    remain open for Sweden.**
-10. **Italy's DMV vertical** (Italy opened GOV-2382 via Taxes): a strong
-    pre-scouted follow-on candidate is Modello TT2119, Ministero delle
-    Infrastrutture e dei Trasporti / `ilportaledellautomobilista.it`
-    (`https://www.ilportaledellautomobilista.it/documents/56611/128846273/
-    TT2119.pdf`) — confirmed unauthenticated, a real PDF, ~13 pages, with a
-    genuine embedded text layer and no AcroForm widgets, its own
-    lettered/coded operation-type table self-documenting the form's
-    sections. Not yet authored; a same-tier candidate to Italy's own
-    Modello 730. Italy's other four remaining verticals were all screened
-    this cycle and found weak/dead-end — see "Confirmed dead ends" below
-    for Passport, Business Formation, National ID, and Visa.
+10. **Italy's DMV vertical is now closed too (GOV-2389)**, via
+    `it/mit/domanda-operazioni-veicoli-a-motore-e-rimorchi` — Modulario
+    TT 2119, Ministero delle Infrastrutture e dei Trasporti /
+    `ilportaledellautomobilista.it`. This cycle's own re-inspection found a
+    materially different construction than this item's prior note claimed:
+    zero AcroForm widgets is confirmed, but the four core data-entry pages
+    are pure scanned images with **zero extractable text**, not a genuine
+    text layer — only the surrounding cover/operation-table/notes/privacy
+    pages carry real text. The scanned pages were extracted directly from
+    the PDF's own object stream and read visually. See the Executive
+    Summary update above and the document's own VERIFICATION.md for the
+    full record, including two genuine same-code-different-meaning
+    duplicates the source's own operation-code table prints. **Italy now
+    stands at 2 of 6 verticals** (Taxes, DMV). Italy's other four remaining
+    verticals were screened in the prior cycle and found weak/dead-end —
+    see "Confirmed dead ends" below for Passport, Business Formation,
+    National ID, and Visa.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
