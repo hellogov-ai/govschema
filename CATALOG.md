@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **357 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **358 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2356, "GovSchema Standard Research"): Finland's
+> DMV vertical is now closed — Finland stands at 5 of 6 verticals**, via
+> `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — the
+> Finnish Transport and Communications Agency's (Traficom) form B124,
+> "Luovutuskirja ajoneuvon/vesikulkuneuvon omistusoikeuden siirrosta" (Deed
+> of transfer of ownership for a vehicle/watercraft), a private-party
+> bill-of-sale/title-transfer deed. A prior cycle (GOV-2276's parent
+> scouting pass) had screened Traficom's core driving-licence and
+> vehicle-registration flows as Suomi.fi-login-gated or in-person-only, with
+> only two narrow downloadable companion forms (F122, a doctor's
+> attestation; B527, too narrow-scope) considered and rejected; B124 is a
+> distinct, genuinely citizen-facing, unauthenticated title-transfer deed
+> neither prior pass considered. Fetched fresh from `lomakkeet.traficom.fi`:
+> HTTP 200, 110,479 bytes, genuine `%PDF-1.7` header, no login/CAPTCHA/WAF
+> gate. A `pdfjs-dist` extraction confirmed exactly 25 `/Widget` annotations
+> on page 1 (23 `Tx` text-field widgets + 2 `Btn` radio-option widgets
+> belonging to one genuine radio-button parent field) across 24 distinct
+> field names — an exact match to this cycle's own pre-authoring scouting
+> count — with page 2 carrying 0 widgets (a short instructions-only page).
+> All 24 fields map 1:1 into this schema's `fields[]`, covering vehicle/
+> watercraft identification (plus a separate watercraft-engine block),
+> transferee/buyer and transferor/seller name-or-company-name/personal-ID-
+> or-Business-ID/address, freeform agreed terms, place-and-date of
+> transfer, and both parties' own signature-and-name-clarification lines —
+> the latter unusually realized as genuine fillable `Tx` widgets rather
+> than this registry's usual widget-less signature line (see the
+> document's own VERIFICATION.md). Two mock conformance scenarios (a
+> minimal bill-of-sale car sale, and a fuller "other deed" watercraft sale
+> exercising the engine block) found 0 errors, plus 2 mutation controls
+> each correctly raised exactly 1 error. **Finland now stands at 5 of 6
+> verticals** (Visa, Business Formation, National ID, Taxes, DMV); Passport
+> remains a confirmed dead end (Finland eliminated paper passport
+> applications in 2006), so no vertical remains genuinely open for Finland.
 
 > **Update (2026-07-11, GOV-2346, "GovSchema Standard Research"): Denmark's
 > DMV vertical is now closed — Denmark stands at 6 of 6 verticals**, the
@@ -5515,7 +5549,25 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (32/35 jurisdictions — 91%)
+### DMV — Vehicle Registration, Licensing, Permits (33/35 jurisdictions — 94%)
+
+**Finland's DMV vertical is now closed (GOV-2356)**, via
+`fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — Traficom's
+(the Finnish Transport and Communications Agency) form B124, "Luovutuskirja
+ajoneuvon/vesikulkuneuvon omistusoikeuden siirrosta" (Deed of transfer of
+ownership for a vehicle/watercraft), a private-party bill-of-sale/
+title-transfer deed. A prior cycle (GOV-2276's own parent scouting pass)
+had screened Traficom's core driving-licence and vehicle-registration flows
+as Suomi.fi-login-gated or in-person-only, considering and rejecting only
+two narrow downloadable companion forms (F122, a doctor's attestation on
+driving fitness, not applicant-facing; B527, a paperless-vehicle
+registration notice, too narrow-scope); B124 is a distinct, genuinely
+citizen-facing, unauthenticated title-transfer deed neither prior pass
+considered. See the Executive Summary update above and the document's own
+VERIFICATION.md. This closes Finland to 5 of 6 verticals — only Passport
+remains unmodelled, and it is a confirmed dead end (Finland eliminated
+paper passport applications in 2006), so no vertical remains genuinely open
+for Finland.
 
 **Denmark's DMV vertical is now closed (GOV-2346)**, via
 `dk/fstyr/samtykkeerklaering-koerekort-under-18` — Færdselsstyrelsen's form
@@ -7248,7 +7300,7 @@ now closed.
 | **DK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **FI** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **FI** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -8167,20 +8219,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    generated per-taxpayer and typically e-filed via MyTax, but this
    correction form is a genuine citizen-facing paper alternative) — see
    the Executive Summary update above and the document's own
-   VERIFICATION.md. **Finland now stands at 4 of 6 verticals** (Visa,
-   Business Formation, National ID, Taxes); **only DMV remains open**.
-   **Passport** is a confirmed dead end: Finland eliminated paper passport applications in
+   VERIFICATION.md. **DMV has since closed too (GOV-2356)**, via
+   `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` —
+   Traficom's form B124, "Luovutuskirja ajoneuvon/vesikulkuneuvon
+   omistusoikeuden siirrosta" (Deed of transfer of ownership for a
+   vehicle/watercraft), a private-party bill-of-sale/title-transfer deed
+   found after Traficom's core driving-licence/vehicle-registration flows
+   were reconfirmed Suomi.fi-login-gated or in-person-only (via Ajovarma),
+   with only two narrow companion forms downloadable — F122 (a doctor's
+   statement on driving fitness, not applicant-facing) and B527 (a
+   paperless-vehicle registration notice, narrow-scope) — neither
+   reattempted. This cycle's own `pdfjs-dist` extraction confirmed 25
+   `/Widget` annotations (23 `Tx` + 1 `Btn` radio parent) across 24
+   distinct field names on page 1, matching the pre-scout's own count
+   exactly; see the Executive Summary update above and the document's own
+   VERIFICATION.md. **Finland now stands at 5 of 6 verticals** (Visa,
+   Business Formation, National ID, Taxes, DMV). **Passport** is a
+   confirmed dead end: Finland eliminated paper passport applications in
    2006 — `poliisi.fi` offers only online (`asiointi.poliisi.fi`) or
    in-person appointment channels, with a digital photo pre-uploaded
    separately (`lupakuvienvastaanotto.fi`); no PDF/paper application form
-   exists. **DMV** is weak: Traficom's core driving-licence and
-   vehicle-registration flows are Suomi.fi-login-gated or in-person only
-   (via Ajovarma); only companion forms are downloadable — F122 (a doctor's
-   statement on driving fitness, not an applicant-facing intake form) and
-   B527 (a paperless-vehicle registration notice, narrow-scope). A future
-   cycle should look for a different DMV candidate rather than
-   re-attempting either, or move on to Passport/DMV gaps in other
-   jurisdictions.
+   exists. **No vertical remains genuinely open for Finland** — this item
+   is fully closed.
 8. **Norway's remaining verticals** (opened GOV-2316 via its Business
    Formation vertical, `no/brreg/samordnet-registermelding`): three of
    Norway's other five verticals were genuine, unscreened-in-depth backlog
