@@ -1,0 +1,518 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fi/dvv/registration-of-foreigner",
+  "version": "1.0.0",
+  "title": "Finland Registration of a Foreigner — Request for a Personal Identity Code (Ulkomaalaisen rekisteröinti — Henkilötunnuspyyntö, DVV05.03.00A)",
+  "description": "The Digital and Population Data Services Agency's (DVV, Digi- ja väestötietovirasto) form DVV05.03.00A, \"The registration information of a foreigner\" (\"Ulkomaalaisen rekisteröinti\"), used by a foreign national residing legally in Finland to request a henkilötunnus (Finnish personal identity code) and be registered in the Väestötietojärjestelmä (Population Information System, PIS) for the first time. Covers the applicant's own personal data (name, date of birth, sex, citizenship, prior residence in Finland, marital status if registrable via this form, native/contact language), address in Finland, immigration details (country and date of move, an Estonian/Nordic identity number if applicable, expected duration of stay in Finland), the applicant's own signed request declaration, contact details, and a disclosure question about family members already in Finland or moving with the applicant (their full registration is handled by separate forms, per the source's own instructions). Registering as a foreigner in the Population Information System is what triggers assignment of a henkilötunnus for an applicant who does not already have one. Opens Finland's National ID & Civic Documents vertical (3/6 for Finland; Visa and Business Formation already modelled via GOV-2276/GOV-2292), globally one of GovSchema's weakest-covered verticals. Submitting this request requires an in-person appointment at a DVV service point (or the State Department of Åland) within one month of submitting the form; it cannot be mailed or emailed. This schema describes the form only; it does not submit anything on the applicant's behalf, and does not imply Finnish government endorsement. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Finland or DVV.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Digi- ja väestötietovirasto (Digital and Population Data Services Agency)",
+    "abbreviation": "DVV",
+    "url": "https://dvv.fi"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://dvv.fi/documents/16079645/39123197/The+registration+information+of+a+foreigner.pdf/d179dd2f-e279-8f32-1f8b-ee1fed610d90/The+registration+information+of+a+foreigner.pdf?t=1753428818556",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "DVV05.03.00A, \"The registration information of a foreigner — Request for personal identity code\" (English edition, 06/2025), DVV's own English-language fillable AcroForm PDF, cross-checked against the Finnish-language edition (\"Ulkomaalaisen rekisteröinti\", 04/2025) of the same form number."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2299 'GovSchema Standard Research' cycle. Opens Finland's National ID & Civic Documents vertical (3/6; Visa and Business Formation already modelled via GOV-2276/GOV-2292), globally one of GovSchema's weakest-covered verticals (74% at cycle start). Finland's domestic eID/identity-card route (poliisi.fi) was re-confirmed this cycle as online-e-service-or-in-person-only with no downloadable form, so DVV's foreigner-registration form remains the correct National ID candidate. Both the English (39123197) and Finnish (42069833) editions were fetched fresh with a plain HTTP GET this session: HTTP 200, 151,115 bytes (English) / 142,376 bytes (Finnish), both confirmed genuine '%PDF-1.7' AcroForm PDFs with no login/CAPTCHA/WAF gate — byte sizes match a prior scouting pass exactly. A from-scratch pdfjs-dist (v4, legacy build) extraction via page.getAnnotations()/page.getTextContent() on both editions found 3 pages and exactly 43 real /Widget-subtype annotations (28 on page 1, 13 on page 2, 2 on page 3) across 34 unique field names (32 applicant-facing on pages 1-2, plus 2 Save/Print button widgets on page 3, which is a GDPR privacy statement carrying 0 applicant-facing fields and is excluded) — not '54 total widget annotations' as a prior scouting pass had estimated; that figure counted every annotation on the page (e.g. link annotations to Datatilsynet-equivalent privacy pages) rather than only true /Widget subtypes, and this cycle's own precise widget-subtype count supersedes it. Unlike several prior Nordic specimens in this registry, this form's fields are self-documenting: every Tx widget carries its own descriptive alternativeText tooltip quoting the form's own numbered question text verbatim (e.g. 'Text field 1' → alternativeText '1. Surname'), and every Btn radio group is a genuine PDF radio-button parent field (radioButton: true confirmed on every one of the form's 7 exclusive-choice groups: sex, prior residence in Finland, marital status, contact language, duration of stay, official-decision-by-email preference, and the family-members-in-Finland yes/no gate) rather than independent same-named checkboxes — so, unusually for this registry, no coordinate cross-reference against printed text was strictly required to establish field identity, though row y-coordinates were still used to confirm each radio option's exported value against its printed label (e.g. duration-of-stay's 4 options, top-to-bottom on the page, map to exportValue 0/1/2/3 in the same order as their printed text) and to pair each of the 3 family-member checkboxes (spouse/children/parents, independently checkable, not mutually exclusive) with its own adjacent free-text name field. The 32 applicant-facing widget-groups were modelled 1:1 into 32 fields[] entries with no merging or splitting, except the two 'end date' follow-up text fields (temporaryStayEndDate, lessThanYearEndDate), which the source itself visibly nests under two of the four duration-of-stay radio options and this schema gates with requiredWhen/visibleWhen against durationOfStay accordingly. Three modelling decisions are disclosed in this document's own VERIFICATION.md: (1) marital status is deliberately left ungated by any Condition — the form's own instruction text ('We can register your marital status with this form only in these situations. In other cases, marital status is registered with a separate form.') scopes it to only two situations (under 18 and unmarried, or unmarried with refugee/subsidiary-protection status), but no field on the form itself (e.g. a computed age, or a refugee-status flag) exists to gate a Condition against, so — per this registry's existing precedent for OLE_TY1 section 8 — the constraint is disclosed in the field's own description only; (2) the family-members-in-Finland question (item 24) is modelled as a yes/no gate plus 3 independent presence-flag/name-pairs (spouse, children under 18, parents of children under 18) rather than a full repeating sub-schema, since the source's own instruction text states plainly that family relationships absent from the Population Information System are NOT registered via this form ('Family relations missing from the Population information System will not be registered with this form. Use the forms \"Notification of marriage outside Finland\" and/or \"Notification of child born outside Finland\"'), i.e. this question is a disclosure/context field, not a registration mechanism, matching the scope this schema's fields[] give it; (3) the Estonian/Nordic identity-number field (item 16) and the contact-language field (item 9) are both left ungated against countryMovedFrom/nativeLanguage respectively, since both of those source fields are free text on this form (no enum to reliably match a Condition's equals/in operator against), following this registry's existing dk/cpr precedent for the same class of judgment call — and per this registry's own established notEquals-empty-string-on-an-optional-field bug pattern, no Condition in this schema gates on notEquals against an optional field; every requiredWhen/visibleWhen here is a plain equals/in check against a boolean or enum field. The physical signature line (item 20, 'Signature') carries no fillable AcroForm widget on this specimen, consistent with this registry's dk/cpr and fi/migri precedent for signature lines; it is modelled as an attestation documents[] entry quoting the form's own item 19/20 declaration text verbatim, alongside 4 further documents[] entries derived from DVV's own published foreigner-registration guidance (dvv.fi/en/foreigner-registration, fetched fresh this session) listing the identity/legal-residence proof, work-or-study proof, and family-relationship-certificate documents an applicant must bring to their in-person appointment. One crossFieldValidation rule (dateMovedToAddress must not precede dateMovedToFinland) encodes a genuine logical constraint the source's own field ordering implies. Two mock conformance scenarios (a minimal single applicant moving from Sweden with no dependents, and a fuller scenario for a fictional Estonian software developer moving to Finland for employment with a spouse and child already resident) plus a disposable mutation-control script (not committed) were run against this schema's own required/requiredWhen/visibleWhen/validation/crossFieldValidation grammar and documents[] requiredness — see this document's own VERIFICATION.md for the full run record. Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 1 'Surname'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "forenames",
+      "label": "Forenames",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 2 'Forenames'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 3 'Date of Birth'",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "description": "The form's own two-option 'Sex' radio-button group (a genuine PDF radio field, not two independent checkboxes; no third option is printed on this specimen).",
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 4 'Sex': 'Male ○ Female ○'",
+      "validation": {
+        "enum": [
+          "male",
+          "female"
+        ]
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "citizenship",
+      "label": "Citizenship",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 5 'Citizenship'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "hasLivedInFinlandBefore",
+      "label": "Have you lived in Finland before?",
+      "type": "boolean",
+      "required": true,
+      "description": "The form's own two-option 'No / Yes, when?' radio-button group.",
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 6 'Have you lived in Finland before? No ○ Yes, when? ○'",
+      "classification": "pii"
+    },
+    {
+      "name": "livedInFinlandBeforeWhen",
+      "label": "Have you lived in Finland before? Yes, when?",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasLivedInFinlandBefore",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "hasLivedInFinlandBefore",
+        "equals": true
+      },
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 6 follow-up text field, printed directly beside the 'Yes' option",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": false,
+      "description": "This form registers marital status only in the two situations printed on the form itself: an applicant under 18 and unmarried, or an applicant unmarried with refugee status or subsidiary protection. The form's own instruction text states plainly: 'We can register your marital status with this form only in these situations. In other cases, marital status is registered with a separate form.' No field on this form (e.g. a computed age or a distinct refugee-status flag) exists to gate this field's applicability via a Condition, so the scoping is disclosed here descriptively rather than enforced structurally — see this document's VERIFICATION.md.",
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 7 'Marital status': 'Under 18 years and unmarried ○ Unmarried with refugee status or subsidiary protection ○'",
+      "validation": {
+        "enum": [
+          "under_18_and_unmarried",
+          "unmarried_with_refugee_or_subsidiary_protection_status"
+        ]
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "nativeLanguage",
+      "label": "Native language (only one can be registered)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 8 'Native language (only one can be registered)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "contactLanguage",
+      "label": "Contact language",
+      "type": "enum",
+      "required": false,
+      "description": "Meaningful only if the applicant's native language is neither Finnish nor Swedish: which of Finland's two official languages official messages not available in the applicant's native language should be sent in. The source form prints only these two options (no 'other' choice; nativeLanguage above is free text and is not gated against this field by a Condition, since matching it reliably would require string comparison against an open-ended value, per this registry's established judgment on similar free-text-gated fields).",
+      "sourceRef": "DVV05.03.00A — page 1/3, PERSONAL DATA, item 9 'Contact language ... Finnish ○ Swedish ○'",
+      "validation": {
+        "enum": [
+          "finnish",
+          "swedish"
+        ]
+      }
+    },
+    {
+      "name": "streetAddress",
+      "label": "Street address, also apartment code (letter and number)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, ADDRESS IN FINLAND, item 10 'Street address, also apartment code (letter and number)'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "postalCodeAndCity",
+      "label": "Postal code and city",
+      "type": "string",
+      "required": true,
+      "description": "The source form combines postal code and city into a single fillable field (one widget, not two), unlike this registry's Danish siblings which split them; this schema mirrors the form's own single-field layout rather than introducing a split the source does not have.",
+      "sourceRef": "DVV05.03.00A — page 1/3, ADDRESS IN FINLAND, item 11 'Postal code and city'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "municipality",
+      "label": "Municipality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, ADDRESS IN FINLAND, item 12 'Municipality'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "dateMovedToAddress",
+      "label": "The date on which you moved to this address",
+      "type": "date",
+      "required": true,
+      "description": "If the date of move was more than one month ago, the date the request is submitted will be registered as the date of move instead, per the form's own instruction text.",
+      "sourceRef": "DVV05.03.00A — page 1/3, ADDRESS IN FINLAND, item 13 'The date on which you moved to this address'",
+      "classification": "pii"
+    },
+    {
+      "name": "countryMovedFrom",
+      "label": "From which country did you move to Finland?",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, IMMIGRATION, item 14 'From which country did you move to Finland?'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "dateMovedToFinland",
+      "label": "When did you move to Finland?",
+      "type": "date",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 1/3, IMMIGRATION, item 15 'When did you move to Finland?'",
+      "classification": "pii"
+    },
+    {
+      "name": "estoniaOrNordicIdentityNumber",
+      "label": "If you moved from Estonia or a Nordic country, what is your identity number in that country?",
+      "type": "string",
+      "required": false,
+      "description": "Left ungated against countryMovedFrom: that field is free text on this form, so a reliable Condition match (equals/in) against an open-ended country name is not possible, matching this registry's existing dk/cpr precedent for the equivalent field.",
+      "sourceRef": "DVV05.03.00A — page 1/3, IMMIGRATION, item 16",
+      "validation": {
+        "maxLength": 50
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "durationOfStay",
+      "label": "For how long will you live in Finland?",
+      "type": "enum",
+      "required": true,
+      "description": "The form's own 4-option radio-button group (a genuine PDF radio field), top-to-bottom on the page: a permanent address with a municipality of residence; a temporary address without a municipality of residence (at least one year); an address for less than one year; or no residence in Finland at all, with the address registered as a postal address only.",
+      "sourceRef": "DVV05.03.00A — page 1/3, IMMIGRATION, item 17 'For how long will you live in Finland?'",
+      "validation": {
+        "enum": [
+          "permanent_address",
+          "temporary_address_at_least_one_year",
+          "less_than_one_year",
+          "postal_address_only"
+        ]
+      }
+    },
+    {
+      "name": "temporaryStayEndDate",
+      "label": "End date of temporary stay",
+      "type": "date",
+      "required": false,
+      "visibleWhen": {
+        "field": "durationOfStay",
+        "equals": "temporary_address_at_least_one_year"
+      },
+      "requiredWhen": {
+        "field": "durationOfStay",
+        "equals": "temporary_address_at_least_one_year"
+      },
+      "sourceRef": "DVV05.03.00A — page 1/3, IMMIGRATION, item 17 follow-up field 'End date of temporary stay:'"
+    },
+    {
+      "name": "lessThanYearEndDate",
+      "label": "Less than a year, until",
+      "type": "date",
+      "required": false,
+      "visibleWhen": {
+        "field": "durationOfStay",
+        "equals": "less_than_one_year"
+      },
+      "requiredWhen": {
+        "field": "durationOfStay",
+        "equals": "less_than_one_year"
+      },
+      "sourceRef": "DVV05.03.00A — page 1/3, IMMIGRATION, item 17 follow-up field 'Less than a year, until:'"
+    },
+    {
+      "name": "additionalAddressInformation",
+      "label": "Possible additional information concerning the address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DVV05.03.00A — page 1/3, item 18 'Possible additional information concerning the address'",
+      "validation": {
+        "maxLength": 1000
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "The date of the applicant's own signed request declaration ('I request that the information I have given above be entered into the Finnish Population Information System. I confirm that the information given is correct...'). The adjacent 'Signature' item (20) carries no fillable AcroForm widget on this specimen — a physical signature line only, consistent with this registry's precedent for signature lines — and is modelled instead as an attestation documents[] entry quoting the declaration text verbatim.",
+      "sourceRef": "DVV05.03.00A — page 2/3, SIGNATURE, item 19 'Date'"
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone number",
+      "type": "string",
+      "required": false,
+      "description": "The form's own note states contact details are not registered in the Population Information System and are used only for contact purposes regarding this registration.",
+      "sourceRef": "DVV05.03.00A — page 2/3, CONTACT DETAILS, item 21 'Telephone number'",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": true,
+      "description": "Required: the form's own item 23 states the notification of registration is primarily sent by e-mail.",
+      "sourceRef": "DVV05.03.00A — page 2/3, CONTACT DETAILS, item 22 'E-mail'",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "wantOfficialDecisionsByEmail",
+      "label": "The notification of registration is primarily sent by e-mail. Do you also want a possible official decision to be sent by e-mail?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "DVV05.03.00A — page 2/3, CONTACT DETAILS, item 23"
+    },
+    {
+      "name": "hasFamilyMembersInFinland",
+      "label": "Do you have family members who live in Finland or who moved with you to Finland?",
+      "type": "boolean",
+      "required": true,
+      "description": "A disclosure/context question only. The form's own instruction text states plainly that family relationships absent from the Population Information System are NOT registered via this form ('Use the forms \"Notification of marriage outside Finland\" and/or \"Notification of child born outside Finland\" for notifying family relations'), so this field and its three dependents below deliberately do not model a full repeating family-member sub-schema.",
+      "sourceRef": "DVV05.03.00A — page 2/3, BACKGROUND INFORMATION, item 24"
+    },
+    {
+      "name": "familyMemberSpousePresent",
+      "label": "Yes; Spouse",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasFamilyMembersInFinland",
+        "equals": true
+      },
+      "sourceRef": "DVV05.03.00A — page 2/3, BACKGROUND INFORMATION, item 24 checkbox 'Spouse:'"
+    },
+    {
+      "name": "familyMemberSpouseName",
+      "label": "Spouse",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "familyMemberSpousePresent",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "familyMemberSpousePresent",
+        "equals": true
+      },
+      "sourceRef": "DVV05.03.00A — page 2/3, BACKGROUND INFORMATION, item 24, 'Spouse:' free-text field",
+      "validation": {
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "familyMemberChildrenPresent",
+      "label": "Yes; Children under 18 years",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasFamilyMembersInFinland",
+        "equals": true
+      },
+      "sourceRef": "DVV05.03.00A — page 2/3, BACKGROUND INFORMATION, item 24 checkbox 'Children under 18 years:'"
+    },
+    {
+      "name": "familyMemberChildrenNames",
+      "label": "Children under 18 years",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "familyMemberChildrenPresent",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "familyMemberChildrenPresent",
+        "equals": true
+      },
+      "sourceRef": "DVV05.03.00A — page 2/3, BACKGROUND INFORMATION, item 24, 'Children under 18 years:' free-text field",
+      "validation": {
+        "maxLength": 500
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "familyMemberParentsPresent",
+      "label": "Yes; Parents (for children under 18 years)",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "field": "hasFamilyMembersInFinland",
+        "equals": true
+      },
+      "sourceRef": "DVV05.03.00A — page 2/3, BACKGROUND INFORMATION, item 24 checkbox 'Parents (for children under 18 years):'"
+    },
+    {
+      "name": "familyMemberParentsNames",
+      "label": "Parents (for children under 18 years)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "familyMemberParentsPresent",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "familyMemberParentsPresent",
+        "equals": true
+      },
+      "sourceRef": "DVV05.03.00A — page 2/3, BACKGROUND INFORMATION, item 24, 'Parents (for children under 18 years):' free-text field",
+      "validation": {
+        "maxLength": 500
+      },
+      "classification": "pii"
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocument",
+      "label": "A valid passport, or an official photo ID card of a citizen of an EU member country, Iceland, Norway, Liechtenstein, Switzerland, or San Marino",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "passport",
+        "eu-eea-national-photo-id-card"
+      ],
+      "sourceRef": "dvv.fi/en/foreigner-registration, 'Book an appointment for a personal visit': 'Please bring with you the appropriate documents for your situation to your appointment: a valid passport or an official photo ID card of a citizen from an EU member country, Iceland, Norway, Liechtenstein, Switzerland, or San Marino'"
+    },
+    {
+      "id": "proofOfLegalResidence",
+      "label": "A residence permit card, other proof of lawful residence in Finland, or (for EU citizens) a certificate of registration of the right of residence",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "residence-permit-card",
+        "other-proof-of-legal-residence",
+        "eu-right-of-residence-registration-certificate"
+      ],
+      "sourceRef": "dvv.fi/en/foreigner-registration: 'a residence permit card or any other possible proof that you are residing legally in Finland; a certificate of registration of the right of residence for EU citizens'. Which specific document applies depends on the applicant's own citizenship and immigration status; the source lists these as alternatives rather than naming a single universal document, merged here into one requirement with multiple acceptedTypes."
+    },
+    {
+      "id": "proofOfWorkOrStudy",
+      "label": "Proof of work or studies in Finland (e.g. a certificate of student status or an employment contract)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "certificate-of-student-status",
+        "employment-contract"
+      ],
+      "sourceRef": "dvv.fi/en/foreigner-registration, 'Who can get a personal identity code?': 'working in Finland and you have the right to work; studying in Finland'; 'Book an appointment for a personal visit': 'proof of work or studies in Finland, for example, a certificate of student status or an employment contract'. Applicable when the applicant's grounds for registration are employment or study in Finland, one of several alternative grounds DVV's own guidance lists (the others being an existing family member already registered in Finland, or a residence permit/residence card/EU right-of-residence registration). This form has no single field naming the applicant's chosen grounds for registration to gate this entry against, so it is left descriptive rather than machine-required, following this registry's established convention for the same class of gap."
+    },
+    {
+      "id": "familyRelationshipCertificates",
+      "label": "Completed family-relationship notification forms, and, if required, legalised and translated certificates (e.g. marriage or parenthood)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasFamilyMembersInFinland",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "dvv.fi/en/foreigner-registration: 'If required, fill out the forms on your family relationships. You must also present us with an official certificate showing the information (for example marriage or parenthood).'; 'Book an appointment for a personal visit': 'if you are also requesting the registration of family relationships in addition to the personal identity code, bring completed forms and, if required, legalised and translated certificates'"
+    },
+    {
+      "id": "applicantDeclaration",
+      "label": "Applicant's signed request declaration",
+      "category": "attestation",
+      "required": true,
+      "statement": "I request that the information I have given above be entered into the Finnish Population Information System. I confirm that the information given is correct. I undertake to notify any changes to my details not already known to the authorities.",
+      "sourceRef": "DVV05.03.00A — page 2/3, SIGNATURE section, items 19-20"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "movedToAddressNotBeforeMovedToFinland",
+      "compare": {
+        "field": "dateMovedToAddress",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "dateMovedToFinland"
+      }
+    }
+  ]
+}
