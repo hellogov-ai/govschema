@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **353 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **354 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2323, "GovSchema Standard Research"): Norway's
+> National ID & Civic Documents vertical is now closed**, via
+> `no/skatteetaten/notification-of-move-within-norway` — Skatteetaten's
+> (the Norwegian Tax Administration) form RF-1400B, "Flyttemelding –
+> flytting innen Norge" (Notification of moving within Norway, for persons
+> who already hold a fødselsnummer). This was one of the three Norway
+> candidates the GOV-2316 parent cycle had already pre-scouted and named in
+> this catalog's own "Known Gaps" section (item 8); picked over the other
+> two (Statens vegvesen's driving-licence form, UDI's legacy-paper visa
+> form) as the smallest and most tightly-scoped, and the closest analogue to
+> this registry's `fi/dvv/registration-of-foreigner` National ID precedent
+> (Norway's own physical national ID card is in-person/biometric-issuance
+> only, with no downloadable application form). Fetched fresh from
+> `skatteetaten.no`: HTTP 200, 238,950 bytes, genuine `%PDF` header, no
+> login/CAPTCHA/WAF gate. A `pdfjs-dist` extraction resolved 61 raw
+> `/Widget` annotations across 2 pages (close to but not identical to the
+> pre-scout's own ~63 approximate figure), consolidated — via a
+> 3-text-widget day/month/year merge into one `moveDate` field, a
+> 2-checkbox street-vs-property address-type merge into one enum, and a
+> 3-checkbox identification-type merge into one `documents[]` entry — into
+> **55 `fields[]` entries and 2 `documents[]` entries**. Two mock
+> conformance scenarios (a single sender/single mover on the street-address
+> path; a joint two-sender family of three on the property-address/
+> gårds-og-bruksnummer path, with a foreign mailing address) were checked
+> against a disposable checker script that evaluates both `fields[]` and
+> `documents[]` requiredness (this registry's own documented blind spot
+> from the `fi/migri` cycle, GOV-2280/GOV-2282) — both found **0 errors**.
+> **Norway now stands at 2 of its 6 verticals** (Business Formation,
+> National ID); DMV and Visa remain open, pre-scouted backlog candidates,
+> and Taxes/Passport are confirmed weak/dead-end. See the "Known Gaps"
+> section below and the document's own VERIFICATION.md for the full
+> sourcing record.
+>
 
 > **Update (2026-07-11, GOV-2316, "GovSchema Standard Research"): Norway
 > opens as the registry's 35th jurisdiction**, via its Business Formation
@@ -6807,7 +6841,18 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (26/35 jurisdictions — 74%)
+### National ID & Civic Documents (27/35 jurisdictions — 77%)
+
+**Norway**'s National ID & Civic Documents gap is now closed (GOV-2323),
+via `no/skatteetaten/notification-of-move-within-norway` — Skatteetaten's
+RF-1400B, "Flyttemelding" (move notification), used to register a change
+of residential address in Folkeregisteret (the National Population
+Register) for a person or family group who already hold a Norwegian
+fødselsnummer. This was CATALOG.md's own named Known Gaps candidate for
+Norway (item 8); see the Executive Summary update above and the
+document's own VERIFICATION.md for the full sourcing record. Norway now
+stands at 2 of 6 verticals (Business Formation, National ID); DMV and
+Visa remain open, pre-scouted backlog candidates — see "Known Gaps" below.
 
 **Finland**'s National ID & Civic Documents gap is now closed (GOV-2299),
 via `fi/dvv/registration-of-foreigner` — the Digital and Population Data
@@ -7072,7 +7117,7 @@ now closed.
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **NO** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **NO** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -7986,23 +8031,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    jurisdictions.
 8. **Norway's remaining verticals** (opened GOV-2316 via its Business
    Formation vertical, `no/brreg/samordnet-registermelding`): three of
-   Norway's other five verticals are genuine, unscreened-in-depth backlog
-   candidates for a future cycle, each confirmed to have a live,
-   directly-downloadable form as of this cycle's own scouting pass (byte
-   counts and widget counts below are approximate, from a quick scout, not
-   a full independent extraction):
-   - **National ID**: Skatteetaten's (the Norwegian Tax Administration)
-     form RF-1400B, "Flyttemelding" (notification of moving within
-     Norway) —
-     `https://www.skatteetaten.no/globalassets/skjema/alltid/rf1400b-flytte-i-norge.pdf`,
-     ~63 widgets. Used to register a change of address in the National
-     Population Register, Norway's closest analogue to a National ID
-     civic-registration form (Norway's actual national ID card,
-     "nasjonalt ID-kort," is an in-person/biometric-issuance process with
-     no downloadable application form, so this address-notification form
-     is the strongest available National ID candidate for Norway, the
-     same pattern this registry's `fi/dvv` precedent established for
-     Finland).
+   Norway's other five verticals were genuine, unscreened-in-depth backlog
+   candidates as of that cycle's own scouting pass (byte counts and widget
+   counts below are approximate, from a quick scout, not a full independent
+   extraction). **Update (2026-07-11, GOV-2323): National ID is now
+   closed**, via `no/skatteetaten/notification-of-move-within-norway` — see
+   the Executive Summary update above and the document's own
+   VERIFICATION.md (which also independently re-extracted the widget count
+   at 61, close to but not identical to this entry's own ~63 approximate
+   figure). DMV and Visa remain open:
    - **DMV**: Statens vegvesen's (the Norwegian Public Roads
      Administration) driving-licence application form (a combined
      application and health self-declaration,
