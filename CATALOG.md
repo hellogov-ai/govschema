@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**34 jurisdictions** | **348 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**34 jurisdictions** | **349 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2285, "GovSchema Standard Research"): Denmark's
+> Visa vertical opens**, via `dk/siri/work-permit-application` — SIRI's
+> (Styrelsen for International Rekruttering og Integration, the Danish
+> Agency for International Recruitment and Integration) form AR8,
+> "Application for a work permit or for an extension of a work permit in
+> Denmark." Before authoring, this cycle re-screened whether SIRI's primary
+> first-time work-permit route (form AR1, or its employer-submitted twin
+> AR6 — covering the Pay Limit Scheme, Positive Lists, Researcher, and
+> Fast-track pathways) would be a stronger, less narrowly-scoped candidate
+> than AR8's own sideline-employment/accompanying-family/extension-only
+> scope: confirmed AR1/AR3/AR6/AR7 are all routed exclusively through a
+> MitID-authenticated case-management wizard
+> (`forms.nyidanmark.dk/siri/Login/LoginMitId`) with no downloadable
+> AcroForm or fill-by-hand specimen anywhere on `nyidanmark.dk`, only
+> boilerplate GDPR/sworn-declaration PDFs adjacent to it — not modellable
+> from an unauthenticated static source. AR8 was authored instead, fetched
+> fresh via two independent curl fetches (HTTP 200, 855,022 bytes,
+> SHA-256-identical). An independent `pdfjs-dist` extraction confirmed 0
+> AcroForm widgets across all 14 pages (a genuine fill-by-hand specimen,
+> matching this registry's existing `at/bmeia`/`is/skatturinn` precedent for
+> numbered/non-fillable specimens) and was used to build a **104-field**
+> model spanning the form's own two parts — Part 1, completed by the
+> applicant, and Part 2, completed by their employer in Denmark, each
+> independently declaring correctness and signing separately. Four new
+> `crossFieldValidation` `equals` rules (a first for this registry; prior
+> uses were date-ordering `greaterThanOrEqual` comparisons only) check the
+> employer's own restated applicant-identity fields (Part 2, Section 4)
+> against the applicant's own Part 1 fields. Two judgment calls are
+> disclosed in VERIFICATION.md: required-field determination is editorial
+> (the source carries no asterisk/required-marking convention at all), and
+> the two power-of-attorney `documents[]` entries are modelled
+> `required: false` with an explanatory label rather than gated by an
+> invented synthetic third-party-yes/no field the source does not print. A
+> mock conformance run (see the document's own VERIFICATION.md) found 0
+> errors across 2 valid scenarios and 6 mutation controls, plus an
+> independent check that every `documents[].requiredWhen` field reference
+> resolves. **Denmark now stands at 5 of 6 verticals** (Passport, Taxes,
+> National ID, Business Formation, Visa); **DMV remains Denmark's only open
+> vertical**, previously screened and set aside as a poor candidate (see
+> "Known Gaps" below).
 
 > **Update (2026-07-11, GOV-2276, "GovSchema Standard Research"): Finland
 > opens as GovSchema's 34th jurisdiction**, via its Visa vertical, one of
@@ -6229,7 +6270,23 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (26/34 jurisdictions — 76%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (27/34 jurisdictions — 79%)
+
+**Denmark's Visa vertical is now open** (`dk/siri/work-permit-application`,
+GOV-2285), via SIRI's (the Danish Agency for International Recruitment and
+Integration) form AR8 — a genuine, unauthenticated fill-by-hand PDF (0
+AcroForm widgets across 14 pages) scoped to sideline employment, work
+permits for accompanying family, and extensions of either. This is
+narrower than a first-time primary work-permit application: SIRI's own
+primary route (form AR1, or employer-submitted twin AR6) was re-screened
+this cycle and confirmed to be exclusively a MitID-authenticated online
+wizard with no unauthenticated static specimen — see the Executive Summary
+update above and the document's own VERIFICATION.md for the full
+candidate-selection record. Denmark's own Schengen short-stay route
+(`applyvisa.um.dk`) remains a confirmed duplicate of the EU-harmonized
+Annex I template already modelled for other Schengen jurisdictions in this
+registry (e.g. `fr/france-visas/schengen-visa-application`,
+`at/bmeia/schengen-visa-application`), not a genuine gap.
 
 **Finland opens as GovSchema's 34th jurisdiction (GOV-2276)**, via
 `fi/migri/residence-permit-employed-person` — Migri's form OLE_TY1, the
@@ -6239,12 +6296,6 @@ the full sourcing and field-mapping record. Finland now stands at 1 of its
 6 verticals (Visa); Business Formation, Taxes, and National ID are all
 confirmed strong, unscreened backlog candidates for a future cycle (Passport
 is a confirmed dead end; DMV is weak) — see "Known Gaps" below.
-
-**Denmark**, opened this cycle (GOV-2244) via its Passport vertical, has
-no Visa schema yet — an open, unscreened backlog candidate for a future
-cycle (Denmark, as a Schengen member, would likely share the EU-harmonized
-national-visa template already modelled for other Schengen jurisdictions
-in this registry, but this was not confirmed this cycle).
 
 **Iceland's Visa vertical is now open** (`is/utl/other-residence-permit-application`,
 GOV-2210), via Útlendingastofnun's (the Directorate of Immigration, ÚTL)
@@ -6725,7 +6776,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DK** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **DK** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -7590,6 +7641,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    guide found" note is corrected here rather than silently left standing.
    **Denmark now stands at 4 of 6 verticals** (Passport, Taxes, National
    ID, Business Formation); DMV and Visa remain open backlog candidates.
+   **Update (2026-07-11, GOV-2285): Visa is now closed**, via
+   `dk/siri/work-permit-application` (SIRI form AR8, "Application for a
+   work permit or for an extension of a work permit in Denmark," scoped to
+   sideline employment/accompanying family/extensions — SIRI's own
+   first-time primary route, AR1/AR6, was re-screened this cycle and
+   reconfirmed to be exclusively a MitID-authenticated online wizard with
+   no unauthenticated static specimen) — see the Executive Summary update
+   above and the document's own VERIFICATION.md. **Denmark now stands at 5
+   of 6 verticals** (Passport, Taxes, National ID, Business Formation,
+   Visa); **DMV is Denmark's only remaining open vertical**, already
+   screened and set aside above (Færdselsstyrelsen's P23 is a shared
+   multi-party record card, not a citizen-facing intake form;
+   Motorstyrelsen's re-registration flow is exclusively login-gated) — a
+   future cycle should look for a different DMV candidate (e.g. a dedicated
+   new-vehicle-registration or learner's-permit form) rather than
+   re-attempting either.
 7. **Finland's remaining verticals** (opened GOV-2276 via its Visa vertical,
    `fi/migri/residence-permit-employed-person`): the parent scouting cycle
    (three parallel scouts across Norway, Finland, Belgium) found Finland's

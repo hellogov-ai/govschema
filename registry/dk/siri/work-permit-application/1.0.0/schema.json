@@ -1,0 +1,1029 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "dk/siri/work-permit-application",
+  "version": "1.0.0",
+  "title": "Denmark Work Permit Application — Sideline Employment or Accompanying Family (Form AR8)",
+  "description": "Denmark's Styrelsen for International Rekruttering og Integration (SIRI, the Danish Agency for International Recruitment and Integration) application form AR8, used to apply for a work permit (not a residence permit) on one of two specific grounds — (a) sideline employment, a second job alongside an existing residence-and-work permit, or (b) a work permit for a family member accompanying a sponsor who already holds Danish residence — or for an extension of either. This is a genuinely narrower scope than a first-time primary work-permit application: SIRI's own primary route (form AR1, or its employer-submitted twin AR6) is a MitID-authenticated online case-management wizard (forms.nyidanmark.dk) with no unauthenticated static-form fallback, and commuters who reside abroad while working in Denmark cannot use AR8 at all (the source form directs them to AR1/AR3/AR6/AR7 instead) — see VERIFICATION.md for the full sourcing record and the screening that ruled out AR1/AR3/AR6/AR7 as candidates. AR8 is a genuine, current, unauthenticated fill-by-hand PDF (no AcroForm widget layer — 0 widgets confirmed across all 14 pages) published directly by SIRI at newtodenmark.dk, with an official parallel English version used as this schema's primary source. The form is completed in two parts by two distinct parties: Part 1 by the applicant (the foreign national), and Part 2 by their employer in Denmark, each independently declaring the correctness of their own part and signing separately. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Denmark, the Danish Agency for International Recruitment and Integration (SIRI), or the Ministry of Immigration and Integration.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Styrelsen for International Rekruttering og Integration (Danish Agency for International Recruitment and Integration)",
+    "abbreviation": "SIRI",
+    "url": "https://www.nyidanmark.dk/en-GB/Words-and-concepts/SIRI/Application-forms---SIRI"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.nyidanmark.dk/-/media/Files/SIRI/Application-forms/Work-permit-only/AR8_en.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "AR8 (form code AR8_en_30012026, per the form's own footer) — 'Application for a work permit or for an extension of a work permit in Denmark', SIRI's own official English-language specimen, 14 pages"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2285: GovSchema Standard Research cycle. Denmark stood at 4 of 6 verticals (Passport, Taxes, National ID, Business Formation; GOV-2244/2253/2260/2268); this schema opens the 5th, Visa, via the AR8 candidate CATALOG.md had already flagged as genuine but unauthored. Fetched fresh via curl from nyidanmark.dk: HTTP 200, content-type application/pdf, 855,022 bytes. Before authoring, the primary/first-time work-permit route (AR1, and its employer-submitted twin AR6) was re-screened this cycle on the theory that a first-time-applicant schema would be a stronger fit for the Visa vertical than AR8's narrower sideline/accompanying-family/extension scope: SIRI's own application-forms index page links AR1/AR3/AR6/AR7 only to newtodenmark.dk/AR1, which 302-redirects to forms.nyidanmark.dk/siri/Login/LoginMitId, a MitID-authenticated case-management wizard with no static AcroForm or fill-by-hand specimen; the only adjacent first-party PDFs are a sworn-declaration signature-substitute and a GDPR/data-processing prose sheet, neither containing the application's own data-entry fields. Confirmed with a fresh pdfjs-dist extraction of that adjacent PDF (no /AcroForm fields) that it is boilerplate, not the form. AR1/AR3/AR6/AR7 are accordingly set aside as not modellable from an unauthenticated static source; AR8 (genuinely SIRI's own downloadable specimen, matching CATALOG.md's prior characterization) was authored instead, with its narrower real-world scope disclosed plainly in this document's own title and description rather than mischaracterized as a general work-permit application. Re-confirmed via a fresh pdfjs-dist extraction of AR8 itself (legacy build, cached local install): doc.getFieldObjects() returns null and page.getAnnotations() returns 0 Widget-subtype annotations across all 14 pages — a genuine fill-by-hand specimen with no AcroForm layer. All running text was extracted page-by-page with getTextContent(), clustered into lines by y-coordinate, and cross-walked against the source's own section numbering (Part 1 sections 1-12, Part 2 sections 1-8) to build the field list; x/y positions were inspected directly (not merely the clustered line text) for the salary table on pages 9-10 to confirm each row is a single label with a single blank value cell (no separate 'amount' column exists on the source), so 'Other employer paid benefits, if any – state which one' (three repeated rows) and 'Base salary/Hourly wage' etc. are each modelled as one field, not a label/amount pair. Two disclosed judgment calls: (1) the source form carries no asterisk/required-marking convention at all (unlike this registry's AT Schengen-visa precedent) and no explicit third-party/power-of-attorney yes/no checkbox, so field-level 'required' reflects an editorial judgment about what is necessary to process the application, and the two power-of-attorney document entries are modelled required:false with a description explaining the real-world condition, rather than invented as a synthetic gating field (see 'documents' below); (2) sections 7-8 (education, previous employment) are marked visibleWhen the applicant's own 'danishAuthorisationRequired' answer is not true, mirroring the source's own printed instruction ('you do not need to complete sections 7 and 8') rather than silently dropped. Four crossFieldValidation entries were added comparing the employer's cross-check identity fields (Part 2, section 4) against the applicant's own identity fields (Part 1, section 3) for equality, since the source form asks the employer to restate the same applicant identity data for cross-referencing. A mock conformance run (see this document's own VERIFICATION.md) filled two valid scenarios (a minimal sideline-employment application and a full accompanying-family application with a third-party representative) plus mutation controls confirming every requiredWhen/crossFieldValidation/exclusivityGroups rule is actually enforced, validated cleanly against tools/validate.mjs, tools/validate-ajv.mjs, and an ad hoc conformance checker script."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationType",
+      "label": "Type of application",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Part 1, Section 1 'About the type of application': 'New work permit' / 'Extension of my current work permit'",
+      "validation": {
+        "enum": ["new-work-permit", "extension"]
+      }
+    },
+    {
+      "name": "employmentBasis",
+      "label": "Type of employment (grounds for this application)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Part 1, Section 2 'About the type of employment': 'Sideline employment' / 'Work permit for accompanying family'",
+      "description": "'Sideline employment' is a second job alongside the applicant's existing residence-and-work permit. 'Work permit for accompanying family' is for a family member of a sponsor who already holds a Danish residence permit, offered a job at the sponsor's own company or a closely related one.",
+      "validation": {
+        "enum": ["sideline-employment", "accompanying-family"]
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Surname'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "firstNames",
+      "label": "First name(s)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 1, Section 3 'About you' — 'First name(s)'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Nationality'",
+      "validation": { "minLength": 1, "maxLength": 100 },
+      "classification": "pii"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Date of birth (date, month, year)'",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "cprNumber",
+      "label": "CPR number",
+      "type": "string",
+      "required": false,
+      "description": "Danish Civil Registration (CPR) number, if the applicant already has one (e.g. from a prior stay in Denmark). Not marked mandatory on the source, since a first-time entrant may not yet have been assigned one.",
+      "sourceRef": "Part 1, Section 3 'About you' — 'CPR number'",
+      "validation": { "pattern": "^[0-9]{10}$" },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "personId",
+      "label": "Person ID",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Person ID'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "addressInDenmarkStreetAndNumber",
+      "label": "Address in Denmark (street and number)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Address in Denmark (street and number)'",
+      "validation": { "maxLength": 300 },
+      "classification": "pii"
+    },
+    {
+      "name": "addressInDenmarkPostcodeAndCity",
+      "label": "Postcode and city (address in Denmark)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Postcode and city'",
+      "validation": { "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Phone number'",
+      "validation": { "minLength": 1, "maxLength": 50 },
+      "classification": "pii"
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 1, Section 3 'About you' — 'Email'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 1, Section 4 'About your passport' — 'Passport number'",
+      "validation": { "minLength": 1, "maxLength": 50 },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "sidelineRelatedToPrimaryJob",
+      "label": "Is your sideline employment naturally related to the job forming the basis of your residence and work permit?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "employmentBasis", "equals": "sideline-employment" },
+      "requiredWhen": { "field": "employmentBasis", "equals": "sideline-employment" },
+      "sourceRef": "Part 1, Section 5 'Sideline employment'"
+    },
+    {
+      "name": "sidelineRelatedElaboration",
+      "label": "Elaboration on the relation between the sideline employment and the primary job",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "sidelineRelatedToPrimaryJob", "equals": true },
+      "requiredWhen": { "field": "sidelineRelatedToPrimaryJob", "equals": true },
+      "sourceRef": "Part 1, Section 5 'Sideline employment' — 'If yes, please elaborate'",
+      "validation": { "maxLength": 1000 }
+    },
+    {
+      "name": "danishAuthorisationRequired",
+      "label": "Does the offered job require a Danish authorisation?",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the source form's own instruction states the applicant does not need to complete sections 7 (education) and 8 (previous employment) — modelled here via each of those sections' own 'visibleWhen'.",
+      "sourceRef": "Part 1, Section 6 'About authorisation, if applicable'"
+    },
+    {
+      "name": "completedRelevantEducation",
+      "label": "Have you completed an education that is relevant to the job offered?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "danishAuthorisationRequired", "equals": false },
+      "sourceRef": "Part 1, Section 7 'About your education'"
+    },
+    {
+      "name": "completedEducationTitle",
+      "label": "Title of completed education",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "completedRelevantEducation", "equals": true },
+      "sourceRef": "Part 1, Section 7 — 'If yes, please state title, type and date of completion' — 'Title'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "completedEducationType",
+      "label": "Type of completed education",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "completedRelevantEducation", "equals": true },
+      "sourceRef": "Part 1, Section 7 — 'Type'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "completedEducationDate",
+      "label": "Date of completion of education",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "completedRelevantEducation", "equals": true },
+      "sourceRef": "Part 1, Section 7 — 'Date of completion'"
+    },
+    {
+      "name": "currentlyEnrolledRelevantEducation",
+      "label": "Are you currently enrolled at an education that is relevant to the job offered?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "danishAuthorisationRequired", "equals": false },
+      "sourceRef": "Part 1, Section 7 'About your education'"
+    },
+    {
+      "name": "currentEducationTitle",
+      "label": "Title of education currently enrolled in",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "currentlyEnrolledRelevantEducation", "equals": true },
+      "sourceRef": "Part 1, Section 7 — 'If yes, please state title, type and expected date of completion' — 'Title'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "currentEducationType",
+      "label": "Type of education currently enrolled in",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "currentlyEnrolledRelevantEducation", "equals": true },
+      "sourceRef": "Part 1, Section 7 — 'Type'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "currentEducationExpectedCompletionDate",
+      "label": "Expected date of completion of current education",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "currentlyEnrolledRelevantEducation", "equals": true },
+      "sourceRef": "Part 1, Section 7 — 'Expected date of completion'"
+    },
+    {
+      "name": "hadRelevantPreviousEmployment",
+      "label": "Have you had any previous employment that is relevant to the job offered?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "danishAuthorisationRequired", "equals": false },
+      "sourceRef": "Part 1, Section 8 'About previous employment'"
+    },
+    {
+      "name": "previousEmployment1CompanyName",
+      "label": "Name of company (previous relevant employment A)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment A' — 'Name of company'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "previousEmployment1PeriodFrom",
+      "label": "Period from (previous relevant employment A)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment A' — 'Period of time — From'"
+    },
+    {
+      "name": "previousEmployment1PeriodTo",
+      "label": "Period to (previous relevant employment A)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment A' — 'Period of time — To'"
+    },
+    {
+      "name": "previousEmployment1Address",
+      "label": "Address (previous relevant employment A)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment A' — 'Address'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "previousEmployment1WorkTasks",
+      "label": "Work tasks, short description (previous relevant employment A)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment A' — 'Work tasks (short description)'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "previousEmployment1JobTitle",
+      "label": "Job title (previous relevant employment A)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment A' — 'Job title'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployment2CompanyName",
+      "label": "Name of company (previous relevant employment B)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment B' — 'Name of company'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "previousEmployment2PeriodFrom",
+      "label": "Period from (previous relevant employment B)",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment B' — 'Period of time — From'"
+    },
+    {
+      "name": "previousEmployment2PeriodTo",
+      "label": "Period to (previous relevant employment B)",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment B' — 'Period of time — To'"
+    },
+    {
+      "name": "previousEmployment2Address",
+      "label": "Address (previous relevant employment B)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment B' — 'Address'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "previousEmployment2WorkTasks",
+      "label": "Work tasks, short description (previous relevant employment B)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment B' — 'Work tasks (short description)'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "previousEmployment2JobTitle",
+      "label": "Job title (previous relevant employment B)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment B' — 'Job title'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousEmployment3CompanyName",
+      "label": "Name of company (previous relevant employment C)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment C' — 'Name of company'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "previousEmployment3PeriodFrom",
+      "label": "Period from (previous relevant employment C)",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment C' — 'Period of time — From'"
+    },
+    {
+      "name": "previousEmployment3PeriodTo",
+      "label": "Period to (previous relevant employment C)",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment C' — 'Period of time — To'"
+    },
+    {
+      "name": "previousEmployment3Address",
+      "label": "Address (previous relevant employment C)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment C' — 'Address'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "previousEmployment3WorkTasks",
+      "label": "Work tasks, short description (previous relevant employment C)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment C' — 'Work tasks (short description)'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "previousEmployment3JobTitle",
+      "label": "Job title (previous relevant employment C)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "hadRelevantPreviousEmployment", "equals": true },
+      "sourceRef": "Part 1, Section 8 'Previous relevant employment C' — 'Job title'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "otherRelevantQualifications",
+      "label": "Other qualifications, thesis or the like, relevant to the job offered",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "danishAuthorisationRequired", "equals": false },
+      "sourceRef": "Part 1, Section 8 'About previous employment' — 'Other qualifications, thesis or the like, that is relevant to the job offered'",
+      "validation": { "maxLength": 1000 }
+    },
+    {
+      "name": "comments",
+      "label": "Comments",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 9 'Comments'",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "thirdPartyCvrNumber",
+      "label": "CVR number of third party",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 10 'About the third party, if any' — 'CVR number of third party'",
+      "validation": { "pattern": "^[0-9]{8}$" }
+    },
+    {
+      "name": "thirdPartyName",
+      "label": "Name of third party",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 10 'About the third party, if any' — 'Name of third party'",
+      "validation": { "maxLength": 300 },
+      "classification": "pii"
+    },
+    {
+      "name": "thirdPartyAddress",
+      "label": "Address of third party (street and number)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 10 'About the third party, if any' — 'Address (Street and number)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "thirdPartyPostcodeAndCity",
+      "label": "Postcode and city of third party",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 10 'About the third party, if any' — 'Postcode and city'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "thirdPartyContactPerson",
+      "label": "Contact person at third party",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 10 'About the third party, if any' — 'Contact person'",
+      "validation": { "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "thirdPartyPhoneNumber",
+      "label": "Phone number of third party",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 10 'About the third party, if any' — 'Phone number'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "thirdPartyEmail",
+      "label": "Email of third party",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 1, Section 10 'About the third party, if any' — 'Email'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "consentToShareInformationWithEmployer",
+      "label": "Consent to let SIRI share information from my case with my employer and a potential third party, to a greater extent",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Part 1, Section 11 'Consent to let SIRI share information from my case with my employer and a potential third party' — '(tick the box)'",
+      "description": "Optional per the source's own prose: withholding consent does not block the application, but may lengthen processing since SIRI will then obtain information from the applicant directly rather than the employer."
+    },
+    {
+      "name": "signaturePlace",
+      "label": "Place of signature (applicant)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 1, Section 12 'Signature' — 'Date and place' (place component)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date of signature (applicant)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part 1, Section 12 'Signature' — 'Date and place' (date component)"
+    },
+    {
+      "name": "employerCompanyName",
+      "label": "Name of company (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'Name of company'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "employerCvrNumber",
+      "label": "CVR number (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'CVR number'",
+      "validation": { "pattern": "^[0-9]{8}$" }
+    },
+    {
+      "name": "employerDepartmentName",
+      "label": "Name of department/institute (if applicable)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'Name of department/institute (if applicable)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "employerAddress",
+      "label": "Address (street and number) (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'Address (street and number)'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "employerPostcodeAndCity",
+      "label": "Postcode and city (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'Post code and city'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "employerContactPersonName",
+      "label": "Contact person (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'Contact person'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "employerContactPersonPhone",
+      "label": "Direct phone number of contact person (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'Direct phone number of contact person'",
+      "validation": { "minLength": 1, "maxLength": 50 },
+      "classification": "pii"
+    },
+    {
+      "name": "employerContactPersonEmail",
+      "label": "Email of contact person (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark' — 'Email of contact person'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "employerCoveredByCollectiveBargainingViaAssociation",
+      "label": "Is the employer covered by a collective bargaining agreement via a membership to an employers' association?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Part 2, Section 1 'About the employer in Denmark'"
+    },
+    {
+      "name": "employerAssociationName",
+      "label": "Name of the employers' association",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "employerCoveredByCollectiveBargainingViaAssociation", "equals": true },
+      "sourceRef": "Part 2, Section 1 — 'If yes, please state which employers' association'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "employerCoveredByCollectiveBargainingOtherWay",
+      "label": "If not via an association, is the employer covered by a collective bargaining agreement in another way?",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": { "field": "employerCoveredByCollectiveBargainingViaAssociation", "equals": false },
+      "sourceRef": "Part 2, Section 1 — 'If no, is the employer covered by a collective bargaining agreement in another way?'"
+    },
+    {
+      "name": "employerCollectiveBargainingOtherWayDescription",
+      "label": "Description of the other way the employer is covered by a collective bargaining agreement",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "employerCoveredByCollectiveBargainingOtherWay", "equals": true },
+      "sourceRef": "Part 2, Section 1 — 'If yes, state in which way the employer is covered by a collective bargaining agreement'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "jobTitleInDenmark",
+      "label": "Applicant's job title in Denmark",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'What is the applicant's job title in Denmark?'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "jobDescription",
+      "label": "Job description (work tasks and roles)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'What is the job description (work tasks and roles)?'",
+      "validation": { "minLength": 1, "maxLength": 1000 }
+    },
+    {
+      "name": "disco08Code",
+      "label": "Position's classification code (DISCO-08 code)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'What is the position's classification code (Disco-08 code)?'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "disco08JobFunction",
+      "label": "Job function related to the DISCO-08 code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'State the job function related to the Disco-08 code stated above'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "employmentStartDate",
+      "label": "Start date of employment",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'Start date of employment (day, month, year)'"
+    },
+    {
+      "name": "employmentIndefinite",
+      "label": "Is the employment indefinite?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'Is the employment indefinite?'"
+    },
+    {
+      "name": "employmentEndDate",
+      "label": "End date of the employment",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "employmentIndefinite", "equals": false },
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'If no, state the end date of the employment (day, month, year)'"
+    },
+    {
+      "name": "weeklyWorkingHours",
+      "label": "Weekly working hours",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'Weekly working hours: hours'",
+      "validation": { "minimum": 0, "maximum": 168 }
+    },
+    {
+      "name": "termsResultOfCollectiveBargainingAgreement",
+      "label": "Are the terms of employment the result of a collective bargaining agreement?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'Are the terms of employment the result of a collective bargaining agreement?'"
+    },
+    {
+      "name": "collectiveBargainingAgreementName",
+      "label": "Name of the collective bargaining agreement governing the employment terms",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "termsResultOfCollectiveBargainingAgreement", "equals": true },
+      "sourceRef": "Part 2, Section 2 — 'If yes, please state which agreement'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "entitledToHolidayUnderHolidayAct",
+      "label": "Is the applicant entitled to holiday under the Danish Holiday Act (ferieloven)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'Is the applicant entitled to holiday under the Danish Holiday Act (ferieloven)?'"
+    },
+    {
+      "name": "holidayEntitlementsDescription",
+      "label": "Description of the employment's holiday entitlements",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "entitledToHolidayUnderHolidayAct", "equals": false },
+      "sourceRef": "Part 2, Section 2 — 'If no, please state the holiday entitlements of the employment'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "terminationCompliesWithSalariedEmployeesAct",
+      "label": "Do the terms of termination comply with the Danish Salaried Employees Act (funktionærloven)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'Do the terms of termination comply with the Danish Salaried Employees Act (funktionærloven)?'"
+    },
+    {
+      "name": "terminationTermsDescription",
+      "label": "Description of the employment's terms of termination",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "terminationCompliesWithSalariedEmployeesAct", "equals": false },
+      "sourceRef": "Part 2, Section 2 — 'If no, please state the terms of termination of the employment'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "overtimeConditions",
+      "label": "Applicable conditions in case of overtime",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 2 'About the employment' — 'Applicable conditions in case of overtime'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "baseSalaryOrHourlyWage",
+      "label": "Base salary/hourly wage, gross, in DKK",
+      "type": "number",
+      "required": true,
+      "description": "Gross figure, i.e. actual payroll cost before tax, in DKK, per the source's own instruction.",
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Base salary/Hourly wage'",
+      "validation": { "minimum": 0 },
+      "classification": "financial"
+    },
+    {
+      "name": "fixedAllowances",
+      "label": "Fixed allowances, gross, in DKK, if any",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Fixed allowances, if any'",
+      "validation": { "minimum": 0 },
+      "classification": "financial"
+    },
+    {
+      "name": "employerPaidPensionShare",
+      "label": "Employer-paid share of pension, gross, in DKK, if any",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Employer paid share of pension, if any'",
+      "validation": { "minimum": 0 },
+      "classification": "financial"
+    },
+    {
+      "name": "otherEmployerPaidBenefit1",
+      "label": "Other employer-paid benefit, if any — state which one (1)",
+      "type": "string",
+      "required": false,
+      "description": "The source repeats this same row three times with no distinguishing sub-label; modelled as three independent optional entries.",
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Other employer paid benefits, if any – state which one:' (first of three identical rows)",
+      "validation": { "maxLength": 300 },
+      "classification": "financial"
+    },
+    {
+      "name": "otherEmployerPaidBenefit2",
+      "label": "Other employer-paid benefit, if any — state which one (2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Other employer paid benefits, if any – state which one:' (second of three identical rows)",
+      "validation": { "maxLength": 300 },
+      "classification": "financial"
+    },
+    {
+      "name": "otherEmployerPaidBenefit3",
+      "label": "Other employer-paid benefit, if any — state which one (3)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Other employer paid benefits, if any – state which one:' (third of three identical rows)",
+      "validation": { "maxLength": 300 },
+      "classification": "financial"
+    },
+    {
+      "name": "totalGrossSalaryPerHour",
+      "label": "Total gross salary per hour, in DKK",
+      "type": "number",
+      "required": false,
+      "description": "The source prints both a 'per hour' and a 'per month' total-gross-salary cell; an employer states whichever matches the wage basis (hourly vs. salaried) — neither is independently marked mandatory.",
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Total gross salary — per hour'",
+      "validation": { "minimum": 0 },
+      "classification": "financial"
+    },
+    {
+      "name": "totalGrossSalaryPerMonth",
+      "label": "Total gross salary per month, in DKK",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Part 2, Section 3 'About the employee's salary' — 'Total gross salary — per month'",
+      "validation": { "minimum": 0 },
+      "classification": "financial"
+    },
+    {
+      "name": "employeeSurnameStatedByEmployer",
+      "label": "Applicant's surname, as stated by the employer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 4 'About the employee' — 'Surname'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "employeeFirstNamesStatedByEmployer",
+      "label": "Applicant's first name(s), as stated by the employer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 4 'About the employee' — 'First name(s)'",
+      "validation": { "minLength": 1, "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "employeeDateOfBirthStatedByEmployer",
+      "label": "Applicant's date of birth, as stated by the employer",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part 2, Section 4 'About the employee' — 'Date of birth (day, month, year)'",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "employeeNationalityStatedByEmployer",
+      "label": "Applicant's nationality, as stated by the employer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 4 'About the employee' — 'Nationality'",
+      "validation": { "minLength": 1, "maxLength": 100 },
+      "classification": "pii"
+    },
+    {
+      "name": "employerThirdPartyCvrNumber",
+      "label": "CVR number of third party (employer's part)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 5 'About the third party, if any' — 'CVR number of third party'",
+      "validation": { "pattern": "^[0-9]{8}$" }
+    },
+    {
+      "name": "employerThirdPartyName",
+      "label": "Name of third party (employer's part)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 5 'About the third party, if any' — 'Name of third party'",
+      "validation": { "maxLength": 300 },
+      "classification": "pii"
+    },
+    {
+      "name": "employerThirdPartyAddress",
+      "label": "Address of third party (employer's part, street and number)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 5 'About the third party, if any' — 'Address (Street and number)'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "employerThirdPartyPostcodeAndCity",
+      "label": "Postcode and city of third party (employer's part)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 5 'About the third party, if any' — 'Postcode and city'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employerThirdPartyContactPerson",
+      "label": "Contact person at third party (employer's part)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 5 'About the third party, if any' — 'Contact person'",
+      "validation": { "maxLength": 200 },
+      "classification": "pii"
+    },
+    {
+      "name": "employerThirdPartyPhoneNumber",
+      "label": "Phone number of third party (employer's part)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 5 'About the third party, if any' — 'Phone number'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "employerThirdPartyEmail",
+      "label": "Email of third party (employer's part)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 5 'About the third party, if any' — 'Email'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employerComments",
+      "label": "Comments (employer)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part 2, Section 6 'Comments'",
+      "validation": { "maxLength": 2000 }
+    },
+    {
+      "name": "employerSignaturePlace",
+      "label": "Place of signature (employer)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part 2, Section 8 'Signature' — 'Date and place' (place component)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "employerSignatureDate",
+      "label": "Date of signature (employer)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part 2, Section 8 'Signature' — 'Date and place' (date component)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportCopy",
+      "label": "Copy of all pages of the applicant's passport, including empty pages and front/back cover",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1 'Which documents do you have to attach to the application?', reiterated in the page-8/14 checklists"
+    },
+    {
+      "id": "employmentContractOrJobOffer",
+      "label": "Employment contract or job offer, with salary, terms of employment, and job description",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1 'Which documents do you have to attach to the application?', reiterated in the page-8/14 checklists"
+    },
+    {
+      "id": "authorisationDocumentation",
+      "label": "Documentation of Danish authorisation, if the offered job requires one",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "danishAuthorisationRequired", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Part 1, Section 6 'About authorisation, if applicable', reiterated in the page-8/14 checklists"
+    },
+    {
+      "id": "cv",
+      "label": "CV, if any",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1 'Which documents do you have to attach to the application?'"
+    },
+    {
+      "id": "applicantPowerOfAttorney",
+      "label": "Power of attorney signed by the applicant, authorizing a third party to handle the application — mandatory only when a third party submits on the applicant's behalf (no dedicated yes/no checkbox on the source; see VERIFICATION.md)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Part 1, Section 10 'About the third party, if any'"
+    },
+    {
+      "id": "applicantSignature",
+      "label": "Applicant's signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Paraphrased from the source form's Part 1, Section 12 declaration (not a verbatim quote — see VERIFICATION.md): by signing, the applicant confirms the information given in the form is correct, that they have read and accepted the declarations of Section 10 A-B (the sworn declaration of correctness under penalty of the Danish Aliens Act §40(1)(1) and Danish Criminal Act §161, and the duty to provide necessary information), that they have made a decision on Section 11's consent question, and that they understand the information given will be registered in SIRI's registers and may be compared against the Civil Registration System (CPR), the Building and Dwelling Register (BBR), and the Income Register (eIncome).",
+      "sourceRef": "Part 1, Section 12 'Signature'"
+    },
+    {
+      "id": "employerPowerOfAttorney",
+      "label": "Power of attorney signed by the employer, authorizing a third party to handle the application — mandatory only when a third party submits on the employer's behalf (no dedicated yes/no checkbox on the source; see VERIFICATION.md)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "Part 2, Section 5 'About the third party, if any'"
+    },
+    {
+      "id": "employerSignature",
+      "label": "Employer's signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "statement": "Paraphrased from the source form's Part 2, Section 8 declaration (not a verbatim quote — see VERIFICATION.md): by signing on behalf of the company, the signatory confirms the information given in Part 2 is correct and that the company has accepted the declarations of Section 7 A-C (the sworn declaration of correctness under penalty of the Danish Aliens Act §40(1)(1) and Danish Criminal Act §161, the sworn declaration of compliance with work-environment legislation regarding employees under 18, and the duty to provide necessary information).",
+      "sourceRef": "Part 2, Section 8 'Signature'"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "employeeSurnameMatchesApplicant",
+      "compare": {
+        "field": "employeeSurnameStatedByEmployer",
+        "operator": "equals",
+        "compareTo": "surname"
+      }
+    },
+    {
+      "id": "employeeFirstNamesMatchApplicant",
+      "compare": {
+        "field": "employeeFirstNamesStatedByEmployer",
+        "operator": "equals",
+        "compareTo": "firstNames"
+      }
+    },
+    {
+      "id": "employeeDateOfBirthMatchesApplicant",
+      "compare": {
+        "field": "employeeDateOfBirthStatedByEmployer",
+        "operator": "equals",
+        "compareTo": "dateOfBirth"
+      }
+    },
+    {
+      "id": "employeeNationalityMatchesApplicant",
+      "compare": {
+        "field": "employeeNationalityStatedByEmployer",
+        "operator": "equals",
+        "compareTo": "nationality"
+      }
+    },
+    {
+      "id": "employmentEndDateAfterStartDate",
+      "compare": {
+        "field": "employmentEndDate",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "employmentStartDate"
+      }
+    }
+  ]
+}
