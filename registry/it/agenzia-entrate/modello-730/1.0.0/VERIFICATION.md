@@ -23,10 +23,15 @@ income tax return for employees/pensioners.
 
 - **Authority:** Agenzia delle Entrate (AdE).
 - **Document:** Modello 730/2026, "Redditi 2025" — the current version as
-  published on `agenziaentrate.gov.it`'s own dichiarazione-730-2026 landing
-  page at the time of this cycle's retrieval.
+  published on `agenziaentrate.gov.it`'s own "730-2026 — Modello e istruzioni"
+  landing page at the time of this cycle's retrieval.
 - **URL:**
   `https://www.agenziaentrate.gov.it/portale/documents/20143/9764684/730_modello_2026.pdf`
+  (direct PDF); landing page:
+  `https://www.agenziaentrate.gov.it/portale/730-2026/modello-e-istruzioni`
+  (HTTP 200, confirmed live 2026-07-11 — an earlier draft of this document
+  cited a different, now-404 URL path for this landing page; corrected after
+  CI's `verify-sources` check caught it).
 - **Fetched:** direct `curl` from this sandbox, 2026-07-11. **HTTP 200**, no
   login/CAPTCHA/WAF gate, no `WebFetch` fallback needed (unlike some other
   gov PDF hosts this registry has previously hit timeouts against).
