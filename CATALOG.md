@@ -26,7 +26,7 @@
 > Negocios, Transeúnte, Artista, Tripulante, Otro, Residente) replaces the
 > older binary Temporal/Residente split, a Correo Electrónico field is new,
 > and an entirely new conditional Grupo Artístico section applies only when
-> Artista is selected. All 20 `fields[]` and 1 `documents[]` entry are cited
+> Artista is selected. All 21 `fields[]` and 1 `documents[]` entry are cited
 > to their own numbered Sección 2 item or section heading; 8 single-character
 > AcroForm boxes for date of birth are consolidated into one `date` field per
 > established registry convention. Two mock conformance scenarios (a first-time
