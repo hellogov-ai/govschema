@@ -1,0 +1,334 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta",
+  "version": "1.0.0",
+  "title": "Finland Deed of Transfer of Ownership for a Vehicle/Watercraft (Luovutuskirja ajoneuvon/vesikulkuneuvon omistusoikeuden siirrosta, B124)",
+  "description": "The Finnish Transport and Communications Agency's (Traficom, Liikenne- ja viestintävirasto) form B124, a deed of transfer of ownership for a vehicle or watercraft used between private parties as a bill of sale (kauppakirja) or other title document (muu saantokirja) when a vehicle or watercraft changes hands. It is not itself filed with Traficom: per the form's own second-page instructions, the transferor/seller can use it to demonstrate that a transfer/sale took place if the transferee/buyer fails to make the separate registration notification, and the transferee/buyer would attach or reference it when making that notification. Covers the object being transferred (vehicle registration number, make, model, serial number/VIN, or, for a watercraft, its own identification plus a separate engine block for make, model, serial number, and power output), the transferee/buyer's and transferor/seller's own name-or-company-name, personal identity code or Business ID, and address, freeform agreed terms and other information, the place and date of transfer, and both parties' signature-and-name-clarification lines. Closes Finland's DMV vertical (5/6 for Finland; Visa, Business Formation, National ID, and Taxes already modelled via GOV-2276/GOV-2292/GOV-2299/GOV-2308). A prior cycle (GOV-2276's own parent scouting pass) had screened Traficom's core driving-licence and vehicle-registration flows as Suomi.fi-login-gated or in-person-only (via Ajovarma), with only two narrow companion forms downloadable — F122 (a doctor's statement on driving fitness, not an applicant-facing intake form) and B527 (a paperless-vehicle registration notice, too narrow in scope); B124 is a distinct, genuinely citizen-facing, unauthenticated private-party title-transfer deed neither prior pass considered. This schema describes the form only; it does not submit anything on either party's behalf, and does not imply Finnish government endorsement. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Finland or Traficom.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Liikenne- ja viestintävirasto (Finnish Transport and Communications Agency)",
+    "abbreviation": "Traficom",
+    "url": "https://www.traficom.fi"
+  },
+  "process": {
+    "type": "other",
+    "language": "fi"
+  },
+  "source": {
+    "url": "https://lomakkeet.traficom.fi/B124",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "B124 - 7/2026, \"Luovutuskirja ajoneuvon/vesikulkuneuvon omistusoikeuden siirrosta\" (Deed of transfer of ownership for a vehicle/watercraft)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2356 'GovSchema Standard Research' cycle (child of GOV-2353). Fetched fresh with a plain HTTP GET from Traficom's own forms subdomain (lomakkeet.traficom.fi, which serves the Content-Disposition header 'Luovutuskirja ajoneuvon vesikulkuneuvon omistusoikeuden siirrosta B124.pdf'): HTTP 200, 110,479 bytes, genuine '%PDF-1.7' header, no login/CAPTCHA/WAF gate. A from-scratch pdfjs-dist (v4, legacy build) extraction via page.getAnnotations()/page.getTextContent() found 2 pages: page 1 carries exactly 25 /Widget-subtype annotations — 23 Tx text-field widgets plus 2 Btn radio-option widgets belonging to a single genuine radio-button parent field ('Radio Button 1', radioButton: true, exportValue 0/1) — across 24 distinct field names, matching this issue's own pre-authoring scouting count of '24 distinct interactive fields — 23 text + 1 radio group' exactly; page 2 carries 0 widgets and is a short instructions-only page ('Ohjeita ajoneuvon/vesikulkuneuvon myyjälle ja ostajalle') explaining the deed's dual purpose as a bill of sale or fallback proof of transfer, quoted in this schema's own top-level description. All 24 fields were modelled 1:1 into fields[] with no merging or splitting, using each Tx widget's own alternativeText tooltip (present on every field, e.g. 'Sukunimi tai yrityksen nimi', 'Henkilö-/Y-tunnus') cross-checked against the page's printed section headings ('Ajoneuvo/vesikulkuneuvo', 'Vesikulkuneuvon moottori', 'Luovutuksensaaja/ostaja', 'Luovuttaja/myyjä', 'Sovitut ehdot ja muut tiedot', 'Luovutuspäivä', 'Allekirjoitukset') via y-coordinate proximity, since several alternativeText values repeat across sections (e.g. 'Merkki'/'Malli' appear for both the vehicle/watercraft identification row and the watercraft-engine row, and 'Sukunimi tai yrityksen nimi'/'Etunimet'/'Henkilö-/Y-tunnus'/'Lähiosoite'/'Postinumero ja -toimipaikka' repeat identically for the buyer and seller blocks) and were disambiguated into buyerX/sellerX and vehicle-identification-vs-watercraftEngineX field names accordingly, following this registry's own established convention for repeated alternativeText/label pairs across parallel sections (e.g. dk/cpr's entrantN/childN precedent). One piece of printed text on the vehicle/watercraft identification row, 'Järj.nro (käsittelijä täyttää ajoneuvosta)' ('Case number, filled in by the processing official for the vehicle'), carries no corresponding /Widget annotation at all — it is office-use-only text, not an applicant-facing field, and is excluded from fields[] entirely (distinct from this registry's usual signature-line-with-no-widget pattern; here it is a plain non-fillable annotation-free label). Three modelling decisions are disclosed here: (1) the four watercraft-engine fields (watercraftEngineMake/Model/SerialNumber/Power) are left ungated by any Condition, since the form provides no boolean or enum field distinguishing 'this transfer is a vehicle' from 'this transfer is a watercraft' for a requiredWhen/visibleWhen to reference — only the printed section heading 'Vesikulkuneuvon moottori' ('Watercraft's engine') scopes them, so, per this registry's existing OLE_TY1/fi-dvv marital-status precedent for an unrepresentable scoping constraint, the restriction is disclosed in each field's own description rather than encoded as a Condition, and all four are modelled required: false; (2) buyerFirstNames and sellerFirstNames are likewise modelled required: false and disclosed as applying only when the transferee/transferor is an individual rather than a company, since 'Sukunimi tai yrityksen nimi' ('Surname or company name') is a single shared field for either case and no boolean flag exists to gate on; (3) unlike this registry's dk/cpr and fi/migri/fi/dvv signature-line precedent (where the printed signature line carries no fillable widget at all and is instead modelled as a documents[] attestation entry), this form's two signature lines (sellerSignatureAndNameClarification, buyerSignatureAndNameClarification) ARE genuine Tx text-field widgets on the AcroForm itself, so both are modelled as ordinary required string fields in fields[] with no documents[] entry needed — flagged here as a genuine cross-jurisdiction difference in how a signature line is realized on the underlying PDF, not an inconsistency in this schema. No crossFieldValidation rules were added: unlike this registry's typical date-range pairs, this form has only a single combined free-text 'place and date of transfer' field (transferPlaceAndDate) with no second date to compare against. Two mock conformance scenarios (a minimal required-only private-party car sale using the 'bill of sale' document-type option, and a fuller watercraft sale using the 'other' document-type option with its own free-text specification, both watercraft-engine fields, and populated agreed-terms/other-information text) plus a disposable mutation-control script (not committed) were run against this schema's own required/requiredWhen grammar: the minimal scenario passed with 0 errors under both tools/validate.mjs's runtime checker and a hand-rolled ajv-based conformance check against schema.json's own required/requiredWhen/enum rules, and 2 mutation controls (blanking a required field; setting documentType to 'other' while leaving otherDocumentTypeSpecify blank) each correctly raised exactly 1 error. Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run. Closes Finland's DMV vertical; Finland now stands at 5 of 6 verticals (Visa, Business Formation, National ID, Taxes, DMV) — Passport remains a confirmed dead end (Finland eliminated paper passport applications in 2006), so no vertical remains genuinely open for Finland."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "documentType",
+      "label": "Type of deed",
+      "type": "enum",
+      "required": true,
+      "description": "The form's own two-option radio-button group at the top of the page selecting whether this deed is being used as a bill of sale, or as some other type of title document (with a free-text specification).",
+      "sourceRef": "B124 — page 1/2, header radio group: 'Kauppakirja' (Bill of sale, exportValue 0) / 'Muu, mikä' (Other, specify — exportValue 1)",
+      "validation": {
+        "enum": ["bill_of_sale", "other"]
+      }
+    },
+    {
+      "name": "otherDocumentTypeSpecify",
+      "label": "Other type of deed, specify",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "documentType", "equals": "other" },
+      "sourceRef": "B124 — page 1/2, header, free-text field beside 'Muu, mikä' ('Other, specify')",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "registrationNumber",
+      "label": "Registration number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Ajoneuvo/vesikulkuneuvo' (Vehicle/watercraft) section, 'Rekisteritunnus'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "make",
+      "label": "Make",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Ajoneuvo/vesikulkuneuvo' (Vehicle/watercraft) section, 'Merkki'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "model",
+      "label": "Model",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Ajoneuvo/vesikulkuneuvo' (Vehicle/watercraft) section, 'Malli'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "serialNumberOrVin",
+      "label": "Serial number / VIN code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Ajoneuvo/vesikulkuneuvo' (Vehicle/watercraft) section, 'Valmistenumero/VIN-koodi'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "watercraftEngineMake",
+      "label": "Watercraft engine make",
+      "type": "string",
+      "required": false,
+      "description": "Applies only when the object being transferred is a watercraft (Vesikulkuneuvon moottori — 'Watercraft's engine' — is this row's own printed section heading); the form provides no separate field distinguishing a vehicle transfer from a watercraft transfer to gate this on.",
+      "sourceRef": "B124 — page 1/2, 'Vesikulkuneuvon moottori' (Watercraft's engine) section, 'Merkki'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "watercraftEngineModel",
+      "label": "Watercraft engine model",
+      "type": "string",
+      "required": false,
+      "description": "Applies only when the object being transferred is a watercraft; see watercraftEngineMake.",
+      "sourceRef": "B124 — page 1/2, 'Vesikulkuneuvon moottori' (Watercraft's engine) section, 'Malli'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "watercraftEngineSerialNumber",
+      "label": "Watercraft engine serial number",
+      "type": "string",
+      "required": false,
+      "description": "Applies only when the object being transferred is a watercraft; see watercraftEngineMake.",
+      "sourceRef": "B124 — page 1/2, 'Vesikulkuneuvon moottori' (Watercraft's engine) section, 'Valmistenumero'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "watercraftEnginePower",
+      "label": "Watercraft engine power output",
+      "type": "string",
+      "required": false,
+      "description": "Applies only when the object being transferred is a watercraft; see watercraftEngineMake. Free text on the source (no fixed unit is printed).",
+      "sourceRef": "B124 — page 1/2, 'Vesikulkuneuvon moottori' (Watercraft's engine) section, 'Teho'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "buyerName",
+      "label": "Buyer's surname or company name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovutuksensaaja/ostaja' (Transferee/buyer) section, 'Sukunimi tai yrityksen nimi'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "buyerFirstNames",
+      "label": "Buyer's first names",
+      "type": "string",
+      "required": false,
+      "description": "Applies only when the transferee/buyer is an individual rather than a company; the source's 'Sukunimi tai yrityksen nimi' (buyerName) field is shared for either case.",
+      "sourceRef": "B124 — page 1/2, 'Luovutuksensaaja/ostaja' (Transferee/buyer) section, 'Etunimet'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "buyerIdNumber",
+      "label": "Buyer's personal identity code / Business ID",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovutuksensaaja/ostaja' (Transferee/buyer) section, 'Henkilö-/Y-tunnus'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "buyerAddress",
+      "label": "Buyer's street address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovutuksensaaja/ostaja' (Transferee/buyer) section, 'Lähiosoite'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "buyerPostalCodeAndCity",
+      "label": "Buyer's postal code and city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovutuksensaaja/ostaja' (Transferee/buyer) section, 'Postinumero ja -toimipaikka'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "sellerName",
+      "label": "Seller's surname or company name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovuttaja/myyjä' (Transferor/seller) section, 'Sukunimi tai yrityksen nimi'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "sellerFirstNames",
+      "label": "Seller's first names",
+      "type": "string",
+      "required": false,
+      "description": "Applies only when the transferor/seller is an individual rather than a company; the source's 'Sukunimi tai yrityksen nimi' (sellerName) field is shared for either case.",
+      "sourceRef": "B124 — page 1/2, 'Luovuttaja/myyjä' (Transferor/seller) section, 'Etunimet'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "sellerIdNumber",
+      "label": "Seller's personal identity code / Business ID",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovuttaja/myyjä' (Transferor/seller) section, 'Hnekilö-tunnus/Y-tunnus' (sic, as printed on the form)",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "sellerAddress",
+      "label": "Seller's street address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovuttaja/myyjä' (Transferor/seller) section, 'Lähiosoite'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "sellerPostalCodeAndCity",
+      "label": "Seller's postal code and city",
+      "type": "string",
+      "required": true,
+      "sourceRef": "B124 — page 1/2, 'Luovuttaja/myyjä' (Transferor/seller) section, 'Postinumero ja -toimipaikka'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "agreedTermsAndOtherInformation",
+      "label": "Agreed terms and other information",
+      "type": "string",
+      "required": false,
+      "sourceRef": "B124 — page 1/2, 'Sovitut ehdot ja muut tiedot' (Agreed terms and other information) section, freeform multi-line text box",
+      "validation": {
+        "maxLength": 4000
+      }
+    },
+    {
+      "name": "transferPlaceAndDate",
+      "label": "Place and date of transfer",
+      "type": "string",
+      "required": true,
+      "description": "A single combined free-text field for both the place and the date of transfer, as printed on the source (not two separate fields).",
+      "sourceRef": "B124 — page 1/2, 'Luovutuspäivä' (Date of transfer) section, 'Paikka ja luovutuspäivämäärä'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "sellerSignatureAndNameClarification",
+      "label": "Seller's signature and name clarification",
+      "type": "string",
+      "required": true,
+      "description": "A genuine fillable text-field widget on this specimen (unlike this registry's usual signature-line-with-no-widget precedent), covering the transferor/seller's signature and printed name clarification.",
+      "sourceRef": "B124 — page 1/2, 'Allekirjoitukset' (Signatures) section, 'Luovuttajan/myyjän allekirjoitus ja nimenselvennys'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "buyerSignatureAndNameClarification",
+      "label": "Buyer's signature and name clarification",
+      "type": "string",
+      "required": true,
+      "description": "A genuine fillable text-field widget on this specimen (unlike this registry's usual signature-line-with-no-widget precedent), covering the transferee/buyer's signature and printed name clarification.",
+      "sourceRef": "B124 — page 1/2, 'Allekirjoitukset' (Signatures) section, 'Luovutuksensaajan/ostajan allekirjoitus ja nimenselvennys'",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "classification": "pii"
+    }
+  ]
+}
