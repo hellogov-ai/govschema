@@ -4,8 +4,47 @@
 
 ## Executive Summary
 
-**32 jurisdictions** | **342 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**33 jurisdictions** | **343 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-11, GOV-2244, "GovSchema Standard Research"): Denmark
+> opens as the registry's 33rd jurisdiction**, via
+> `dk/um/application-for-danish-passport` — the Ministry of Foreign
+> Affairs of Denmark's (Udenrigsministeriet, UM) "Application for Danish
+> passport" (edition 03/2026), a genuine, directly downloadable, currently
+> unauthenticated fillable AcroForm PDF fetched fresh this session with a
+> plain HTTP GET (HTTP 200, no login/CAPTCHA/WAF gate). A from-scratch
+> `pdfjs-dist` re-extraction confirmed exactly **86 AcroForm widgets**
+> across the document's 2 pages, resolving to **58 modelled fields**: 3
+> ten-digit Civil Registration/CPR-number groups (the applicant's own, plus
+> up to two parents'/guardians' own) each merge 10 single-digit boxes into
+> 1 field per this registry's split-digit-box convention (correcting this
+> cycle's own scouting brief, which had assumed 11 boxes per group — the
+> true 10-digit shape matches Denmark's genuine `DDMMYY-XXXX` CPR format);
+> 2 widgets (a "Date received"/"Height in cm" pair inside a "For official
+> use only" box) are excluded as clerk-only; and 1 semantic-only field
+> (`applicantIsMinor`) with no backing widget gates the visibility of
+> Section D, the two-column parent/guardian consent block used when the
+> applicant is under 18 (modelled on this registry's
+> `is/thjodskra/passport-issuance-consent-minor` precedent). A second
+> structural correction: despite Danish-language internal AcroForm field
+> names, every printed label on the document is English-only (this is the
+> Ministry's consular/embassy edition for applicants abroad, not a
+> bilingual domestic form) — `process.language` is set to `"en"`
+> accordingly. This session's own mutation testing against a
+> previously-drafted (uncommitted, unauthored) version of this schema
+> already present in the shared working tree also caught and fixed a real
+> `requiredWhen` bug: a second consent-holder's core fields had been gated
+> on "applicant is a minor" alone, wrongly forcing a second parent's
+> name/CPR/signature even in the common sole-custody case; fixed to gate on
+> the first consent-holder's own declared custody type instead (`joint`,
+> not `sole`). See the document's own VERIFICATION.md for the full
+> sourcing record, all disclosed structural findings, and the conformance
+> test run (3 valid mocks — adult renewal, minor with joint custody, minor
+> with sole custody — and 6 negative controls, all as expected). Denmark
+> opens with 1 of its 6 verticals (Passport); two further candidates were
+> scouted and found strong this cycle for a future one — see "Known Gaps &
+> Opportunities" below.
+>
 > **Update (2026-07-11, GOV-2233, "GovSchema Standard Research"): Iceland
 > closes to 6/6 verticals**, via
 > `is/skatturinn/system-identification-number-application-foreign-national` —
@@ -4722,7 +4761,20 @@
 
 ## By Vertical
 
-### Passport (25/32 jurisdictions — 78%)
+### Passport (26/33 jurisdictions — 79%)
+
+**Denmark opens as this registry's 33rd jurisdiction via this vertical
+(GOV-2244)**, via `dk/um/application-for-danish-passport` — the Ministry
+of Foreign Affairs of Denmark's (Udenrigsministeriet, UM) "Application for
+Danish passport." See the Executive Summary update above for the full
+sourcing record, the two corrected structural assumptions (an English-only,
+not bilingual, consular/embassy edition; 10-digit, not 11-digit, Civil
+Registration/CPR split-box groups), and the `requiredWhen` bug this
+cycle's own mutation testing caught and fixed. Denmark opens with 1 of its
+6 verticals; Taxes (Skattestyrelsen's Blanket 04.003, "Oplysningsskemaet")
+and Visa (Udlændingestyrelsen's VS1 Schengen visa form) were scouted this
+cycle and found strong, genuinely open follow-on candidates — see "Known
+Gaps & Opportunities" below.
 
 **Iceland's Passport vertical opens (GOV-2226)**, via
 `is/thjodskra/passport-issuance-consent-minor` — Þjóðskrá Íslands' Form
@@ -4865,7 +4917,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (30/32 jurisdictions — 94%)
+### DMV — Vehicle Registration, Licensing, Permits (30/33 jurisdictions — 91%)
 
 **Iceland's DMV vertical opens (GOV-2219)**, via
 `is/samgongustofa/vehicle-ownership-transfer` — Samgöngustofa's Form
@@ -5095,7 +5147,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (31/32 jurisdictions — 97%)
+### Business Formation — Incorporation, LLC, Company Registration (31/33 jurisdictions — 94%)
 
 **Argentina's Business Formation vertical deepens with the individual/
 persona física analogue (GOV-2195)**, via
@@ -5500,7 +5552,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (30/32 jurisdictions — 94%)
+### Taxes — Income Tax Return, Tax Filing (30/33 jurisdictions — 91%)
 
 **Austria's Taxes vertical opens** (`at/bmf/employee-tax-assessment`,
 GOV-2114) — Bundesministerium für Finanzen (BMF) Form L 1, "Erklärung L1 zur
@@ -5941,7 +5993,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (25/32 jurisdictions — 78%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (25/33 jurisdictions — 76%)
 
 **Iceland's Visa vertical is now open** (`is/utl/other-residence-permit-application`,
 GOV-2210), via Útlendingastofnun's (the Directorate of Immigration, ÚTL)
@@ -6183,7 +6235,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (24/32 jurisdictions — 75%)
+### National ID & Civic Documents (24/33 jurisdictions — 73%)
 
 **Iceland**'s National ID & Civic Documents gap is now closed (GOV-2233), via
 `is/skatturinn/system-identification-number-application-foreign-national` —
@@ -6409,6 +6461,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **DK** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -7211,10 +7264,42 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Registration Notification's corporate-representative-member scenario and
     the Taxes document's own excluded income types/tax-computation
     chain/第二表 per-dependent itemization remain this registry's only open
-    Japan companion-schedule candidates for a future cycle.
+    Japan companion-schedule candidates for a future cycle. **Update
+    (2026-07-11, GOV-2244, "GovSchema Standard Research"): Denmark opens as
+    the registry's 33rd jurisdiction**, via
+    `dk/um/application-for-danish-passport` — the Ministry of Foreign
+    Affairs of Denmark's "Application for Danish passport" (edition
+    03/2026); see the Executive Summary update above and the Passport
+    vertical section for the full sourcing record. Denmark opens with 1 of
+    its 6 verticals (Passport). This cycle also scouted two further Danish
+    verticals and found both genuinely strong, ready-to-author follow-on
+    candidates for a future cycle: **Taxes** — Skattestyrelsen's (the
+    Danish Tax Agency) Blanket 04.003, "Oplysningsskemaet" (the annual
+    tax-information return),
+    `https://skat.dk/media/ftiduwhm/04003_januar2026-t.pdf`, ~124 fields,
+    edition January 2026; and **Visa** — Udlændingestyrelsen's (the Danish
+    Immigration Service) VS1 Schengen visa application form,
+    `https://nyidanmark.dk/-/media/Files/US/Application-forms/Visum/vs1_en.pdf`,
+    ~37 fields, edition 2024-06. Two further Danish verticals were scouted
+    and found weaker but not fully dead ends: **DMV** — Motorstyrelsen's
+    Blanket 21.051 covers only a temporary/international driving-permit
+    certificate, since Denmark's primary vehicle-registration flow is
+    gated behind MitID login; and **National ID** — only a narrow
+    overseas-voter-registration form (FR 144) was found, not a general
+    national-ID-document process. **Business Formation** is a confirmed
+    dead end this cycle: `virk.dk`'s "Start virksomhed" service is a
+    fully digital, MitID-gated wizard from its first step, with no
+    downloadable form artifact of any kind found.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **DK Business Formation** — GOV-2244, 2026-07-11. `virk.dk`'s "Start
+  virksomhed" service is a fully digital, MitID-login-gated wizard from
+  its very first step, with no downloadable form artifact, blank specimen,
+  or field-by-field walkthrough guide found anywhere on the domain. A
+  confirmed dead end for the current official publishing pattern; not a
+  hard dead end if a genuinely new source (e.g. a third-party walkthrough
+  of the live wizard) surfaces in a future cycle.
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
   `portal.gov.cz` state identically that citizens do not complete a printed
   application form for a passport: a clerk enters the applicant's data
