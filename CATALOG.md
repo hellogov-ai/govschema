@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**34 jurisdictions** | **349 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**34 jurisdictions** | **350 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2292, "GovSchema Standard Research"): Finland's
+> Business Formation vertical opens**, via `fi/prh/start-up-notification-y1`
+> — the Finnish Patent and Registration Office's (Patentti- ja
+> rekisterihallitus, PRH) and Finnish Tax Administration's (Vero) jointly
+> published form Y1, "Perustamisilmoitus" ("Start-up notification"), used
+> to register a limited company, co-operative, foundation, or other listed
+> organisation type with the Trade Register or Register of Foundations,
+> simultaneously with the VAT/Prepayment/Employer registers. A prior cycle
+> (GOV-2276) had already flagged this exact form as a confirmed-strong,
+> unscreened Business Formation candidate after a three-way Nordic scouting
+> pass; this cycle picked it up directly rather than re-screening. Fetched
+> fresh from `prh.fi`: HTTP 200, 287,294 bytes, genuine `%PDF-1.7`, 4 pages,
+> no login/CAPTCHA/WAF gate, footer edition "YTJ 1001e 1.2026". A
+> `pdfjs-dist` extraction resolved 110 raw AcroForm `/Widget` annotations
+> (56 `Tx` text, 54 `Btn` checkboxes), of which 8 are page-navigation/
+> utility controls excluded as non-data-collecting UI chrome, leaving
+> **102 substantive widgets** — unlike this registry's `fi/migri` precedent,
+> this specimen's own field names are self-documenting English label text,
+> so no Finnish-name-to-English-label decoding step was needed. Every one
+> of the 102 widgets was mapped to exactly one `fields[]`/`documents[]`
+> entry via a disposable reconciliation script asserting zero unmapped and
+> zero double-mapped widgets, consolidating seven independent-checkbox
+> groups (company-name language, registration-register choice, type of
+> enterprise, turnover bracket, VAT/employer tax-period lengths, and a
+> split 5-digit industry code) into single enum/pattern-constrained
+> fields, to **78 `fields[]` + 7 `documents[]` entries** (the 7 "Enclosures"
+> appendix-form checkboxes, gated `requiredWhen` against the enterprise-type
+> field where the source form's own two checkbox lists correspond, and left
+> ungated where they don't — a disclosed gap in the source's own lists, not
+> invented over). Two disclosed quirks and one editorial judgment call
+> (the "postal or street address is mandatory" either/or requirement, which
+> v0.3's `crossFieldValidation` has no direct primitive for) are recorded in
+> the document's own VERIFICATION.md. A mock conformance run (a foundation
+> registration exercising only statically-required fields; a limited
+> company continuing a previous sole trader's business with VAT/employer/
+> prepayment registration) found 0 errors across both scenarios and 5
+> mutation controls, including one confirming the `documents[]`
+> requiredness path (not just `fields[]`) is genuinely exercised. **Finland
+> now stands at 2 of its 6 verticals** (Visa, Business Formation); Taxes
+> (Vero form 3023e) and National ID (DVV's foreign-national
+> population-register form) remain open, unscreened backlog candidates —
+> see "Known Gaps" below.
 
 > **Update (2026-07-11, GOV-2285, "GovSchema Standard Research"): Denmark's
 > Visa vertical opens**, via `dk/siri/work-permit-application` — SIRI's
@@ -5400,7 +5443,18 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (32/34 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (33/34 jurisdictions — 97%)
+
+**Finland's Business Formation vertical opens (GOV-2292)**, via
+`fi/prh/start-up-notification-y1` — PRH's and Vero's jointly published
+form Y1, "Perustamisilmoitus" ("Start-up notification"), used to register
+a limited company, co-operative, foundation, or other listed organisation
+type with the Trade Register or Register of Foundations, simultaneously
+with the VAT/Prepayment/Employer registers. See the Executive Summary's
+GOV-2292 update above for the full sourcing record, including the
+7-entry "Enclosures" appendix-form checklist modelled as `documents[]`
+and the disclosed either/or postal-vs-street-address judgment call.
+Finland now stands at 2 of its 6 verticals (Visa, Business Formation).
 
 **Denmark's Business Formation vertical opens (GOV-2268)**, via
 `dk/erst/virksomhedsregistrering` — Erhvervsstyrelsen's form 40.110,
@@ -6295,7 +6349,13 @@ Executive Summary update above and the document's own VERIFICATION.md for
 the full sourcing and field-mapping record. Finland now stands at 1 of its
 6 verticals (Visa); Business Formation, Taxes, and National ID are all
 confirmed strong, unscreened backlog candidates for a future cycle (Passport
-is a confirmed dead end; DMV is weak) — see "Known Gaps" below.
+is a confirmed dead end; DMV is weak) — see "Known Gaps" below. **Finland's
+Business Formation vertical has since opened too (GOV-2292)**, via
+`fi/prh/start-up-notification-y1` — PRH/Vero's jointly published form Y1
+("Perustamisilmoitus"); see the Executive Summary update above and the
+document's own VERIFICATION.md. Finland now stands at 2 of its 6 verticals
+(Visa, Business Formation); Taxes and National ID remain open, unscreened
+backlog candidates.
 
 **Iceland's Visa vertical is now open** (`is/utl/other-residence-permit-application`,
 GOV-2210), via Útlendingastofnun's (the Directorate of Immigration, ÚTL)
@@ -7662,10 +7722,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    (three parallel scouts across Norway, Finland, Belgium) found Finland's
    other three unmodelled verticals each backed by a genuine, live,
    unauthenticated fillable AcroForm PDF, confirmed via direct fetch —
-   strong candidates for a future cycle. **Business Formation**: PRH/YTJ's
-   Y1 "Perustamisilmoitus" (general establishment notification for
-   oy/osuuskunta/etc.), `ytj.fi`, 110 real Widget/FT fields across 4 pages,
-   pure fill-print-mail workflow, no login. **Taxes**: Vero's form 3023e/
+   strong candidates for a future cycle. **Business Formation has since
+   closed (GOV-2292)**, via `fi/prh/start-up-notification-y1` — the
+   pre-scout's own 110-widget count was independently re-derived exactly
+   (102 substantive after excluding 8 navigation/utility controls); see the
+   Executive Summary update above and the document's own VERIFICATION.md.
+   **Taxes**: Vero's form 3023e/
    "50A" (earned income and deductions correction/supplement form),
    `vero.fi`, 135 Widget/126 FT fields across 4 pages, no login required for
    the PDF itself (the pre-filled return proper is generated per-taxpayer
