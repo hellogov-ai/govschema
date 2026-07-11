@@ -1,0 +1,232 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "dk/fstyr/samtykkeerklaering-koerekort-under-18",
+  "version": "1.0.0",
+  "title": "Denmark Consent Declaration for a Driving Licence Application, Under 18 — Samtykkeerklæring ved ansøgning om kørekort, Under 18 år (P23T)",
+  "description": "Denmark's form P23T, \"Samtykkeerklæring ved ansøgning om kørekort — Under 18 år\" (Consent Declaration for a Driving Licence Application, under 18), published by Færdselsstyrelsen (the Danish Road Traffic Authority) and required whenever a driving-licence applicant (kørekortansøger) is under 18 years of age. Because a minor cannot independently consent to holding a driving licence, whoever holds parental custody (forældremyndighed) over the applicant must declare, under penalty of Section 163 of the Danish Criminal Code, that they consent to the licence being issued. The form's own two parallel \"Part 1\"/\"Part 2\" columns let it capture either a single sole-custody holder's consent or, where custody is shared, both joint-custody holders' consent side by side. This schema models the form's own applicant header (name and personnummer) plus both consent-holder columns in full (name, personnummer, sole-vs-joint-custody declaration, and date-and-signature) and the destination-municipality header field where the declaration is shown/presented (\"Forevist kommunen\"). It is presented in person, alongside the underlying driving-licence application itself, at the applicant's kommune (municipality) citizen service centre; this schema models the form's own data fields, not an online submission channel. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Denmark or Færdselsstyrelsen.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Færdselsstyrelsen (the Danish Road Traffic Authority)",
+    "abbreviation": "FSTYR",
+    "url": "https://www.fstyr.dk"
+  },
+  "process": {
+    "type": "application",
+    "language": "da-DK"
+  },
+  "source": {
+    "url": "https://www.fstyr.dk/Media/638161826116299623/Samtykkeerkl%C3%A6ring%20ved%20ans%C3%B8gning%20om%20k%C3%B8rekort%20-%20%20Under%2018%20%C3%A5r%20-%20(P23T).pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Form P23T, \"Samtykkeerklæring ved ansøgning om kørekort — Under 18 år\" (KLE 23.09.04G01, form code KK 002, 05/2020 edition), a 1-page fillable AcroForm PDF published unauthenticated directly on Færdselsstyrelsen's own site, prepared by KL (Kommunernes Landsforening, Local Government Denmark) and approved by Færdselsstyrelsen per the form's own footer (\"Udarbejdet af KL\" / \"Godkendt af Færdselsstyrelsen\")."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2346 (\"GovSchema Standard Research\"). Closes Denmark's DMV vertical, its last open vertical, bringing Denmark to 6 of 6 (Passport, Taxes, National ID, Business Formation, Visa, DMV) — the third jurisdiction in this registry to reach full vertical coverage, after Colombia (GOV-1616) and Norway (GOV-2340). A prior cycle (GOV-2253) had screened and rejected Denmark's DMV vertical twice over: Færdselsstyrelsen's own primary P23 driving-licence application is a genuine, current AcroForm but a shared, multi-party 397-field record card filled progressively by driving schools/police/kommune staff over the licence's lifetime, not a citizen-facing intake form; Motorstyrelsen's vehicle-registration/re-registration flow is exclusively MitID/TastSelv-login-gated with no static-form fallback. This cycle's scouting (already completed before this authoring pass) found the genuine open candidate: P23T, a distinct, narrowly-scoped companion form P23 itself references (via its own under-18 branch) that captures only the parent/guardian consent declaration, with no kommune/kørelærer/syn institutional fill-in section of any kind. Fetched fresh directly from fstyr.dk (note: the resolving URL encodes a double space, \"%20%20\", between \"kørekort -\" and \"Under 18\" — a copy-paste artifact of the source site's own link, confirmed by testing both the single- and double-space variants; the single-space variant 404s): HTTP 200, 61,834 bytes, genuine %PDF-1.7 header, no login/CAPTCHA/WAF gate. Independent pdfjs-dist extraction (getFieldObjects() and per-page getAnnotations(), both cross-checked) confirmed exactly 14 Widget/AcroForm fields, all on the form's single page, all with distinct field names — an exact match to the pre-authoring scouting count. All 14 widgets map 1:1 to this schema's 14 fields: 4 applicant/header fields (municipality name-and-address, applicant personnummer, applicant first name, applicant last name) plus 5 fields per consent-holder column x2 (name, personnummer, sole-custody checkbox, joint-custody checkbox, date-and-signature). The two custody checkboxes per column (\"part N ene myndighed\" / \"part N med myndighed\") are confirmed via getAnnotations() to be independent, non-grouped Btn/checkbox widgets (checkBox:true, radioButton:false, distinct field names) rather than a true PDF radio-button group, consistent with this registry's established convention (e.g. dk/um/application-for-danish-passport) of modelling such pairs as two boolean fields plus an exclusivityGroup rather than a single enum. The custody-branching structure follows this registry's own precedent set in dk/um/application-for-danish-passport@1.1.0: a consent-holder's own declaration of holding SOLE custody implies no second consent-holder exists, so the second column's core fields (name, personnummer, date-and-signature) are requiredWhen the first column declares JOINT custody, not unconditionally required — the same fix that version's own VERIFICATION.md documents finding necessary for the passport form's structurally identical two-column consent pattern. One disclosed judgment call: the top-of-form field \"kommune navn adresse\" (alternativeText \"Indtast kommunens navn og adresse\", under the printed heading \"Forevist kommunen\"/\"Shown to the municipality\") is ambiguous between an applicant/guardian pre-filling which kommune office the declaration will be presented at, and a kommune staff member's own stamp confirming presentation — unlike the excluded institutional sections of P23/P22/P23A, this is the form's only such field, it carries no accompanying municipal-caseworker notes/signature block, and its own alternativeText is phrased as a plain instruction to fill in a name and address rather than a staff annotation; modelled here as an optional applicant/guardian-facing field (`presentedAtMunicipalityNameAndAddress`, required: false) rather than silently excluded or forced required. Personnummer pattern (^[0-9]{10}$) follows this registry's existing dk/cpr and dk/um precedent; no digit-split boxes are present on this form (each personnummer is a single text widget). Two mock conformance scenarios (a sole-custody single-guardian consent; a joint-custody two-guardian consent) validated with 0 errors, plus mutation controls each raising exactly 1 error; see this document's own VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "presentedAtMunicipalityNameAndAddress",
+      "label": "Forevist kommunen",
+      "type": "string",
+      "required": false,
+      "description": "The name and address of the kommune (municipality) citizen service centre where this consent declaration is presented, alongside the underlying driving-licence application, for verification. Ambiguous on the source form between an applicant/guardian pre-filling which office it will be shown at and a staff confirmation stamp; modelled here as optional and applicant/guardian-facing rather than excluded — see VERIFICATION.md.",
+      "sourceRef": "Header — \"Forevist kommunen\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "applicantPersonalIdentityNumber",
+      "label": "Ansøgers personnummer",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The driving-licence applicant's (the minor's) 10-digit Danish CPR number (personnummer).",
+      "sourceRef": "Header — \"Ansøgers personnummer\"",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "applicantFirstName",
+      "label": "Fornavn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The driving-licence applicant's (the minor's) given name(s).",
+      "sourceRef": "\"Ansøger\" — \"Fornavn\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "applicantLastName",
+      "label": "Efternavn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The driving-licence applicant's (the minor's) surname.",
+      "sourceRef": "\"Ansøger\" — \"Efternavn\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "firstGuardianName",
+      "label": "Navn (Part 1)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name of the first parent/legal guardian (consent holder) giving consent to the licence being issued.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 1 — \"Navn\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "firstGuardianPersonalIdentityNumber",
+      "label": "Personnummer (Part 1)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The first parent/legal guardian's 10-digit Danish CPR number (personnummer).",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 1 — \"Personnummer\"",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "firstGuardianHasSoleCustody",
+      "label": "Jeg er eneindehaver af forældremyndigheden (Part 1)",
+      "type": "boolean",
+      "required": false,
+      "description": "The first consent holder declares, under penalty of Section 163 of the Danish Criminal Code, that they are the sole holder (eneindehaver) of parental custody over the applicant. One of two independent, non-grouped PDF checkboxes (checkBox:true, radioButton:false); see exclusivityGroups. Not itself requiredWhen-gated, consistent with this registry's convention of not forcing an answer onto an independent, non-grouped checkbox pair.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 1 — \"at jeg er eneindehaver ... af forældremyndigheden over kørekortansøgeren\""
+    },
+    {
+      "name": "firstGuardianHasJointCustody",
+      "label": "Jeg er medindehaver af forældremyndigheden (Part 1)",
+      "type": "boolean",
+      "required": false,
+      "description": "The first consent holder declares, under penalty of Section 163 of the Danish Criminal Code, that they are a joint holder (medindehaver) of parental custody over the applicant, alongside a second custody holder who must also consent (see secondGuardian* fields). One of two independent, non-grouped PDF checkboxes (checkBox:true, radioButton:false); see exclusivityGroups.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 1 — \"at jeg er ... medindehaver af forældremyndigheden over kørekortansøgeren\""
+    },
+    {
+      "name": "firstGuardianDateAndSignature",
+      "label": "Dato og underskrift (Part 1)",
+      "type": "string",
+      "required": true,
+      "description": "A physical, ink date-and-signature block completed in person by the first consent holder, given under penalty of Section 163 of the Danish Criminal Code. Not a hand-drawn/image signature field per this registry's convention for other in-person print-and-sign Danish forms — modelled as the printed date-plus-signature line the consent holder completes on paper.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 1 — \"Dato og underskrift\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "secondGuardianName",
+      "label": "Navn (Part 2)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "firstGuardianHasJointCustody",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The name of the second parent/legal guardian (consent holder), required only where the first consent holder has declared joint (not sole) custody — per this registry's dk/um/application-for-danish-passport precedent for the structurally identical two-column consent pattern, a sole-custody declaration means no second consent holder exists.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 2 — \"Navn\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "secondGuardianPersonalIdentityNumber",
+      "label": "Personnummer (Part 2)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "firstGuardianHasJointCustody",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "The second parent/legal guardian's 10-digit Danish CPR number (personnummer), required only where the first consent holder has declared joint custody.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 2 — \"Personnummer\"",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "secondGuardianHasSoleCustody",
+      "label": "Jeg er eneindehaver af forældremyndigheden (Part 2)",
+      "type": "boolean",
+      "required": false,
+      "description": "The second consent holder declares, under penalty of Section 163 of the Danish Criminal Code, that they are the sole holder (eneindehaver) of parental custody over the applicant. One of two independent, non-grouped PDF checkboxes (checkBox:true, radioButton:false); see exclusivityGroups. Relevant only when a second consent holder exists (see secondGuardianName); not itself requiredWhen-gated, consistent with this registry's convention of not forcing an answer onto an independent, non-grouped checkbox pair.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 2 — \"at jeg er eneindehaver ... af forældremyndigheden over kørekortansøgeren\""
+    },
+    {
+      "name": "secondGuardianHasJointCustody",
+      "label": "Jeg er medindehaver af forældremyndigheden (Part 2)",
+      "type": "boolean",
+      "required": false,
+      "description": "The second consent holder declares, under penalty of Section 163 of the Danish Criminal Code, that they are a joint holder (medindehaver) of parental custody over the applicant. One of two independent, non-grouped PDF checkboxes (checkBox:true, radioButton:false); see exclusivityGroups.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 2 — \"at jeg er ... medindehaver af forældremyndigheden over kørekortansøgeren\""
+    },
+    {
+      "name": "secondGuardianDateAndSignature",
+      "label": "Dato og underskrift (Part 2)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "firstGuardianHasJointCustody",
+        "equals": true
+      },
+      "description": "A physical, ink date-and-signature block completed in person by the second consent holder, given under penalty of Section 163 of the Danish Criminal Code, required only where the first consent holder has declared joint custody. Not a hand-drawn/image signature field per this registry's convention for other in-person print-and-sign Danish forms.",
+      "sourceRef": "\"Samtykke og underskrift\" — Part 2 — \"Dato og underskrift\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "first_guardian_custody_type",
+      "fields": [
+        "firstGuardianHasSoleCustody",
+        "firstGuardianHasJointCustody"
+      ]
+    },
+    {
+      "id": "second_guardian_custody_type",
+      "fields": [
+        "secondGuardianHasSoleCustody",
+        "secondGuardianHasJointCustody"
+      ]
+    }
+  ]
+}
