@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**36 jurisdictions** | **363 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**36 jurisdictions** | **364 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2397, "GovSchema Standard Research"): Finland's
+> Passport vertical is now closed — Finland stands at 6 of 6 verticals**, via
+> `fi/poliisi/huoltajan-suostumus` — the Finnish Police's (Poliisi) form
+> Poliisi-Muut-07, "Huoltajan suostumus" (Guardian's consent), used by a
+> minor's guardian(s) to consent to the minor being granted a passport,
+> identity card, firearms permit, or explosives precursor licence. Finland's
+> own primary adult passport/identity-card application (poliisi.fi) was
+> re-confirmed this cycle as an online-application-plus-mandatory-in-person-
+> biometric process with no downloadable blank application form — the same
+> dead-end pattern already confirmed for the Czech Republic, Norway, Estonia,
+> Poland, and Sweden's passport verticals. This narrow guardian-consent
+> companion form is directly analogous to `se/polisen/medgivande-pass-
+> nationellt-id-kort-minderarig` (GOV-2363) and `dk/fstyr/samtykkeerklaering-
+> koerekort-under-18` (GOV-2346), each of which closed that jurisdiction's own
+> vertical the same way. Fetched fresh directly from `poliisi.fi` (both the
+> Finnish original and an English bilingual sibling edition; a realistic
+> browser User-Agent was required — a bare `curl` default UA and a stale URL
+> variant each returned an HTML error page instead of the PDF): both editions
+> are genuine `%PDF-1.7` files with no login/CAPTCHA/WAF gate once fetched
+> correctly. Independent `pdfjs-dist` extraction on both editions confirmed
+> 20 AcroForm widgets total, of which 4 are non-data Save/Print/Clear-form UI
+> buttons (including two separate clear-form buttons, correcting a prior
+> scouting pass's "17 real data fields" estimate to the actual 16) — 16
+> applicant-facing fields modelling the minor's identity, an explicit Yes/No
+> consent decision for each of the four licence/document types (modelled as
+> boolean pairs plus `exclusivityGroups`, since each checkbox's own raw
+> `exportValue` is misleadingly the literal string "Kyllä"/"Yes" regardless of
+> which side of the pair it is), and one or two guardians' own name, personal
+> identity code, and a single combined date/place/signature line — this
+> Finnish form does not split date/place/name into three fields the way
+> Sweden's PM 531.2 sibling does. Three other jurisdictions' open verticals
+> (Spain's Passport, Argentina's National ID, Chile's Passport/Visa/National
+> ID) were scouted in parallel this cycle and set aside as weaker or
+> dead-end candidates — see the document's own VERIFICATION.md for the full
+> comparison. Two mock conformance scenarios (a single guardian consenting to
+> a passport and identity card; two guardians consenting to all four
+> licence/document types, including exercising the "No" side of one
+> exclusivity pair) found **0 errors** each, plus 3 mutation controls (missing
+> required field, henkilötunnus `maxLength` violation, and an
+> `exclusivityGroups` violation) each correctly raised exactly 1 error.
+> **Finland now stands at 6 of 6 verticals** (Business Formation, DMV, Taxes,
+> National ID, Visa, Passport) — no vertical remains open for Finland.
 
 > **Update (2026-07-11, GOV-2389, "GovSchema Standard Research"): Italy's DMV
 > vertical is now open**, via `it/mit/domanda-operazioni-veicoli-a-motore-e-rimorchi`
@@ -225,9 +268,13 @@
 > minimal bill-of-sale car sale, and a fuller "other deed" watercraft sale
 > exercising the engine block) found 0 errors, plus 2 mutation controls
 > each correctly raised exactly 1 error. **Finland now stands at 5 of 6
-> verticals** (Visa, Business Formation, National ID, Taxes, DMV); Passport
-> remains a confirmed dead end (Finland eliminated paper passport
-> applications in 2006), so no vertical remains genuinely open for Finland.
+> verticals** (Visa, Business Formation, National ID, Taxes, DMV); Passport's
+> main adult application flow remains a confirmed dead end (Finland
+> eliminated paper passport applications in 2006). **Update (2026-07-11,
+> GOV-2397): Passport has since closed too**, not via the main flow but via a
+> standalone guardian-consent companion form (`fi/poliisi/huoltajan-suostumus`)
+> — see the Executive Summary update above. Finland now stands at 6 of 6
+> verticals; no vertical remains open for Finland.
 
 > **Update (2026-07-11, GOV-2355, "GovSchema Standard Research"): Denmark's
 > DMV vertical gains a second schema**, via
@@ -519,11 +566,12 @@
 > Finland, and a spousal separation) found 0 errors, plus 5 mutation
 > controls each correctly raised exactly 1 error. **Finland now stands at
 > 4 of 6 verticals** (Business Formation, Visa, National ID, Taxes);
-> Passport is a confirmed dead end (Finland eliminated paper passport
-> applications in 2006) and DMV remains open, already confirmed weak
-> (Traficom's core flows are Suomi.fi-login-gated or in-person only) —
-> see the "Known Gaps" section below. See the document's own
-> VERIFICATION.md for the full sourcing record.
+> Passport's main adult flow is a confirmed dead end (Finland eliminated
+> paper passport applications in 2006 — since closed anyway via a
+> guardian-consent companion form, GOV-2397) and DMV remains open, already
+> confirmed weak (Traficom's core flows are Suomi.fi-login-gated or
+> in-person only) — see the "Known Gaps" section below. See the document's
+> own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-11, GOV-2299, "GovSchema Standard Research"): Finland's
 > National ID & Civic Documents vertical opens**, via
@@ -5612,7 +5660,27 @@
 
 ## By Vertical
 
-### Passport (27/36 jurisdictions — 75%)
+### Passport (28/36 jurisdictions — 78%)
+
+**Finland's Passport gap is now closed (GOV-2397)**, via
+`fi/poliisi/huoltajan-suostumus` — Poliisi's (the Finnish Police) form
+Poliisi-Muut-07, "Huoltajan suostumus" (Guardian's consent), a standalone
+guardian-consent form required whenever a minor's guardian(s) consent to the
+minor being granted a passport, identity card, firearms permit, or
+explosives precursor licence — directly analogous to Sweden's own PM 531.2
+(GOV-2363, immediately below) and Denmark's DMV-vertical-closing
+`dk/fstyr/samtykkeerklaering-koerekort-under-18` (GOV-2346). Finland's own
+primary adult passport/identity-card application remains a confirmed dead
+end (online-application-plus-mandatory-in-person-biometric, no downloadable
+blank form for the main flow). Unlike the Swedish precedent, this form is a
+genuine fillable AcroForm PDF (16 applicant-facing widgets across 20 total,
+4 of which are non-data Save/Print/Clear-form buttons). See the Executive
+Summary update above and the document's own VERIFICATION.md for the full
+sourcing record, including the Yes/No checkbox-pair modelling for each of
+the four licence/document types (each checkbox's own raw `exportValue` is
+misleadingly identical regardless of Yes/No side) and the disclosed
+top/bottom (not left/right) guardian-block layout. Finland now stands at 6
+of its 6 verticals — no vertical remains open for Finland.
 
 **Sweden's Passport gap is now closed (GOV-2363)**, via
 `se/polisen/medgivande-pass-nationellt-id-kort-minderarig` — Polismyndigheten's
@@ -7593,7 +7661,7 @@ now closed.
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **FI** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -8539,13 +8607,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    distinct field names on page 1, matching the pre-scout's own count
    exactly; see the Executive Summary update above and the document's own
    VERIFICATION.md. **Finland now stands at 5 of 6 verticals** (Visa,
-   Business Formation, National ID, Taxes, DMV). **Passport** is a
-   confirmed dead end: Finland eliminated paper passport applications in
-   2006 — `poliisi.fi` offers only online (`asiointi.poliisi.fi`) or
-   in-person appointment channels, with a digital photo pre-uploaded
-   separately (`lupakuvienvastaanotto.fi`); no PDF/paper application form
-   exists. **No vertical remains genuinely open for Finland** — this item
-   is fully closed.
+   Business Formation, National ID, Taxes, DMV). **Passport**'s main adult
+   flow is a confirmed dead end: Finland eliminated paper passport
+   applications in 2006 — `poliisi.fi` offers only online
+   (`asiointi.poliisi.fi`) or in-person appointment channels, with a digital
+   photo pre-uploaded separately (`lupakuvienvastaanotto.fi`); no PDF/paper
+   *application* form exists. **Update (2026-07-11, GOV-2397): Passport has
+   since closed anyway**, via a standalone guardian-consent companion form,
+   `fi/poliisi/huoltajan-suostumus` (Poliisi-Muut-07) — see the Executive
+   Summary update above and the document's own VERIFICATION.md. **Finland
+   now stands at 6 of 6 verticals — this item is fully closed.**
 8. **Norway's remaining verticals** (opened GOV-2316 via its Business
    Formation vertical, `no/brreg/samordnet-registermelding`): three of
    Norway's other five verticals were genuine, unscreened-in-depth backlog
