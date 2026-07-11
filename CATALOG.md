@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **361 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**36 jurisdictions** | **362 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2382, "GovSchema Standard Research"): Italy opens
+> as the registry's 36th jurisdiction**, via its Taxes vertical, sourced from
+> Agenzia delle Entrate's Modello 730/2026, "Redditi 2025" — the flagship
+> annual income tax return available to employees, pensioners, and other
+> taxpayers whose withholding agent (substitute d'imposta) performs the
+> year-end tax adjustment directly in their pay, or filed "senza sostituto"
+> with the Agenzia delle Entrate, a Caf, or a qualified professional. Both
+> the 24-page form PDF and its 175-page istruzioni companion were fetched
+> fresh via direct `curl` (HTTP 200 on both, no login/CAPTCHA/WAF gate, no
+> WebFetch fallback needed) from `agenziaentrate.gov.it`: the form is
+> 1,054,909 bytes (sha256 `e7fa9aa859e165878a5093e9c1ae23ee4c463d05dd25d738
+> d63982088be257d9`) and the istruzioni is 3,552,969 bytes (sha256
+> `0f09c12914f1132f8114cf22e836915d4f9f8fabe99888923bdb1316ffcfe8e6`). A
+> `pdfjs-dist` extraction confirmed zero AcroForm Widget annotations across
+> all 24 pages — a static print/hand-fill template, like this registry's
+> `pl/mf/zeznanie-pit-37` and `es/aeat/declaracion-censal-personas-fisicas-
+> modelo-030` precedents — but a genuine embedded text layer, with every
+> field keyed to a printed casella code (e.g. C1, C9, E1, E21) the
+> istruzioni explains rigo-by-rigo under its own numbered heading. This
+> v1.0.0 scopes to the common salaried-employee/pensioner core — identifying
+> data and residence/domicile (frontespizio), the family-dependents schedule
+> for a spouse and up to four further dependents, Quadro C Section I's
+> employment/pension income rows and Sections III-IV's IRPEF/regional/
+> municipal surtax withholding, and Quadro E's most common medical-expense/
+> mortgage-interest/mandatory-pension-contribution deductions — 67 `fields[]`
+> entries and 4 `documents[]` entries, and explicitly defers the remaining
+> ~20 of 24 pages (land/building income, capital gains and self-employment
+> income, most of Quadro E's dozens of coded niche deductions, tax-credit
+> and advance-payment quadri, and the 8x1000/5x1000 elections). See the
+> document's own VERIFICATION.md for the full field inventory, every
+> disclosed scope/judgment-call decision, and a mock conformance run (two
+> valid scenarios; five mutation controls, each correctly raising at least
+> one error, including a `documents[].requiredWhen` case). The same cycle
+> also screened Italy's other five verticals — see the Known Gaps &
+> Opportunities section below for the full disclosure of DMV (a strong
+> pre-scouted follow-on candidate), Passport, Business Formation, National
+> ID, and Visa.
 
 > **Update (2026-07-11, GOV-2372, "GovSchema Standard Research"): Sweden's
 > National ID & Civic Documents vertical is now closed — Sweden stands at
@@ -5529,7 +5567,7 @@
 
 ## By Vertical
 
-### Passport (27/35 jurisdictions — 77%)
+### Passport (27/36 jurisdictions — 75%)
 
 **Sweden's Passport gap is now closed (GOV-2363)**, via
 `se/polisen/medgivande-pass-nationellt-id-kort-minderarig` — Polismyndigheten's
@@ -5708,7 +5746,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (33/35 jurisdictions — 94%)
+### DMV — Vehicle Registration, Licensing, Permits (33/36 jurisdictions — 92%)
 
 **Finland's DMV vertical is now closed (GOV-2356)**, via
 `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — Traficom's
@@ -5992,7 +6030,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (34/35 jurisdictions — 97%)
+### Business Formation — Incorporation, LLC, Company Registration (34/36 jurisdictions — 94%)
 
 **Norway opens as this registry's 35th jurisdiction via this vertical
 (GOV-2316)**, via `no/brreg/samordnet-registermelding` —
@@ -6437,7 +6475,31 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (32/35 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (33/36 jurisdictions — 92%)
+
+**Italy opens** (`it/agenzia-entrate/modello-730`, GOV-2382) — Agenzia delle
+Entrate's Modello 730/2026, "Redditi 2025," the flagship annual income tax
+return for employees and pensioners whose withholding agent performs the
+year-end adjustment directly in their pay (or, since recent years, filed
+"senza sostituto" with the Agenzia delle Entrate, a Caf, or a qualified
+professional). This is Italy's first schema in the registry, opening it as
+the 36th jurisdiction. Both the 24-page form and its 175-page istruzioni
+companion were fetched fresh directly from `agenziaentrate.gov.it` (HTTP
+200, no login/CAPTCHA/WAF gate); a `pdfjs-dist` extraction confirmed zero
+AcroForm widgets (a static print/hand-fill template) but a genuine embedded
+text layer with every field keyed to a printed casella code the istruzioni
+explains rigo-by-rigo (e.g. "Rigo E21 - Contributi previdenziali e
+assistenziali"), the same source tier already accepted for
+`pl/mf/zeznanie-pit-37` and `es/aeat/declaracion-censal-personas-fisicas-
+modelo-030`. v1.0.0 scopes to the common salaried-employee/pensioner core —
+identifying data, the family-dependents schedule, Quadro C's employment/
+pension income and withholding rows, and Quadro E's most common
+medical-expense/mortgage-interest/pension-contribution deductions — 67
+`fields[]` and 4 `documents[]` entries, explicitly deferring land/building
+income, capital gains and self-employment income, the bulk of Quadro E's
+coded niche deductions, the tax-credit/advance-payment quadri, and the
+8x1000/5x1000 elections. See the document's own VERIFICATION.md for the
+full inventory and every disclosed judgment call.
 
 **Finland's Taxes vertical opens** (`fi/vero/50a-earned-income-and-deductions`,
 GOV-2308) — the Finnish Tax Administration's (Vero, Verohallinto) form
@@ -6927,7 +6989,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (28/35 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (28/36 jurisdictions — 78%)
 
 **Norway's Visa vertical is now open (GOV-2340), closing Norway's last open
 vertical (6/6)** — see the Executive Summary update above and the
@@ -7205,7 +7267,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (28/35 jurisdictions — 80%)
+### National ID & Civic Documents (28/36 jurisdictions — 78%)
 
 **Sweden**'s National ID & Civic Documents gap is now closed (GOV-2372),
 via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
@@ -7493,6 +7555,7 @@ now closed.
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **IT** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -8490,6 +8553,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    update above and that document's own VERIFICATION.md. **Sweden now
    stands at 6 of 6 verticals — this item is fully closed, no verticals
    remain open for Sweden.**
+10. **Italy's DMV vertical** (Italy opened GOV-2382 via Taxes): a strong
+    pre-scouted follow-on candidate is Modello TT2119, Ministero delle
+    Infrastrutture e dei Trasporti / `ilportaledellautomobilista.it`
+    (`https://www.ilportaledellautomobilista.it/documents/56611/128846273/
+    TT2119.pdf`) — confirmed unauthenticated, a real PDF, ~13 pages, with a
+    genuine embedded text layer and no AcroForm widgets, its own
+    lettered/coded operation-type table self-documenting the form's
+    sections. Not yet authored; a same-tier candidate to Italy's own
+    Modello 730. Italy's other four remaining verticals were all screened
+    this cycle and found weak/dead-end — see "Confirmed dead ends" below
+    for Passport, Business Formation, National ID, and Visa.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -8679,6 +8753,31 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   exists for either tax. Do not re-attempt without a genuinely new source
   (e.g. a leaked/third-party-republished blank form with real line
   numbers).
+- **IT Passport (Polizia di Stato Modello 308)** — GOV-2382, 2026-07-11.
+  The form's own fillable pages are a scanned image with zero extractable
+  text (confirmed via `pdfjs-dist` returning no text-content items for
+  those pages); only the separate instructions page carries real text. Not
+  a self-documenting numbered-position source like Modello 730 or TT2119.
+  Do not re-attempt without a genuinely new source (e.g. a re-published
+  version with a real text layer on the fillable pages).
+- **IT Business Formation (Registro Imprese ComUnica)** — GOV-2382,
+  2026-07-11. ComUnica is digital-signature/telematic-only, filed via
+  commercialisti (accountant) intermediaries through the Camere di
+  Commercio's own telematic channel; there is no plain downloadable
+  fillable modulo distributed for direct citizen use. Do not re-attempt
+  without a genuinely new source.
+- **IT National ID (Carta d'Identità Elettronica)** — GOV-2382, 2026-07-11.
+  Fully appointment-based at the comune, with mandatory in-person
+  biometric capture (photo, fingerprints, signature); no downloadable
+  application form exists for the main flow, the same in-person-only
+  pattern this registry has repeatedly confirmed dead-end elsewhere (e.g.
+  CZ, MY — see above). Do not re-attempt without a genuinely new source.
+- **IT Visa (Farnesina national D-visa)** — GOV-2382, 2026-07-11. The
+  Ministero degli Affari Esteri's national (Type D) visa application form
+  is a confirmed field-for-field duplicate of the already-modelled
+  `de/auswaertiges-amt/national-visa-application` EU-harmonized template,
+  the same finding this registry has already reached for Poland's and
+  Spain's equivalent forms (see above). Not an open gap.
 
 ---
 
