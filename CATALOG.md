@@ -21,7 +21,7 @@
 > `pdfjs-dist` re-extraction, independent of the scouting agent's own
 > numbers, confirmed exactly **86 AcroForm widgets** across 2 pages, all
 > distinct field names with zero genuine PDF radio-button groups. The
-> document splits three separate 11-digit Civil Registration (CPR)
+> document splits three separate 10-digit Civil Registration (CPR)
 > numbers across ten single-digit boxes each (the applicant's, plus up to
 > two parents'/guardians' in the minor-consent Section D) — each group
 > merged into one field per this registry's established split-digit-box

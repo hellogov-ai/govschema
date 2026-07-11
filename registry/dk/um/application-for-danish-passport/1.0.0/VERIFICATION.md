@@ -49,7 +49,7 @@ same style used by this registry's `at/bmeia`/`is/*` cycles.
 - `getFieldObjects()` returns **86 distinct field-name keys** — i.e. no two
   widgets in this document share a field name anywhere. Every `Btn`
   (checkbox) widget's own `radioButton` flag is `false` (checked across
-  all 33 `Btn` widgets programmatically, not eyeballed). **This document
+  all 30 `Btn` widgets programmatically, not eyeballed). **This document
   contains zero genuine PDF radio-button groups.**
 - **Zero widgets carry a shared field name across the split
   Civil-Registration-number (CPR/personnummer) digit boxes** — each of the
