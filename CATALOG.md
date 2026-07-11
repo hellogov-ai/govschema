@@ -4,7 +4,61 @@
 
 ## Executive Summary
 
-**34 jurisdictions** | **351 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**34 jurisdictions** | **352 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2308, "GovSchema Standard Research"): Finland's
+> Taxes vertical opens**, via `fi/vero/50a-earned-income-and-deductions` —
+> the Finnish Tax Administration's (Vero, Verohallinto) form 3023e, "50A –
+> Earned income and deductions," used to report earned income (wages,
+> salaries, fees, compensation, pensions, benefits) missing from a
+> taxpayer's pre-completed tax return or to correct it, together with
+> deductions from earned income, child support paid, international-
+> taxation elections, custody of children living outside Finland, and a
+> permanent spousal separation during the tax year. This was already
+> CATALOG.md's own confirmed-strong Known Gaps candidate (item 7),
+> flagged across three prior cycles (GOV-2276, GOV-2292, GOV-2299); no
+> fresh scouting was needed. Fetched fresh from `vero.fi` with a plain
+> HTTP GET: HTTP 200, 233,558 bytes — matching the issue's own
+> pre-recorded figure exactly — genuine `%PDF-1.7`, 4 pages, no
+> login/CAPTCHA/WAF gate, footer edition "VEROH 3023e 1.2025". A
+> `pdfjs-dist` extraction (reproduced twice, with and without an intent
+> filter) resolved 135 raw `/Widget` annotations (115 Tx, 20 Btn, 0 Ch)
+> across 126 unique field names — matching this catalog's own
+> separately-recorded pre-scout figure ("135 Widget/126 FT fields")
+> exactly, though not the GOV-2308 issue text's own stated figure (141
+> widgets/127 names/17 Btn), a discrepancy disclosed in the document's
+> own VERIFICATION.md rather than silently reconciled. 3 of the 126
+> names are page-navigation/utility controls, clustered once on page 4
+> only, excluded as non-data-collecting UI chrome. A disposable
+> reconciliation script mapped all 126 unique widget names to exactly
+> one `fields[]` entry (0 unmapped), consolidating — via 32 euro/cent
+> split-widget merges and two bounded repeating groups flattened by
+> ordinal suffix (2 wages-income rows; 3 custody-of-children-outside-
+> Finland rows, matching this registry's `dk/cpr` precedent) — to **92
+> `fields[]` entries and 0 `documents[]` entries**. The zero
+> `documents[]` count is a disclosed structural fact, not an oversight:
+> the form's own instructions state verbatim not to enclose any receipts,
+> since the Tax Administration requests them separately if needed.
+> Several source-form naming quirks are disclosed in the document's own
+> VERIFICATION.md (an inconsistent comma/semicolon widget-name
+> convention across the four child-support child-identity-code fields; a
+> semantically bare `1`/`s1` field-name pair for the foreign-pension tax
+> credit; a spousal-separation field that is a single text, not
+> checkbox+date, widget; custody-type checkbox pairs without the
+> PDF-level `radioButton` flag this registry's `fi/dvv` precedent had).
+> Two mock conformance scenarios (a minimal single filer exercising only
+> the 3 statically-required header fields; a full-coverage filer
+> exercising two wages payors, a car benefit, a pension, a benefit, every
+> deduction category, child support for two children, a full set of
+> international-situation elections, two children with custody outside
+> Finland, and a spousal separation) found 0 errors, plus 5 mutation
+> controls each correctly raised exactly 1 error. **Finland now stands at
+> 4 of 6 verticals** (Business Formation, Visa, National ID, Taxes);
+> Passport is a confirmed dead end (Finland eliminated paper passport
+> applications in 2006) and DMV remains open, already confirmed weak
+> (Traficom's core flows are Suomi.fi-login-gated or in-person only) —
+> see the "Known Gaps" section below. See the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-11, GOV-2299, "GovSchema Standard Research"): Finland's
 > National ID & Civic Documents vertical opens**, via
@@ -5914,7 +5968,42 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (31/34 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (32/34 jurisdictions — 94%)
+
+**Finland's Taxes vertical opens** (`fi/vero/50a-earned-income-and-deductions`,
+GOV-2308) — the Finnish Tax Administration's (Vero, Verohallinto) form
+3023e, "50A – Earned income and deductions," used to report earned
+income (wages, salaries, fees, compensation, pensions, benefits) missing
+from a taxpayer's pre-completed tax return or to correct it, together
+with deductions from earned income, child support paid, international-
+taxation elections, custody of children living outside Finland, and a
+permanent spousal separation during the tax year. This was already
+CATALOG.md's own confirmed-strong Known Gaps candidate (item 7), flagged
+across three prior cycles (GOV-2276, GOV-2292, GOV-2299); no fresh
+scouting was needed this cycle. Fetched fresh from `vero.fi`: HTTP 200,
+233,558 bytes (matching the issue's own pre-recorded figure exactly),
+genuine `%PDF-1.7`, 4 pages, no login/CAPTCHA/WAF gate, footer edition
+"VEROH 3023e 1.2025". A `pdfjs-dist` extraction (reproduced twice, with
+and without an intent filter) resolved 135 raw `/Widget` annotations
+(115 Tx, 20 Btn, 0 Ch) across 126 unique field names, matching this
+catalog's own separately-recorded pre-scout figure exactly, though not
+the issue text's own stated figure (141 widgets/127 names/17 Btn) — a
+discrepancy disclosed rather than silently reconciled, since this
+cycle's own count was independently reproduced twice against the same
+byte-size-matching PDF. 3 of the 126 names are page-navigation/utility
+controls, clustered once on page 4 only. Every widget name was mapped to
+exactly one `fields[]` entry via a disposable reconciliation script (0
+unmapped), consolidating — via 32 euro/cent split-widget merges (this
+registry's established convention) and two bounded repeating groups
+flattened by ordinal suffix (2 wages-income rows; 3 custody-of-children-
+outside-Finland rows, matching this registry's `dk/cpr` precedent) — to
+92 `fields[]` entries and 0 `documents[]` entries, the latter a disclosed
+structural fact (the form's own instructions state verbatim not to
+enclose any receipts) rather than an oversight. See the document's own
+VERIFICATION.md for every disclosed source-naming quirk and the full
+mock conformance run (two scenarios, 0 errors; 5 mutation controls, each
+correctly raising exactly 1 error). This deepens **Finland to 4 of its 6
+verticals** (Passport is a confirmed dead end; only DMV remains open).
 
 **Denmark's Taxes vertical opens** (`dk/skattestyrelsen/oplysningsskemaet`,
 GOV-2253) — Skattestyrelsen's form 04.003, "Oplysningsskemaet," scoped to
@@ -6895,7 +6984,7 @@ now closed.
 | **DK** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **FI** | 3 | ✗ | ✗ | ✓ | ✗ | ✓ | ✓ |
+| **FI** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -7783,35 +7872,41 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    pre-scout's own 110-widget count was independently re-derived exactly
    (102 substantive after excluding 8 navigation/utility controls); see the
    Executive Summary update above and the document's own VERIFICATION.md.
-   **Taxes**: Vero's form 3023e/
-   "50A" (earned income and deductions correction/supplement form),
-   `vero.fi`, 135 Widget/126 FT fields across 4 pages, no login required for
-   the PDF itself (the pre-filled return proper is generated per-taxpayer
-   and typically e-filed via MyTax, but this correction form is a genuine
-   citizen-facing paper alternative). **National ID & Civic Documents has
-   since closed too (GOV-2299)**, via `fi/dvv/registration-of-foreigner` —
-   DVV's "Ulkomaalaisen rekisteröinti" (foreign national's registration
-   into the Population Information System, i.e. henkilötunnus/personal
-   identity code request), `dvv.fi`. This cycle's own from-scratch
-   `pdfjs-dist` extraction confirmed the pre-scout's 43 Widget/34 FT field
-   count exactly (the domestic Finnish eID/identity-card itself, via
-   `poliisi.fi`, was re-confirmed online/in-person-only with no downloadable
-   form, so this DVV registration form remains the strongest available
-   National ID candidate for this jurisdiction) — see the Executive Summary
-   update above and the document's own VERIFICATION.md. **Finland now stands
-   at 3 of 6 verticals** (Visa, Business Formation, National ID); **DMV and
-   Taxes remain Finland's only open verticals**. **Passport** is a confirmed dead end:
-   Finland eliminated paper passport applications in 2006 — `poliisi.fi`
-   offers only online (`asiointi.poliisi.fi`) or in-person appointment
-   channels, with a digital photo pre-uploaded separately
-   (`lupakuvienvastaanotto.fi`); no PDF/paper application form exists.
-   **DMV** is weak: Traficom's core driving-licence and
+   **National ID & Civic Documents has since closed too (GOV-2299)**, via
+   `fi/dvv/registration-of-foreigner` — DVV's "Ulkomaalaisen rekisteröinti"
+   (foreign national's registration into the Population Information
+   System, i.e. henkilötunnus/personal identity code request), `dvv.fi`.
+   This cycle's own from-scratch `pdfjs-dist` extraction confirmed the
+   pre-scout's 43 Widget/34 FT field count exactly (the domestic Finnish
+   eID/identity-card itself, via `poliisi.fi`, was re-confirmed
+   online/in-person-only with no downloadable form, so this DVV
+   registration form remains the strongest available National ID
+   candidate for this jurisdiction) — see the Executive Summary update
+   above and the document's own VERIFICATION.md. **Taxes has since closed
+   too (GOV-2308)**, via `fi/vero/50a-earned-income-and-deductions` —
+   Vero's form 3023e, "50A – Earned income and deductions" (an
+   earned-income/deductions correction-and-supplement form to a
+   taxpayer's pre-completed return), `vero.fi`. This cycle's own
+   `pdfjs-dist` extraction (reproduced twice) found 135 Widget/126 FT
+   fields across 4 pages, matching this pre-scout's own figure exactly,
+   no login required for the PDF itself (the pre-filled return proper is
+   generated per-taxpayer and typically e-filed via MyTax, but this
+   correction form is a genuine citizen-facing paper alternative) — see
+   the Executive Summary update above and the document's own
+   VERIFICATION.md. **Finland now stands at 4 of 6 verticals** (Visa,
+   Business Formation, National ID, Taxes); **only DMV remains open**.
+   **Passport** is a confirmed dead end: Finland eliminated paper passport applications in
+   2006 — `poliisi.fi` offers only online (`asiointi.poliisi.fi`) or
+   in-person appointment channels, with a digital photo pre-uploaded
+   separately (`lupakuvienvastaanotto.fi`); no PDF/paper application form
+   exists. **DMV** is weak: Traficom's core driving-licence and
    vehicle-registration flows are Suomi.fi-login-gated or in-person only
    (via Ajovarma); only companion forms are downloadable — F122 (a doctor's
    statement on driving fitness, not an applicant-facing intake form) and
    B527 (a paperless-vehicle registration notice, narrow-scope). A future
-   cycle should pick Business Formation, Taxes, or National ID next rather
-   than DMV or Passport.
+   cycle should look for a different DMV candidate rather than
+   re-attempting either, or move on to Passport/DMV gaps in other
+   jurisdictions.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 

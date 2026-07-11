@@ -1,0 +1,1016 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "fi/vero/50a-earned-income-and-deductions",
+  "version": "1.0.0",
+  "title": "Finland Form 50A — Earned Income and Deductions",
+  "description": "The Finnish Tax Administration's (Vero, Verohallinto) form 3023e, \"50A – Earned income and deductions,\" used to report earned income (wages, salaries, fees, compensation, pensions, and benefits) missing from a taxpayer's pre-completed tax return, or to correct information already on it, together with deductions from earned income, child support paid, international-taxation elections, custody of children living outside Finland, and a permanent separation from a spouse during the tax year. The form's own instructions state that receipts and free-form clarifications must not be enclosed; the Tax Administration will request them separately if needed, so this schema publishes no documents[] entries. It can be filed on paper without any prior authentication, though the Tax Administration's own e-filing channel (MyTax) is the primary route for taxpayers who can authenticate. This document describes the form only; it does not submit anything on the taxpayer's behalf, and does not imply Finnish government endorsement. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Finland or the Finnish Tax Administration.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "FI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Verohallinto (Finnish Tax Administration)",
+    "abbreviation": "Vero",
+    "url": "https://www.vero.fi"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.vero.fi/contentassets/23a6d90331ae408e84959d44a99dc45d/3023ev25_ws.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "3023e, \"50A – Earned income and deductions\" (VEROH 3023e 1.2025) — Vero's own English-language fillable AcroForm PDF"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2308 \"GovSchema Standard Research\" cycle. Opens Finland's Taxes vertical (4 of 6 verticals; Passport is a confirmed dead end and only DMV remains open, already confirmed weak -- Traficom's core flows are Suomi.fi-login-gated or in-person only). This form was already CATALOG.md's own confirmed-strong Known Gaps candidate (item 7), flagged across three prior cycles (GOV-2276/GOV-2292/GOV-2299); no fresh scouting was needed. Fetched fresh from vero.fi with a plain HTTP GET: HTTP 200, 233,558 bytes (matching the issue's own pre-recorded figure exactly), genuine %PDF-1.7, 4 pages, no login/CAPTCHA/WAF gate, footer edition \"VEROH 3023e 1.2025\". A pdfjs-dist extraction (reproduced twice, with and without an intent filter) resolved 135 raw /Widget annotations (115 Tx, 20 Btn, 0 Ch) across 126 unique field names -- matching CATALOG.md's own separately-recorded pre-scout figure (\"135 Widget/126 FT fields\") exactly, though not the GOV-2308 issue text's own stated figure (141 widgets/127 names/17 Btn), a discrepancy disclosed in this document's own VERIFICATION.md rather than silently reconciled. 3 of the 126 names are page-navigation/utility controls (Print, To first page, Reset), clustered once on page 4 only, excluded as non-data-collecting UI chrome. A disposable reconciliation script mapped all 126 unique widget names to exactly one fields[] entry (0 unmapped), consolidating -- via 32 euro/cent split-widget merges (this registry's established convention) and two bounded repeating groups flattened by ordinal suffix (2 wages-income rows; 3 custody-of-children-outside-Finland rows, matching this registry's dk/cpr precedent) -- to 92 fields[] entries and 0 documents[] entries. The zero documents[] count is a disclosed structural fact, not an oversight: the form's own instructions state verbatim not to enclose any receipts, since the Tax Administration requests them separately if needed. Several source-form naming quirks are disclosed in the document's own VERIFICATION.md: an inconsistent comma/semicolon widget-name convention across the four child-support child-identity-code fields; a semantically bare '1'/'s1' field-name pair for the foreign-pension tax credit, modelled by its own tooltip instead; a spousal-separation field that is a single text (not checkbox+date) widget, modelled as one optional date field whose presence signals the separation occurred; and custody-type checkbox pairs that are two same-named Btn widgets per row without the PDF-level radioButton flag this registry's fi/dvv precedent had, modelled as a per-row enum regardless. Two mock conformance scenarios (a minimal single filer exercising only the 3 statically-required header fields; a full-coverage filer with two wages payors, a car benefit, a pension, a benefit, every deduction category, child support for two children, a full set of international-situation elections, two children with custody outside Finland, and a spousal separation) were run against a from-scratch interpreter script walking fields[]/crossFieldValidation[] directly: 0 errors on both, plus 5 independent mutation controls (two dropped statically-required header fields; two requiredWhen-gated special-deduction cost fields each omitted while their gating checkbox is true; one reversed tax-at-source employment-period date pair) each correctly raised exactly 1 error. The same script confirmed every requiredWhen/crossFieldValidation field reference resolves (0 dangling references). Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "fullName",
+      "label": "Your name",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's full name, printed as a repeated header field on every page of the form.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Your name\"",
+      "classification": "pii"
+    },
+    {
+      "name": "personalIdentityCode",
+      "label": "Personal identity code",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's Finnish personal identity code (henkilötunnus), printed as a repeated header field on every page of the form.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Personal identity code\"",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "taxYear",
+      "label": "Tax year",
+      "type": "integer",
+      "required": true,
+      "description": "The calendar tax year this correction/supplement applies to, printed as a repeated header field on every page of the form.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Tax year\"",
+      "validation": {
+        "minimum": 2000,
+        "maximum": 2100
+      }
+    },
+    {
+      "name": "wagesPayorId1",
+      "label": "Payor's Business ID or personal identity code (row 1)",
+      "type": "string",
+      "required": false,
+      "description": "Business ID or personal identity code of the first payor of wages, salary, fees, or compensation being reported or corrected.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Payor’s Business ID or personal identity code\"",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "wagesPayorName1",
+      "label": "Payor's name (row 1)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the first payor of wages, salary, fees, or compensation.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Payor’s name\""
+    },
+    {
+      "name": "wagesIncomeType1",
+      "label": "Type of income (row 1)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of the type of income (e.g. cash wages and fringe benefits).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Type of income (e.g. cash wages and fringe benefits)\""
+    },
+    {
+      "name": "wagesGrossIncome1",
+      "label": "Gross income, euro (row 1)",
+      "type": "number",
+      "required": false,
+      "description": "Gross wage/salary/fee/compensation income missing from or to be corrected on the pre-completed tax return. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Gross income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "wagesWithholdingTax1",
+      "label": "Withholding tax, euro (row 1)",
+      "type": "number",
+      "required": false,
+      "description": "Withholding tax on the reported wage/salary/fee/compensation income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Withholding tax\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "wagesPensionContribution1",
+      "label": "Statutory pension insurance contributions withheld by the employer, euro (row 1)",
+      "type": "number",
+      "required": false,
+      "description": "Statutory pension insurance contributions withheld by the employer from the reported income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Statutory pension insurance contributions (withheld by the employer)\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "wagesUnemploymentContribution1",
+      "label": "Statutory unemployment insurance contributions, euro (row 1)",
+      "type": "number",
+      "required": false,
+      "description": "Statutory unemployment insurance contributions withheld from the reported income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Statutory unemployment insurance contributions\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "wagesPayorId2",
+      "label": "Payor's Business ID or personal identity code (row 2)",
+      "type": "string",
+      "required": false,
+      "description": "Business ID or personal identity code of the second payor of wages, salary, fees, or compensation being reported or corrected.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Payor’s Business ID or personal identity code\"",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "wagesPayorName2",
+      "label": "Payor's name (row 2)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the second payor of wages, salary, fees, or compensation.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Payor’s name\""
+    },
+    {
+      "name": "wagesIncomeType2",
+      "label": "Type of income (row 2)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of the type of income (e.g. cash wages and fringe benefits).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Type of income (e.g. cash wages and fringe benefits)\""
+    },
+    {
+      "name": "wagesGrossIncome2",
+      "label": "Gross income, euro (row 2)",
+      "type": "number",
+      "required": false,
+      "description": "Gross wage/salary/fee/compensation income missing from or to be corrected on the pre-completed tax return. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Gross income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "wagesWithholdingTax2",
+      "label": "Withholding tax, euro (row 2)",
+      "type": "number",
+      "required": false,
+      "description": "Withholding tax on the reported wage/salary/fee/compensation income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Withholding tax\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "wagesPensionContribution2",
+      "label": "Statutory pension insurance contributions withheld by the employer, euro (row 2)",
+      "type": "number",
+      "required": false,
+      "description": "Statutory pension insurance contributions withheld by the employer from the reported income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Statutory pension insurance contributions (withheld by the employer)\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "wagesUnemploymentContribution2",
+      "label": "Statutory unemployment insurance contributions, euro (row 2)",
+      "type": "number",
+      "required": false,
+      "description": "Statutory unemployment insurance contributions withheld from the reported income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Statutory unemployment insurance contributions\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "carBenefitReductionPrivateUse",
+      "label": "I claim reduction in the value of a car benefit due to private use",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer claims a reduction in the value of a company car benefit due to private use.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"I claim reduction in the value of a car benefit due to private use.\""
+    },
+    {
+      "name": "carBenefitReductionOtherReason",
+      "label": "Other reason for reduction in value of car benefit",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer claims a reduction in the value of a company car benefit for a reason other than private use.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Other reason for reduction in value of car benefit.\""
+    },
+    {
+      "name": "carBenefitPrivateUseKm",
+      "label": "Private use (km)",
+      "type": "number",
+      "required": false,
+      "description": "Kilometres of private use of the company car supporting the claimed reduction.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Private use (km)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "carBenefitWorkRelatedUseKm",
+      "label": "Work-related use (km)",
+      "type": "number",
+      "required": false,
+      "description": "Kilometres of work-related use of the company car supporting the claimed reduction.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Work-related use (km)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayorId",
+      "label": "Pension payor's Business ID or personal identity code",
+      "type": "string",
+      "required": false,
+      "description": "Business ID or personal identity code of the payor of a pension being reported or corrected.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Payor’s Business ID or personal identity code\"",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "pensionPayorName",
+      "label": "Pension payor's name",
+      "type": "string",
+      "required": false,
+      "description": "Name of the payor of the reported pension.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Payor’s name\""
+    },
+    {
+      "name": "pensionType",
+      "label": "Type of pension",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of the type of pension (e.g. for past employment).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Type of pension (e.g. for past employment)\""
+    },
+    {
+      "name": "pensionGrossIncome",
+      "label": "Gross pension income, euro",
+      "type": "number",
+      "required": false,
+      "description": "Gross pension income missing from or to be corrected on the pre-completed tax return. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Gross income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "pensionWithholdingTax",
+      "label": "Withholding tax on pension, euro",
+      "type": "number",
+      "required": false,
+      "description": "Withholding tax on the reported pension income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 1/4: \"Withholding tax\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "benefitPayorId",
+      "label": "Benefit payor's Business ID or personal identity code",
+      "type": "string",
+      "required": false,
+      "description": "Business ID or personal identity code of the payor of a benefit (e.g. unemployment allowance or study grant) being reported or corrected.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Payor’s Business ID or personal identity code\"",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "benefitPayorName",
+      "label": "Benefit payor's name",
+      "type": "string",
+      "required": false,
+      "description": "Name of the payor of the reported benefit.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Payor’s name\""
+    },
+    {
+      "name": "benefitType",
+      "label": "Type of benefit",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of the type of benefit (e.g. study grant).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Type of benefit (e.g. study grant)\""
+    },
+    {
+      "name": "benefitGrossIncome",
+      "label": "Gross benefit income, euro",
+      "type": "number",
+      "required": false,
+      "description": "Gross benefit income missing from or to be corrected on the pre-completed tax return. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Gross income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "benefitWithholdingTax",
+      "label": "Withholding tax on benefit, euro",
+      "type": "number",
+      "required": false,
+      "description": "Withholding tax on the reported benefit income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Withholding tax\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "otherEarnedIncomeType",
+      "label": "Other earned income: type of income",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of other earned income missing from the pre-completed tax return.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Type of income\""
+    },
+    {
+      "name": "otherEarnedIncomeGrossAmount",
+      "label": "Other earned income: gross income, euro",
+      "type": "number",
+      "required": false,
+      "description": "Gross amount of other earned income. The source specimen splits this amount across two adjacent boxes (whole euros, cents); this schema models the combined euro amount as a single decimal value.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Gross income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "incomeSpreadingRequested",
+      "label": "I am asking for income spreading",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer requests income spreading (averaging non-recurring income over several years).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"I am asking for income spreading.\""
+    },
+    {
+      "name": "retirementIncomeDeferralAndSpreadingRequested",
+      "label": "I am asking for a deferral of retirement income and income spreading",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer requests both a deferral of retirement income and income spreading.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"I am asking for a deferral of retirement income and income spreading.\""
+    },
+    {
+      "name": "specialDeductionIllness",
+      "label": "Grounds for special tax deduction: Illness",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer claims a special tax deduction for reduced capacity to pay taxes on grounds of illness.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Grounds for special tax deduction: Illness\""
+    },
+    {
+      "name": "specialDeductionIllnessCost",
+      "label": "Illness: cost, euro",
+      "type": "number",
+      "required": false,
+      "description": "Cost supporting the illness-based special tax deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Cost\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "specialDeductionIllness",
+        "equals": true
+      }
+    },
+    {
+      "name": "specialDeductionChildDevelopmentalDisorder",
+      "label": "Grounds for special tax deduction: Child's developmental disorder",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer claims a special tax deduction for reduced capacity to pay taxes on grounds of a child's developmental disorder.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Grounds for special tax deduction: Child’s developmental disorder\""
+    },
+    {
+      "name": "specialDeductionChildDevelopmentalDisorderCost",
+      "label": "Child's developmental disorder: cost, euro",
+      "type": "number",
+      "required": false,
+      "description": "Cost supporting the child's-developmental-disorder-based special tax deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Cost\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "specialDeductionChildDevelopmentalDisorder",
+        "equals": true
+      }
+    },
+    {
+      "name": "specialDeductionOtherReason",
+      "label": "Grounds for special tax deduction: Other reason",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer claims a special tax deduction for reduced capacity to pay taxes on another ground (e.g. unemployment, child support obligation).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Grounds for special tax deduction: Other reason (e.g. unemployment, child support obligation)\""
+    },
+    {
+      "name": "specialDeductionOtherReasonCost",
+      "label": "Other reason: cost, euro",
+      "type": "number",
+      "required": false,
+      "description": "Cost supporting the other-reason-based special tax deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Cost\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "specialDeductionOtherReason",
+        "equals": true
+      }
+    },
+    {
+      "name": "specialDeductionTotal",
+      "label": "Special tax deduction: total, euro",
+      "type": "number",
+      "required": false,
+      "description": "Total special tax deduction for reduced capacity to pay taxes, summing the illness, developmental disorder, and other-reason cost amounts.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Total\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "selfEmployedPensionInsuranceContribution",
+      "label": "YEL or MYEL pension insurance contributions, euro",
+      "type": "number",
+      "required": false,
+      "description": "Statutory YEL (self-employed) or MYEL (farmers') pension insurance contributions, when not deducted as business expenses.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"YEL or MYEL pension insurance contributions (when not deducted as business expenses)\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "laborOrgMembershipFeesTotal",
+      "label": "Total membership fees for labour market organisation or unemployment fund, euro/year",
+      "type": "number",
+      "required": false,
+      "description": "Total amount of membership fees paid per year to a labour market organisation or unemployment fund, missing from or to be corrected on the pre-completed tax return.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Total membership fees for labour market organisation or unemployment fund/year\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "laborOrgName",
+      "label": "Name of labour market organisation or unemployment fund",
+      "type": "string",
+      "required": false,
+      "description": "Name of the labour market organisation or unemployment fund to which the correction applies. Per the form's own instruction, only the name and Business ID of the organisation are entered here, not per-payment detail.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Name of labour market organisation or unemployment fund\""
+    },
+    {
+      "name": "laborOrgBusinessId",
+      "label": "Business ID (of labour market organisation or unemployment fund)",
+      "type": "string",
+      "required": false,
+      "description": "Business ID of the labour market organisation or unemployment fund.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 2/4: \"Business ID\""
+    },
+    {
+      "name": "trainingExpenses",
+      "label": "Training expenses, euro",
+      "type": "number",
+      "required": false,
+      "description": "Training expenses incurred in acquiring or maintaining wage income.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Training expenses\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "homeOfficeDeduction",
+      "label": "Home office deduction, euro",
+      "type": "number",
+      "required": false,
+      "description": "Home office deduction, an expense incurred in acquiring or maintaining wage income.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Home office deduction\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "workEquipmentExpenses",
+      "label": "Work-related equipment expenses, euro",
+      "type": "number",
+      "required": false,
+      "description": "Material costs and expenses for using own work equipment, an expense incurred in acquiring or maintaining wage income.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Work-related equipment (material costs and expenses for using own work equipment)\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "businessTripLivingExpenses",
+      "label": "Increased living expenses due to business trips, euro",
+      "type": "number",
+      "required": false,
+      "description": "Increased living expenses due to business trips, an expense incurred in acquiring or maintaining wage income.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Increased living expenses due to business trips\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "otherWageIncomeExpenses",
+      "label": "Other expenses (wage income), euro",
+      "type": "number",
+      "required": false,
+      "description": "Other expenses incurred in acquiring or maintaining wage income, not otherwise itemised.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Other expenses\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "totalWageIncomeExpenses",
+      "label": "Total expenses incurred in acquiring or maintaining wage income, euro",
+      "type": "number",
+      "required": false,
+      "description": "Total of the training, home office, work equipment, business trip, and other expenses incurred in acquiring or maintaining wage income.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Total expenses incurred in acquiring or maintaining wage income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "nonWageIncomeExpenses",
+      "label": "Expenses incurred in acquiring or maintaining non-wage income, euro",
+      "type": "number",
+      "required": false,
+      "description": "Expenses incurred in acquiring or maintaining income other than wages and salary.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Expenses incurred in acquiring or maintaining non-wage income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "benefitRelatedExpenses",
+      "label": "Expenses relating to benefits and other earned income, euro",
+      "type": "number",
+      "required": false,
+      "description": "Expenses relating to benefits and other earned income.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Expenses relating to benefits and other earned income\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "donationRecipientName",
+      "label": "Deductions for donations: name of donation recipient",
+      "type": "string",
+      "required": false,
+      "description": "Name of the recipient of a donation being claimed as a deduction.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Deductions for donations, Name of donation recipient\""
+    },
+    {
+      "name": "donationAmount",
+      "label": "Amount of donation, euro",
+      "type": "number",
+      "required": false,
+      "description": "Amount of the donation being claimed as a deduction.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Amount of donation\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "repaymentDeduction",
+      "label": "Repayment deduction, euro",
+      "type": "number",
+      "required": false,
+      "description": "Deduction claimed for a repayment of previously received income.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Repayment deduction\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "totalChildSupportPaid",
+      "label": "Total child support paid during the tax year, euro",
+      "type": "number",
+      "required": false,
+      "description": "Total child support paid during the tax year, missing from or to be corrected on the pre-completed tax return.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Total child support paid during the tax year\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "childSupportChildPersonalIdentityCode1",
+      "label": "Child support recipient's personal identity code (child 1)",
+      "type": "string",
+      "required": false,
+      "description": "Finnish personal identity code of the first child for whom child support is being reported, up to four children.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Child’s personal identity code\"",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "childSupportChildPersonalIdentityCode2",
+      "label": "Child support recipient's personal identity code (child 2)",
+      "type": "string",
+      "required": false,
+      "description": "Finnish personal identity code of the second child for whom child support is being reported, up to four children.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Child’s personal identity code\"",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "childSupportChildPersonalIdentityCode3",
+      "label": "Child support recipient's personal identity code (child 3)",
+      "type": "string",
+      "required": false,
+      "description": "Finnish personal identity code of the third child for whom child support is being reported, up to four children.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Child’s personal identity code\"",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "childSupportChildPersonalIdentityCode4",
+      "label": "Child support recipient's personal identity code (child 4)",
+      "type": "string",
+      "required": false,
+      "description": "Finnish personal identity code of the fourth child for whom child support is being reported, up to four children.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Child’s personal identity code\"",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "nonResidentUnderTaxTreatyRequested",
+      "label": "I am asking to be considered non-resident under a tax treaty",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer requests to be considered non-resident under an applicable tax treaty.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"I am asking to be considered non-resident under a tax treaty.\""
+    },
+    {
+      "name": "taxTreatyStudentTeacherResearcherExemptionRequested",
+      "label": "I am asking for tax-exemption or tax relief under the article on students, teachers, or researchers of a tax treaty",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer requests tax exemption or relief under the students/teachers/researchers article of an applicable tax treaty.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"I am asking for tax-exemption or tax relief under the article on students, teachers, or researchers of a tax treaty.\""
+    },
+    {
+      "name": "limitedTaxLiabilityRequested",
+      "label": "I am asking for limited tax liability",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer requests to be treated as having limited tax liability.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"I am asking for limited tax liability.\""
+    },
+    {
+      "name": "a1CertificateHeld",
+      "label": "I have an A1 certificate or other corresponding certificate",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer holds an A1 certificate (or other corresponding certificate) of applicable social security legislation.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"I have an A1 certificate or other corresponding certificate.\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod1Start",
+      "label": "Tax at source deduction: period of employment 1, start date",
+      "type": "date",
+      "required": false,
+      "description": "Start date of a period of employment supporting a tax-at-source deduction claim, for a non-resident taxpayer who is a leased employee, printed as dd.mm.yyyy on the form (up to four periods).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod1End",
+      "label": "Tax at source deduction: period of employment 1, end date",
+      "type": "date",
+      "required": false,
+      "description": "End date of the corresponding period of employment supporting a tax-at-source deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod2Start",
+      "label": "Tax at source deduction: period of employment 2, start date",
+      "type": "date",
+      "required": false,
+      "description": "Start date of a period of employment supporting a tax-at-source deduction claim, for a non-resident taxpayer who is a leased employee, printed as dd.mm.yyyy on the form (up to four periods).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod2End",
+      "label": "Tax at source deduction: period of employment 2, end date",
+      "type": "date",
+      "required": false,
+      "description": "End date of the corresponding period of employment supporting a tax-at-source deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod3Start",
+      "label": "Tax at source deduction: period of employment 3, start date",
+      "type": "date",
+      "required": false,
+      "description": "Start date of a period of employment supporting a tax-at-source deduction claim, for a non-resident taxpayer who is a leased employee, printed as dd.mm.yyyy on the form (up to four periods).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod3End",
+      "label": "Tax at source deduction: period of employment 3, end date",
+      "type": "date",
+      "required": false,
+      "description": "End date of the corresponding period of employment supporting a tax-at-source deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod4Start",
+      "label": "Tax at source deduction: period of employment 4, start date",
+      "type": "date",
+      "required": false,
+      "description": "Start date of a period of employment supporting a tax-at-source deduction claim, for a non-resident taxpayer who is a leased employee, printed as dd.mm.yyyy on the form (up to four periods).",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceEmploymentPeriod4End",
+      "label": "Tax at source deduction: period of employment 4, end date",
+      "type": "date",
+      "required": false,
+      "description": "End date of the corresponding period of employment supporting a tax-at-source deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Period of employment (ddmmyyyy–ddmmyyyy)\""
+    },
+    {
+      "name": "taxAtSourceTotalWorkdays",
+      "label": "Total number of workdays",
+      "type": "integer",
+      "required": false,
+      "description": "Total number of workdays across the reported employment periods, supporting the tax-at-source deduction claim.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"Total number of workdays\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignTaxCreditOnFinnishPension",
+      "label": "Crediting of tax paid abroad on a Finnish-sourced pension, euro",
+      "type": "number",
+      "required": false,
+      "description": "Amount of tax paid abroad on a pension received from Finland, for which a reverse credit is claimed.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 3/4: \"I have paid tax abroad on a pension I have received from Finland (see the instructions for completing the form).\"",
+      "validation": {
+        "minimum": 0
+      },
+      "classification": "financial"
+    },
+    {
+      "name": "childOutsideFinlandName1",
+      "label": "Child's name (child outside Finland, row 1)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the first child who does not have a Finnish personal identity code, for whom custody outside Finland is being reported. Reportable only if the taxpayer holds a certificate from the child's country of residence proving guardianship.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Child’s name\"",
+      "classification": "pii"
+    },
+    {
+      "name": "childOutsideFinlandDateOfBirth1",
+      "label": "Date of birth (child outside Finland, row 1)",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of the child.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Date of birth (ddmmyyyy)\""
+    },
+    {
+      "name": "childOutsideFinlandCustodyType1",
+      "label": "Type of child custody (row 1)",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the taxpayer has joint or sole custody of the child.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Type of child custody ☐ Joint custody ☐ Sole custody\"",
+      "validation": {
+        "enum": [
+          "joint_custody",
+          "sole_custody"
+        ]
+      }
+    },
+    {
+      "name": "childOutsideFinlandCustodyEndDate1",
+      "label": "End date of child custody (row 1)",
+      "type": "date",
+      "required": false,
+      "description": "End date of child custody, if custody ended during the tax year.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"End date of child custody (ddmmyyyy)\""
+    },
+    {
+      "name": "childOutsideFinlandName2",
+      "label": "Child's name (child outside Finland, row 2)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the second child who does not have a Finnish personal identity code, for whom custody outside Finland is being reported. Reportable only if the taxpayer holds a certificate from the child's country of residence proving guardianship.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Child’s name\"",
+      "classification": "pii"
+    },
+    {
+      "name": "childOutsideFinlandDateOfBirth2",
+      "label": "Date of birth (child outside Finland, row 2)",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of the child.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Date of birth (ddmmyyyy)\""
+    },
+    {
+      "name": "childOutsideFinlandCustodyType2",
+      "label": "Type of child custody (row 2)",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the taxpayer has joint or sole custody of the child.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Type of child custody ☐ Joint custody ☐ Sole custody\"",
+      "validation": {
+        "enum": [
+          "joint_custody",
+          "sole_custody"
+        ]
+      }
+    },
+    {
+      "name": "childOutsideFinlandCustodyEndDate2",
+      "label": "End date of child custody (row 2)",
+      "type": "date",
+      "required": false,
+      "description": "End date of child custody, if custody ended during the tax year.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"End date of child custody (ddmmyyyy)\""
+    },
+    {
+      "name": "childOutsideFinlandName3",
+      "label": "Child's name (child outside Finland, row 3)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the third child who does not have a Finnish personal identity code, for whom custody outside Finland is being reported. Reportable only if the taxpayer holds a certificate from the child's country of residence proving guardianship.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Child’s name\"",
+      "classification": "pii"
+    },
+    {
+      "name": "childOutsideFinlandDateOfBirth3",
+      "label": "Date of birth (child outside Finland, row 3)",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of the child.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Date of birth (ddmmyyyy)\""
+    },
+    {
+      "name": "childOutsideFinlandCustodyType3",
+      "label": "Type of child custody (row 3)",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the taxpayer has joint or sole custody of the child.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Type of child custody ☐ Joint custody ☐ Sole custody\"",
+      "validation": {
+        "enum": [
+          "joint_custody",
+          "sole_custody"
+        ]
+      }
+    },
+    {
+      "name": "childOutsideFinlandCustodyEndDate3",
+      "label": "End date of child custody (row 3)",
+      "type": "date",
+      "required": false,
+      "description": "End date of child custody, if custody ended during the tax year.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"End date of child custody (ddmmyyyy)\""
+    },
+    {
+      "name": "spouseSeparationDate",
+      "label": "My spouse and I have separated permanently during the tax year",
+      "type": "date",
+      "required": false,
+      "description": "Date the taxpayer and their spouse separated permanently during the tax year, if applicable. The source specimen prints this as a single date field directly following the declarative sentence, rather than as a separate checkbox plus date; presence of a value is what indicates the separation occurred.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"My spouse and I have separated permanently during the tax year.\""
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date",
+      "type": "date",
+      "required": false,
+      "description": "Date the form is signed.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Date\""
+    },
+    {
+      "name": "signature",
+      "label": "Signature",
+      "type": "string",
+      "required": false,
+      "description": "The taxpayer prints and signs their name by hand; the form must be printed out for this.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Signature\"",
+      "classification": "pii"
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone number",
+      "type": "string",
+      "required": false,
+      "description": "The taxpayer's telephone number, for the Tax Administration to use if clarification is needed.",
+      "sourceRef": "VEROH 3023e 1.2025, \"50A – Earned income and deductions\", page 4/4: \"Telephone number\"",
+      "classification": "pii"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "taxAtSourceEmploymentPeriod1EndNotBeforeStart",
+      "compare": {
+        "field": "taxAtSourceEmploymentPeriod1End",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "taxAtSourceEmploymentPeriod1Start"
+      }
+    },
+    {
+      "id": "taxAtSourceEmploymentPeriod2EndNotBeforeStart",
+      "compare": {
+        "field": "taxAtSourceEmploymentPeriod2End",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "taxAtSourceEmploymentPeriod2Start"
+      }
+    },
+    {
+      "id": "taxAtSourceEmploymentPeriod3EndNotBeforeStart",
+      "compare": {
+        "field": "taxAtSourceEmploymentPeriod3End",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "taxAtSourceEmploymentPeriod3Start"
+      }
+    },
+    {
+      "id": "taxAtSourceEmploymentPeriod4EndNotBeforeStart",
+      "compare": {
+        "field": "taxAtSourceEmploymentPeriod4End",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "taxAtSourceEmploymentPeriod4Start"
+      }
+    }
+  ]
+}
