@@ -4,7 +4,53 @@
 
 ## Executive Summary
 
-**37 jurisdictions** | **365 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**37 jurisdictions** | **366 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2411, "GovSchema Standard Research"): Vietnam's
+> Taxes vertical opens (2 of 6)**, via `vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`
+> v1.0.0, sourced from Mẫu số 02/QTT-TNCN, "Tờ khai quyết toán thuế thu nhập
+> cá nhân" (Personal Income Tax Finalization Declaration), applicable to a
+> resident individual with wage/salary income who self-files their annual
+> PIT finalization. A pre-scouted candidate PDF
+> (`easyinvoice.vn/wp-content/uploads/2026/04/mau-so-02-QTT-TNCN-2.pdf`,
+> re-verified: genuine text layer, zero AcroForm widgets, same tier as
+> `jp/houmukyoku`) turned out to model a **superseded** template on the same
+> legal-currency check that caught `vn/xuatnhapcanh`'s own X01-vs-TK01 issue:
+> the form has been amended twice in 2025 — Thông tư 40/2025/TT-BTC
+> (hiệu lực 01/07/2025) replaced a three-tier Quận/huyện+Tỉnh/thành phố
+> address breakdown with a two-tier Xã/phường/đặc khu+Tỉnh/thành phố
+> breakdown, reflecting Vietnam's mid-2025 abolition of the district
+> administrative tier; Thông tư 94/2025/TT-BTC (hiệu lực 14/10/2025) added a
+> new chỉ tiêu [05a] "Số định danh cá nhân" for tax-code/citizen-ID
+> synchronization — and the candidate PDF had neither change applied.
+> `gdt.gov.vn`/`canhan.gdt.gov.vn` were unreachable (20s timeouts) and two
+> other gov-adjacent PDF leads dead-ended (one misattributed by search to an
+> unrelated commendation-awards circular; one a 3-page scanned image with no
+> extractable text). This schema instead sources the current,
+> amendment-incorporating template from thuvienphapluat.vn — Vietnam's
+> leading legal-document portal, an explicitly sanctioned fallback — via a
+> directly downloadable `.doc` file whose own header states verbatim that it
+> "đã bao gồm nội dung sửa đổi, bổ sung" (already incorporates the amended
+> content), cross-checked against thuvienphapluat.vn's own companion
+> advisory article. A related correction: this cycle's own brief named the
+> issuing authority "Tổng cục Thuế" (General Department of Taxation), which
+> an independent search found was itself renamed **Cục Thuế** (Tax
+> Department) effective 1 March 2025 (Thông báo 275/TB-TCT) — this schema's
+> `authority.name` reflects the current name. All 70 `fields[]` and 6
+> `documents[]` entries (the latter, like `vn/xuatnhapcanh`'s own, sourced
+> from a professional advisory site's guidance rather than the form's own
+> text, which carries no attachment checklist) are cited to their own chỉ
+> tiêu number or printed instruction. Two mock conformance scenarios (a
+> first-time filer with no dependents and a small bank-transfer refund; a
+> supplementary filing with dependents, a charitable deduction, foreign tax
+> paid, and a budget-offset request) found **0 errors** each, plus 3
+> mutation controls (missing required field, personal-ID-number pattern
+> violation, a refund-detail field required by `refundMethod` left absent)
+> each correctly raised exactly 1 error. **Vietnam now stands at 2 of 6
+> verticals** (Passport, Taxes); Business Formation, DMV, Visa, and National
+> ID remain open — Business Formation and Visa have only weak pre-scouted
+> leads, DMV was inconclusive on a 503'd gov host, and National ID is a
+> confirmed dead end (in-person/biometric CCCD issuance only).
 
 > **Update (2026-07-11, GOV-2404, "GovSchema Standard Research"): Vietnam
 > opens as this registry's 37th jurisdiction**, via its Passport vertical,
@@ -6668,7 +6714,29 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (33/37 jurisdictions — 89%)
+### Taxes — Income Tax Return, Tax Filing (34/37 jurisdictions — 92%)
+
+**Vietnam's Taxes vertical opens** (`vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`,
+GOV-2411) — Mẫu số 02/QTT-TNCN, "Tờ khai quyết toán thuế thu nhập cá nhân"
+(Personal Income Tax Finalization Declaration), for a resident individual
+with wage/salary income self-filing their annual PIT finalization directly
+with the tax authority. This is Vietnam's Taxes vertical (2 of 6), following
+the Passport vertical opened the previous cycle. A pre-scouted candidate PDF
+(`easyinvoice.vn`) turned out to model a template superseded by two 2025
+circulars — Thông tư 40/2025/TT-BTC (a district-tier-abolition address
+restructuring) and Thông tư 94/2025/TT-BTC (a new personal-ID-number chỉ
+tiêu [05a]) — the same kind of legal-currency trap `vn/xuatnhapcanh` itself
+caught the prior cycle. With `gdt.gov.vn` unreachable and two other gov-
+adjacent PDF leads dead-ending, this schema sources the current,
+amendment-incorporating template from thuvienphapluat.vn (an explicitly
+sanctioned fallback), cross-checked against that same portal's own advisory
+article. 70 `fields[]` and 6 `documents[]` entries model the full chỉ tiêu
+[01]-[48] income/deduction/tax-liability table plus the conditional
+refund-payment and budget-offset detail blocks, deferring the separate
+02-1/BK-QTT-TNCN dependent schedule and the granular 13-column budget-offset
+breakdown table. See the document's own VERIFICATION.md for the full
+sourcing record, including the authority-name correction (Tổng cục Thuế →
+Cục Thuế, effective 2025-03-01) this cycle's own research caught.
 
 **Italy opens** (`it/agenzia-entrate/modello-730`, GOV-2382) — Agenzia delle
 Entrate's Modello 730/2026, "Redditi 2025," the flagship annual income tax
@@ -7762,7 +7830,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **VN** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **VN** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
@@ -8769,10 +8837,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     National ID, and Visa.
 11. **Vietnam opens as the registry's 37th jurisdiction (GOV-2404)**, via its
     Passport vertical, `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc`
-    (Mẫu TK01, Circular 69/2026/TT-BCA, effective 2026-07-01). Vietnam's other
-    five verticals (Business Formation, DMV, Taxes, Visa, National ID) are
-    open, unscreened backlog candidates for a future cycle. The two
-    runner-up candidates scouted the same cycle remain open backlog
+    (Mẫu TK01, Circular 69/2026/TT-BCA, effective 2026-07-01). **Vietnam's
+    Taxes vertical is now open too (GOV-2411)**, via
+    `vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan` (Mẫu 02/QTT-TNCN,
+    Thông tư 80/2021/TT-BTC as amended by Thông tư 40/2025/TT-BTC and Thông
+    tư 94/2025/TT-BTC) — **Vietnam now stands at 2 of 6 verticals**
+    (Passport, Taxes). Vietnam's remaining four verticals are open backlog
+    candidates of varying strength: **Business Formation** and **Visa**
+    each have only weak pre-scouted leads; **DMV** is inconclusive, having
+    hit a 503 from the relevant gov host during prior scouting; **National
+    ID** is a confirmed dead end (in-person/biometric CCCD issuance only,
+    no downloadable form) — see "Confirmed dead ends" below. The two
+    runner-up candidates scouted the GOV-2404 cycle remain open backlog
     candidates too: **Greece** (Business Formation/DMV/National ID
     confirmed in-person-only or telematic-only dead ends; Passport's only
     downloadable artifact is a scanned "sample" with zero extractable text;
@@ -8786,7 +8862,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Visa's DGC-005 form are all genuine unauthenticated static text-layer
     PDFs, none carrying real AcroForm widgets). See
     `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc`'s own
-    VERIFICATION.md for the full three-way candidate comparison.
+    VERIFICATION.md for the full three-way candidate comparison, and
+    `vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`'s own VERIFICATION.md
+    for the Taxes-vertical sourcing record.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -9001,6 +9079,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   `de/auswaertiges-amt/national-visa-application` EU-harmonized template,
   the same finding this registry has already reached for Poland's and
   Spain's equivalent forms (see above). Not an open gap.
+- **VN National ID (Citizen Identification / CCCD)** — GOV-2404, screened
+  2026-07-11. Citizen Identification card issuance/renewal is
+  appointment-based with mandatory in-person biometric capture (photograph,
+  fingerprints); no downloadable citizen-facing application form exists for
+  the main flow, the same in-person-only pattern this registry has
+  repeatedly confirmed dead-end elsewhere (CZ, MY, IT — see above). Do not
+  re-attempt without a genuinely new source.
 
 ---
 
