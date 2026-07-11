@@ -4,8 +4,48 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **355 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **356 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-11, GOV-2340, "GovSchema Standard Research"): Norway's
+> Visa vertical is now closed — Norway stands at 6 of 6 verticals**, the
+> registry's first Nordic jurisdiction with every vertical modelled, via
+> `no/udi/soknad-om-opphold-og-arbeidstillatelse` — UDI's (the Norwegian
+> Directorate of Immigration) form GP-7028 B, "Søknad om tillatelse til
+> arbeid og opphold" (Application for a permit to work and reside),
+> covering all four of its permit grounds (family immigration, work,
+> education, protection/asylum-or-other) plus first-time/renewal, criminal-
+> record, power-of-attorney, and minor/guardian sections. This is CATALOG.md's
+> own pre-scouted Known Gaps item 8 candidate, the same UDI form the GOV-2316/
+> GOV-2330 cycles had already sized at ~328 raw widgets and set aside as the
+> larger of Norway's two remaining candidates. Fetched fresh from `udi.no`:
+> HTTP 200, 1,519,473 bytes, genuine `%PDF-1.6` header, no login/CAPTCHA/WAF
+> gate. A `pdfjs-dist` extraction resolved 7 pages, 325 raw `/Widget`
+> annotations, and 231 distinct field names — an exact match to this cycle's
+> own pre-extraction. Because the source form's own instruction is simply to
+> "fill in the field(s) that correspond to the basis you are applying on,"
+> with no single dedicated selector widget naming which permit ground
+> applies, this schema introduces four synthetic, disclosed boolean gating
+> fields (`applyingForFamilyImmigration`/`applyingForWorkPermit`/
+> `applyingForEducationPermit`/`applyingForProtectionOrOtherPermit`) so each
+> branch's fields can be expressed with this registry's `visibleWhen`/
+> `requiredWhen` conventions. 325 widgets were mapped to 229 `fields[]`
+> entries plus 4 `documents[]` entries, following this registry's established
+> radio-group-to-enum, bounded-repeating-group (a 6-row foreign-travel table;
+> a spouse/two-parents/six-other-relatives family-member block), and office-
+> use-content-exclusion conventions (the page-1 case-number/fee stamp box and
+> the page-7 police/embassy remarks radios). Two disclosed duplicate/stray
+> widget-layer artifacts (page 4's foreign-travel table rows 1-4; one stray
+> page-5 gender-radio widget) were excluded, matching this registry's prior
+> Norway schemas. Two mock conformance scenarios (a first-time work-permit
+> application; a renewal family-immigration application with a spouse, a
+> child, a prior marriage, a criminal conviction, and a granted power of
+> attorney) found **0 errors**, plus 4 mutation controls each correctly
+> raised exactly 1 error — including two exercising the `documents[]`
+> requiredness path this registry has previously found conformance checkers
+> can silently skip. **Norway now stands at 6 of 6 verticals — no verticals
+> remain open for this jurisdiction** — see the document's own
+> VERIFICATION.md for the full sourcing record.
+>
 > **Update (2026-07-11, GOV-2330, "GovSchema Standard Research"): Norway's
 > DMV vertical is now closed**, via
 > `no/vegvesen/soknad-om-forerkort-og-kompetansebevis` — Statens vegvesen's
@@ -6611,7 +6651,12 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (27/35 jurisdictions — 77%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (28/35 jurisdictions — 80%)
+
+**Norway's Visa vertical is now open (GOV-2340), closing Norway's last open
+vertical (6/6)** — see the Executive Summary update above and the
+document's own VERIFICATION.md for the full sourcing and field-mapping
+record.
 
 **Denmark's Visa vertical is now open** (`dk/siri/work-permit-application`,
 GOV-2285), via SIRI's (the Danish Agency for International Recruitment and
@@ -7163,7 +7208,7 @@ now closed.
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **NO** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
+| **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -8089,15 +8134,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    `no/vegvesen/soknad-om-forerkort-og-kompetansebevis` — see the Executive
    Summary update above and the document's own VERIFICATION.md (which
    independently re-extracted 82 widgets, matching this entry's own ~82
-   approximate figure exactly). **Visa remains Norway's only open vertical**:
-   - **Visa**: UDI's (the Norwegian Directorate of Immigration) form
-     GP7028, a paper application form —
-     `https://www.udi.no/globalassets/global/skjemaer/arbeid-og-opphold-gp7028-b.pdf`,
-     ~328 widgets. Disclosed as UDI's own legacy/paper fallback, not its
-     primary online (`udi.no` self-service portal / `søknadsportal`)
-     application path — a future cycle should confirm whether this paper
-     specimen is still genuinely accepted, or scout the online portal's
-     own field-by-field structure instead, before committing to it.
+   approximate figure exactly). **Update (2026-07-11, GOV-2340): Visa is
+   now closed too**, via `no/udi/soknad-om-opphold-og-arbeidstillatelse` —
+   UDI's own form GP7028 (paper fallback, per the note below, still
+   confirmed live and unauthenticated) — see the Executive Summary update
+   above and the document's own VERIFICATION.md (which independently
+   re-extracted 325 widgets/231 distinct field names, exactly matching this
+   entry's own ~328 approximate figure). **Norway now stands at 6 of 6
+   verticals — this item is fully closed, no verticals remain open for
+   Norway.**
 
    **Taxes** and **Passport** are confirmed weak/dead-end candidates for
    Norway, not open gaps: Taxes is fully digital and pre-filled
