@@ -1,10 +1,48 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-10** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-11** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**32 jurisdictions** | **341 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**32 jurisdictions** | **342 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2233, "GovSchema Standard Research"): Iceland
+> closes to 6/6 verticals**, via
+> `is/skatturinn/system-identification-number-application-foreign-national` —
+> Skatturinn's (Icelandic Tax and Customs Directorate) Form RSK 3.30,
+> "Umsókn erlends ríkisborgara um kerfiskennitölu" (Foreign national's
+> application for a system identification number). A kerfiskennitala is a
+> temporary identification number issued to a foreign national who does not
+> qualify for a regular Icelandic kennitala, used by exactly three groups
+> per the form's own eligibility note: EEA/EFTA citizens working in Iceland
+> for at most six months; spouses of Icelanders or EEA/EFTA citizens in paid
+> employment awaiting a residence-permit decision; and foreign parties with
+> reportable Icelandic capital income. This closes the National ID & Civic
+> Documents gap the GOV-2226 cycle had already scouted and named as a
+> viable, well-sourced candidate ("Skatturinn Form RSK 3.30 ...") but left
+> unauthored; re-screened fresh this session rather than assumed still
+> valid. Fetched directly from `skatturinn.is` (HTTP 200, 37,195 bytes,
+> SHA-256 `62597acdda...4400ee9cda106`), no login/CAPTCHA/WAF gate. A
+> from-scratch `pdfjs-dist` re-extraction confirmed exactly **23 AcroForm
+> widgets** on the document's single page, resolving 1:1 to 23 distinct
+> field names with no split-box or duplicate-copy reconciliation needed.
+> Position-aware (x/y proximity) cross-walking surfaced one non-obvious
+> structural finding: two of the three "reason for application" checkboxes
+> carry no field name at all in the source PDF's own AcroForm (reported as
+> literal `"undefined"`/`"undefined_2"` by `getFieldObjects()`), the same
+> class of upstream authoring gap already seen on this registry's
+> `is/samgongustofa` schema. Net **19 fields plus 2 first-class
+> `documents[]` attachment declarations** (a passport copy, statically
+> required, and a Directorate of Labour work-permit-exemption confirmation,
+> deliberately left unconditional since the source only rules its
+> requirement out for one of three reasons, not in for the other two). See
+> the document's own VERIFICATION.md for the full sourcing record, the
+> structural finding, every scope decision, and the mock conformance test
+> run (0 errors across 2 valid mocks — one EEA/EFTA worker, one
+> capital-income "other" case — and 2 negative controls both failing as
+> expected). **Iceland now stands at 6 of 6 verticals** (Business Formation,
+> Taxes, Visa, DMV, Passport, National ID), the second jurisdiction in this
+> registry (after Colombia) to reach full coverage.
 
 > **Update (2026-07-10, GOV-2226, "GovSchema Standard Research"): Iceland's
 > Passport vertical opens (5/6)**, via
@@ -45,7 +83,8 @@
 > National ID remains Iceland's sole open vertical — a prior cycle's
 > scouting note named Skatturinn Form RSK 3.30 (kerfiskennitala for
 > foreign nationals) as a viable, well-sourced backlog candidate, still
-> unauthored.
+> unauthored. **This has since closed too (GOV-2233, 2026-07-11)** — see the
+> Executive Summary update above; Iceland now stands at 6 of 6 verticals.
 
 > **Update (2026-07-10, GOV-2219, "GovSchema Standard Research"): Iceland's
 > DMV vertical opens (4/6)**, via
@@ -4690,8 +4729,10 @@
 V-901, the genuine standalone custodian-consent form embedded within
 Iceland's otherwise in-person/biometric passport-issuance process. See the
 Executive Summary update above and the document's own VERIFICATION.md for
-the full sourcing record. Iceland now stands at 5 of its 6 verticals;
-National ID remains its sole open vertical.
+the full sourcing record. Iceland now stood at 5 of its 6 verticals at that
+point; **its National ID gap has since closed too (GOV-2233)** — see the
+National ID & Civic Documents section below and the Executive Summary
+update above. Iceland now stands at 6 of 6 verticals.
 
 **Austria**'s Passport gap is now closed (GOV-2128), via
 `at/bmeia/passport-or-identity-card-application` — the bilingual
@@ -6142,7 +6183,17 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (23/32 jurisdictions — 72%)
+### National ID & Civic Documents (24/32 jurisdictions — 75%)
+
+**Iceland**'s National ID & Civic Documents gap is now closed (GOV-2233), via
+`is/skatturinn/system-identification-number-application-foreign-national` —
+Skatturinn's Form RSK 3.30, the foreign national's application for a
+kerfiskennitala (system identification number), the temporary ID number
+issued to a foreign national who does not qualify for a regular Icelandic
+kennitala. This closes Iceland's sixth and last open vertical; see the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full sourcing record. Iceland now stands at 6 of 6 verticals, the second
+jurisdiction in this registry (after Colombia) to reach full coverage.
 
 **Japan**'s National ID gap is now closed (GOV-2012), via
 `jp/j-lis/individual-number-card-issuing-application` — the Japan Agency for
@@ -6365,7 +6416,7 @@ now closed.
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IS** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
