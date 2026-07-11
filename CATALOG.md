@@ -58,7 +58,8 @@
 > `git worktree` checkout of the pushed branch. See the document's own
 > VERIFICATION.md for the full field-mapping record. PR
 > [#370](https://github.com/hellogov-ai/govschema/pull/370), review gate
-> GOV-2280 (authoring record GOV-2278). **Finland now stands at 1 of its 6
+> [GOV-2281](/GOV/issues/GOV-2281) (authoring record
+> [GOV-2280](/GOV/issues/GOV-2280)). **Finland now stands at 1 of its 6
 > verticals** (Visa); Business Formation (PRH/YTJ form Y1), Taxes (Vero
 > form 3023e), and National ID (DVV's foreign-national population-register
 > form) are all confirmed strong, unscreened backlog candidates for a
