@@ -4,8 +4,47 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **354 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **355 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-11, GOV-2330, "GovSchema Standard Research"): Norway's
+> DMV vertical is now closed**, via
+> `no/vegvesen/soknad-om-forerkort-og-kompetansebevis` — Statens vegvesen's
+> (the Norwegian Public Roads Administration) combined application form for
+> a driving licence and/or competence certificate, "Søknad om førerkort og
+> kompetansebevis / Egenerklæring om helse" (including a mandatory 17-question
+> health self-declaration). This was the smaller of the two Norway candidates
+> the GOV-2316 parent cycle had pre-scouted and named in this catalog's own
+> "Known Gaps" section (item 8), picked over UDI's GP7028 legacy-paper Visa
+> form (~328 widgets vs. this form's ~82). Fetched fresh from `vegvesen.no`:
+> HTTP 200, 223,986 bytes, genuine `%PDF-1.6` header, no login/CAPTCHA/WAF
+> gate. A `pdfjs-dist` extraction resolved 82 raw `/Widget` annotations, all
+> on page 1 (page 2 is purely informational), matching the pre-scout's own
+> approximate figure exactly, and `getFieldObjects()` found 65 distinct field
+> names. A disposable reconciliation script mapped all 65 names to 57
+> `fields[]` entries (0 `documents[]` — a disclosed structural fact, matching
+> this registry's `fi/vero` precedent) — via a written-form-preference
+> checkbox-pair-to-enum collapse, a 6-value application-type consolidation, a
+> foreign-licence Ja/Nei-to-boolean collapse, and the 17 health questions
+> each modelled as an independent required boolean (`classification: health`
+> per GSP-0006). The 23-item licence-class/competence checklist was
+> deliberately **not** collapsed to a single enum, unlike the other two
+> checkbox groups: it is genuinely multi-selectable (an applicant can request
+> several classes at once, e.g. B + BE), and this registry's spec has no
+> `array` field type, so 23 independent boolean fields is the spec's correct
+> expression of a multi-select group, not a workaround. One stray widget
+> (field name identical to the on-page question text, positioned as a
+> full-width box overlapping two other fields' captions with no distinct
+> visible role) is excluded as a disclosed forms-authoring artifact. Two mock
+> conformance scenarios (a minimal first-time class-B application; a renewal
+> requesting three classes at once with a declared foreign licence and two
+> health questions answered "yes") found **0 errors**, plus 2 mutation
+> controls each correctly raised exactly 1 error (a `requiredWhen` violation
+> and a `crossFieldValidation` date-ordering violation). **Norway now stands
+> at 5 of its 6 verticals** (Business Formation, National ID, DMV, plus
+> Taxes/Passport confirmed weak/dead-end); **Visa (UDI form GP7028) is
+> Norway's only remaining open vertical** — see the "Known Gaps" section
+> below and the document's own VERIFICATION.md for the full sourcing record.
+>
 > **Update (2026-07-11, GOV-2323, "GovSchema Standard Research"): Norway's
 > National ID & Civic Documents vertical is now closed**, via
 > `no/skatteetaten/notification-of-move-within-norway` — Skatteetaten's
@@ -5393,7 +5432,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (30/35 jurisdictions — 86%)
+### DMV — Vehicle Registration, Licensing, Permits (31/35 jurisdictions — 89%)
 
 **Denmark** has no DMV schema yet. GOV-2253 screened this vertical fresh
 and set it aside as a poor candidate: Færdselsstyrelsen's P23
@@ -5621,7 +5660,11 @@ Enforcement Rule, Attached Form No. 14) via law.go.kr, cross-checked against
 the Car365 (car365.go.kr) portal's own guidance and several district
 vehicle-registration-office pages; the portal's own online submission
 channel requires a Korean digital-certificate login and was not walked
-interactively. Remaining gaps are all **sub-process/edition** expansions
+interactively. **Norway** (`no/vegvesen/soknad-om-forerkort-og-kompetansebevis`,
+GOV-2330) is new this cycle — Statens vegvesen's combined driving-licence/
+competence-certificate application form, incl. a 17-question health
+self-declaration, closing Norway's DMV vertical (Visa is Norway's only
+remaining open vertical). Remaining gaps are all **sub-process/edition** expansions
 within an already-covered vertical:
 
 - **CDL (commercial driver licence):** only `us/ca/dmv/commercial-drivers-license-application` exists. No CDL-equivalent schema yet for GB (HGV/PCV — `gb/dvla/lorry-bus-provisional-licence` is the closest analogue), DE, FR, IE, IN, NL, NZ, SG, ZA.
@@ -6850,9 +6893,12 @@ of residential address in Folkeregisteret (the National Population
 Register) for a person or family group who already hold a Norwegian
 fødselsnummer. This was CATALOG.md's own named Known Gaps candidate for
 Norway (item 8); see the Executive Summary update above and the
-document's own VERIFICATION.md for the full sourcing record. Norway now
-stands at 2 of 6 verticals (Business Formation, National ID); DMV and
-Visa remain open, pre-scouted backlog candidates — see "Known Gaps" below.
+document's own VERIFICATION.md for the full sourcing record. **Update
+(2026-07-11, GOV-2330): Norway's DMV vertical has since closed too**, via
+`no/vegvesen/soknad-om-forerkort-og-kompetansebevis` — see the Executive
+Summary update above. Norway now stands at 3 of 6 verticals (Business
+Formation, National ID, DMV); Visa remains Norway's only open,
+pre-scouted backlog candidate — see "Known Gaps" below.
 
 **Finland**'s National ID & Civic Documents gap is now closed (GOV-2299),
 via `fi/dvv/registration-of-foreigner` — the Digital and Population Data
@@ -7117,7 +7163,7 @@ now closed.
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **NO** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **NO** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -8039,13 +8085,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    the Executive Summary update above and the document's own
    VERIFICATION.md (which also independently re-extracted the widget count
    at 61, close to but not identical to this entry's own ~63 approximate
-   figure). DMV and Visa remain open:
-   - **DMV**: Statens vegvesen's (the Norwegian Public Roads
-     Administration) driving-licence application form (a combined
-     application and health self-declaration,
-     "Søknad om førerkort og kompetansebevis / Egenerklæring om helse") —
-     `https://www.vegvesen.no/globalassets/forerkort/ta-forerkort/soknad-om-forerkort-og-kompetansebevis-egenerklaering-om-helse.pdf`,
-     ~82 widgets.
+   figure). **Update (2026-07-11, GOV-2330): DMV is now closed too**, via
+   `no/vegvesen/soknad-om-forerkort-og-kompetansebevis` — see the Executive
+   Summary update above and the document's own VERIFICATION.md (which
+   independently re-extracted 82 widgets, matching this entry's own ~82
+   approximate figure exactly). **Visa remains Norway's only open vertical**:
    - **Visa**: UDI's (the Norwegian Directorate of Immigration) form
      GP7028, a paper application form —
      `https://www.udi.no/globalassets/global/skjemaer/arbeid-og-opphold-gp7028-b.pdf`,
