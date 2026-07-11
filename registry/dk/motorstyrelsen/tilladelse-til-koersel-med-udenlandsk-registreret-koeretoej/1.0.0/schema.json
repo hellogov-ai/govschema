@@ -1,0 +1,485 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "dk/motorstyrelsen/tilladelse-til-koersel-med-udenlandsk-registreret-koeretoej",
+  "version": "1.0.0",
+  "title": "Denmark Application for Permit to Drive a Foreign-Registered Motor Vehicle for Private Purposes in Denmark — Ansøgning om tilladelse til kørsel i Danmark med udenlandsk registreret køretøj (form 21.059)",
+  "description": "Denmark's Motorstyrelsen (the Danish Motor Vehicle Agency, part of the Danish Customs and Tax Administration) form 21.059, \"Ansøgning om tilladelse til kørsel i Danmark med udenlandsk registreret køretøj\" (Application for permit to drive a foreign-registered motor vehicle for private purposes in Denmark). A person residing in or staying in Denmark who wishes to privately drive a motor vehicle registered in another country on Danish roads generally needs this permit, since Danish rules otherwise require a vehicle used in Denmark to itself carry a Danish registration. The form captures the applicant's own residence and travel history (dates of entry/departure, any prior residence in Denmark, current and prior domicile in Denmark and in their home country, and ties retained abroad such as a spouse/cohabitant or children living at home), the vehicle to be driven (registration number and country, make, type, VIN, registered owner, current and expected mileage at home and in Denmark), and the intended use of the vehicle both in Denmark and in the applicant's home country. This schema models the form's own two-page applicant-facing content in full, including its bilingual (Danish/English) field labels and its own document/payment attachment instructions (a copy of the vehicle's registration certificate, a receipt for the DKK 400 processing fee, and documentation of the duration of the applicant's employment or study in Denmark where applicable). It does not model the form's own physical/electronic signature widget itself (Underskrift/Signature), consistent with this registry's convention of not modelling ink/e-signature acts as schema data (see dk/siri/work-permit-application and dk/um/application-for-danish-passport precedent); only the accompanying signature date is modelled. It does not submit the application; the live source (motorst.dk / Motorstyrelsen) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Denmark or Motorstyrelsen.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Motorstyrelsen (the Danish Motor Vehicle Agency)",
+    "abbreviation": "MOTORST",
+    "url": "https://motorst.dk"
+  },
+  "process": {
+    "type": "application",
+    "language": "da-DK"
+  },
+  "source": {
+    "url": "https://motorst.dk/media/gbplxzah/21059_en_ns_t.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Form 21.059 DA EN (edition 2018.07), \"Ansøgning om tilladelse til kørsel i Danmark med udenlandsk registreret køretøj\" / \"Application for permit to drive a foreign-registered motor vehicle for private purposes in Denmark\", a 2-page fillable AcroForm PDF published unauthenticated directly on Motorstyrelsen's own site (motorst.dk), submitted by post to Motorstyrelsen, Nykøbingvej 76, Bygning 45, 4990 Sakskøbing."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2355 (\"GovSchema Standard Research\"). Denmark's DMV vertical was already closed to 6/6 by a concurrent cycle (GOV-2346, dk/fstyr/samtykkeerklaering-koerekort-under-18, merged shortly before this authoring pass began) via a different form (P23T, the under-18 driving-licence consent declaration). This schema authors a second, genuinely distinct DMV sub-process for Denmark -- form 21.059, the foreign-registered-vehicle driving permit, a citizen-facing intake form with no overlap with P23T or the previously-screened/rejected P23 (shared multi-party record card) and Motorstyrelsen re-registration flow (MitID-gated) -- expanding Denmark's real-world DMV coverage rather than closing a vertical count a second time. Fetched fresh directly from motorst.dk: HTTP 200, 1,222,437 bytes, genuine %PDF-1.6 header, no login/CAPTCHA/WAF gate, SHA-256 3acae2e99c97c234f6326fc2ac83b3dd31a1ce9d01d49aee806d886624a26147. Independent pdfjs-dist extraction (getFieldObjects() and per-page getAnnotations(), cross-checked) confirmed exactly 38 distinct AcroForm field names across 48 total Widget annotations (33 on page 1, 15 on page 2) -- matching the pre-authoring scouting figures exactly. The gap between 48 widgets and 38 field names is entirely accounted for by 4 genuine PDF radio-button groups (radioButton:true, shared fieldName, distinct buttonValue per option): pg1-9 (2-option Ja/Nej, 'Er der tidligere søgt om tilladelse?'/'Former applications for permit'), pg1-15 (5-option House/Apartment/Room/Owned/Rented, 'Beboelsens art'/'Type of residence' in Denmark), pg1-18 (the same 5-option set for 'Beboelsens art'/'Nature of domicile' in the home country), and pg1-20 (2-option Ja/Nej, 'Beboelsen bevares under opholdet i Danmark?'/'Domicile is maintained during stay in Denmark'). Each is modelled as a single `enum` field (validation.enum listing the widget's own buttonValue strings), per this registry's established convention for genuine single-selection PDF radio groups (e.g. no/skatteetaten, no/brreg, no/vegvesen). Field-to-label correlation used getTextContent() per page, matched by y-coordinate proximity to each widget's own rect, since radio-group option widgets themselves carry no alternativeText. Of the 38 distinct fields, 37 are modelled as schema fields; the 38th (pg2-17, the form's own genuine `Sig` (digital-signature) AcroForm field type -- distinct from every other widget on this form, all of which are `Tx` text fields or the 4 `Btn` radio groups) is deliberately not modelled as schema data, consistent with this registry's existing precedent (dk/siri/work-permit-application models only signatureDate/signaturePlace, not the ink signature act itself; dk/um/application-for-danish-passport's own VERIFICATION.md states signature blocks are 'not modelled as hand-drawn/image signature fields'). Its accompanying date field, pg2-16 ('Dato/Date'), is modelled as `signatureDate`. Two disclosed modelling judgment calls: (1) pg1-3 ('Dansk personnummer eller fødselsdato og -år'/'Danish civil registration number or date and year of birth') is modelled as a plain `string` rather than this registry's usual `^[0-9]{10}$` personnummer pattern, because the form's own label explicitly offers a second, non-personnummer alternative (date and year of birth) for applicants who do not yet hold a Danish personnummer -- constraining to the 10-digit pattern would reject a legitimate value the source form itself invites; (2) `previousApplicationReferenceNumber` (pg1-10, 'Evt. journalnummer'/'Reference number, if any') is modelled with `requiredWhen` gated on `previouslyAppliedForPermit` (pg1-9) equalling true, since the form's own 'Evt.' ('if applicable') qualifier and physical layout tie it to a 'yes' answer on the adjacent former-applications question, not left unconditionally optional with no linkage. Three document/attachment requirements are modelled in `documents[]`, each directly quoting the form's own printed instructions rather than inferred: a copy of the vehicle's registration certificate ('Kopi af køretøjets registreringsattest vedlægges', printed on both the page-1 header and again on page 2, `required: true`), a receipt for the DKK 400 processing fee ('Det koster 400 kr. at få behandlet ansøgningen, vedlæg kvittering for indbetaling', page 1 subtitle, `required: true`), and documentation of the duration of employment/study ('Dokumentation for ansættelses-/studieforholdet herunder varighed bedes vedlagt', the pg1-7 field's own parenthetical) — this third document is modelled as unconditionally `required: false` with no `requiredWhen`, a disclosed judgment call: it textually applies only when the applicant's stated purpose of stay (occupationOrPurposeOfStay) is employment or study, but that field is free text, not a boolean/enum GovSchema's `requiredWhen` condition grammar can gate on precisely, so gating it on an exact-string match would be unreliable rather than a genuine reflection of the source form's own conditionality. Two mock conformance scenarios (a foreign worker on a fixed-term assignment driving their own home-country-registered car; a returning student who previously held a permit) validated with 0 errors, plus 4 mutation-control fixtures each raising exactly 1 error; see this document's own VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "fullName",
+      "label": "Navn/Full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the person who will use (drive) the foreign-registered vehicle in Denmark.",
+      "sourceRef": "Page 1, \"Oplysninger om den, som skal anvende køretøjet i Danmark\"/\"Information about the user of the vehicle in Denmark\" — \"Navn/Full name\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "nationality",
+      "label": "Statsborgerforhold/Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Nationality of the vehicle's user.",
+      "sourceRef": "Page 1, \"Oplysninger om den, som skal anvende køretøjet i Danmark\"/\"Information about the user of the vehicle in Denmark\" — \"Statsborgerforhold/Nationality\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "personalIdentityNumberOrDateOfBirth",
+      "label": "Dansk personnummer eller fødselsdato og -år/Danish civil registration number or date and year of birth",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The vehicle user's 10-digit Danish personnummer (CPR number) if already assigned one, or otherwise their date and year of birth. Modelled as a plain string rather than this registry's usual ^[0-9]{10}$ personnummer pattern because the form's own label offers this as an explicit alternative for applicants without a Danish personnummer.",
+      "sourceRef": "Page 1, \"Oplysninger om den, som skal anvende køretøjet i Danmark\"/\"Information about the user of the vehicle in Denmark\" — \"Dansk personnummer eller fødselsdato og -år/Danish civil registration number or date and year of birth\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "dateOfEntryIntoDenmark",
+      "label": "Dato for indrejse i Danmark/Date of entry into Denmark",
+      "type": "date",
+      "required": true,
+      "description": "The date the vehicle user entered (or expects to enter) Denmark for the stay covered by this application.",
+      "sourceRef": "Page 1, \"Oplysninger om den, som skal anvende køretøjet i Danmark\"/\"Information about the user of the vehicle in Denmark\" — \"Dato for indrejse i Danmark/Date of entry into Denmark\""
+    },
+    {
+      "name": "dateOfDepartureFromDenmark",
+      "label": "Dato for udrejse af Danmark/Date of departure from Denmark",
+      "type": "date",
+      "required": true,
+      "description": "The date the vehicle user expects to depart Denmark at the end of the stay covered by this application.",
+      "sourceRef": "Page 1, \"Oplysninger om den, som skal anvende køretøjet i Danmark\"/\"Information about the user of the vehicle in Denmark\" — \"Dato for udrejse af Danmark/Date of departure from Denmark\""
+    },
+    {
+      "name": "occupationOrPurposeOfStay",
+      "label": "Opholdets formål/Occupation",
+      "type": "string",
+      "required": true,
+      "description": "The purpose/occupation of the applicant's stay in Denmark (e.g. employment or study). The form's own parenthetical asks that documentation of the nature and duration of the employment/study be enclosed — modelled as the employmentOrStudyDocumentation entry in documents[].",
+      "sourceRef": "Page 1, \"Oplysninger om den, som skal anvende køretøjet i Danmark\"/\"Information about the user of the vehicle in Denmark\" — \"Opholdets formål (Dokumentation for ansættelses-/studieforholdet herunder varighed bedes vedlagt)/Occupation (Documentation of nature and duration of employment/study must be enclosed)\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "previousResidenceDurationInDenmark",
+      "label": "Varighed af evt. tidligere ophold i Danmark/Previous residence in Denmark",
+      "type": "string",
+      "required": false,
+      "description": "Duration of any previous residence the applicant has had in Denmark, if any (\"evt.\" — if applicable).",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Varighed af evt. tidligere ophold i Danmark/Previous residence in Denmark\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "previouslyAppliedForPermit",
+      "label": "Er der tidligere søgt om tilladelse?/Former applications for permit",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant has previously applied for this permit.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Er der tidligere søgt om tilladelse?/Former applications for permit\" (radio, 2 options)",
+      "validation": {
+        "enum": ["Ja/Yes", "Nej/No"]
+      }
+    },
+    {
+      "name": "previousApplicationReferenceNumber",
+      "label": "Evt. journalnummer/Reference number, if any",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previouslyAppliedForPermit", "equals": "Ja/Yes" },
+      "description": "Reference/case number of the applicant's previous permit application, if one was previously made.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Evt. journalnummer/Reference number, if any\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "addressInDenmark",
+      "label": "Adresse i Danmark",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The vehicle user's street address in Denmark during the stay.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Adresse i Danmark/Address in Denmark\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "postalCodeAndCityInDenmark",
+      "label": "Postnummer og by/Postal code and city",
+      "type": "string",
+      "required": true,
+      "description": "Postal code and city of the applicant's address in Denmark, entered as a single combined value on the source form's own single widget.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Postnummer og by/Postal code and city\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "telephone",
+      "label": "Telefon/Telephone",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Contact telephone number of the applicant.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Telefon/Telephone\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Contact email address of the applicant.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"E-mail\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "typeOfResidenceInDenmark",
+      "label": "Beboelsens art/Type of residence (sæt X/tick X)",
+      "type": "enum",
+      "required": true,
+      "description": "The type and tenure of the applicant's residence in Denmark. The source form implements this as a single 5-option radio group (mutually exclusive), covering both dwelling type (House/Apartment/Room) and tenure (Owned/Rented) as one choice — modelled here exactly as the widget structure dictates, not split into two independent fields.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Beboelsens art/Type of residence\" (radio, 5 options)",
+      "validation": {
+        "enum": ["Hus/House", "Lejlighed/Apartment", "Værelse/Room", "Ejet/Owned", "Lejet/Rented"]
+      }
+    },
+    {
+      "name": "leaseDurationInDenmark",
+      "label": "Evt. lejemålets varighed/Lease duration",
+      "type": "string",
+      "required": false,
+      "description": "Duration of the lease on the applicant's residence in Denmark, if renting.",
+      "sourceRef": "Page 1, \"Varighed af tidligere ophold i Danmark\"/\"Duration of previous residence in Denmark\" — \"Evt. lejemålets varighed/Lease duration\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "addressInHomeCountry",
+      "label": "Adresse i udlandet/Address in home country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's own address in their home country.",
+      "sourceRef": "Page 1, \"Tilknytning til udlandet\"/\"Ties with your home country\" — \"Adresse i udlandet/Address in home country\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "natureOfDomicileInHomeCountry",
+      "label": "Beboelsens art/Nature of domicile (sæt X/tick X)",
+      "type": "enum",
+      "required": true,
+      "description": "The type and tenure of the applicant's domicile in their home country, the same 5-option radio-group structure used for typeOfResidenceInDenmark.",
+      "sourceRef": "Page 1, \"Tilknytning til udlandet\"/\"Ties with your home country\" — \"Beboelsens art/Nature of domicile\" (radio, 5 options)",
+      "validation": {
+        "enum": ["Hus/House", "Lejlighed/Apartment", "Værelse/Room", "Ejet/Owned", "Lejet/Rented"]
+      }
+    },
+    {
+      "name": "leaseDurationInHomeCountry",
+      "label": "Evt. lejemålets varighed/Lease duration",
+      "type": "string",
+      "required": false,
+      "description": "Duration of the lease on the applicant's domicile in their home country, if renting.",
+      "sourceRef": "Page 1, \"Tilknytning til udlandet\"/\"Ties with your home country\" — \"Evt. lejemålets varighed/Lease duration\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "domicileMaintainedDuringStayInDenmark",
+      "label": "Beboelsen bevares under opholdet i Danmark?/Domicile is maintained during stay in Denmark (sæt X/tick X)",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant keeps (maintains) their home-country domicile available during their stay in Denmark.",
+      "sourceRef": "Page 1, \"Tilknytning til udlandet\"/\"Ties with your home country\" — \"Beboelsen bevares under opholdet i Danmark?/Domicile is maintained during stay in Denmark\" (radio, 2 options)",
+      "validation": {
+        "enum": ["Ja/Yes", "Nej/No"]
+      }
+    },
+    {
+      "name": "spouseOrCohabitantNameAndAddress",
+      "label": "Ægtefælles/samlevers navn og bopæl/Name and address of spouse/cohabitant",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name and address of the applicant's spouse or cohabitant, if applicable, kept in the applicant's home country as a tie retained there.",
+      "sourceRef": "Page 1, \"Tilknytning til udlandet\"/\"Ties with your home country\" — \"Ægtefælles/samlevers navn og bopæl/Name and address of spouse/cohabitant\"",
+      "validation": {
+        "maxLength": 400
+      }
+    },
+    {
+      "name": "childrenNameAndDateOfBirth",
+      "label": "Hjemmeboende børns navn og fødselsdato/år/Name and birthdate/year of children living at home",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name(s) and date/year of birth of any children living at the applicant's home-country address, if applicable.",
+      "sourceRef": "Page 1, \"Tilknytning til udlandet\"/\"Ties with your home country\" — \"Hjemmeboende børns navn og fødselsdato/år/Name and birthdate/year of children living at home\"",
+      "validation": {
+        "maxLength": 400
+      }
+    },
+    {
+      "name": "expectedDaysOffInDenmark",
+      "label": "Hvor mange weekender, ferier og andre fridage forventer du at afholde i Danmark i den ansøgte periode?",
+      "type": "string",
+      "required": true,
+      "description": "How many weekends, holidays (including public holidays) and other days off the applicant expects to spend in Denmark during the period applied for.",
+      "sourceRef": "Page 1 — \"Hvor mange weekender, ferier og andre fridage forventer du at afholde i Danmark i den ansøgte periode?/How many weekends, holidays (including public holidays) and other days off do you expect to spend in Denmark during the period applied for?\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "expectedDaysOffInHomeCountry",
+      "label": "Hvor mange weekender, ferier og andre fridage forventer du at afholde i udlandet i den ansøgte periode?",
+      "type": "string",
+      "required": true,
+      "description": "How many weekends, holidays (including public holidays) and other days off the applicant expects to spend in their home country during the period applied for.",
+      "sourceRef": "Page 1 — \"Hvor mange weekender, ferier og andre fridage forventer du at afholde i udlandet i den ansøgte periode?/How many weekends, holidays (including public holidays) and other days off do you expect to spend in your home country during the period applied for?\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "vehicleRegistrationNumber",
+      "label": "Registreringsnummer/Registration number",
+      "type": "string",
+      "required": true,
+      "description": "The foreign registration (license plate) number of the vehicle.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Registreringsnummer/Registration number\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "vehicleRegistrationCountry",
+      "label": "I (land)/In (country)",
+      "type": "string",
+      "required": true,
+      "description": "The country in which the vehicle is registered.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"I (land)/In (country)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "vehicleMake",
+      "label": "Mærke/Make",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's make (manufacturer/brand).",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Mærke/Make\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "vehicleType",
+      "label": "Art (personbil, lastbil ect.)/Type (private car, van, ect.)",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's type, e.g. private car, van, etc.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Art (personbil, lastbil ect.)/Type (private car, van, ect.)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "vehicleIdentificationNumber",
+      "label": "Stelnummer/Vehicle identification number (VIN)",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's chassis/identification number (VIN).",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Stelnummer/Vehicle identification number (VIN)\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "vehicleOwnerNameAndAddress",
+      "label": "Køretøjets ejer (navn og adresse)/Name and address of the owner of the motor vehicle",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name and address of the vehicle's registered owner (who may or may not be the applicant themself).",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Køretøjets ejer (navn og adresse)/Name and address of the owner of the motor vehicle\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "currentMileage",
+      "label": "Nuværende kilometerstand/Current mileage of vehicle",
+      "type": "integer",
+      "required": true,
+      "description": "The vehicle's current odometer reading, in kilometers.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Nuværende kilometerstand:/Current mileage of vehicle:\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "expectedMileageInHomeCountry",
+      "label": "In home country/I udlandet",
+      "type": "integer",
+      "required": true,
+      "description": "Expected mileage (in kilometers) the vehicle will travel in the applicant's home country during the coming year.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Hvor mange kilometer forventes køretøjet at tilbagelægge i det kommende år?/Expected mileage in kilometers in coming year\" — \"In home country/I udlandet\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "expectedMileageInDenmark",
+      "label": "In Denmark/I Danmark",
+      "type": "integer",
+      "required": true,
+      "description": "Expected mileage (in kilometers) the vehicle will travel in Denmark during the coming year.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Hvor mange kilometer forventes køretøjet at tilbagelægge i det kommende år?/Expected mileage in kilometers in coming year\" — \"In Denmark/I Danmark\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "purposeOfUseInHomeCountry",
+      "label": "Hvilken kørsel anvendes køretøjet til i udlandet?/For what purpose will you use the vehicle in your home country?",
+      "type": "string",
+      "required": true,
+      "description": "The purpose(s) for which the vehicle is used in the applicant's home country.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Hvilken kørsel anvendes køretøjet til i udlandet?/For what purpose will you use the vehicle in your home country?\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "purposeOfUseInDenmark",
+      "label": "Hvilken kørsel skal køretøjet anvendes til i Danmark?/For what purpose will you use the vehicle in Denmark?",
+      "type": "string",
+      "required": true,
+      "description": "The purpose(s) for which the vehicle will be used in Denmark.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Hvilken kørsel skal køretøjet anvendes til i Danmark?/For what purpose will you use the vehicle in Denmark?\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "frequencyOfUse",
+      "label": "Hvor ofte skal kørslen foregå?/How often will you use the vehicle?",
+      "type": "string",
+      "required": true,
+      "description": "How often the applicant expects to drive the vehicle.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Hvor ofte skal kørslen foregå?/How often will you use the vehicle?\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "supplementaryInformation",
+      "label": "Evt. supplerende oplysninger/Supplementary information, if any",
+      "type": "string",
+      "required": false,
+      "description": "Any further supplementary information the applicant wishes to provide.",
+      "sourceRef": "Page 2, \"Oplysninger om køretøjet, som skal anvendes\"/\"Information about the vehicle\" — \"Evt. supplerende oplysninger/Supplementary information, if any\"",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Dato/Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the application is signed. The form's own accompanying signature widget (Underskrift/Signature) is not itself modelled as schema data, per this registry's convention for ink/e-signature acts.",
+      "sourceRef": "Page 2, \"Underskrift\"/\"Signature\" — \"Dato/Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "vehicleRegistrationCertificateCopy",
+      "label": "Copy of the vehicle's registration certificate",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1 header — \"Kopi af køretøjets registreringsat test vedlægges/Enclose copy of the vehicle registration certificate\", repeated on page 2"
+    },
+    {
+      "id": "processingFeeReceipt",
+      "label": "Receipt for payment of the DKK 400 application-processing fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1 subtitle — \"(Det koster 400 kr. at få behandlet ansøgningen, vedlæg kvittering for indbetaling)/(The price for applying for a permit is DKK 400, enclose receipt for payment)\""
+    },
+    {
+      "id": "employmentOrStudyDocumentation",
+      "label": "Documentation of the nature and duration of employment/study in Denmark",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1, \"Opholdets formål (Dokumentation for ansættelses-/studieforholdet herunder varighed bedes vedlagt)/Occupation (Documentation of nature and duration of employment/study must be enclosed)\""
+    }
+  ]
+}

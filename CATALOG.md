@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **358 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **359 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-11, GOV-2356, "GovSchema Standard Research"): Finland's
 > DMV vertical is now closed — Finland stands at 5 of 6 verticals**, via
@@ -39,6 +39,35 @@
 > verticals** (Visa, Business Formation, National ID, Taxes, DMV); Passport
 > remains a confirmed dead end (Finland eliminated paper passport
 > applications in 2006), so no vertical remains genuinely open for Finland.
+
+> **Update (2026-07-11, GOV-2355, "GovSchema Standard Research"): Denmark's
+> DMV vertical gains a second schema**, via
+> `dk/motorstyrelsen/tilladelse-til-koersel-med-udenlandsk-registreret-koeretoej`
+> — Motorstyrelsen's (the Danish Motor Vehicle Agency's) form 21.059,
+> "Ansøgning om tilladelse til kørsel i Danmark med udenlandsk registreret
+> køretøj" (Application for permit to drive a foreign-registered motor
+> vehicle for private purposes in Denmark). This issue's own brief framed
+> the form as closing Denmark's DMV vertical to 6/6, but a concurrent cycle
+> (GOV-2346, `dk/fstyr/samtykkeerklaering-koerekort-under-18`) had already
+> done so moments earlier via a different, unrelated form (the under-18
+> driving-licence consent declaration) — confirmed by re-fetching
+> `origin/main` before authoring. Form 21.059 is a genuinely distinct,
+> unauthenticated, citizen-facing intake form with no overlap with P23T or
+> either DMV candidate (P23, Motorstyrelsen re-registration) the prior
+> GOV-2253 cycle screened and rejected, so it is authored here as additional
+> real-world DMV coverage for Denmark rather than a second attempt at
+> closing the same vertical. Independent `pdfjs-dist` extraction confirmed
+> 38 distinct AcroForm fields across 48 widgets (4 genuine radio-button
+> groups accounting for the gap), mapped to 37 schema fields — the 38th, a
+> genuine `Sig` (digital-signature) widget, is deliberately not modelled as
+> schema data, per this registry's existing signature-field convention.
+> Three `documents[]` entries (vehicle registration certificate copy, DKK
+> 400 processing-fee receipt, employment/study documentation) are modelled
+> directly from the form's own printed instructions. Two mock conformance
+> scenarios (0 errors each) and 4 mutation controls (each raising exactly 1
+> error) validated; see the schema's own VERIFICATION.md. **Denmark remains
+> at 6 of 6 verticals** (this does not change the vertical count, only DMV's
+> own real-world sub-process coverage within it).
 
 > **Update (2026-07-11, GOV-2346, "GovSchema Standard Research"): Denmark's
 > DMV vertical is now closed — Denmark stands at 6 of 6 verticals**, the
@@ -5569,6 +5598,19 @@ remains unmodelled, and it is a confirmed dead end (Finland eliminated
 paper passport applications in 2006), so no vertical remains genuinely open
 for Finland.
 
+**Denmark's DMV vertical gains a second schema (GOV-2355)**, via
+`dk/motorstyrelsen/tilladelse-til-koersel-med-udenlandsk-registreret-koeretoej`
+— Motorstyrelsen's form 21.059, "Ansøgning om tilladelse til kørsel i
+Danmark med udenlandsk registreret køretøj" (Application for permit to
+drive a foreign-registered motor vehicle for private purposes in Denmark),
+a genuinely distinct citizen-facing intake form with no overlap with P23T
+(below) or either DMV candidate the GOV-2253 cycle screened and rejected.
+See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record (38 distinct AcroForm fields
+across 48 widgets, 4 radio-button groups, 1 `Sig` widget deliberately not
+modelled). Does not change Denmark's vertical count (already 6 of 6 per
+GOV-2346 below).
+
 **Denmark's DMV vertical is now closed (GOV-2346)**, via
 `dk/fstyr/samtykkeerklaering-koerekort-under-18` — Færdselsstyrelsen's form
 P23T, "Samtykkeerklæring ved ansøgning om kørekort — Under 18 år" (Consent
@@ -7297,7 +7339,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -8187,7 +8229,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    re-attempting either previously-rejected candidate as this entry's own
    prior note advised. See the Executive Summary update above and the
    document's own VERIFICATION.md. **Denmark now stands at 6 of 6
-   verticals** — no verticals remain open for this jurisdiction.
+   verticals** — no verticals remain open for this jurisdiction. **Update
+   (2026-07-11, GOV-2355): DMV gains a second, additional schema** — a
+   pre-scouted candidate independently confirmed the same cycle (before
+   GOV-2346 merged), `dk/motorstyrelsen/tilladelse-til-koersel-med-
+   udenlandsk-registreret-koeretoej` (Motorstyrelsen form 21.059,
+   "Ansøgning om tilladelse til kørsel i Danmark med udenlandsk registreret
+   køretøj," the foreign-registered-vehicle driving permit) is authored as
+   additional real-world DMV coverage rather than a second vertical-closing
+   attempt, since it is a genuinely distinct process from P23T with no
+   overlap with any previously-screened/rejected DMV candidate — see the
+   Executive Summary update above and the document's own VERIFICATION.md.
+   Denmark's vertical count is unchanged at 6 of 6.
 7. **Finland's remaining verticals** (opened GOV-2276 via its Visa vertical,
    `fi/migri/residence-permit-employed-person`): the parent scouting cycle
    (three parallel scouts across Norway, Finland, Belgium) found Finland's
