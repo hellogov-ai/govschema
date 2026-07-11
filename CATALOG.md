@@ -4,8 +4,69 @@
 
 ## Executive Summary
 
-**34 jurisdictions** | **352 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **353 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-11, GOV-2316, "GovSchema Standard Research"): Norway
+> opens as the registry's 35th jurisdiction**, via its Business Formation
+> vertical, with `no/brreg/samordnet-registermelding` — Brønnøysundregistrene's
+> (the Brønnøysund Register Centre) central "Samordnet registermelding"
+> (Coordinated Register Notification), form BR-1010BM, used to register a
+> business or company with the Central Coordinating Register for Legal
+> Entities (Enhetsregisteret), the Register of Business Enterprises
+> (Foretaksregisteret), NAV's Employer/Employee Register, Statistics
+> Norway's Register of Business and Enterprises, the Register of
+> Foundations, and the Directorate of Taxes' register of non-personal
+> taxpayers, all at once, across most Norwegian legal entity types. Norway
+> had been named as a parallel Nordic scouting candidate across at least
+> two prior cycles (GOV-2276, GOV-2292); this cycle picked up BRREG's own
+> coordinated form directly. Fetched fresh from `brreg.no` with a plain
+> HTTP GET: HTTP 200, 2,313,349 bytes, genuine `%PDF-1.6`, 6 pages, no
+> login/CAPTCHA/WAF gate. A `pdfjs-dist` extraction resolved 380 raw
+> `/Widget` annotations (207 Tx, 173 Btn) across 6 pages, and a separate
+> `getFieldObjects()` cross-check found 386 distinct field names — both
+> matching this issue's own pre-recorded figures exactly. A disposable
+> reconciliation script mapped every one of the 380 widgets to exactly
+> one of: a `fields[]` entry (318 widgets, consolidating — via a 26-value
+> legal-entity-type checkbox-grid-to-enum consolidation, a 4-value
+> notification-type consolidation, an 11-slot bounded board/participants
+> table each with its own 7-checkbox role group consolidated to one enum
+> per slot, a signature-arrangement 11-checkbox-to-enum consolidation,
+> split date/year widget merges, and a disclosed shared-field-name split
+> — to **191 `fields[]` entries and 0 `documents[]` entries**), a
+> disclosed, out-of-scope deferred section (61 widgets across six
+> entity-type- or event-specific sections — articles of
+> association/partnership agreement, share/partnership capital, capital
+> reduction, merger, demerger, and a Norwegian-registered foreign
+> enterprise's own Norway address block — each named and scoped out in
+> the document's own VERIFICATION.md rather than silently dropped), or a
+> confirmed non-rendering artifact widget (1, a zero-height checkbox
+> rect). 380 = 318 + 61 + 1, 0 unmapped, 0 double-mapped. The zero
+> `documents[]` count is a disclosed structural fact: this specimen has
+> no fillable enclosure-checklist widget group, unlike this registry's
+> `fi/prh` precedent. Several source-form quirks are disclosed in the
+> document's own VERIFICATION.md (a shared, non-unique AcroForm field
+> name across two structurally distinct widgets on the same row,
+> disambiguated by widget geometry; an 11-row, not 10-row, board table
+> caught only by the reconciliation script's own zero-unmapped assertion;
+> an unlabelled mobile-number widget identified only via per-item
+> x-coordinate cross-referencing against a printed column header; a
+> 4-option, not 5-option, second contact-person role group; and four
+> legal-entity-type values whose "must be specified in field 26" note
+> this schema cannot mechanically enforce with v0.3's `Condition`
+> grammar). Two mock conformance scenarios (a sole proprietorship's
+> minimal new registration; a private limited company's fuller
+> change-of-registration notification exercising an 11-row board table's
+> three populated slots, a signature arrangement, an auditor, and an
+> accountant) found 0 errors, plus 4 mutation controls each correctly
+> raised exactly 1 error. **Norway opens with 1 of its 6 verticals**
+> (Business Formation); National ID (Skatteetaten RF-1400B,
+> "Flyttemelding"), DMV (Statens vegvesen's driving-licence application),
+> and Visa (UDI form GP7028, a legacy/paper fallback) are flagged as
+> genuine, unscreened-in-depth backlog candidates, while Taxes and
+> Passport are confirmed weak/dead-end candidates — see the "Known Gaps"
+> section below for the full detail on all five remaining verticals. See
+> the document's own VERIFICATION.md for the full sourcing record.
+>
 > **Update (2026-07-11, GOV-2308, "GovSchema Standard Research"): Finland's
 > Taxes vertical opens**, via `fi/vero/50a-earned-income-and-deductions` —
 > the Finnish Tax Administration's (Vero, Verohallinto) form 3023e, "50A –
@@ -5147,7 +5208,7 @@
 
 ## By Vertical
 
-### Passport (26/34 jurisdictions — 76%)
+### Passport (26/35 jurisdictions — 74%)
 
 **Denmark opens as GovSchema's 33rd jurisdiction (GOV-2244)**, via
 `dk/um/application-for-danish-passport` — the Ministry of Foreign Affairs'
@@ -5302,7 +5363,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (30/34 jurisdictions — 88%)
+### DMV — Vehicle Registration, Licensing, Permits (30/35 jurisdictions — 86%)
 
 **Denmark** has no DMV schema yet. GOV-2253 screened this vertical fresh
 and set it aside as a poor candidate: Færdselsstyrelsen's P23
@@ -5542,7 +5603,25 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (33/34 jurisdictions — 97%)
+### Business Formation — Incorporation, LLC, Company Registration (34/35 jurisdictions — 97%)
+
+**Norway opens as this registry's 35th jurisdiction via this vertical
+(GOV-2316)**, via `no/brreg/samordnet-registermelding` —
+Brønnøysundregistrene's form BR-1010BM, "Samordnet registermelding"
+(Coordinated Register Notification), the central multi-purpose form used
+to register a business or company with the Central Coordinating Register
+for Legal Entities, the Register of Business Enterprises, NAV's
+Employer/Employee Register, and several other Norwegian registers at
+once, across most legal entity types. See the Executive Summary's
+GOV-2316 update above for the full sourcing record, including the
+disclosed 61-widget deferral of six entity-type-/event-specific
+sub-sections (articles of association, share capital, capital reduction,
+merger, demerger, and a foreign-registered enterprise's own Norway
+address block) and the 380/318/61/1 widget-reconciliation accounting.
+Norway opens with 1 of its 6 verticals (Business Formation); National ID,
+DMV, and Visa remain open, unscreened-in-depth backlog candidates, and
+Taxes/Passport are confirmed weak/dead-end candidates — see "Known Gaps"
+below.
 
 **Finland's Business Formation vertical opens (GOV-2292)**, via
 `fi/prh/start-up-notification-y1` — PRH's and Vero's jointly published
@@ -5968,7 +6047,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (32/34 jurisdictions — 94%)
+### Taxes — Income Tax Return, Tax Filing (32/35 jurisdictions — 91%)
 
 **Finland's Taxes vertical opens** (`fi/vero/50a-earned-income-and-deductions`,
 GOV-2308) — the Finnish Tax Administration's (Vero, Verohallinto) form
@@ -6458,7 +6537,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (27/34 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (27/35 jurisdictions — 77%)
 
 **Denmark's Visa vertical is now open** (`dk/siri/work-permit-application`,
 GOV-2285), via SIRI's (the Danish Agency for International Recruitment and
@@ -6731,7 +6810,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (26/34 jurisdictions — 76%)
+### National ID & Civic Documents (26/35 jurisdictions — 74%)
 
 **Finland**'s National ID & Civic Documents gap is now closed (GOV-2299),
 via `fi/dvv/registration-of-foreigner` — the Digital and Population Data
@@ -6996,6 +7075,7 @@ now closed.
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **NO** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -7907,6 +7987,49 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    cycle should look for a different DMV candidate rather than
    re-attempting either, or move on to Passport/DMV gaps in other
    jurisdictions.
+8. **Norway's remaining verticals** (opened GOV-2316 via its Business
+   Formation vertical, `no/brreg/samordnet-registermelding`): three of
+   Norway's other five verticals are genuine, unscreened-in-depth backlog
+   candidates for a future cycle, each confirmed to have a live,
+   directly-downloadable form as of this cycle's own scouting pass (byte
+   counts and widget counts below are approximate, from a quick scout, not
+   a full independent extraction):
+   - **National ID**: Skatteetaten's (the Norwegian Tax Administration)
+     form RF-1400B, "Flyttemelding" (notification of moving within
+     Norway) —
+     `https://www.skatteetaten.no/globalassets/skjema/alltid/rf1400b-flytte-i-norge.pdf`,
+     ~63 widgets. Used to register a change of address in the National
+     Population Register, Norway's closest analogue to a National ID
+     civic-registration form (Norway's actual national ID card,
+     "nasjonalt ID-kort," is an in-person/biometric-issuance process with
+     no downloadable application form, so this address-notification form
+     is the strongest available National ID candidate for Norway, the
+     same pattern this registry's `fi/dvv` precedent established for
+     Finland).
+   - **DMV**: Statens vegvesen's (the Norwegian Public Roads
+     Administration) driving-licence application form (a combined
+     application and health self-declaration,
+     "Søknad om førerkort og kompetansebevis / Egenerklæring om helse") —
+     `https://www.vegvesen.no/globalassets/forerkort/ta-forerkort/soknad-om-forerkort-og-kompetansebevis-egenerklaering-om-helse.pdf`,
+     ~82 widgets.
+   - **Visa**: UDI's (the Norwegian Directorate of Immigration) form
+     GP7028, a paper application form —
+     `https://www.udi.no/globalassets/global/skjemaer/arbeid-og-opphold-gp7028-b.pdf`,
+     ~328 widgets. Disclosed as UDI's own legacy/paper fallback, not its
+     primary online (`udi.no` self-service portal / `søknadsportal`)
+     application path — a future cycle should confirm whether this paper
+     specimen is still genuinely accepted, or scout the online portal's
+     own field-by-field structure instead, before committing to it.
+
+   **Taxes** and **Passport** are confirmed weak/dead-end candidates for
+   Norway, not open gaps: Taxes is fully digital and pre-filled
+   (Skatteetaten's individual return, the closest analogue to RF-1030, has
+   disallowed paper submission since the 2022 tax year — filing is
+   `skatteetaten.no`-login-gated with no downloadable blank form);
+   Passport is an online-application-plus-mandatory-in-person-biometric
+   process (`politiet.no`) with no downloadable application form, the same
+   pattern this registry has repeatedly confirmed dead-end in other
+   Nordic/EU jurisdictions (e.g. Finland, Estonia, Poland — see above).
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
