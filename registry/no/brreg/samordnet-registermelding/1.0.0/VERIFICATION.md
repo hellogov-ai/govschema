@@ -2,331 +2,263 @@
 
 ## Candidate selection
 
-This session's brief (GOV-2316, "GovSchema Standard Research") opens Norway
-as the registry's 35th jurisdiction, via its Business Formation vertical.
-Norway had been named as a parallel Nordic scouting candidate across at
-least two prior cycles (GOV-2276, which opened Finland via a three-way
-Norway/Finland/Belgium scouting pass, and GOV-2292). This cycle picked up
-Brønnøysundregistrene's own central, multi-purpose coordinated
-registration form (BR-1010BM, "Samordnet registermelding") directly, since
-it is Norway's single shared intake for registering a business or company
-with the Central Coordinating Register for Legal Entities
-(Enhetsregisteret), the Register of Business Enterprises
-(Foretaksregisteret), NAV's Employer/Employee Register, Statistics
-Norway's Register of Business and Enterprises, the Register of
-Foundations, and the Directorate of Taxes' register of non-personal
-taxpayers, across most Norwegian legal entity types in one document.
+GOV-2316 is a direct follow-on to GOV-2314 ("GovSchema Standard Research"),
+which scouted Norway, Belgium, and Luxembourg in parallel via three
+general-purpose subagents doing real WebSearch+fetch across all 6 verticals
+for each. Norway rated the strongest opening: genuine unauthenticated
+AcroForm PDFs in 4 of its 6 verticals (Business Formation ~380 widgets,
+Visa ~328, DMV ~82, National ID ~63); Passport and Taxes were pre-scouted as
+weak/dead-end (Norway's tax return has been fully digital/pre-filled with no
+paper fallback since 2022; the passport process is online/in-person-only
+with no downloadable application PDF). Belgium's candidates were all flat
+non-fillable PDFs (no AcroForm widgets in any of the 6 verticals). Luxembourg
+had 2 strong candidates (Taxes 1128 widgets, DMV 42 widgets) but 4 of 6
+weak/dead. Norway's 4-of-6 hit rate made it the stronger overall opening,
+matching this registry's Finland precedent (GOV-2276).
+
+This document opens Norway (the registry's 35th jurisdiction) via Business
+Formation — Brønnøysundregistrene's (BRREG) "Samordnet registermelding"
+(Coordinated Register Notification), form BR-1010B — the richest of the
+4 pre-scouted candidates, matching this registry's precedent of opening a
+new jurisdiction via its strongest vertical (e.g. Finland/GOV-2276,
+`fi/migri/residence-permit-employed-person`).
 
 ## Source
 
 - **URL:** `https://www.brreg.no/wp-content/uploads/BR-1010BM.pdf`
 - Fetched fresh this session with a plain HTTP GET: **HTTP 200**,
-  `2,313,349` bytes — matching this issue's own pre-recorded figure
-  exactly. Confirmed a genuine PDF (`%PDF-1.6` header), 6 pages, no
-  login/CAPTCHA/WAF gate anywhere on `brreg.no`.
-- **Edition:** the form's own footer prints "BR – 1010B - 2026" on every
-  page — the currently live 2026 edition as of this cycle.
+  `2,313,349` bytes — matching this issue's own pre-recorded figure exactly.
+  Confirmed a genuine PDF (`%PDF-1.6` header), 6 pages, no login/CAPTCHA/WAF
+  gate anywhere on `brreg.no`.
+- **Edition:** the form's own footer prints "BR–1010B-2026" on every page
+  (the 2026 edition, currently live as of this cycle). Note the source
+  filename on the BRREG web server is `BR-1010BM.pdf` (with a trailing "M"),
+  while the form's own internally-printed identifier reads "BR–1010B-2026"
+  (no "M") — a disclosed filename/internal-identifier discrepancy, not
+  incorporated into this document's own `id` (which follows this registry's
+  own `<agency>/<process-name>` convention, not the source's internal form
+  number).
 
 ## Extraction technique
 
-`pdfjs-dist` v4 (`legacy/build/pdf.mjs`, this package version only ships
-ESM builds — no `legacy/build/pdf.js` CJS entry point existed in the
-locally installed version, so a plain `import` in a `.mjs` script was used
-rather than the `require()`-in-`.cjs` pattern some prior cycles needed)
-was used for a two-pass extraction:
+`pdfjs-dist` (`legacy/build/pdf.mjs` v4, installed fresh to a disposable
+`/tmp` directory) was used for a three-pass extraction:
 
-1. **Per-page `getAnnotations({ intent: 'display' })`** resolved every
+1. **`doc.getFieldObjects()`** resolved **386 distinct field names**, matching
+   this issue's own pre-recorded figure exactly.
+2. **Per-page `page.getAnnotations({ intent: 'display' })`** resolved every
    `/Widget` annotation's `fieldName`, `fieldType` (`Tx`/`Btn`),
-   `alternativeText` (tooltip), `exportValue`, and `rect` (bounding box) —
-   **380 raw widgets across 6 pages** (207 `Tx`, 173 `Btn`, 0 `Ch`).
-2. **A separate `doc.getFieldObjects()` cross-check** resolved **386
-   distinct field names** — matching this issue's own pre-recorded figure
-   exactly. The 386-vs-380 gap reconciles exactly: 7 of the 386 names are
-   non-terminal radio-group **parent** names whose child widgets are
-   separately, individually named (e.g. parent name `"Check Box70"` has
-   kid widgets named `"Check Box70.0"`, `".1"`, `".4"`, each already
-   counted among the 380 raw widgets) — confirmed by checking each of the
-   7 names absent from the widget list against a prefix search of the
-   widget list's own field names. The remaining 379 distinct widget-linked
-   names include exactly **one non-unique name**: `"Postnummer7"` is
-   assigned, apparently by a PDF-authoring error, to **two different
-   widgets on the same row** (page 2) — a narrow ~47pt-wide box and a
-   wide ~213pt-wide box. 379 (widget-linked names) + 7 (parent-only
-   names) = 386, reconciling the getFieldObjects() count exactly.
-3. **Per-page `getTextContent()`**, extracted twice — first as
-   y-coordinate-clustered lines (a coarse first pass), then re-extracted
-   with **per-item x-coordinates preserved** after the coarse pass was
-   found to merge adjacent same-line column headers into a single
-   ambiguous string (see the `headOfficeMobileNumber` quirk below) — used
-   to identify section headings and to decode the many checkbox groups
-   whose own AcroForm names are generic (`"Check Box30"`, `"Boks35"`,
-   etc.) with no `alternativeText` tooltip, by cross-referencing each
-   checkbox's `rect` x/y position against the nearest printed label text
-   at the matching x-coordinate.
+   `checkBox`/`radioButton` flags, `exportValue`, and `alternativeText`
+   (tooltip, where present), and `rect` (position) — **380 raw widgets
+   across 6 pages** (207 `Tx` text, 173 `Btn` checkbox, 0 `Ch`), matching
+   this issue's own pre-recorded figure exactly. 379 distinct widget
+   `fieldName`s among the 380 widgets: one raw name (`Postnummer7`, page 2)
+   is reused by two independent widgets at different positions — a
+   disclosed source-form authoring duplicate/typo (see "Judgment calls and
+   disclosed quirks" below), not a repeated/kids-of-one-field structure.
+3. **Per-page `getTextContent()`**, clustered into visual lines by
+   y-coordinate and cross-referenced by x-coordinate against each widget's
+   own `rect` — used to decode this specimen's own field names, which
+   (unlike this registry's `fi/prh` precedent) are a mix of self-documenting
+   Norwegian words (`Navn1`, `Organisasjonsnummer`, `Adresse2`) and fully
+   generic sequential names (`Check Box16`...`Check Box150`, `Boks14`...
+   `Boks50`, `Text14`...`Text38`) with no `alternativeText` tooltip on the
+   generic ones. Every generic checkbox/text widget's semantic meaning was
+   derived from its `rect` x/y position relative to the nearest printed
+   label, cross-checked against consistent left-to-right/top-to-bottom
+   reading-order and checkbox-before-label offset patterns (typically
+   17-25pt) observed across every *confidently verifiable* group on this
+   specimen (e.g. the 26-option organisational-form grid in field 8, whose
+   3-column/9-row checkbox-to-label mapping was independently re-derived by
+   x-position and cross-checked against the section's own printed
+   3-column layout).
 
-Every one of the 380 widgets was mapped to exactly one of: a `fields[]`
-entry, a disclosed out-of-scope deferred section, or a confirmed
-non-rendering artifact, via a disposable reconciliation script
-(`/tmp/no-brreg-extract/reconcile.mjs`, not committed) that asserts zero
-unmapped and zero double-mapped widgets. The script confirmed:
+A rendering attempt via a headless-Chromium/Playwright pipeline (using this
+environment's cached `playwright-core` + `chromium-1228` binary against
+`/paperclip/chrome-sysroot`'s shared libraries) failed: Chromium's built-in
+PDF viewer crashed on this specimen. A second attempt rendering each page
+to a PNG canvas via `pdfjs-dist` + `node-canvas` (with `standardFontDataUrl`
+and `cMapUrl` correctly configured) produced only the AcroForm widget
+rectangles with **no glyph text at all** on every page attempted — consistent
+with this specimen's visible page content being a background raster image
+(not vector text) that `node-canvas`'s image-decoding path could not paint,
+while the *invisible* OCR text layer above it (the actual source of every
+`getTextContent()` result used throughout this extraction) rendered fine as
+data but not as pixels. This means the coordinate-based inference below was
+**not** cross-checked against a rendered visual of the specimen; every
+mapping is disclosed as either confidently reproducible (consistent,
+verifiable offset patterns; the large majority of this form) or explicitly
+flagged as lower-confidence (two specific checkbox rows, below).
 
-- **318 widgets → 191 `fields[]` entries**
-- **61 widgets → deferred, out-of-scope sections** (see Scope below)
-- **1 widget → excluded as a non-rendering artifact**: `"Check Box84"`
-  has a zero-height rect (`[499,170,514,170]`, top y equals bottom y),
-  rendering no visible checkbox anywhere on the page — excluded as
-  non-data-collecting, the same class of exclusion this registry's
-  `fi/prh` precedent applied to page-navigation/utility controls, though
-  here the artifact is a broken/invisible widget rather than a chrome
-  button.
-- **380 = 318 + 61 + 1, 0 unmapped, 0 double-mapped.**
-
-This document has **0 `documents[]` entries**: unlike this registry's
-`fi/prh` precedent (which modelled a 7-checkbox "Enclosures" appendix-form
-checklist as `documents[]`), this specimen has no fillable
-enclosure-checklist widget group naming specific attachments. The form's
-own final-page note ("Husk de nødvendige vedleggene. Se veiledningen for
-oversikt." — "Remember the necessary attachments. See the guidance for an
-overview.") points to external, non-form-embedded guidance instead. This
-is a disclosed structural fact, not an oversight — matching this
-registry's `fi/vero/50a-earned-income-and-deductions` precedent's own
-zero-`documents[]` rationale.
-
-## Scope: what this document models, and what it deliberately defers
-
-This coordinated form is Brønnøysundregistrene's single shared intake for
-many Norwegian legal entity types at once: sole proprietorship
-(enkeltpersonforetak), general partnership with joint or divided liability
-(ANS/DA), limited partnership (KS), private/public limited company
-(AS/ASA), foreign branch (Norskregistrert utenlandsk foretak, NUF),
-foundation (stiftelse), cooperative (samvirkeforetak, SA), savings bank,
-and 18 further named types, selected via one 26-value checkbox grid
-(field 8). Per this cycle's brief, and consistent with this registry's
-precedent of modelling a coordinated form's core plus its most common
-entity type in full rather than exhaustively branching on every entity
-type (matching e.g. ZA SARS ITR14's and FI Vero 50A's own precedent),
-this schema models:
-
-- **The entity-type-independent core** (sections 1-13): name/organisation
-  number, notification type, other-register registration, four address
-  blocks (head office, postal, sub-unit location, submitter),
-  establishment/sub-unit-transfer dates and parties, activity description,
-  two contact-person slots, and written-language preference. These apply
-  identically regardless of which of the 26 legal entity types is
-  selected.
-- **The governance sections that apply broadly across most registered
-  entity types** (sections 19, 20, 21, 22, 23, 25, 26, 27, 28): the
-  11-slot board/participants table, signature-right arrangement,
-  procuration arrangement, auditor, accountant, corporate-group flags,
-  free-text remarks, notification addresses, and the final 12-slot
-  signatory block. These are the sections a private limited company (AS)
-  — Norway's most common formally-registered business type that uses
-  this form's fuller governance apparatus — actually needs to complete,
-  and they are not restricted to AS alone (associations, foundations, and
-  cooperatives all need board/signature/auditor information too).
-
-In total: **191 `fields[]` entries**.
-
-This schema explicitly does **not** model six entity-type- or
-event-specific sub-sections, disclosed here as deferred,
-out-of-scope companion-schedule candidates for a future cycle rather than
-silently dropped:
-
-1. **Section 14, Vedtekter/selskapsavtale** (articles of
-   association/partnership agreement) — 2 widgets. Relevant only once a
-   company/foundation is registered, or is to be registered, in the
-   Register of Business Enterprises and/or Register of Foundations.
-2. **Section 15, Kapital** (share/partnership capital in a limited
-   company, public limited company, limited partnership, or foundation)
-   — 7 widgets. AS/ASA/KS/foundation-specific.
-3. **Section 16, Vedtak om kapitalnedsettelse** (capital reduction
-   decision) — 15 widgets. AS/ASA-specific, and event-specific (only
-   relevant on an actual capital reduction).
-4. **Section 17, Fusjon** (merger) — 11 widgets. Event-specific.
-5. **Section 18, Fisjon** (demerger) — 16 widgets. Event-specific.
-6. **Section 24, Navn og adresse med mer for virksomheten i Norge** (name
-   and address etc. for the business in Norway) — 10 widgets. Applies
-   only to a Norwegian-registered foreign enterprise (NUF).
-
-Together these 6 sections account for **61 of the specimen's 380 widgets
-(16%)**. The form's own page-3 instruction states plainly that a sole
-proprietorship skips fields 14-20 entirely ("Enkeltpersonforetak skal
-ikke fylle ut feltene 14-20" — "Sole proprietorships shall not fill in
-fields 14-20"), underscoring that these deferred sections are genuinely
-entity-type-gated, not universal, structure — consistent with this
-task's own instruction not to model every entity type's full detail
-disproportionately.
+A disposable reconciliation script (`/tmp/no-brreg-extract/gen/reconcile.mjs`,
+not committed) mapped all 379 distinct widget names to this document's
+`fields[]`/`documents[]` entries and confirmed: **378/379 mapped, 1 disclosed
+exclusion** (`Check Box84`, page 2 — a stray widget positioned directly
+under the "Kryss av" ("Tick") column-header text for section 12's contact-
+person role grid, with no adjacent label of its own and no tooltip;
+excluded as a non-data-collecting artifact, the same treatment this
+registry's `fi/prh` precedent gave its form's page-navigation/utility
+buttons, disclosed here rather than silently dropped). The remaining 378
+names consolidate to **240 `fields[]` entries and 6 `documents[]` entries**.
 
 ## Field consolidation
 
-- **Notification type** (4 independent checkboxes: business not
-  registered before / changes-or-new-information / dissolution decision /
-  deletion of business) → one `notificationType` enum field.
-- **Legal entity type** (26 independent checkboxes in a 3-column grid) →
-  one `legalEntityType` enum field, `requiredWhen: notificationType equals
-  "new_business"` per the source's own "fylles bare ut ved melding om
-  virksomhet som ikke er registrert tidligere" instruction.
-- **Register-in-Foretaksregisteret?** and **has/expects
-  employees?** (2 independent Yes/No checkbox pairs) → two boolean
-  fields.
-- **9a/9b establishment/transfer/discontinuation questions** (4
-  independent Yes/No checkbox pairs, each paired with its own split
-  date/year widgets) → 4 boolean fields plus 4 merged ISO-date fields,
-  each `requiredWhen` its own boolean equals `true`.
-- **Contact-person role** (5-checkbox group for slot 1: Innehaver/Daglig
-  leder/Forretningsfører/Norsk representant/Annen kontaktperson; 4-checkbox
-  group for slot 2, missing the Innehaver column) → two enum fields,
-  `contactPerson1Role` (5 values) and `contactPerson2Role` (4 values),
-  the asymmetry disclosed in `contactPerson2Role`'s own description
-  rather than silently normalised to 5 values for both.
-- **Board/participant role** (7-checkbox group per row: Styrets
-  leder/Nestleder/Styremedlem/Varamedlem/Observatør/Komplementar/Deltaker)
-  → one `boardMemberNRole` enum field per slot, flattened across the
-  source's own printed **11-row** bounded repeating table (not 10 — see
-  the disclosed correction below) into `boardMember1`..`boardMember11`
-  numbered slots, matching this registry's established bounded
-  repeating-group flattening convention (the source form's own printed
-  bound, not an invented cap).
-- **Signature-right arrangement** (11 independent "standard alternative"
-  checkboxes) → one `signatureArrangement` enum field, plus a free-text
-  `otherSignatureProvision` field for a non-standard arrangement.
-- **Procuration arrangement** (2 independent checkboxes) → one
-  `procuraArrangement` enum field, plus a free-text
-  `otherProcuraProvision` field.
-- **Signatory printed name** (12 independent block-letter text widgets,
-  "Gjenta med blokkbokstaver") → flattened to `signatoryPrintedName1`
-  through `signatoryPrintedName12`, matching the source form's own
-  printed 12-slot bound. Only `signatoryPrintedName1` is modelled
-  `required: true`, since at least one signatory is always needed but
-  GovSchema v0.3 has no direct "at least one of N slots" primitive.
-- **Split date/year widgets** throughout (establishment date, activity
-  change date, audit-waiver decision date, signature date, and each of
-  the four 9a/9b sub-question dates) were merged into single ISO `date`
-  fields per this registry's established split-widget consolidation
-  convention.
+- **26-option organisational form** (section 8, "Organisasjonsform") — every
+  legal entity type Enhetsregisteret accepts (sole proprietorship through
+  public limited companies, foundations, cooperatives, public-sector bodies,
+  etc.), printed as a 3-column checkbox grid — consolidated into one
+  `legalEntityType` enum field, with `legalEntityTypeOtherText` gated
+  `requiredWhen` on the 3 values whose own printed label says "må
+  spesifiseres i felt 26" (must be specified in field 26).
+- **Notification type** (4 checkboxes: not registered before / changes /
+  dissolution decision / deletion) → one `notificationType` enum, since
+  these are mutually-exclusive purposes of a single submission.
+- **Ja/Nei checkbox pairs** throughout (e.g. 3.1, 3.2, the four sub-unit
+  establishment/transfer questions in 9a/9b) → single `boolean` fields
+  (`true` = "Ja" ticked), per this registry's established convention.
+- **11 repeating board/participant rows** (section 19, "Styre, deltakere og
+  annet") → flattened to `boardMember1`...`boardMember11`, each with
+  `IdNumber`/`Name`/`Role`/`ResponsibilityShare`/`SpecialInformation`/
+  `Address`/`PostalCode`/`Place`. This is the largest bounded-repeat
+  flattening in this registry to date (prior largest: 3 rows, `fi/vero`);
+  justified because the source specimen itself prints exactly 11 rows and
+  a company's board is a first-class, frequently-multi-member concept this
+  schema would otherwise materially under-represent. The 7-role column
+  grid (Styrets leder/Nestleder/Styremedlem/Varamedlem/Observatør/
+  Komplementar/Deltaker) is confidently mapped: its own column headers are
+  self-documenting printed text directly above 7 consistently-positioned
+  checkboxes repeated identically across all 11 rows.
+- **12 repeating signatory-printed-name slots** (section 28) →
+  `signatoryPrintedName1`...`signatoryPrintedName12` (only the actual
+  hand-signature is unfillable in a PDF; the "repeat in block letters"
+  printed-name slot is the fillable counterpart).
+- **2 contact-person rows** (section 12) → `contactPerson1`/`contactPerson2`,
+  each with an `IdNumber`/`Name`/`Role`/`Address`/`PostalCode`/`Place`. Row
+  2's source specimen has only 4 role checkboxes (no "Innehaver"/owner
+  option), a disclosed asymmetry versus row 1's 5 — matching this registry's
+  established precedent that such per-row option-set differences are
+  convention, not a bug (cf. `dk/siri`'s `previousEmployment1-3` `visibleWhen`
+  asymmetry, GOV-2288).
+- **Sub-unit establishment/transfer** (9a/9b/10a/10b) — a two-column,
+  multi-row block with generic `Text33`-`Text38`/`Dato1`-`Dato2#1`/
+  `Check Box57`-`Check Box64` names — decoded via the shared "Har
+  virksomheten [-startet ny aktivitet?] / [-overtatt underenhet?]" stem
+  spanning both columns, cross-referenced against each row's own Ja/Nei
+  checkbox x-position (leftmost = "Ja", per the printed "JaNei" reading
+  order) to yield 4 boolean+date pairs (`newActivityStarted`,
+  `activityDiscontinued`, `subUnitTakenOver`, `subUnitTransferred`) plus
+  the previous/new owner detail blocks (10a/10b).
 
 ## Judgment calls and disclosed quirks
 
-- **The `Postnummer7` shared-name defect**: two structurally distinct
-  widgets on the same printed row (the "10b. Overdragelse av underenhet
-  til" — transfer-to-party — address block) share the identical AcroForm
-  field name `"Postnummer7"`, one a narrow ~47pt box consistent with a
-  postal code and the other a ~213pt-wide box consistent with a place
-  name. Modelled as two distinct fields, `transferToPostalCode` and
-  `transferToTown`, disambiguated by widget geometry rather than by name
-  (since the name alone is ambiguous), with the naming defect disclosed
-  in each field's own `description` rather than silently merged into one
-  field or silently treated as though uniquely named.
-- **The 11-row, not 10-row, board/participants table**: this cycle's own
-  first extraction pass assumed a 10-row table, based on the visible
-  `Ansvarsdel`/`Spesielle opplysninger` numbering reaching only as high as
-  suffix 10 in a quick scan. The disposable reconciliation script's own
-  zero-unmapped-widgets assertion caught 2 unmapped widgets on that first
-  pass — an 11th row (`Fødselsnummer23`/`Navn23`/`Adresse23`/`Postnr23`/
-  `Poststed23`, itself using a *different* numeric suffix convention than
-  the rest of that row's own `Ansvarsdel11`/`Spesielle opplysninger11`
-  pair) — corrected before finalizing. Flagged here as a concrete
-  illustration of why this registry's own "assert zero unmapped, don't
-  eyeball a widget count" discipline matters in practice, not just in
-  principle.
-- **`legalEntityType`'s own "must be specified in field 26" notes**: four
-  of the 26 legal-entity-type values (`public_sector`,
-  `european_company_or_grouping`, `other_legal_person`, and — per this
-  specimen's own inconsistent print layout — ambiguously,
-  `pension_fund`) carry a printed "(må spesifiseres i felt 26)" note
-  beside them on the source form. Field 26 (`otherRemarks`) is in scope,
-  so this dependency is satisfiable, but it is not mechanically enforced
-  via `requiredWhen`, since GovSchema v0.3 has no direct way to make one
-  field's content conditionally required based on a sibling enum field's
-  *specific value* without inventing a synthetic boolean the source does
-  not itself print. For `pension_fund` specifically, this cycle's own
-  x-coordinate-based text extraction could not confirm with full
-  confidence whether the "(må spesifiseres i felt 26)" note is actually
-  attached to that value or to its neighbouring column entry — disclosed
-  here as an extraction-fidelity gap rather than silently resolved either
-  way.
-- **`headOfficeMobileNumber`'s unlabelled widget**: this widget's own
-  AcroForm name is a generic `"Text14"` with no `alternativeText`
-  tooltip, unlike its neighbouring fields. Its identity as the mobile
-  telephone number field was inferred from its x-coordinate position
-  beneath the printed column header "Mobiltelefonnummer Telefonnummer
-  Hjemmeside" — confirmed only after a dedicated per-item x-coordinate
-  re-extraction, since this cycle's first, coarser y-only line-clustering
-  pass had merged the three header words into a single ambiguous string
-  ("Mobiltelefonnummer Telefonnummer Hjemmeside" read as one run, in an
-  order that did not match the widgets' own left-to-right positions).
-  Disclosed as a labelling gap in the source, not a structural fact
-  silently assumed.
-- **`contactPerson2Role` has 4 options, not 5**: the second contact-person
-  row's own checkbox group has no "Innehaver" (owner) column on the
-  specimen itself, consistent with sole ownership being nameable only
-  once (in `contactPerson1Role`). Disclosed in the field's own
-  description rather than silently normalised to match slot 1.
-- **Employee board representation** ("merk disse med A for «valgt av de
-  ansatte»" — mark these with "A" for "elected by the employees") is a
-  hand-annotation convention described in the form's own instructions,
-  with no corresponding fillable widget on this specimen. Not modelled as
-  schema-level structure; disclosed in each `boardMemberNRole`'s own
-  description rather than silently ignored.
-- **No ink-signature widgets**: the auditor's and accountant's own printed
-  "Jeg bekrefter ... (underskrift)" ("I confirm ... (signature)") lines,
-  and the final section 28 "Underskrift" line itself, require a physical
-  ink signature with no corresponding fillable widget anywhere on this
-  specimen (the form must be printed and hand-signed; the source states
-  an original signature is required in all cases and that a copy or
-  digital signature is not accepted). Only the adjoining printed-name
-  repetition ("Gjenta med blokkbokstaver") is modelled, matching this
-  registry's `fi/prh` `signatureAndPrintedName` precedent for the same
-  class of gap.
+- **Two checkbox rows modelled with lower confidence** (disclosed in each
+  field's own `description`): section 17's ("Fusjon"/merger)
+  `mergerResolutionType` (3 values, from `Check Box9`/`10`/`11`) and section
+  18's ("Fisjon"/demerger) `demergerDecisionType` (5 values, from `Check
+  Box28`/`29`/`56`/`66` and `Boks21`). Both rows carry generic sequential
+  `Btn` names with no `alternativeText` tooltip, spread across a densely
+  wrapped 2-line, multi-column label that even the coordinate/reading-order
+  technique used everywhere else on this form could not fully disambiguate
+  with certainty (attempts to render the actual page visually to confirm,
+  described above, did not succeed). The enum value sets and their
+  left-to-right ordering are a best-effort inference, not a tooltip- or
+  visual-confirmed mapping — flagged for a future cycle to re-verify against
+  a properly rendered page image. Every other checkbox group on this form
+  (including the 26-option organisational-form grid, the 7-role board
+  grid, and all Ja/Nei pairs) was independently confirmed via consistent,
+  verifiable x/y offset patterns and is not subject to this caveat.
+- **`Postnummer7` naming duplicate** (page 2, section 10b): two independent
+  widgets at different positions (postal-code column, then post-town column)
+  share the identical raw AcroForm field name — an authoring
+  duplicate/typo in the source specimen. Modelled as two distinct schema
+  fields (`newOwnerPostalCode`, `newOwnerPlace`) by their printed position,
+  disclosed in each field's own `description` rather than silently merged
+  or silently treated as one shared value.
+- **`Check Box84` exclusion** (page 2): a stray widget with no adjacent
+  label or tooltip, positioned directly under the "Kryss av" column-header
+  text above section 12's contact-person role grid — excluded as
+  non-data-collecting, disclosed above under "Extraction technique" rather
+  than silently dropped.
+- **Section 12 vs. section 19 "at least one contact" gap**: whether a
+  business fills in section 12 (owner/managing director/business
+  manager/Norwegian representative/other contact — the natural fit for
+  simpler entity types) or section 19's full board/participants table (the
+  natural fit for AS/ASA-type companies) is entity-type-dependent, and the
+  source form does not gate one on the other with a checkbox this schema
+  could reference. GovSchema v0.3's `crossFieldValidation` has no "at least
+  one of these two sections" primitive (only two-field `compare` or a
+  `when`-gated `requireAbsent`/`requirePresent`). Neither
+  `contactPerson1Name` nor `boardMember1Name` is therefore modelled as
+  unconditionally `required: true`; disclosed here rather than guessed,
+  matching this registry's `fi/prh` precedent for its own "postal or street
+  address is mandatory" either/or gap.
+- **Narrative-conditional `documents[]` entries**: `newBoardMemberConfirmationLetter`
+  and `partnerConsentDeclaration` (section 28's own instructions) are each
+  conditioned on whether a specific person "has not signed the notification"
+  — a fact this schema has no corresponding field for (signing is physical,
+  not data-captured per-signatory). Modelled with `required: false` and no
+  `requiredWhen`, disclosed in each entry's own `sourceRef` rather than
+  gated on an invented condition.
+- **`capitalReductionUse*`/section 16 "Beløpet skal anvendes til" checkboxes**
+  modelled as 5 independent `boolean` fields rather than one enum, since a
+  capital reduction can plausibly be applied to more than one use
+  simultaneously (e.g. partial repayment and partial fund allocation) —
+  the source does not print these as mutually exclusive.
+- **`crossFieldValidation`** (`capitalReductionToLessThanFrom`,
+  `demergerCapitalToLessThanFrom`) each compare two optional amount fields
+  that are only meaningfully populated together (a capital reduction/
+  demerger scenario); this document's own mock conformance interpreter (see
+  below) treats a `compare` rule as vacuously satisfied when either side is
+  absent, consistent with how `fi/prh`'s own date-ordering rule behaves when
+  its own compared fields are unset.
 
 ## Mock conformance run
 
-Two scenarios were built and checked against this schema's own
-`required`/`requiredWhen`/`crossFieldValidation` grammar with a
-from-scratch interpreter script (`/tmp/no-brreg-extract/conformance-check.mjs`,
-not committed — walks `fields[]`, `documents[]`, and
-`crossFieldValidation[]` directly against a candidate data object):
+Two scenarios were built and checked against this document's own
+`required`/`requiredWhen`/`documents[].requiredWhen`/`crossFieldValidation`
+grammar with a from-scratch interpreter script
+(`/tmp/no-brreg-extract/gen/conformance-check.mjs`, not committed — walks
+`fields[]`, `documents[]`, and `crossFieldValidation[]` directly against a
+candidate data object):
 
-1. **`minimal-sole-proprietorship-new-registration.json`** — a sole
-   proprietorship's first-time registration, exercising only the
-   statically-required fields (`legalName`, `notificationType`,
-   `headOfficeStreetAddress`/`PostalCode`/`Town`, `activityDescription`,
-   `signatureDate`, `signatoryPrintedName1`) plus `legalEntityType` and
-   both notification-address fields, each conditionally required by
-   `notificationType equals "new_business"`. **0 errors.**
-2. **`private-limited-company-full-governance.json`** — a private
-   limited company (AS)'s change-of-registration notification, exercising
-   `organisationNumber` (required for a non-new-business notification via
-   `notificationType in [...]`), a 3-member board with 3 distinct roles,
-   a signature arrangement, an auditor, an accountant, and both
-   corporate-group flags. **0 errors.**
+1. **`sole-proprietorship-minimal-required-only.json`** — a sole
+   proprietorship (`enkeltpersonforetak`) new registration, filling only the
+   10 statically-`required: true` fields plus the one conditionally-required
+   field this scenario triggers (`notificationEmail`, via
+   `notificationType: "not_registered_before"`). **0 errors.**
+2. **`limited-company-board-capital-and-audit-exemption.json`** — an AS
+   (aksjeselskap) new registration exercising a 2-member board, share
+   capital, an audit-exemption resolution (with its conditionally-required
+   resolution date), and the `articlesOfAssociationOrPartnershipAgreement`
+   conditional document. **0 errors.**
 
-**4 mutation controls**, each expected to raise exactly 1 error, all
+**5 mutation controls**, each expected to raise exactly 1 error, all
 confirmed:
 
-- Dropping `legalName` (a statically-required field) from scenario 1 →
-  1 error (`MISSING REQUIRED FIELD: legalName`).
-- Setting `notificationType: "new_business"` (scenario 1) while omitting
-  `legalEntityType` → 1 error (`MISSING REQUIRED FIELD: legalEntityType`).
-- Setting `notificationType: "new_business"` (scenario 1) while omitting
-  `notificationEmail` → 1 error (`MISSING REQUIRED FIELD:
+- Dropping `businessName` (a statically-required field) → 1 error
+  (`MISSING REQUIRED FIELD: businessName`).
+- Dropping `notificationEmail` while `notificationType` is
+  `"not_registered_before"` → 1 error (`MISSING REQUIRED FIELD:
   notificationEmail`).
-- Setting `establishmentDate` later than `signatureDate` (scenario 2) →
-  1 error (`CROSS-FIELD VIOLATION:
-  signatureDateNotBeforeEstablishmentDate`).
+- Removing `articlesOfAssociationOrPartnershipAgreement` from scenario 2's
+  `documents[]` list entirely (not just marking it unprovided) → 1 error
+  (`MISSING REQUIRED DOCUMENT: articlesOfAssociationOrPartnershipAgreement
+  (listed=false)`) — confirming the checker's `documents[]` requiredness
+  path is actually exercised, not just its `fields[]` path (a
+  documents-blind-spot bug this registry's tooling has hit before).
+- Setting `capitalReductionToAmount` greater than
+  `capitalReductionFromAmount` → 1 error (`CROSS-FIELD VIOLATION:
+  capitalReductionToLessThanFrom`).
+- Setting `auditExempted: true` while omitting
+  `auditExemptionResolutionDate` → 1 error (`MISSING REQUIRED FIELD:
+  auditExemptionResolutionDate`).
 
-The checker script additionally walks every `requiredWhen`/
+The checker script additionally walks every `visibleWhen`/`requiredWhen`/
 `crossFieldValidation` field reference in the document and confirms each
-resolves to a real `fields[]` entry (0 dangling references). This
-document has 0 `documents[]` entries, so no `documents[]`-requiredness
-path applies here — see the Extraction technique section above for why
-that is a disclosed structural fact about the source form, not a gap in
-this checker.
+resolves to a real `fields[]` entry (0 dangling references).
 
 ## Validation
 
 `node tools/validate.mjs registry/no/brreg/samordnet-registermelding/1.0.0/schema.json`
-and `node tools/validate-ajv.mjs` (same path) both pass individually and
-as part of a full-registry run from a clean checkout of this branch (353
-documents total). `node tools/verify-sources.mjs` confirms this
-document's own `source.url` resolves.
+and `node tools/validate-ajv.mjs` (same path) both pass individually and as
+part of a full-registry run from a clean checkout of this branch.
