@@ -1,0 +1,1166 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "dk/erst/virksomhedsregistrering",
+  "version": "1.0.0",
+  "title": "Denmark Foreign Business Registration (Virksomhedsregistrering) — Form 40.110",
+  "description": "Erhvervsstyrelsen's (the Danish Business Authority's) form 40.110, \"Virksomhedsregistrering\" (\"Registrering af udenlandsk virksomhed - start\"), the MitID-free paper fallback foreign businesses without a Danish CVR number use to register with Erhvervsstyrelsen when they cannot or do not want to use the digital self-service solution at virk.dk/virksomhed (which requires a Danish MitID/NemID-equivalent login most foreign applicants do not hold). This schema models the form's own applicant-facing content across all 5 pages: the business's registration-type choice and home-country identity (Rubrik 1-2), the conditional Danish business address or Danish/home-country contact-person blocks (Rubrik 3-4, gated on the registration-type choice), the business owner's identity and ID/passport documentation (Rubrik 5), the home-country contact person and industry classification (Rubrik 6, 8), VAT/moms registration (Rubrik 9, including a bounded 4-slot EU-country/VAT-number repeating pair for VAT numbers to be linked to a Danish EORI number), customs (told) registration and EORI eligibility questions (Rubrik 10), corporate tax liability including the \"Ledelsens sæde er i Danmark\" (management seat in Denmark) checkbox (Rubrik 11), payroll tax / lønsumsafgift for the narrow set of trades subject to it (Rubrik 12), employee registration (Rubrik 13), a free-text registration-reason/remarks field (Rubrik 14), and the owner/authorized-signatory and Danish-contact-person signature blocks (Rubrik 15-16, the latter conditionally required only when the applicant chose the contact-address-only registration path). It deliberately does NOT model: Rubrik 7 (\"Forsendelsesadresse i Danmark\"), whose own printed text discloses \"Rubrikken er ikke længere relevant\" (\"this field is no longer relevant\") and carries no AcroForm widget on this specimen; two page-4 text-field widgets whose rects and alternativeText exactly echo the Rubrik 12 section heading itself (\"Lønsumsafgift\" / \"(kun for taxivognmænd, finansielle virksomheder, læger mv.)\") rather than collecting any applicant input; and one page-3 checkbox (\"Check Box328\") next to the optional VAT-registration-reason text box that carries no tooltip/alternativeText and no disambiguating position against any printed label, whose purpose could not be determined from the specimen alone. It does not submit the registration; the live source (virk.dk / Erhvervsstyrelsen) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Denmark or Erhvervsstyrelsen.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Erhvervsstyrelsen (Danish Business Authority)",
+    "abbreviation": "ERST",
+    "url": "https://erhvervsstyrelsen.dk",
+    "operatedBy": {
+      "name": "Erhvervsministeriet (Danish Ministry of Industry, Business and Financial Affairs)",
+      "abbreviation": "EM",
+      "url": "https://em.dk",
+      "basis": "The form's own header (\"Erhvervsstyrelsen\", Langelinie Allé 17, DK-2100 København Ø, virksomhed@erst.dk) and footer edition stamp (\"04.2021\"); the form is published unauthenticated at virk.dk, Erhvervsstyrelsen's own digital-service portal, alongside its own guidance page confirming Erhvervsstyrelsen processes form 40.110 registrations."
+    }
+  },
+  "process": {
+    "type": "registration",
+    "language": "da-DK"
+  },
+  "source": {
+    "url": "https://virk.dk/assets/7cC2xGkV8DgTbAW9pxeZVv/40110.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Blanket 40.110 \"Virksomhedsregistrering\" (April 2021 edition, footer-stamped \"04.2021\" on every page), a 5-page fillable AcroForm PDF published unauthenticated at virk.dk, cross-checked against Erhvervsstyrelsen's own guidance pages (virk.dk/myndigheder/stat/ERST/selvbetjening/Registrering_af_udenlandsk_virksomhed_-_start_-_40110/ and its vejledning-til-registrering-udenlandsk-virksomhed/ sub-page) and against form 40.112, the same form's official English-language translation, linked from the same guidance page (\"Blanketten findes på engelsk her\")."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2268: GovSchema Standard Research cycle. Opens Denmark's Business Formation vertical (4/6; Passport, Taxes, and National ID & Civic Documents already modelled via GOV-2244/GOV-2253/GOV-2260). A prior cycle (GOV-2260) had already screened virk.dk form 40.110 as a genuine unauthenticated AcroForm for foreign-business registration without MitID and set it aside as a strong Business Formation candidate; this cycle picked it up directly rather than re-screening, since Denmark's other open verticals (Visa via SIRI's AR8, a fill-by-hand PDF with no AcroForm widget layer; DMV via Færdselsstyrelsen's P23, a shared multi-party record card) had already been confirmed weaker candidates in that same screening pass. Fetched fresh this session with a plain HTTP GET: HTTP 200, 642,622 bytes, confirmed a genuine PDF (%PDF-1.7 header, 5 pages) containing an /AcroForm dictionary — matching the pre-scout's byte count exactly, re-confirmed rather than assumed. Independently re-extracted with pdfjs-dist (build/pdf.js, legacy build, loaded from a cached node_modules install) rather than trusting the pre-scout's own field count: doc.getFieldObjects() resolved 122 distinct field names (97 Tx text fields, 15 Btn radio groups with 41 total mutually-exclusive kid widgets, 10 independent Btn checkboxes) — matching the pre-scout's ~122 unique-field-base-name estimate, independently reproduced rather than copied. Every field's genuine alternativeText tooltip was captured via page.getAnnotations() per page, and cross-referenced against page.getTextContent() clustered into visual lines by y-coordinate (2.5pt tolerance), matching each widget's own rect x/y range against the surrounding printed label rather than trusting field-name numbering or tooltip text alone as a position/meaning proxy — the same technique this registry's dk/skattestyrelsen/oplysningsskemaet cycle established, and necessary here too: this specimen contains at least two disclosed tooltip/position mismatches (below) that a name- or tooltip-only mapping would have silently mis-attributed.\n\nDisclosed specimen quirks found by the coordinate cross-reference: (1) on page 3 (Rubrik 10, the bounded 4-slot EU-country/VAT-number repeating pair for VAT numbers to be linked to a Danish EORI number), the third slot's country-code widget (positioned directly under the first two slots' country-code column, at the same x-range) carries the alternativeText \"Husk at udfylde og medsende bilaget 'Hæftende Repræsentant'\" — a tooltip copy-pasted from an unrelated instructional note elsewhere on the same page, not describing this field's actual purpose; modelled by rect position as euVatCountryCode3, with the mismatch disclosed here rather than silently corrected or silently followed. (2) on page 4 (Rubrik 11, \"Årsag til skattepligt til Danmark\"), a free-text widget positioned at the row for the \"Andet, angiv årsag\" (\"Other, state reason\") checkbox carries the alternativeText \"Ledelsens sæde er i Danmark\" — identical to the wording of a *different*, already-modelled checkbox two rows above it (Check Box345, this schema's taxLiabilityManagementSeatInDenmark) — another apparent copy-paste tooltip error; modelled by rect position as taxLiabilityOtherReasonText (paired with taxLiabilityOtherReasonApplicable, the \"Andet, angiv årsag\" checkbox), distinct from the genuine taxLiabilityManagementSeatInDenmark checkbox. Both quirks were confirmed by checking the exact page.getTextContent() item stream at the relevant y-range, not assumed from rect adjacency alone.\n\nThree structural exclusions were established, each checked exhaustively rather than assumed: (1) Rubrik 7 (\"Forsendelsesadresse i Danmark\") is printed with its own disclosed \"(Rubrikken er ikke længere relevant.)\" (\"this field is no longer relevant\") annotation and has zero AcroForm widgets anywhere in its row on the specimen — confirmed by walking every widget rect on page 2 and finding none in the Rubrik 7 y-range. (2) Two page-4 Tx widgets (fieldNames \"Lønsumsafgift\" and \"kun for taxivognmænd finansielle virksomheder læger mv\") sit at a rect x-start identical, character-for-character, to the Rubrik 12 section heading's own two printed text runs 13-15pt below them, with alternativeText that is simply the heading text itself — this is a heading echoed into a fillable-looking widget, not applicant input (asking an applicant to type \"Lønsumsafgift\" into a box collects no information), and is excluded on that basis, distinct from (structurally weaker than) the hard 'no widget at all' finding for Rubrik 7 but still a clear non-input widget. (3) One page-3 checkbox (\"Check Box328\", positioned immediately left of the optional \"Angiv evt. årsag til momsregistrering (se vejledning)\" free-text box) carries no alternativeText and sits at a position not disambiguated by any other printed label on the page; its purpose could not be determined and it is excluded rather than guessed at.\n\nEight instances of a printed \"DD MM ÅÅ\" three-box date split (Fødselsdato, VAT start date, customs start date, corporate-tax-liability start date, first-accounting-period start/end dates, payroll-tax start date, first-employee-hire date) were each combined into a single schema field of type \"date\", per this registry's existing dk/cpr/notification-of-entry precedent (which combines FR 050's own \"Dag / måned / år\" split into one date field) rather than modelled as three separate day/month/year fields; each combined field's description/sourceRef discloses the specimen's own three-box split. The printed year box is genuinely only two digits (\"ÅÅ\", not \"ÅÅÅÅ\") on every one of these eight date splits — confirmed by inspecting the raw text-item stream at each date row rather than assumed misreading; this is disclosed per-field rather than silently upgraded to a 4-digit assumption.\n\nBusiness-context scope decision (disclosed, not a hard structural fact): Rubrik 1, 2, 5, 6, 8, and 15 are unconditionally required on this specimen and modelled as required:true; Rubrik 3/4/16 fields are conditionally required and modelled with requiredWhen against the Rubrik-1 registration-type radio (businessType). Rubrik 9 (VAT), 10 (customs/EORI), 11 (corporate tax liability), 12 (payroll tax — Rubrik 12's own heading states it applies \"kun for taxivognmænd, finansielle virksomheder, læger mv.\", i.e. only for taxi operators, financial businesses, doctors, etc.), and 13 (employees) each carry their own printed asterisks on individual rows, but these Rubrikker are themselves conditional on real-world facts the form has no single gating checkbox for (does this business need Danish VAT/customs/employee registration at all, which not every foreign business does) — this schema therefore models every field in Rubrik 9-13 as required:false, a deliberate editorial scope decision disclosed here rather than a structural fact, distinct from the hard 'no widget exists' and 'heading echo' exclusions above. A mock conformance run (see this document's own VERIFICATION.md) filled every required field plus a representative subset of the conditional/optional sections with valid synthetic example values for a fictional small US company opening a Danish branch office, and validated cleanly against the schema and against tools/validate.mjs."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "businessType",
+      "label": "Virksomhedstype",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the three registration-type paths the business falls under, determining which of Rubrik 3/4's conditional address blocks (if any) must be completed.",
+      "sourceRef": "Rubrik 1 — Virksomhedstype*",
+      "validation": {
+        "enum": ["noAddressInDenmarkEuEeaOnly", "businessAddressInDenmark", "contactAddressInDenmark"]
+      }
+    },
+    {
+      "name": "registeredInHomeCountry",
+      "label": "Er virksomheden registreret i hjemlandet?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the business is already registered in its home country. If yes, the foreign business ID and home-country VAT number must also be provided.",
+      "sourceRef": "Rubrik 1 — Er virksomheden registreret i hjemlandet?* Ja/Nej"
+    },
+    {
+      "name": "foreignBusinessId",
+      "label": "Hvis ja, oplys udenlandsk virksomheds-id",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registeredInHomeCountry", "equals": true },
+      "description": "The business's own foreign (home-country) business/company registration ID, if already registered there. Documentation must be enclosed per the form's own instruction.",
+      "sourceRef": "Rubrik 1 — Hvis ja, oplys udenlandsk virksomheds-id (Dokumentation vedlægges, jf. vejl.)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "homeCountryVatNumberAtRegistration",
+      "label": "Momsnummer i hjemland",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registeredInHomeCountry", "equals": true },
+      "description": "The business's VAT number in its home country, if already registered there. Documentation must be enclosed per the form's own instruction.",
+      "sourceRef": "Rubrik 1 — Momsnummer i hjemland (Dokumentation vedlægges, jf. vejl.)",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "businessNameHomeCountry",
+      "label": "Virksomhedens navn",
+      "type": "string",
+      "required": true,
+      "description": "The business's own registered name in its home country.",
+      "sourceRef": "Rubrik 2 — Virksomhedens navn*",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "phoneNumberHomeCountry",
+      "label": "Telefonnummer",
+      "type": "string",
+      "required": false,
+      "description": "The business's telephone number in its home country.",
+      "sourceRef": "Rubrik 2 — Telefonnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "addressLine1HomeCountry",
+      "label": "Adresse 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The business's home-country address, first line.",
+      "sourceRef": "Rubrik 2 — Adresse 1*",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "faxNumberHomeCountry",
+      "label": "Faxnummer",
+      "type": "string",
+      "required": false,
+      "description": "The business's fax number in its home country.",
+      "sourceRef": "Rubrik 2 — Faxnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "addressLine2HomeCountry",
+      "label": "Adresse 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The business's home-country address, second line.",
+      "sourceRef": "Rubrik 2 — Adresse 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "mobileNumberHomeCountry",
+      "label": "Mobilnummer",
+      "type": "string",
+      "required": false,
+      "description": "The business's mobile telephone number in its home country.",
+      "sourceRef": "Rubrik 2 — Mobilnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "postalCodeHomeCountry",
+      "label": "Postnummer",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The postal code of the business's home-country address.",
+      "sourceRef": "Rubrik 2 — Postnummer*",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "cityHomeCountry",
+      "label": "By",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The city of the business's home-country address.",
+      "sourceRef": "Rubrik 2 — By*",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "emailHomeCountry",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "description": "The business's email address in its home country.",
+      "sourceRef": "Rubrik 2 — E-mail",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "countryHomeCountry",
+      "label": "Land",
+      "type": "string",
+      "required": true,
+      "description": "The business's home country (name).",
+      "sourceRef": "Rubrik 2 — Land*",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "countryCodeHomeCountry",
+      "label": "Landekode",
+      "type": "string",
+      "required": true,
+      "description": "The country code of the business's home country.",
+      "sourceRef": "Rubrik 2 — Landekode*",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "danishBusinessAddressStreet",
+      "label": "Adresse [vejnavn, husnummer, etage]",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "businessAddressInDenmark" },
+      "classification": "pii",
+      "description": "The business's own Danish establishment address (street name, house number, floor) — e.g. a shop, office, or outlet. Only applicable when the business has established itself with a business address in Denmark (Rubrik 3); completing this rubrik means Rubrik 4 is skipped.",
+      "sourceRef": "Rubrik 3 — Adresse [vejnavn, husnummer, etage]*",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "danishBusinessAddressPhone",
+      "label": "Telefonnummer",
+      "type": "string",
+      "required": false,
+      "description": "Telephone number at the business's Danish establishment address.",
+      "sourceRef": "Rubrik 3 — Telefonnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "danishBusinessAddressPostalCode",
+      "label": "Postnummer",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "businessAddressInDenmark" },
+      "classification": "pii",
+      "description": "Postal code of the business's Danish establishment address.",
+      "sourceRef": "Rubrik 3 — Postnummer*",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "danishBusinessAddressCity",
+      "label": "By",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "businessAddressInDenmark" },
+      "classification": "pii",
+      "description": "City of the business's Danish establishment address.",
+      "sourceRef": "Rubrik 3 — By*",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "danishBusinessAddressFax",
+      "label": "Faxnummer",
+      "type": "string",
+      "required": false,
+      "description": "Fax number at the business's Danish establishment address.",
+      "sourceRef": "Rubrik 3 — Faxnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "danishBusinessAddressEmail",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "description": "Email address at the business's Danish establishment address.",
+      "sourceRef": "Rubrik 3 — E-mail",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "danishBusinessAddressMobile",
+      "label": "Mobilnummer",
+      "type": "string",
+      "required": false,
+      "description": "Mobile telephone number at the business's Danish establishment address.",
+      "sourceRef": "Rubrik 3 — Mobilnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "contactPersonNameDenmark",
+      "label": "Navn",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "contactAddressInDenmark" },
+      "classification": "pii",
+      "description": "Name of the business's contact person in Denmark. Only applicable when the business has only a Danish contact/postal address (Rubrik 4), not an established business address (Rubrik 3); the contact person must also sign in Rubrik 16.",
+      "sourceRef": "Rubrik 4 — Navn*",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactPersonPhoneDenmark",
+      "label": "Telefonnummer",
+      "type": "string",
+      "required": false,
+      "description": "Telephone number of the business's contact person in Denmark.",
+      "sourceRef": "Rubrik 4 — Telefonnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "contactPersonAddressDenmark",
+      "label": "Adresse [vejnavn, husnummer, etage]",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "contactAddressInDenmark" },
+      "classification": "pii",
+      "description": "Danish contact/postal address (street name, house number, floor) of the business's contact person in Denmark.",
+      "sourceRef": "Rubrik 4 — Adresse [vejnavn, husnummer, etage]*",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "contactPersonFaxDenmark",
+      "label": "Faxnummer",
+      "type": "string",
+      "required": false,
+      "description": "Fax number of the business's contact person in Denmark.",
+      "sourceRef": "Rubrik 4 — Faxnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "contactPersonPostalCodeDenmark",
+      "label": "Postnummer",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "contactAddressInDenmark" },
+      "classification": "pii",
+      "description": "Postal code of the business's contact person's Danish address.",
+      "sourceRef": "Rubrik 4 — Postnummer*",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "contactPersonCityDenmark",
+      "label": "By",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "contactAddressInDenmark" },
+      "classification": "pii",
+      "description": "City of the business's contact person's Danish address.",
+      "sourceRef": "Rubrik 4 — By*",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactPersonMobileDenmark",
+      "label": "Mobilnummer",
+      "type": "string",
+      "required": false,
+      "description": "Mobile telephone number of the business's contact person in Denmark.",
+      "sourceRef": "Rubrik 4 — Mobilnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "contactPersonEmailDenmark",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "description": "Email address of the business's contact person in Denmark.",
+      "sourceRef": "Rubrik 4 — E-mail",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactPersonCprOrCvr",
+      "label": "Dansk CPR-nr eller CVR-nr.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "contactAddressInDenmark" },
+      "classification": "sensitive-pii",
+      "description": "The Danish contact person's own CPR number (10 digits) or CVR number (8 digits), if they have one.",
+      "sourceRef": "Rubrik 4 — Dansk CPR-nr eller CVR-nr.*",
+      "validation": {
+        "pattern": "^[0-9]{8}$|^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "ownerName",
+      "label": "Navn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the business's owner.",
+      "sourceRef": "Rubrik 5 — Navn*",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerDateOfBirth",
+      "label": "Fødselsdato",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's date of birth. On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ — the year box is genuinely only two digits on this specimen), combined here into a single date field per this registry's existing dk/cpr/notification-of-entry precedent.",
+      "sourceRef": "Rubrik 5 — Fødselsdato* (DD MM ÅÅ)"
+    },
+    {
+      "name": "ownerAddressLine1",
+      "label": "Adresse 1",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's address, first line.",
+      "sourceRef": "Rubrik 5 — Adresse 1*",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerAddressLine2",
+      "label": "Adresse 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The owner's address, second line.",
+      "sourceRef": "Rubrik 5 — Adresse 2",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "ownerPostalCode",
+      "label": "Postnummer",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Postal code of the owner's address.",
+      "sourceRef": "Rubrik 5 — Postnummer*",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "ownerCity",
+      "label": "By",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "City of the owner's address.",
+      "sourceRef": "Rubrik 5 — By*",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ownerCountry",
+      "label": "Land",
+      "type": "string",
+      "required": true,
+      "description": "Country of the owner's address.",
+      "sourceRef": "Rubrik 5 — Land*",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ownerCountryCode",
+      "label": "Landekode",
+      "type": "string",
+      "required": true,
+      "description": "Country code of the owner's address.",
+      "sourceRef": "Rubrik 5 — Landekode*",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "ownerIdType",
+      "label": "Id-type (sæt kryds)",
+      "type": "enum",
+      "required": true,
+      "description": "The type of identity document the owner is providing a copy of: passport, or another form of ID (specified in ownerOtherIdTypeSpecify).",
+      "sourceRef": "Rubrik 5 — Id-type (sæt kryds): Pas / Anden ID (oplys type)",
+      "validation": {
+        "enum": ["passport", "other"]
+      }
+    },
+    {
+      "name": "ownerOtherIdTypeSpecify",
+      "label": "Anden ID (oplys type)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "ownerIdType", "equals": "other" },
+      "description": "If the owner's ID type is \"other\" rather than a passport, the specific type of ID document provided.",
+      "sourceRef": "Rubrik 5 — Anden ID (oplys type)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "ownerCprNumberIfEmigrated",
+      "label": "CPR-nummer for udvandrede personer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The owner's Danish CPR number, only applicable if the owner is a Danish citizen who has emigrated (an \"udvandret person\") and already holds a CPR number.",
+      "sourceRef": "Rubrik 5 — CPR-nummer for udvandrede personer",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "ownerIdNumber",
+      "label": "ID-nummer",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The owner's ID document number (passport number, or the equivalent number on the other ID type specified).",
+      "sourceRef": "Rubrik 5 — ID-nummer* (Kopi af ID/pas skal vedlægges)",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "ownerIdCopyAttachment",
+      "label": "Kopi af ID/pas",
+      "type": "file",
+      "required": true,
+      "description": "A copy of the owner's passport or other ID document, which the form's own instruction requires be enclosed alongside the ID number. This field models that enclosure requirement; the source PDF has no dedicated upload widget for it (a physical/attached-copy requirement on a paper form), consistent with this registry's existing practice of modelling disclosed attachment requirements even without a dedicated widget.",
+      "sourceRef": "Rubrik 5 — ID-nummer * (Kopi af ID/pas skal vedlægges)",
+      "validation": {
+        "mediaTypes": ["application/pdf", "image/jpeg", "image/png"]
+      }
+    },
+    {
+      "name": "homeCountryContactName",
+      "label": "Navn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name of the business's contact person in its home country.",
+      "sourceRef": "Rubrik 6 — Navn*",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "homeCountryContactPhone",
+      "label": "Telefonnummer",
+      "type": "string",
+      "required": false,
+      "description": "Telephone number of the business's contact person in its home country.",
+      "sourceRef": "Rubrik 6 — Telefonnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "homeCountryContactEmail",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "description": "Email address of the business's contact person in its home country.",
+      "sourceRef": "Rubrik 6 — E-mail",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "homeCountryContactMobile",
+      "label": "Mobilnummer",
+      "type": "string",
+      "required": false,
+      "description": "Mobile telephone number of the business's contact person in its home country.",
+      "sourceRef": "Rubrik 6 — Mobilnummer",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "industryDescription",
+      "label": "Branche",
+      "type": "string",
+      "required": true,
+      "description": "Free-text description of the business's industry/trade.",
+      "sourceRef": "Rubrik 8 — Branche*",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "industryCode",
+      "label": "Branchekode (6 cifre)",
+      "type": "string",
+      "required": true,
+      "description": "The 6-digit industry code chosen from Erhvervsstyrelsen's own list at branchekode.dk.",
+      "sourceRef": "Rubrik 8 — Branchekode (6 cifre)*",
+      "validation": {
+        "pattern": "^[0-9]{6}$"
+      }
+    },
+    {
+      "name": "vatStartDate",
+      "label": "Startdato for momspligtige aktiviteter",
+      "type": "date",
+      "required": false,
+      "description": "Start date of VAT-liable activities (e.g. first invoicing or first purchase). On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ, a 2-digit year), combined here into a single date field. Modelled as optional: Rubrik 9 (Moms) applies only to businesses that need Danish VAT registration, which not every foreign business does, even though this row itself carries a printed asterisk.",
+      "sourceRef": "Rubrik 9 — Startdato for momspligtige aktiviteter (fx første fakturering eller indkøb)* (DD MM ÅÅ)"
+    },
+    {
+      "name": "vatRegistrationType",
+      "label": "Type af momsregistrering i Danmark",
+      "type": "enum",
+      "required": false,
+      "description": "The single type of Danish VAT registration being requested (the form instructs \"vælg kun en\" — choose only one).",
+      "sourceRef": "Rubrik 9 — Type af momsregistrering i Danmark (vælg kun en):*",
+      "validation": {
+        "enum": [
+          "annualTurnover0To55MillionQuarterly",
+          "annualTurnoverOver55MillionMonthly",
+          "vatOneStopShopDenmark",
+          "foreignTouristBuses",
+          "euAcquisitions",
+          "distanceSales",
+          "occasionalRegistration"
+        ]
+      }
+    },
+    {
+      "name": "vatRegistrationReason",
+      "label": "Angiv evt. årsag til momsregistrering",
+      "type": "string",
+      "required": false,
+      "description": "Free-text reason for VAT registration, if applicable (see the form's own guidance).",
+      "sourceRef": "Rubrik 9 — Angiv evt. årsag til momsregistrering (se vejledning)",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "permanentEstablishmentInDenmark",
+      "label": "Har virksomheden et fast forretningssted i Danmark?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business has a fixed place of business in Denmark, asked to help establish the business's legal VAT status.",
+      "sourceRef": "Rubrik 9 — Har virksomheden et fast forretningssted i Danmark?* Ja/Nej"
+    },
+    {
+      "name": "permanentEstablishmentInEu",
+      "label": "Har virksomheden et fast forretningssted indenfor EU?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business has a fixed place of business within the EU, asked to help establish the business's legal VAT status.",
+      "sourceRef": "Rubrik 9 — Har virksomheden et fast forretningssted indenfor EU?* Ja/Nej"
+    },
+    {
+      "name": "homeCountryVatCountryCode",
+      "label": "Landekode",
+      "type": "string",
+      "required": false,
+      "description": "Country code for the home-country VAT number below. Only needs to be filled in if the home-country VAT number was not already given in Rubrik 2 (homeCountryVatNumberAtRegistration).",
+      "sourceRef": "Rubrik 9 — Momsnummer i hjemland (Skal udfyldes, hvis momsnr. ikke er oplyst i Rubrik 2) — Landekode",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "homeCountryVatNumberIfNotInRubrik2",
+      "label": "Momsnummer",
+      "type": "string",
+      "required": false,
+      "description": "The business's home-country VAT number, only needed if not already given in Rubrik 2 (homeCountryVatNumberAtRegistration).",
+      "sourceRef": "Rubrik 9 — Momsnummer i hjemland (Skal udfyldes, hvis momsnr. ikke er oplyst i Rubrik 2) — Momsnummer",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "customsStartDate",
+      "label": "Startdato for første import eller eksport i Danmark",
+      "type": "date",
+      "required": false,
+      "description": "Start date of the business's first import or export in Denmark. On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ, a 2-digit year), combined here into a single date field. Modelled as optional: Rubrik 10 (Toldregistrering) applies only to businesses that import/export, which not every foreign business does.",
+      "sourceRef": "Rubrik 10 — Startdato for første import eller eksport i Danmark* (DD MM ÅÅ)"
+    },
+    {
+      "name": "customsImport",
+      "label": "Import",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business imports goods.",
+      "sourceRef": "Rubrik 10 — Import"
+    },
+    {
+      "name": "customsExport",
+      "label": "Eksport",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business exports goods.",
+      "sourceRef": "Rubrik 10 — Eksport"
+    },
+    {
+      "name": "customsDutyPaymentMethod",
+      "label": "Betaling af told",
+      "type": "enum",
+      "required": false,
+      "description": "The chosen method of paying customs duty on goods imported from outside the EU, one of the three options the form itself lays out.",
+      "sourceRef": "Rubrik 10 — Importerer du varer uden for EU, skal du vælge, hvordan du vil betale din told (tre muligheder)",
+      "validation": {
+        "enum": ["immediateUseCashSettlementPerShipment", "deferredUseCashSettlementWithin5Days", "securityArrangement"]
+      }
+    },
+    {
+      "name": "customsEstablishedOtherEuCountry",
+      "label": "Er virksomheden etableret i et andet EU-land end Danmark med hensyn til EU's toldregler?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business is established in an EU country other than Denmark for EU customs-rule purposes, asked to help determine EORI-number eligibility.",
+      "sourceRef": "Rubrik 10 — Er virksomheden etableret i et andet EU-land end Danmark med hensyn til EU's toldregler?* Ja/Nej"
+    },
+    {
+      "name": "customsEstablishedInDenmark",
+      "label": "Er virksomheden etableret i Danmark med hensyn til EU's toldregler?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business is established in Denmark for EU customs-rule purposes, asked to help determine EORI-number eligibility.",
+      "sourceRef": "Rubrik 10 — Er virksomheden etableret i Danmark med hensyn til EU's toldregler?* Ja/Nej"
+    },
+    {
+      "name": "eoriPublicationConsent",
+      "label": "Ønskes publikation af virksomhedsnavn og adresse på EU's centrale websøgninger?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business wants its name and address published in the EU's central EORI web search.",
+      "sourceRef": "Rubrik 10 — Ønskes publikation af virksomhedsnavn og adresse på EU's centrale websøgninger?* Ja/Nej"
+    },
+    {
+      "name": "existingEoriNumber",
+      "label": "Evt. eksisterende EORI-nummer",
+      "type": "string",
+      "required": false,
+      "description": "The business's existing EORI number, if it already has one (remember the country code).",
+      "sourceRef": "Rubrik 10 — Evt. eksisterende EORI-nummer skal oplyses, husk landekoden.",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "euVatCountryCode1",
+      "label": "Landekode",
+      "type": "string",
+      "required": false,
+      "description": "Country code for the first of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 1 of 4) — Landekode",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "euVatNumber1",
+      "label": "Momsnummer",
+      "type": "string",
+      "required": false,
+      "description": "The first of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 1 of 4) — Momsnummer",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "euVatCountryCode2",
+      "label": "Landekode",
+      "type": "string",
+      "required": false,
+      "description": "Country code for the second of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 2 of 4) — Landekode",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "euVatNumber2",
+      "label": "Momsnummer",
+      "type": "string",
+      "required": false,
+      "description": "The second of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 2 of 4) — Momsnummer",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "euVatCountryCode3",
+      "label": "Landekode",
+      "type": "string",
+      "required": false,
+      "description": "Country code for the third of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number. This widget's own alternativeText tooltip on the source PDF is a copy-paste artifact reading \"Husk at udfylde og medsende bilaget 'Hæftende Repræsentant'\" (an unrelated instructional note found elsewhere on the same page); it is mapped here by its rect position, directly below the slot-1/slot-2 country-code column, not by its tooltip text — see VERIFICATION.md.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 3 of 4) — Landekode (position-mapped; tooltip mismatch disclosed)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "euVatNumber3",
+      "label": "Momsnummer",
+      "type": "string",
+      "required": false,
+      "description": "The third of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 3 of 4) — Momsnummer",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "euVatCountryCode4",
+      "label": "Landekode",
+      "type": "string",
+      "required": false,
+      "description": "Country code for the fourth of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 4 of 4) — Landekode",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "euVatNumber4",
+      "label": "Momsnummer",
+      "type": "string",
+      "required": false,
+      "description": "The fourth of up to 4 additional EU VAT numbers the business wants linked to a Danish EORI number.",
+      "sourceRef": "Rubrik 10 — Momsnumre, der ønskes tilføjet til et dansk EORI-nummer (slot 4 of 4) — Momsnummer",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "taxLiabilityStartDate",
+      "label": "Dato for skattepligtens indtræden",
+      "type": "date",
+      "required": false,
+      "description": "The date Danish corporate tax liability commences. On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ, a 2-digit year), combined here into a single date field. Modelled as optional: Rubrik 11 applies only to businesses that are subject to Danish corporate tax liability.",
+      "sourceRef": "Rubrik 11 — Dato for skattepligtens indtræden* (DD MM ÅÅ)"
+    },
+    {
+      "name": "firstAccountingPeriodStartDate",
+      "label": "Virksomhedens første regnskabsperiode: Startdato",
+      "type": "date",
+      "required": false,
+      "description": "Start date of the business's first Danish accounting period. On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ, a 2-digit year), combined here into a single date field.",
+      "sourceRef": "Rubrik 11 — Virksomhedens første regnskabsperiode: Startdato (DD MM ÅÅ)"
+    },
+    {
+      "name": "firstAccountingPeriodEndDate",
+      "label": "Virksomhedens første regnskabsperiode: Slutdato",
+      "type": "date",
+      "required": false,
+      "description": "End date of the business's first Danish accounting period. On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ, a 2-digit year), combined here into a single date field.",
+      "sourceRef": "Rubrik 11 — Virksomhedens første regnskabsperiode: Slutdato (DD MM ÅÅ)"
+    },
+    {
+      "name": "taxLiabilityPermanentEstablishment",
+      "label": "Virksomheden har fast driftssted i Danmark",
+      "type": "boolean",
+      "required": false,
+      "description": "One of several possible reasons for Danish corporate tax liability: the business has a permanent establishment in Denmark. The form allows selecting several reasons (\"Vælg evt. flere\").",
+      "sourceRef": "Rubrik 11 — Årsag til skattepligt til Danmark (Vælg evt. flere) — Virksomheden har fast driftssted i Danmark"
+    },
+    {
+      "name": "taxLiabilityOwnsRealProperty",
+      "label": "Virksomheden ejer fast ejendom i Danmark",
+      "type": "boolean",
+      "required": false,
+      "description": "One of several possible reasons for Danish corporate tax liability: the business owns real property in Denmark.",
+      "sourceRef": "Rubrik 11 — Årsag til skattepligt til Danmark (Vælg evt. flere) — Virksomheden ejer fast ejendom i Danmark"
+    },
+    {
+      "name": "taxLiabilityManagementSeatInDenmark",
+      "label": "Ledelsens sæde er i Danmark",
+      "type": "boolean",
+      "required": false,
+      "description": "One of several possible reasons for Danish corporate tax liability: the seat of the business's management is in Denmark.",
+      "sourceRef": "Rubrik 11 — Årsag til skattepligt til Danmark (Vælg evt. flere) — Ledelsens sæde er i Danmark"
+    },
+    {
+      "name": "taxLiabilityJointTaxationRequested",
+      "label": "Ønsker sambeskatning",
+      "type": "boolean",
+      "required": false,
+      "description": "One of several possible reasons for Danish corporate tax liability: the business requests joint taxation (see the form's own guidance).",
+      "sourceRef": "Rubrik 11 — Årsag til skattepligt til Danmark (Vælg evt. flere) — Ønsker sambeskatning (se vejledning)"
+    },
+    {
+      "name": "taxLiabilityOtherReasonApplicable",
+      "label": "Andet, angiv årsag",
+      "type": "boolean",
+      "required": false,
+      "description": "One of several possible reasons for Danish corporate tax liability: another reason, specified in taxLiabilityOtherReasonText.",
+      "sourceRef": "Rubrik 11 — Årsag til skattepligt til Danmark (Vælg evt. flere) — Andet, angiv årsag"
+    },
+    {
+      "name": "taxLiabilityOtherReasonText",
+      "label": "Andet, angiv årsag (fritekst)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "taxLiabilityOtherReasonApplicable", "equals": true },
+      "description": "Free-text statement of the other reason for Danish corporate tax liability. This widget's own alternativeText tooltip on the source PDF reads \"Ledelsens sæde er i Danmark\" — identical to a different, already-modelled checkbox's label two rows above it — an apparent copy-paste tooltip error; mapped here by its rect position (directly beside the \"Andet, angiv årsag\" checkbox), not by its tooltip text, since the position makes the free-text-for-other-reason purpose unambiguous. See VERIFICATION.md.",
+      "sourceRef": "Rubrik 11 — Andet, angiv årsag (fritekst; position-mapped, tooltip mismatch disclosed)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "alternativeAddressCoName",
+      "label": "Evt. c/o navn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional c/o name for the alternative Danish address below, only completed when neither Rubrik 3 (Danish business address) nor Rubrik 4 (Danish contact address) has been filled in.",
+      "sourceRef": "Rubrik 11 — Alternativ adresse i Danmark (udfyldes, hvis rubrik 3 og 4 ikke er udfyldt) — Evt. c/o navn",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "alternativeAddressStreet",
+      "label": "Adresse [vejnavn, husnummer, etage]",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Street name, house number, and floor of the alternative Danish address, only completed when neither Rubrik 3 nor Rubrik 4 has been filled in.",
+      "sourceRef": "Rubrik 11 — Alternativ adresse i Danmark (udfyldes, hvis rubrik 3 og 4 ikke er udfyldt) — Adresse",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "alternativeAddressPostalCode",
+      "label": "Postnummer",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Postal code of the alternative Danish address, only completed when neither Rubrik 3 nor Rubrik 4 has been filled in.",
+      "sourceRef": "Rubrik 11 — Alternativ adresse i Danmark (udfyldes, hvis rubrik 3 og 4 ikke er udfyldt) — Postnummer",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "alternativeAddressCity",
+      "label": "By",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "City of the alternative Danish address, only completed when neither Rubrik 3 nor Rubrik 4 has been filled in.",
+      "sourceRef": "Rubrik 11 — Alternativ adresse i Danmark (udfyldes, hvis rubrik 3 og 4 ikke er udfyldt) — By",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "payrollTaxStartDate",
+      "label": "Startdato (lønsumsafgift)",
+      "type": "date",
+      "required": false,
+      "description": "Start date of payroll-tax (lønsumsafgift) liability. On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ, a 2-digit year), combined here into a single date field. Modelled as optional: Rubrik 12's own heading states it applies only to taxi operators, financial businesses, doctors, etc. (\"kun for taxivognmænd, finansielle virksomheder, læger mv.\").",
+      "sourceRef": "Rubrik 12 — Startdato* (DD MM ÅÅ)"
+    },
+    {
+      "name": "payrollTaxCategory",
+      "label": "Kategori for lønsumsafgift",
+      "type": "enum",
+      "required": false,
+      "description": "Which lønsumsafgift (payroll tax) category the business falls under.",
+      "sourceRef": "Rubrik 12 — category radio group (Turistkontorer / Forsikringsvirksomhed mv. / Virksomheder der udgiver eller importerer aviser / Andet / Organisationer, fonde, foreninger mv.)",
+      "validation": {
+        "enum": [
+          "touristOfficesInformationServicesLotteries",
+          "insuranceBankingFinancing",
+          "newspaperPublisherOrImporter",
+          "otherDoctorDentistEducationMuseumClinicTaxi",
+          "organizationsFoundationsAssociationsSelfGoverningInstitutions"
+        ]
+      }
+    },
+    {
+      "name": "payrollTaxBusinessLocationInDenmark",
+      "label": "Har virksomheden et forretningssted i Danmark?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business has a place of business in Denmark, for lønsumsafgift purposes. If no, the form's own instruction requires enclosing the \"Hæftende Repræsentant\" (liable representative) attachment.",
+      "sourceRef": "Rubrik 12 — Har virksomheden et forretningssted i Danmark?* Ja/Nej"
+    },
+    {
+      "name": "firstEmployeeHireDate",
+      "label": "Hvornår blev den første medarbejder ansat?",
+      "type": "date",
+      "required": false,
+      "description": "The date the business's first employee in Denmark was hired. On the source PDF this is printed as three separate boxes (DD / MM / ÅÅ, a 2-digit year), combined here into a single date field. Modelled as optional: Rubrik 13 applies only to businesses with Danish employees.",
+      "sourceRef": "Rubrik 13 — Hvornår blev den første medarbejder ansat* (DD MM ÅÅ)"
+    },
+    {
+      "name": "taxWithholdingCategory",
+      "label": "Afregning af danske medarbejderes A-skat, ATP mv.",
+      "type": "enum",
+      "required": false,
+      "description": "Which single category of Danish employee tax/contribution settlement applies (this is a mutually-exclusive radio group on the source PDF, distinct from the two independent checkboxes atpRegistration and taxFreeNetWageRegistration below).",
+      "sourceRef": "Rubrik 13 — Afregning af danske medarbejderes A-skat, ATP mv. (A-skat og AM-bidrag / Udbetaling af B-indkomst, månedlig / Udbetaling af B-indkomst, sporadisk)",
+      "validation": {
+        "enum": ["aSkatOgAmBidrag", "bIncomeMonthly", "bIncomeSporadic"]
+      }
+    },
+    {
+      "name": "atpRegistration",
+      "label": "ATP",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business registers for ATP (Arbejdsmarkedets Tillægspension, the Danish labour-market supplementary pension) contributions for its Danish employees. An independent checkbox on the source PDF, not part of the taxWithholdingCategory radio group.",
+      "sourceRef": "Rubrik 13 — ATP"
+    },
+    {
+      "name": "taxFreeNetWageRegistration",
+      "label": "Udbetaling af skattefri nettohyre",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business pays tax-free net wage/hyre (see the form's own guidance). An independent checkbox on the source PDF, not part of the taxWithholdingCategory radio group.",
+      "sourceRef": "Rubrik 13 — Udbetaling af skattefri nettohyre (se vejledning)"
+    },
+    {
+      "name": "employeeTaxPermanentEstablishmentInDenmark",
+      "label": "Har virksomheden et fast driftssted i Danmark?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business has a permanent establishment in Denmark, asked again in Rubrik 13 specifically to help establish the business's legal status for employee-tax purposes (distinct from the similarly-worded Rubrik 11 checkbox, taxLiabilityPermanentEstablishment, which is its own separate reason-for-corporate-tax-liability checkbox).",
+      "sourceRef": "Rubrik 13 — Har virksomheden et fast driftssted i Danmark?* Ja/Nej"
+    },
+    {
+      "name": "addressOutsideEuFaroeGreenlandIcelandNorway",
+      "label": "Har virksomheden adresse (hjemting) udenfor EU, Færøerne, Grønland, Island og Norge?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the business has its registered address (hjemting) outside the EU, the Faroe Islands, Greenland, Iceland, and Norway.",
+      "sourceRef": "Rubrik 13 — Har virksomheden adresse (hjemting) udenfor EU, Færøerne, Grønland, Island og Norge?* Ja/Nej"
+    },
+    {
+      "name": "registrationReasonOrRemarks",
+      "label": "Årsag til registrering i Danmark / Evt. øvrige bemærkninger med betydning for registreringen",
+      "type": "string",
+      "required": false,
+      "description": "Free-text field serving two purposes per the form's own printed instructions: the reason for registration in Denmark (Rubrik 14), only to be completed if none of Rubrik 9-13 have been filled in; and/or any other remarks of significance for the registration.",
+      "sourceRef": "Rubrik 14 (Feltet skal kun udfyldes, hvis ingen af rubrikkerne 9-13 er udfyldt) / Evt. øvrige bemærkninger med betydning for registreringen",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "signatoryDate1",
+      "label": "Dato",
+      "type": "date",
+      "required": true,
+      "description": "Date of signature for the first owner/authorized signatory (of up to 3 on this specimen).",
+      "sourceRef": "Rubrik 15 — Underskrift(er)* Ejer(e)s/tegningsberettigedes underskrift(er), slot 1 of 3 — Dato"
+    },
+    {
+      "name": "signatoryName1",
+      "label": "Navn med blokbogstaver",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name in block letters of the first owner/authorized signatory (of up to 3 on this specimen).",
+      "sourceRef": "Rubrik 15 — Underskrift(er)* Ejer(e)s/tegningsberettigedes underskrift(er), slot 1 of 3 — Navn med blokbogstaver",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "signatoryDate2",
+      "label": "Dato",
+      "type": "date",
+      "required": false,
+      "description": "Date of signature for the second owner/authorized signatory, if more than one signs.",
+      "sourceRef": "Rubrik 15 — Underskrift(er) Ejer(e)s/tegningsberettigedes underskrift(er), slot 2 of 3 — Dato"
+    },
+    {
+      "name": "signatoryName2",
+      "label": "Navn med blokbogstaver",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name in block letters of the second owner/authorized signatory, if more than one signs.",
+      "sourceRef": "Rubrik 15 — Underskrift(er) Ejer(e)s/tegningsberettigedes underskrift(er), slot 2 of 3 — Navn med blokbogstaver",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "signatoryDate3",
+      "label": "Dato",
+      "type": "date",
+      "required": false,
+      "description": "Date of signature for the third owner/authorized signatory, if more than two sign.",
+      "sourceRef": "Rubrik 15 — Underskrift(er) Ejer(e)s/tegningsberettigedes underskrift(er), slot 3 of 3 — Dato"
+    },
+    {
+      "name": "signatoryName3",
+      "label": "Navn med blokbogstaver",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Name in block letters of the third owner/authorized signatory, if more than two sign.",
+      "sourceRef": "Rubrik 15 — Underskrift(er) Ejer(e)s/tegningsberettigedes underskrift(er), slot 3 of 3 — Navn med blokbogstaver",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "contactPersonSignatureDate",
+      "label": "Dato",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "contactAddressInDenmark" },
+      "description": "Date of signature of the Danish contact person, required only when the business registered via the Rubrik-4 contact-address-only path (Rubrik 1's own instruction: \"husk at kontaktpersonen skal underskrive i rubrik 16\").",
+      "sourceRef": "Rubrik 16 — Underskrift Dansk kontaktperson — Dato"
+    },
+    {
+      "name": "contactPersonSignatureName",
+      "label": "Navn med blokbogstaver",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessType", "equals": "contactAddressInDenmark" },
+      "classification": "pii",
+      "description": "Name in block letters of the Danish contact person's signature, required only when the business registered via the Rubrik-4 contact-address-only path.",
+      "sourceRef": "Rubrik 16 — Underskrift Dansk kontaktperson — Navn med blokbogstaver",
+      "validation": {
+        "maxLength": 200
+      }
+    }
+  ]
+}
