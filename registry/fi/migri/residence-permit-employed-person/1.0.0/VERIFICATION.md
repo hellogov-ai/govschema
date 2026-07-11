@@ -219,6 +219,30 @@ same technique as this registry's other recent cycles):
      conditional-required violation).
   8. Setting `lastName` to a 300-character string (violates
      `validation.maxLength: 200`) → `maxLength-violation`.
+  9. Removing `termsOfEmploymentForm` from `documents` (violates a
+     `documents[].required: true` entry with no `requiredWhen`) →
+     `missing-required-document`.
+
+**Correction (independent re-check, review gate):** the disposable
+checker script above only checked `fields[]` against
+`required`/`requiredWhen`/`visibleWhen`/`validation`/`crossFieldValidation`
+— it never checked `documents[]` requiredness, and neither committed
+scenario originally carried a `documents` key at all. Both scenarios were
+therefore silently missing all 5 of this schema's unconditionally-required
+`documents[]` entries (`colorCopyOfPassportPages`,
+`passportPhotoOrRetrievalCode`, `proofOfLegalStayInCountryOfApplication`,
+`termsOfEmploymentForm`, `applicantSignatureDeclaration`), which a
+from-scratch re-check (extending the checker to also evaluate
+`documents[].required`/`requiredWhen`, matching this registry's own
+established `documents`-array convention — e.g. `at/gewerbebehoerde`,
+`dk/um/application-for-danish-passport`) confirmed by raising exactly 5
+`missing-required-document` errors on each scenario as originally
+committed. Both scenario files were corrected to include a `documents`
+array marking these 5 entries `provided: true` (mutation control 9 above
+added to cover the gap going forward); the re-check now confirms 0 errors
+on both scenarios with the corrected fixtures, and field collection counts
+(44/90 and 96/38) are unchanged. `formMP1`, the schema's one optional
+`documents[]` entry, is intentionally omitted from both scenarios.
 
 The schema was also validated against the GovSchema v0.3 meta-schema with
 `node tools/validate.mjs` and `node tools/validate-ajv.mjs` — both pass,
