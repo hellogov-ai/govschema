@@ -10,56 +10,52 @@
 > opens as the registry's 35th jurisdiction**, via its Business Formation
 > vertical, with `no/brreg/samordnet-registermelding` — Brønnøysundregistrene's
 > (the Brønnøysund Register Centre) central "Samordnet registermelding"
-> (Coordinated Register Notification), form BR-1010BM, used to register a
+> (Coordinated Register Notification), form BR-1010B, used to register a
 > business or company with the Central Coordinating Register for Legal
 > Entities (Enhetsregisteret), the Register of Business Enterprises
 > (Foretaksregisteret), NAV's Employer/Employee Register, Statistics
 > Norway's Register of Business and Enterprises, the Register of
 > Foundations, and the Directorate of Taxes' register of non-personal
-> taxpayers, all at once, across most Norwegian legal entity types. Norway
-> had been named as a parallel Nordic scouting candidate across at least
-> two prior cycles (GOV-2276, GOV-2292); this cycle picked up BRREG's own
-> coordinated form directly. Fetched fresh from `brreg.no` with a plain
-> HTTP GET: HTTP 200, 2,313,349 bytes, genuine `%PDF-1.6`, 6 pages, no
-> login/CAPTCHA/WAF gate. A `pdfjs-dist` extraction resolved 380 raw
-> `/Widget` annotations (207 Tx, 173 Btn) across 6 pages, and a separate
-> `getFieldObjects()` cross-check found 386 distinct field names — both
-> matching this issue's own pre-recorded figures exactly. A disposable
-> reconciliation script mapped every one of the 380 widgets to exactly
-> one of: a `fields[]` entry (318 widgets, consolidating — via a 26-value
-> legal-entity-type checkbox-grid-to-enum consolidation, a 4-value
-> notification-type consolidation, an 11-slot bounded board/participants
-> table each with its own 7-checkbox role group consolidated to one enum
-> per slot, a signature-arrangement 11-checkbox-to-enum consolidation,
-> split date/year widget merges, and a disclosed shared-field-name split
-> — to **191 `fields[]` entries and 0 `documents[]` entries**), a
-> disclosed, out-of-scope deferred section (61 widgets across six
-> entity-type- or event-specific sections — articles of
-> association/partnership agreement, share/partnership capital, capital
-> reduction, merger, demerger, and a Norwegian-registered foreign
-> enterprise's own Norway address block — each named and scoped out in
-> the document's own VERIFICATION.md rather than silently dropped), or a
-> confirmed non-rendering artifact widget (1, a zero-height checkbox
-> rect). 380 = 318 + 61 + 1, 0 unmapped, 0 double-mapped. The zero
-> `documents[]` count is a disclosed structural fact: this specimen has
-> no fillable enclosure-checklist widget group, unlike this registry's
-> `fi/prh` precedent. Several source-form quirks are disclosed in the
-> document's own VERIFICATION.md (a shared, non-unique AcroForm field
-> name across two structurally distinct widgets on the same row,
-> disambiguated by widget geometry; an 11-row, not 10-row, board table
-> caught only by the reconciliation script's own zero-unmapped assertion;
-> an unlabelled mobile-number widget identified only via per-item
-> x-coordinate cross-referencing against a printed column header; a
-> 4-option, not 5-option, second contact-person role group; and four
-> legal-entity-type values whose "must be specified in field 26" note
-> this schema cannot mechanically enforce with v0.3's `Condition`
-> grammar). Two mock conformance scenarios (a sole proprietorship's
-> minimal new registration; a private limited company's fuller
-> change-of-registration notification exercising an 11-row board table's
-> three populated slots, a signature arrangement, an auditor, and an
-> accountant) found 0 errors, plus 4 mutation controls each correctly
-> raised exactly 1 error. **Norway opens with 1 of its 6 verticals**
-> (Business Formation); National ID (Skatteetaten RF-1400B,
+> taxpayers, all at once, across essentially every Norwegian legal entity
+> type. Norway had been named as a parallel Nordic scouting candidate
+> across at least two prior cycles (GOV-2276, GOV-2292); a same-day
+> follow-on scouting pass (GOV-2314, alongside Belgium and Luxembourg)
+> confirmed it as the strongest opening of the three, and this cycle
+> picked up BRREG's own coordinated form directly. Fetched fresh from
+> `brreg.no` with a plain HTTP GET: HTTP 200, 2,313,349 bytes, genuine
+> `%PDF-1.6`, 6 pages, no login/CAPTCHA/WAF gate. A `pdfjs-dist`
+> extraction resolved 380 raw `/Widget` annotations (207 Tx, 173 Btn)
+> across 6 pages, and a separate `getFieldObjects()` cross-check found
+> 386 distinct field names — both matching this issue's own pre-recorded
+> figures exactly. A disposable reconciliation script mapped 378 of the
+> 379 distinct widget names to exactly one `fields[]`/`documents[]` entry
+> (0 double-mapped), consolidating — via a 26-value legal-entity-type
+> checkbox-grid-to-enum consolidation, a 4-value notification-type
+> consolidation, an 11-row bounded board/participants table (this
+> registry's largest repeating-group flattening to date, each row with
+> its own 7-checkbox role group consolidated to one enum), a 2-row
+> contact-person table, a 12-slot bounded signatory-printed-name table,
+> and numerous Ja/Nei-checkbox-pair-to-boolean and split date/year
+> mergers — to **240 `fields[]` entries and 6 `documents[]` entries**,
+> plus 2 `crossFieldValidation` rules (capital-reduction and demerger
+> amount ordering). The 1 disclosed exclusion (`Check Box84`) is a stray,
+> unlabelled widget with no adjacent text or tooltip. Several source-form
+> quirks are disclosed in the document's own VERIFICATION.md (a shared,
+> non-unique AcroForm field name — `Postnummer7` — across two structurally
+> distinct widgets on the same row, disambiguated by position; a 4-option,
+> not 5-option, second contact-person role group; two multi-line,
+> multi-column checkbox rows — the merger and demerger decision-type
+> groups — whose exact widget-to-phrase pairing could not be confirmed
+> against a rendered visual, since both a headless-Chromium and a
+> `pdfjs-dist`+`node-canvas` rendering attempt failed to paint this
+> specimen's glyphs, and is disclosed as a best-effort inference rather
+> than a confirmed mapping). Two mock conformance scenarios (a sole
+> proprietorship's minimal new registration; an AS's fuller registration
+> exercising a 2-member board, share capital, and an audit-exemption
+> resolution) found 0 errors, plus 5 mutation controls each correctly
+> raised exactly 1 error, including one confirming the `documents[]`
+> requiredness path is genuinely exercised. **Norway opens with 1 of its
+> 6 verticals** (Business Formation); National ID (Skatteetaten RF-1400B,
 > "Flyttemelding"), DMV (Statens vegvesen's driving-licence application),
 > and Visa (UDI form GP7028, a legacy/paper fallback) are flagged as
 > genuine, unscreened-in-depth backlog candidates, while Taxes and
@@ -5607,21 +5603,22 @@ within an already-covered vertical:
 
 **Norway opens as this registry's 35th jurisdiction via this vertical
 (GOV-2316)**, via `no/brreg/samordnet-registermelding` —
-Brønnøysundregistrene's form BR-1010BM, "Samordnet registermelding"
+Brønnøysundregistrene's form BR-1010B, "Samordnet registermelding"
 (Coordinated Register Notification), the central multi-purpose form used
 to register a business or company with the Central Coordinating Register
 for Legal Entities, the Register of Business Enterprises, NAV's
 Employer/Employee Register, and several other Norwegian registers at
-once, across most legal entity types. See the Executive Summary's
-GOV-2316 update above for the full sourcing record, including the
-disclosed 61-widget deferral of six entity-type-/event-specific
-sub-sections (articles of association, share capital, capital reduction,
-merger, demerger, and a foreign-registered enterprise's own Norway
-address block) and the 380/318/61/1 widget-reconciliation accounting.
-Norway opens with 1 of its 6 verticals (Business Formation); National ID,
-DMV, and Visa remain open, unscreened-in-depth backlog candidates, and
-Taxes/Passport are confirmed weak/dead-end candidates — see "Known Gaps"
-below.
+once, across essentially every legal entity type. See the Executive
+Summary's GOV-2316 update above for the full sourcing record, including
+the 240 `fields[]`/6 `documents[]` consolidation from 378 of 379 distinct
+widget names (1 disclosed exclusion), the registry's largest bounded
+repeating-group flattening to date (an 11-row board/participants table),
+and the two disclosed lower-confidence checkbox-row mappings (merger and
+demerger decision types) that could not be cross-checked against a
+rendered visual. Norway opens with 1 of its 6 verticals (Business
+Formation); National ID, DMV, and Visa remain open, unscreened-in-depth
+backlog candidates, and Taxes/Passport are confirmed weak/dead-end
+candidates — see "Known Gaps" below.
 
 **Finland's Business Formation vertical opens (GOV-2292)**, via
 `fi/prh/start-up-notification-y1` — PRH's and Vero's jointly published
