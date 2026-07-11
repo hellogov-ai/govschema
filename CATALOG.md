@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**33 jurisdictions** | **346 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**33 jurisdictions** | **347 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2268, "GovSchema Standard Research"): Denmark's
+> Business Formation vertical opens**, via
+> `dk/erst/virksomhedsregistrering` — Erhvervsstyrelsen's (the Danish
+> Business Authority's) form 40.110, "Virksomhedsregistrering," the
+> MitID-free paper fallback foreign businesses without a Danish CVR number
+> use to register with Erhvervsstyrelsen. A prior cycle (GOV-2260) had
+> already screened this exact form and set it aside as the strongest
+> Business Formation candidate; this cycle picked it up directly rather
+> than re-screening (Denmark's remaining two open verticals, Visa and DMV,
+> had already been confirmed weaker candidates in that same screening
+> pass). Fetched fresh from `virk.dk`: HTTP 200, 642,622 bytes — matching
+> the prior cycle's own byte count exactly. An independent `pdfjs-dist`
+> extraction resolved **122 distinct field names across 5 pages** (97 `Tx`
+> text fields, 15 `Btn` radio groups, 10 independent checkboxes; 148 raw
+> widgets total) — reproducing, not assuming, the prior cycle's own
+> field-count estimate. A coordinate-based cross-reference (matching every
+> widget's rect against the page's clustered text lines, not the field-name
+> sequence or tooltip text alone) turned up two disclosed tooltip
+> copy-paste artifacts on this specimen (a EU-VAT-number repeating-block
+> widget and a corporate-tax-liability free-text widget each carry an
+> alternativeText belonging to a different, unrelated field elsewhere on
+> the same page) and three exclusions: Rubrik 7 ("Forsendelsesadresse i
+> Danmark") is disclosed on the specimen itself as "ikke længere relevant"
+> (no longer relevant) and carries zero AcroForm widgets; two page-4
+> widgets whose rects and tooltips exactly echo the Rubrik 12 section
+> heading rather than collect any input; and one unlabelled, undisambiguated
+> checkbox of indeterminate purpose. This schema models the registration-type
+> choice and home-country/Danish-address identity blocks, the business
+> owner's identity plus a modelled ID/passport-copy attachment requirement,
+> a bounded 4-slot EU-country/VAT-number repeating pair (Rubrik 10), VAT/
+> customs/EORI/corporate-tax-liability/payroll-tax/employee registration
+> (Rubrik 9-13, modelled as optional despite the specimen's own printed
+> asterisks, since these Rubrikker are conditional on real-world facts the
+> form has no single gating checkbox for), and the owner/authorized-signatory
+> plus conditional Danish-contact-person signature blocks — 104 fields
+> total. See the document's own VERIFICATION.md for the full field mapping,
+> both disclosed tooltip-mismatch quirks, and the mock conformance test run
+> (0 errors across 2 valid scenarios and 5 mutation controls). **Denmark now
+> stands at 4 of 6 verticals** (Passport, Taxes, National ID, Business
+> Formation); Visa and DMV remain open backlog candidates — see "Known
+> Gaps" below.
 
 > **Update (2026-07-11, GOV-2260, "GovSchema Standard Research"): Denmark's
 > National ID & Civic Documents vertical opens**, via
@@ -5254,12 +5296,17 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (31/33 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (32/33 jurisdictions — 97%)
 
-**Denmark**, opened this cycle (GOV-2244) via its Passport vertical, has
-no Business Formation schema yet — an open, unscreened backlog candidate
-for a future cycle (the Danish Business Authority's virk.dk company
-registration flow was not screened this cycle).
+**Denmark's Business Formation vertical opens (GOV-2268)**, via
+`dk/erst/virksomhedsregistrering` — Erhvervsstyrelsen's form 40.110,
+"Virksomhedsregistrering," the MitID-free paper fallback foreign
+businesses without a Danish CVR number use to register. See the
+Executive Summary's GOV-2268 update above for the full sourcing record,
+including two disclosed tooltip-copy-paste quirks and a bounded 4-slot
+EU-country/VAT-number repeating pair. Denmark now stands at 4 of its 6
+verticals (Passport, Taxes, National ID, Business Formation); Visa and
+DMV remain open backlog candidates.
 
 **Argentina's Business Formation vertical deepens with the individual/
 persona física analogue (GOV-2195)**, via
@@ -6606,7 +6653,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DK** | 3 | ✓ | ✗ | ✗ | ✓ | ✗ | ✓ |
+| **DK** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -7459,7 +7506,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    3-4 self-employment/sole-proprietorship tax sections
    (Virksomhedsbeløb/Virksomhedsordning/Kapitalafkastordning) are a further
    open companion-schedule candidate — see the Taxes vertical section
-   above.
+   above. **Update (2026-07-11, GOV-2268): Business Formation is now
+   closed**, via `dk/erst/virksomhedsregistrering` (Erhvervsstyrelsen form
+   40.110, "Virksomhedsregistrering") — see the Executive Summary update
+   above and the document's own VERIFICATION.md. Contrary to this entry's
+   own prior characterization above, an official English-language
+   cross-check translation of this form does in fact exist (form 40.112,
+   linked from the same virk.dk guidance page) and was used this cycle to
+   disambiguate several field labels; the earlier "no official English
+   guide found" note is corrected here rather than silently left standing.
+   **Denmark now stands at 4 of 6 verticals** (Passport, Taxes, National
+   ID, Business Formation); DMV and Visa remain open backlog candidates.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
