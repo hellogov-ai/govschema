@@ -4,7 +4,69 @@
 
 ## Executive Summary
 
-**36 jurisdictions** | **364 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**37 jurisdictions** | **365 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2404, "GovSchema Standard Research"): Vietnam
+> opens as this registry's 37th jurisdiction**, via its Passport vertical,
+> sourced from Vietnam's form TK01, "Tờ khai đề nghị cấp hộ chiếu phổ thông ở
+> trong nước dành cho người từ 14 tuổi trở lên" (Declaration requesting
+> issuance of a domestic regular passport for persons aged 14 and above),
+> published by the Immigration Department (Cục Quản lý xuất nhập cảnh) under
+> the Ministry of Public Security. This registry's existing open gaps were
+> re-confirmed dead ends this cycle (Italy's remaining four verticals per
+> GOV-2382; Argentina/Chile/Spain's remaining verticals per GOV-2397), so
+> three fresh candidate jurisdictions were scouted in parallel: Greece, Peru,
+> and Vietnam — see the Known Gaps section below for the Greece/Peru
+> candidate comparison. Vietnam's Passport vertical won on source strength: a
+> first scouting pass found a genuinely fillable AcroForm PDF live and
+> unauthenticated at `hochieu.xuatnhapcanh.gov.vn` (form "X01," 41 widgets
+> across 39 self-documenting field names with Vietnamese `alternativeText`
+> tooltips) — but a routine legal-currency check, run before authoring
+> against it, found X01 had been superseded three times since its issuing
+> Circular 29/2016/TT-BCA: renamed TK01 (Circular 73/2021/TT-BCA), restated
+> with QR-code/photo provisions and a split-off under-14 sibling form TK01a
+> (Circular 31/2023/TT-BCA), and finally replaced outright by **Circular
+> 69/2026/TT-BCA, issued 2026-05-22 and effective 2026-07-01 — ten days
+> before this schema's own retrieval date**. X01's continued live
+> availability at its original government URL is a publishing-lag artifact,
+> not evidence of continued legal validity; this schema does not use X01 at
+> all. The current TK01 template was instead located inside Circular
+> 69/2026/TT-BCA's own full-text PDF, fetched directly from the Ministry of
+> Public Security's own domain (`bocongan.gov.vn`, HTTP 200, genuine
+> `%PDF-1.5` header, no login/CAPTCHA/WAF gate) — a 12-page scanned/signed
+> gazette document mixing two image codecs (`DCTDecode`/JPEG and `JBIG2Decode`)
+> across its appendix pages, with zero embedded text on any page but the
+> cover. Rather than hand-decode two codecs, `node-canvas` + `pdfjs-dist`
+> full-page rendering (`page.render()` at 2x scale) rasterized every page to
+> PNG for direct visual transcription — a new extraction technique for this
+> registry, distinct from both the AcroForm-widget route and the raw-JPEG-
+> object-stream route (`it/mit`, GOV-2389) used in prior cycles. All 30
+> fields were identified directly from the rendered page's own printed
+> layout (no widgets exist on this flattened scan). The new TK01 differs
+> materially from the superseded X01 in ways this schema follows exactly:
+> a single 12-digit "Số định danh cá nhân" (personal identification number)
+> field replaces X01's separate CMND/CCCD-number-plus-issue-date-plus-place
+> block; the old three-part ward/district/province address breakdown is
+> gone in favor of three flat free-text address lines (permanent, temporary,
+> current residence); the employer name/address boxes are merged into one
+> field; the entire "child under 9 to be included in this passport" section
+> has no counterpart (now exclusively routed through the separate TK01a
+> form); and two field clusters are wholly new — a fee-refund bank-account
+> block, and a mutually exclusive chip/no-chip e-passport choice modelled as
+> a boolean pair plus `exclusivityGroups`, per the form's own footnote
+> instruction. Two `documents[]` entries (a required recent photograph,
+> matching the form's own printed photo-box note; an optional prior-
+> passport-or-loss-report, disclosed as conditionally applicable) were
+> sourced from a first-party provincial police portal's own published
+> guidance (`conganthanhhoa.gov.vn`), since the form's own text carries no
+> attachment checklist. Two mock conformance scenarios (a minimal first-time
+> applicant; a fuller renewal applicant exercising every optional field)
+> found **0 errors** each, plus 3 mutation controls (missing required field,
+> personal-identification-number pattern violation, chip/no-chip
+> `exclusivityGroups` violation) each correctly raised exactly 1 error.
+> **Vietnam now stands at 1 of 6 verticals** (Passport); Business Formation,
+> DMV, Taxes, Visa, and National ID remain open, unscreened backlog
+> candidates for a future cycle.
 
 > **Update (2026-07-11, GOV-2397, "GovSchema Standard Research"): Finland's
 > Passport vertical is now closed — Finland stands at 6 of 6 verticals**, via
@@ -5660,7 +5722,25 @@
 
 ## By Vertical
 
-### Passport (28/36 jurisdictions — 78%)
+### Passport (29/37 jurisdictions — 78%)
+
+**Vietnam opens as this registry's 37th jurisdiction (GOV-2404)**, via
+`vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc` — the current
+Mẫu TK01, "Tờ khai đề nghị cấp hộ chiếu phổ thông ở trong nước dành cho
+người từ 14 tuổi trở lên," published by the Immigration Department under
+Circular 69/2026/TT-BCA (effective 2026-07-01). A first scouting pass found
+an older, still-live, genuinely fillable AcroForm PDF at the same host
+(form "X01," Circular 29/2016/TT-BCA) — but a legal-currency check found it
+superseded three times over, most recently ten days before this schema's
+own retrieval date. This schema models the current TK01 exclusively,
+located inside the superseding circular's own full-text PDF on
+`bocongan.gov.vn` and extracted via full-page `node-canvas`/`pdfjs-dist`
+rendering of a mixed-JPEG/JBIG2 scanned gazette document, since the source
+carries no AcroForm widgets. See the Executive Summary update above and the
+document's own VERIFICATION.md for the full sourcing record, including the
+field-by-field comparison against the superseded X01 form. Vietnam stands
+at 1 of its 6 verticals; Business Formation, DMV, Taxes, Visa, and National
+ID remain open backlog candidates.
 
 **Finland's Passport gap is now closed (GOV-2397)**, via
 `fi/poliisi/huoltajan-suostumus` — Poliisi's (the Finnish Police) form
@@ -5859,7 +5939,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (33/36 jurisdictions — 92%)
+### DMV — Vehicle Registration, Licensing, Permits (33/37 jurisdictions — 89%)
 
 **Finland's DMV vertical is now closed (GOV-2356)**, via
 `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — Traficom's
@@ -6143,7 +6223,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (34/36 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (34/37 jurisdictions — 92%)
 
 **Norway opens as this registry's 35th jurisdiction via this vertical
 (GOV-2316)**, via `no/brreg/samordnet-registermelding` —
@@ -6588,7 +6668,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (33/36 jurisdictions — 92%)
+### Taxes — Income Tax Return, Tax Filing (33/37 jurisdictions — 89%)
 
 **Italy opens** (`it/agenzia-entrate/modello-730`, GOV-2382) — Agenzia delle
 Entrate's Modello 730/2026, "Redditi 2025," the flagship annual income tax
@@ -7102,7 +7182,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (28/36 jurisdictions — 78%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (28/37 jurisdictions — 76%)
 
 **Norway's Visa vertical is now open (GOV-2340), closing Norway's last open
 vertical (6/6)** — see the Executive Summary update above and the
@@ -7380,7 +7460,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (28/36 jurisdictions — 78%)
+### National ID & Civic Documents (28/37 jurisdictions — 76%)
 
 **Sweden**'s National ID & Civic Documents gap is now closed (GOV-2372),
 via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
@@ -7682,6 +7762,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **VN** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
@@ -8686,6 +8767,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     verticals were screened in the prior cycle and found weak/dead-end —
     see "Confirmed dead ends" below for Passport, Business Formation,
     National ID, and Visa.
+11. **Vietnam opens as the registry's 37th jurisdiction (GOV-2404)**, via its
+    Passport vertical, `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc`
+    (Mẫu TK01, Circular 69/2026/TT-BCA, effective 2026-07-01). Vietnam's other
+    five verticals (Business Formation, DMV, Taxes, Visa, National ID) are
+    open, unscreened backlog candidates for a future cycle. The two
+    runner-up candidates scouted the same cycle remain open backlog
+    candidates too: **Greece** (Business Formation/DMV/National ID
+    confirmed in-person-only or telematic-only dead ends; Passport's only
+    downloadable artifact is a scanned "sample" with zero extractable text;
+    the Greek MFA's national/Schengen visa application form is a genuine
+    static text-layer PDF, independently fetchable only via a VFS Global
+    consulate mirror from this sandbox — worth retrying the primary
+    `mfa.gr` host from a different network) and **Peru** (Passport/National
+    ID re-confirmed appointment/biometric-gated; Taxes is Clave-SOL-gated;
+    Business Formation's primary SUNARP channel is login-gated, but a
+    sibling SUNAT RUC-registration form, Business Formation's DMV, and
+    Visa's DGC-005 form are all genuine unauthenticated static text-layer
+    PDFs, none carrying real AcroForm widgets). See
+    `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc`'s own
+    VERIFICATION.md for the full three-way candidate comparison.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
