@@ -97,8 +97,11 @@ schema's `fields[].name` list: exact match, 0 missing, 0 extra) and **0
   as `fullName`, `personalIdentityCode`, `taxYear`.
 - **Euro/cent amount splits**: every monetary amount on this form is
   printed as two adjacent boxes — a whole-euro box (e.g. "062") and a
-  paired cents box with an `s` prefix (e.g. "s062") — **32 such pairs**
-  across the form. Each pair is merged into **one `number` field**
+  paired cents box with an `s` prefix (e.g. "s062") — **31 such pairs**
+  across the form (31 `s`-prefixed widget names in the raw extraction,
+  each matched to exactly one non-`s` base widget name; corrected here
+  during independent re-verification from an initially miscounted "32").
+  Each pair is merged into **one `number` field**
   representing the combined decimal euro amount, per this registry's
   established split-widget consolidation convention (the same treatment
   `fi/prh` gave its 5-digit TOL industry code).
