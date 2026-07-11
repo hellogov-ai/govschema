@@ -4,7 +4,70 @@
 
 ## Executive Summary
 
-**33 jurisdictions** | **347 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**34 jurisdictions** | **348 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2276, "GovSchema Standard Research"): Finland
+> opens as GovSchema's 34th jurisdiction**, via its Visa vertical, one of
+> GovSchema's weakest-covered verticals globally (76% before this cycle).
+> Denmark's own two remaining open verticals (Visa via `nyidanmark.dk`'s
+> SIRI AR8, and DMV, screened fresh in GOV-2253 and re-confirmed a poor
+> candidate — a shared multi-party record card, a login-gated portal, and
+> two zero-widget downloadable forms) were both re-confirmed weak this
+> cycle rather than re-screened, so effort went to scouting new
+> jurisdictions instead: three parallel scouts (Norway, Finland, Belgium),
+> each independently fetching and inspecting candidate PDFs across all 6
+> verticals rather than guessing. Finland rated strongest overall — 4 of
+> its 6 verticals (Business Formation, Visa, Taxes, National ID) each have
+> a genuine, live, unauthenticated fillable AcroForm PDF, an unusually deep
+> hit rate for a first-cycle scout. The winning document:
+> `fi/migri/residence-permit-employed-person`, Maahanmuuttovirasto's (the
+> Finnish Immigration Service, Migri) form **OLE_TY1** ("Työntekijän
+> oleskelulupahakemus," the residence permit application for an employed
+> person, "TTOL") — the richest artifact found across all three scouts'
+> combined 18 vertical checks (194 AcroForm widgets). Independently
+> re-fetched fresh from `migri.fi` (the originally-scouted URL had 404'd;
+> the corrected CDN-suffixed URL was found via web search): HTTP 200,
+> 477,135 bytes, genuine `%PDF-1.6`, confirmed byte-for-byte against the
+> authoring pass's own claim. A from-scratch `pdfjs-dist` re-extraction
+> independently reproduced the exact same structure: **10 pages** (not the
+> ~14 the initial scouting pass had estimated — superseded, not
+> reconciled), **194 distinct AcroForm widgets** (131 `Tx` text, 63 `Btn`
+> checkboxes, 0 `Ch` choice fields, 0 genuine PDF radio groups — every
+> checkbox is independently named, matching this registry's existing
+> treatment of similar forms at `at/bmeia` and `se/migrationsverket`).
+> These 194 widgets consolidate to **134 `fields[]` + 6 `documents[]`
+> entries**: 14 split day/month/year date triplets (42 widgets) folded into
+> single ISO `date` fields, 15 mutually-exclusive independent-checkbox
+> groups (42 widgets) folded into single `enum`/`boolean` fields, 105
+> widgets mapped 1:1, and 5 checklist checkboxes plus one signature-less
+> attestation line modelled as `documents[]` entries per this registry's
+> established supporting-document-checklist convention (matching
+> `is/utl/other-residence-permit-application`). Two bounded repeating
+> groups (up to 3 children, up to 4 "other attachment" rows) are flattened
+> to numbered slots per this registry's established convention. Two mock
+> conformance scenarios (a Finnish IT company sponsoring a foreign software
+> engineer with no dependents; a maximal-coverage first-permit application
+> with a spouse, 2 children, fringe benefits, and a criminal-history
+> disclosure) were independently re-run against the schema's own
+> `required`/`requiredWhen`/`crossFieldValidation` grammar with a
+> from-scratch reconciliation script (not the authoring pass's own script):
+> 0 errors on both valid scenarios, and 2 independent mutation controls
+> (dropping a required field; reversing a pay-period date pair) each
+> correctly raised exactly 1 error. `tools/validate.mjs` and
+> `tools/validate-ajv.mjs` both pass 348/348 documents from a fresh
+> `git worktree` checkout of the pushed branch. See the document's own
+> VERIFICATION.md for the full field-mapping record. PR
+> [#370](https://github.com/hellogov-ai/govschema/pull/370), review gate
+> [GOV-2281](/GOV/issues/GOV-2281) (authoring record
+> [GOV-2280](/GOV/issues/GOV-2280)). **Finland now stands at 1 of its 6
+> verticals** (Visa); Business Formation (PRH/YTJ form Y1), Taxes (Vero
+> form 3023e), and National ID (DVV's foreign-national population-register
+> form) are all confirmed strong, unscreened backlog candidates for a
+> future cycle — see "Known Gaps" below. Passport is a confirmed dead end
+> (Finland eliminated paper passport applications in 2006; online/in-person
+> only) and DMV is weak (core driving-licence/vehicle-registration flows
+> are portal/in-person-only; only companion forms — a doctor's fitness
+> statement, a paperless-vehicle notice — are downloadable).
 
 > **Update (2026-07-11, GOV-2268, "GovSchema Standard Research"): Denmark's
 > Business Formation vertical opens**, via
@@ -4901,7 +4964,7 @@
 
 ## By Vertical
 
-### Passport (26/33 jurisdictions — 79%)
+### Passport (26/34 jurisdictions — 76%)
 
 **Denmark opens as GovSchema's 33rd jurisdiction (GOV-2244)**, via
 `dk/um/application-for-danish-passport` — the Ministry of Foreign Affairs'
@@ -5056,7 +5119,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (30/33 jurisdictions — 91%)
+### DMV — Vehicle Registration, Licensing, Permits (30/34 jurisdictions — 88%)
 
 **Denmark** has no DMV schema yet. GOV-2253 screened this vertical fresh
 and set it aside as a poor candidate: Færdselsstyrelsen's P23
@@ -5296,7 +5359,7 @@ within an already-covered vertical:
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 
-### Business Formation — Incorporation, LLC, Company Registration (32/33 jurisdictions — 97%)
+### Business Formation — Incorporation, LLC, Company Registration (32/34 jurisdictions — 94%)
 
 **Denmark's Business Formation vertical opens (GOV-2268)**, via
 `dk/erst/virksomhedsregistrering` — Erhvervsstyrelsen's form 40.110,
@@ -5711,7 +5774,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (31/33 jurisdictions — 94%)
+### Taxes — Income Tax Return, Tax Filing (31/34 jurisdictions — 91%)
 
 **Denmark's Taxes vertical opens** (`dk/skattestyrelsen/oplysningsskemaet`,
 GOV-2253) — Skattestyrelsen's form 04.003, "Oplysningsskemaet," scoped to
@@ -6166,7 +6229,16 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (25/33 jurisdictions — 76%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (26/34 jurisdictions — 76%)
+
+**Finland opens as GovSchema's 34th jurisdiction (GOV-2276)**, via
+`fi/migri/residence-permit-employed-person` — Migri's form OLE_TY1, the
+residence permit application for an employed person ("TTOL"). See the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full sourcing and field-mapping record. Finland now stands at 1 of its
+6 verticals (Visa); Business Formation, Taxes, and National ID are all
+confirmed strong, unscreened backlog candidates for a future cycle (Passport
+is a confirmed dead end; DMV is weak) — see "Known Gaps" below.
 
 **Denmark**, opened this cycle (GOV-2244) via its Passport vertical, has
 no Visa schema yet — an open, unscreened backlog candidate for a future
@@ -6414,7 +6486,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (25/33 jurisdictions — 76%)
+### National ID & Civic Documents (25/34 jurisdictions — 74%)
 
 **Denmark**'s National ID & Civic Documents gap is now closed (GOV-2260),
 via `dk/cpr/notification-of-entry` — KL's (Kommunernes Landsforening) form
@@ -6656,6 +6728,7 @@ now closed.
 | **DK** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **FI** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -7517,6 +7590,38 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    guide found" note is corrected here rather than silently left standing.
    **Denmark now stands at 4 of 6 verticals** (Passport, Taxes, National
    ID, Business Formation); DMV and Visa remain open backlog candidates.
+7. **Finland's remaining verticals** (opened GOV-2276 via its Visa vertical,
+   `fi/migri/residence-permit-employed-person`): the parent scouting cycle
+   (three parallel scouts across Norway, Finland, Belgium) found Finland's
+   other three unmodelled verticals each backed by a genuine, live,
+   unauthenticated fillable AcroForm PDF, confirmed via direct fetch —
+   strong candidates for a future cycle. **Business Formation**: PRH/YTJ's
+   Y1 "Perustamisilmoitus" (general establishment notification for
+   oy/osuuskunta/etc.), `ytj.fi`, 110 real Widget/FT fields across 4 pages,
+   pure fill-print-mail workflow, no login. **Taxes**: Vero's form 3023e/
+   "50A" (earned income and deductions correction/supplement form),
+   `vero.fi`, 135 Widget/126 FT fields across 4 pages, no login required for
+   the PDF itself (the pre-filled return proper is generated per-taxpayer
+   and typically e-filed via MyTax, but this correction form is a genuine
+   citizen-facing paper alternative). **National ID & Civic Documents**:
+   DVV's "Ulkomaalaisen rekisteröinti" (foreign national's registration
+   into the Population Information System, i.e. henkilötunnus/personal
+   identity code request), `dvv.fi`, 43 Widget/34 FT fields across 3 pages,
+   no login (the domestic Finnish eID/identity-card itself, via
+   `poliisi.fi`, is online/in-person-only with no downloadable form, so
+   this DVV registration form is the strongest available National ID
+   candidate for this jurisdiction). **Passport** is a confirmed dead end:
+   Finland eliminated paper passport applications in 2006 — `poliisi.fi`
+   offers only online (`asiointi.poliisi.fi`) or in-person appointment
+   channels, with a digital photo pre-uploaded separately
+   (`lupakuvienvastaanotto.fi`); no PDF/paper application form exists.
+   **DMV** is weak: Traficom's core driving-licence and
+   vehicle-registration flows are Suomi.fi-login-gated or in-person only
+   (via Ajovarma); only companion forms are downloadable — F122 (a doctor's
+   statement on driving fitness, not an applicant-facing intake form) and
+   B527 (a paperless-vehicle registration notice, narrow-scope). A future
+   cycle should pick Business Formation, Taxes, or National ID next rather
+   than DMV or Passport.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
