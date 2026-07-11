@@ -1,0 +1,749 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "dk/cpr/notification-of-entry",
+  "version": "1.0.0",
+  "title": "Denmark Notification of Entry (CPR Registration) — Anmeldelse af Indrejse",
+  "description": "Denmark's national form for notifying a municipality (kommune) of entry/moving to Denmark from abroad, form FR 050 (\"Anmeldelse af indrejse\"), published by KL (Kommunernes Landsforening, Local Government Denmark) and used uniformly across all Danish municipalities to register a person or family group in CPR (Det Centrale Personregister, the Central Person Register) on first moving to Denmark or returning after living abroad. Registering as entered (\"indrejst\") in CPR is what triggers assignment of a personnummer (CPR number) and issuance of a sundhedskort (health insurance card) for entrants who do not already have one. This schema models the form's own applicant-facing section in full: the shared entry-date/departure/destination-address block, and the repeating table of up to 6 entrants travelling together (name, gender, place of birth, citizenship, personnummer if already assigned, Nordic country-of-departure identification if applicable, and folkekirke/church-membership status for each). It deliberately does NOT model the form's own second section, printed under the heading \"Andre oplysninger (udfyldes af kommunen)\" (\"Other information, completed by the municipality\") — marital status, marriage documentation, spouse's personnummer, previous Danish address, date of departure from Denmark, police alien registration number, parents' personnummer, choice of physician, and the municipal caseworker's own notes/signature — because the form's own printed heading discloses these fields are filled in by municipal staff during in-person processing, not by the applicant. Submitting this notification requires in-person attendance at the bopælskommune (municipality of residence) with supporting identity and lawful-residence documentation per CPR-lovens §16-17 (§20-21); this schema does not submit the notification itself, and the live source (kl.dk / the applicant's own kommune) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Denmark, KL, or any Danish kommune.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "CPR-administrationen (Danish Civil Registration System Administration)",
+    "abbreviation": "CPR",
+    "url": "https://cpr.dk",
+    "operatedBy": {
+      "name": "Kommunernes Landsforening (KL) — Local Government Denmark, publisher of this form; the notification is submitted to, and CPR registration performed by, the applicant's own bopælskommune (municipality of residence)",
+      "abbreviation": "KL",
+      "url": "https://www.kl.dk",
+      "basis": "The form's own footer (\"Udarbejdet af KL\", KLE 23.05.12G01, FR 050 (12/2025)); CPR-administrationen's own published guidance (cpr.dk) confirms the bopælskommune determines eligibility for CPR entry-registration under CPR-lovens §16-17 and that personnummer assignment follows from that registration."
+    }
+  },
+  "process": {
+    "type": "registration",
+    "language": "da-DK"
+  },
+  "source": {
+    "url": "https://www.klxml.dk/KLB/Blanket/Gaelder/fr050.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Blanket FR 050 \"Anmeldelse af indrejse\" (December 2025 edition), a 2-page fillable AcroForm PDF published unauthenticated in KL's own blanket library (kl.dk/blanketter/blanketsamling/folkeregistrering), cross-checked against KL's own official English translation, FR 050_ENG \"Notification of entry\" (same edition, same host)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2260: GovSchema Standard Research cycle. Opens Denmark's National ID & Civic Documents vertical (3/6; Passport and Taxes already modelled via GOV-2244/GOV-2253). CATALOG.md's own Known Gaps item 4 had flagged Denmark's CPR system as an open, unscreened candidate, noting the personnummer already reused throughout the Passport and Taxes schemas. This cycle screened all three of Denmark's remaining open verticals in parallel (Business Formation via virk.dk form 40.110, a genuine unauthenticated AcroForm for foreign-business registration without MitID; Visa via SIRI's nyidanmark.dk work-permit form AR8, genuine and unauthenticated but a fill-by-hand PDF with no AcroForm widget layer; National ID via KL's FR 050 CPR/Folkeregister entry-notification form) and picked FR 050 as the strongest: a single national AcroForm template used uniformly across all ~98 Danish kommuner (not a local variant), with a genuine unauthenticated official English cross-check translation (FR 050_ENG) and direct composability with the personnummer field type already established by this registry's DK schemas. Fetched fresh (both fr050.pdf, 85,513 bytes, and fr050_eng.pdf, 88,602 bytes, HTTP 200, no login/CAPTCHA/WAF gate) and extracted with pdfjs-dist getAnnotations()/getTextContent() per page rather than trusting the scouting pass's own field count: page 1 carries 80 real AcroForm widgets (78 Tx text fields + a link annotation + one further Tx field split across the page-1/page-2 boundary), page 2 carries 2 (a Datatilsynet.dk link annotation and one free-text \"kommune noteringer\" field). Cross-referencing every widget's alternativeText/fieldName against the page's own printed labels (via getTextContent(), matched by y-coordinate) established a clean, disclosed structural finding: the form's own page-1 heading \"Andre oplysninger (udfyldes af kommunen)\" (\"Other information, completed by the municipality\") explicitly marks every field from Ægteskabelig status (marital status) onward — marriage documentation, spouse's personnummer, previous Danish address, date of departure, police alien-registration number, both parents' personnummer, choice of physician, caseworker remarks/contact/signature — as municipal-staff-entered, not applicant-entered; each such field's own alternativeText independently confirms this (e.g. \"Ægteskabelig status på de indrejsende udfyldes af kommunen\"). This schema models only the applicant-facing section above that heading: the shared entry-date/departure/destination-address block (12 fields) and the repeating table of up to 6 entrants travelling together (8 fields each: personnummer, surname, given names, gender, place of birth, citizenship, folkekirke membership, and Nordic-country-of-departure identification — 48 fields), for 60 fields total, matching the table's own printed \"1 2 3 4 5 6\" column numbering exactly (verified against both the Danish and English specimens). Two disclosed modelling notes: (1) personnummer is left optional for every entrant, not just deferred ones, because CPR-administrationen's own published guidance (cpr.dk, fetched directly this cycle) states a personnummer is assigned upon successful CPR entry-registration — i.e. this notification is frequently how a first-time entrant obtains one, so the field cannot be assumed pre-filled; (2) \"Medlem af folkekirken\" is modelled as a single boolean per entrant even though the source PDF implements it as two independent checkbox widgets (a Ja box and a Nej box, not a true radio group) that happen to share the same AcroForm export value \"ja\" — a specimen quirk disclosed here rather than silently corrected. Money/date types and validation conventions (personnummer pattern ^[0-9]{10}$, postal-code pattern ^[0-9]{4}$) follow this registry's existing dk/skattestyrelsen and dk/um precedent. A mock conformance run (see this document's own VERIFICATION.md) filled all 60 fields with valid synthetic example values for a family of two entering Denmark from Sweden and validated cleanly against the schema and against tools/validate.mjs."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "entryDate",
+      "label": "Indrejsedato",
+      "type": "date",
+      "required": true,
+      "description": "The date of entry into Denmark (day/month/year) for the group of persons covered by this notification.",
+      "sourceRef": "Header — Indrejsedato (Dag / måned / år)"
+    },
+    {
+      "name": "countryOfDeparture",
+      "label": "Fraflytningsland",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The country the group is moving from.",
+      "sourceRef": "\"Flytter fra\" section — Fraflytningsland",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "departureAddress",
+      "label": "Fraflytningsadresse",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The group's address in the country of departure.",
+      "sourceRef": "\"Flytter fra\" section — Fraflytningsadresse",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "movingToStreetName",
+      "label": "Vejnavn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The street name of the Danish address the group is moving to.",
+      "sourceRef": "\"Flytter til\" section — Vejnavn",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "movingToHouseNumber",
+      "label": "Husnr./-bogstav",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The house number (and letter, if any) of the Danish address the group is moving to.",
+      "sourceRef": "\"Flytter til\" section — Husnr./-bogstav",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "movingToFloor",
+      "label": "Etage",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The floor of the Danish address the group is moving to, if the building has floors.",
+      "sourceRef": "\"Flytter til\" section — Etage",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "movingToSideDoorNumber",
+      "label": "Side/dørnummer",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The side and/or door number of the Danish address the group is moving to, if applicable.",
+      "sourceRef": "\"Flytter til\" section — Side/dørnummer",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "movingToPostalCode",
+      "label": "Postnummer",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The postal code of the Danish address the group is moving to.",
+      "sourceRef": "\"Flytter til\" section — Postnummer",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "movingToPostalDistrict",
+      "label": "Postdistrikt",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The postal district (by name) of the Danish address the group is moving to.",
+      "sourceRef": "\"Flytter til\" section — Postdistrikt",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "movingToCityName",
+      "label": "Evt. bynavn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The city/town name of the Danish address the group is moving to, if applicable (some rural Danish addresses are identified by postal district alone).",
+      "sourceRef": "\"Flytter til\" section — Evt. bynavn",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "movingToCareOfAddress",
+      "label": "Bor hos (c/o)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The name and address of the person the group will be living with (c/o), if the new residence is not solely the group's own.",
+      "sourceRef": "\"Flytter til\" section — Bor hos (c/o)",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "expectedDurationOfStay",
+      "label": "Opholdets forventede varighed",
+      "type": "string",
+      "required": true,
+      "description": "The group's expected duration of stay in Denmark. Per CPR-lovens §16, registration in CPR on entry is only possible if the stay is expected to exceed 3 months (or 6 months for Nordic/EU/EEA/Swiss citizens), so this value is central to whether the notification itself is applicable.",
+      "sourceRef": "\"Flytter til\" section — Opholdets forventede varighed"
+    },
+    {
+      "name": "entrant1CivilRegistrationNumber",
+      "label": "Personnummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The first entrant's Danish CPR number (personnummer), if one has already been assigned (e.g. by Udlændingestyrelsen/SIRI as part of a residence-permit case, or from a prior period of Danish residence). Left optional: per CPR-administrationen's own guidance (cpr.dk), a personnummer is often assigned only once this notification is processed and the applicant is registered as \"indrejst\" in CPR, so a genuinely first-time entrant may have none to report yet.",
+      "sourceRef": "Table column \"Personnummer\", første person / entrant 1 of up to 6",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "entrant1Surname",
+      "label": "Efternavn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The first entrant's surname/last name.",
+      "sourceRef": "Table column \"Efternavn\", første person / entrant 1 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant1GivenNames",
+      "label": "Samtlige fornavne og mellemnavne",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "All of the first entrant's first names and middle names.",
+      "sourceRef": "Table column \"Samtlige fornavne og mellemnavne\", første person / entrant 1 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant1Gender",
+      "label": "Køn",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The first entrant's gender, as recorded on this form.",
+      "sourceRef": "Table column \"Køn\", første person / entrant 1 of up to 6",
+      "validation": {
+        "enum": [
+          "M",
+          "K"
+        ]
+      }
+    },
+    {
+      "name": "entrant1PlaceOfBirth",
+      "label": "Fødested",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The first entrant's place of birth.",
+      "sourceRef": "Table column \"Fødested\", første person / entrant 1 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant1Citizenship",
+      "label": "Statsborgerforhold",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The first entrant's citizenship(s).",
+      "sourceRef": "Table column \"Statsborgerforhold\", første person / entrant 1 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant1MemberOfFolkekirken",
+      "label": "Medlem af folkekirken",
+      "type": "boolean",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Whether the first entrant is a member of the Evangelical-Lutheran Church in Denmark (Folkekirken). On the source PDF this is two separate checkbox widgets (a \"Ja\" box and a \"Nej\" box) rather than one shared toggle or true radio group; both widgets happen to share the AcroForm export value \"ja\" (a specimen quirk, disclosed rather than corrected), and this schema models the pair as the single boolean answer they jointly represent.",
+      "sourceRef": "\"Medlem af folkekirken\" Ja/Nej checkbox pair, første person / entrant 1 of up to 6"
+    },
+    {
+      "name": "entrant1CivilRegistrationNumberInCountryOfDeparture",
+      "label": "Identifikation (personnummer) i fraflytningslandet",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "If the first entrant is moving to Denmark from a Nordic country, their civil registration/identification number in that country of departure.",
+      "sourceRef": "\"Hvis du tilflytter fra et nordisk land, bedes du anføre din identifikation (personnummer) i fraflytningslandet\" column, første person / entrant 1 of up to 6"
+    },
+    {
+      "name": "entrant2CivilRegistrationNumber",
+      "label": "Personnummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The second entrant's Danish CPR number (personnummer), if one has already been assigned (e.g. by Udlændingestyrelsen/SIRI as part of a residence-permit case, or from a prior period of Danish residence). Left optional: per CPR-administrationen's own guidance (cpr.dk), a personnummer is often assigned only once this notification is processed and the applicant is registered as \"indrejst\" in CPR, so a genuinely first-time entrant may have none to report yet.",
+      "sourceRef": "Table column \"Personnummer\", anden person / entrant 2 of up to 6",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "entrant2Surname",
+      "label": "Efternavn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The second entrant's surname/last name.",
+      "sourceRef": "Table column \"Efternavn\", anden person / entrant 2 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant2GivenNames",
+      "label": "Samtlige fornavne og mellemnavne",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "All of the second entrant's first names and middle names.",
+      "sourceRef": "Table column \"Samtlige fornavne og mellemnavne\", anden person / entrant 2 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant2Gender",
+      "label": "Køn",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "description": "The second entrant's gender, as recorded on this form.",
+      "sourceRef": "Table column \"Køn\", anden person / entrant 2 of up to 6",
+      "validation": {
+        "enum": [
+          "M",
+          "K"
+        ]
+      }
+    },
+    {
+      "name": "entrant2PlaceOfBirth",
+      "label": "Fødested",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The second entrant's place of birth.",
+      "sourceRef": "Table column \"Fødested\", anden person / entrant 2 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant2Citizenship",
+      "label": "Statsborgerforhold",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The second entrant's citizenship(s).",
+      "sourceRef": "Table column \"Statsborgerforhold\", anden person / entrant 2 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant2MemberOfFolkekirken",
+      "label": "Medlem af folkekirken",
+      "type": "boolean",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Whether the second entrant is a member of the Evangelical-Lutheran Church in Denmark (Folkekirken). On the source PDF this is two separate checkbox widgets (a \"Ja\" box and a \"Nej\" box) rather than one shared toggle or true radio group; both widgets happen to share the AcroForm export value \"ja\" (a specimen quirk, disclosed rather than corrected), and this schema models the pair as the single boolean answer they jointly represent.",
+      "sourceRef": "\"Medlem af folkekirken\" Ja/Nej checkbox pair, anden person / entrant 2 of up to 6"
+    },
+    {
+      "name": "entrant2CivilRegistrationNumberInCountryOfDeparture",
+      "label": "Identifikation (personnummer) i fraflytningslandet",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "If the second entrant is moving to Denmark from a Nordic country, their civil registration/identification number in that country of departure.",
+      "sourceRef": "\"Hvis du tilflytter fra et nordisk land, bedes du anføre din identifikation (personnummer) i fraflytningslandet\" column, anden person / entrant 2 of up to 6"
+    },
+    {
+      "name": "entrant3CivilRegistrationNumber",
+      "label": "Personnummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The third entrant's Danish CPR number (personnummer), if one has already been assigned (e.g. by Udlændingestyrelsen/SIRI as part of a residence-permit case, or from a prior period of Danish residence). Left optional: per CPR-administrationen's own guidance (cpr.dk), a personnummer is often assigned only once this notification is processed and the applicant is registered as \"indrejst\" in CPR, so a genuinely first-time entrant may have none to report yet.",
+      "sourceRef": "Table column \"Personnummer\", tredje person / entrant 3 of up to 6",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "entrant3Surname",
+      "label": "Efternavn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The third entrant's surname/last name.",
+      "sourceRef": "Table column \"Efternavn\", tredje person / entrant 3 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant3GivenNames",
+      "label": "Samtlige fornavne og mellemnavne",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "All of the third entrant's first names and middle names.",
+      "sourceRef": "Table column \"Samtlige fornavne og mellemnavne\", tredje person / entrant 3 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant3Gender",
+      "label": "Køn",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "description": "The third entrant's gender, as recorded on this form.",
+      "sourceRef": "Table column \"Køn\", tredje person / entrant 3 of up to 6",
+      "validation": {
+        "enum": [
+          "M",
+          "K"
+        ]
+      }
+    },
+    {
+      "name": "entrant3PlaceOfBirth",
+      "label": "Fødested",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The third entrant's place of birth.",
+      "sourceRef": "Table column \"Fødested\", tredje person / entrant 3 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant3Citizenship",
+      "label": "Statsborgerforhold",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The third entrant's citizenship(s).",
+      "sourceRef": "Table column \"Statsborgerforhold\", tredje person / entrant 3 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant3MemberOfFolkekirken",
+      "label": "Medlem af folkekirken",
+      "type": "boolean",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Whether the third entrant is a member of the Evangelical-Lutheran Church in Denmark (Folkekirken). On the source PDF this is two separate checkbox widgets (a \"Ja\" box and a \"Nej\" box) rather than one shared toggle or true radio group; both widgets happen to share the AcroForm export value \"ja\" (a specimen quirk, disclosed rather than corrected), and this schema models the pair as the single boolean answer they jointly represent.",
+      "sourceRef": "\"Medlem af folkekirken\" Ja/Nej checkbox pair, tredje person / entrant 3 of up to 6"
+    },
+    {
+      "name": "entrant3CivilRegistrationNumberInCountryOfDeparture",
+      "label": "Identifikation (personnummer) i fraflytningslandet",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "If the third entrant is moving to Denmark from a Nordic country, their civil registration/identification number in that country of departure.",
+      "sourceRef": "\"Hvis du tilflytter fra et nordisk land, bedes du anføre din identifikation (personnummer) i fraflytningslandet\" column, tredje person / entrant 3 of up to 6"
+    },
+    {
+      "name": "entrant4CivilRegistrationNumber",
+      "label": "Personnummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The fourth entrant's Danish CPR number (personnummer), if one has already been assigned (e.g. by Udlændingestyrelsen/SIRI as part of a residence-permit case, or from a prior period of Danish residence). Left optional: per CPR-administrationen's own guidance (cpr.dk), a personnummer is often assigned only once this notification is processed and the applicant is registered as \"indrejst\" in CPR, so a genuinely first-time entrant may have none to report yet.",
+      "sourceRef": "Table column \"Personnummer\", fjerde person / entrant 4 of up to 6",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "entrant4Surname",
+      "label": "Efternavn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The fourth entrant's surname/last name.",
+      "sourceRef": "Table column \"Efternavn\", fjerde person / entrant 4 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant4GivenNames",
+      "label": "Samtlige fornavne og mellemnavne",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "All of the fourth entrant's first names and middle names.",
+      "sourceRef": "Table column \"Samtlige fornavne og mellemnavne\", fjerde person / entrant 4 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant4Gender",
+      "label": "Køn",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "description": "The fourth entrant's gender, as recorded on this form.",
+      "sourceRef": "Table column \"Køn\", fjerde person / entrant 4 of up to 6",
+      "validation": {
+        "enum": [
+          "M",
+          "K"
+        ]
+      }
+    },
+    {
+      "name": "entrant4PlaceOfBirth",
+      "label": "Fødested",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The fourth entrant's place of birth.",
+      "sourceRef": "Table column \"Fødested\", fjerde person / entrant 4 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant4Citizenship",
+      "label": "Statsborgerforhold",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The fourth entrant's citizenship(s).",
+      "sourceRef": "Table column \"Statsborgerforhold\", fjerde person / entrant 4 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant4MemberOfFolkekirken",
+      "label": "Medlem af folkekirken",
+      "type": "boolean",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Whether the fourth entrant is a member of the Evangelical-Lutheran Church in Denmark (Folkekirken). On the source PDF this is two separate checkbox widgets (a \"Ja\" box and a \"Nej\" box) rather than one shared toggle or true radio group; both widgets happen to share the AcroForm export value \"ja\" (a specimen quirk, disclosed rather than corrected), and this schema models the pair as the single boolean answer they jointly represent.",
+      "sourceRef": "\"Medlem af folkekirken\" Ja/Nej checkbox pair, fjerde person / entrant 4 of up to 6"
+    },
+    {
+      "name": "entrant4CivilRegistrationNumberInCountryOfDeparture",
+      "label": "Identifikation (personnummer) i fraflytningslandet",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "If the fourth entrant is moving to Denmark from a Nordic country, their civil registration/identification number in that country of departure.",
+      "sourceRef": "\"Hvis du tilflytter fra et nordisk land, bedes du anføre din identifikation (personnummer) i fraflytningslandet\" column, fjerde person / entrant 4 of up to 6"
+    },
+    {
+      "name": "entrant5CivilRegistrationNumber",
+      "label": "Personnummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The fifth entrant's Danish CPR number (personnummer), if one has already been assigned (e.g. by Udlændingestyrelsen/SIRI as part of a residence-permit case, or from a prior period of Danish residence). Left optional: per CPR-administrationen's own guidance (cpr.dk), a personnummer is often assigned only once this notification is processed and the applicant is registered as \"indrejst\" in CPR, so a genuinely first-time entrant may have none to report yet.",
+      "sourceRef": "Table column \"Personnummer\", femte person / entrant 5 of up to 6",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "entrant5Surname",
+      "label": "Efternavn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The fifth entrant's surname/last name.",
+      "sourceRef": "Table column \"Efternavn\", femte person / entrant 5 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant5GivenNames",
+      "label": "Samtlige fornavne og mellemnavne",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "All of the fifth entrant's first names and middle names.",
+      "sourceRef": "Table column \"Samtlige fornavne og mellemnavne\", femte person / entrant 5 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant5Gender",
+      "label": "Køn",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "description": "The fifth entrant's gender, as recorded on this form.",
+      "sourceRef": "Table column \"Køn\", femte person / entrant 5 of up to 6",
+      "validation": {
+        "enum": [
+          "M",
+          "K"
+        ]
+      }
+    },
+    {
+      "name": "entrant5PlaceOfBirth",
+      "label": "Fødested",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The fifth entrant's place of birth.",
+      "sourceRef": "Table column \"Fødested\", femte person / entrant 5 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant5Citizenship",
+      "label": "Statsborgerforhold",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The fifth entrant's citizenship(s).",
+      "sourceRef": "Table column \"Statsborgerforhold\", femte person / entrant 5 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant5MemberOfFolkekirken",
+      "label": "Medlem af folkekirken",
+      "type": "boolean",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Whether the fifth entrant is a member of the Evangelical-Lutheran Church in Denmark (Folkekirken). On the source PDF this is two separate checkbox widgets (a \"Ja\" box and a \"Nej\" box) rather than one shared toggle or true radio group; both widgets happen to share the AcroForm export value \"ja\" (a specimen quirk, disclosed rather than corrected), and this schema models the pair as the single boolean answer they jointly represent.",
+      "sourceRef": "\"Medlem af folkekirken\" Ja/Nej checkbox pair, femte person / entrant 5 of up to 6"
+    },
+    {
+      "name": "entrant5CivilRegistrationNumberInCountryOfDeparture",
+      "label": "Identifikation (personnummer) i fraflytningslandet",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "If the fifth entrant is moving to Denmark from a Nordic country, their civil registration/identification number in that country of departure.",
+      "sourceRef": "\"Hvis du tilflytter fra et nordisk land, bedes du anføre din identifikation (personnummer) i fraflytningslandet\" column, femte person / entrant 5 of up to 6"
+    },
+    {
+      "name": "entrant6CivilRegistrationNumber",
+      "label": "Personnummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The sixth entrant's Danish CPR number (personnummer), if one has already been assigned (e.g. by Udlændingestyrelsen/SIRI as part of a residence-permit case, or from a prior period of Danish residence). Left optional: per CPR-administrationen's own guidance (cpr.dk), a personnummer is often assigned only once this notification is processed and the applicant is registered as \"indrejst\" in CPR, so a genuinely first-time entrant may have none to report yet.",
+      "sourceRef": "Table column \"Personnummer\", sjette person / entrant 6 of up to 6",
+      "validation": {
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+    {
+      "name": "entrant6Surname",
+      "label": "Efternavn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The sixth entrant's surname/last name.",
+      "sourceRef": "Table column \"Efternavn\", sjette person / entrant 6 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant6GivenNames",
+      "label": "Samtlige fornavne og mellemnavne",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "All of the sixth entrant's first names and middle names.",
+      "sourceRef": "Table column \"Samtlige fornavne og mellemnavne\", sjette person / entrant 6 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant6Gender",
+      "label": "Køn",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "description": "The sixth entrant's gender, as recorded on this form.",
+      "sourceRef": "Table column \"Køn\", sjette person / entrant 6 of up to 6",
+      "validation": {
+        "enum": [
+          "M",
+          "K"
+        ]
+      }
+    },
+    {
+      "name": "entrant6PlaceOfBirth",
+      "label": "Fødested",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The sixth entrant's place of birth.",
+      "sourceRef": "Table column \"Fødested\", sjette person / entrant 6 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant6Citizenship",
+      "label": "Statsborgerforhold",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The sixth entrant's citizenship(s).",
+      "sourceRef": "Table column \"Statsborgerforhold\", sjette person / entrant 6 of up to 6",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "entrant6MemberOfFolkekirken",
+      "label": "Medlem af folkekirken",
+      "type": "boolean",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Whether the sixth entrant is a member of the Evangelical-Lutheran Church in Denmark (Folkekirken). On the source PDF this is two separate checkbox widgets (a \"Ja\" box and a \"Nej\" box) rather than one shared toggle or true radio group; both widgets happen to share the AcroForm export value \"ja\" (a specimen quirk, disclosed rather than corrected), and this schema models the pair as the single boolean answer they jointly represent.",
+      "sourceRef": "\"Medlem af folkekirken\" Ja/Nej checkbox pair, sjette person / entrant 6 of up to 6"
+    },
+    {
+      "name": "entrant6CivilRegistrationNumberInCountryOfDeparture",
+      "label": "Identifikation (personnummer) i fraflytningslandet",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "If the sixth entrant is moving to Denmark from a Nordic country, their civil registration/identification number in that country of departure.",
+      "sourceRef": "\"Hvis du tilflytter fra et nordisk land, bedes du anføre din identifikation (personnummer) i fraflytningslandet\" column, sjette person / entrant 6 of up to 6"
+    }
+  ]
+}

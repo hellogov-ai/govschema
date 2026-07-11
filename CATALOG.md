@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**33 jurisdictions** | **345 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**33 jurisdictions** | **346 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2260, "GovSchema Standard Research"): Denmark's
+> National ID & Civic Documents vertical opens**, via
+> `dk/cpr/notification-of-entry` — KL's (Kommunernes Landsforening) form
+> FR 050, "Anmeldelse af indrejse" (Notification of Entry), the national
+> template every Danish kommune uses to register a person or family
+> entering/moving to Denmark in CPR (Det Centrale Personregister), which in
+> turn triggers personnummer assignment and sundhedskort issuance. Screened
+> alongside Denmark's Business Formation (`virk.dk` form 40.110, a genuine
+> unauthenticated AcroForm but scoped narrowly to foreign businesses
+> without a Danish CVR number, all-Danish, no English guide) and Visa
+> (SIRI's `nyidanmark.dk` work-permit form AR8, genuine and unauthenticated
+> but a fill-by-hand PDF with no AcroForm widget layer; the pure Schengen
+> short-stay route is a JS-rendered SPA whose paper template duplicates
+> this registry's existing pan-Schengen schema) verticals this cycle, and
+> picked as the strongest of the three. Fetched fresh from `klxml.dk`
+> (Danish specimen: HTTP 200, 85,513 bytes; English cross-check specimen,
+> FR 050_ENG: HTTP 200, 88,602 bytes), no login/CAPTCHA/WAF gate on either.
+> A `pdfjs-dist` extraction resolved **80 real AcroForm widgets on page 1**
+> (self-documenting field names, e.g. `personnummer`, `efternavn`,
+> `fornavne`) and confirmed, via the specimen's own printed section heading
+> "Andre oplysninger (udfyldes af kommunen)" plus each field's own
+> `alternativeText`, that a whole second block of fields (marital status,
+> spouse's/parents' personnummer, prior Danish address, police
+> alien-registration number, choice of physician, caseworker notes/
+> signature) is filled in by municipal staff, not the applicant — a hard,
+> disclosed structural fact, mirroring the same class of finding the prior
+> DK Taxes cycle made for "Felt låst" rows. This schema models the
+> applicant-facing section only: a shared entry-date/departure/
+> destination-address block plus a bounded 6-entrant repeating table
+> (personnummer if already assigned, name, gender, place of birth,
+> citizenship, folkekirke membership, Nordic country-of-departure
+> identification), 60 fields total. See the document's own VERIFICATION.md
+> for the full field mapping and the mock conformance test run (0 errors
+> across 2 valid scenarios and a 3-defect mutation control). **Denmark now
+> stands at 3 of 6 verticals** (Passport, Taxes, National ID); Business
+> Formation and Visa were screened this cycle and set aside as weaker
+> candidates (not hard dead ends); DMV remains open per the prior cycle's
+> own note — see "Known Gaps" below.
 
 > **Update (2026-07-11, GOV-2253, "GovSchema Standard Research"): Denmark's
 > Taxes vertical opens**, via `dk/skattestyrelsen/oplysningsskemaet` —
@@ -6328,13 +6367,20 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (24/33 jurisdictions — 73%)
+### National ID & Civic Documents (25/33 jurisdictions — 76%)
 
-**Denmark**, opened this cycle (GOV-2244) via its Passport vertical, has
-no National ID & Civic Documents schema yet — an open, unscreened backlog
-candidate for a future cycle (Denmark's CPR system, whose 10-digit
-personnummer already appears throughout the new Passport schema, is a
-likely National ID candidate but was not itself screened this cycle).
+**Denmark**'s National ID & Civic Documents gap is now closed (GOV-2260),
+via `dk/cpr/notification-of-entry` — KL's (Kommunernes Landsforening) form
+FR 050, "Anmeldelse af indrejse" (Notification of Entry), the national
+template every Danish kommune uses to register a person or family entering
+Denmark in CPR (Det Centrale Personregister), the same system whose
+10-digit personnummer already appears throughout the Passport and Taxes
+schemas. See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record. Denmark now stands at 3 of 6
+verticals (Passport, Taxes, National ID); DMV, Business Formation, and
+Visa remain open backlog candidates (Business Formation and Visa were
+screened this same cycle and set aside as weaker candidates, not hard dead
+ends — see "Known Gaps" below).
 
 **Iceland**'s National ID & Civic Documents gap is now closed (GOV-2233), via
 `is/skatturinn/system-identification-number-application-foreign-national` —
@@ -6560,7 +6606,7 @@ now closed.
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DK** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **DK** | 3 | ✓ | ✗ | ✗ | ✓ | ✗ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -7383,14 +7429,34 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    zero AcroForm fields. A future cycle should look for a different DMV
    candidate (e.g. a dedicated new-vehicle-registration or learner's-permit
    form) rather than re-attempting P23 or the login-gated re-registration
-   flow. **Business Formation** (Danish Business Authority /
-   Erhvervsstyrelsen, `virk.dk`), **Visa** (Denmark is a Schengen member and
-   may share the EU-harmonized national-visa template already modelled for
-   other Schengen jurisdictions in this registry), and **National ID &
-   Civic Documents** (Denmark's CPR system, whose 10-digit personnummer
-   already appears throughout the Passport and Taxes schemas) are open,
-   unscreened backlog candidates not yet confirmed viable. Denmark's own
-   page 3-4 self-employment/sole-proprietorship tax sections
+   flow. **Update (2026-07-11, GOV-2260): National ID & Civic Documents is
+   now closed too**, via `dk/cpr/notification-of-entry` (KL's form FR 050,
+   "Anmeldelse af indrejse") — see the Executive Summary update above and
+   the document's own VERIFICATION.md. This same cycle also screened
+   **Business Formation** and **Visa** and set both aside as weaker
+   candidates rather than picking them: Business Formation's only genuine
+   unauthenticated candidate is `virk.dk` form 40.110
+   ("Virksomhedsregistrering"), Erhvervsstyrelsen's own explicit paper
+   fallback for applicants without MitID — real, current, and a genuine
+   AcroForm, but scoped narrowly to foreign businesses/owners without a
+   Danish CVR number, entirely in Danish, with no official English guide
+   found (the mainstream ApS/A/S/enkeltmandsvirksomhed formation path
+   remains confirmed MitID/NemID-login-gated with no static fallback).
+   Visa's pure Schengen short-stay route (`applyvisa.um.dk`) is confirmed
+   (not just assumed, per a prior cycle's speculation) to be a JS-rendered
+   SPA whose underlying paper template is the same pan-Schengen Annex I
+   form already duplicated against `fr/france-visas/schengen-visa-application`
+   and several other Schengen jurisdictions in this registry — authoring it
+   would be a confirmed duplicate, not a genuine gap; SIRI's own
+   `nyidanmark.dk` work-permit form (AR8) is genuinely Denmark-specific and
+   unauthenticated, but is a fill-by-hand PDF with no AcroForm widget layer
+   (matching this registry's existing precedent for accepting such
+   fill-by-hand specimens, e.g. AT's Schengen form), and remains a viable
+   open candidate for a future cycle alongside SIRI's several other
+   downloadable forms (VS2, KO1/EU, OD1B, MF4, TBT). **Denmark now stands
+   at 3 of 6 verticals** (Passport, Taxes, National ID); DMV, Business
+   Formation, and Visa remain open backlog candidates. Denmark's own page
+   3-4 self-employment/sole-proprietorship tax sections
    (Virksomhedsbeløb/Virksomhedsordning/Kapitalafkastordning) are a further
    open companion-schedule candidate — see the Taxes vertical section
    above.
