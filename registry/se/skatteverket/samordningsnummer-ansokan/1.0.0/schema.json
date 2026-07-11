@@ -1,0 +1,411 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "se/skatteverket/samordningsnummer-ansokan",
+  "version": "1.0.0",
+  "title": "Sweden Application for a Coordination Number — Samordningsnummer – Ansökan (SKV 7540)",
+  "description": "Sweden's form SKV 7540, \"Samordningsnummer – Ansökan\" (Coordination Number Application), published by Skatteverket (the Swedish Tax Agency), used by a person with a connection to Sweden but no Swedish personal identity number (personnummer) to apply for a samordningsnummer (coordination number) — the identifier Sweden issues to non-residents who need to be identified by Swedish authorities, banks, employers, or educational institutions without qualifying for full population registration (folkbokföring). The form itself instructs the applicant to submit it in person, at a booked appointment at a Skatteverket service office (servicekontor), together with an identity-verification check (\"Lämna ansökan i samband med personligt besök på ett servicekontor\"); it is not mailed in or filed online. This schema models the form's own two-column, applicant/guardian-facing page 1 (personal details, a Swedish or foreign contact address, the applicant's stated connection to Sweden, the reason a coordination number is needed, and a signature block for the applicant or, for a minor, their custody holder(s)). Page 2, \"Skatteverkets anteckningar (fylls i av myndigheten)\" (Skatteverket's notes, to be filled in by the authority), is a staff-only identity-verification worksheet completed by the caseworker during the appointment (which identity document was shown, whether its chip/MRZ/UV/blacklight checks passed, a facial-photo match, and the officer's own name/service office) — it is excluded from this schema entirely, following this registry's established convention for population-registration/civil-document authority forms with an officer-only verification section (see se/polisen/medgivande-pass-nationellt-id-kort-minderarig, dk/cpr/notification-of-entry, dk/fstyr/samtykkeerklaering-koerekort-under-18). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Sweden or Skatteverket.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Swedish Tax Agency",
+    "abbreviation": "Skatteverket",
+    "url": "https://www.skatteverket.se"
+  },
+  "process": {
+    "type": "application",
+    "language": "sv-SE"
+  },
+  "source": {
+    "url": "https://www1.skatteverket.se/lcmp2/lc_webapp/secure/PdfServlet.do?formularID=7540&sprak=sv&format=sform",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Form SKV 7540, \"Samordningsnummer – Ansökan\" (edition 03, printed footer \"SKV 7540 03 sv web 06 1\"), a 2-page fillable AcroForm PDF. Listing/info page: https://www.skatteverket.se/privat/etjansterochblanketter/blanketterbroschyrer/blanketter/info/7540.4.339cd9fe17d1714c077642d.html"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "GOV-2372 (\"GovSchema Standard Research\", child of GOV-2370). Closes Sweden's National ID & Civic Documents vertical, bringing Sweden to 6 of 6 verticals (Business Formation, DMV, Visa, Taxes, Passport, National ID) — no vertical remains open for Sweden. Fetched fresh this cycle via the direct PDF URL: the first request returns HTTP 302 to a login.do cookie-initialization endpoint (not a real authentication gate — no credentials or CAPTCHA are involved), and a second request against the same URL, replaying the session cookie set on the first response, returns HTTP 200, genuine %PDF-1.7 header, 125,390 bytes (sha256 419e7119f9ac1e47b08e8b5e31b61310dde4b26d9f8a6187be557080ad641ae8) — matching the pre-scouted ~125,387-byte estimate closely enough to confirm the same document. Independent pdfjs-dist@3.11.174 extraction (getAnnotations() per page, getTextContent() for label cross-reference) found exactly 82 /Widget annotations: page 1 (the applicant/guardian-facing page) carries 33 widgets — 27 Tx (text) fields and 6 Btn fields (a genuine 2-option PDF radio-button group sharing the field name 'RadioButtonList[0]' for Kön/gender, plus 4 independent checkbox fields named krsAlternativ[0..3] for the 'Vilken anknytning har du till Sverige?' connection-reason question); page 2 (the officer-only page) carries 49 widgets — 6 Tx and 43 Btn, all under field-name prefixes subDok1[0]/subDok2[0] (two independently repeatable identity-document check blocks: document number, in-person-visit confirmation, photo match, document type Pass/EU-ID/uppehållstillstånd, biometric-chip Ja/Nej, automated MRZ/UV/blacklight/RFID-chip/RFID-photo checks, validity Ja/Nej, face-verification status, and a not-performed reason), subOvrigt[0] (free-text remarks), and subUtfordAv[0] (the caseworker's own name and service office) — confirmed self-documenting via each widget's own alternativeText tooltip and cross-checked against getTextContent()'s printed labels/section headings, which read verbatim 'Skatteverkets anteckningar (fylls i av myndigheten)' at the top of page 2. This is disclosed as a deliberate exclusion, not an oversight: page 2 collects no applicant-authored data — every field on it is completed by the Skatteverket officer during the mandatory in-person appointment, the same officer-verification-worksheet pattern this registry already excludes for se/polisen/medgivande-pass-nationellt-id-kort-minderarig (its two 'Passmyndighetens identitetskontroll' boxes), dk/cpr/notification-of-entry (its 'udfyldes af kommunen' municipality section), and dk/fstyr/samtykkeerklaering-koerekort-under-18's own institutional section. 32 fields were mapped from page 1's 33 widgets (27 Tx map 1:1 to 27 fields; the 2-widget Kön radio group merges into a single 'gender' enum field per this registry's at/bmi/national-identity-card-application precedent for a genuine radio-button-group merge; the 4 krsAlternativ checkboxes map to 4 independent boolean fields). Judgment calls, disclosed in full: (1) the top-of-page 'Datum' field (alternativeText 'Ange datum i formatet ÅÅÅÅ-MM-DD') is modelled as applicationDate, required, on the reading that it is the date the applicant completes/signs the form, consistent with this form's own in-person, single-sitting submission model; (2) gender is offered as a binary 'Man'/'Kvinna' (male/female) choice only — the source form provides no third option — translated to the canonical English enum values ['male','female'] per the at/bmi precedent, with the native Swedish labels disclosed in each option's sourceRef; (3) the 'Kontaktadress i Sverige' (Swedish contact address) and 'Kontaktadress utanför Sverige' (foreign contact address, captioned 'Anges endast om svensk kontaktadress saknas' — 'specified only if a Swedish contact address is missing') blocks are mutually alternative in the source form's own instructions, but the form prints no dedicated selector field (e.g. a 'do you have a Swedish address?' checkbox) to key a requiredWhen condition on; per this registry's se/polisen precedent (judgment call 5, 'no synthetic gating field is invented absent a printed selector') and the registry's own documented notEquals-empty-string-absent-field pitfall, neither address block is forced required — both are modelled required:false, each field's description stating the alternative-use business rule in prose; the foreign address's own printed 'Max 35 tecken per fält' ('max 35 characters per field') instruction is encoded as maxLength:35 on addressLine1Foreign/addressLine2Foreign/addressLine3Foreign; (4) connectionDescription ('Beskriv din anknytning till Sverige') and coordinationNumberReason ('Beskriv varför du behöver ett samordningsnummer') are modelled required:true, since they are the form's own substantive justification for issuing a coordination number, not incidental detail; the four krsAlternativ connection-reason checkboxes (Familj/Studerande/Äger eller hyr bostad/Annan) are independent, non-exclusive booleans (confirmed via getAnnotations(): each is checkBox:true, radioButton:false, a distinct field name, unlike the Kön radio group) — no exclusivityGroups entry is added, since the form allows selecting more than one reason at once; (5) the two-column 'Underskrift' block prints one integrated note above both columns — 'Om ansökan gäller ett barn som är under 18 år ska båda vårdnadshavarna skriva under' ('If the application concerns a child under 18, both custody holders must sign') — but, as with se/polisen's PM 531.2, the form provides no dedicated 'is this application for a minor'/'sole vs joint custody' selector field; the first column (primarySignerSignature/PrintedName/Phone/Email) is modelled required:true (it is completed in every case, by the applicant themselves or by a first custody holder on a minor's behalf) and the second column (secondGuardianSignature/PrintedName/Phone/Email) is modelled required:false, each field's description disclosing that a second custody holder's signature may be required in practice for a minor applicant but that the form itself gives no fillable indicator to condition on, matching this registry's existing se/polisen judgment-call precedent for an identical fact pattern; (6) the genuine fillable Tx 'Underskrift' widgets are modelled as plain string fields representing the signature line the signer completes (by hand, once printed, or as a typed acknowledgment), not a hand-drawn/image signature field, consistent with this registry's dk/fstyr and se/polisen precedent for Nordic signature-line fields — modelling the signature as a documents[] 'attestation' entry (the alternative pattern this registry uses in se/skatteverket/individual-income-tax-return, the sibling schema under this same authority) was considered and set aside here because that sibling schema's attestation statement is drawn from a separate distribution-instructions page, whereas this form's own printed text supplies no equivalent standalone attestation sentence to cite verbatim; (7) no documents[] array: this form's own info page (fetched fresh this cycle) states the applicant brings a passport/ID card/residence-permit card to show in person at the appointment ('pass, identitetskort eller annan motsvarande handling. Har du uppehållstillstånd i Sverige ska du även överlämna ditt uppehållstillståndskort') and that 'du lämnar ansökan i samband med din identitetskontroll på ditt bokade besök på servicekontoret' — there is no file-upload/attachment concept on the form itself, since identity documents are physically shown to and recorded by the officer on the excluded page 2, not submitted as scanned copies; this matches the 0-documents precedent already established for se/polisen and dk/fstyr. Two mock conformance scenarios (a student with a Swedish contact address who needs a coordination number to open a Swedish bank account; a property owner using a foreign contact address, per the form's own 'Anges endast om svensk kontaktadress saknas' alternative) validated with 0 errors, plus mutation controls (a missing required field, a gender enum-value violation, a maxLength violation on a foreign-address line) each raising exactly 1 error; see this document's own VERIFICATION.md. No documents[]-requiredness mutation control is included, since this schema carries no documents[] array — disclosed rather than fabricated, per this cycle's own task brief."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationDate",
+      "label": "Datum",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant completes and signs the application, normalized to ISO 8601 full-date per this registry's convention (the source form prints a ÅÅÅÅ-MM-DD box).",
+      "sourceRef": "Header, next to \"Ansökan\" — \"Datum\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Födelsetid (ÅÅÅÅ-MM-DD)",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's date of birth, normalized to ISO 8601 full-date per this registry's convention.",
+      "sourceRef": "\"Personuppgifter\" — \"Födelsetid (ÅÅÅÅ-MM-DD)\""
+    },
+    {
+      "name": "gender",
+      "label": "Kön",
+      "type": "enum",
+      "required": true,
+      "description": "Merges a genuine 2-option PDF radio-button group (getAnnotations() reports radioButton:true, a single shared field name 'RadioButtonList[0]') into one enum, per this registry's at/bmi/national-identity-card-application precedent. The source form offers only 'Man'/'Kvinna' (male/female); no third option is printed.",
+      "sourceRef": "\"Personuppgifter\" — \"Kön\": \"Man\" / \"Kvinna\"",
+      "validation": {
+        "enum": ["male", "female"]
+      }
+    },
+    {
+      "name": "citizenship",
+      "label": "Medborgarskap",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's citizenship/nationality.",
+      "sourceRef": "\"Personuppgifter\" — \"Medborgarskap\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "Förnamn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's given name(s).",
+      "sourceRef": "\"Personuppgifter\" — \"Förnamn\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "lastName",
+      "label": "Efternamn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's surname.",
+      "sourceRef": "\"Personuppgifter\" — \"Efternamn\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "previousLastName",
+      "label": "Tidigare efternamn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A previous surname the applicant has held, if any (e.g. before a name change or marriage).",
+      "sourceRef": "\"Personuppgifter\" — \"Tidigare efternamn\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Födelseort",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's place of birth.",
+      "sourceRef": "\"Personuppgifter\" — \"Födelseort\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Födelseland",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's country of birth.",
+      "sourceRef": "\"Personuppgifter\" — \"Födelseland\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "careOfSweden",
+      "label": "c/o",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "An optional care-of line for the applicant's Swedish contact address.",
+      "sourceRef": "\"Kontaktadress i Sverige\" — \"c/o\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "streetAddressSweden",
+      "label": "Gatuadress",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The street address of the applicant's contact address in Sweden. This block and the foreign contact address block below are mutually alternative per the form's own instructions ('Anges endast om svensk kontaktadress saknas' printed on the foreign block), but the form provides no dedicated selector field to key a machine-checkable requiredness condition on — neither block is forced required; see VERIFICATION.md.",
+      "sourceRef": "\"Kontaktadress i Sverige\" — \"Gatuadress\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "apartmentNumberSweden",
+      "label": "Lägenhetsnummer",
+      "type": "string",
+      "required": false,
+      "description": "The apartment number of the applicant's contact address in Sweden, when applicable (used by multi-unit Swedish addresses).",
+      "sourceRef": "\"Kontaktadress i Sverige\" — \"Lägenhetsnummer\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "postalCodeSweden",
+      "label": "Postnummer",
+      "type": "string",
+      "required": false,
+      "description": "The postal code of the applicant's contact address in Sweden.",
+      "sourceRef": "\"Kontaktadress i Sverige\" — \"Postnummer\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "cityNameSweden",
+      "label": "Postort",
+      "type": "string",
+      "required": false,
+      "description": "The postal city/town of the applicant's contact address in Sweden.",
+      "sourceRef": "\"Kontaktadress i Sverige\" — \"Postort\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "addressLine1Foreign",
+      "label": "Adressrad 1",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The first line of the applicant's contact address outside Sweden, to be specified only if no Swedish contact address is given (see streetAddressSweden). The form's own printed instruction caps each foreign address line at 35 characters ('Max 35 tecken per fält').",
+      "sourceRef": "\"Kontaktadress utanför Sverige\" — \"Adressrad 1\" (\"Max 35 tecken per fält. Anges endast om svensk kontaktadress saknas.\")",
+      "validation": {
+        "maxLength": 35
+      }
+    },
+    {
+      "name": "addressLine2Foreign",
+      "label": "Adressrad 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The second line of the applicant's contact address outside Sweden.",
+      "sourceRef": "\"Kontaktadress utanför Sverige\" — \"Adressrad 2\"",
+      "validation": {
+        "maxLength": 35
+      }
+    },
+    {
+      "name": "addressLine3Foreign",
+      "label": "Adressrad 3",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The third line of the applicant's contact address outside Sweden.",
+      "sourceRef": "\"Kontaktadress utanför Sverige\" — \"Adressrad 3\"",
+      "validation": {
+        "maxLength": 35
+      }
+    },
+    {
+      "name": "countryForeign",
+      "label": "Land",
+      "type": "string",
+      "required": false,
+      "description": "The country of the applicant's contact address outside Sweden.",
+      "sourceRef": "\"Kontaktadress utanför Sverige\" — \"Land\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "connectionReasonFamily",
+      "label": "Familj",
+      "type": "boolean",
+      "required": false,
+      "description": "The applicant's connection to Sweden is family-related. One of four independent (non-exclusive) checkboxes under 'Vilken anknytning har du till Sverige?' — more than one may be selected.",
+      "sourceRef": "\"Vilken anknytning har du till Sverige?\" — \"Familj\""
+    },
+    {
+      "name": "connectionReasonStudent",
+      "label": "Studerande",
+      "type": "boolean",
+      "required": false,
+      "description": "The applicant's connection to Sweden is as a student.",
+      "sourceRef": "\"Vilken anknytning har du till Sverige?\" — \"Studerande\""
+    },
+    {
+      "name": "connectionReasonOwnsOrRentsHousing",
+      "label": "Äger eller hyr bostad",
+      "type": "boolean",
+      "required": false,
+      "description": "The applicant owns or rents housing in Sweden.",
+      "sourceRef": "\"Vilken anknytning har du till Sverige?\" — \"Äger eller hyr bostad\""
+    },
+    {
+      "name": "connectionReasonOther",
+      "label": "Annan",
+      "type": "boolean",
+      "required": false,
+      "description": "The applicant's connection to Sweden is some other reason, described in connectionDescription.",
+      "sourceRef": "\"Vilken anknytning har du till Sverige?\" — \"Annan\""
+    },
+    {
+      "name": "connectionDescription",
+      "label": "Beskriv din anknytning till Sverige",
+      "type": "string",
+      "required": true,
+      "description": "A free-text description of the applicant's connection to Sweden, substantiating the checkbox(es) selected above.",
+      "sourceRef": "\"Beskriv din anknytning till Sverige\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "coordinationNumberReason",
+      "label": "Beskriv varför du behöver ett samordningsnummer",
+      "type": "string",
+      "required": true,
+      "description": "A free-text description of why the applicant needs a coordination number (e.g. to open a bank account, to be registered by an employer or an educational institution).",
+      "sourceRef": "\"Beskriv varför du behöver ett samordningsnummer\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "primarySignerSignature",
+      "label": "Underskrift",
+      "type": "string",
+      "required": true,
+      "description": "The signature line of the applicant, or, if the application concerns a child under 18, the first custody holder signing on the minor's behalf ('Om ansökan gäller ett barn som är under 18 år ska båda vårdnadshavarna skriva under' — if the application concerns a child under 18, both custody holders must sign). A genuine fillable Tx widget on the source PDF, modelled as a plain string signature line per this registry's Nordic signature-line convention, not a hand-drawn/image signature field.",
+      "sourceRef": "\"Underskrift\" — first (left) column — \"Underskrift\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "primarySignerPrintedName",
+      "label": "Namnförtydligande",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The first signer's own printed/clarified name, alongside their signature.",
+      "sourceRef": "\"Underskrift\" — first (left) column — \"Namnförtydligande\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "primarySignerPhone",
+      "label": "Telefonnummer",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The first signer's telephone number.",
+      "sourceRef": "\"Underskrift\" — first (left) column — \"Telefonnummer\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "primarySignerEmail",
+      "label": "Mejladress",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The first signer's email address.",
+      "sourceRef": "\"Underskrift\" — first (left) column — \"Mejladress\"",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "secondGuardianSignature",
+      "label": "Underskrift",
+      "type": "string",
+      "required": false,
+      "description": "A second custody holder's signature, required in practice only if the application concerns a minor under joint custody — the form itself provides no fillable indicator (e.g. a sole/joint custody selector) to condition this on, so it is modelled as optional; see VERIFICATION.md.",
+      "sourceRef": "\"Underskrift\" — second (right) column — \"Underskrift\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "secondGuardianPrintedName",
+      "label": "Namnförtydligande",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A second custody holder's own printed/clarified name, optional for the same reason as secondGuardianSignature.",
+      "sourceRef": "\"Underskrift\" — second (right) column — \"Namnförtydligande\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "secondGuardianPhone",
+      "label": "Telefonnummer",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A second custody holder's telephone number, optional for the same reason as secondGuardianSignature.",
+      "sourceRef": "\"Underskrift\" — second (right) column — \"Telefonnummer\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "secondGuardianEmail",
+      "label": "Mejladress",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A second custody holder's email address, optional for the same reason as secondGuardianSignature.",
+      "sourceRef": "\"Underskrift\" — second (right) column — \"Mejladress\"",
+      "validation": {
+        "maxLength": 200
+      }
+    }
+  ]
+}
