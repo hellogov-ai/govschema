@@ -4,8 +4,53 @@
 
 ## Executive Summary
 
-**34 jurisdictions** | **350 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**34 jurisdictions** | **351 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-11, GOV-2299, "GovSchema Standard Research"): Finland's
+> National ID & Civic Documents vertical opens**, via
+> `fi/dvv/registration-of-foreigner` — the Digital and Population Data
+> Services Agency's (Digi- ja väestötietovirasto, DVV) form DVV05.03.00A,
+> "The registration information of a foreigner" ("Ulkomaalaisen
+> rekisteröinti"), used by a foreign national residing legally in Finland to
+> request a henkilötunnus (personal identity code) and be registered in the
+> Väestötietojärjestelmä (Population Information System) for the first time.
+> This was already this catalog's own named Known Gaps candidate for
+> Finland's National ID vertical (item 7); this cycle picked it up directly.
+> Both the English and Finnish editions were fetched fresh: HTTP 200,
+> 151,115 bytes / 142,376 bytes, both genuine `%PDF-1.7` AcroForms, no
+> login/CAPTCHA/WAF gate — byte sizes match the Known Gaps entry's own
+> figures exactly. A `pdfjs-dist` extraction found 3 pages and exactly 43
+> real `/Widget`-subtype annotations across 34 unique field names (32
+> applicant-facing; page 3 is a GDPR privacy statement with 0 fields) —
+> confirming the Known Gaps entry's own "43 Widget/34 FT fields" figure
+> precisely. Unusually for this registry's Nordic specimens, every field is
+> self-documenting via its own descriptive `alternativeText` tooltip, and
+> every one of the form's 7 radio-button groups is a genuine PDF radio
+> field (`radioButton: true`), not independent same-named checkboxes — no
+> coordinate-based label decoding was required. The 32 widget-groups map
+> 1:1 to **32 `fields[]` entries**, plus **5 `documents[]` entries** (4
+> identity/residence/work/family-relationship document requirements sourced
+> from DVV's own published foreigner-registration guidance, plus one
+> attestation quoting the form's own signed-declaration text verbatim, since
+> the physical signature line carries no fillable widget on this specimen).
+> Three modelling decisions are disclosed in the document's own
+> VERIFICATION.md: marital status is left ungated by any `Condition` (the
+> form scopes it to two specific situations with no field to gate against);
+> the family-members-in-Finland question models a disclosure/context gate
+> plus three independent presence-flag/name pairs rather than a full
+> repeating family sub-schema, since the source's own text states family
+> relationships are registered via separate forms, not this one; and the
+> Estonian/Nordic identity-number and contact-language fields are left
+> ungated against free-text fields, per this registry's established
+> judgment for that class of gap. A mock conformance run (a Swedish citizen
+> moving to Helsinki with no dependents; a fuller scenario for a fictional
+> Estonian software developer moving to Tampere with a spouse and child
+> already resident) found 0 errors across both scenarios and 6 mutation
+> controls, including two confirming the `documents[]` requiredness path
+> specifically (not just `fields[]`) is genuinely exercised. **Finland now
+> stands at 3 of its 6 verticals** (Visa, Business Formation, National ID);
+> DMV and Taxes remain open backlog candidates — see "Known Gaps" below.
+>
 > **Update (2026-07-11, GOV-2292, "GovSchema Standard Research"): Finland's
 > Business Formation vertical opens**, via `fi/prh/start-up-notification-y1`
 > — the Finnish Patent and Registration Office's (Patentti- ja
@@ -6597,7 +6642,18 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (25/34 jurisdictions — 74%)
+### National ID & Civic Documents (26/34 jurisdictions — 76%)
+
+**Finland**'s National ID & Civic Documents gap is now closed (GOV-2299),
+via `fi/dvv/registration-of-foreigner` — the Digital and Population Data
+Services Agency's (DVV) form DVV05.03.00A, "The registration information of
+a foreigner," used to request a henkilötunnus (Finnish personal identity
+code) and register a foreign national in the Population Information System
+for the first time. This was this catalog's own named Known Gaps candidate
+for Finland (item 7); see the Executive Summary update above and the
+document's own VERIFICATION.md for the full sourcing record. Finland now
+stands at 3 of 6 verticals (Visa, Business Formation, National ID); DMV and
+Taxes remain open, unscreened backlog candidates — see "Known Gaps" below.
 
 **Denmark**'s National ID & Civic Documents gap is now closed (GOV-2260),
 via `dk/cpr/notification-of-entry` — KL's (Kommunernes Landsforening) form
@@ -6839,7 +6895,7 @@ now closed.
 | **DK** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **FI** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **FI** | 3 | ✗ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -7732,14 +7788,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    `vero.fi`, 135 Widget/126 FT fields across 4 pages, no login required for
    the PDF itself (the pre-filled return proper is generated per-taxpayer
    and typically e-filed via MyTax, but this correction form is a genuine
-   citizen-facing paper alternative). **National ID & Civic Documents**:
+   citizen-facing paper alternative). **National ID & Civic Documents has
+   since closed too (GOV-2299)**, via `fi/dvv/registration-of-foreigner` —
    DVV's "Ulkomaalaisen rekisteröinti" (foreign national's registration
    into the Population Information System, i.e. henkilötunnus/personal
-   identity code request), `dvv.fi`, 43 Widget/34 FT fields across 3 pages,
-   no login (the domestic Finnish eID/identity-card itself, via
-   `poliisi.fi`, is online/in-person-only with no downloadable form, so
-   this DVV registration form is the strongest available National ID
-   candidate for this jurisdiction). **Passport** is a confirmed dead end:
+   identity code request), `dvv.fi`. This cycle's own from-scratch
+   `pdfjs-dist` extraction confirmed the pre-scout's 43 Widget/34 FT field
+   count exactly (the domestic Finnish eID/identity-card itself, via
+   `poliisi.fi`, was re-confirmed online/in-person-only with no downloadable
+   form, so this DVV registration form remains the strongest available
+   National ID candidate for this jurisdiction) — see the Executive Summary
+   update above and the document's own VERIFICATION.md. **Finland now stands
+   at 3 of 6 verticals** (Visa, Business Formation, National ID); **DMV and
+   Taxes remain Finland's only open verticals**. **Passport** is a confirmed dead end:
    Finland eliminated paper passport applications in 2006 — `poliisi.fi`
    offers only online (`asiointi.poliisi.fi`) or in-person appointment
    channels, with a digital photo pre-uploaded separately
