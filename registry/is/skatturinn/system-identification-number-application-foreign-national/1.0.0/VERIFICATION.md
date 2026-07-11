@@ -48,8 +48,11 @@ Confirmed programmatically with `pdfjs-dist` (`legacy/build/pdf.js`, Node
 CommonJS) before any field cataloguing began:
 
 - `doc.numPages` → **1** (a genuinely single-page form).
-- `page.getAnnotations()` → exactly **23 Widget annotations**: 20
-  `fieldType: "Tx"` (plain text fields) and 3 checkbox widgets.
+- `page.getAnnotations()` → exactly **23 Widget annotations**: 18
+  `fieldType: "Tx"` (plain text fields) and 5 checkbox (`Btn`) widgets — 3
+  backing the "Ástæða umsóknar" reason-for-application options and 2 backing
+  the "Fylgiskjöl" (attachments) declarations (`passportCopy` and
+  `workPermitExemptionConfirmation`).
   `getFieldObjects()` resolves the same 23 widgets to **23 distinct field
   names**, a clean 1:1 ratio requiring no split-box or duplicate-copy
   reconciliation (unlike several other specimens in this registry, e.g.
@@ -66,22 +69,39 @@ eyeballing the rendered page alone.
 
 ## One non-obvious structural finding
 
-**Two of the three "Ástæða umsóknar" (reason for application) checkboxes
-carry no field name at all in the source PDF's own AcroForm.** `pdfjs-dist`
-reports them literally as `"undefined"` and `"undefined_2"` — a genuine
-upstream authoring omission (confirmed via `getFieldObjects()`, not an
-extraction artifact of this session's own tooling), the same class of
-finding already documented for `is/samgongustofa`'s vehicle-ownership-transfer
-form (two unnamed co-owner/operator checkboxes) and, more severely, for
-`is/thjodskra`'s custody-choice checkboxes (no widget at all). Here, unlike
-`is/thjodskra`, all three reason checkboxes *are* present as real Widget
-annotations — only their `getFieldObjects()` names are missing or generic —
-so position-aware cross-walking against the printed labels ("Launþegi -
-EES/EFTA borgari...", "Maki Íslendings eða EES/EFTA ríkisborgara...", "Annað,
-hvað:") was sufficient to identify each option with no ambiguity. Modelled
-as three options of one `reasonForApplication` enum field (see "Scope
-decisions" below for why this is a single-select rather than three
-independent booleans).
+**Three of the form's five checkbox widgets carry no field name at all in
+the source PDF's own AcroForm.** `pdfjs-dist` reports them literally as
+`"undefined"`, `"undefined_2"`, and `"undefined_3"` — a genuine upstream
+authoring omission (confirmed via `getFieldObjects()`, not an extraction
+artifact of this session's own tooling), the same class of finding already
+documented for `is/samgongustofa`'s vehicle-ownership-transfer form (two
+unnamed co-owner/operator checkboxes) and, more severely, for
+`is/thjodskra`'s custody-choice checkboxes (no widget at all).
+
+Two of the three (`undefined`, `undefined_2`) are two of the three "Ástæða
+umsóknar" (reason for application) checkboxes — the third reason checkbox
+does carry a real (if verbose) field name. Here, unlike `is/thjodskra`, all
+three reason checkboxes *are* present as real Widget annotations — only some
+of their `getFieldObjects()` names are missing or generic — so position-aware
+cross-walking against the printed labels ("Launþegi - EES/EFTA borgari...",
+"Maki Íslendings eða EES/EFTA ríkisborgara...", "Annað, hvað:") was
+sufficient to identify each option with no ambiguity. Modelled as three
+options of one `reasonForApplication` enum field (see "Scope decisions"
+below for why this is a single-select rather than three independent
+booleans).
+
+**The third unnamed widget (`undefined_3`) is not in the reason-for-application
+section at all.** It sits lower on the page, in the "Fylgiskjöl" (attachments)
+section, immediately beside the printed label "Afrit af gildu vegabréfi eða
+ferðaskilríki" (Copy of valid passport or travel document) — it is the
+checkbox backing this schema's statically-**required** `passportCopy`
+document. This was not disclosed in this issue's initial structural-finding
+writeup and is corrected here per GOV-2238's independent re-extraction
+(re-confirmed by this session's own from-scratch re-fetch and re-extraction,
+same SHA-256). The remaining attachment checkbox, backing
+`workPermitExemptionConfirmation`, does carry a real field name
+(`"Staðfesting á undanþágu atvinnuleyfis frá Vinnumálastofnun..."`) and was
+never in question.
 
 A second, related finding: the form's own top-of-page eligibility note names
 **three** applicant categories (EEA/EFTA worker, spouse awaiting a residence
@@ -220,8 +240,9 @@ membership, and `pattern`/`minLength`/`maxLength` bounds.
 
 Per the `manual-source-review-v1` practice's cadence, `nextReviewBy` is set
 to **2027-01-11** (~6 months): this is a from-scratch closing of Iceland's
-sixth and last vertical with two non-obvious structural findings (two
-unnamed reason-for-application checkboxes; an ambiguous, only-partially
+sixth and last vertical with two non-obvious structural findings (three
+unnamed checkboxes — two backing reason-for-application options, one backing
+the required passport-copy attachment; an ambiguous, only-partially
 conditional attachment requirement). Re-check the cited PDF URL, byte size,
 and hash, confirm no newer edition has replaced the "11-2-2026" specimen
 this record cites, and re-confirm the third-party corroborating sources
