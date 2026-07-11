@@ -4,7 +4,60 @@
 
 ## Executive Summary
 
-**35 jurisdictions** | **359 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**35 jurisdictions** | **360 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-11, GOV-2363, "GovSchema Standard Research"): Sweden's
+> Passport vertical is now closed — Sweden stands at 5 of 6 verticals**, via
+> `se/polisen/medgivande-pass-nationellt-id-kort-minderarig` — the Swedish
+> Police Authority's (Polismyndigheten) form PM 531.2, "BILAGA till ansökan
+> om pass/nationellt identitetskort för minderårig (barn under 18 år)"
+> (Appendix to an application for a passport/national identity card for a
+> minor). Sweden's primary adult passport/national-ID-card application
+> (polisen.se) was re-confirmed this cycle as appointment-based, in-person,
+> and biometric (fingerprints are captured for a national identity card),
+> with no downloadable blank application form for the main flow — the same
+> dead-end pattern already confirmed for Finland, Norway, Estonia, and
+> Poland's own passport verticals. PM 531.2, however, is a genuine,
+> standalone, citizen-facing companion PDF: Polisen's own guidance page
+> explicitly names it as one of three accepted ways a custody holder can
+> consent to a minor's passport/national-identity-card application (the
+> other two being an e-legitimation-gated online portal and consenting in
+> person). Fetched fresh from `polisen.se`: HTTP 200, 170,418 bytes, genuine
+> `%PDF-1.6` header, no login/CAPTCHA/WAF gate. Independent `pdfjs-dist`
+> extraction confirmed **0** AcroForm/Widget annotations — a print-and-fill
+> form, not a fillable PDF — so, following this registry's existing
+> `jp/houmukyoku/*` precedent for "no AcroForm but a rich extractable text
+> layer" documents, all 39 schema fields were identified directly from the
+> page's own text layer and per-glyph coordinates instead of from widgets.
+> Coordinate-based layout analysis found the minor's own personal-identity-
+> number field is printed as a full 4-digit-century digit-box grid
+> (ÅÅÅÅMMDD-NNNN), genuinely distinct from the two guardian columns' own
+> 2-digit-year personnummer line (ÅÅMMDD-NNNN) — reconciled by reusing this
+> registry's existing `se/skatteverket/individual-income-tax-return`
+> personnummer pattern (which already accommodates both variants) across all
+> three personnummer fields, rather than inventing two different patterns.
+> The mutually exclusive travel-document-type selection (passport only / ID
+> card only / both) is modelled as three booleans plus an `exclusivityGroups`
+> entry, following this registry's own `pt/imt/requerimento-carta-de-conducao`
+> precedent for an identical single-line/three-option printed pattern. A
+> font-encoding glyph artifact in the source PDF's embedded subset font (two
+> garbled text runs, one beside "Längd"/height, one beside the guardians'
+> own personnummer lines) was independently reproduced and decoded via a
+> reproducible Caesar-shift, corroborating the readable English bilingual
+> sibling edition's (PM 531.13) own plain-English labels — the same kind of
+> artifact already disclosed for `dk/motorstyrelsen` (GOV-2355) and
+> `fi/traficom` (GOV-2356). Unlike Denmark's P23T, this form prints no
+> explicit sole/joint-custody selector field and no "Part 1"/"Part 2"
+> column numbering anywhere, so the second custody holder's fields and both
+> witness blocks are modelled as plainly optional rather than gated by an
+> invented synthetic field — disclosed in full in the schema's own
+> VERIFICATION.md. Two mock conformance scenarios (a sole-custody-like single
+> guardian/witness consent, and a joint-custody-like two-guardian/two-witness
+> consent) found 0 errors each, plus 3 mutation controls (missing required
+> field, personnummer pattern violation, travel-document-type exclusivity
+> violation) each correctly raised exactly 1 error. **Sweden now stands at 5
+> of 6 verticals** (Business Formation, DMV, Visa, Taxes, Passport); National
+> ID remains Sweden's sole open, unscreened vertical for a future cycle.
 
 > **Update (2026-07-11, GOV-2356, "GovSchema Standard Research"): Finland's
 > DMV vertical is now closed — Finland stands at 5 of 6 verticals**, via
@@ -5423,7 +5476,31 @@
 
 ## By Vertical
 
-### Passport (26/35 jurisdictions — 74%)
+### Passport (27/35 jurisdictions — 77%)
+
+**Sweden's Passport gap is now closed (GOV-2363)**, via
+`se/polisen/medgivande-pass-nationellt-id-kort-minderarig` — Polismyndigheten's
+(the Swedish Police Authority) form PM 531.2, a standalone guardian-consent
+appendix required whenever a minor applies for a passport and/or national
+identity card, directly analogous to Iceland's own `is/thjodskra/passport-issuance-consent-minor`
+(GOV-2226, above) and Denmark's DMV-vertical-closing
+`dk/fstyr/samtykkeerklaering-koerekort-under-18` (GOV-2346). Sweden's own
+primary adult passport/national-ID-card application remains a confirmed
+dead end (appointment-based, in-person, biometric, no downloadable blank
+form), matching the same pattern already confirmed for Finland, Norway,
+Estonia, and Poland's own passport verticals. The source PDF carries zero
+AcroForm/Widget annotations — all 39 schema fields were identified from its
+text layer and per-glyph coordinates instead, following this registry's own
+`jp/houmukyoku/*` "no AcroForm, rich text layer" precedent. See the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full sourcing record, including the coordinate-based discovery that the
+minor's own personal-identity-number field uses a different digit-count
+format than the guardians' own, an independently-reproduced embedded-font
+glyph-encoding artifact, and every disclosed judgment call (document-type
+modelling, guardian-2/witness optionality with no synthetic gating field,
+excluded office-use/institutional boxes). Sweden now stands at 5 of its 6
+verticals (Business Formation, DMV, Visa, Taxes, Passport); National ID
+remains Sweden's sole open, unscreened vertical.
 
 **Denmark opens as GovSchema's 33rd jurisdiction (GOV-2244)**, via
 `dk/um/application-for-danish-passport` — the Ministry of Foreign Affairs'
@@ -7359,7 +7436,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **SE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **SE** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -8327,6 +8404,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    process (`politiet.no`) with no downloadable application form, the same
    pattern this registry has repeatedly confirmed dead-end in other
    Nordic/EU jurisdictions (e.g. Finland, Estonia, Poland — see above).
+9. **Sweden's Passport vertical** (opened GOV-2056 via Business Formation,
+   later reaching DMV/Taxes/Visa): **now closed (GOV-2363)**, via
+   `se/polisen/medgivande-pass-nationellt-id-kort-minderarig` — Polisen's
+   form PM 531.2, a standalone guardian-consent appendix for a minor's
+   passport/national-identity-card application. Sweden's own primary adult
+   passport/national-ID-card process is a confirmed dead end: appointment-
+   based, in-person, and biometric via `polisen.se`, with no downloadable
+   blank application form for the main flow — the same pattern this
+   registry has repeatedly confirmed dead-end in other Nordic/EU
+   jurisdictions (Finland, Norway, Estonia, Poland — see above). See the
+   Executive Summary update above and the document's own VERIFICATION.md
+   for the full sourcing record. **Sweden now stands at 5 of 6 verticals**
+   (Business Formation, DMV, Visa, Taxes, Passport). **National ID remains
+   Sweden's sole open, unscreened vertical** — not screened this cycle, a
+   genuine candidate for a future one.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
