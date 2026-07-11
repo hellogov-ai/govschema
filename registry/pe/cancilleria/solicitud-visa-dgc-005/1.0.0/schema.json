@@ -1,0 +1,259 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pe/cancilleria/solicitud-visa-dgc-005",
+  "version": "1.0.0",
+  "title": "Peru Visa Application (Formulario DGC-005)",
+  "description": "Apply for a Peruvian visa through the Ministerio de Relaciones Exteriores (Cancillería), Formulario DGC-005, \"Solicitud de Visa\" — a genuine AcroForm PDF published directly by the Ministry (gob.pe) and mirrored unauthenticated by its consulates worldwide. Opens Peru as this registry's 38th jurisdiction, via the Visa vertical. Covers the applicant-facing Sección 1 (Procedimiento a Realizar / visa type and sub-category selection) and Sección 2 (Datos del Solicitante / general applicant information: passport, names, sex, marital status, place of birth, nationality, date of birth, profession, domestic and foreign addresses, email), plus the conditional Sección 4 (Grupo Artístico) required only when the Artista sub-category is selected. Does not model: Sección 3 (signature, right-index fingerprint, and photo — physical marks/attachment captured in person at the consular counter, not data-entry fields), Sección 5 (Reservado para Uso Interno — internal Cancillería/DIGEMIN case-processing fields), or Sección 6 (Observaciones and the Cónsul's own signature — consular-officer-only). This document does not submit an application; the Ministerio de Relaciones Exteriores and its consular network are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministerio de Relaciones Exteriores del Perú",
+    "abbreviation": "Cancillería",
+    "url": "https://www.gob.pe/rree"
+  },
+  "process": {
+    "type": "application",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://cdn.www.gob.pe/uploads/document/file/321107/formulario_solicitud_visa.pdf",
+    "retrievedAt": "2026-07-11",
+    "documentRef": "Formulario DGC-005, \"Solicitud de Visa\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-11",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-11",
+    "notes": "Opens Peru as this registry's 38th jurisdiction. A prior 'GovSchema Standard Research' cycle (GOV-2404) had screened this same DGC-005 form and characterized it as a genuine but AcroForm-less static text-layer PDF, weaker by this registry's own bar than the Vietnam TK01 candidate ultimately picked that cycle. This cycle re-fetched the form from three independent gob.pe-hosted mirrors (the Ministry's own institutional page at gob.pe/institucion/rree, and the Barcelona and Guayaquil consulates' own pages) and found the prior characterization was based on an outdated 2013 revision (Barcelona mirror, Microsoft Word 2007, IsAcroFormPresent: false, 0 widgets). The Ministry's own current, authoritative page and the Guayaquil consulate's page both serve a byte-identical, materially different 2019 revision (Microsoft Word 2016, IsAcroFormPresent: true, 63 real AcroForm widgets with self-documenting alternativeText tooltips) that adds an email field, a granular visa-subtype checkbox group (Turista/Negocios/Transeúnte/Artista/Tripulante/Otro/Residente in place of the old binary Temporal/Residente), and a conditional Grupo Artístico section — a genuinely stronger candidate than previously scouted, not merely a re-confirmation. See VERIFICATION.md for the full widget-by-widget field inventory, every disclosed judgment call, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-11"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "visaType",
+      "label": "Procedimiento a Realizar / Type of Visa",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The form implements this as seven checkbox-style widgets grouped under two printed headings: six Visa Temporal sub-categories (Turista, Negocios, Transeúnte, Artista, Tripulante, Otro) and the separate Visa Residente category. The source has no top-level 'Visa Temporal' checkbox of its own — selecting any of the six sub-category boxes is what signals a temporary-visa application, as opposed to checking Residente. Negocios, Transeúnte, Artista, Tripulante, and Residente are genuine AcroForm checkbox (Btn) widgets with exportValue \"On\"; Turista and Otro are implemented as small plain text (Tx) boxes at the equivalent grid position rather than true checkboxes — a disclosed authoring inconsistency in the source PDF, not a meaningful difference for this schema.",
+      "sourceRef": "Sección 1, Procedimiento a Realizar / Type of Visa",
+      "validation": { "enum": ["TURISTA", "NEGOCIOS", "TRANSEUNTE", "ARTISTA", "TRIPULANTE", "OTRO", "RESIDENTE"] }
+    },
+    {
+      "name": "otroEspecifique",
+      "label": "Otro (especifique)",
+      "type": "string",
+      "requiredWhen": { "field": "visaType", "equals": "OTRO" },
+      "description": "Free-text box immediately following the Otro checkbox. Its own AcroForm field name carries the internal alternativeText \"Business\" despite sitting in the generic 'Otro' position — a disclosed field-naming artifact of the source PDF (likely copy-pasted from a template), not evidence this box is scoped only to business-type visas.",
+      "sourceRef": "Sección 1, Otro (especifique)"
+    },
+    {
+      "name": "passportType",
+      "label": "Tipo de Pasaporte",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "First of two blanks under item 1's combined label \"Tipo.Nro.Pasaporte\" (Type, Num. Passport); e.g. Ordinario, Diplomático, Oficial, Especial. The form does not print an enumerated checkbox list for this value, so it is modelled as free text.",
+      "sourceRef": "Sección 2, ítem 1 (Tipo.Nro.Pasaporte)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Número de Pasaporte",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Second blank under item 1, labelled \"Nro\" (Num).",
+      "sourceRef": "Sección 2, ítem 1 (Nro)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "apellidoPaterno",
+      "label": "Apellido Paterno",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Printed English gloss on the form reads \"(Last Name)\", but the Spanish label and this form's own naming convention (paired with apellidoMaternoCasada below) make clear this is the paternal surname, the first of Peru's standard two-surname convention.",
+      "sourceRef": "Sección 2, ítem 2 (Apellido Paterno)",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "apellidoMaternoCasada",
+      "label": "Apellido Materno o Casada",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Item 3: the maternal surname (Peru's standard second surname) or, for a married woman using her husband's name, her married surname — the source form offers a single blank serving either meaning, disambiguated only by the applicant's own circumstances.",
+      "sourceRef": "Sección 2, ítem 3 (Apellido Materno o Casada / Maiden Name)",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "nombres",
+      "label": "Nombres",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Sección 2, ítem 4 (Nombres)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sexo",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Two small checkbox-position boxes, Masculino above Femenino; neither is a true AcroForm checkbox widget in this revision (both are plain text boxes at the checkbox grid position), consistent with the Turista/Otro pattern noted on visaType.",
+      "sourceRef": "Sección 2, ítem 5 (Sexo)",
+      "validation": { "enum": ["MASCULINO", "FEMENINO"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Estado Civil",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Four checkbox-position boxes in a 2x2 grid (Soltero/Viudo above Casado/Divorciado). Soltero and Casado are genuine AcroForm checkbox (Btn) widgets; Viudo and Divorciado's underlying widgets carry no alternativeText (Divorciado's own widget field name is literally \"undefined\" in the source PDF) — inferred from their fixed grid position directly beside Viudo/Divorciado's printed labels, cross-checked against the row order (Soltero/Viudo, then Casado/Divorciado) common to both the 2013 and 2019 revisions of this form.",
+      "sourceRef": "Sección 2, ítem 6 (Estado Civil)",
+      "validation": { "enum": ["SOLTERO", "CASADO", "VIUDO", "DIVORCIADO"] }
+    },
+    {
+      "name": "lugarNacimiento",
+      "label": "Lugar de Nacimiento (País)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own parenthetical qualifies this as the country of birth, not city/place generally.",
+      "sourceRef": "Sección 2, ítem 7 (Lugar de nacimiento (País))",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nacionalidad",
+      "label": "Nacionalidad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Sección 2, ítem 8 (Nacionalidad)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fechaNacimiento",
+      "label": "Fecha de Nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The source implements this as eight individual single-character AcroForm text boxes (day: 'd'+'d2'; month: 'm1'+'m2'; year: 'a1'-'a4') rather than one field, printed with a dd/mm/aaaa format hint. Consolidated here into a single ISO 8601 date field per this registry's established convention for segmented date-of-birth boxes.",
+      "sourceRef": "Sección 2, ítem 9 (Fecha de nacimiento, dd/mm/aaaa)"
+    },
+    {
+      "name": "profesionOcupacion",
+      "label": "Profesión/Ocupación",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Sección 2, ítem 10 (Profesión/Ocupación)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "domicilioPeru",
+      "label": "Domicilio o Alojamiento en el Perú (Av.Jr.Calle)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The source spans this address across two visual line boxes (a first line at the item-11 label's own row, a second, full-width continuation line below it); consolidated into one field.",
+      "sourceRef": "Sección 2, ítem 11 (Domicilio o alojamiento en el Perú)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "telefonoPeru",
+      "label": "Teléfono (Perú)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Unnumbered sub-field beside item 11, without its own item number in the source's own numbering scheme — treated as optional, unlike the 13 numbered items, which this schema treats as required.",
+      "sourceRef": "Sección 2, ítem 11 (Teléfono)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "domicilioExtranjero",
+      "label": "Domicilio en el Extranjero (Permanent Address)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Sección 2, ítem 12 (Domicilio en el Extranjero)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "paisExtranjero",
+      "label": "País",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Unnumbered sub-field of item 12, but required here since a foreign permanent address is not meaningfully complete without its country.",
+      "sourceRef": "Sección 2, ítem 12 (País)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "telefonoExtranjero",
+      "label": "Teléfono (Extranjero)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Unnumbered sub-field of item 12 — treated as optional, matching telefonoPeru.",
+      "sourceRef": "Sección 2, ítem 12 (Teléfono)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Item 13 — present only in the 2019 AcroForm revision this schema is sourced from; absent from the older 2013 text-layer-only mirror a prior cycle had screened.",
+      "sourceRef": "Sección 2, ítem 13 (Correo Electrónico)",
+      "validation": { "maxLength": 254, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "grupoArtisticoNombre",
+      "label": "Nombre (Grupo Artístico)",
+      "type": "string",
+      "requiredWhen": { "field": "visaType", "equals": "ARTISTA" },
+      "classification": "pii",
+      "description": "Sección 4 applies \"ONLY FOR ARTIST — APLICATION\" per its own printed heading; this field is the artistic group/ensemble's name, not the applicant's own name (already captured in nombres/apellidoPaterno/apellidoMaternoCasada).",
+      "sourceRef": "Sección 4, Grupo Artístico (Nombre)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "grupoArtisticoNacionalidad",
+      "label": "Nacionalidad (Grupo Artístico)",
+      "type": "string",
+      "requiredWhen": { "field": "visaType", "equals": "ARTISTA" },
+      "description": "The artistic group's nationality, conditionally required alongside grupoArtisticoNombre.",
+      "sourceRef": "Sección 4, Grupo Artístico (Nacionalidad)",
+      "validation": { "maxLength": 100 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Foto del Solicitante",
+      "category": "supporting-evidence",
+      "required": true,
+      "sourceRef": "Sección 3, Foto (Photo)"
+    }
+  ]
+}
