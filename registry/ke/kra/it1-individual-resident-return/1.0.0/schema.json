@@ -1,0 +1,848 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ke/kra/it1-individual-resident-return",
+  "version": "1.0.0",
+  "title": "Kenya IT1 Individual Resident Return — Employed Resident Individual",
+  "description": "The Kenya Revenue Authority's (KRA) \"IT1_Individual_Resident_Return\" Excel workbook (internal version 18.0.1, matching the current live filename), the offline data-entry template Kenyan resident individuals complete and later upload (as an XML export) through the iTax portal (itax.kra.go.ke) to file their annual income tax return. Closes Kenya's Taxes vertical (3 of 6 verticals; Business Formation and National ID are already modelled via ke/brs/cr1-application-to-register-a-company and ke/nrb/application-for-identity-card). This v1.0.0 models the employed-resident-individual filing pathway only — a taxpayer whose sole income is employment income (PAYE), with no business/farming, partnership, estate/trust, rental, car-benefit, mortgage, Home Ownership Savings Plan, life-insurance, commercial-vehicle, foreign/DTAA, or spousal-joint income to declare — covering five of the workbook's 34 sheets: A_Basic_Info (return identification, the nine other-income/benefit routing declarations, the disability exemption certificate, and optional bank details), F_Employment_Income (per-employer employment income detail, bounded to 2 employers as the sheet itself provides), M_Details_of_PAYE_Deducted (per-employer PAYE-already-deducted detail, likewise bounded to 2 employers), and T_Tax_Computation (the two genuine free-text inputs relevant to this pathway — pension contribution and personal relief — plus the workbook's own computed rollup lines through to the final tax due/refund figure). The sixth named sheet, T_Income_Computation_Self, is a pure formula rollup of the excluded Business/Farming/Rental/Interest/Commission/Other income categories and contributes zero raw-entry fields to this pathway — a disclosed structural finding, not an omission; see VERIFICATION.md. Out of scope for this v1.0.0 (each a candidate for a future companion schema): the Profit & Loss/Balance Sheet/Stock/Capital Allowances sheets (B, C, D, E1, E2, E) for self-employed or business income; Partnership income (G); Estate/Trust income (H); Car Benefit detail (I); Mortgage interest (J); Home Ownership Savings Plan (K); Life Insurance Relief (L); Installment Tax, Withholding Tax, Advance Tax, IT Payment, and DTAA credit schedules (N, O, P, Q, R); prior-year losses (S); and the entire spousal/\"Wife\" income-declaration pathway (T_Income_Computation_Wife and every Wife-suffixed field across the other sheets), since this workbook supports joint/separate spousal filing as a distinct, materially larger surface. This document describes the workbook only; it does not file a return on the taxpayer's behalf, and the live iTax portal (itax.kra.go.ke) and KRA's own current publications are always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Kenya or the Kenya Revenue Authority.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Kenya Revenue Authority",
+    "abbreviation": "KRA",
+    "url": "https://www.kra.go.ke"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.kra.go.ke/images/publications/IT1_Individual_Resident_Return_18.0.1latest.xls",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "IT1_Individual_Resident_Return_18.0.1latest.xls, internal workbook version 18.0.1 (cell A_Basic_Info!I1)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2535/GOV-2533. Closes Kenya's Taxes vertical (3 of 6; Business Formation and National ID already modelled). This exact candidate was flagged across three prior cycles (GOV-2500/GOV-2507/GOV-2517) and was already CATALOG.md's own confirmed-strong, corrected-in-place Known Gaps entry (item 21): a same-day GOV-2507 'reversed to dead end' claim (based on one genuinely MS-Office-encrypted sibling file) was itself corrected by GOV-2517, which identified two live, unauthenticated, unencrypted siblings on kra.go.ke. This document independently re-fetched the cited sibling (IT1_Individual_Resident_Return_18.0.1latest.xls) fresh via a plain HTTPS GET: HTTP 200, 3,323,904 bytes, sha256:7c85241bbabc797b9e3c6b708209a32866c4ec9131f9d845d0b87c9734e939e2 — exactly matching the byte size and hash already cited going into this cycle. Opened cleanly with the xlsx npm package (BIFF/Excel-97-2003 format, no password prompt), confirming all 34 sheets by name (Data, Read Me, Errors, Validations, ValidationList, Macros_Disabled, ImportCsv, and the lettered content sheets A_Basic_Info through T_Tax_Computation, plus Sheet1) — an exact match to this cycle's own pre-stated sheet list. This also resolves CATALOG.md's own standing 'suspect' flag on the workbook's version number: GOV-2500 had cited '19.0.3/March 2026' and GOV-2517 could not corroborate it anywhere; this cycle's own extraction of cell A_Basic_Info!I1 reads '18.0.1' — matching the live filename itself ('...18.0.1latest.xls') — so '19.0.3' appears to have been a citation error in the GOV-2500 cycle, not a real prior edition; treat '18.0.1' as the confirmed current version. See VERIFICATION.md for the full sheet-by-sheet extraction method (raw sheet_to_json row/column dumps cross-correlated against the workbook's own internal Defined Names, the Validations and ValidationList reference sheets for mandatory/format rules, and cell-formula inspection via {cellFormula:true} to distinguish genuine free-text input cells from macro/formula-computed rollups), every scoping and disclosure judgment call (the Type of Return dropdown's two values sourced from the Data sheet's own ReturnType named range; the KRA-PIN 11-character pattern combining the Validations sheet's own MinLength/MaxLength=11 with Kenya's well-known public PIN format, disclosed as a supplementary convention since the workbook's validatePIN() check is a compiled macro with no extractable literal regex; the Tax Slabs annotation embedded as plain cell text at T_Tax_Computation!F15, cited but not reproduced as an executable formula since the actual computation runs through an external, non-extractable VBA function; and the finding that T_Income_Computation_Self contributes zero fields to this pathway), and the conformance run writeup (2 valid fixtures, 0 errors each; 5 mutation-control fixtures, exactly 1 error each)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "pin",
+      "label": "Personal Identification Number *",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The taxpayer's own KRA Personal Identification Number (PIN).",
+      "sourceRef": "A_Basic_Info!B3 (named range RetInf.PIN), label A3 — Validations sheet row 1: MinLength=11, MaxLength=11, Validation Rule2 validatePIN(). The 11-character letter+9-digit+letter pattern below reflects Kenya's well-known public KRA PIN format combined with the sourced 11-character length constraint; the workbook's own validatePIN() check is a compiled macro with no extractable literal regex, so this pattern is a disclosed supplementary convention, not literally read out of the workbook — see VERIFICATION.md.",
+      "validation": {
+        "pattern": "^[A-Z][0-9]{9}[A-Z]$",
+        "minLength": 11,
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "typeOfReturn",
+      "label": "Type of Return *",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this is an original or an amended return.",
+      "sourceRef": "A_Basic_Info!B4 (named range RetInf.RetType), label A4 — dropdown sourced from Data!D19:D20 (named range ReturnType): \"Original\", \"Amended\".",
+      "validation": {
+        "enum": [
+          "original",
+          "amended"
+        ]
+      }
+    },
+    {
+      "name": "returnPeriodFrom",
+      "label": "Return Period From *",
+      "type": "date",
+      "required": true,
+      "sourceRef": "A_Basic_Info!B5 (named range RetInf.RetStartDate), label A5."
+    },
+    {
+      "name": "returnPeriodTo",
+      "label": "Return Period To *",
+      "type": "date",
+      "required": true,
+      "sourceRef": "A_Basic_Info!B6 (named range RetInf.RetEndDate), label A6."
+    },
+    {
+      "name": "hasOtherIncomeThanEmployment",
+      "label": "Do you have any income other than employment income? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to the Business/Farming/Rental/Interest/Commission/Other income computation (B_Profit_Loss_Account_Self, C_Balance_Sheet, D_Stock_Analysis, E1/E2 Capital Allowances, and T_Income_Computation_Self's own six income-category columns), all out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B7 (named range RetInf.DeclareSelfBusIncome), label A7."
+    },
+    {
+      "name": "hasPartnershipIncome",
+      "label": "Do you have partnership income? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to G_Partnership_Income, out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B8 (named range RetInf.dispSec.PartnershipIncome), label A8."
+    },
+    {
+      "name": "hasEstateTrustIncome",
+      "label": "Do you have estate trust income? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to H_Estate_Trust_Income, out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B9 (named range dispSec.EstateTrustIncome), label A9."
+    },
+    {
+      "name": "employerProvidedCar",
+      "label": "Has your employer provided you with a car? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to I_Computation_of_Car_Benefit, out of scope for this employed-only v1.0.0 (the corresponding \"Value of Car Benefit\" rollup on F_Employment_Income is consequently always zero here — see that field's own description).",
+      "sourceRef": "A_Basic_Info!B10 (named range dispSec.CarBenefit), label A10."
+    },
+    {
+      "name": "hasMortgage",
+      "label": "Do you have a mortgage? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to J_Computation_of_Mortgage, out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B11 (named range dispSec.Mortgage), label A11."
+    },
+    {
+      "name": "hasHomeOwnershipSavingsPlan",
+      "label": "Do you have a Home Ownership Savings Plan? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to K_Home_Ownership_Saving_Plan, out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B12 (named range dispSec.OwnershipSaving), label A12."
+    },
+    {
+      "name": "hasLifeInsurancePolicy",
+      "label": "Do you have a life insurance policy? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to L_Computation_of_Insu_Relief, out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B13 (named range dispSec.InsuRelief), label A13."
+    },
+    {
+      "name": "hasCommercialVehicle",
+      "label": "Do you have a commercial vehicle? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to P_Advance_Tax_Credits (Advance Tax on Commercial Vehicle), out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B14 (named range dispSec.AdvanceTax), label A14."
+    },
+    {
+      "name": "earnsForeignIncome",
+      "label": "Do you earn any income from a foreign country? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to R_DTAA_Credits (double-taxation-agreement relief), out of scope for this employed-only v1.0.0.",
+      "sourceRef": "A_Basic_Info!B15 (named range dispSec.DTAA), label A15."
+    },
+    {
+      "name": "hasDisabilityExemptionCertificate",
+      "label": "Have you been issued the Exemption Certificate for disability? *",
+      "type": "boolean",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Gates the Section A Part 6 disability exemption certificate list below, which remains in scope (it lives on A_Basic_Info itself, not a separate excluded sheet). The resulting relief amount on T_Tax_Computation (line 12.3, \"Allowable Tax Exemption in case of Person with Disability\") is a macro-computed value this schema does not model as a field — see VERIFICATION.md.",
+      "sourceRef": "A_Basic_Info!B16 (named range RetInf.DeclareExemptionCerti), label A16."
+    },
+    {
+      "name": "disabilityExemptionCertificateNumber1",
+      "label": "Exemption Certificate Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDisabilityExemptionCertificate",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "description": "First of up to 2 disability exemption certificates (the sheet itself provides exactly 2 list rows). Required once hasDisabilityExemptionCertificate is true.",
+      "sourceRef": "A_Basic_Info!A68 (named range ExemptCerti.ListS, row 1 of 2), header at A67.",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "disabilityExemptionCertificateDateFrom1",
+      "label": "Date From",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDisabilityExemptionCertificate",
+        "equals": true
+      },
+      "sourceRef": "A_Basic_Info!B68 (named range ExemptCerti.ListS, row 1 of 2), header at B67."
+    },
+    {
+      "name": "disabilityExemptionCertificateDateTo1",
+      "label": "Date To",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDisabilityExemptionCertificate",
+        "equals": true
+      },
+      "sourceRef": "A_Basic_Info!C68 (named range ExemptCerti.ListS, row 1 of 2), header at C67."
+    },
+    {
+      "name": "disabilityExemptionCertificateNumber2",
+      "label": "Exemption Certificate Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Second of up to 2 disability exemption certificates, when the taxpayer holds more than one.",
+      "sourceRef": "A_Basic_Info!A69 (named range ExemptCerti.ListS, row 2 of 2).",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "disabilityExemptionCertificateDateFrom2",
+      "label": "Date From",
+      "type": "date",
+      "required": false,
+      "sourceRef": "A_Basic_Info!B69 (named range ExemptCerti.ListS, row 2 of 2)."
+    },
+    {
+      "name": "disabilityExemptionCertificateDateTo2",
+      "label": "Date To",
+      "type": "date",
+      "required": false,
+      "sourceRef": "A_Basic_Info!C69 (named range ExemptCerti.ListS, row 2 of 2)."
+    },
+    {
+      "name": "wantsToDeclareWifeIncome",
+      "label": "Do you want to declare Wife's Income? *",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "eligibleValues": [
+        false
+      ],
+      "description": "Routes to the entire spousal-declaration pathway (Wife's PIN, T_Income_Computation_Wife, and every Wife-suffixed field across A_Basic_Info/F_Employment_Income/M_Details_of_PAYE_Deducted/T_Tax_Computation) — out of scope for this v1.0.0, a materially larger companion-schema candidate given this workbook's joint/separate spousal filing support.",
+      "sourceRef": "A_Basic_Info!B17 (named range RetInf.DeclareWifeIncome), label A17."
+    },
+    {
+      "name": "bankName",
+      "label": "Bank Name",
+      "type": "string",
+      "required": false,
+      "description": "Optional bank details (Section A Part 2), used for any refund payment. Not conditioned on any other declaration — the source marks these fields Mandatory=N unconditionally.",
+      "sourceRef": "A_Basic_Info!D23 (named range BankDtl.BankNameS), label A23 — Validations sheet: MaxLength=15.",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "branchName",
+      "label": "Branch Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "A_Basic_Info!D24 (named range BankDtl.BranchNameS), label A24 — Validations sheet: MaxLength=15.",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "bankCity",
+      "label": "City",
+      "type": "string",
+      "required": false,
+      "sourceRef": "A_Basic_Info!B25 (named range BankDtl.CityS), label A25 — Validations sheet: MaxLength=15, validateAlphabetOnly.",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "accountHolderName",
+      "label": "Account Holder's Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "A_Basic_Info!B26 (named range BankDtl.AccNameS), label A26 — Validations sheet: MaxLength=15.",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "accountNumber",
+      "label": "Account Number",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "A_Basic_Info!B27 (named range BankDtl.AccNumberS), label A27 — Validations sheet: MaxLength=15.",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "employer1PIN",
+      "label": "PIN of Employer",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "First employer, of up to 2 the sheet itself provides rows for.",
+      "sourceRef": "F_Employment_Income!A3 (named range EmpIncome.ListS row 1 of 2), header at A2.",
+      "validation": {
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "employer1Name",
+      "label": "Name of Employer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "F_Employment_Income!B3 (named range EmpIncome.ListS row 1 of 2), header at B2.",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "employer1GrossPay",
+      "label": "Gross Pay (Ksh) (A)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!C3 (named range EmpIncome.ListS row 1 of 2), header at C2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer1AllowancesAndBenefits",
+      "label": "Allowances and Benefits from Employment (Other than Car and Housing) (Ksh) (B)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!D3 (named range EmpIncome.ListS row 1 of 2), header at D2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer1NetValueOfHousing",
+      "label": "Net Value of Housing (Ksh) (D)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!F3 (named range EmpIncome.ListS row 1 of 2), header at F2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer1PensionInExcessOf300000",
+      "label": "Pension if in excess of 300,000 (Ksh) (E)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!G3 (named range EmpIncome.ListS row 1 of 2), header at G2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer1TotalEmploymentIncome",
+      "label": "Total Employment Income (Ksh) (F) = (A+B+C+D+E)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as Gross Pay + Allowances/Benefits + Value of Car Benefit + Net Housing + Pension excess, per row; not entered directly. \"Value of Car Benefit\" (component C, column E on the source) is itself pulled from I_Computation_of_Car_Benefit, out of scope here, so it is always zero for this employed-only pathway.",
+      "sourceRef": "F_Employment_Income!H3 (named range EmpIncome.ListS row 1 of 2), header at H2 — formula =IF(COUNTBLANK(C3:G3)=5,\"\",SUM(C3:G3)).",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer2PIN",
+      "label": "PIN of Employer",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Second employer, of up to 2 the sheet itself provides rows for.",
+      "sourceRef": "F_Employment_Income!A4 (named range EmpIncome.ListS row 2 of 2), header at A2.",
+      "validation": {
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "employer2Name",
+      "label": "Name of Employer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "F_Employment_Income!B4 (named range EmpIncome.ListS row 2 of 2), header at B2.",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "employer2GrossPay",
+      "label": "Gross Pay (Ksh) (A)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!C4 (named range EmpIncome.ListS row 2 of 2), header at C2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer2AllowancesAndBenefits",
+      "label": "Allowances and Benefits from Employment (Other than Car and Housing) (Ksh) (B)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!D4 (named range EmpIncome.ListS row 2 of 2), header at D2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer2NetValueOfHousing",
+      "label": "Net Value of Housing (Ksh) (D)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!F4 (named range EmpIncome.ListS row 2 of 2), header at F2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer2PensionInExcessOf300000",
+      "label": "Pension if in excess of 300,000 (Ksh) (E)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!G4 (named range EmpIncome.ListS row 2 of 2), header at G2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employer2TotalEmploymentIncome",
+      "label": "Total Employment Income (Ksh) (F) = (A+B+C+D+E)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as Gross Pay + Allowances/Benefits + Value of Car Benefit + Net Housing + Pension excess, per row; not entered directly. \"Value of Car Benefit\" (component C, column E on the source) is itself pulled from I_Computation_of_Car_Benefit, out of scope here, so it is always zero for this employed-only pathway.",
+      "sourceRef": "F_Employment_Income!H4 (named range EmpIncome.ListS row 2 of 2), header at H2 — formula =IF(COUNTBLANK(C4:G4)=5,\"\",SUM(C4:G4)).",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "totalEmploymentIncomeAllEmployers",
+      "label": "Total",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as the sum of Total Employment Income across all declared employers (both rows); not entered directly.",
+      "sourceRef": "F_Employment_Income!H5, label A5 — formula =SUM(H3:OFFSET(EmpIncome.ListSTO,-1,0)).",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employmentIncomeJanuaryToMarch",
+      "label": "January - March: Income",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "The portion of total employment income earned in the January-March period, entered directly (used to apply the correct sub-period tax computation). The workbook's own validateJanDecIncome2020 check requires this plus employmentIncomeAprilToDecember to sum to totalEmploymentIncomeAllEmployers; that arithmetic constraint is disclosed here and in VERIFICATION.md rather than encoded, since the spec's crossFieldValidation grammar does not support a multi-field sum comparison.",
+      "sourceRef": "F_Employment_Income!H6 (named range EmpIncome.ListSTOJANMAR), label A6 — Validations sheet row 40: Mandatory Y.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "pensionJanuaryToMarch",
+      "label": "January - March: Pension",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!H7 (named range EmpIncome.ListSPENSJANMAR), label A7 — Validations sheet row 42: Mandatory Y.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employmentIncomeAprilToDecember",
+      "label": "April-December: Income",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "The portion of total employment income earned in the April-December period. See employmentIncomeJanuaryToMarch's description for the disclosed sum constraint against totalEmploymentIncomeAllEmployers.",
+      "sourceRef": "F_Employment_Income!H8 (named range EmpIncome.ListSTOAPRDEC), label A8 — Validations sheet row 40: Mandatory Y.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "pensionAprilToDecember",
+      "label": "April - December: Pension",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income!H9 (named range EmpIncome.ListSTOJanDecPensionSum's sibling input EmpIncome.ListSPENSAPRDEC), label A9 — Validations sheet row 42: Mandatory Y.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeEmployer1PIN",
+      "label": "PIN of Employer",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "First employer, of up to 2 the sheet itself provides rows for. Independent of F_Employment_Income's own employer list (the source workbook does not structurally link the two by PIN), though in practice they describe the same employer(s).",
+      "sourceRef": "M_Details_of_PAYE_Deducted!A3 (named range PayeDed.ListS row 1 of 2), header at A2.",
+      "validation": {
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "payeEmployer1Name",
+      "label": "Name of Employer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "M_Details_of_PAYE_Deducted!B3 (named range PayeDed.ListS row 1 of 2), header at B2.",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "payeEmployer1TaxableSalary",
+      "label": "Taxable Salary (Ksh)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted!C3 (named range PayeDed.ListS row 1 of 2), header at C2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeEmployer1TaxPayableOnTaxableSalary",
+      "label": "Tax Payable on Taxable Salary (Ksh) (A)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted!D3 (named range PayeDed.ListS row 1 of 2), header at D2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeEmployer1AmountOfTaxDeductedPAYE",
+      "label": "Amount of Tax Deducted (PAYE) (Ksh) (B)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted!E3 (named range PayeDed.ListS row 1 of 2), header at E2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeEmployer1AmountOfTaxPayableOrRefundable",
+      "label": "Amount of Tax Payable or Refundable (PAYE) (Ksh) (C) = (A-B)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as Tax Payable on Taxable Salary minus Amount of Tax Deducted (PAYE); not entered directly. Can be negative (a refundable amount).",
+      "sourceRef": "M_Details_of_PAYE_Deducted!F3 (named range PayeDed.ListS row 1 of 2), header at F2 — formula =IF(D3=\"\",\"\",IF(E3=\"\",\"\",ROUND(D3,2)-ROUND(E3,2)))."
+    },
+    {
+      "name": "payeEmployer2PIN",
+      "label": "PIN of Employer",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Second employer, of up to 2 the sheet itself provides rows for. Independent of F_Employment_Income's own employer list (the source workbook does not structurally link the two by PIN), though in practice they describe the same employer(s).",
+      "sourceRef": "M_Details_of_PAYE_Deducted!A4 (named range PayeDed.ListS row 2 of 2), header at A2.",
+      "validation": {
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "payeEmployer2Name",
+      "label": "Name of Employer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "M_Details_of_PAYE_Deducted!B4 (named range PayeDed.ListS row 2 of 2), header at B2.",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "payeEmployer2TaxableSalary",
+      "label": "Taxable Salary (Ksh)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted!C4 (named range PayeDed.ListS row 2 of 2), header at C2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeEmployer2TaxPayableOnTaxableSalary",
+      "label": "Tax Payable on Taxable Salary (Ksh) (A)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted!D4 (named range PayeDed.ListS row 2 of 2), header at D2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeEmployer2AmountOfTaxDeductedPAYE",
+      "label": "Amount of Tax Deducted (PAYE) (Ksh) (B)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted!E4 (named range PayeDed.ListS row 2 of 2), header at E2.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeEmployer2AmountOfTaxPayableOrRefundable",
+      "label": "Amount of Tax Payable or Refundable (PAYE) (Ksh) (C) = (A-B)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as Tax Payable on Taxable Salary minus Amount of Tax Deducted (PAYE); not entered directly. Can be negative (a refundable amount).",
+      "sourceRef": "M_Details_of_PAYE_Deducted!F4 (named range PayeDed.ListS row 2 of 2), header at F2 — formula =IF(D4=\"\",\"\",IF(E4=\"\",\"\",ROUND(D4,2)-ROUND(E4,2)))."
+    },
+    {
+      "name": "totalAmountOfTaxDeductedPAYESelf",
+      "label": "Total",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as the sum of Amount of Tax Deducted (PAYE) across all declared employers; not entered directly. Feeds T_Tax_Computation line 13.1 (PAYE Deducted from Salary).",
+      "sourceRef": "M_Details_of_PAYE_Deducted!E5, label A5 — formula =SUM(E3:OFFSET(PayeDed.ListSTO,-1,0)).",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "pensionContributionSelf",
+      "label": "Defined / Pension Contribution",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "The taxpayer's registered-pension-scheme contribution for the year, entered directly. Feeds Total Deduction (line 11) against employment income. The workbook does not state a statutory cap in a plain-text cell near this input, so none is asserted here.",
+      "sourceRef": "T_Tax_Computation!C5 (named range DedDtl.PensionS), line 11.1 label at B5 — Validations sheet: Mandatory N.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "personalReliefSelf",
+      "label": "Personal Relief",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "The taxpayer's personal relief amount, entered directly (not auto-computed by any in-sheet formula). Cell F18 carries a developer note reading \"Keep it 13,944 but make it configurable\" — disclosed here as an internal implementation note found in the workbook, not asserted as the current statutory relief amount (Kenya's statutory personal relief has changed over time; this schema does not invent or default a value). Feeds Total of Tax Payable Less Reliefs and Exemptions (line 12).",
+      "sourceRef": "T_Tax_Computation!C18 (named range TaxComp.PersonalReliefS), line 12.6 label at B18 — Validations sheet: Mandatory N.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "totalDeductionSelf",
+      "label": "Total Deduction (11.1+ Higher value of 11.2 or 11.3)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as Pension Contribution plus the higher of Mortgage Interest or Home Ownership Savings Plan deposit (both out of scope here, so effectively equal to pensionContributionSelf for this pathway); not entered directly.",
+      "sourceRef": "T_Tax_Computation!C3, line 11 label at B3 — formula =IF(C6>C7,C5+C6,C5+C7).",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "employmentIncomeSelfComputed",
+      "label": "Employment Income (\"Total Taxable Employment Income\" from F_Employement_Income)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as a direct copy of totalEmploymentIncomeAllEmployers from F_Employment_Income; not entered directly. Feeds Net Taxable Income (line 12.4).",
+      "sourceRef": "T_Tax_Computation!C11, line 12.1 label at B11 — formula =EmpIncome.ListSTO.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "taxPayableLessReliefsAndExemptionsSelf",
+      "label": "Total of Tax Payable Less Reliefs and Exemptions (12.5 - 12.6 - 12.7)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as Tax on Taxable Income minus Personal Relief minus Insurance Relief (the latter out of scope here), floored at zero; not entered directly.",
+      "sourceRef": "T_Tax_Computation!C9, line 12 label at B9 — formula references TaxComp.TaxPayableS, TaxComp.PersonalReliefS, TaxComp.InsReliefDtlsListSTO.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "netTaxableIncomeSelf",
+      "label": "Net Taxable Income (12.1+ 12.2+Line Number 9 (Consolidated) - 11-12.3)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook from Employment Income, Estate/Trust income (out of scope, always zero here), the consolidated non-employment computation from T_Income_Computation_Self (always zero for this employed-only pathway — see this document's own top-level description), Total Deduction, and the disability exemption amount (out of scope as a field, see hasDisabilityExemptionCertificate); not entered directly.",
+      "sourceRef": "T_Tax_Computation!C14, line 12.4 label at B14 — formula references TaxComp.EmpIncomeListSTO, TaxComp.TaxbleIncomeEstateS, TaxComp.ChargeableIncomeS, DedDtl.TotalDeductionS, TaxComp.ExemptedAmtS.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "taxOnTaxableIncomeSelf",
+      "label": "Tax on Taxable Income (12.4 *applicable rates)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook by applying Kenya's individual income tax bands to Net Taxable Income, via an external VBA macro function (getTotalTaxPayble) that is not present as a literal, reproducible spreadsheet formula — per this registry's convention, this schema does not attempt to reimplement that computation. The workbook does document the underlying rate bands as plain cell text (see sourceRef); not entered directly.",
+      "sourceRef": "T_Tax_Computation!C15, line 12.5 label at B15, formula = getTotalTaxPayble(TaxComp.NetTaxableIncomeS,SecA.RtnYear) — rate bands documented at F15: \"Tax Slabs: 0 to 1,21,968 (10%); 1,21,969 to 2,36,880 (15%); 2,36,881 to 3,51,792 (20%); 3,51,793 to 4,66,704 (25%); Over 4,66,704 (30%)\" (figures as printed in the workbook, Indian-style digit grouping; i.e. KES 121,968 / 236,880 / 351,792 / 466,704).",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "payeDeductedFromSalarySelfComputed",
+      "label": "PAYE Deducted from Salary (Total of \"Amount of Tax Deducted (PAYE)\" from M_Details_of_PAYE_Deducted)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as a direct copy of totalAmountOfTaxDeductedPAYESelf from M_Details_of_PAYE_Deducted; not entered directly. Feeds Tax Credits (line 13).",
+      "sourceRef": "T_Tax_Computation!C22, line 13.1 label at B22 — formula =PayeDed.ListSTO.",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "taxCreditsTotalSelf",
+      "label": "Tax Credits (13.1+13.2+13.3+13.4+13.5+13.6+13.7+13.8)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Computed by the workbook as the sum of lines 13.1 through 13.8; for this employed-only pathway every component except 13.1 (PAYE Deducted from Salary) is out of scope and zero (estate/trust credit, installment tax, withholding tax, advance tax on commercial vehicle, income tax paid in advance, DTAA credits, and rental withholding tax), so this reduces to payeDeductedFromSalarySelfComputed here; not entered directly.",
+      "sourceRef": "T_Tax_Computation!C21, line 13 label at B21 — formula =SUM(C22:C29).",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999999999999999
+      }
+    },
+    {
+      "name": "taxDueOrRefundDueSelf",
+      "label": "Tax Due / (Refund Due) ((12 (Self) + 12 (Wife) - 13(Self) - 13 (Wife))",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "The workbook's own bottom-line filing outcome, computed as Total of Tax Payable Less Reliefs and Exemptions minus Tax Credits (the Wife terms are always zero for this employed-only, non-joint-filing pathway); not entered directly. Can be negative, representing a refund due.",
+      "sourceRef": "T_Tax_Computation!C31, line 14 label at B31 — formula =ROUND(TaxComp.TotTaxableIncomeLessRlfS,2)+ROUND(TaxComp.TotTaxableIncomeLessRlfW,2)-ROUND(CreditIncome.TotalTaxCreditS,2)-ROUND(CreditIncome.TotalTaxCreditW,2)."
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "returnPeriodOrder",
+      "compare": {
+        "field": "returnPeriodTo",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "returnPeriodFrom"
+      }
+    }
+  ]
+}

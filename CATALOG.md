@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **381 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **382 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2535/GOV-2533, "GovSchema Standard Research"):
+> Kenya's Taxes vertical opens (3 of 6)**, via
+> `ke/kra/it1-individual-resident-return` v1.0.0, sourced from the Kenya
+> Revenue Authority's `IT1_Individual_Resident_Return` Excel workbook (an
+> offline data-entry template later uploaded through iTax), modelling the
+> employed-resident-individual filing pathway. This was already this
+> catalog's own standing, previously-corrected Known Gaps candidate (item
+> 21): GOV-2500 first identified it (citing an unconfirmed "19.0.3/March
+> 2026" internal version), GOV-2507 wrongly reversed it to a dead end after
+> finding one encrypted sibling file, and GOV-2517 corrected that reversal
+> by finding two live, unauthenticated, unencrypted siblings on the same
+> host. This cycle re-fetched the sibling GOV-2517 named as workable
+> (`IT1_Individual_Resident_Return_18.0.1latest.xls`) fresh and independently:
+> HTTP 200, 3,323,904 bytes,
+> `sha256:7c85241bbabc797b9e3c6b708209a32866c4ec9131f9d845d0b87c9734e939e2`
+> — exactly matching the byte size/hash already on record — opened cleanly
+> with the `xlsx` npm library (34 sheets confirmed by name), and resolved
+> the standing version-number question: cell `A_Basic_Info!I1` reads
+> `18.0.1`, matching the live filename itself, so GOV-2500's "19.0.3" claim
+> was a citation error rather than a real prior edition. Extraction
+> cross-correlated the workbook's own sparse row/column layout against its
+> 1,875 Defined Names and its `Validations`/`ValidationList` reference
+> sheets (mandatory flags, format rules, and per-column list definitions),
+> and used `{cellFormula:true}` inspection to separate genuine free-text
+> input cells from macro/formula-computed rollups. 68 `fields[]` across
+> `A_Basic_Info`, `F_Employment_Income`, `M_Details_of_PAYE_Deducted`, and
+> `T_Tax_Computation`; the fifth named sheet, `T_Income_Computation_Self`,
+> was found to contribute zero fields to this pathway — a disclosed
+> structural finding (its every amount cell is a formula rollup of the
+> excluded business/farming/rental/partnership income categories) rather
+> than an oversight. Nine "do you have X income/benefit" declarations are
+> modelled via `fieldRole: eligibility`/`eligibleValues: [false]`, routing
+> the self-employed/business, partnership, estate/trust, car-benefit,
+> mortgage, Home Ownership Savings Plan, life-insurance, commercial-vehicle,
+> and foreign/DTAA-income pathways out of scope for this v1.0.0, alongside
+> the entire spousal/joint-filing pathway (`wantsToDeclareWifeIncome`,
+> `eligibleValues: [false]`) — each flagged as a future companion-schema
+> candidate. See the document's own VERIFICATION.md for the full sourcing
+> record, every scoping/disclosure judgment call (the KRA-PIN pattern, the
+> Tax Slabs annotation cited but not reimplemented, the disclosed-not-encoded
+> Jan-Mar/Apr-Dec sum constraint), and the conformance run writeup (2 valid
+> fixtures, 0 errors each; 5 mutation-control fixtures, exactly 1 error
+> each). **Kenya now stands at 3 of 6 verticals** (Business Formation,
+> National ID, Taxes); Passport, DMV, and Visa remain confirmed dead ends
+> per GOV-2500's scouting (fully online, login/payment-gated processes with
+> no unauthenticated specimen).
 
 > **Update (2026-07-12, GOV-2526, "GovSchema Standard Research"): Rwanda
 > opens as this registry's 43rd jurisdiction**, via its DMV vertical (1 of
@@ -7465,7 +7512,36 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (35/40 jurisdictions — 88%)
+### Taxes — Income Tax Return, Tax Filing (36/40 jurisdictions — 90%)
+
+**Kenya's Taxes vertical opens** (`ke/kra/it1-individual-resident-return`,
+GOV-2535/GOV-2533) — the Kenya Revenue Authority's
+`IT1_Individual_Resident_Return` Excel workbook, an offline data-entry
+template later uploaded through the iTax portal, modelling the
+employed-resident-individual filing pathway (no business/farming,
+partnership, estate/trust, car benefit, mortgage, HOSP, life insurance,
+commercial vehicle, foreign/DTAA income, or spousal/joint filing). This was
+already this catalog's own standing Known Gaps candidate (item 21, itself a
+correction of a same-day wrong "reversed to dead end" claim — see the Known
+Gaps section below); this cycle re-fetched the workbook fresh and
+independently (HTTP 200, 3,323,904 bytes,
+`sha256:7c85241bbabc797b9e3c6b708209a32866c4ec9131f9d845d0b87c9734e939e2`,
+34 sheets confirmed by name) and resolved the catalog's own standing
+"suspect" version-number flag: cell `A_Basic_Info!I1` reads `18.0.1`,
+matching the live filename, not the previously-cited, uncorroborated
+"19.0.3". 68 `fields[]` were extracted across `A_Basic_Info`,
+`F_Employment_Income`, `M_Details_of_PAYE_Deducted`, and
+`T_Tax_Computation` by cross-correlating the workbook's own Defined Names
+and its `Validations`/`ValidationList` reference sheets and by using
+`{cellFormula:true}` inspection to separate raw-entry cells from
+macro/formula-computed rollups; the fifth named sheet,
+`T_Income_Computation_Self`, was found to contribute zero fields to this
+pathway (a disclosed structural finding — its every cell is a formula
+rollup of the excluded business/farming/rental/partnership income
+categories). See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record and every disclosed
+scoping/judgment call. **Kenya now stands at 3 of 6 verticals** (Business
+Formation, National ID, Taxes).
 
 **Peru's Taxes vertical opens** (`pe/sunat/formulario-virtual-709-declaracion-renta`,
 GOV-2465) — SUNAT's Formulario Virtual N° 709, "Declaración Jurada Anual
@@ -8650,7 +8726,7 @@ now closed.
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KE** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -9921,7 +9997,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     that applies both ways: a "genuine, strong candidate" note can turn out
     wrong on fresh re-verification, and so can a same-day reversal of one —
     verify each sub-claim independently rather than accepting a bundled
-    finding as one unit.
+    finding as one unit. **[This candidate was authored at
+    GOV-2535/GOV-2533, "Kenya's Taxes vertical opens (3/6)" — see the
+    Executive Summary update above; it is no longer open backlog. The
+    re-fetch there also resolved the "19.0.3/March 2026" version-number
+    question: the workbook's own `A_Basic_Info!I1` cell reads `18.0.1`,
+    matching the live filename, so "19.0.3" was a citation error, not a
+    real prior edition.]**
 22. **Rwanda scouted as a 42nd-jurisdiction candidate (GOV-2507), not
     authored yet — remains genuine, ready-to-author backlog for a future
     cycle.** (Nigeria, scouted alongside Rwanda in the same GOV-2507 pass,
