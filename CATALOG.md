@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**39 jurisdictions** | **374 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**39 jurisdictions** | **375 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2479, "GovSchema Standard Research"): Vietnam's
+> DMV vertical opens (4 of 6)**, via `vn/bca/to-khai-dang-ky-xe` v1.0.0,
+> sourced from Mẫu ĐKX10, "Giấy khai đăng ký xe" (Vehicle Registration
+> Declaration), issued under Thông tư 79/2024/TT-BCA (Ministry of Public
+> Security). Flagged as a strong, ready-to-author backlog candidate in the
+> prior GOV-2472 cycle; this cycle independently re-verified it from
+> scratch rather than trusting that finding. Fetched directly from
+> `files.thuvienphapluat.vn`'s own CDN (HTTP 200, no login gate, 44,032
+> bytes, genuine OLE2/Compound-File-Binary header, `sha256:
+> eb94a4d2211c7a1817f3eef821a4e3e25fad2c86713c116b06c0257494de781d`),
+> extracted via the same raw UTF-16LE byte-level decode `vn/gdt`'s own
+> VERIFICATION.md documents for a legacy `.doc` with no fillable tooling
+> available in this sandbox. A legal-currency check (searching "Thông tư
+> 79/2024/TT-BCA" + "sửa đổi"/"thay thế"/"bổ sung") surfaced a genuine
+> three-circular amendment chain to the parent circular (Thông tư
+> 13/2025/TT-BCA, Thông tư 51/2025/TT-BCA, and the newer Thông tư
+> 37/2026/TT-BCA) — but each was independently checked against Mẫu ĐKX10
+> itself, and none touches this specific appendix (Thông tư 51/2025/TT-BCA
+> replaces a different appendix and amends three sibling forms, ĐKX07/08/09;
+> Thông tư 37/2026/TT-BCA adds an unrelated inspection-certificate template,
+> Mẫu KĐ23a; a July-2025-current consolidated text confirms ĐKX10 remains
+> as originally issued). This schema models the form's full 3-page
+> structure — the page 1 owner/vehicle-characteristics declaration, page
+> 2's electronic vehicle-origin and registration-fee data (populated
+> automatically from linked government databases per the form's own
+> instructions, filled in manually only when absent), and page 3's
+> electronic-invoice data — deliberately not re-declaring the vehicle-
+> characteristics values page 2/3 duplicate from page 1, nor the
+> registration-office-internal verification block. 78 `fields[]`, 2
+> `documents[]` (an attestation and a conditionally disclosed chain-of-sale
+> supporting-evidence entry). Two mock conformance scenarios (a first-time
+> registration with full electronic linkage; an ownership transfer with an
+> authorized agent and an incomplete chain-of-sale disclosure) found 0
+> errors each, plus 3 mutation controls (a missing required field, an
+> `originType` enum violation, and a missing required document) each
+> correctly raised exactly 1 error. **Vietnam now stands at 4 of 6
+> verticals** (Business Formation, Passport, Taxes, DMV); Visa (Mẫu NA1,
+> pre-scouted and still flagged ready-to-author) and National ID (a
+> confirmed dead end) remain — see the DMV vertical section and the
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-12, GOV-2472, "GovSchema Standard Research"): Uruguay's
 > Visa vertical opens (3 of 6)**, via
@@ -6312,7 +6353,14 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (36/39 jurisdictions — 92%)
+### DMV — Vehicle Registration, Licensing, Permits (37/39 jurisdictions — 95%)
+
+**Vietnam's DMV vertical opens (4 of 6) (GOV-2479)**, via
+`vn/bca/to-khai-dang-ky-xe` (Mẫu ĐKX10, "Giấy khai đăng ký xe," issued under
+Thông tư 79/2024/TT-BCA, Bộ Công an/Ministry of Public Security). See the
+Executive Summary update above and the document's own VERIFICATION.md for
+the full sourcing record, the legal-currency check across the circular's
+three-amendment chain, and every disclosed scoping/judgment call.
 
 **Uruguay's DMV vertical opens (2 of 6) (GOV-2456)**, via
 `uy/imm/empadronamiento-vehiculos-nacionales` (Formulario F19,
@@ -8253,7 +8301,7 @@ now closed.
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **VN** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **VN** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
@@ -9402,6 +9450,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     6 (Business Formation, Passport, Taxes), with DMV (ĐKX10) and Visa (NA1)
     both flagged as strong, ready-to-author candidates for an immediate
     follow-up cycle.
+16. **Vietnam's DMV vertical opens (4 of 6) (GOV-2479)**, via
+    `vn/bca/to-khai-dang-ky-xe`, Mẫu ĐKX10 ("Giấy khai đăng ký xe," Thông tư
+    79/2024/TT-BCA) — the candidate flagged as ready-to-author in item 15
+    above, this time independently re-verified from scratch rather than
+    taken on faith. A fresh legal-currency check found a genuine
+    three-circular amendment chain to the parent Thông tư (13/2025/TT-BCA,
+    51/2025/TT-BCA, and the newer 37/2026/TT-BCA) but confirmed none of the
+    three touches Mẫu ĐKX10 itself. See the Executive Summary update above
+    and the document's own VERIFICATION.md for the full sourcing record.
+    Vietnam now stands at 4 of 6 verticals (Business Formation, Passport,
+    Taxes, DMV); Visa (Mẫu NA1) remains a ready-to-author backlog candidate,
+    and National ID remains a confirmed dead end.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
