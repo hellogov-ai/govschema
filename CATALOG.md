@@ -4,8 +4,52 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **387 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **388 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-12, GOV-2585, "GovSchema Standard Research"): Rwanda's
+> Business Formation vertical opens (3 of 6)**, via
+> `rw/rdb/rf-001-domestic-company-application-for-incorporation`, the Rwanda
+> Development Board's (RDB) "RF-001 Domestic Company Application Form for
+> Incorporation", a candidate pre-scouted and confirmed strong in GOV-2569's
+> research cycle but left unauthored until now. Independently re-fetched the
+> source directly this cycle: HTTP 200, `application/pdf`, 1,218,128 bytes,
+> `sha256:
+> 0bbcfa32fc17ea7d38365575bcadf72a7948c029bacd020e505757396700da8b` —
+> matching the issue's own cited hash and size exactly. A 10-page, 18-
+> numbered-section specimen with a real, position-anchored text layer but
+> **0 AcroForm widgets** (confirmed via `pdfjs-dist`), like `rw/dgie`'s Visa
+> specimen — a flat, print-and-hand-fill form despite its 1.2MB size (the
+> weight comes from embedded fonts/graphics, not a scanned image). Models
+> the shared form's full printed breadth: the Registration-reason and
+> Category (company-type) selectors; company Identification; the filing
+> Applicant; Head office address; an optional Chairman of the board; the
+> Managing director; an optional Company employee/secretary; a bounded
+> 2-slot Member of the board group; optional Auditor and Accountant blocks
+> (each a Person-or-Organization alternative); a bounded 3-slot Business
+> activities group (flattened from the source's own unbounded ~17-row
+> table); company-level Capital information (a 5-subtype share table plus a
+> Guarantee type/Amount table, each `requiredWhen` the selected Category
+> implies shares or a guarantee respectively); a first Subscriber slot and a
+> first Guarantor slot (each Person-or-Organization, bounded to 1 slot per
+> the source's own "Add more pages as needed" note); and the
+> Amalgamation/Declaring-to-be-dormant/Dissolution sections, each
+> `requiredWhen` the matching Registration-reason value. 256 `fields[]`
+> entries and 19 `documents[]` entries (18 checklist attachments plus the
+> printed certification statement). One modelling bug was caught and fixed
+> during this cycle's own conformance-fixture testing: an earlier draft
+> `requiredWhen`-gated all 5 share-table subtypes identically, which a
+> from-scratch positive fixture (a single-ordinary-share-class
+> incorporation) correctly flagged as over-strict (8 spurious errors) before
+> the gating was narrowed to only the Ordinary-share row. Two mock
+> conformance scenarios (a Limited-by-shares-private incorporation with a
+> single individual subscriber; a Limited-by-guarantee-private incorporation
+> exercising the full officer roster) found 0 errors each, and 5 mutation-
+> control fixtures each raised exactly 1 error. **Rwanda now stands at 3 of
+> 6 verticals** (DMV, Visa, Business Formation); Passport, Taxes, and
+> National ID remain open. See GOV-2585 and this schema's own
+> `VERIFICATION.md` for the full sourcing record and every scoping/
+> disclosure judgment call.
+>
 > **Update (2026-07-12, GOV-2577, "GovSchema Standard Research"): Nigeria's
 > Passport vertical closes (5 of 6)**, via
 > `ng/nis/application-for-nigeria-standard-passport`, the Nigeria
@@ -7246,7 +7290,29 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (38/42 jurisdictions — 90%)
+### Business Formation — Incorporation, LLC, Company Registration (40/43 jurisdictions — 93%)
+
+**Rwanda's Business Formation vertical opens (3 of 6) (GOV-2585)**, via
+`rw/rdb/rf-001-domestic-company-application-for-incorporation` — the Rwanda
+Development Board (RDB)'s "RF-001 Domestic Company Application Form for
+Incorporation," a candidate pre-scouted and confirmed strong in GOV-2569's
+research cycle but left unauthored until now. A 10-page, 18-section
+specimen carrying a real text layer but 0 AcroForm widgets (confirmed via
+`pdfjs-dist`), like `rw/dgie`'s Visa specimen. Models the shared form's full
+printed breadth (Registration-reason/Category selectors, company
+Identification, Applicant, Head office address, an optional Chairman, the
+Managing director, an optional Company secretary, a bounded 2-slot Member-
+of-the-board group, optional Auditor/Accountant Person-or-Organization
+blocks, a bounded 3-slot Business activities group, company-level Capital
+information gated on Category, a first Subscriber and first Guarantor slot,
+and the Amalgamation/Dormancy/Dissolution sections each gated on
+Registration-reason) as 256 `fields[]` + 19 `documents[]` entries. See the
+Executive Summary's GOV-2585 update above for the full sourcing record,
+including a modelling bug (over-strict share-subtype gating) caught and
+fixed via this cycle's own conformance-fixture testing, and the document's
+own VERIFICATION.md for every scoping/disclosure judgment call. Rwanda now
+stands at 3 of 6 verticals (DMV, Visa, Business Formation); Passport,
+Taxes, and National ID remain open.
 
 **Nigeria opens as this registry's 42nd jurisdiction via this vertical
 (GOV-2518)**, via
@@ -9030,7 +9096,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RW** | 2 | ✗ | ✓ | ✗ | ✗ | ✓ | ✗ |
+| **RW** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -10568,6 +10634,35 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     affidavit and two statutory declarations. **Nigeria now stands at 5 of
     6 verticals** (Business Formation, Taxes, Visa, National ID, Passport);
     DMV remains the sole confirmed dead end.
+23. **Rwanda's Business Formation gap is now closed too (GOV-2585)**, via
+    `rw/rdb/rf-001-domestic-company-application-for-incorporation` — RDB's
+    "RF-001 Domestic Company Application Form for Incorporation," the
+    candidate scouted and confirmed strong in item 21 above but left
+    unauthored. Independently re-fetched the source directly this cycle
+    (HTTP 200, `application/pdf`, 1,218,128 bytes,
+    `sha256:0bbcfa32fc17ea7d38365575bcadf72a7948c029bacd020e505757396700da8b`
+    — matching the prior scouting citation exactly), and confirmed via
+    `pdfjs-dist` that this 10-page, 18-numbered-section specimen carries a
+    real, position-anchored text layer but **0 AcroForm widgets** (the
+    1.2MB size is embedded fonts/graphics, not a scanned image) — the same
+    flat, print-and-hand-fill pattern as `rw/dgie`'s Visa specimen. Models
+    the shared form's full printed breadth (Registration-reason/Category
+    selectors, company Identification, the filing Applicant, Head office
+    address, an optional Chairman, the Managing director, an optional
+    Company secretary, a bounded 2-slot Member-of-the-board group, optional
+    Auditor/Accountant Person-or-Organization blocks, a bounded 3-slot
+    Business activities group, company-level Capital information gated on
+    Category, a first Subscriber and first Guarantor slot, and the
+    Amalgamation/Dormancy/Dissolution sections each gated on
+    Registration-reason) as 256 `fields[]` + 19 `documents[]` entries. Two
+    mock conformance scenarios found 0 errors each, plus 5 mutation
+    controls each correctly raised exactly 1 error — after this cycle's own
+    fixture testing caught and fixed an over-strict share-subtype gating
+    bug in an earlier draft. See the Executive Summary update above and
+    the document's own VERIFICATION.md for the full sourcing record and
+    every disclosed scoping/judgment call. **Rwanda now stands at 3 of 6
+    verticals** (DMV, Visa, Business Formation); Passport, Taxes, and
+    National ID remain open, unscreened backlog for a future cycle.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
