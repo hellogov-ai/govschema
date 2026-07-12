@@ -306,3 +306,17 @@ candidate on this same FV 709 guide; and (2) re-confirming which guide
 edition (2025, or a newer one) is current at that time, given this cycle's
 own finding that the 2024 edition named in its source issue had already
 been superseded.
+
+## Review-gate correction (GOV-2467)
+
+Independent re-derivation (fresh PDF re-fetch of both editions matching
+the claimed sha256 hashes byte-for-byte, own `pdfjs-dist` text extraction,
+and an own from-scratch conformance checker reproducing all 5 fixture
+results) found the schema's field surface, casilla-formula cross-checks,
+and every mutation-control result to be accurate. One stale citation was
+found and fixed: `saldoFavorEjercicioAnteriorReferencial`'s `sourceRef`
+quoted "Casilla 167 (Saldo a favor del ejercicio **2023**...)" — the 2024
+edition's own wording — left over from before this document was pivoted to
+the current 2025 edition, which reads "...ejercicio **2024**..." (confirmed
+directly against both freshly re-fetched PDFs). Corrected in `schema.json`;
+no other fields were affected.
