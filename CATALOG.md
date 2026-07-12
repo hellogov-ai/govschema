@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**38 jurisdictions** | **368 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**38 jurisdictions** | **369 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2434, "GovSchema Standard Research"): Peru's
+> DMV vertical opens (3 of 6)**, via
+> `pe/mtc/solicitud-licencia-conducir-012-17` v1.0.0, sourced from Formulario
+> 012/17.03, "Solicitud - Licencias de Conducir," published by the Ministerio
+> de Transportes y Comunicaciones' (MTC) Dirección de Circulación Vial (DCV).
+> CATALOG.md's own "Known Gaps" section (items 11-13, across the GOV-2404/
+> GOV-2419/GOV-2426 cycles) had named MTC's driver's-licence application as
+> Peru's strongest pre-scouted DMV candidate but never actually fetched or
+> field-extracted it. This cycle did, and found the candidate more layered
+> than the one-line note suggested: `portal.mtc.gob.pe`, the only host
+> serving the current form, is unreachable from this environment at the TCP
+> level (a network/infrastructure limitation, not a login gate or WAF), so
+> the form was retrieved via a Wayback Machine capture whose SHA-1 content
+> digest is identical across eight crawls spanning 2022-06-30 through
+> 2025-06-28 — three years unchanged — independently corroborated current by
+> a 2026-01-16 crawl of MTC's own TUPA entry for procedure DCV-037, which
+> cites "Formulario PDF: 012/17.03" by name. A `gob.pe`-mirrored older
+> revision (unversioned "012/17," missing an entire Notificación section
+> added by a 2019 legal requirement) turned out to be a superseded circular,
+> the same pattern this registry caught in `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc`
+> (GOV-2404). Neither revision carries an AcroForm widget; both are genuine,
+> unauthenticated, text-layer PDFs. The form is a single "menu" cover sheet
+> spanning ~20 DCV procedure codes (first issuance, renewal, category
+> upgrade, military/diplomatic/refugee exchange, duplicate, information
+> correction, hazmat endorsement); this schema scopes its 27 `fields[]` to
+> the nine procedure codes most relevant to an individual citizen obtaining,
+> renewing, upgrading, or replacing their own Clase A licence, disclosing the
+> military/diplomatic/refugee/foreign-exchange/MATPEL/correction codes as out
+> of scope. Two mock conformance scenarios (a first-time Clase A Categoría I
+> applicant; a Categoría IIIA duplicate request after theft) found **0
+> errors** each, plus 3 mutation controls (missing required field, an email
+> pattern violation, a `requiredWhen`-gated licence-category field left
+> absent) each correctly raised exactly 1 error class. **Peru now stands at
+> 3 of 6 verticals** (Visa, Business Formation, DMV); Taxes remains
+> Clave-SOL-login-gated, and Passport/National ID remain
+> appointment/biometric-gated — see the Known Gaps section below. See
+> `pe/mtc/solicitud-licencia-conducir-012-17`'s own VERIFICATION.md for the
+> full sourcing record and every disclosed judgment call.
 
 > **Update (2026-07-12, GOV-2426, "GovSchema Standard Research"): Peru's
 > Business Formation vertical opens (2 of 6)**, via
@@ -6056,7 +6095,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (33/38 jurisdictions — 87%)
+### DMV — Vehicle Registration, Licensing, Permits (34/38 jurisdictions — 89%)
 
 **Finland's DMV vertical is now closed (GOV-2356)**, via
 `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — Traficom's
@@ -6328,7 +6367,17 @@ interactively. **Norway** (`no/vegvesen/soknad-om-forerkort-og-kompetansebevis`,
 GOV-2330) is new this cycle — Statens vegvesen's combined driving-licence/
 competence-certificate application form, incl. a 17-question health
 self-declaration, closing Norway's DMV vertical (Visa is Norway's only
-remaining open vertical). Remaining gaps are all **sub-process/edition** expansions
+remaining open vertical). **Peru** (`pe/mtc/solicitud-licencia-conducir-012-17`,
+GOV-2434) is new this cycle — MTC's Dirección de Circulación Vial (DCV)
+driver's-licence application, Formulario 012/17.03, "Solicitud - Licencias
+de Conducir," a single cover form spanning ~20 procedure codes (first
+issuance, renewal, category upgrade, exchange, duplicate, correction,
+hazmat endorsement); this schema scopes to the nine codes relevant to an
+individual obtaining/renewing/upgrading/replacing their own Clase A licence.
+The canonical `portal.mtc.gob.pe` host is unreachable at the TCP level from
+this environment, so the form was retrieved via a Wayback Machine capture
+whose content digest is unchanged across three years of crawls, corroborated
+current by MTC's own TUPA procedure entry for DCV-037. Remaining gaps are all **sub-process/edition** expansions
 within an already-covered vertical:
 
 - **CDL (commercial driver licence):** only `us/ca/dmv/commercial-drivers-license-application` exists. No CDL-equivalent schema yet for GB (HGV/PCV — `gb/dvla/lorry-bus-provisional-licence` is the closest analogue), DE, FR, IE, IN, NL, NZ, SG, ZA.
@@ -6339,6 +6388,7 @@ within an already-covered vertical:
 - **Mexico:** only the foráneo (out-of-state) private-vehicle registration pathway is modelled (`mx/semovi/alta-vehiculo-foraneo`, GOV-1435); a brand-new-from-dealer registration pathway and driver-licence issuance are open sub-process candidates for a future cycle.
 - **Philippines:** only the Type A ("new") SP/DL/CL pathway is modelled (`ph/lto/drivers-license-application`, GOV-1519); the other ten `typeOfApplication` transaction types (renewal, conversion of foreign licence, additional code/category, etc.) share the same form but their distinct downstream document requirements are open sub-process candidates for a future cycle.
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
+- **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
 ### Business Formation — Incorporation, LLC, Company Registration (34/38 jurisdictions — 89%)
 
@@ -7907,7 +7957,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PE** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **PE** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -8985,6 +9035,37 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     National ID (RENIEC DNI) remain appointment/biometric-gated. See
     `pe/sunat/solicitud-inscripcion-ruc-persona-natural`'s own
     VERIFICATION.md for the full sourcing record.
+14. **Peru's DMV vertical opens (3 of 6) (GOV-2434)**, via
+    `pe/mtc/solicitud-licencia-conducir-012-17` (Formulario 012/17.03,
+    "Solicitud - Licencias de Conducir," Ministerio de Transportes y
+    Comunicaciones' Dirección de Circulación Vial). This is the same
+    candidate items 12-13 named but had never actually fetched. It turned
+    out to be genuine but more layered: the only host serving the current
+    revision, `portal.mtc.gob.pe`, is unreachable from this environment at
+    the TCP level (times out on every attempt, including a bare handshake —
+    an infrastructure limitation, not a login/CAPTCHA/WAF gate), so the form
+    was retrieved via a Wayback Machine capture whose SHA-1 content digest
+    (`UE6SELZNJWXPDVKQS2SVPY6UKLGOUOWV`) is identical across eight crawls
+    from 2022-06-30 through 2025-06-28, independently corroborated current
+    by a 2026-01-16 crawl of MTC's own TUPA entry for procedure DCV-037
+    (which names "Formulario PDF: 012/17.03" directly). A `gob.pe`-mirrored
+    older revision (unversioned "012/17," missing an entire Rubro añadido by
+    a 2019 Sistema de Casillas Electrónicas legal requirement) turned out to
+    be a superseded circular — the same pattern this registry caught in
+    `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc` (GOV-2404).
+    Neither revision carries an AcroForm widget. The form is a single
+    "menu" cover sheet spanning ~20 DCV procedure codes; this schema scopes
+    to the nine codes relevant to an individual obtaining, renewing,
+    upgrading, or replacing their own Clase A licence, disclosing the
+    military/police, diplomatic, refugee/asylum, foreign-licence-exchange,
+    MATPEL hazardous-materials-endorsement, and information-correction
+    codes as out of scope. Peru now stands at 3 of 6 verticals (Visa,
+    Business Formation, DMV); Taxes (SUNAT) remains Clave-SOL-login-gated;
+    Passport (Migraciones) and National ID (RENIEC DNI) remain
+    appointment/biometric-gated. See
+    `pe/mtc/solicitud-licencia-conducir-012-17`'s own VERIFICATION.md for
+    the full sourcing record, the checkbox-matrix reconstruction method, and
+    every disclosed judgment call.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
