@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **381 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **382 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2535, "GovSchema Standard Research"): Kenya's
+> Taxes vertical closes (3 of 6)**, via
+> `ke/kra/it1-individual-resident-return`, the Kenya Revenue Authority
+> (KRA)'s "IT1 Individual Resident Return" Excel workbook (edition 18.0.1;
+> a genuinely live, unencrypted 34-sheet .xls, independently re-fetched and
+> re-hashed this cycle — `sha256:
+> 7c85241bbabc797b9e3c6b708209a32866c4ec9131f9d845d0b87c9734e939e2`). This
+> was Kenya's sole remaining open, previously-scouted-in-depth vertical
+> candidate (Passport, DMV, and Visa were already confirmed dead ends in
+> the GOV-2500 cycle); a same-cycle GOV-2517 correction had already
+> restored this candidate to the open backlog after an intervening
+> reversal wrongly called it a dead end. This schema deliberately bounds
+> scope to the workbook's "employed resident individual" filing pathway
+> across 5 of its 34 sheets (`A_Basic_Info`, `F_Employment_Income`,
+> `M_Details_of_PAYE_Deducted`, `T_Income_Computation_Self`,
+> `T_Tax_Computation`), covering 86 `fields[]` with a bounded 2-employer
+> repeating group spanning the employment-income and PAYE-deducted sheets.
+> Every self-employment/business-income, farming, partnership, estate/
+> trust, capital-allowance, and tax-credit schedule, plus the workbook's
+> entire mirrored spousal ("Wife") filing pathway, is out of scope and
+> disclosed as a companion-schedule candidate for a future cycle. Two
+> disclosed ambiguities the source itself leaves unresolved (an author
+> comment questioning whether the mortgage-interest and home-ownership-
+> savings-plan deductions are mutually exclusive; an author comment
+> flagging the embedded Ksh 13,944 personal-relief figure as a
+> configurable template default, not an asserted-current legal amount) are
+> quoted verbatim rather than silently resolved. Two mock conformance
+> scenarios (a single-employer taxpayer with a small tax payable; a
+> two-employer taxpayer with a disability exemption certificate and a
+> refund due) found 0 errors each, plus 3 mutation controls (a missing
+> required field, and two missing `requiredWhen`-gated fields) each
+> correctly raised exactly 1 error. See the document's own VERIFICATION.md
+> for the full sourcing record and every disclosed scoping/judgment call.
+> **Kenya now stands at 3 of 6 verticals** (Business Formation, National
+> ID, Taxes); Passport, DMV, and Visa remain confirmed dead ends, so no
+> vertical remains open-and-unscreened for Kenya.
 
 > **Update (2026-07-12, GOV-2526, "GovSchema Standard Research"): Rwanda
 > opens as this registry's 43rd jurisdiction**, via its DMV vertical (1 of
@@ -7465,7 +7502,46 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (35/40 jurisdictions — 88%)
+### Taxes — Income Tax Return, Tax Filing (36/40 jurisdictions — 90%)
+
+**Kenya's Taxes vertical closes** (`ke/kra/it1-individual-resident-return`,
+GOV-2535) — the Kenya Revenue Authority (KRA)'s "IT1 Individual Resident
+Return", a genuinely live, unencrypted, 34-sheet Excel (.xls) workbook
+(edition 18.0.1) directly downloadable from `kra.go.ke`, independently
+re-fetched and re-hashed this cycle (`sha256:
+7c85241bbabc797b9e3c6b708209a32866c4ec9131f9d845d0b87c9734e939e2`; a
+newer-numbered sibling edition, 18.0.9-2024, was cross-checked and found
+materially identical for this schema's in-scope content, while a
+differently-named sibling remains genuinely password-encrypted and was not
+used). Kenya's own prior cycle (GOV-2500) had already confirmed Passport,
+DMV, and Visa as dead ends, leaving Taxes as Kenya's sole open,
+previously-scouted-in-depth candidate — and a same-cycle correction
+(GOV-2517) had already reversed an intervening wrong dead-end call on this
+exact candidate, restoring it to open backlog. This schema deliberately
+bounds scope to the workbook's "employed resident individual" filing
+pathway, modelling only 5 of its 34 sheets (`A_Basic_Info`,
+`F_Employment_Income`, `M_Details_of_PAYE_Deducted`,
+`T_Income_Computation_Self`, `T_Tax_Computation`) — 86 `fields[]`,
+including a bounded 2-employer repeating group spanning the employment-
+income and PAYE-deducted sheets, and merging each sheet's separately-listed
+"PIN of Employer"/"Name of Employer" columns into one shared identity per
+employer rather than duplicating them. Every self-employment/business-
+income, farming, partnership, estate/trust, capital-allowance, and
+tax-credit schedule, plus the workbook's entire mirrored spousal ("Wife")
+filing pathway that Kenyan tax law permits electing into, is out of scope
+and disclosed as a companion-schedule candidate for a future cycle. Two
+ambiguities the source itself leaves unresolved in its own embedded
+comments — whether the mortgage-interest and home-ownership-savings-plan
+deductions are meant to be mutually exclusive, and an explicit flag that
+the embedded Ksh 13,944 personal-relief figure is a configurable template
+default rather than an asserted-current legal amount — are quoted verbatim
+rather than silently resolved or corrected. Two mock conformance scenarios
+(0 errors each) plus 3 mutation controls (each raising exactly 1 error)
+passed; see the document's own VERIFICATION.md for the full sheet-by-sheet
+field inventory and every disclosed scope/judgment call. **Kenya now
+stands at 3 of 6 verticals** (Business Formation, National ID, Taxes);
+Passport, DMV, and Visa remain confirmed dead ends, so no vertical remains
+open-and-unscreened for Kenya.
 
 **Peru's Taxes vertical opens** (`pe/sunat/formulario-virtual-709-declaracion-renta`,
 GOV-2465) — SUNAT's Formulario Virtual N° 709, "Declaración Jurada Anual
@@ -8650,7 +8726,7 @@ now closed.
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KE** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -9986,6 +10062,45 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     confirmed dead end. Rwanda's remaining sub-process backlog: Business
     Formation, National ID, Passport, and Taxes are confirmed dead ends per
     the above; Visa is unresolved backlog.
+24. **Kenya's Taxes vertical closes (3 of 6) (GOV-2535)**, via
+    `ke/kra/it1-individual-resident-return` (KRA's "IT1 Individual Resident
+    Return" Excel workbook, edition 18.0.1). This was Kenya's sole
+    remaining open, previously-scouted-in-depth vertical candidate (item 19
+    above; Passport, DMV, and Visa were already confirmed dead ends).
+    Independently re-fetched and re-hashed
+    `IT1_Individual_Resident_Return_18.0.1latest.xls` this cycle
+    (`sha256:7c85241bbabc797b9e3c6b708209a32866c4ec9131f9d845d0b87c9734e939e2`),
+    confirming it live, unencrypted, and exactly the 34-sheet structure
+    prior cycles described; cross-checked against the newer-numbered
+    sibling `Updated-IT1_Individual_Resident_Return_XLS-18.0.9-2024.xls`
+    (also live, materially identical for this schema's in-scope content).
+    Did not chase item 21's still-unconfirmed "19.0.3/March 2026"
+    version-number claim further — no such file was found on `kra.go.ke`
+    this cycle either, and the claim remains an open, separate question
+    from the candidate's own live status. This schema deliberately bounds
+    scope to the workbook's "employed resident individual" filing pathway
+    across 5 of its 34 sheets (`A_Basic_Info`, `F_Employment_Income`,
+    `M_Details_of_PAYE_Deducted`, `T_Income_Computation_Self`,
+    `T_Tax_Computation`) — 86 `fields[]`, including a bounded 2-employer
+    repeating group spanning the employment-income and PAYE-deducted
+    sheets, with each sheet's separately-listed "PIN of Employer"/"Name of
+    Employer" columns merged into one shared per-employer identity rather
+    than duplicated. Every self-employment/business-income, farming,
+    partnership, estate/trust, capital-allowance, and tax-credit schedule,
+    plus the workbook's entire mirrored spousal ("Wife") filing pathway, is
+    out of scope and disclosed as a companion-schedule candidate for a
+    future cycle. Two ambiguities the source itself leaves unresolved in
+    its own embedded comments (a mutual-exclusivity question between the
+    mortgage-interest and home-ownership-savings-plan deductions; a flag
+    that the embedded Ksh 13,944 personal-relief figure is a configurable
+    template default, not an asserted-current legal amount) are quoted
+    verbatim rather than silently resolved. See the Executive Summary
+    update above, the "Taxes" vertical section above, and the document's
+    own VERIFICATION.md for the full sourcing record and every disclosed
+    scope/judgment call. **Kenya now stands at 3 of 6 verticals** (Business
+    Formation, National ID, Taxes); Passport, DMV, and Visa remain
+    confirmed dead ends, so no vertical remains open-and-unscreened for
+    Kenya.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
