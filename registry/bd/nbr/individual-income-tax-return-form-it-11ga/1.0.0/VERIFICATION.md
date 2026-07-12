@@ -12,7 +12,7 @@ practice.
 - **`maturity.level`:** `structural-reference`
 
 This is GovSchema Standard Research cycle **GOV-2612**. It opens
-**Bangladesh as this registry's 45th jurisdiction**, via its **Taxes
+**Bangladesh as this registry's 46th jurisdiction**, via its **Taxes
 vertical (1 of 6)**, using the National Board of Revenue's (NBR) IT-11GA
 ("Form of Return of Income for Individual Person"), 2023 edition. Bangladesh
 was scouted and screened in GOV-2591's prior cycle (see that issue's own
@@ -363,7 +363,7 @@ regress any other document.
 
 ## Scope and jurisdiction notes
 
-- Opens Bangladesh as this registry's **45th jurisdiction**, via its
+- Opens Bangladesh as this registry's **46th jurisdiction**, via its
   **Taxes vertical (1 of 6)**. `jurisdiction.level` is `national` — the
   National Board of Revenue is Bangladesh's national tax authority.
 - No `edition` member: GovSchema v0.3's `edition.scheme` vocabulary is
