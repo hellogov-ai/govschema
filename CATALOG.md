@@ -4,8 +4,42 @@
 
 ## Executive Summary
 
-**44 jurisdictions** | **389 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**44 jurisdictions** | **390 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-12, GOV-2602, "GovSchema Standard Research"): Thailand's
+> Visa vertical opens (2 of 6)**, via
+> `th/mfa/non-immigrant-visa-b-application-for-employment`, the Ministry of
+> Foreign Affairs' (MFA) Non-Immigrant Visa (B) for Employment specimen — a
+> candidate pre-scouted (58 AcroForm fields) in GOV-2593's prior cycle and
+> left as backlog. The task named only a widget count and topic, no specific
+> URL; independently located the source this cycle via a fresh search
+> restricted to `mfa.go.th`, screening out two sibling visa-application PDFs
+> (0 and 103 widgets respectively) before confirming this one's widget count
+> matched exactly. Independently re-fetched and hashed: HTTP 200,
+> `application/pdf`, 270,415 bytes, `sha256:
+> 8e61fcc80bd6260f83f86b01d5443f54a75eda4ef915c3c5449e498b8b2600d4`. A
+> 2-page specimen — page 1 a non-fillable 10-item document checklist (0
+> AcroForm widgets, modelled as `documents[]`), page 2 the MFA's own generic
+> "APPLICATION FOR VISA" AcroForm (footer-stamped `mfavisaform 10 09 2007`,
+> shared across all MFA visa categories) carrying all 58 widgets, confirmed
+> via `pdfjs-dist`. 2 of the 58 widgets are excluded as non-visible,
+> near-zero-dimension artifacts with no printed label (disclosed in
+> VERIFICATION.md); the remaining 56 collapse into 57 `fields[]` (3
+> checkbox groups — visa-type-requested, title, purpose-of-visit — modelled
+> as independent booleans plus `exclusivityGroups`, per this registry's
+> established convention) plus 10 `documents[]` from page 1's checklist.
+> Disclosed: the source's own printed options never literally say
+> "Employment" (`visaTypeNonImmigrant`/`purposeOfVisitBusiness` are each
+> flagged as the closest applicable option, not asserted as canonical); the
+> page-2 "FOR OFFICIAL USE" block carries no AcroForm widgets at all and is
+> out of scope. Two mock conformance scenarios found 0 errors each, and 5
+> mutation controls each raised exactly 1 error. **Thailand now at 2 of 6
+> verticals** (Taxes, Visa); Business Formation is in progress via a
+> concurrent GOV-2601 child of the same research cycle, and DMV/Passport/
+> National ID remain screened dead-end/backlog. See GOV-2602 and this
+> schema's own `VERIFICATION.md` for the full sourcing record and every
+> scoping/disclosure judgment call.
+>
 > **Update (2026-07-12, GOV-2593, "GovSchema Standard Research"): Thailand
 > opens as this registry's 44th jurisdiction, via its Taxes vertical (1 of
 > 6)**, via `th/rd/pit-90-personal-income-tax-return`, the Revenue
@@ -9174,7 +9208,7 @@ now closed.
 | **RW** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TH** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **TH** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -10777,6 +10811,34 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     DBD Form บอจ.1 for Business Formation (101 AcroForm fields, `dbd.go.th`)
     and the MFA Non-Immigrant Visa B/Employment application for Visa (58
     AcroForm fields, served from an `mfa.go.th` CDN).
+25. **Thailand's Visa vertical opens (2 of 6, GOV-2602)**, via
+    `th/mfa/non-immigrant-visa-b-application-for-employment`, the backlog
+    candidate flagged in the prior entry. Independently located the source
+    URL this cycle (the task named only a widget count and topic), screening
+    out two sibling visa-application PDFs (0 and 103 widgets) before
+    confirming this specimen's widget count matched exactly. Independently
+    re-fetched and hashed (HTTP 200, `application/pdf`, 270,415 bytes,
+    `sha256:8e61fcc80bd6260f83f86b01d5443f54a75eda4ef915c3c5449e498b8b2600d4`),
+    and confirmed via `pdfjs-dist` a 2-page specimen: page 1 a non-fillable
+    10-item document checklist (0 widgets, modelled as `documents[]`), page
+    2 the MFA's own generic "APPLICATION FOR VISA" AcroForm (footer-stamped
+    `mfavisaform 10 09 2007`, shared across all MFA visa categories)
+    carrying all 58 widgets. 2 widgets are excluded as non-visible,
+    near-zero-dimension artifacts with no printed label; the remaining 56
+    collapse into 57 `fields[]` (3 checkbox groups — visa-type-requested,
+    title, purpose-of-visit — modelled as independent booleans plus
+    `exclusivityGroups`) plus 10 `documents[]`. Disclosed: the source's own
+    printed options never literally say "Employment"
+    (`visaTypeNonImmigrant`/`purposeOfVisitBusiness` are each flagged as the
+    closest applicable option, not asserted as canonical); the page-2 "FOR
+    OFFICIAL USE" block carries no AcroForm widgets at all and is out of
+    scope. Two mock conformance scenarios found 0 errors each, plus 5
+    mutation controls each correctly raised exactly 1 error. See the
+    Executive Summary update above and the document's own VERIFICATION.md
+    for the full sourcing record and every disclosed scoping/judgment call.
+    **Thailand now at 2 of 6 verticals** (Taxes, Visa); Business Formation
+    is in progress via a concurrent GOV-2601 child of the same research
+    cycle, and DMV/Passport/National ID remain screened dead-end/backlog.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
