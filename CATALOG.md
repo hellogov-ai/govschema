@@ -9741,31 +9741,41 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     cross-check and the widget-to-label coordinate-correlation table, and the
     document's own VERIFICATION.md for every disclosed scoping/judgment call.
     **Kenya now stands at 2 of 6 verticals** (Business Formation, National
-    ID). **Update (2026-07-12, GOV-2507, "GovSchema Standard Research"):
-    the KRA IT1 candidate flagged above was re-screened this cycle and
-    reversed to a dead end** — the two live, unauthenticated `.xls` files on
-    `kra.go.ke` (versions 18.03-Revised and 18.0.0, not "19.0.3") are both
-    genuinely MS-Office-encrypted (confirmed via the `xlsx` npm library
-    failing with "File is password-protected," and a raw byte-string scan
-    finding literal `Encrypt` markers in both files' OLE streams), so no
-    named cells or field layout can be extracted from either without a
-    password this registry does not have; the one companion "User Guide"
-    PDF found is a 2021/22 iTax-portal screenshot walkthrough, not a
-    field-by-field line-item guide. The prior cycle's "19.0.3/March 2026"
-    version claim could not be corroborated anywhere and looks fabricated —
-    see [[gov2167-govschema-standard-research-routine]]'s own recurring
-    caution that prior cycles' "genuine, strong candidate" notes have
-    sometimes turned out wrong on fresh re-verification. Do not re-attempt
-    without a genuinely new, unencrypted source or a working decryption
-    password. Kenya's remaining Taxes vertical is now a confirmed dead end,
-    not open backlog — see "Confirmed dead ends" below.
+    ID). **Correction (2026-07-12, GOV-2517, "GovSchema Standard
+    Research"): a same-day GOV-2507 update claiming the KRA IT1 candidate
+    had "reversed to a dead end" was itself wrong and has been removed.**
+    GOV-2507 found one live, unauthenticated `.xls` file on `kra.go.ke`
+    (`IT1_Individual_Resident_Return_Version-18.03-Revised.xls`) is
+    genuinely MS-Office-encrypted, which is accurate as far as it goes —
+    but a plain web search for the form's own filename turns up two more
+    currently-live, unauthenticated, *unencrypted* siblings on the same
+    host: `Updated-IT1_Individual_Resident_Return_XLS-18.0.9-2024.xls` and
+    `IT1_Individual_Resident_Return_18.0.1latest.xls`, both independently
+    re-fetched and re-opened here with the `xlsx` npm library, each
+    resolving cleanly to the same genuine 34-sheet structure (`A_Basic_Info`
+    through `T_Tax_Computation`, plus `Data`/reference-list sheets) with no
+    password prompt. Taxes therefore remains Kenya's sole open,
+    unscreened-in-depth vertical for a future cycle — cite
+    `IT1_Individual_Resident_Return_18.0.1latest.xls` or
+    `Updated-IT1_Individual_Resident_Return_XLS-18.0.9-2024.xls` as the
+    workable source, not the encrypted `18.03-Revised` edition. GOV-2507's
+    "19.0.3/March 2026" version-number claim (from GOV-2500) still could not
+    be corroborated anywhere and remains suspect — treat the version string
+    as unconfirmed, not the candidate itself as dead. See
+    [[gov2167-govschema-standard-research-routine]] for the standing caution
+    that applies both ways: a "genuine, strong candidate" note can turn out
+    wrong on fresh re-verification, and so can a same-day reversal of one —
+    verify each sub-claim independently rather than accepting a bundled
+    finding as one unit.
 20. **Nigeria and Rwanda scouted as 42nd-jurisdiction candidates (GOV-2507),
     neither authored yet — both are genuine, ready-to-author backlog for a
-    future cycle.** This cycle's own Kenya/Norway/Chile/Argentina backlog
-    screening (see the KE Taxes reversal immediately above, and the "NO
-    Passport," "NO Taxes," "CL Passport," "CL Visa," "CL National ID," and
-    "AR National ID" entries under "Confirmed dead ends" below) came back
-    entirely dead ends, so this cycle scouted new jurisdictions instead.
+    future cycle.** This cycle's own Norway/Chile/Argentina backlog
+    screening (see the "NO Passport," "NO Taxes," "CL Passport," "CL Visa,"
+    "CL National ID," and "AR National ID" entries under "Confirmed dead
+    ends" below) came back entirely dead ends — Kenya's own re-screen this
+    cycle was itself later found wrong (see the correction immediately
+    above: KE Taxes remains open backlog, not a dead end) — so this cycle
+    scouted new jurisdictions instead.
     **Nigeria** — CAC Form 1.1 ("Application for Registration of Company"),
     fetched live and unauthenticated from
     `nigeriainfotrade.fmiti.gov.ng/media/CAC%20Form%201.1.pdf` (HTTP 200,
@@ -10085,20 +10095,6 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   no government-published specimen form; only a third-party travel-agency
   guide reconstructs the field list. Do not re-attempt without a genuinely
   new, government-published source.
-- **KE Taxes (KRA IT1 Individual Resident Return)** — GOV-2507, screened
-  2026-07-12, reversing GOV-2500's "genuine, strong candidate" note. Both
-  live, unauthenticated `.xls` files on `kra.go.ke` (versions 18.03-Revised
-  and 18.0.0) are genuinely MS-Office-encrypted — the `xlsx` npm library
-  fails on both with "File is password-protected," corroborated by a raw
-  byte-string scan finding literal `Encrypt` markers in each file's OLE
-  streams — so no named cells or field layout are extractable without a
-  password not available here. GOV-2500's cited "version 19.0.3/March 2026"
-  could not be corroborated anywhere and looks fabricated. The one companion
-  guide found (`USER-GUIDE-FOR-FILING-...-10.3.2023.pdf`) is a 2021/22
-  screenshot walkthrough of the iTax portal, not a field-by-field line-item
-  guide. `itax.kra.go.ke` itself is confirmed login-gated before any return
-  layout is visible. Do not re-attempt without a genuinely new, unencrypted
-  source or a working decryption password.
 - **NO Passport** — GOV-2507, screened 2026-07-12. `politiet.no` and
   Norwegian embassies abroad (`norway.no`) both require an in-person
   appointment with biometric photo/fingerprint capture; no downloadable
