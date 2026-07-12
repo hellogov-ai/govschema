@@ -162,13 +162,13 @@ underlying AcroForm field name(s):
 | `titular2CodigoPostal` | Código postal | Identificación del Titular #2 | `CodPosTit2` |
 | `titular2DomicilioElectronico` | Domicilio electrónico | Identificación del Titular #2 | `MailTit2` |
 
-**53 fields total**, covering 68 of the 81 AcroForm widgets (56 of the 65
+**53 fields total**, covering 70 of the 81 AcroForm widgets (56 of the 65
 uniquely named fields — 52 mapped 1:1 or as a consolidated radio/date group,
 plus 1 synthetic gating field with no underlying widget of its own).
 
 ## Access notes and judgment calls
 
-1. **9 named fields (13 widgets) excluded, disclosed rather than guessed.**
+1. **9 named fields (11 widgets) excluded, disclosed rather than guessed.**
    Two clusters:
    - **`NumTelGestor_2`/`_3`/`_4`/`_5` (4 widgets, page 1 header row).**
      These sit directly under printed labels **"ID"** and **"CÓDIGO
