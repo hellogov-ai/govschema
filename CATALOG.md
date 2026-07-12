@@ -9741,8 +9741,60 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     cross-check and the widget-to-label coordinate-correlation table, and the
     document's own VERIFICATION.md for every disclosed scoping/judgment call.
     **Kenya now stands at 2 of 6 verticals** (Business Formation, National
-    ID); Taxes remains Kenya's sole open, unscreened-in-depth vertical for a
-    future cycle.
+    ID). **Update (2026-07-12, GOV-2507, "GovSchema Standard Research"):
+    the KRA IT1 candidate flagged above was re-screened this cycle and
+    reversed to a dead end** — the two live, unauthenticated `.xls` files on
+    `kra.go.ke` (versions 18.03-Revised and 18.0.0, not "19.0.3") are both
+    genuinely MS-Office-encrypted (confirmed via the `xlsx` npm library
+    failing with "File is password-protected," and a raw byte-string scan
+    finding literal `Encrypt` markers in both files' OLE streams), so no
+    named cells or field layout can be extracted from either without a
+    password this registry does not have; the one companion "User Guide"
+    PDF found is a 2021/22 iTax-portal screenshot walkthrough, not a
+    field-by-field line-item guide. The prior cycle's "19.0.3/March 2026"
+    version claim could not be corroborated anywhere and looks fabricated —
+    see [[gov2167-govschema-standard-research-routine]]'s own recurring
+    caution that prior cycles' "genuine, strong candidate" notes have
+    sometimes turned out wrong on fresh re-verification. Do not re-attempt
+    without a genuinely new, unencrypted source or a working decryption
+    password. Kenya's remaining Taxes vertical is now a confirmed dead end,
+    not open backlog — see "Confirmed dead ends" below.
+20. **Nigeria and Rwanda scouted as 42nd-jurisdiction candidates (GOV-2507),
+    neither authored yet — both are genuine, ready-to-author backlog for a
+    future cycle.** This cycle's own Kenya/Norway/Chile/Argentina backlog
+    screening (see the KE Taxes reversal immediately above, and the "NO
+    Passport," "NO Taxes," "CL Passport," "CL Visa," "CL National ID," and
+    "AR National ID" entries under "Confirmed dead ends" below) came back
+    entirely dead ends, so this cycle scouted new jurisdictions instead.
+    **Nigeria** — CAC Form 1.1 ("Application for Registration of Company"),
+    fetched live and unauthenticated from
+    `nigeriainfotrade.fmiti.gov.ng/media/CAC%20Form%201.1.pdf` (HTTP 200,
+    415KB), a genuine AcroForm with 87 widgets (75 text, 3 button, 2
+    choice) — the strongest single candidate found across all 6 of
+    Nigeria's verticals. Backup candidates in the same jurisdiction: CAC/BN/1
+    (Business Name registration, 2024 edition, hosted directly on
+    `news.cac.gov.ng`, text-layer-only) and Form Imm. 22 (visa/entry permit,
+    a genuine 128-widget AcroForm, but only found on third-party
+    aggregators with unconfirmed currency against Nigeria's e-visa
+    migration). Nigeria's DMV (FRSC/NDLIS, fully portal-gated) is a
+    confirmed dead end; Taxes (FIRS) and National ID (NIMC) surfaced only
+    Wayback-archived or territory-scoped candidates, unresolved rather than
+    confirmed either way. **Rwanda** — RRA's Motor Vehicle Registration
+    Form ("RRA-MVD-VRF-E06"), fetched live and unauthenticated from
+    `rra.gov.rw/fileadmin/user_upload/mvregistrationform.pdf` (HTTP 200,
+    191,913 bytes), a genuine `/AcroForm`+`/XFA` PDF independently parsed at
+    the byte level to confirm 46 real widget annotations (42 text, 3
+    signature, 1 button/radio) with clean, real field labels (owner
+    identification, registration information, vehicle information,
+    certification). Rwanda's other five verticals are all confirmed dead
+    ends this cycle — Business Formation (RDB), Taxes (RRA declarations),
+    National ID (NIDA), Passport (DGIE), and Visa all route exclusively
+    through the login/payment-gated IremboGov one-stop portal with no
+    downloadable citizen-facing form found anywhere. Neither Nigeria nor
+    Rwanda was authored this cycle (Ghana's stronger, higher-widget-count
+    National ID candidate was prioritized instead — see the Executive
+    Summary update above); both remain live, ready-to-author candidates for
+    an immediate follow-up cycle.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
@@ -10033,6 +10085,74 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   no government-published specimen form; only a third-party travel-agency
   guide reconstructs the field list. Do not re-attempt without a genuinely
   new, government-published source.
+- **KE Taxes (KRA IT1 Individual Resident Return)** — GOV-2507, screened
+  2026-07-12, reversing GOV-2500's "genuine, strong candidate" note. Both
+  live, unauthenticated `.xls` files on `kra.go.ke` (versions 18.03-Revised
+  and 18.0.0) are genuinely MS-Office-encrypted — the `xlsx` npm library
+  fails on both with "File is password-protected," corroborated by a raw
+  byte-string scan finding literal `Encrypt` markers in each file's OLE
+  streams — so no named cells or field layout are extractable without a
+  password not available here. GOV-2500's cited "version 19.0.3/March 2026"
+  could not be corroborated anywhere and looks fabricated. The one companion
+  guide found (`USER-GUIDE-FOR-FILING-...-10.3.2023.pdf`) is a 2021/22
+  screenshot walkthrough of the iTax portal, not a field-by-field line-item
+  guide. `itax.kra.go.ke` itself is confirmed login-gated before any return
+  layout is visible. Do not re-attempt without a genuinely new, unencrypted
+  source or a working decryption password.
+- **NO Passport** — GOV-2507, screened 2026-07-12. `politiet.no` and
+  Norwegian embassies abroad (`norway.no`) both require an in-person
+  appointment with biometric photo/fingerprint capture; no downloadable
+  application form exists. The one PDF-shaped candidate found via search
+  (`norway.no/contentassets/.../passkjema-eng..pdf`) is a Canva-made
+  graphic/design document with no `/AcroForm`, `/Widget`, or `/FT` objects
+  at the byte level — not an official form. Do not re-attempt without a
+  genuinely new source (e.g. a Nordic-style guardian-consent companion form,
+  which has closed other Nordic countries' Passport verticals in this
+  registry).
+- **NO Taxes** — GOV-2507, screened 2026-07-12. Norway's personal tax return
+  (skattemelding) is pre-filled automatically from 60M+ third-party data
+  points and submitted online/mobile only; the one plausible paper-fallback
+  form, RF-1281, is explicitly marked "replaced from income year 2023" with
+  no PDF successor found. Business/self-employed filers' RF-1030 states
+  outright that paper submissions "will be considered as not submitted" —
+  fully electronic-only, ID-porten/Altinn-gated. Do not re-attempt without a
+  genuinely new source.
+- **CL Passport** — GOV-2507, screened 2026-07-12 (re-confirming GOV-1624).
+  Servicio de Registro Civil e Identificación's process is ClaveÚnica
+  login → appointment booking → in-person biometric capture for adults and
+  minors alike; `registrocivil.cl` is also Radware-bot-manager-CAPTCHA-
+  walled. The one guardian-consent-shaped candidate found
+  ("Autorización Notarial de Viaje") is a notary-drafted legal deed, not a
+  government-hosted fillable document. Do not re-attempt without a
+  genuinely new source.
+- **CL Visa** — GOV-2507, screened 2026-07-12 (re-confirming GOV-1624).
+  Domestic processing (`tramites.extranjeria.gob.cl`) is ClaveÚnica-gated;
+  the consular network's current pages instruct applicants to the online
+  SAC platform rather than a downloadable form. Two legacy consulate PDFs
+  were found and independently fetched/parsed (Washington DC, 88 AcroForm
+  fields, dated 2018; Rabat/Morocco, 0 AcroForm fields, dated 2012) — both
+  stale, consulate-specific remnants no longer linked from any current
+  visa-instructions page. Do not re-attempt without a genuinely new,
+  current, generic source.
+- **CL National ID (cédula de identidad)** — GOV-2507, screened 2026-07-12
+  (re-confirming GOV-1624). Servicio de Registro Civil e Identificación
+  requires ClaveÚnica/CedulApp login plus an in-person biometric appointment
+  for every path (first cédula, renewal, reprint, foreigner's cédula,
+  blocking a lost card). Two PDF candidates were ruled out (a PDI
+  instructions sheet whose own text says the requirement it describes was
+  already eliminated; a scanned decree with 0 extractable text). Do not
+  re-attempt without a genuinely new source.
+- **AR National ID (RENAPER DNI)** — GOV-2507, screened 2026-07-12
+  (re-confirming and strengthening GOV-2195/GOV-2204's prior note). DNI
+  issuance is in-person/biometric-only. The one plausible non-obvious
+  candidate, `mininterior.gob.ar`'s "Formulario Único de Toma de Trámite de
+  DNI" instructivo, is explicitly an internal RENAPER staff manual (cites
+  "impresiones decadactilares" fingerprinting and "uso interno del
+  ReNaPer") describing a controlled, pre-numbered/barcoded specimen
+  completed by registry staff, not something the public downloads blank. A
+  second candidate (`docuest.aaip.gob.ar`, for flagging a lost/stolen DNI)
+  is a distinct, login-gated AAIP fraud-prevention SPA, not DNI issuance.
+  Do not re-attempt without a genuinely new source.
 
 ---
 
