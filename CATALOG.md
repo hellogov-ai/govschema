@@ -4,7 +4,64 @@
 
 ## Executive Summary
 
-**41 jurisdictions** | **379 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**42 jurisdictions** | **380 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2518, "GovSchema Standard Research"): Nigeria
+> opens as this registry's 42nd jurisdiction**, via its Business Formation
+> vertical (1 of 6), sourced from the Corporate Affairs Commission (CAC)'s
+> Form 1.1, "Application for Registration of Company." A prior scouting pass
+> (GOV-2507) had flagged this form and cited a hash/byte size/widget count;
+> independently re-fetching and re-deriving from scratch confirmed the
+> hash/byte size exactly (`sha256:
+> b0c57c0d8b9fc48e0fa5c944e2c8a9e04e8b9ad58b6c4cc2b9c348f86092c07e`,
+> 415,060 bytes, fetched unauthenticated from a Federal Ministry of
+> Industry, Trade and Investment mirror since `cac.gov.ng` itself 403s from
+> this sandbox), but **corrected the cited widget count** — a fresh
+> `pdfjs-dist` extraction across all 4 pages found 87 widgets (75 text, 9
+> choice, 3 checkbox), not the "3 button, 2 choice" the prior pass had
+> cited; the choice-widget count was undercounted by 7. Extraction also
+> surfaced a genuine AcroForm authoring defect: the ID-type and gender
+> dropdowns are the **same fully-qualified field name reused across all 4
+> printed director slots** (plus the individual secretary, for ID type) —
+> in a real PDF viewer this would silently synchronize every slot's value
+> to whichever was filled in last. This schema does not preserve that bug,
+> modelling each slot's ID type/gender as its own independent field, with
+> the defect disclosed rather than silently corrected without comment. A
+> legal-currency check confirmed the Companies and Allied Matters Act 2020
+> (CAMA 2020) — not the 1990 Act this specimen's own cover page still cites
+> — is the currently governing statute, and that CAC's incorporation
+> process is now conducted primarily through CAC's own login-gated Company
+> Registration Portal (iCRP); Form 1.1 itself remains a currently and
+> unauthenticated reachable structural reference, the same
+> "structural-reference-over-a-now-primarily-online-process" framing this
+> registry has used for `pe/sunat`, `uy/dgi`, and `ke/brs`. 85 `fields[]`
+> (of 87 widgets, 2 excluded as raw "Signature:"-labelled text boxes in the
+> Secretary sections) cover the type-of-company selection (modelled as 3
+> booleans in an `exclusivityGroups` entry, since the source's own 3
+> checkboxes are independent Btn widgets, not a native radio group), company
+> name/address/share-capital particulars, the form's exact 4 printed
+> first-director slots and their consent to act, an individual- or
+> corporate-body secretary, the legal-practitioner statutory declaration of
+> CAMA compliance, and the presenter-of-filing block. 8 `documents[]` (a
+> per-person ID copy and the memorandum/articles of association, both
+> unconditionally required; 4 conditional supporting documents — a minor
+> subscriber's birth certificate, a corporate-subscriber board resolution, a
+> foreign corporate subscriber's certificate of registration, and a foreign
+> director/subscriber's residence permit — each disclosed via prose rather
+> than a fabricated `requiredWhen`, since this schema's flattened director
+> slots carry no boolean to gate on; plus the director's consent attestation
+> and the deponent's statutory-declaration attestation). Two mock
+> conformance scenarios (a private company limited by shares with a single
+> director; a company limited by guarantee with two directors, an
+> individual secretary, and a legal-practitioner Section E declaration)
+> found 0 errors each, plus 5 mutation controls (a missing required field,
+> an email pattern violation, an ID-type enum violation, a missing required
+> document, and a type-of-company exclusivity violation) each correctly
+> raised exactly 1 error. See the document's own VERIFICATION.md for the
+> full sourcing record and every disclosed scoping/judgment call. **Nigeria
+> now stands at 1 of 6 verticals** (Business Formation); Passport, DMV,
+> Taxes, Visa, and National ID remain open, unscreened backlog for future
+> cycles.
 
 > **Update (2026-07-12, GOV-2510, "GovSchema Standard Research"): Ghana
 > opens as this registry's 41st jurisdiction**, via its National ID & Civic
@@ -6853,7 +6910,29 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (37/40 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (38/42 jurisdictions — 90%)
+
+**Nigeria opens as this registry's 42nd jurisdiction via this vertical
+(GOV-2518)**, via
+`ng/cac/cac-1-1-application-for-registration-of-company` — the Corporate
+Affairs Commission (CAC)'s Form 1.1, "Application for Registration of
+Company," under the Companies and Allied Matters Act 2020 (CAMA 2020). A
+prior scouting pass (GOV-2507) had cited this form's hash/byte size (both
+independently reconfirmed exactly this cycle) and a widget count this
+cycle's own `pdfjs-dist` extraction corrected — 87 widgets (75 text, 9
+choice, 3 checkbox), not the prior "3 button, 2 choice" (the choice-widget
+count had been undercounted by 7). Extraction also surfaced a genuine
+field-name-reuse defect in the source PDF itself: the ID-type and gender
+dropdowns share one fully-qualified AcroForm field name across all four
+printed director slots (plus the individual secretary, for ID type),
+meaning a real PDF viewer would silently synchronize every slot's value —
+disclosed, and deliberately not preserved in this schema, which models each
+slot's ID type/gender as its own independent field. See the Executive
+Summary's GOV-2518 update above for the full sourcing record and the
+document's own VERIFICATION.md for every scoping/disclosure judgment call.
+Nigeria now stands at 1 of 6 verticals (Business Formation); Passport, DMV,
+Taxes, Visa, and National ID remain open, unscreened backlog for future
+cycles.
 
 **Kenya opens as this registry's 40th jurisdiction via this vertical
 (GOV-2493)**, via `ke/brs/cr1-application-to-register-a-company` —
@@ -8522,6 +8601,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **NG** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -9743,6 +9823,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     **Kenya now stands at 2 of 6 verticals** (Business Formation, National
     ID); Taxes remains Kenya's sole open, unscreened-in-depth vertical for a
     future cycle.
+20. **Nigeria opens as the registry's 42nd jurisdiction (GOV-2518)**, via its
+    Business Formation vertical,
+    `ng/cac/cac-1-1-application-for-registration-of-company` (Corporate
+    Affairs Commission Form 1.1, "Application for Registration of Company,"
+    Companies and Allied Matters Act 2020). A prior scouting pass (GOV-2507)
+    had cited this form's hash/byte size (both independently reconfirmed
+    exactly) and a widget count that this cycle's own `pdfjs-dist` extraction
+    corrected (87 widgets: 75 text, 9 choice, 3 checkbox — the prior "3
+    button, 2 choice" undercounted the choice widgets by 7); extraction also
+    surfaced a genuine field-name-reuse defect in the source PDF (the
+    ID-type/gender dropdowns share one AcroForm field name across all 4
+    printed director slots), disclosed and deliberately not preserved in this
+    schema. See the Executive Summary update above and the document's own
+    VERIFICATION.md for the full sourcing record. **Nigeria now stands at 1
+    of 6 verticals** (Business Formation); Nigeria's other five verticals —
+    Passport, DMV, Taxes, Visa, and National ID — are open, unscreened
+    backlog candidates for a future cycle; none of them has been scouted or
+    screened yet.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
