@@ -1,0 +1,509 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pe/sunat/formulario-virtual-709-declaracion-renta",
+  "version": "1.0.0",
+  "title": "Peru Annual Individual Income Tax Return (Formulario Virtual N° 709)",
+  "description": "Peru's annual individual income tax return (\"Declaración Jurada Anual del Impuesto a la Renta – Persona Natural\"), filed online through SUNAT's Formulario Virtual N° 709. Opens Peru's Taxes vertical (4 of 6), following the Visa, Business Formation, and DMV verticals already opened by `pe/cancilleria/solicitud-visa-dgc-005`, `pe/sunat/solicitud-inscripcion-ruc-persona-natural`, and `pe/mtc/solicitud-licencia-conducir-012-17`. FV 709 itself is filed exclusively through SUNAT's Clave-SOL-authenticated online portal — matching this registry's prior finding that SUNAT's individual-taxpayer channels are login-gated (no live AcroForm/HTML exists to extract directly) — so this document is a structural-reference schema authored from SUNAT's own official field-by-field walkthrough guide (\"Ayuda para el registro del Formulario Virtual N° 709\"), the same tier as this registry's `jp/houmukyoku` and `pe/sunat/solicitud-inscripcion-ruc-persona-natural` precedents. Scoped to the return's Sección Informativa \"Otros Ingresos\" block (exonerated/non-taxed income disclosures, casillas 200/201/203/902/998/999/518) and the entire \"Rentas de Trabajo (Cuarta y Quinta Categoría) y/o Fuente Extranjera\" path of the Sección Determinativa (employment/independent-service income, the 7 UIT and additional 3 UIT deductions, ITF and donation deductions, foreign-source income, and that income category's own Determinación de Deuda tax computation, casillas 107 through 168) — the return path the source's own guide most thoroughly documents field-by-field, and the one this issue's own scope names (rentas de trabajo, rentas de fuente extranjera, deductions). Out of scope for this v1.0.0: the return's \"Rentas de Capital – Primera Categoría\" (rental/lease income from real or personal property, casillas 100-166) and \"Rentas de Capital – Segunda Categoría\" (capital gains from the sale of securities, casillas 350-366) tabs, and the Sección Informativa's own Condóminos/Alquileres Pagados/Atribución de Gastos sub-sections, which are specific to that same rental/capital-gains income and require their own genuinely distinct co-ownership, tenancy, and spousal-expense-attribution field sets — a well-bounded, disclosed companion-schedule candidate for a future cycle (see VERIFICATION.md). Each in-scope casilla that the source's own guide describes as fed by a repeating \"asistente\" (wizard) covering an open-ended number of per-transaction entries (individual recibos por honorarios, monthly remuneraciones, per-country foreign-tax credits, and similar) is modelled at the casilla's own declared-total level, not the underlying per-transaction wizard detail — see VERIFICATION.md for the full disclosure. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Peru or SUNAT.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Superintendencia Nacional de Aduanas y de Administración Tributaria",
+    "abbreviation": "SUNAT",
+    "url": "https://www.sunat.gob.pe"
+  },
+  "process": {
+    "type": "filing",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://renta.sunat.gob.pe/sites/default/files/inline-files/AYUDA_FV_%20709_2025.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "\"Ayuda para el registro del Formulario Virtual N° 709 – Renta Anual Persona Natural 2025\" (field-by-field guide to Formulario Virtual N° 709, the Declaración Jurada Anual del Impuesto a la Renta – Persona Natural, ejercicio 2025)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "Opens Peru's Taxes vertical (4 of 6). GOV-2456 (2026-07-12) had pre-scouted this candidate against the 2024-edition guide (AYUDA%20FV_%20709_2024__0.pdf). This cycle's mandatory legal-currency check found that guide superseded: SUNAT's own `renta.sunat.gob.pe` portal is currently running its \"Renta 2025\" annual campaign, and its `/personas/ayuda-para-el-registro-del-formulario-ndeg-709` page now links a 2025 edition (`AYUDA_FV_%20709_2025.pdf`, HTTP 200, 514013 bytes, sha256 740f62f08e673a4671eb343eef30c741d735b4705fc4263a4f2e74e675fe0324) alongside `RS%20386-2025-SUNAT.pdf` (HTTP 200, confirmed live) as its underlying Superintendencia resolution. This document is authored against the current 2025 edition, not the 2024 one named in this issue's own brief. Both editions were fetched and extracted with pdfjs-dist for comparison: identical 36-page structure and an identical set of 67 distinct casilla numbers referenced (diffed programmatically), confirming the casilla-numbering scheme is stable year-over-year; only UIT-indexed monetary constants changed (2025's UIT is S/. 5,350, vs. 2024's S/. 5,150), and the Sección Informativa's own Rentas Exoneradas/Inafectas reference lists (casillas 200/201) grew by one and two items respectively (new Treasury-bond/ETF-related inafectación categories) — this document's own `totalRentasExoneradas`/`totalRentasInafectas` fields model the casilla-level totals, not each reference-list item, so this growth does not change the field surface. `node tools/verify-sources.mjs registry/pe/sunat/formulario-virtual-709-declaracion-renta/1.0.0` reports 0 warnings. See VERIFICATION.md for the full casilla-by-casilla field inventory, every disclosed scope decision, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "tipoDeclaracion",
+      "label": "Tipo de Declaración",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this is an original return, or a substitute/amending return of a previously presented FV 709 for the same ejercicio. SUNAT's own system determines and pre-selects this based on whether a prior FV 709 already exists for the taxpayer and period.",
+      "sourceRef": "Sección Informativa, \"Tipo de Declaración: Declaración\"",
+      "validation": { "enum": ["ORIGINAL", "SUSTITUTORIA_RECTIFICATORIA"] }
+    },
+    {
+      "name": "declaraRentasTrabajoYFuenteExtranjera",
+      "label": "Declara Rentas de Trabajo y/o Fuente Extranjera",
+      "type": "boolean",
+      "required": true,
+      "description": "The \"Tipo de Renta que se declara\" checkbox for option (c), Rentas de Trabajo y/o Fuente Extranjera. The source form allows selecting more than one of its three income-category checkboxes (Rentas de Capital Primera Categoría, Rentas de Capital Segunda Categoría, Rentas de Trabajo y/o Fuente Extranjera); this document only models the Rentas de Trabajo y/o Fuente Extranjera path (see this document's own top-level scope note), so the other two checkboxes are not modelled here.",
+      "sourceRef": "Sección Informativa, \"Tipo de Renta que se declara: c) Rentas de Trabajo y/o Fuente Extranjera\""
+    },
+    {
+      "name": "modalidadDeclaracion",
+      "label": "Modalidad de la Declaración",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the taxpayer files as an individual contribuyente (Personal) or as one spouse's attributed share under a sociedad conyugal (attributed per article 16 of the LIR).",
+      "sourceRef": "Sección Informativa, \"Tipo de Declaración: ○ Personal ○ Sociedad Conyugal\"",
+      "validation": { "enum": ["PERSONAL", "SOCIEDAD_CONYUGAL"] }
+    },
+    {
+      "name": "tieneRentasExoneradas",
+      "label": "¿Tiene Rentas Exoneradas?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer obtained any income exempt under article 19 of the LIR during the ejercicio (e.g. certain foreign-government-official remuneration, life-insurance proceeds, bank-deposit interest, copyright royalties, cooperative interest, capital gains up to 100 UIT under Ley N° 30341, among the source's own listed categories).",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"¿Tiene rentas exoneradas?\""
+    },
+    {
+      "name": "totalRentasExoneradas",
+      "label": "Total Rentas Exoneradas (Casilla 200)",
+      "type": "number",
+      "requiredWhen": { "field": "tieneRentasExoneradas", "equals": true },
+      "classification": "financial",
+      "description": "Total exempt income for the ejercicio, in Soles (S/.), summed across all of the source's own listed exemption categories.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Total Rentas Exoneradas (Casilla 200)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "tieneRentasInafectas",
+      "label": "¿Tiene Rentas Inafectas?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer obtained any income not subject to tax under article 18 of the LIR during the ejercicio (e.g. labor-law indemnities, death/incapacity indemnities, compensación por tiempo de servicios, retirement pensions, among the source's own listed categories).",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"¿Tiene rentas inafectas?\""
+    },
+    {
+      "name": "totalRentasInafectas",
+      "label": "Total Rentas Inafectas (Casilla 201)",
+      "type": "number",
+      "requiredWhen": { "field": "tieneRentasInafectas", "equals": true },
+      "classification": "financial",
+      "description": "Total non-taxable income for the ejercicio, in Soles (S/.), summed across all of the source's own listed non-taxable categories.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Total Rentas Inafectas (Casilla 201)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "resultadoActividadesTerceraCategoria",
+      "label": "Resultado por Actividades Generadoras de Rentas de 3ra Categoría (Casilla 203)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Pre-tax net profit declared on Formulario N° 710 – Renta Tercera Categoría, for a natural person who additionally holds an empresa unipersonal (excludes RUS/RER income), or for participation in a business-collaboration contract (e.g. joint venture, consorcio). Enter \"0\" if a loss resulted.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 203 'Resultado por actividades generadoras de rentas de 3ra categoría'\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "dividendosPercibidos",
+      "label": "Dividendos Percibidos (Casilla 998)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Dividends received by the taxpayer during the ejercicio.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 998 Dividendos Percibidos\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "rentaFuenteExtranjeraExclusivaCDI",
+      "label": "Renta de Fuente Extranjera de Tributación Exclusiva en el País de la Fuente (Casilla 999)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Foreign-source income falling under a double-taxation treaty (Convenio para evitar la Doble Imposición) that assigns exclusive taxation to the source country, and is therefore excluded from Peru's taxable base.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 999 Renta de Fuente Extranjera tributación exclusiva en el País de la Fuente\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "liberalidadRecibidaDonacion",
+      "label": "Liberalidades Recibidas en Efectivo — Donación (Casilla 902)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Cash donations received by the taxpayer during the ejercicio, one of the source's own four Casilla 902 sub-options. The taxpayer is never registered as the donor here — only as the recipient of the liberalidad.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 902 Liberalidades recibidas en efectivo — 1) Donación\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "liberalidadRecibidaAnticipoLegitima",
+      "label": "Liberalidades Recibidas en Efectivo — Anticipo de Legítima (Casilla 902)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Cash received during the ejercicio as an anticipo de legítima (advance inheritance), one of the source's own four Casilla 902 sub-options.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 902 Liberalidades recibidas en efectivo — 2) Anticipo de legítima\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "liberalidadRecibidaHerencia",
+      "label": "Liberalidades Recibidas en Efectivo — Herencia (Casilla 902)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Cash received during the ejercicio as an inheritance, one of the source's own four Casilla 902 sub-options.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 902 Liberalidades recibidas en efectivo — 3) Herencia\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "liberalidadRecibidaOtros",
+      "label": "Liberalidades Recibidas en Efectivo — Otros (Casilla 902)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Cash received during the ejercicio as any other liberalidad not covered by donación, anticipo de legítima, or herencia, the fourth of the source's own Casilla 902 sub-options.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 902 Liberalidades recibidas en efectivo — 4) Otros\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "liberalidadRecibidaOtrosDescripcion",
+      "label": "Descripción de la Liberalidad — Otros",
+      "type": "string",
+      "requiredWhen": { "field": "liberalidadRecibidaOtros", "greaterThan": 0 },
+      "description": "Free-text detail identifying the \"Otros\" liberalidad, required by the source whenever an amount is registered under that sub-option.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 902 ... 4) Otros (identificar el detalle de Otros)\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "totalIngresosEjercicio",
+      "label": "Total Ingresos del Ejercicio (Casilla 518)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable (system-calculated, not applicant-entered): the sum of the ejercicio's income items disclosed above. Included for completeness of the declaration's own field surface, per this registry's convention of modelling a source's own casilla-level totals even when system-calculated.",
+      "sourceRef": "Sección Informativa, Otros ingresos, \"Casilla 518 Total ingresos del ejercicio\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "rentaBrutaCuartaCategoriaEjercicioIndividual",
+      "label": "Renta Bruta del Ejercicio Individual de Profesión, Arte, Ciencia u Oficio (Casilla 107)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Gross fourth-category (cuarta categoría) income from the individual exercise of a profession, art, science, or trade during the ejercicio, before deducting any cuarta-categoría withholdings. Fed by recibos por honorarios (including those issued via SEE-SOL); this document models the casilla's own declared total, not each underlying recibo (see this document's own top-level scope note).",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 107 (renta bruta obtenida por el ejercicio individual – profesión, arte, ciencia u oficio)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "deduccion20PorCientoCuartaCategoria",
+      "label": "Deducción del 20% — Máximo 24 UIT (Casilla 507)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: the 20% deduction from rentaBrutaCuartaCategoriaEjercicioIndividual under article 45 of the LIR, capped at 24 UIT (S/. 128,400 for the 2025 ejercicio, at the 2025 UIT of S/. 5,350).",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 507 (deducción – Máximo S/. 128,400)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "rentaNetaCuartaCategoriaEjercicioIndividual",
+      "label": "Renta Neta del Ejercicio Individual de Profesión, Arte, Ciencia u Oficio (Casilla 508)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: rentaBrutaCuartaCategoriaEjercicioIndividual minus deduccion20PorCientoCuartaCategoria.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 508 (renta neta obtenida por el ejercicio individual - profesión, arte, ciencia u oficio)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otrasRentasCuartaCategoria",
+      "label": "Otras Rentas de Cuarta Categoría (Casilla 108)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Income received during the ejercicio for functions such as director, síndico, mandatario, gestor de negocios, albacea, and similar activities under article 33(b) of the LIR, including dietas received by municipal regidores or regional consejeros.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 108 (otras rentas de cuarta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalRentasCuartaCategoria",
+      "label": "Total Rentas de Cuarta Categoría (Casilla 509)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: rentaNetaCuartaCategoriaEjercicioIndividual plus otrasRentasCuartaCategoria.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 509 (total rentas de cuarta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalRentaQuintaCategoria",
+      "label": "Total Renta de Quinta Categoría (Casilla 111)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Gross fifth-category (quinta categoría, dependent-employment) remuneration received during the ejercicio, before monthly withholdings.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 111 (total renta de quinta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalRentasCuartaYQuintaCategoria",
+      "label": "Total Rentas de Cuarta y Quinta Categoría (Casilla 510)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: totalRentasCuartaCategoria plus totalRentaQuintaCategoria.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 510 (total rentas de cuarta y quinta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "deduccion7UIT",
+      "label": "Deducción de 7 UIT (Casilla 511)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: the fixed annual deduction of 7 UIT under article 46 of the LIR, S/. 37,450 for the 2025 ejercicio (7 × the 2025 UIT of S/. 5,350) — a figure that changes each ejercicio with the UIT value.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 511 (deducción de 7 UIT)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "deduccionAdicional3UIT",
+      "label": "Deducción Adicional de 3 UIT (Casilla 514)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: the additional annual deduction of up to 3 UIT (S/. 16,050 for the 2025 ejercicio) under Decreto Legislativo N° 1258, available only when income exceeds 7 UIT, covering five expense categories the source's own Anexo details at the per-receipt/wizard level (rent on real property at 30%, EsSalud contributions for household workers at 100%, professional-services recibos por honorarios at 30%, hotel lodging and restaurant consumption at 15%, and medical/dental services). This document models the casilla's own declared total, not the underlying per-category, per-receipt wizard detail (see this document's own top-level scope note).",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 514 (deducción adicional de 3 UIT)\"; Anexo, \"Deducciones Adicionales de 3 UIT\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalRentaNetaCuartaYQuintaCategoria",
+      "label": "Total Renta Neta de Cuarta y Quinta Categoría (Casilla 512)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: totalRentasCuartaYQuintaCategoria minus deduccion7UIT minus deduccionAdicional3UIT.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 512 (total renta neta de cuarta y quinta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "deduccionITF",
+      "label": "Deducción por Impuesto a las Transacciones Financieras (Casilla 522)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "ITF withheld by financial entities during the ejercicio, deductible up to the limit of totalRentasCuartaCategoria, and only to the extent it relates to generating cuarta-categoría income (not ITF withheld on personal-consumption transactions).",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 522 (deducción por Impuesto a las Transacciones Financieras –ITF)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "gastosPorDonaciones",
+      "label": "Gastos por Concepto de Donaciones (Casilla 519)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Donations made to qualifying Sector Público Nacional entities or SUNAT-qualified non-profits under article 49(b) of the LIR, deductible up to 10% of the sum of totalRentaNetaCuartaYQuintaCategoria and totalRentaNetaFuenteExtranjera.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 519 (gastos por concepto de donaciones)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "subtotalRentaNetaTrabajo",
+      "label": "Subtotal Renta Neta de Trabajo (Casilla 513)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: totalRentaNetaCuartaYQuintaCategoria minus the sum of deduccionITF and gastosPorDonaciones.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 513 (subtotal casilla 512 — (casilla 522 + casilla 519))\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalRentaNetaFuenteExtranjera",
+      "label": "Total Renta Neta de Fuente Extranjera (Casilla 116)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Net foreign-source income for the ejercicio (excluding foreign-source securities-sale gains already scoped to the excluded Rentas de Capital – Segunda Categoría tab), summed and offset across the taxpayer's foreign income-producing sources, recorded only when net positive — losses from low/no-tax jurisdictions listed in the LIR Regulation's own Anexo are excluded from this offset.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 116 (total renta neta de fuente extranjera)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalRentaImponibleTrabajoYFuenteExtranjera",
+      "label": "Total Renta Imponible de Trabajo y Fuente Extranjera (Casilla 517)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: subtotalRentaNetaTrabajo plus totalRentaNetaFuenteExtranjera — the taxable base to which article 53 of the LIR's progressive cumulative rates (8%/14%/17%/20%/30%, at UIT-indexed brackets that change each ejercicio) apply.",
+      "sourceRef": "Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 517 (total renta imponible de trabajo y fuente extranjera)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "impuestoRentaTrabajoYFuenteExtranjera",
+      "label": "Impuesto a la Renta de Trabajo y Fuente Extranjera (Casilla 120)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: the result of applying article 53 of the LIR's progressive cumulative rates to totalRentaImponibleTrabajoYFuenteExtranjera.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 120 (impuesto a la renta)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditoImpuestoRentaFuenteExtranjera",
+      "label": "Crédito por Impuesto a la Renta de Fuente Extranjera (Casilla 122)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Foreign income tax paid or withheld abroad on the foreign-source income included above, creditable up to the lesser of the tasa media del contribuyente applied to the foreign income, or the tax actually paid abroad; any unused portion may not be carried forward or refunded.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 122 (crédito por impuesto a la renta de fuente extranjera)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "subtotalImpuestoMenosCredito",
+      "label": "Subtotal (Casilla 158)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: impuestoRentaTrabajoYFuenteExtranjera minus creditoImpuestoRentaFuenteExtranjera.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 158 (subtotal)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saldoFavorEjercicioAnteriorReferencial",
+      "label": "Saldo a Favor del Ejercicio Anterior según Información Personalizada (Casilla 167)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Informational only: the prior ejercicio's own credit balance for rentas de trabajo y/o fuente extranjera, as recognized by SUNAT or established by the taxpayer in the prior year's own FV 709, when that declaration has neither been challenged nor its refund requested.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 167 (Saldo a favor del ejercicio 2023 según información personalizada)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saldoFavorEjercicioAnterior",
+      "label": "Saldo a Favor del Ejercicio Anterior (Casilla 125)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Editable casilla: the prior ejercicio's credit balance the taxpayer is applying against the current ejercicio's tax determined.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 125 (saldo a favor del ejercicio anterior)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "pagoDirectoRentaCuartaCategoria",
+      "label": "Pago Directo del Impuesto a la Renta de Cuarta Categoría (Casilla 127)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Direct (a-cuenta) payments the taxpayer made toward cuarta-categoría income tax during the ejercicio.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 127 (pago directo del impuesto a la renta de cuarta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "pagoDirectoRentaQuintaCategoria",
+      "label": "Pago Directo del Impuesto a la Renta de Quinta Categoría (Casilla 128)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Direct payments the taxpayer made toward quinta-categoría income tax during the ejercicio (tributo code 3051).",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 128 (pago directo del impuesto a la renta de quinta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "impuestoRetenidoRentaCuartaCategoria",
+      "label": "Impuesto Retenido sobre Rentas de Cuarta Categoría (Casilla 130)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Cuarta-categoría withholdings made by payers during the ejercicio.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 130 (impuesto retenido sobre rentas de cuarta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "impuestoRetenidoRentaQuintaCategoria",
+      "label": "Impuesto Retenido sobre Rentas de Quinta Categoría (Casilla 131)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Quinta-categoría withholdings made by the taxpayer's employer(s) during the ejercicio, net of any excess-withholding refunds the employer already returned.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 131 (impuesto retenido sobre rentas de quinta categoría)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saldoFavorContribuyenteTrabajoFuenteExtranjera",
+      "label": "Saldo a Favor del Contribuyente — Rentas de Trabajo y Fuente Extranjera (Casilla 141)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: the resulting credit balance in the taxpayer's favor for rentas de trabajo y/o fuente extranjera, when credits/payments/withholdings exceed subtotalImpuestoMenosCredito. The source's own guide references this casilla only inline (while describing indicadorUsoSaldoFavor's gating condition), not in its own dedicated numbered paragraph as it does for every other casilla in this section — disclosed in VERIFICATION.md.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, referenced inline as \"la casilla 141\" ahead of the indicador de utilización del saldo a favor",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "indicadorUsoSaldoFavor",
+      "label": "Indicador de Utilización del Saldo a Favor del Contribuyente",
+      "type": "enum",
+      "requiredWhen": { "field": "saldoFavorContribuyenteTrabajoFuenteExtranjera", "greaterThan": 0 },
+      "description": "Mandatory whenever saldoFavorContribuyenteTrabajoFuenteExtranjera is positive: whether the taxpayer requests a refund (Devolución) of the credit balance, or elects to apply it (Aplicación) against future a-cuenta/regularización payments. A credit balance from rentas de trabajo y fuente extranjera cannot be applied against rentas de capital (primera or segunda categoría) obligations, or vice versa.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Indicador de utilización del 'saldo a favor del contribuyente' — ○ Devolución ○ Aplicación\"",
+      "validation": { "enum": ["DEVOLUCION", "APLICACION"] }
+    },
+    {
+      "name": "saldoAFavorDelFisco",
+      "label": "Saldo a Favor del Fisco (Casilla 142)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: the balance owed to SUNAT for rentas de trabajo y fuente extranjera before applying prior regularización payments.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 142 (A favor del fisco)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "pagosContraSaldoFavorFisco",
+      "label": "Pagos Contra el Saldo a Favor del Fisco (Casilla 144)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Prior payments already made under tributo code 3073 (\"Regularización rentas de trabajo\") that must be discounted from this regularización declaration.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 144 (pagos contra el saldo a favor del fisco)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "interesMoratorio",
+      "label": "Interés Moratorio (Casilla 145)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Late-payment interest, applicable only when the DJA Persona Natural is presented after SUNAT's own filing deadline, calculated at the daily TIM (0.9% monthly ÷ 30) from the day after the due date through the payment date, inclusive.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 145 (interés moratorio)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saldoDeudaTributaria",
+      "label": "Saldo de la Deuda Tributaria (Casilla 146)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Casilla no editable: the amount payable for rentas de trabajo y fuente extranjera, when the tax determined exceeds direct payments and/or the prior ejercicio's credit balance.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casilla 146 (saldo de la deuda tributaria)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "importeAPagar",
+      "label": "Importe a Pagar (Casilla 168)",
+      "type": "number",
+      "requiredWhen": { "field": "saldoDeudaTributaria", "greaterThan": 0 },
+      "classification": "financial",
+      "description": "The amount the taxpayer elects to pay toward rentas de trabajo y fuente extranjera with this declaration; cannot exceed saldoDeudaTributaria.",
+      "sourceRef": "Determinación de la Deuda, Rentas de Trabajo y/o Fuente Extranjera, \"Casillas 168 (importe a pagar)\"",
+      "validation": { "minimum": 0 }
+    }
+  ]
+}
