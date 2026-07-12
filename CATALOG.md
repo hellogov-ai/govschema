@@ -4,8 +4,36 @@
 
 ## Executive Summary
 
-**39 jurisdictions** | **372 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**39 jurisdictions** | **373 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-12, GOV-2465, "GovSchema Standard Research"): Peru's
+> Taxes vertical opens (4 of 6)**, via
+> `pe/sunat/formulario-virtual-709-declaracion-renta` v1.0.0, sourced from
+> SUNAT's own "Ayuda FV-709" guide to Formulario Virtual N° 709
+> ("Declaración Jurada Anual Persona Natural"). This candidate was
+> pre-scouted the prior cycle (GOV-2456) against a 2024-edition guide; this
+> cycle's own mandatory legal-currency check found `renta.sunat.gob.pe`
+> already running a live "Renta 2025" campaign with a 2025-edition guide
+> superseding it (fetched live, HTTP 200, 514013 bytes,
+> `sha256:740f62f08e673a4671eb343eef30c741d735b4705fc4263a4f2e74e675fe0324`),
+> so this document is authored against the current edition instead. FV 709
+> itself remains Clave-SOL-login-gated (no live AcroForm/HTML), so this is a
+> structural-reference schema built from the guide's own casilla-numbered
+> field-by-field walkthrough — a programmatic diff against the 2024 edition
+> confirmed all 67 distinct casilla numbers cited are identical
+> year-over-year (only UIT-indexed peso amounts changed). Scoped to the
+> return's "Otros Ingresos" disclosures and the entire "Rentas de Trabajo
+> (Cuarta y Quinta Categoría) y/o Fuente Extranjera" income category
+> end-to-end — 47 `fields[]`, 0 `documents[]` (FV 709 is filed entirely
+> online against SUNAT's own pre-populated data, with no supporting-document
+> instruction anywhere in the guide). The "Rentas de Capital" (rental
+> income and securities capital gains) tabs are out of scope, flagged as a
+> future companion-schedule candidate. Two mock conformance scenarios (0
+> errors) plus three mutation controls (each raising exactly 1 error) all
+> behaved as expected. **Peru now stands at 4 of 6 verticals** (Visa,
+> Business Formation, DMV, Taxes) — see the Taxes vertical section and the
+> document's own VERIFICATION.md for the full sourcing record.
+>
 > **Update (2026-07-12, GOV-2456, "GovSchema Standard Research"): Uruguay's
 > DMV vertical opens (2 of 6)**, via
 > `uy/imm/empadronamiento-vehiculos-nacionales` v1.0.0, sourced from the
@@ -7002,7 +7030,44 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (34/39 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (35/39 jurisdictions — 90%)
+
+**Peru's Taxes vertical opens** (`pe/sunat/formulario-virtual-709-declaracion-renta`,
+GOV-2465) — SUNAT's Formulario Virtual N° 709, "Declaración Jurada Anual
+Persona Natural" (the annual individual income tax return), pre-scouted the
+prior cycle (GOV-2456) against a 2024-edition guide. This cycle's own
+legal-currency check (a mandatory authoring step) found that edition
+already superseded: `renta.sunat.gob.pe`'s own portal is running a live
+"Renta 2025" campaign, and its dedicated guide page now links only a
+2025-edition "Ayuda FV-709" (HTTP 200, `sha256:740f62f08e6...`), which this
+document is authored against instead. FV 709 itself remains
+Clave-SOL-login-gated (no live AcroForm/HTML to extract), so this is a
+structural-reference schema built from the guide's own casilla-numbered
+field-by-field walkthrough, the same tier as this registry's `jp/houmukyoku`
+and `pe/sunat/solicitud-inscripcion-ruc-persona-natural` precedents. A
+programmatic diff against the 2024 edition confirmed all 67 distinct
+casilla numbers referenced are identical year-over-year (only UIT-indexed
+peso amounts changed), so this document's own casilla-cited `sourceRef`s
+should remain stable across future ejercicio editions. Scoped to the
+return's Sección Informativa "Otros Ingresos" disclosures (exempt/
+non-taxable income, dividends, liberalidades) and the entire "Rentas de
+Trabajo (Cuarta y Quinta Categoría) y/o Fuente Extranjera" income category
+end-to-end (its own Sección Determinativa income/deduction casillas plus
+its own Determinación de Deuda tax computation) — 47 `fields[]` entries, 0
+`documents[]` (a disclosed structural fact: FV 709 is filed entirely online
+against SUNAT's own pre-populated data, with no instruction anywhere in the
+36-page guide to attach a supporting file). Explicitly out of scope: the
+"Rentas de Capital – Primera Categoría" (rental income) and "Segunda
+Categoría" (securities capital gains) tabs, each a genuinely distinct
+income category with its own open-ended per-transaction wizards, flagged as
+a future companion-schedule candidate. Two mock conformance scenarios (0
+errors) plus three mutation controls (each raising exactly 1 error,
+including this registry's first exercised use of a `requiredWhen`/
+`greaterThan` gate) passed; see the document's own VERIFICATION.md for the
+full casilla-by-casilla inventory and every disclosed scope decision. Peru
+now stands at **4 of 6 verticals** (Visa, Business Formation, DMV, Taxes);
+Passport (Migraciones) and National ID (RENIEC DNI) remain
+appointment/biometric-gated.
 
 **Vietnam's Taxes vertical opens** (`vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`,
 GOV-2411) — Mẫu số 02/QTT-TNCN, "Tờ khai quyết toán thuế thu nhập cá nhân"
@@ -8124,7 +8189,7 @@ now closed.
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PE** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -9240,25 +9305,6 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     `pe/mtc/solicitud-licencia-conducir-012-17`'s own VERIFICATION.md for
     the full sourcing record, the checkbox-matrix reconstruction method, and
     every disclosed judgment call.
-15. **Peru's Taxes vertical: SUNAT Formulario Virtual 709, "Declaración de
-    Renta Persona Natural"** (individual income tax return) — independently
-    scouted in GOV-2456 (2026-07-12) and confirmed a strong pre-scouted
-    candidate, ready to author in a future cycle. Source:
-    <https://renta.sunat.gob.pe/sites/default/files/inline-files/AYUDA%20FV_%20709_2024__0.pdf>,
-    a genuine, unauthenticated, directly fetchable (HTTP 200, no login/
-    CAPTCHA/WAF) 36-page prose guide ("Ayuda FV-709") with dozens of
-    numbered casillas/fields walked through field-by-field. Formulario
-    Virtual 709 itself is filed through SUNAT's Clave-SOL-authenticated
-    online portal (matching this registry's prior finding that SUNAT is
-    login-gated for the individual RUC-registration path), so no live
-    AcroForm/HTML form exists to extract directly — but this guide's own
-    casilla-numbered walkthrough is a strong enough field-by-field source to
-    author a structural-reference schema from, the same tier as this
-    registry's existing text-layer-only precedents (e.g. `jp/houmukyoku`,
-    `pe/sunat/solicitud-inscripcion-ruc-persona-natural`). Not yet authored
-    this cycle — GOV-2456's own deliverable was Uruguay's DMV vertical (see
-    the Executive Summary update above); flagged here for a future cycle.
-
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
