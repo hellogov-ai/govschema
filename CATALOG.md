@@ -4,7 +4,63 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **383 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **384 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2553, "GovSchema Standard Research"): Nigeria's
+> Taxes vertical closes (2 of 6)**, via
+> `ng/firs/fct-irs-personal-income-tax-return-form-a`, the Federal Capital
+> Territory Internal Revenue Service (FCT-IRS)'s "Form A" Personal Income Tax
+> Return Form, filed under the Personal Income Tax Act (PITA). Nigerian
+> personal income tax is administered state-by-state (each state plus the
+> FCT runs its own IRS under the nationally-standardized PITA framework), so
+> this schema is deliberately scoped `jurisdiction.level: subnational`,
+> `subdivision: NG-FC` rather than asserted as a single national form.
+> Independently re-fetched the cited source directly (HTTP 200,
+> `application/pdf`, 323,404 bytes, Last-Modified 2025-10-09, `sha256:
+> 5062478b44c42c94524d773691e0903d2328640a9d5f3a252475c094a3bd324d`),
+> confirming the child issue's own citation exactly. A fresh `pdfjs-dist`
+> extraction confirms **0 AcroForm widgets** across the 2-page specimen — a
+> flat print-and-hand-fill form, the same tier as this registry's `rw/dgie`,
+> `pe/sunat`, `uy/dgi`, and `ke/brs` specimens — and also surfaced a
+> font-rendering defect in the specimen's embedded bold typeface that made
+> `pdfjs-dist`/`node-canvas` silently drop most bold caption glyphs on
+> render; two tables' row counts (domestic servants, Part D allowances) were
+> confirmed via the rendered vector ruling-line geometry instead, since their
+> captions render invisible under this defect. 82 `fields[]` cover Part A
+> (Personal Details), Part B (Statement of Income — earned income from
+> trade/employment/pension/foreign sources, investment income from
+> dividends/interest/rents/other profits), a conditional spouse-and-children
+> block (a bounded, printed 4-slot children table), Part C (Benefits in
+> Kind, including bounded 2-slot domestic-servants and vehicles tables), and
+> Part D (a bounded 2-slot life-assurance/gratuities/NHIS/pension-
+> contribution table), plus the closing declaration. This specimen carries
+> **zero asterisks or any other required-field marking convention anywhere**
+> in its text (confirmed by a full-text scan) — a disclosed judgment call
+> models every Part B income-statement line required with a 0-permitting
+> minimum (a filer with none of a given income type still enters 0), while
+> the spouse/children block and every Part C/D item, none of which apply to
+> every filer, are modeled optional; no synthetic Marital Status field was
+> invented to gate the spouse/children block, since the specimen has no
+> corresponding checkbox to reference, per this registry's `ng/cac` Section
+> D/D1 precedent. A disclosed printed-label discrepancy: the source's own
+> "Aggregate Investment Income (iv - vii above) (Y)" label cannot literally
+> mean items (iv)-(vii), since item (iv) is already summed into the
+> preceding "Aggregate Earned Income (i-iv above) (X)" line — this schema
+> models the field as the sum of items (v)-(viii) instead, the only
+> numerically consistent reading, with the printed range quoted verbatim
+> rather than silently re-typeset. 8 `documents[]` entries capture the
+> specimen's own "Attach ..." instructions (6 conditional, disclosed via
+> `handling` prose since no boolean field exists to gate a `requiredWhen`
+> cleanly) plus the signed declaration statement (required). Two mock
+> conformance scenarios (a single-employed filer with no benefits; a married
+> filer with two children, employer-paid rent, a domestic servant, a
+> vehicle, and a life-assurance policy) found 0 errors each, plus 4 mutation
+> controls (a missing required field, an email-pattern violation, an enum
+> violation, and a vehicle-year range violation) each correctly raised
+> exactly 1 error. See the document's own VERIFICATION.md for the full
+> sourcing record and every disclosed scoping/judgment call. **Nigeria now
+> stands at 2 of 6 verticals** (Business Formation, Taxes); Passport, DMV,
+> Visa, and National ID remain open, unscreened backlog for a future cycle.
 
 > **Update (2026-07-12, GOV-2544, "GovSchema Standard Research"): Rwanda's
 > Visa vertical opens (2 of 6)**, via `rw/dgie/visa-application` (Directorate
@@ -7533,7 +7589,33 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (36/40 jurisdictions — 90%)
+### Taxes — Income Tax Return, Tax Filing (37/40 jurisdictions — 93%)
+
+**Nigeria's Taxes vertical closes** (`ng/firs/fct-irs-personal-income-tax-return-form-a`,
+GOV-2553) — the Federal Capital Territory Internal Revenue Service
+(FCT-IRS)'s "Form A" Personal Income Tax Return Form, filed under the
+Personal Income Tax Act (PITA). Modeled `subnational`/`NG-FC`, since Nigerian
+personal income tax is administered state-by-state rather than by a single
+national form. A flat, 2-page, 0-AcroForm-widget specimen (independently
+re-fetched and re-hashed this cycle, matching the child issue's own
+citation exactly); extraction also surfaced a font-rendering defect in the
+specimen's embedded bold typeface, worked around by cross-checking two
+tables' row counts against rendered vector ruling-line geometry rather than
+rendered captions. 82 `fields[]` (a disclosed judgment call models every
+Part B income-statement line required with a 0-permitting minimum, since
+the specimen carries zero asterisks or any other required-field marking
+anywhere; the spouse/children block and every Part C/D item are modeled
+optional, with no synthetic Marital Status field invented to gate the
+former) plus 8 `documents[]`. A disclosed printed-label discrepancy: the
+source's own "Aggregate Investment Income (iv - vii above) (Y)" label is
+modeled as the sum of items (v)-(viii) instead, the only numerically
+consistent reading, since item (iv) is already summed into the preceding
+Aggregate Earned Income line. Two mock conformance scenarios (0 errors
+each) plus 4 mutation controls (each raising exactly 1 error) passed; see
+the document's own VERIFICATION.md for the full sourcing record and every
+disclosed scope/judgment call. **Nigeria now stands at 2 of 6 verticals**
+(Business Formation, Taxes); Passport, DMV, Visa, and National ID remain
+open, unscreened backlog for a future cycle.
 
 **Kenya's Taxes vertical closes** (`ke/kra/it1-individual-resident-return`,
 GOV-2535) — the Kenya Revenue Authority (KRA)'s "IT1 Individual Resident
@@ -8769,7 +8851,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **NG** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **NG** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -10187,6 +10269,57 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     **Rwanda now stands at 2 of 6 verticals** (DMV, Visa); Business
     Formation, National ID, Passport, and Taxes remain confirmed dead ends
     per item 23/GOV-2526.
+26. **Nigeria's Taxes vertical closes (2 of 6) (GOV-2553)**, via
+    `ng/firs/fct-irs-personal-income-tax-return-form-a` (the Federal Capital
+    Territory Internal Revenue Service's "Form A" Personal Income Tax Return
+    Form, under the Personal Income Tax Act). Resolves item 20's disclosed
+    open, unscreened Taxes backlog for Nigeria. Independently re-fetched the
+    cited source directly (HTTP 200, `application/pdf`, 323,404 bytes,
+    Last-Modified 2025-10-09, `sha256:
+    5062478b44c42c94524d773691e0903d2328640a9d5f3a252475c094a3bd324d`),
+    confirming the child issue's own citation exactly. A fresh `pdfjs-dist`
+    extraction confirms **0 AcroForm widgets** across the 2-page specimen,
+    the same flat-print-form tier as `rw/dgie`, `pe/sunat`, `uy/dgi`, and
+    `ke/brs`; extraction also surfaced a font-rendering defect in the
+    specimen's own embedded bold typeface that silently dropped most bold
+    caption glyphs on render, worked around by cross-checking two tables'
+    row counts (domestic servants, Part D allowances) against rendered
+    vector ruling-line geometry instead of the (invisible) rendered
+    captions. Modeled `jurisdiction.level: subnational`, `subdivision:
+    NG-FC`, since Nigerian personal income tax is administered
+    state-by-state under the nationally-standardized PITA framework, not by
+    a single national form. 82 `fields[]` cover Part A (Personal Details),
+    Part B (Statement of Income), a conditional spouse-and-children block
+    (a bounded, printed 4-slot children table), Part C (Benefits in Kind,
+    including bounded 2-slot domestic-servants and vehicles tables), and
+    Part D (a bounded 2-slot life-assurance/gratuities/NHIS/pension-
+    contribution table). This specimen carries **zero asterisks or any
+    other required-field marking convention anywhere** in its text
+    (confirmed by a full-text scan) — a disclosed judgment call models
+    every Part B income-statement line required with a 0-permitting
+    minimum, while the spouse/children block and every Part C/D item are
+    modeled optional, with no synthetic Marital Status field invented to
+    gate the former (no corresponding checkbox exists on the specimen),
+    per this registry's `ng/cac` Section D/D1 precedent. A disclosed
+    printed-label discrepancy: the source's own "Aggregate Investment
+    Income (iv - vii above) (Y)" label is modeled as the sum of items
+    (v)-(viii) instead, the only numerically consistent reading, since item
+    (iv) is already summed into the preceding "Aggregate Earned Income
+    (i-iv above) (X)" line. 8 `documents[]` entries capture the specimen's
+    own "Attach ..." instructions (6 conditional, disclosed via `handling`
+    prose since no boolean field exists to gate a `requiredWhen` cleanly)
+    plus the signed declaration statement (required). Two mock conformance
+    scenarios (a single-employed filer with no benefits; a married filer
+    with two children, employer-paid rent, a domestic servant, a vehicle,
+    and a life-assurance policy) found 0 errors each, plus 4 mutation
+    controls (a missing required field, an email-pattern violation, an enum
+    violation, and a vehicle-year range violation) each correctly raised
+    exactly 1 error. See the Executive Summary update above, the "Taxes"
+    vertical section above, and the document's own VERIFICATION.md for the
+    full sourcing record and every disclosed scoping/judgment call.
+    **Nigeria now stands at 2 of 6 verticals** (Business Formation, Taxes);
+    Passport, DMV, Visa, and National ID remain open, unscreened backlog
+    for a future cycle.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
