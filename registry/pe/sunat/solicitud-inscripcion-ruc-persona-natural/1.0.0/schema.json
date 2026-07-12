@@ -1,0 +1,558 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pe/sunat/solicitud-inscripcion-ruc-persona-natural",
+  "version": "1.0.0",
+  "title": "Peru RUC Registration for Individuals (Formulario 2119)",
+  "description": "Register a natural person, conjugal partnership, or undivided estate (sucesión indivisa) in Peru's Registro Único de Contribuyentes (RUC) — the tax identification registry all Peruvian taxpayers must join before issuing invoices or paying taxes — using SUNAT's Formulario 2119, \"Solicitud de Inscripción o Comunicación de Afectación de Tributos.\" Opens Peru's Business Formation vertical (2 of 6), following the Visa vertical opened by `pe/cancilleria/solicitud-visa-dgc-005`. Covers Rubro I (Información General: inscription vs. tax-affectation request type), Rubro II (Datos Generales del Contribuyente: taxpayer type, economic activity, invoicing/accounting systems, foreign-trade activity), Rubro III (Domicilio Fiscal: registered tax address), Rubro IV (Datos de la Persona Natural: identity document, date of birth, sex, nationality, residency), and Rubro VI (Tributos Afectos: the tax regime code(s) the taxpayer is registering under). Scoped to the natural-person/conjugal-partnership/undivided-estate applicant path (Tabla Anexa N° 2 codes for PERSONA_NATURAL and SOCIEDAD_CONYUGAL and SUCESION_INDIVISA); the legal-entity (persona jurídica) path — which additionally requires the companion Formulario 2054 (Representantes Legales) — is out of scope. Does not model Rubro V (Datos de la Empresa, applicable only to legal entities), the SUNAT-internal UBIGEO/USO SUNAT boxes, or the signature/fingerprint/seal marks captured in person at the SUNAT counter. This document does not submit a registration; SUNAT (Superintendencia Nacional de Aduanas y de Administración Tributaria) is always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Superintendencia Nacional de Aduanas y de Administración Tributaria",
+    "abbreviation": "SUNAT",
+    "url": "https://www.sunat.gob.pe"
+  },
+  "process": {
+    "type": "application",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://www.sunat.gob.pe/orientacion/formularios/ruc/f-2119.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "Formulario 2119, \"Solicitud de Inscripción o Comunicación de Afectación de Tributos (Incluye Exoneraciones)\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "Opens Peru's Business Formation vertical (2 of 6). A prior 'GovSchema Standard Research' cycle (GOV-2404) had screened Formulario 2119 and characterized it as a genuine, unauthenticated, static text-layer PDF without AcroForm widgets — the strongest of Peru's then-unauthored candidates. This cycle, prompted by the immediately preceding GOV-2419 cycle's finding that a sibling Peru form (DGC-005) turned out to carry a genuine AcroForm revision hidden behind its Ministry institutional page, re-checked whether the same was true here: three independent copies were fetched (SUNAT's own canonical `sunat.gob.pe/orientacion/formularios/ruc/f-2119.pdf`, and two gob.pe institutional-page mirrors at upload IDs 400202 and 448271) and cross-hashed. The two gob.pe mirrors are byte-identical to each other (`sha256:28a3d216...`, PDFium-regenerated, 2016) but differ from SUNAT's own canonical copy (`sha256:136cc390...`, Adobe PageMaker/Acrobat Distiller, 2006) only in producer/regeneration metadata — both render the same two-page form content, verified via pdfjs-dist text-content comparison, and neither carries any AcroForm widget (`getAnnotations()` returns 0 widgets on every page of every copy). This re-confirms, rather than overturns, the GOV-2404 finding: Formulario 2119 is a genuine text-layer-only PDF, the same tier as this registry's `jp/houmukyoku` and `vn/gdt` precedents. `orientacion.sunat.gob.pe/03-formularios-para-la-inscripcion-al-ruc` independently confirms the form is currently 'VIGENTE' (in force), used specifically for RUC inscription by a third party (por tercero) or for post-inscription tax-affectation/exemption communication. See VERIFICATION.md for the full casilla-by-casilla field inventory (cross-referenced against the form's own companion instructions document, `i-2119.pdf`, and the full Tablas Anexas reference published at `orientacion.sunat.gob.pe/6746-03-tablas-anexas-2-ruc-empresas`), every disclosed judgment call, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "tipoSolicitud",
+      "label": "Tipo de Solicitud",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this submission requests initial RUC inscription, or communicates a taxpayer's later affectation/exemption to one or more taxes (used by an already-inscribed taxpayer).",
+      "sourceRef": "Rubro I, Casillas 05-06 (Tipo de Solicitud, Marcar con \"X\")",
+      "validation": { "enum": ["INSCRIPCION", "AFECTACION_TRIBUTOS"] }
+    },
+    {
+      "name": "numeroRuc",
+      "label": "Número de RUC",
+      "type": "string",
+      "requiredWhen": { "field": "tipoSolicitud", "equals": "AFECTACION_TRIBUTOS" },
+      "classification": "pii",
+      "description": "The taxpayer's existing 11-digit RUC number. Only applicable to the tax-affectation path — an inscription request has no RUC yet, since obtaining one is the point of the request.",
+      "sourceRef": "Rubro I, Casilla 13 (Número de RUC)",
+      "validation": { "pattern": "^[0-9]{11}$" }
+    },
+    {
+      "name": "apellidosNombresRazonSocial",
+      "label": "Apellidos y Nombres o Razón Social",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "For a natural person: Apellido Paterno, then Apellido Materno, then Nombres, each separated by a blank space. For an undivided estate (sucesión indivisa), the word \"Sucesión\" is prefixed to the deceased's own apellidos y nombres.",
+      "sourceRef": "Rubro I, Casilla 14 (Apellidos y Nombres o Razón Social)"
+    },
+    {
+      "name": "tipoContribuyente",
+      "label": "Tipo de Contribuyente",
+      "type": "enum",
+      "required": true,
+      "description": "Taxpayer type, per Tabla Anexa N° 2. This schema's scope is limited to the six natural-person-adjacent codes; the remaining ~45 Tabla Anexa N° 2 codes (sociedades, empresas, entidades públicas, etc.) require the companion Formulario 2054 (Representantes Legales) and are out of scope for this document.",
+      "sourceRef": "Rubro II, Tipo de Contribuyente (Ver Tabla Anexa N° 2)",
+      "validation": {
+        "enum": [
+          "PERSONA_NATURAL_SIN_NEGOCIO",
+          "PERSONA_NATURAL_CON_NEGOCIO",
+          "SOCIEDAD_CONYUGAL_SIN_NEGOCIO",
+          "SOCIEDAD_CONYUGAL_CON_NEGOCIO",
+          "SUCESION_INDIVISA_SIN_NEGOCIO",
+          "SUCESION_INDIVISA_CON_NEGOCIO"
+        ]
+      }
+    },
+    {
+      "name": "telefono",
+      "label": "Teléfono",
+      "type": "string",
+      "classification": "pii",
+      "description": "Contact telephone number. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro II, Teléfonos"
+    },
+    {
+      "name": "profesionUOficioCodigo",
+      "label": "Código de Profesión u Oficio",
+      "type": "string",
+      "description": "Profession/occupation code per Tabla Anexa N° 11, applicable only to natural persons and conjugal partnerships. Tabla Anexa N° 11 lists several hundred codes and is modelled here as a free-text code rather than a full enum, per this registry's convention for large external reference tables (cf. CIIU economic-activity codes below).",
+      "sourceRef": "Rubro II, Código de Profesión u Oficio (Ver Tabla Anexa N° 11) — sólo Personas Naturales y Sociedades Conyugales",
+      "validation": { "pattern": "^[0-9]+$" }
+    },
+    {
+      "name": "nombreComercial",
+      "label": "Nombre Comercial",
+      "type": "string",
+      "description": "Trade name used for public/advertising purposes, if any. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro II, Nombre Comercial"
+    },
+    {
+      "name": "numeroLicenciaMunicipal",
+      "label": "N° Licencia Municipal",
+      "type": "string",
+      "description": "Municipal operating-license number, if one has already been issued. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro II, N° Licencia Municipal"
+    },
+    {
+      "name": "fax",
+      "label": "Fax",
+      "type": "string",
+      "classification": "pii",
+      "description": "Fax number. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro II, Fax"
+    },
+    {
+      "name": "fechaInicioActividades",
+      "label": "Fecha de Inicio de Actividades",
+      "type": "date",
+      "required": true,
+      "description": "Date the taxpayer's commercial, productive, or service activities begin.",
+      "sourceRef": "Rubro II, Fecha Inicio Activ. (Día/Mes/Año)"
+    },
+    {
+      "name": "actividadEconomicaPrincipalDescripcion",
+      "label": "Actividad Económica Principal",
+      "type": "string",
+      "required": true,
+      "description": "Free-text description of the taxpayer's main economic activity. Where more than one activity is carried out, this is the one generating the greatest income.",
+      "sourceRef": "Rubro II, Actividad Económica Principal (Ver Tabla Anexa N° 1)"
+    },
+    {
+      "name": "actividadEconomicaPrincipalCodigoCiiu",
+      "label": "Código CIIU (Actividad Principal)",
+      "type": "string",
+      "required": true,
+      "description": "International Standard Industrial Classification (CIIU) code for the main economic activity, per Tabla Anexa N° 1. Tabla Anexa N° 1 enumerates several hundred CIIU codes and is modelled here as a free-text code rather than a full enum, per this registry's convention for large external reference tables.",
+      "sourceRef": "Rubro II, Código CIIU (Ver Tabla Anexa N° 1)",
+      "validation": { "pattern": "^[0-9]+$" }
+    },
+    {
+      "name": "sistemaEmisionComprobantes",
+      "label": "Sistema de Emisión de Comprobantes de Pago",
+      "type": "enum",
+      "required": true,
+      "description": "How the taxpayer issues payment receipts/invoices. \"Computarizado\" applies whenever any kind of computer is used for this purpose.",
+      "sourceRef": "Rubro II, Sist. de Emisión de Comprob. de Pago (Marcar con \"X\")",
+      "validation": { "enum": ["MANUAL", "MAQUINA_REGISTRADORA", "COMPUTARIZADO"] }
+    },
+    {
+      "name": "actividadesEconomicasSecundariasDescripcion",
+      "label": "Actividades Económicas Secundarias",
+      "type": "string",
+      "description": "Free-text description of any secondary economic activity. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro II, Actividades Económicas Secundarias (Ver Tabla Anexa N° 1)"
+    },
+    {
+      "name": "actividadesEconomicasSecundariasCodigoCiiu",
+      "label": "Código CIIU (Actividad Secundaria)",
+      "type": "string",
+      "description": "CIIU code for the secondary economic activity, per Tabla Anexa N° 1. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro II, Código CIIU (Ver Tabla Anexa N° 1)",
+      "validation": { "pattern": "^[0-9]+$" }
+    },
+    {
+      "name": "sistemaContabilidad",
+      "label": "Sistema de Contabilidad",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the taxpayer's own bookkeeping system is manual or computerized.",
+      "sourceRef": "Rubro II, Sistema de Contabilidad (Marcar con \"X\")",
+      "validation": { "enum": ["MANUAL", "COMPUTARIZADO"] }
+    },
+    {
+      "name": "actividadComercioExteriorExportador",
+      "label": "Actividad de Comercio Exterior — Exportador",
+      "type": "boolean",
+      "description": "Whether the taxpayer carries out export activity. Not marked as obligatory by the source; absence means the box was left unchecked.",
+      "sourceRef": "Rubro II, Actividad de Comercio Exterior — Exportador (Marcar con \"X\")"
+    },
+    {
+      "name": "actividadComercioExteriorImportador",
+      "label": "Actividad de Comercio Exterior — Importador",
+      "type": "boolean",
+      "description": "Whether the taxpayer carries out import activity. Not marked as obligatory by the source; absence means the box was left unchecked.",
+      "sourceRef": "Rubro II, Actividad de Comercio Exterior — Importador (Marcar con \"X\")"
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "classification": "pii",
+      "description": "Email address. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro II, Correo Electrónico",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "departamento",
+      "label": "Departamento",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Region (departamento) of the taxpayer's registered tax address (domicilio fiscal).",
+      "sourceRef": "Rubro III, Departamento"
+    },
+    {
+      "name": "provincia",
+      "label": "Provincia",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Province of the registered tax address.",
+      "sourceRef": "Rubro III, Provincia"
+    },
+    {
+      "name": "distrito",
+      "label": "Distrito",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "District of the registered tax address.",
+      "sourceRef": "Rubro III, Distrito"
+    },
+    {
+      "name": "zonaCodigo",
+      "label": "Tipo de Zona",
+      "type": "enum",
+      "classification": "pii",
+      "description": "Type of named zone the tax address sits within (e.g. Urbanización, Pueblo Joven), per Tabla Anexa N° 3, if the address sits within one. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro III, Zona (Ver Tabla Anexa N° 3)",
+      "validation": {
+        "enum": [
+          "URBANIZACION",
+          "PUEBLO_JOVEN",
+          "UNIDAD_VECINAL",
+          "CONJUNTO_HABITACIONAL",
+          "ASENTAMIENTO_HUMANO",
+          "COOPERATIVA",
+          "RESIDENCIAL",
+          "ZONA_INDUSTRIAL",
+          "GRUPO",
+          "CASERIO",
+          "FUNDO",
+          "OTROS"
+        ]
+      }
+    },
+    {
+      "name": "zonaNombre",
+      "label": "Nombre de la Zona",
+      "type": "string",
+      "requiredWhen": { "field": "zonaCodigo", "equals": "OTROS" },
+      "classification": "pii",
+      "description": "Free-text name of the zone, required when Tipo de Zona is \"Otros\" (code 12) per the source's own casilla instruction. The source's prose description of this casilla is somewhat broader (\"fill in if your tax address sits within a zone\"); this schema follows the more specific numbered casilla instruction as authoritative, a disclosed judgment call — see VERIFICATION.md.",
+      "sourceRef": "Rubro III, Casilla 38 (Nombre de la Zona)"
+    },
+    {
+      "name": "viaCodigo",
+      "label": "Tipo de Vía",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Type of thoroughfare (e.g. Avenida, Jirón, Calle) the tax address sits on, per Tabla Anexa N° 4.",
+      "sourceRef": "Rubro III, Vía (Ver Tabla Anexa N° 4)",
+      "validation": {
+        "enum": [
+          "AVENIDA",
+          "JIRON",
+          "CALLE",
+          "PASAJE",
+          "ALAMEDA",
+          "MALECON",
+          "OVALO",
+          "PARQUE",
+          "PLAZA",
+          "CARRETERA",
+          "BLOCK",
+          "OTROS"
+        ]
+      }
+    },
+    {
+      "name": "viaNombre",
+      "label": "Nombre de la Vía",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Free-text name of the thoroughfare itself (e.g. \"Larco\" for Avenida Larco). Modelled here as always required rather than only when Tipo de Vía is \"Otros\": every Peruvian tax address needs its actual street name recorded regardless of thoroughfare type, and the source's own casilla instruction is genuinely ambiguous on this point (it also says to \"inform the name of the zone, that of the vía, or both\") — a disclosed judgment call, see VERIFICATION.md.",
+      "sourceRef": "Rubro III, Casilla 40 (Nombre de la Vía)"
+    },
+    {
+      "name": "numero",
+      "label": "Número",
+      "type": "string",
+      "classification": "pii",
+      "description": "Street number, when the tax address sits on a normal street (not a highway or an unnumbered block). Not marked as obligatory by the source.",
+      "sourceRef": "Rubro III, Número"
+    },
+    {
+      "name": "kilometro",
+      "label": "Kilómetro",
+      "type": "string",
+      "classification": "pii",
+      "description": "Kilometre marker, used instead of a street number only when Tipo de Vía is Carretera (highway).",
+      "sourceRef": "Rubro III, Kilometro"
+    },
+    {
+      "name": "manzana",
+      "label": "Manzana",
+      "type": "string",
+      "classification": "pii",
+      "description": "Block (manzana) identifier, used instead of a street number when the address is located by block rather than street number.",
+      "sourceRef": "Rubro III, Manzana"
+    },
+    {
+      "name": "interior",
+      "label": "Interior",
+      "type": "string",
+      "classification": "pii",
+      "description": "Interior/unit number within the building, if applicable. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro III, Interior"
+    },
+    {
+      "name": "departamentoUnidad",
+      "label": "Dpto.",
+      "type": "string",
+      "classification": "pii",
+      "description": "Apartment/unit number (\"Dpto.\"), distinct from the Departamento region field above. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro III, Dpto."
+    },
+    {
+      "name": "lote",
+      "label": "Lote",
+      "type": "string",
+      "classification": "pii",
+      "description": "Lot number within a block (manzana), if applicable. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro III, Lote"
+    },
+    {
+      "name": "otrasReferencias",
+      "label": "Otras Referencias",
+      "type": "string",
+      "classification": "pii",
+      "description": "Free-text reference information to help locate the tax address (e.g. a nearby landmark). Not marked as obligatory by the source.",
+      "sourceRef": "Rubro III, Otras Referencias"
+    },
+    {
+      "name": "condicionInmueble",
+      "label": "Condición del Inmueble",
+      "type": "enum",
+      "classification": "pii",
+      "description": "Whether the property at the tax address is owned, rented, used under a cesión en uso arrangement, or other. Not marked as obligatory by the source; the source's own printed form has no distinct checkbox group for this value beyond its instructions-page description.",
+      "sourceRef": "Rubro III, Condición del Inmueble",
+      "validation": { "enum": ["PROPIO", "ALQUILADO", "CESION_EN_USO", "OTROS"] }
+    },
+    {
+      "name": "documentoIdentidadTipo",
+      "label": "Documento de Identidad — Tipo",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "tipoContribuyente",
+        "in": ["PERSONA_NATURAL_SIN_NEGOCIO", "PERSONA_NATURAL_CON_NEGOCIO", "SOCIEDAD_CONYUGAL_SIN_NEGOCIO", "SOCIEDAD_CONYUGAL_CON_NEGOCIO"]
+      },
+      "classification": "pii",
+      "description": "Identity document type per Tabla Anexa N° 5. Not required for an undivided estate (sucesión indivisa), per the source's own instruction that an estate need not supply identity-document, date-of-birth, or sex information.",
+      "sourceRef": "Rubro IV, Documento de Identidad (Ver Tabla Anexa N° 5)",
+      "validation": { "enum": ["DNI", "CARNE_EXTRANJERIA", "PASAPORTE", "CEDULA_DIPLOMATICA"] }
+    },
+    {
+      "name": "documentoIdentidadNumero",
+      "label": "Documento de Identidad — Número",
+      "type": "string",
+      "requiredWhen": {
+        "field": "tipoContribuyente",
+        "in": ["PERSONA_NATURAL_SIN_NEGOCIO", "PERSONA_NATURAL_CON_NEGOCIO", "SOCIEDAD_CONYUGAL_SIN_NEGOCIO", "SOCIEDAD_CONYUGAL_CON_NEGOCIO"]
+      },
+      "classification": "pii",
+      "description": "Identity document number, including all digits.",
+      "sourceRef": "Rubro IV, Documento de Identidad — Número"
+    },
+    {
+      "name": "fechaNacimientoOInicioSucesion",
+      "label": "Fecha de Nacimiento o Inicio de la Sucesión",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Date of birth for a natural person or conjugal partnership member, or the undivided estate's own start date for a sucesión indivisa — the one field an estate must supply even though it is exempt from the identity-document/sex/nationality fields.",
+      "sourceRef": "Rubro IV, Fecha de Nacimiento o Inicio de la Sucesión"
+    },
+    {
+      "name": "sexo",
+      "label": "Sexo",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "tipoContribuyente",
+        "in": ["PERSONA_NATURAL_SIN_NEGOCIO", "PERSONA_NATURAL_CON_NEGOCIO", "SOCIEDAD_CONYUGAL_SIN_NEGOCIO", "SOCIEDAD_CONYUGAL_CON_NEGOCIO"]
+      },
+      "classification": "pii",
+      "description": "Sex, per Tabla Anexa N° 6. Not required for an undivided estate.",
+      "sourceRef": "Rubro IV, Sexo (Ver Tabla Anexa N° 6)",
+      "validation": { "enum": ["MASCULINO", "FEMENINO"] }
+    },
+    {
+      "name": "nacionalidad",
+      "label": "Nacionalidad",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "tipoContribuyente",
+        "in": ["PERSONA_NATURAL_SIN_NEGOCIO", "PERSONA_NATURAL_CON_NEGOCIO", "SOCIEDAD_CONYUGAL_SIN_NEGOCIO", "SOCIEDAD_CONYUGAL_CON_NEGOCIO"]
+      },
+      "classification": "pii",
+      "description": "Per Tabla Anexa N° 7, this field is a binary Peruana/Extranjera flag, not a full country code — the actual country is captured separately in País de Procedencia when Extranjera applies.",
+      "sourceRef": "Rubro IV, Nacionalidad (Ver Tabla Anexa N° 7)",
+      "validation": { "enum": ["PERUANA", "EXTRANJERA"] }
+    },
+    {
+      "name": "paisDeProcedencia",
+      "label": "País de Procedencia",
+      "type": "string",
+      "requiredWhen": { "field": "nacionalidad", "equals": "EXTRANJERA" },
+      "classification": "pii",
+      "description": "Country of origin, applicable only when Nacionalidad is Extranjera.",
+      "sourceRef": "Rubro IV, País de Procedencia (Sólo si es extranjero)"
+    },
+    {
+      "name": "condicionDomiciliado",
+      "label": "Condición de Domiciliado",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "tipoContribuyente",
+        "in": ["PERSONA_NATURAL_SIN_NEGOCIO", "PERSONA_NATURAL_CON_NEGOCIO", "SOCIEDAD_CONYUGAL_SIN_NEGOCIO", "SOCIEDAD_CONYUGAL_CON_NEGOCIO"]
+      },
+      "description": "Tax-residency status per Tabla Anexa N° 8. The source refers readers to Peru's own Ley del Impuesto a la Renta for the detailed \"domiciliado\" test.",
+      "sourceRef": "Rubro IV, Domiciliado (Ver Tabla Anexa N° 8)",
+      "validation": { "enum": ["DOMICILIADO", "NO_DOMICILIADO"] }
+    },
+    {
+      "name": "tributo1Codigo",
+      "label": "Código de Tributo 1",
+      "type": "string",
+      "required": true,
+      "description": "Tax-regime code the taxpayer is registering under, per Tabla Anexa N° 10 (e.g. \"1011\" = IGV, operaciones internas, cuenta propia). Tabla Anexa N° 10 lists dozens of codes and is modelled here as a free-text code rather than a full enum, per this registry's convention for large external reference tables. The source form provides six repeatable Rubro VI rows in total (for the full lifetime of afectación/exoneración changes); this schema models the first two, the bounded set relevant to an initial inscription, per this registry's established bounded-repeating-group convention.",
+      "sourceRef": "Rubro VI, Código (Ver Tabla Anexa N° 10) — fila 1",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "tributo1Afectacion",
+      "label": "Afectación (Tributo 1)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether this row communicates an affectation (as opposed to only an exemption) to the tax in tributo1Codigo.",
+      "sourceRef": "Rubro VI, Afectación (Marcar con \"X\") — fila 1"
+    },
+    {
+      "name": "tributo1FechaAfectacion",
+      "label": "Fecha desde la cual está Afecto (Tributo 1)",
+      "type": "date",
+      "requiredWhen": { "field": "tributo1Afectacion", "equals": true },
+      "description": "Date from which the taxpayer is affected by this tax.",
+      "sourceRef": "Rubro VI, Fecha desde la cual está Afecto al Tributo — fila 1"
+    },
+    {
+      "name": "tributo1Exoneracion",
+      "label": "Exoneración (Tributo 1)",
+      "type": "boolean",
+      "description": "Whether this row communicates an exemption from the tax in tributo1Codigo. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro VI, Exoneración (Marcar con \"X\") — fila 1"
+    },
+    {
+      "name": "tributo1FechaExoneracion",
+      "label": "Fecha desde la cual está Exonerado (Tributo 1)",
+      "type": "date",
+      "requiredWhen": { "field": "tributo1Exoneracion", "equals": true },
+      "description": "Date from which the taxpayer is exempted from this tax.",
+      "sourceRef": "Rubro VI, Fecha desde la cual está Exonerado al Tributo — fila 1"
+    },
+    {
+      "name": "tributo2Codigo",
+      "label": "Código de Tributo 2",
+      "type": "string",
+      "description": "Second tax-regime code, when the taxpayer registers under more than one tax at once. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro VI, Código (Ver Tabla Anexa N° 10) — fila 2",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "tributo2Afectacion",
+      "label": "Afectación (Tributo 2)",
+      "type": "boolean",
+      "description": "Whether this row communicates an affectation to the tax in tributo2Codigo.",
+      "sourceRef": "Rubro VI, Afectación (Marcar con \"X\") — fila 2"
+    },
+    {
+      "name": "tributo2FechaAfectacion",
+      "label": "Fecha desde la cual está Afecto (Tributo 2)",
+      "type": "date",
+      "requiredWhen": { "field": "tributo2Afectacion", "equals": true },
+      "description": "Date from which the taxpayer is affected by this second tax.",
+      "sourceRef": "Rubro VI, Fecha desde la cual está Afecto al Tributo — fila 2"
+    },
+    {
+      "name": "tributo2Exoneracion",
+      "label": "Exoneración (Tributo 2)",
+      "type": "boolean",
+      "description": "Whether this row communicates an exemption from the tax in tributo2Codigo. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro VI, Exoneración (Marcar con \"X\") — fila 2"
+    },
+    {
+      "name": "tributo2FechaExoneracion",
+      "label": "Fecha desde la cual está Exonerado (Tributo 2)",
+      "type": "date",
+      "requiredWhen": { "field": "tributo2Exoneracion", "equals": true },
+      "description": "Date from which the taxpayer is exempted from this second tax.",
+      "sourceRef": "Rubro VI, Fecha desde la cual está Exonerado al Tributo — fila 2"
+    },
+    {
+      "name": "autorizaTercero",
+      "label": "Autoriza a Otra Persona para la Presentación",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer authorizes a third party to submit this declaration on their behalf.",
+      "sourceRef": "Constancia de Recepción, \"Marque con 'X' si autoriza o no a otra persona para la presentación de esta declaración\""
+    },
+    {
+      "name": "terceroApellidosNombres",
+      "label": "Apellidos y Nombres (Persona Autorizada)",
+      "type": "string",
+      "requiredWhen": { "field": "autorizaTercero", "equals": true },
+      "classification": "pii",
+      "description": "Full name of the third party authorized to submit this declaration.",
+      "sourceRef": "Constancia de Recepción, Identificación de la Persona Autorizada — Apellidos y Nombres"
+    },
+    {
+      "name": "terceroDocumentoIdentidad",
+      "label": "Documento de Identidad (Persona Autorizada)",
+      "type": "string",
+      "requiredWhen": { "field": "autorizaTercero", "equals": true },
+      "classification": "pii",
+      "description": "Identity document number of the third party authorized to submit this declaration.",
+      "sourceRef": "Constancia de Recepción, Identificación de la Persona Autorizada — Documento de Identidad"
+    }
+  ]
+}
