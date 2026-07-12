@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**39 jurisdictions** | **373 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**39 jurisdictions** | **374 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2472, "GovSchema Standard Research"): Uruguay's
+> Visa vertical opens (3 of 6)**, via
+> `uy/mrree/formulario-unificado-de-visas` v1.0.0, sourced from the
+> Ministerio de Relaciones Exteriores' (MRREE) "Formulario Unificado de
+> Visas" — a single bilingual (Spanish/English) form used across Uruguay's
+> entire consular network in place of older per-consulate visa-request
+> letters. This cycle screened all four of Uruguay's remaining open
+> verticals (Taxes, Visa, Passport, National ID) in parallel: Taxes (DGI)
+> resolved to either a login-gated portal or a 0-AcroForm-widget
+> dependents-only PDF; Passport and National ID (both DNIC) resolved to
+> `gub.uy`-login-gated appointment-scheduling with no downloadable form of
+> any kind; Visa was the only genuine, unauthenticated, field-documented
+> candidate. Fetched directly from `gub.uy` (a Uruguay Consulate General in
+> Mexico trámite page, `files/2026-03/...`, HTTP 200, no login/CAPTCHA/WAF,
+> `sha256:429cefed89d404ae8c7380be983eda37318bc88416d22c2f27097643bdf9cb72`,
+> 1,625,285 bytes), confirmed byte-identical to a consulate mirror
+> (Barcelona) that had surfaced first during scouting under an older path —
+> establishing this as the Ministry's own current, centrally hosted edition
+> rather than a stale third-party copy. A second file also hosted on
+> `gub.uy` (a 2024-10-dated `.odt`) was fetched and found to be a
+> materially different, older single-consulate internal request letter
+> ("Solicitud de Autorización de Visa", from the Rosario consulate to the
+> national migration authority) — not an edition of the unified form, and
+> disclosed rather than mistaken for one. `pdfjs-dist` independently
+> confirms a genuine 22-widget AcroForm on page 1 (18 plain-text fields, 4
+> date-formatted fields), all correlating cleanly by y-coordinate to their
+> own printed bilingual label in a single-column layout. This schema models
+> 21 of the 22 widgets as `fields[]` (19 required, 2 optional — spouse's
+> name and prior Uruguay visas, since neither applies universally and the
+> form provides no conditional-visibility marker to gate on); the 22nd
+> widget is unlabeled (sitting in a gap between the printed Ministry header
+> and the form's own title, with no correlating text) and is disclosed as
+> excluded rather than guessed at, alongside the printed signature line at
+> the page bottom, which is confirmed to have no AcroForm widget at all (a
+> wet-ink signature, not a fillable field). 0 `documents[]`: the form's own
+> notes instruct presenting "todos los originales" (all originals) to the
+> consulate but do not itemize which, so none are modelled rather than
+> inventing an unsourced list. Two mock conformance scenarios (a first-time
+> tourist applicant; a married applicant with a prior visa to declare)
+> found 0 errors each, plus 3 mutation controls (a missing required field,
+> an invalid date format, and a maxLength violation) each correctly raised
+> exactly 1 error. **Uruguay now stands at 3 of 6 verticals** (Business
+> Formation, DMV, Visa); Taxes, Passport, and National ID remain open
+> backlog for future cycles — see the Visa vertical section, "Known Gaps &
+> Opportunities" below, and the document's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-12, GOV-2465, "GovSchema Standard Research"): Peru's
 > Taxes vertical opens (4 of 6)**, via
@@ -7603,7 +7650,16 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (29/39 jurisdictions — 74%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (30/39 jurisdictions — 77%)
+
+**Uruguay's Visa vertical opens (GOV-2472)**, via
+`uy/mrree/formulario-unificado-de-visas` — MRREE's "Formulario Unificado de
+Visas," a genuine 22-widget AcroForm PDF hosted directly by the Ministry and
+usable without any `gub.uy` login, unlike Uruguay's Taxes/Passport/National
+ID candidates (all login-gated or AcroForm-less, screened the same cycle —
+see "Known Gaps & Opportunities" below). Models 21 of the 22 widgets as
+`fields[]`; the 22nd is unlabeled and disclosed as out of scope. Uruguay now
+stands at 3 of 6 verticals (Business Formation, DMV, Visa).
 
 **Peru opens as this registry's 38th jurisdiction (GOV-2419)**, via
 `pe/cancilleria/solicitud-visa-dgc-005` — Formulario DGC-005, "Solicitud de
@@ -8196,8 +8252,8 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **UY** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
-| **VN** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **VN** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
@@ -9305,6 +9361,47 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     `pe/mtc/solicitud-licencia-conducir-012-17`'s own VERIFICATION.md for
     the full sourcing record, the checkbox-matrix reconstruction method, and
     every disclosed judgment call.
+15. **Uruguay's Visa vertical opens (3 of 6) (GOV-2472)**, via
+    `uy/mrree/formulario-unificado-de-visas`, MRREE's own "Formulario
+    Unificado de Visas" — see the Executive Summary update above and the
+    document's own VERIFICATION.md for the full sourcing record. This cycle
+    also screened all three of Peru's remaining open verticals (Passport,
+    National ID) and all four of Vietnam's remaining open verticals (DMV,
+    Visa, National ID) as parallel candidates before picking Uruguay's Visa
+    gap as the strongest: **Peru Passport** — Migraciones' domestic process
+    now has zero applicant-facing form of any kind (in-person, order-of-
+    arrival, on-site biometric capture only, as of a policy change the week
+    of 2026-05-25); the one consular passport-request PDF with real field
+    detail is stale (`CreationDate: 2017-06-29`) and its `/AcroForm/Fields`
+    array is empty; the Cancillería diplomatic-passport form is a scanned
+    image PDF (`DCTDecode`/JPEG content streams, not machine-extractable).
+    **Peru National ID** — RENIEC's entire modern DNI pipeline (first
+    issuance, renewal, loss/damage replacement) runs through in-person
+    registrar handoff or the biometric "DNI BioFacial" app/portal; no
+    downloadable, field-documented, non-gated form exists. **Vietnam DMV**
+    — vehicle registration (Mẫu ĐKX10, Thông tư 79/2024/TT-BCA) is a
+    genuine, current, ~20-30-field candidate distributed as a `.docx`
+    template rather than a native fillable PDF, freely downloadable with no
+    login gate; driver's-licence forms (GPLX) are in active regulatory
+    churn (four superseding circulars in under two years, most recently
+    Thông tư 108/2026/TT-BCA) and were set aside as too unstable to author
+    against this month — DMV remains open, with ĐKX10 as a ready-to-author
+    backlog candidate for a future cycle. **Vietnam Visa** — the e-visa
+    portal (`evisa.gov.vn`) is a login/session-gated SPA with no
+    downloadable field-by-field documentation, but the traditional paper
+    form Mẫu NA1 ("Tờ khai đề nghị cấp thị thực Việt Nam," Circular
+    04/2015/TT-BCA, used at embassies/consulates and on-arrival checkpoints)
+    is still current, freely downloadable, and documents ~20 fields — also
+    a ready-to-author backlog candidate. **Vietnam National ID** — Luật Căn
+    cước 2023 and its implementing Thông tư 17/2024/TT-BCA replaced the old
+    citizen-completed CC01 declaration with a purely system/officer-
+    generated workflow (forms CC01-CC05 are all database-extracted or
+    police-generated; the citizen only reviews and signs) — a confirmed
+    dead end, no fillable citizen-facing form remains. Peru stays at 4 of 6
+    verticals (Visa, Business Formation, DMV, Taxes); Vietnam stays at 3 of
+    6 (Business Formation, Passport, Taxes), with DMV (ĐKX10) and Visa (NA1)
+    both flagged as strong, ready-to-author candidates for an immediate
+    follow-up cycle.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
@@ -9524,18 +9621,45 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   fingerprints); no downloadable citizen-facing application form exists for
   the main flow, the same in-person-only pattern this registry has
   repeatedly confirmed dead-end elsewhere (CZ, MY, IT — see above). Do not
-  re-attempt without a genuinely new source.
+  re-attempt without a genuinely new source. **Re-confirmed, GOV-2472,
+  screened 2026-07-12**: the underlying legal basis has since changed
+  (Luật Căn cước 2023, effective 2024-07-01, plus its implementing Thông tư
+  17/2024/TT-BCA) but the finding holds and has strengthened — the old
+  citizen-completed CC01 declaration form (Thông tư 41/2021/TT-BCA) has
+  been formally replaced by a purely system/officer-generated workflow
+  (forms CC01-CC05 are now all database-extracted or police-generated; the
+  citizen only reviews and signs). There is no longer any fillable
+  citizen-facing form to schematize even in principle.
 - **PE Passport (Migraciones/RENIEC)** — GOV-2456, screened 2026-07-12
   (re-confirming prior cycles' GOV-2404/GOV-2419/GOV-2426/GOV-2434 notes).
   Passport issuance requires an in-person appointment with mandatory
   biometric capture; no downloadable citizen-facing application form
   exists for the main flow. Do not re-attempt without a genuinely new
-  source.
+  source. **Re-confirmed, GOV-2472, screened 2026-07-12**: Migraciones
+  eliminated even the online-appointment step the week of 2026-05-25
+  (now 100% in-person, order-of-arrival); the one consular passport-request
+  PDF with real field detail is stale (`CreationDate: 2017-06-29`) with an
+  empty `/AcroForm/Fields` array, and the Cancillería diplomatic-passport
+  form is a scanned-image PDF with no extractable text layer.
 - **PE National ID (RENIEC DNI)** — GOV-2456, screened 2026-07-12
   (re-confirming prior cycles' notes). DNI issuance/renewal is either
   in-person-biometric or gated behind RENIEC's own authenticated online
   portal, with no unauthenticated field-by-field source found. Do not
-  re-attempt without a genuinely new source.
+  re-attempt without a genuinely new source. **Re-confirmed, GOV-2472,
+  screened 2026-07-12**: RENIEC's Mesa de Partes Virtual and the "DNI
+  BioFacial" duplicate-replacement flow are both confirmed login/biometric-
+  gated, with no fixed field catalog exposed by either.
+- **UY Taxes (DGI individual income tax)** — GOV-2472, screened 2026-07-12.
+  The annual IRPF return (Formulario 1102) is filed exclusively through an
+  installable desktop aplicativo or the `servicios.dgi.gub.uy` web portal,
+  both requiring `gub.uy`/digital-cédula authentication. The one
+  downloadable, unauthenticated PDF found under DGI's own site (Formulario
+  3100 v04, 2026-01, a dependents-declaration form submitted to an
+  employer rather than to DGI directly) carries **0 AcroForm widgets**
+  (confirmed via `pdfjs-dist`) — a flat print-and-hand-fill table, not a
+  path to the return itself. Do not re-attempt without a genuinely new
+  source (e.g. a leaked/third-party-republished blank F.1102 with real
+  casilla numbers).
 - **UY Passport (DNIC)** — GOV-2456, screened 2026-07-12. Uruguay's
   Dirección Nacional de Identificación Civil (DNIC) issues passports only
   through a login-gated appointment-scheduling channel; `dnic.gub.uy` is
