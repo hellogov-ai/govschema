@@ -4,8 +4,52 @@
 
 ## Executive Summary
 
-**44 jurisdictions** | **391 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**45 jurisdictions** | **392 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-12, GOV-2611, "GovSchema Standard Research"): Greece
+> opens as this registry's 45th jurisdiction, via its Visa vertical (1 of
+> 6)**, via `gr/mfa/application-for-schengen-visa` — the EU-wide "Harmonised
+> application form / Application for Schengen Visa" (Annex I to the Visa
+> Code), served for Greek consulates by VFS Global — a candidate pre-scouted
+> in GOV-2591's prior cycle after Vietnam/Peru won that cycle's parallel
+> scouting round. The primary `mfa.gr`/`aade.gr` hosts remain Akamai-403-
+> blocked from this sandbox, re-confirmed this cycle rather than assumed.
+> Independently re-located and re-fetched via VFS Global's consulate
+> mirrors: the canonical source (a bilingual EN/AR edition whose own
+> data-protection notice names the Greek MFA at 1 Vas. Sofias Ave., Athens,
+> as data controller) returned HTTP 200, `application/pdf`, 726,000 bytes,
+> `sha256: 303a4c28a53a8b2d88ca219a2b1aff3033a14a25f58708b6c7957414cfeaa969`.
+> Two further mirrors (Jordan, Lebanon) independently corroborated a
+> content-identical English-only edition of the same 32-item form; a
+> "2024 Final" candidate mirror was screened and ruled out as a flattened
+> scan with zero extractable text. The form is a genuine static text-layer
+> PDF with no AcroForm widgets on any mirror — fields were read directly
+> from the position-sorted text layer. This v1.0.0 models items 1-16 and
+> 19-33 of the applicant-facing left column (31 of 32/33 numbered items;
+> the right-column "FOR OFFICIAL USE ONLY" block is out of scope), 97
+> `fields[]` in total: 10 checkbox groups collapsed into 11
+> `exclusivityGroups` (sex, civil status, travel-document type, residence
+> in another country, purpose of journey, number of entries, prior
+> fingerprints, cost-covered-by, and separate applicant/sponsor
+> means-of-support and sponsor-identification sets, since the source does
+> not share option values between the applicant and sponsor cost-coverage
+> paths), plus six `requiredWhen`-gated "please specify" fields. Items 17-18
+> (EU/EEA/CH/UK-national-family-member data, and the exemption from items
+> 21/22/30/31/32 it would unlock for that smaller sub-population) are
+> deliberately deferred out of scope, keeping this v1.0.0 scoped to the
+> standard third-country-national applicant pathway — disclosed in
+> VERIFICATION.md along with a minor edition difference (item 33 present
+> only on the bilingual mirror) and a wording variance across mirrors on
+> one field. Two mock conformance scenarios (a self-funded tourist,
+> single-entry applicant; a sponsor-funded business applicant with
+> multiple entries and a declared prior Schengen visa) found **0 errors**
+> each, plus 5 mutation-control fixtures (missing required field, an
+> exclusivity-group violation, a missing conditional "please specify"
+> field, an empty-string `minLength` violation, and a missing required
+> date) each correctly raised exactly **1 error**. See GOV-2611 and this
+> schema's own `VERIFICATION.md` for the full sourcing record and every
+> scoping/disclosure judgment call.
+>
 > **Update (2026-07-12, GOV-2601, "GovSchema Standard Research"): Thailand's
 > Business Formation vertical opens (2 of 6)**, via
 > `th/dbd/boj-1-application-to-register-a-limited-company`, the Department
@@ -8647,7 +8691,17 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (32/40 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (33/41 jurisdictions — 80%)
+
+**Greece opens as this registry's 45th jurisdiction, via Visa (GOV-2611)**,
+via `gr/mfa/application-for-schengen-visa` — the EU-wide "Harmonised
+application form / Application for Schengen Visa" (Annex I to the Visa
+Code), served for Greek consulates by VFS Global mirrors after the primary
+`mfa.gr`/`aade.gr` hosts were re-confirmed Akamai-blocked. See the Executive
+Summary update above and the document's own VERIFICATION.md for the full
+sourcing record (including the bilingual Greece-attributed edition used as
+the primary source, two corroborating English-only mirrors, and every
+scoping/disclosure judgment call).
 
 **Rwanda's Visa vertical opens (2 of 6) (GOV-2544)**, via
 `rw/dgie/visa-application` (Directorate General of Immigration and
@@ -9273,6 +9327,7 @@ now closed.
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **GR** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -10322,13 +10377,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     is a confirmed dead end (in-person/biometric CCCD issuance only, no
     downloadable form) — see "Confirmed dead ends" below. The two
     runner-up candidates scouted the GOV-2404 cycle remain open backlog
-    candidates too: **Greece** (Business Formation/DMV/National ID
-    confirmed in-person-only or telematic-only dead ends; Passport's only
-    downloadable artifact is a scanned "sample" with zero extractable text;
-    the Greek MFA's national/Schengen visa application form is a genuine
-    static text-layer PDF, independently fetchable only via a VFS Global
-    consulate mirror from this sandbox — worth retrying the primary
-    `mfa.gr` host from a different network) and **Peru** (Passport/National
+    candidates too: **Greece's Visa vertical is now open (GOV-2611)**, via
+    `gr/mfa/application-for-schengen-visa`, opening Greece as this
+    registry's 45th jurisdiction — see the Executive Summary update above.
+    Greece's Business Formation/DMV/National ID remain confirmed
+    in-person-only or telematic-only dead ends, and Passport's only
+    downloadable artifact remains a scanned "sample" with zero extractable
+    text; Taxes (Government Gazette ΦΕΚ Β' 1280/2026's Ε1/Ε2/Ε3 specimen,
+    per GOV-2591) remains an open backlog candidate. **Peru** (Passport/National
     ID re-confirmed appointment/biometric-gated; Taxes is Clave-SOL-gated;
     Business Formation's primary SUNARP channel is login-gated, but a
     sibling SUNAT RUC-registration form, Business Formation's DMV, and
