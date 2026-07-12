@@ -4,8 +4,49 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **388 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**44 jurisdictions** | **389 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-12, GOV-2593, "GovSchema Standard Research"): Thailand
+> opens as this registry's 44th jurisdiction, via its Taxes vertical (1 of
+> 6)**, via `th/rd/pit-90-personal-income-tax-return`, the Revenue
+> Department's (RD) "ภ.ง.ด.90" (PIT 90) personal income tax return, tax year
+> 2568 (2025 CE) edition — a candidate scouted in GOV-2591's prior cycle
+> after Rwanda's remaining verticals were confirmed dead ends. Independently
+> re-fetched the source directly this cycle: HTTP 200, `application/pdf`,
+> 1,629,183 bytes, `sha256:
+> e47796b2b5a5e253407dc6e1d0accebb0ebcf18456ff5ee08396c487786e84e5` —
+> matching the issue's own cited hash and size exactly. A 5-page, 432-
+> AcroForm-widget specimen (76/95/112/78/71 per page, both re-confirmed via
+> `pdfjs-dist`); PIT 90 is Thailand's return for a taxpayer with income
+> beyond pure salary (Revenue Code sections 40(2)-(8)), covering up to 8
+> income-type schedules across pages 2-4 plus a personal-deductions
+> attachment on page 5. This v1.0.0 deliberately scopes to the general/
+> salaried-income filing pathway: page 1's full taxpayer/spouse
+> identification, marital/filing status, the political-party tax-donation
+> declaration, and the refund-request/signature block; ข้อ 1 (income under
+> sections 40(1)-(2): employment/wages/pension and service-fee/commission
+> income); ข้อ 11 (the final 25-line tax computation, including the
+> alternative 0.5%-of-gross computation and its floor, completed by every
+> filer regardless of income type); and the page 5 personal-deductions/
+> allowances attachment (24 numbered items). ข้อ 2 through ข้อ 10 — the
+> royalty/goodwill, dividend/interest, rental, professional-fee,
+> contracting, business/commerce, separate-taxation real-estate-sale and
+> gift/inheritance schedules, and the RMF/Thai-ESG/pension-insurance
+> exclusion election — are explicitly out of scope and disclosed in
+> `VERIFICATION.md`. 154 `fields[]` entries and 2 `documents[]` entries (the
+> printed certification statement and refund supporting evidence). Two mock
+> conformance scenarios (a single salaried filer with a small refund due; a
+> married filer electing joint computation with children, a disability
+> allowance, and additional tax due) found 0 errors each, and 5 mutation-
+> control fixtures each raised exactly 1 error. Thailand's DMV, Passport,
+> and National ID verticals were screened this cycle and found weak/dead-end
+> (in-person/biometric processes with no unauthenticated fillable specimen);
+> two further Thailand candidates (DBD Form บอจ.1 for Business Formation,
+> 101 AcroForm fields; MFA Non-Immigrant Visa B/Employment, 58 AcroForm
+> fields) are left as backlog. See GOV-2593 and this schema's own
+> `VERIFICATION.md` for the full sourcing record and every scoping/
+> disclosure judgment call.
+>
 > **Update (2026-07-12, GOV-2585, "GovSchema Standard Research"): Rwanda's
 > Business Formation vertical opens (3 of 6)**, via
 > `rw/rdb/rf-001-domestic-company-application-for-incorporation`, the Rwanda
@@ -7814,7 +7855,41 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (37/40 jurisdictions — 93%)
+### Taxes — Income Tax Return, Tax Filing (38/41 jurisdictions — 93%)
+
+**Thailand opens (44th jurisdiction) via Taxes**
+(`th/rd/pit-90-personal-income-tax-return`, GOV-2593) — the Revenue
+Department (RD)'s "ภ.ง.ด.90" (PIT 90) personal income tax return, tax year
+2568 (2025 CE) edition, scouted in GOV-2591's prior cycle after Rwanda's
+remaining verticals were confirmed dead ends. A 5-page, 432-AcroForm-widget
+specimen, independently re-fetched and re-hashed this cycle (`sha256:
+e47796b2b5a5e253407dc6e1d0accebb0ebcf18456ff5ee08396c487786e84e5`, matching
+the issue's own citation exactly; per-page widget counts 76/95/112/78/71
+also independently reproduced via `pdfjs-dist`). PIT 90 is Thailand's return
+for a taxpayer with income beyond pure salary (Revenue Code sections
+40(2)-(8)), spanning up to 8 income-type schedules across pages 2-4 plus a
+personal-deductions/allowances attachment on page 5; this schema
+deliberately bounds scope to the general/salaried-income filing pathway —
+page 1's full identification/marital/filing-status/donation/refund block,
+ข้อ 1 (section 40(1)-(2) employment and service-fee/commission income), ข้อ
+11 (the full 25-line final tax computation completed by every filer
+regardless of income type, including the alternative 0.5%-of-gross
+computation and its 5,000-baht floor), and the page 5 deductions attachment
+(24 numbered items) — 154 `fields[]` and 2 `documents[]`. ข้อ 2 through ข้อ
+10 (royalty/goodwill, dividend/interest, rental, professional-fee,
+contracting, business/commerce, the separate-taxation real-estate-sale and
+gift/inheritance schedules, and the RMF/Thai-ESG/pension-insurance exclusion
+election) are explicitly out of scope and disclosed, each with its reason,
+in the schema's own VERIFICATION.md, along with a disclosed simplification
+(several ข้อ 11 "additional tax due / overpaid tax" lines are modeled as a
+single signed number rather than the source's own paired Yes/No-toggle-plus-
+magnitude widgets). Two mock conformance scenarios (0 errors each) plus 5
+mutation controls (each raising exactly 1 error) passed. **Thailand opens at
+1 of 6 verticals** (Taxes); DMV, Passport, and National ID were screened
+this cycle and confirmed weak/dead-end (in-person/biometric processes, no
+unauthenticated fillable specimen); Business Formation (DBD Form บอจ.1, 101
+AcroForm fields) and Visa (MFA Non-Immigrant Visa B/Employment, 58 AcroForm
+fields) remain open, scouted backlog for a future cycle.
 
 **Nigeria's Taxes vertical closes** (`ng/firs/fct-irs-personal-income-tax-return-form-a`,
 GOV-2553) — the Federal Capital Territory Internal Revenue Service
@@ -9099,6 +9174,7 @@ now closed.
 | **RW** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **TH** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -10663,6 +10739,44 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     every disclosed scoping/judgment call. **Rwanda now stands at 3 of 6
     verticals** (DMV, Visa, Business Formation); Passport, Taxes, and
     National ID remain open, unscreened backlog for a future cycle.
+24. **Thailand opens as the registry's 44th jurisdiction (GOV-2593)**, via
+    its Taxes vertical (1 of 6) — `th/rd/pit-90-personal-income-tax-return`,
+    the Revenue Department (RD)'s "ภ.ง.ด.90" (PIT 90) personal income tax
+    return, tax year 2568 (2025 CE) edition, a candidate scouted in GOV-2591's
+    prior cycle after Rwanda's remaining verticals were confirmed dead ends.
+    Independently re-fetched the source directly this cycle (HTTP 200,
+    `application/pdf`, 1,629,183 bytes,
+    `sha256:e47796b2b5a5e253407dc6e1d0accebb0ebcf18456ff5ee08396c487786e84e5`
+    — matching the prior scouting citation exactly), and confirmed via
+    `pdfjs-dist` that this 5-page specimen carries 432 AcroForm widgets
+    (76/95/112/78/71 per page, also matching exactly). PIT 90 is Thailand's
+    return for a taxpayer with income beyond pure salary (Revenue Code
+    sections 40(2)-(8)), spanning up to 8 income-type schedules across pages
+    2-4 plus a personal-deductions/allowances attachment on page 5; this
+    schema deliberately bounds scope to the general/salaried-income filing
+    pathway (page 1's identification/marital/filing-status/donation/refund
+    block, ข้อ 1's section 40(1)-(2) income computation, ข้อ 11's full
+    25-line final tax computation completed by every filer regardless of
+    income type, and the page 5 deductions attachment's 24 numbered items)
+    as 154 `fields[]` + 2 `documents[]` entries. ข้อ 2 through ข้อ 10 — the
+    royalty/goodwill, dividend/interest, rental, professional-fee,
+    contracting, business/commerce, separate-taxation real-estate-sale and
+    gift/inheritance schedules, and the RMF/Thai-ESG/pension-insurance
+    exclusion election — are out of scope and disclosed with reasons in the
+    document's own VERIFICATION.md. Two mock conformance scenarios found 0
+    errors each, plus 5 mutation controls each correctly raised exactly 1
+    error. See the Executive Summary update above and the document's own
+    VERIFICATION.md for the full sourcing record and every disclosed
+    scoping/judgment call. **Thailand opens at 1 of 6 verticals** (Taxes);
+    DMV, Passport, and National ID were screened this cycle and confirmed
+    weak/dead-end (in-person/biometric processes — vehicle registration via
+    the Department of Land Transport, passport issuance via the Department
+    of Consular Affairs, and the national ID card via the Department of
+    Provincial Administration — each with no unauthenticated fillable
+    specimen found); two further candidates remain open, scouted backlog:
+    DBD Form บอจ.1 for Business Formation (101 AcroForm fields, `dbd.go.th`)
+    and the MFA Non-Immigrant Visa B/Employment application for Visa (58
+    AcroForm fields, served from an `mfa.go.th` CDN).
 
 ### Confirmed dead ends (do not re-attempt without new information)
 

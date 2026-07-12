@@ -1,0 +1,1600 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "th/rd/pit-90-personal-income-tax-return",
+  "version": "1.0.0",
+  "title": "Thailand Personal Income Tax Return (PIT 90 / ภ.ง.ด.90)",
+  "description": "The Revenue Department's (RD) ภ.ง.ด.90 (\"PIT 90\") personal income tax return, tax year 2568 (2025 CE) edition — the return for a resident individual with income beyond pure employment (Revenue Code sections 40(2) through 40(8)), as opposed to ภ.ง.ด.91 (the simpler pure-salary return). Opens Thailand as this registry's 44th jurisdiction, via its Taxes vertical (1 of 6). The live 5-page, 432-AcroForm-widget source is a wide, multi-schedule return covering up to eight separate income-type schedules across pages 2-4 (ข้อ 1 through ข้อ 10), plus a personal-deductions/allowances rider attachment (page 5). This v1.0.0 deliberately scopes to the general/salaried-income filing pathway: page 1's full taxpayer/spouse identification, marital/filing-status, political-party tax-donation, and refund-request/signature blocks; ข้อ 1 (income under Revenue Code sections 40(1)-(2): employment/wages/pension and service-fee/commission income — the single most common income category); ข้อ 11 (the final tax computation, lines 1 through 25, completed by every filer regardless of income type); and the page 5 personal-deductions/allowances attachment (items 1-24), which feeds directly into ข้อ 11 and is used by virtually every filer. Out of scope for this v1.0.0, disclosed in VERIFICATION.md: ข้อ 2 through ข้อ 10 — the section 40(3) royalty/goodwill schedule, 40(4) dividend/interest schedule, 40(5) rental-income schedule, 40(6) professional-fee schedule, the shared 40(3)/(5)/(6)/(7)/(8) actual-expense sub-form, 40(7) contracting-income schedule, 40(8) business/commerce/agriculture schedule, the separate-taxation real-estate-sale schedule (ข้อ 8), the separate-taxation gift/inheritance-income schedule (ข้อ 9), and ข้อ 10 (income electing exclusion from the aggregate computation for RMF/Thai-ESG/pension-insurance purposes) — none of which apply to the general employment/service-income filer this v1.0.0 targets. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Thailand or the Revenue Department.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Revenue Department",
+    "abbreviation": "RD",
+    "url": "https://www.rd.go.th"
+  },
+  "process": {
+    "type": "filing",
+    "language": "th"
+  },
+  "source": {
+    "url": "https://www.rd.go.th/fileadmin/tax_pdf/pit/2568/241268PIT90.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "ภ.ง.ด.90 (PIT 90), tax year 2568 (2025 CE) edition"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2593. Opens Thailand as this registry's 44th jurisdiction, via its Taxes vertical (1 of 6). Independently re-fetched https://www.rd.go.th/fileadmin/tax_pdf/pit/2568/241268PIT90.pdf this cycle: HTTP 200, application/pdf, 1,629,183 bytes, sha256 e47796b2b5a5e253407dc6e1d0accebb0ebcf18456ff5ee08396c487786e84e5 — matching the cited figures exactly. Re-ran pdfjs-dist (legacy build, getAnnotations({intent:'display'}) filtered to subtype==='Widget') independently: confirmed 5 pages, 432 AcroForm widgets total, 76/95/112/78/71 per page, matching exactly. Deliberately scoped to the general/salaried-income pathway per the task's own explicit permission (see this document's own description and VERIFICATION.md for the full in/out-of-scope breakdown and disclosed judgment calls)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxYear",
+      "label": "Tax year (Buddhist Era)",
+      "type": "string",
+      "required": true,
+      "description": "The Buddhist-Era tax year this return covers, e.g. \"2568\" (2025 CE). Printed as a blank fill-in on the main form (\"ปีภาษี .............\"); this schema's conformance fixtures use \"2568\", matching the source PDF's own tax-year edition and the printed \"ปีภาษี 2568\" on the page 5 attachment header.",
+      "sourceRef": "Page 1, header row: \"ปีภาษี .............\"",
+      "validation": {
+        "pattern": "^25[0-9]{2}$"
+      }
+    },
+    {
+      "name": "taxpayerTin",
+      "label": "Taxpayer ID Number",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's 13-digit Thai Taxpayer Identification Number.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1, \"ผู้มีเงินได้\" column: \"เลขประจำตัวผู้เสียภาษีอากร\"",
+      "validation": {
+        "pattern": "^[0-9]{13}$",
+        "minLength": 13,
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "spouseTin",
+      "label": "Spouse's ID Number",
+      "type": "string",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "description": "The spouse's 13-digit Thai Taxpayer Identification Number. Required only when maritalStatus is married, per this document's own maritalStatus/marriedStatusDetail gating.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1, \"คู่สมรส\" column: \"เลขประจำตัวผู้เสียภาษีอากร\"",
+      "validation": {
+        "pattern": "^[0-9]{13}$",
+        "minLength": 13,
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "taxpayerBirthDay",
+      "label": "Date of birth: day",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Page 1: \"วันเดือนปีเกิด ...../...../.....\" (ผู้มีเงินได้ column)",
+      "validation": {
+        "minimum": 1,
+        "maximum": 31
+      }
+    },
+    {
+      "name": "taxpayerBirthMonth",
+      "label": "Date of birth: month",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Page 1: \"วันเดือนปีเกิด ...../...../.....\" (ผู้มีเงินได้ column)",
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "taxpayerBirthYear",
+      "label": "Date of birth: year (Buddhist Era)",
+      "type": "integer",
+      "required": true,
+      "description": "Notes at this row also state a taxpayer aged 65+ must additionally complete a separate rights-declaration form (ใบแสดงสิทธิฯ) not modeled in this v1.0.0.",
+      "sourceRef": "Page 1: \"วันเดือนปีเกิด ...../...../.....\" (ผู้มีเงินได้ column)",
+      "validation": {
+        "minimum": 2400,
+        "maximum": 2700
+      }
+    },
+    {
+      "name": "spouseBirthDay",
+      "label": "Spouse's date of birth: day",
+      "type": "integer",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 1: \"วันเดือนปีเกิด\" (คู่สมรส column)",
+      "validation": {
+        "minimum": 1,
+        "maximum": 31
+      }
+    },
+    {
+      "name": "spouseBirthMonth",
+      "label": "Spouse's date of birth: month",
+      "type": "integer",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 1: \"วันเดือนปีเกิด\" (คู่สมรส column)",
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "spouseBirthYear",
+      "label": "Spouse's date of birth: year (Buddhist Era)",
+      "type": "integer",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 1: \"วันเดือนปีเกิด\" (คู่สมรส column)",
+      "validation": {
+        "minimum": 2400,
+        "maximum": 2700
+      }
+    },
+    {
+      "name": "taxpayerName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "description": "Instruction beneath: state clearly whether Mr./Mrs./Miss/rank/undivided estate/ordinary partnership/community enterprise.",
+      "sourceRef": "Page 1: \"ชื่อ .....\" (ผู้มีเงินได้ column)"
+    },
+    {
+      "name": "taxpayerMiddleName",
+      "label": "Middle name",
+      "type": "string",
+      "sourceRef": "Page 1: \"ชื่อกลาง .....\" (ผู้มีเงินได้ column)"
+    },
+    {
+      "name": "taxpayerSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1: \"ชื่อสกุล .....\" (ผู้มีเงินได้ column)"
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse's first name",
+      "type": "string",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 1: \"ชื่อ .....\" (คู่สมรส column)"
+    },
+    {
+      "name": "spouseMiddleName",
+      "label": "Spouse's middle name",
+      "type": "string",
+      "sourceRef": "Page 1: \"ชื่อกลาง .....\" (คู่สมรส column)"
+    },
+    {
+      "name": "spouseSurname",
+      "label": "Spouse's surname",
+      "type": "string",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 1: \"ชื่อสกุล .....\" (คู่สมรส column)"
+    },
+    {
+      "name": "businessEstablishmentName",
+      "label": "Business establishment name",
+      "type": "string",
+      "description": "Only applicable to a VAT-registered filer with a place of business; the source instructs a filer with more than one place of business to itemize each in a separate attachment (not modeled in this v1.0.0).",
+      "sourceRef": "Page 1: \"ชื่อสถานประกอบการ ....\""
+    },
+    {
+      "name": "businessWebsite",
+      "label": "Main website used for the business",
+      "type": "string",
+      "description": "The main website used for e-commerce transactions, applicable only to a VAT-registered e-commerce filer.",
+      "sourceRef": "Page 1: \"ชื่อเว็บไซต์ .....\" (ให้ระบุชื่อเว็บไซต์หลักที่ใช้ในการประกอบธุรกรรม)"
+    },
+    {
+      "name": "addressBuilding",
+      "label": "Building",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"อาคาร ...\""
+    },
+    {
+      "name": "addressRoomNo",
+      "label": "Room number",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"ห้องเลขที่ ...\""
+    },
+    {
+      "name": "addressFloor",
+      "label": "Floor",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"ชั้นที่ ...\""
+    },
+    {
+      "name": "addressVillage",
+      "label": "Village",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"หมู่บ้าน ...\""
+    },
+    {
+      "name": "addressHouseNo",
+      "label": "House number",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"เลขที่ ...\""
+    },
+    {
+      "name": "addressMoo",
+      "label": "Moo (village group) number",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"หมู่ที่ ...\""
+    },
+    {
+      "name": "addressSoi",
+      "label": "Soi (alley)",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"ตรอก/ซอย ...\""
+    },
+    {
+      "name": "addressJunction",
+      "label": "Junction (Yaek)",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"แยก ...\""
+    },
+    {
+      "name": "addressRoad",
+      "label": "Road",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"ถนน ...\""
+    },
+    {
+      "name": "addressSubDistrict",
+      "label": "Sub-district / Khwaeng",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"ตำบล/แขวง ...\""
+    },
+    {
+      "name": "addressDistrict",
+      "label": "District / Khet",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"อำเภอ/เขต ...\""
+    },
+    {
+      "name": "addressProvince",
+      "label": "Province",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"จังหวัด ...\""
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Postal code",
+      "type": "string",
+      "sourceRef": "Page 1, address block: \"รหัสไปรษณีย์\"",
+      "validation": {
+        "pattern": "^[0-9]{5}$",
+        "minLength": 5,
+        "maxLength": 5
+      }
+    },
+    {
+      "name": "returnFilingType",
+      "label": "Filing type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this is an original/normal filing or an additional/amended filing for the same tax year.",
+      "sourceRef": "Page 1: \"ยื่นปกติ ... ยื่นเพิ่มเติม\"",
+      "validation": {
+        "enum": [
+          "normal",
+          "amended"
+        ]
+      }
+    },
+    {
+      "name": "incomeEarnerStatus",
+      "label": "Status of the income earner",
+      "type": "enum",
+      "required": true,
+      "description": "Legal-personality classification of the filer. Values, per the source's own six numbered options: an ordinary individual; a person who died during the tax year; an undivided estate; an ordinary partnership that is not a juristic person; a body of persons that is not a juristic person; or a community enterprise under the Community Enterprise Promotion Act B.E. 2548.",
+      "sourceRef": "Page 1: \"สถานภาพของผู้มีเงินได้\" (1)-(6)",
+      "validation": {
+        "enum": [
+          "individual",
+          "deceasedDuringTaxYear",
+          "undividedEstate",
+          "ordinaryPartnership",
+          "bodyOfPersons",
+          "communityEnterprise"
+        ]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1: \"โสด สมรส หม้าย\"",
+      "validation": {
+        "enum": [
+          "single",
+          "married",
+          "widowed"
+        ]
+      }
+    },
+    {
+      "name": "marriedStatusDetail",
+      "label": "Marital status detail (when married)",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "description": "Sub-classification of when the marriage/dissolution occurred within the tax year, which affects whether spousal income is aggregated for the full year or only part of it.",
+      "sourceRef": "Page 1, \"สถานภาพการสมรส\" column: \"สมรสและอยู่ร่วมกันตลอดปีภาษี / สมรสระหว่างปีภาษี / หย่าระหว่างปีภาษี / ตายระหว่างปีภาษี\"",
+      "validation": {
+        "enum": [
+          "marriedAndLivingTogetherAllYear",
+          "marriedDuringTaxYear",
+          "divorcedDuringTaxYear",
+          "spouseDiedDuringTaxYear"
+        ]
+      }
+    },
+    {
+      "name": "filingStatus",
+      "label": "Joint/separate tax computation status (when married)",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "description": "Whether the couple computes tax jointly, files separately, or files separately for section 40(1) income only. DISCLOSED SIMPLIFICATION: a second, narrower radio-button group on the same source column (2 further options, plus a \"single income type and separate filing\" annotation) sits immediately below this one and could not be confidently correlated to a distinct printed label pair given the compressed layout; it is not separately modeled in this v1.0.0 — see VERIFICATION.md.",
+      "sourceRef": "Page 1, \"สถานะการยื่นแบบฯ\" column: \"รวมคำนวณภาษี / แยกยื่นแบบ / แยกยื่นแบบเฉพาะมาตรา 40(1)\"",
+      "validation": {
+        "enum": [
+          "jointComputation",
+          "separateFiling",
+          "separateFilingSection40_1Only"
+        ]
+      }
+    },
+    {
+      "name": "spouseIncomeSection",
+      "label": "Spouse's income (which Revenue Code section)",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "description": "Declares which Revenue Code section(s) the spouse's own income falls under, or that the spouse has no income — used together with maritalStatus/filingStatus to determine whether/how spousal income is aggregated. Modeled only for the spouse: the taxpayer filing this return is, by definition, always a person with income, so the source form carries no equivalent taxpayer-side toggle.",
+      "sourceRef": "Page 1, \"สถานะการยื่นแบบฯ\" column: \"(1) มีเงินได้มาตรา 40(1)-(8) / (2) มาตรา 40(2)-(8) / (3) มาตรา 40(1) / (4) ไม่มีเงินได้\"",
+      "validation": {
+        "enum": [
+          "section40_1To8",
+          "section40_2To8",
+          "section40_1Only",
+          "noIncome"
+        ]
+      }
+    },
+    {
+      "name": "spousePassportNumber",
+      "label": "Spouse's passport number",
+      "type": "string",
+      "description": "Only applicable when the spouse is a foreign national with no income of their own. No discrete boolean field on the source drives this condition (it is a heading, not a gated widget), so this schema leaves it optional rather than encoding an unsupported requiredWhen — disclosed in VERIFICATION.md.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1: \"กรณีคู่สมรสเป็นคนต่างด้าวและไม่มีเงินได้โปรดระบุ: เลขที่หนังสือเดินทาง\""
+    },
+    {
+      "name": "spouseNationality",
+      "label": "Spouse's nationality",
+      "type": "string",
+      "sourceRef": "Page 1: \"สัญชาติ .........\""
+    },
+    {
+      "name": "spouseForeignCountry",
+      "label": "Spouse's country",
+      "type": "string",
+      "sourceRef": "Page 1: \"ประเทศ .........\""
+    },
+    {
+      "name": "taxpayerDonationWish",
+      "label": "Taxpayer: donate tax to a political party?",
+      "type": "enum",
+      "required": true,
+      "description": "Declaration of intent to allocate part of the taxpayer's tax payment to a political party.",
+      "sourceRef": "Page 1: \"การแสดงเจตนาอุดหนุนเงินภาษีที่ชำระให้พรรคการเมือง ... ผู้มีเงินได้ ประสงค์อุดหนุนเงินภาษี/ไม่ประสงค์อุดหนุนเงินภาษี\"",
+      "validation": {
+        "enum": [
+          "wishesToDonate",
+          "doesNotWishToDonate"
+        ]
+      }
+    },
+    {
+      "name": "taxpayerDonationAmount",
+      "label": "Taxpayer's donation amount (baht)",
+      "type": "number",
+      "requiredWhen": {
+        "field": "taxpayerDonationWish",
+        "equals": "wishesToDonate"
+      },
+      "classification": "financial",
+      "sourceRef": "Page 1, taxpayer donation row: amount (baht)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxpayerDonationPartyCode",
+      "label": "Taxpayer's chosen political party code",
+      "type": "string",
+      "requiredWhen": {
+        "field": "taxpayerDonationWish",
+        "equals": "wishesToDonate"
+      },
+      "description": "Only a Thai-national individual taxpayer may donate to a political party through this mechanism, per the source's own footnote.",
+      "sourceRef": "Page 1: \"รหัสพรรคการเมือง\""
+    },
+    {
+      "name": "spouseDonationWish",
+      "label": "Spouse: donate tax to a political party?",
+      "type": "enum",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 1, spouse donation row (same layout as taxpayer's)",
+      "validation": {
+        "enum": [
+          "wishesToDonate",
+          "doesNotWishToDonate"
+        ]
+      }
+    },
+    {
+      "name": "spouseDonationAmount",
+      "label": "Spouse's donation amount (baht)",
+      "type": "number",
+      "requiredWhen": {
+        "field": "spouseDonationWish",
+        "equals": "wishesToDonate"
+      },
+      "classification": "financial",
+      "sourceRef": "Page 1, spouse donation row: amount (baht)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "spouseDonationPartyCode",
+      "label": "Spouse's chosen political party code",
+      "type": "string",
+      "requiredWhen": {
+        "field": "spouseDonationWish",
+        "equals": "wishesToDonate"
+      },
+      "sourceRef": "Page 1, spouse donation row: \"รหัสพรรคการเมือง\""
+    },
+    {
+      "name": "summaryExcessTaxPaid",
+      "label": "Excess tax paid (page 1 summary)",
+      "type": "number",
+      "description": "A page-1 recap box, immediately above the certification/refund-request block, mirroring the final result of ข้อ 11 (see section11FinalDueOrOverpaid) rather than an independent computation.",
+      "classification": "financial",
+      "sourceRef": "Page 1: \"ภาษีที่ชำระไว้เกิน ..... บาท\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "summaryAdditionalTaxDue",
+      "label": "Additional tax due (page 1 summary)",
+      "type": "number",
+      "description": "A page-1 recap box mirroring the final result of ข้อ 11 (see section11FinalDueOrOverpaid) rather than an independent computation.",
+      "classification": "financial",
+      "sourceRef": "Page 1: \"ภาษีที่ชำระเพิ่มเติม ..... บาท\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "refundRequestedAmount",
+      "label": "Refund amount requested (baht)",
+      "type": "number",
+      "description": "The source carries no discrete Yes/No widget for \"do you request a refund\" separate from this amount field itself; a filer requesting no refund simply leaves this blank. Not gated by requiredWhen for that reason — disclosed in VERIFICATION.md.",
+      "classification": "financial",
+      "sourceRef": "Page 1: \"ข้าพเจ้ามีความประสงค์จะขอคืนเงินภาษีที่ชำระไว้เกิน ... เป็นจำนวนเงิน ..... บาท\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachedEvidenceSheetCount",
+      "label": "Number of evidence sheets attached",
+      "type": "integer",
+      "description": "Count of supporting evidence sheets attached to the refund request (rights-entitlement certificate, income certificate, special-development-zone income certificate, foreign-income certificate).",
+      "sourceRef": "Page 1: \"รวม ..... ฉบับ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxpayerSignatureDate",
+      "label": "Date of taxpayer's signature",
+      "type": "date",
+      "sourceRef": "Page 1, taxpayer signature block: \"วันที่ .....\""
+    },
+    {
+      "name": "representativeName",
+      "label": "Representative's printed name",
+      "type": "string",
+      "description": "Optional — completed only when the return is filed by a legal representative or attorney (e.g. for an undivided estate or a deceased taxpayer). The source has no discrete boolean gating this block, so it is left fully optional rather than encoded with an unsupported requiredWhen.",
+      "sourceRef": "Page 1, representative signature block: \"(.....................)\""
+    },
+    {
+      "name": "representativeCapacity",
+      "label": "Representative's capacity",
+      "type": "string",
+      "description": "The representative's relationship/capacity in respect of the taxpayer (e.g. executor, guardian, attorney).",
+      "sourceRef": "Page 1: \"ในฐานะเป็น ..... ของผู้มีเงินได้\""
+    },
+    {
+      "name": "representativeAddressLine1",
+      "label": "Representative's address (line 1)",
+      "type": "string",
+      "sourceRef": "Page 1: \"ที่อยู่ (ของผู้แทน) .....\""
+    },
+    {
+      "name": "representativeAddressLine2",
+      "label": "Representative's address (line 2)",
+      "type": "string",
+      "sourceRef": "Page 1, representative address block, continuation line"
+    },
+    {
+      "name": "representativeSignatureDate",
+      "label": "Date of representative's signature",
+      "type": "date",
+      "sourceRef": "Page 1, representative signature block: \"วันที่ .....\""
+    },
+    {
+      "name": "section1PayerTin",
+      "label": "Section 1: payer's taxpayer ID number",
+      "type": "string",
+      "description": "Taxpayer ID of the (single, bounded) payer of this employment/service income — e.g. the employer.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, ข้อ 1 header block: \"ผู้จ่ายเงินได้ – เลขประจำตัวผู้เสียภาษีอากร\"",
+      "validation": {
+        "pattern": "^[0-9]{13}$",
+        "minLength": 13,
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "section1Section40_1Income",
+      "label": "1. Income under section 40(1) (salary, wages, pension, etc.)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 1: \"มาตรา 40(1) ได้แก่ เงินเดือน ค่าจ้าง บำนาญ ฯลฯ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1ProvidentFundExcessDeduction",
+      "label": "2.(1) Provident fund contribution (amount over 10,000 baht)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 2(1): \"เงินสะสมกองทุนสำรองเลี้ยงชีพ (ส่วนที่เกิน 10,000 บาท)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1GpfDeduction",
+      "label": "2.(2) Government Pension Fund (GPF) contribution",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 2(2): \"เงินสะสม กบข.\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1PrivateTeacherFundDeduction",
+      "label": "2.(3) Private school teacher welfare fund contribution",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 2(3): \"เงินสะสมกองทุนสงเคราะห์ครูโรงเรียนเอกชน\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1SeverancePayDeduction",
+      "label": "2.(4) Severance pay received under labor law",
+      "type": "number",
+      "description": "Only when included in this tax computation, per the source's own parenthetical.",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 2(4): \"เงินค่าชดเชยที่ได้รับตามกฎหมายแรงงาน (กรณีนำมารวมคำนวณภาษี)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1TotalDeductions1to4",
+      "label": "2. Total of (1) to (4)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1: \"รวม (1) ถึง (4)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1AttachmentSheetCount",
+      "label": "Number of evidence sheets attached for (1)-(4)",
+      "type": "integer",
+      "sourceRef": "Page 2, ข้อ 1: \"(หลักฐานแนบตาม (1) ถึง (4) รวม ..... ฉบับ)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1Section40_2Income",
+      "label": "3. Income under section 40(2) (meeting fees, commissions, etc.)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 3: \"มาตรา 40(2) ได้แก่ เบี้ยประชุม ค่านายหน้า ฯลฯ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section1Subtotal",
+      "label": "4. Remaining (1. - 2. + 3.)",
+      "type": "number",
+      "description": "Line 1 minus line 2 plus line 3. Source presents this as a literal computed cell.",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 4: \"คงเหลือ (1. - 2.+ 3.)\""
+    },
+    {
+      "name": "section1ExpenseDeduction",
+      "label": "5. Less expenses (50%, not exceeding 100,000 baht)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 5: \"หักค่าใช้จ่าย (ร้อยละ 50 แต่ไม่เกิน 100,000 บาท)\"",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100000
+      }
+    },
+    {
+      "name": "section1NetIncomeCarriedForward",
+      "label": "6. Remaining (4. - 5.), carried to ข้อ 11 line 1",
+      "type": "number",
+      "required": true,
+      "description": "Carried forward as the input to section11IncomeAfterExpenses (ข้อ 11, line 1). Because this schema models only ข้อ 1 of the source's seven income-category schedules (ข้อ 1 through ข้อ 7), for the general/salaried scope this schema targets this figure is expected to equal section11IncomeAfterExpenses directly.",
+      "classification": "financial",
+      "sourceRef": "Page 2, ข้อ 1, line 6: \"คงเหลือ (4. - 5.) ยกไปรวมใน ข้อ 11 1.\""
+    },
+    {
+      "name": "section11IncomeAfterExpenses",
+      "label": "ข้อ 11.1 Income after deducting expenses",
+      "type": "number",
+      "required": true,
+      "description": "Total from the last line of ข้อ 1 through ข้อ 7 (this schema models only ข้อ 1's section1NetIncomeCarriedForward; ข้อ 2 through ข้อ 7 are out of scope — see VERIFICATION.md).",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 1: \"เงินได้หลังจากหักค่าใช้จ่าย (รวมยอดมาจากรายการสุดท้ายของ ข้อ 1 ถึง ข้อ 7)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11AllowancesDeduction",
+      "label": "ข้อ 11.2 Less allowances (from attachment)",
+      "type": "number",
+      "required": true,
+      "description": "Carried from the last line of the personal-deductions/allowances attachment (attachmentItem24Total).",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 2: \"หัก ค่าลดหย่อนฯ (ยกมาจากรายการสุดท้ายของใบแนบแสดงรายละเอียดรายการลดหย่อนและยกเว้นหลังหักค่าใช้จ่าย)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11Subtotal1",
+      "label": "ข้อ 11.3 Remaining (1. - 2.)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 3: \"คงเหลือ (1. - 2.)\""
+    },
+    {
+      "name": "section11Donation1Deduction",
+      "label": "ข้อ 11.4 Less donation (2x actual, up to 10% of line 3)",
+      "type": "number",
+      "required": true,
+      "description": "Political/education/sports-style donations eligible for the 2x multiplier, capped at 10% of line 3.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 4: \"หัก เงินบริจาค (2 เท่าของจำนวนที่ได้จ่ายไปจริง แต่ไม่เกินร้อยละ 10 ของ 3.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11Subtotal2",
+      "label": "ข้อ 11.5 Remaining (3. - 4.)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 5: \"คงเหลือ (3. - 4.)\""
+    },
+    {
+      "name": "section11Donation2Deduction",
+      "label": "ข้อ 11.6 Less donation (up to 10% of line 5)",
+      "type": "number",
+      "required": true,
+      "description": "General (1x) donations, capped at 10% of line 5.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 6: \"หัก เงินบริจาค (ไม่เกินร้อยละ 10 ของ 5.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11NetIncome",
+      "label": "ข้อ 11.7 Net income (5. - 6.)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 7: \"เงินได้สุทธิ (5. - 6.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11TaxFromNetIncome",
+      "label": "ข้อ 11.8 Tax computed from net income (per line 7)",
+      "type": "number",
+      "required": true,
+      "description": "Progressive personal income tax computed on section11NetIncome per Thailand's statutory tax bands. This schema does not itself assert or embed the current band table; the figure is a field the source presents, computed per Revenue Code Section 48.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 8: \"ภาษีคำนวณจากเงินได้สุทธิ ตาม 7.\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11AlternativeTaxBase",
+      "label": "ข้อ 11.9a Gross income base for the 0.5% alternative computation",
+      "type": "number",
+      "required": true,
+      "description": "Total gross income before deducting expenses, from ข้อ 1 through ข้อ 7, EXCLUDING income under section 40(1). Required only when this total is 120,000 baht or more (per the source's own threshold); this schema still models the field for the general case, since for a pure section-40(1) salaried filer with no other income category modeled, this figure is 0.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 9: \"ภาษีคำนวณจากเงินได้พึงประเมินตั้งแต่ 120,000 บาทขึ้นไป คือร้อยละ 0.5 ของรวมยอดเงินได้ก่อนหักค่าใช้จ่ายตาม ข้อ 1 ถึง ข้อ 7 (ไม่รวมเงินได้ตามมาตรา 40(1)) X 0.005\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11AlternativeTaxComputed",
+      "label": "ข้อ 11.9b Tax computed at 0.5% of that base",
+      "type": "number",
+      "required": true,
+      "description": "section11AlternativeTaxBase multiplied by 0.005.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 9: \"= ......... X 0.005 =\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11TaxPayable",
+      "label": "ข้อ 11.10 Tax payable (higher of line 8 or line 9)",
+      "type": "number",
+      "required": true,
+      "description": "The greater of section11TaxFromNetIncome and section11AlternativeTaxComputed, except that when line 9 computes to 5,000 baht or less, line 8's figure is used instead (the source's own de-minimis floor for the alternative 0.5% computation).",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 10: \"ภาษีเงินได้ที่ต้องชำระ (จำนวนที่มากกว่าระหว่าง 8. กับ 9. เว้นแต่กรณี 9. คำนวณแล้วไม่เกิน 5,000 บาท ให้ชำระภาษีตาม 8.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11SpecialZoneTax",
+      "label": "ข้อ 11.11 Tax due from the special development zone income certificate",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 11: \"ภาษีที่ต้องชำระจากใบแสดงเงินได้ฯ ในเขตพัฒนาพิเศษเฉพาะกิจ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11TotalTaxPayable",
+      "label": "ข้อ 11.12 Total tax payable",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 12: \"รวมภาษีที่ต้องชำระ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11ForeignTaxCredit",
+      "label": "ข้อ 11.13 Less foreign tax credit",
+      "type": "number",
+      "required": true,
+      "description": "Not to exceed the tax otherwise payable under Thai law.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 13: \"หัก เครดิตภาษีเงินได้จากต่างประเทศ (ไม่เกินภาษีที่ต้องเสียตามกฎหมายประเทศไทย)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11TaxAfterForeignCredit",
+      "label": "ข้อ 11.14 Tax payable after foreign tax credit (12. - 13.)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 14: \"ภาษีที่ต้องชำระหลังหักเครดิตภาษีเงินได้จากต่างประเทศ (12. - 13.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11WithholdingTaxCredit",
+      "label": "ข้อ 11.15 Less withholding tax and tax credit",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 15: \"หัก ภาษีเงินได้หัก ณ ที่จ่ายและเครดิตภาษี\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11Pit93Prepayment",
+      "label": "ข้อ 11.15a Tax paid in advance via Form PIT 93",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11: \"ภาษีเงินได้ชำระไว้ตามแบบ ภ.ง.ด. 93\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11Pit94Prepayment",
+      "label": "ข้อ 11.15b Tax paid in advance via Form PIT 94",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11: \"ภาษีเงินได้ชำระไว้ตามแบบ ภ.ง.ด. 94\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11NetTaxDueOrOverpaid",
+      "label": "ข้อ 11.16 Additional tax due / overpaid tax (interim)",
+      "type": "number",
+      "required": true,
+      "description": "Signed figure: positive means additional tax due, negative means overpaid tax. DISCLOSED SIMPLIFICATION: the source pairs this computed amount with a small \"which applies\" Yes/No radio-button toggle; this schema models only the signed numeric result rather than a separate toggle plus an always-positive magnitude, consistent with how the source's own plain subtraction lines (e.g. section11Subtotal1) are modeled — see VERIFICATION.md.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 16: \"ภาษีที่ชำระเพิ่มเติม/ชำระไว้เกิน\""
+    },
+    {
+      "name": "section11CarriedFromRealEstateSchedule",
+      "label": "ข้อ 11.17 Additional tax due / overpaid tax (from ข้อ 8, if any)",
+      "type": "number",
+      "description": "Carried from ข้อ 8 (the separate-taxation real-estate-sale schedule), which is out of scope for this v1.0.0. Modeled as an optional field defaulting to 0/absent for a filer with no such income.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 17: \"ภาษีที่ชำระเพิ่มเติม/ชำระไว้เกิน (ยกมาจากข้อ 8 (ถ้ามี))\""
+    },
+    {
+      "name": "section11Line18AttachmentCount",
+      "label": "Number of evidence sheets attached for lines 4, 6, 13, 15 and 17",
+      "type": "integer",
+      "sourceRef": "Page 4, ข้อ 11, line 18: \"(หลักฐานแนบ 4. , 6. , 13. , 15. และ 17. รวม ........ ฉบับ)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11TotalDueOrOverpaid",
+      "label": "ข้อ 11.18 Total additional tax due / overpaid tax",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 18: \"รวม ภาษีที่ชำระเพิ่มเติม/ชำระไว้เกิน\""
+    },
+    {
+      "name": "section11AddFromGiftSchedule",
+      "label": "ข้อ 11.19 Plus additional tax due (from ข้อ 9, if any)",
+      "type": "number",
+      "description": "Carried from ข้อ 9 (the separate-taxation gift/inheritance-income schedule), out of scope for this v1.0.0.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 19: \"บวก ภาษีที่ชำระเพิ่มเติม (ยกมาจากข้อ 9 (ถ้ามี))\""
+    },
+    {
+      "name": "section11AddFromAttachmentLine6",
+      "label": "ข้อ 11.20 Plus additional tax due (from attachment line 6, if any)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 20: \"บวก ภาษีที่ชำระเพิ่มเติม (ยกมาจาก 6. ของใบแนบ (ถ้ามี))\""
+    },
+    {
+      "name": "section11LessFromAttachmentLine7",
+      "label": "ข้อ 11.21 Less overpaid tax (from attachment line 7, if any)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 21: \"หัก ภาษีที่ชำระไว้เกิน (ยกมาจาก 7. ของใบแนบ (ถ้ามี))\""
+    },
+    {
+      "name": "section11LessAmendedOriginalTax",
+      "label": "ข้อ 11.22 Less tax computed per original PIT90/91 (amended filing)",
+      "type": "number",
+      "requiredWhen": {
+        "field": "returnFilingType",
+        "equals": "amended"
+      },
+      "description": "Only applicable when returnFilingType is amended — the tax already computed on the taxpayer's original PIT 90/91 filing for the same tax year.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 22: \"หัก ภาษีที่คำนวณได้ตามการยื่นแบบ ภ.ง.ด.90 ภ.ง.ด.91 (กรณียื่นเพิ่มเติม)\""
+    },
+    {
+      "name": "section11Subtotal3",
+      "label": "ข้อ 11.23 Additional tax due / overpaid tax (subtotal)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 23: \"ภาษีที่ชำระเพิ่มเติม/ชำระไว้เกิน\""
+    },
+    {
+      "name": "section11Surcharge",
+      "label": "ข้อ 11.24 Plus surcharge (if any)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 24: \"บวก เงินเพิ่ม (ถ้ามี)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "section11FinalDueOrOverpaid",
+      "label": "ข้อ 11.25 Total additional tax due / overpaid tax (final)",
+      "type": "number",
+      "required": true,
+      "description": "The return's bottom-line figure: a positive value is additional tax owed to the Revenue Department, a negative value is a refund due to the taxpayer. Cross-references summaryExcessTaxPaid/summaryAdditionalTaxDue on page 1 and refundRequestedAmount.",
+      "classification": "financial",
+      "sourceRef": "Page 4, ข้อ 11, line 25: \"รวม ภาษีที่ชำระเพิ่มเติม/ชำระไว้เกิน\""
+    },
+    {
+      "name": "attachmentFormType",
+      "label": "This attachment accompanies",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this personal-deductions/allowances attachment is filed alongside form PIT 90 or form PIT 91.",
+      "sourceRef": "Page 5 header: \"ใบแนบ ภ.ง.ด.90 ภ.ง.ด.91 ปีภาษี 2568\"",
+      "validation": {
+        "enum": [
+          "pit90",
+          "pit91"
+        ]
+      }
+    },
+    {
+      "name": "attachmentTaxpayerTin",
+      "label": "Attachment: taxpayer ID number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5 header block: \"เลขประจำตัวผู้เสียภาษีอากร\" (ผู้มีเงินได้)",
+      "validation": {
+        "pattern": "^[0-9]{13}$",
+        "minLength": 13,
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "attachmentSpouseTin",
+      "label": "Attachment: spouse's ID number",
+      "type": "string",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5 header block: \"เลขประจำตัวผู้เสียภาษีอากร\" (คู่สมรส)",
+      "validation": {
+        "pattern": "^[0-9]{13}$",
+        "minLength": 13,
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "attachmentTaxpayerName",
+      "label": "Attachment: taxpayer's first name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 5 header block: \"ชื่อ\" (ผู้มีเงินได้)"
+    },
+    {
+      "name": "attachmentTaxpayerMiddleName",
+      "label": "Attachment: taxpayer's middle name",
+      "type": "string",
+      "sourceRef": "Page 5 header block: \"ชื่อกลาง\" (ผู้มีเงินได้)"
+    },
+    {
+      "name": "attachmentTaxpayerSurname",
+      "label": "Attachment: taxpayer's surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 5 header block: \"ชื่อสกุล\" (ผู้มีเงินได้)"
+    },
+    {
+      "name": "attachmentSpouseName",
+      "label": "Attachment: spouse's first name",
+      "type": "string",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 5 header block: \"ชื่อ\" (คู่สมรส)"
+    },
+    {
+      "name": "attachmentSpouseMiddleName",
+      "label": "Attachment: spouse's middle name",
+      "type": "string",
+      "sourceRef": "Page 5 header block: \"ชื่อกลาง\" (คู่สมรส)"
+    },
+    {
+      "name": "attachmentSpouseSurname",
+      "label": "Attachment: spouse's surname",
+      "type": "string",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "sourceRef": "Page 5 header block: \"ชื่อสกุล\" (คู่สมรส)"
+    },
+    {
+      "name": "attachmentItem1PersonalAllowance",
+      "label": "1. Personal allowance (60,000 or 120,000 baht)",
+      "type": "number",
+      "required": true,
+      "description": "60,000 baht for a taxpayer filing separately, or 120,000 baht when filing jointly with a spouse, per the source's own parenthetical.",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 1: \"ผู้มีเงินได้ (60,000 บาท หรือ 120,000 บาท แล้วแต่กรณี)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem2SpouseAllowance",
+      "label": "2. Spouse allowance (60,000 baht)",
+      "type": "number",
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "married"
+      },
+      "description": "60,000 baht, applicable when the spouse has income aggregated into this joint computation, or has no income of their own.",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 2: \"คู่สมรส (60,000 บาท กรณีมีเงินได้รวมคำนวณภาษีหรือไม่มีเงินได้)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem3ChildCount",
+      "label": "3. Number of children claimed (30,000 baht each)",
+      "type": "integer",
+      "description": "The source's own four blank citizen-ID-number lines beneath this item (for listing each child) have no corresponding AcroForm widgets in the source PDF and are not modeled individually — disclosed in VERIFICATION.md.",
+      "sourceRef": "Page 5, item 3: \"บุตร คนละ 30,000 บาท ..... คน\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem3ChildAllowance",
+      "label": "3. Total child allowance (30,000 baht per child)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 3 amount field",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem3bAdditionalChildCount",
+      "label": "3. Number of children born 2018 or later, from the 2nd child onward (60,000 baht each)",
+      "type": "integer",
+      "description": "The higher 60,000-baht rate applies from the second qualifying child onward, when that child was born in or after B.E. 2561 (2018 CE).",
+      "sourceRef": "Page 5, item 3 continuation: \"บุตร (ตั้งแต่คนที่ 2 เป็นต้นไปที่เกิดในหรือหลังปี พ.ศ. 2561) คนละ 60,000 บาท ..... คน\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem3bAdditionalChildAllowance",
+      "label": "3. Total additional child allowance (60,000 baht per qualifying child)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 3 continuation, amount field",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem4FatherOfTaxpayerId",
+      "label": "4. Taxpayer's father: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 4: \"บิดาของผู้มีเงินได้ (ให้กรอกเลขประจำตัวประชาชน)\""
+    },
+    {
+      "name": "attachmentItem4FatherOfTaxpayerAllowance",
+      "label": "4. Taxpayer's father: parental care allowance",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 4, taxpayer's father row, amount field",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem4MotherOfTaxpayerId",
+      "label": "4. Taxpayer's mother: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 4: \"มารดาของผู้มีเงินได้\""
+    },
+    {
+      "name": "attachmentItem4MotherOfTaxpayerAllowance",
+      "label": "4. Taxpayer's mother: parental care allowance",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 4, taxpayer's mother row, amount field",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem4FatherOfSpouseId",
+      "label": "4. Spouse's father: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 4: \"บิดาของคู่สมรสที่มีเงินได้รวมคำนวณภาษีหรือไม่มีเงินได้\""
+    },
+    {
+      "name": "attachmentItem4FatherOfSpouseAllowance",
+      "label": "4. Spouse's father: parental care allowance",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 4, spouse's father row, amount field",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem4MotherOfSpouseId",
+      "label": "4. Spouse's mother: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 4: \"มารดาของคู่สมรสที่มีเงินได้รวมคำนวณภาษีหรือไม่มีเงินได้\""
+    },
+    {
+      "name": "attachmentItem4MotherOfSpouseAllowance",
+      "label": "4. Spouse's mother: parental care allowance",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 4, spouse's mother row, amount field",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem5DisabilityCareAllowance",
+      "label": "5. Disabled/incapacitated person care allowance",
+      "type": "number",
+      "description": "Carried from Form L.Y. 04.",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 5: \"อุปการะเลี้ยงดูคนพิการหรือคนทุพพลภาพ (ยกมาจากแบบ ล.ย.04)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem6HealthInsuranceAllowance",
+      "label": "6. Health insurance premium for parents of taxpayer and spouse",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 6: \"เบี้ยประกันสุขภาพบิดามารดาของผู้มีเงินได้และคู่สมรส\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem6FatherOfTaxpayerId",
+      "label": "6. Taxpayer's father: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 6: \"บิดาของผู้มีเงินได้\""
+    },
+    {
+      "name": "attachmentItem6MotherOfTaxpayerId",
+      "label": "6. Taxpayer's mother: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 6: \"มารดาของผู้มีเงินได้\""
+    },
+    {
+      "name": "attachmentItem6FatherOfSpouseId",
+      "label": "6. Spouse's father: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 6: \"บิดาของคู่สมรส\""
+    },
+    {
+      "name": "attachmentItem6MotherOfSpouseId",
+      "label": "6. Spouse's mother: citizen ID number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 5, item 6: \"มารดาของคู่สมรส\""
+    },
+    {
+      "name": "attachmentItem7LifeInsurancePremium",
+      "label": "7. Life insurance premium",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 7: \"เบี้ยประกันชีวิต\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem7HealthInsurancePremium",
+      "label": "7. Health insurance premium (own)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 7 continuation: \"เบี้ยประกันสุขภาพ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem7PensionLifeInsurancePremium",
+      "label": "7. Pension-type life insurance premium",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 7 continuation: \"เบี้ยประกันชีวิตแบบบำนาญ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem8ProvidentFundDeduction",
+      "label": "8. Provident fund contribution (not exceeding 10,000 baht)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 8: \"เงินสะสมกองทุนสำรองเลี้ยงชีพ (ส่วนที่ไม่เกิน 10,000 บาท)\"",
+      "validation": {
+        "minimum": 0,
+        "maximum": 10000
+      }
+    },
+    {
+      "name": "attachmentItem9NationalSavingsFundDeduction",
+      "label": "9. National Savings Fund contribution",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 9: \"เงินสะสมกองทุนการออมแห่งชาติ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem10RmfPurchase",
+      "label": "10. RMF (Retirement Mutual Fund) unit purchase",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 10: \"ค่าซื้อหน่วยลงทุนในกองทุนรวมเพื่อการเลี้ยงชีพ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem11MortgageInterestDeduction",
+      "label": "11. Mortgage interest on a home purchase/lease/construction",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 11: \"ดอกเบี้ยเงินกู้ยืมเพื่อซื้อ เช่าซื้อ หรือสร้างอาคารอยู่อาศัย\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem12SocialSecurityContribution",
+      "label": "12. Social security contribution",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 12: \"เงินสมทบกองทุนประกันสังคม\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem13CctvPurchase",
+      "label": "13. CCTV system purchase and installation (special development zones only)",
+      "type": "number",
+      "description": "Applicable only to income under sections 40(5), (6), (7), and (8) earned in a special development zone.",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 13: \"ค่าซื้อและค่าติดตั้งระบบกล้องโทรทัศน์วงจรปิด (เฉพาะเงินได้ตามมาตรา 40 (5) (6) (7) และ (8) ในเขตพัฒนาพิเศษเฉพาะกิจเท่านั้น)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem14PrenatalChildbirthExpense",
+      "label": "14. Prenatal care and childbirth expenses",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 14: \"ค่าฝากครรภ์และค่าคลอดบุตร\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem15PoliticalPartyDonation",
+      "label": "15. Donation to a political party",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 15: \"เงินที่บริจาคแก่พรรคการเมือง\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem16SocialEnterpriseInvestment",
+      "label": "16. Investment in shares/partnership to establish or increase capital of a registered social enterprise",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 16: \"เงินลงทุนในหุ้น หรือการเป็นหุ้นส่วนเพื่อจัดตั้ง หรือเพิ่มทุนบริษัทหรือห้างหุ้นส่วนนิติบุคคลที่ได้รับจดทะเบียนวิสาหกิจเพื่อสังคม\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem17EasyEReceiptTotal",
+      "label": "17. Easy E-Receipt 2.0 total (16 Jan - 28 Feb 2568)",
+      "type": "number",
+      "description": "Only for goods/services purchases with a full tax invoice or electronic receipt (e-Tax Invoice & e-Receipt).",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 17: \"ค่าซื้อสินค้าหรือค่าบริการ Easy E-Receipt 2.0 (ตั้งแต่วันที่ 16 ม.ค. 2568 – 28 ก.พ. 2568)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem17_1VatGoodsServices",
+      "label": "17.1 Goods/services within the VAT system",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 17.1: \"ค่าซื้อสินค้าและบริการในระบบภาษีมูลค่าเพิ่ม\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem17_2Books",
+      "label": "17.2 Books, newspapers, and magazines",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 17.2: \"ค่าซื้อหนังสือ หนังสือพิมพ์ และนิตยสาร\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem17_3EBooks",
+      "label": "17.3 E-books and electronic magazine/newspaper services via internet",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 17.3: \"ค่าซื้อหนังสือ ค่าบริการหนังสือที่อยู่ในรูปของข้อมูลอิเล็กทรอนิกส์ผ่านอินเทอร์เน็ต\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem17_4OtopGoods",
+      "label": "17.4 OTOP, community enterprise, and social enterprise goods",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 17.4: \"ค่าซื้อสินค้า OTOP วิสาหกิจชุมชน และวิสาหกิจเพื่อสังคม\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem18ThaiEsgPurchase",
+      "label": "18. Thai ESG fund unit purchase",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 18: \"ค่าซื้อหน่วยลงทุนในกองทุนรวมไทยเพื่อความยั่งยืน (Thai ESG)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem19_1ThaiEsgxPurchase",
+      "label": "19.1 Thai ESGX fund unit purchase",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 19.1: \"ค่าซื้อหน่วยลงทุน\" (ค่าซื้อหน่วยลงทุนในกองทุนรวมไทยเพื่อความยั่งยืนแบบพิเศษ (Thai ESGX))",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem19_2LtfSwitchValue",
+      "label": "19.2 Value of units switched from an LTF fund into Thai ESGX",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 19.2: \"มูลค่าการสับเปลี่ยนหน่วยลงทุนจากกองทุน LTF\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem20NewHomeConstructionCost",
+      "label": "20. New home construction contractor cost",
+      "type": "number",
+      "description": "Paid to a contractor who is a VAT-registered operator.",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 20: \"ค่าจ้างก่อสร้างอาคารเพื่ออยู่อาศัยขึ้นใหม่ให้แก่ผู้รับจ้างซึ่งเป็นผู้ประกอบการจดทะเบียนภาษีมูลค่าเพิ่ม\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem21ArtPurchase",
+      "label": "21. Purchase of art/artwork",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 21: \"ค่าซื้องานศิลปะ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem22DomesticTourismTotal",
+      "label": "22. Domestic tourism expenses total (29 Oct - 15 Dec 2568)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 22: \"ค่าท่องเที่ยวภายในประเทศ (ตั้งแต่วันที่ 29 ต.ค. 2568 - 15 ธ.ค. 2568)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem22_1MainCityETaxInvoice",
+      "label": "22.1 Main tourist city, e-Tax invoice",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 22.1: \"เที่ยวเมืองหลัก ใบกำกับภาษี (e-Tax Invoice)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem22_1MainCityPaperInvoice",
+      "label": "22.1 Main tourist city, paper tax invoice",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 22.1: \"เที่ยวเมืองหลัก ... ใบกำกับภาษี (กระดาษ)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem22_2SecondaryCityETaxInvoice",
+      "label": "22.2 Secondary tourist city, e-Tax invoice",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 22.2: \"เที่ยวเมืองรอง ใบกำกับภาษี (e-Tax Invoice)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem22_2SecondaryCityPaperInvoice",
+      "label": "22.2 Secondary tourist city, paper tax invoice",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 22.2: \"เที่ยวเมืองรอง ... ใบกำกับภาษี (กระดาษ)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem23Other",
+      "label": "23. Other",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 23: \"อื่น ๆ\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentItem24Total",
+      "label": "24. Total (items 1 to 23), carried to ข้อ 11 line 2 of PIT 90",
+      "type": "number",
+      "required": true,
+      "description": "Carried forward as the input to section11AllowancesDeduction (ข้อ 11, line 2), or, for a PIT 91 filer, to that form's own line 6.",
+      "classification": "financial",
+      "sourceRef": "Page 5, item 24: \"รวม (1. ถึง 23.) ยกไปรวมใน ข้อ 11 2. ของแบบ ภ.ง.ด.90 หรือยกไปกรอกใน ก 6. ของแบบ ภ.ง.ด.91\"",
+      "validation": {
+        "minimum": 0
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "certificationStatement",
+      "label": "Certification that the return's information is true",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "ข้าพเจ้าขอรับรองว่ารายการที่แสดงไว้เป็นความจริงทุกประการ (\"I certify that the particulars given are true in every respect.\")",
+      "sourceRef": "Page 1: \"คำรับรอง\""
+    },
+    {
+      "id": "refundSupportingEvidence",
+      "label": "Supporting evidence for a refund request (rights-entitlement / income certificate)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "Attached only when refundRequestedAmount is completed. The source lists several possible evidence types on one combined line (rights-entitlement certificate, income certificate, special-development-zone income certificate, foreign-source-income certificate) without discrete per-type checkboxes in the source PDF; not machine-gated via requiredWhen since refundRequestedAmount is itself an optional numeric field with no boolean counterpart to key a condition on — disclosed in VERIFICATION.md.",
+      "sourceRef": "Page 1: \"พร้อมนี้ได้แนบหลักฐานใบแสดงสิทธิฯ ใบแสดงเงินได้ฯ\""
+    }
+  ]
+}
