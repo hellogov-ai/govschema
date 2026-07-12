@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**40 jurisdictions** | **378 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**41 jurisdictions** | **379 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2510, "GovSchema Standard Research"): Ghana
+> opens as this registry's 41st jurisdiction**, via its National ID & Civic
+> Documents vertical (1 of 6), sourced from the National Identification
+> Authority's (NIA) `gh/nia/ghana-card-application-form-1a` v1.0.0 — "Form
+> One" (regulation 3(1)), the "NATIONAL IDENTITY CARD APPLICATION FORM,"
+> commonly the "Ghana Card Application Form 1-A." Fetched directly from
+> `nia.gov.gh` (HTTP 200, `application/pdf`, 498,907 bytes,
+> `sha256:3f401681db2e6d1f39fcc16b78c6b69a71d81a43075789513de29d00593bc5fa`),
+> confirmed live and unauthenticated at verification time. The child issue's
+> inherited claim of a "byte-identical mirror" at `fims.org.gh` did not hold
+> up on independent re-check — that path 404s, and `fims.org.gh` in fact
+> publishes a different NIA form entirely (the Non-Citizen/Refugee Ghana
+> Card application), not a mirror of this schema's source; disclosed as a
+> correction rather than repeated. The issue's 129-widget count, by
+> contrast, did independently reproduce exactly against a fresh
+> `pdfjs-dist` extraction (84 widgets page 1, 45 page 2). Most widgets carry
+> descriptive, self-documenting internal field names (a contrast with
+> several other jurisdictions' generic-XFA-token forms in this registry),
+> though coordinate-correlation against `getTextContent()` was still needed
+> for repeated generic names and two effectively unlabelled widgets. Every
+> `Tx` widget's own AcroForm `charLimit` was read and used directly as
+> `validation.maxLength`; this revealed all nationality-family fields and
+> the form's 14 language-spoken blanks carry `charLimit: 3` and `sex`
+> carries `charLimit: 2` — physical constraints too narrow for free text,
+> so `sex` is modelled as an `M`/`F` enum, justified by a structural
+> AcroForm fact rather than a visual estimate. 129 widgets reconcile to 123
+> `fields[]` + 1 `documents[]` entry: 4 widgets (MRW Number, Registration
+> Centre Number, Interviewer NID No., and the signature/thumbprint capture
+> widget) are excluded as staff-populated/raw-biometric-capture, and the two
+> genuine two-option AcroForm radio fields (Is Father/Mother alive) each
+> collapse to one boolean field. Four checkbox groups (applicant type,
+> request type, marital status, education level) are modelled as
+> independent boolean fields plus an `exclusivityGroups` entry each
+> ("at most one true," machine-checked; the form's own mandatory "exactly
+> one" is disclosed in prose). Non-citizen-only and dual-citizenship-only
+> sections carry a `visibleWhen` keyed off the applicant-type booleans; the
+> spouse list is bounded at 5, per the form's own printed escape hatch to a
+> separate "Spouses Form." Confirmed via a fresh web search that the
+> National Identification Authority Act, 2006 (Act 707) establishes NIA and
+> that the National Identity Register Act, 2008 (Act 750) — the exact
+> instrument the form's declaration text cites for its Section 40 penalty —
+> remains the governing statute, with NIA confirmed as a live, currently
+> operating agency in 2026. Ghana's other five verticals (Passport, DMV,
+> Business Formation, Taxes, Visa) remain open backlog for a future cycle;
+> this cycle's scope was limited to authoring the pre-identified candidate.
+> See the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-12, GOV-2500, "GovSchema Standard Research"): Kenya's
 > National ID & Civic Documents vertical opens (2 of 6)**, via
@@ -8464,6 +8511,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
