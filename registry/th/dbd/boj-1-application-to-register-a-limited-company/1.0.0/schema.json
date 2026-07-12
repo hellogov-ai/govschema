@@ -1,0 +1,154 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "th/dbd/boj-1-application-to-register-a-limited-company",
+  "version": "1.0.0",
+  "title": "Thailand Application to Register a Limited Company (Form บอจ.1)",
+  "description": "The Department of Business Development's (DBD) \"แบบ บอจ.1\" (Form บอจ.1), the cover application a promoter/applicant files with the provincial or Bangkok Registrar of Partnerships and Companies to request one of several company-registration actions under the Civil and Commercial Code. Opens Thailand's Business Formation vertical (2 of 6). The live 2-page, 101-AcroForm-widget source is a registrar-facing routing form: page 1's 17-value checkbox group lets the applicant declare exactly one requested action (new company formation, registering a standalone Memorandum of Association, a partnership-to-company conversion, a capital increase/decrease or merger special resolution, five distinct Memorandum-of-Association amendment sub-types, an Articles-of-Association amendment, a merger, a director change, and others), a further 3-checkbox group for optional post-registration requests (labor-bylaw copy submission, trademark registration, import/export identity card), company/existing-registration identification, a two-signatory signature block, and a statutory false-statement warning notice; page 2 is a bundled \"หนังสือรับรอง\" (certificate of incorporation) template that the Registrar — not the applicant — completes and issues after approval. This v1.0.0 deliberately scopes to the new-company-incorporation (\"จัดตั้งบริษัทจำกัด\") action pathway: the full registrationActionType enum (all 17 source values, so the field is self-contained per the source's own single checkbox group), the 3 optional post-registration-request checkboxes, company-name/existing-registration-reference identification, the statutory warning notice, and the applicant's two-signatory signature block. Out of scope for this v1.0.0, disclosed in VERIFICATION.md: the 14 free-text sub-fields that are dependent on the 16 non-formation registrationActionType values (Memorandum/Articles amendment item references, partnership-conversion and merger company details, director in/out counts, head-/branch-office relocation text), the Registrar/witness certification block at the bottom of page 1, and the entirety of page 2 (the Registrar-issued certificate template, not an applicant input). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Thailand or the Department of Business Development.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Business Development",
+    "abbreviation": "DBD",
+    "url": "https://www.dbd.go.th"
+  },
+  "process": {
+    "type": "filing",
+    "language": "th"
+  },
+  "source": {
+    "url": "https://www.dbd.go.th/download/downloads/03_boj/form_boj1.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "แบบ บอจ.1 (Form บอจ.1), application to register a limited company / notification of company-registration actions"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2601 (child of GOV-2599's parallel Thailand delegation, itself following GOV-2591/GOV-2593's scouting). Opens Thailand's Business Formation vertical (2 of 6); Taxes opened Thailand as the registry's 44th jurisdiction via GOV-2593. Independently re-fetched https://www.dbd.go.th/download/downloads/03_boj/form_boj1.pdf this cycle: HTTP 200, application/pdf, 801091 bytes, sha256 433aace18e925d75236afe99e08796763744040e5f10f5781445e77d70796f72 — matching the task's cited figures exactly. Re-ran pdfjs-dist (legacy build, getAnnotations({intent:'display'}) filtered to subtype==='Widget'), correlating each widget's rect against getTextContent() text on both sides (not just left): confirmed 2 pages, 101 AcroForm widgets total, 45 (page 1) / 56 (page 2), matching exactly. Deliberately scoped to the new-company-incorporation pathway; see this document's own description and VERIFICATION.md for the full in/out-of-scope breakdown and disclosed judgment calls, including the discovery that page 2 is a Registrar-issued certificate template bundled into the same PDF rather than part of the applicant's own submission."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationReceivedReference",
+      "label": "Application receipt reference (registrar-completed)",
+      "type": "string",
+      "description": "The registration office's own receipt annotation, combining a received-date blank and a request-number blank on one printed line. Completed by the receiving DBD registration office at intake, not by the applicant. Modeled as a single optional string since the two blanks share one AcroForm widget in the source and could not be confidently split into two distinct fields — disclosed in VERIFICATION.md.",
+      "sourceRef": "Page 1, header: \"รับวันที่ .......................................... คำขอจดทะเบียนบริษัทจำกัด ........................................................\""
+    },
+    {
+      "name": "companyName",
+      "label": "Company name",
+      "type": "string",
+      "required": true,
+      "description": "The proposed or existing company's name in Thai, excluding the mandatory \"จำกัด\" (Limited) suffix, which is pre-printed on the form immediately after this blank.",
+      "sourceRef": "Page 1: \"บริษัท ................................................................................................................... จำกัด\""
+    },
+    {
+      "name": "existingCompanyBookNumber",
+      "label": "Existing company's book (บค) registration reference",
+      "type": "string",
+      "description": "The existing company's \"บค\" (book) registration reference. Applicable only when this filing concerns an already-registered company (an amendment, capital change, merger, or similar action per registrationActionType) rather than a new incorporation; left blank for this schema's supported new-incorporation pathway.",
+      "sourceRef": "Page 1: \"ทะเบียนเลขที่ บค ............................................................\""
+    },
+    {
+      "name": "existingCompanyRegistrationNumber",
+      "label": "Existing company's registration number",
+      "type": "string",
+      "description": "The existing company's registration number. Applicable only to a non-new-incorporation action, per the same condition as existingCompanyBookNumber.",
+      "sourceRef": "Page 1: \"ทะเบียนเลขที่ ..............................................................\""
+    },
+    {
+      "name": "registrationActionType",
+      "label": "Requested registration action",
+      "type": "enum",
+      "required": true,
+      "description": "Which single type of DBD company-registration action this filing requests, under the Civil and Commercial Code. The source presents these as one self-contained group of 17 checkboxes, so all 17 values are enumerated here; however, this v1.0.0 fully supports only the \"newIncorporation\" pathway (see this schema's own description and VERIFICATION.md) — the other 16 values' own dependent sub-fields (Memorandum/Articles amendment item references, partnership-conversion and merger company details, director in/out counts, office-relocation text) are out of scope for this v1.0.0.",
+      "sourceRef": "Page 1: \"(1) ข้าพเจ้าขอจดทะเบียนบริษัทจำกัด ตามประมวลกฎหมายแพ่งและพาณิชย์ดังต่อไปนี้\" and its 17 checkboxes",
+      "validation": {
+        "enum": [
+          "registerMemorandumOfAssociation",
+          "amendMemorandumBeforeIncorporation",
+          "newIncorporation",
+          "partnershipConversion",
+          "specialResolutionCapitalOrMerger",
+          "capitalIncreaseOrDecrease",
+          "amendMemorandumClause1CompanyName",
+          "amendMemorandumClause2OfficeLocation",
+          "amendMemorandumClause3Objectives",
+          "amendMemorandumClause5CapitalShares",
+          "amendArticlesOfAssociation",
+          "merger",
+          "directorChange",
+          "amendAuthorizedSigningDirectors",
+          "amendOfficeLocation",
+          "amendCompanySeal",
+          "otherMatters"
+        ]
+      }
+    },
+    {
+      "name": "laborBylawCopyRequested",
+      "label": "Also requesting: submit a copy of the company's labor work rules",
+      "type": "boolean",
+      "description": "Whether the applicant, once the requested registration is complete, additionally requests to submit a copy of the company's labor work rules under the Labor Protection Act B.E. 2541 — applicable only to an employer with 10 or more employees, per the source's own parenthetical.",
+      "sourceRef": "Page 1, section (2): \"ขอส่งสำเนาข้อบังคับเกี่ยวกับการทำงาน ตามพระราชบัญญัติคุ้มครองแรงงาน พ.ศ. 2541 (กรณีมีลูกจ้างตั้งแต่ 10 คน ขึ้นไป)\""
+    },
+    {
+      "name": "trademarkRegistrationRequested",
+      "label": "Also requesting: trademark registration",
+      "type": "boolean",
+      "description": "Whether the applicant additionally requests trademark registration under the Trademark Act B.E. 2534.",
+      "sourceRef": "Page 1, section (2): \"ขอจดทะเบียนเครื่องหมายการค้าตามพระราชบัญญัติเครื่องหมายการค้า พ.ศ. 2534\""
+    },
+    {
+      "name": "importExportCardRequested",
+      "label": "Also requesting: importer-exporter identification card",
+      "type": "boolean",
+      "description": "Whether the applicant additionally requests an importer-exporter identification card, per the Department of Foreign Trade's notice on electronic import-export documentation, B.E. 2554.",
+      "sourceRef": "Page 1, section (2): \"ขอมีบัตรประจำตัวผู้ส่งออก – นำเข้าสินค้าตามประกาศกรมการค้าต่างประเทศ เรื่องหลักเกณฑ์วิธีการและเงื่อนไขการขอรับหนังสือสำคัญ การส่งออก – นำเข้า สินค้าโดยวิธีการทางอิเล็กทรอนิกส์ พ.ศ. 2554\""
+    },
+    {
+      "name": "applicantSignatoryName",
+      "label": "First signatory's printed name",
+      "type": "string",
+      "required": true,
+      "description": "Printed name of the first signatory (a company promoter, or a director with binding signing authority) beneath their handwritten signature.",
+      "sourceRef": "Page 1, under \"ลงลายมือชื่อผู้เริ่มก่อการผู้ขอจดทะเบียน / กรรมการผู้มีอำนาจผูกพันบริษัท\": \"( .............................................................................. )\""
+    },
+    {
+      "name": "applicantSignatoryName2",
+      "label": "Second signatory's printed name (with company seal)",
+      "type": "string",
+      "description": "Printed name of a second signatory, affixed alongside the company seal, when the company's authorized-signing rule requires more than one signature to bind the application. Optional: a sole-signatory filing (e.g. before the company seal exists) leaves this blank.",
+      "sourceRef": "Page 1: \"( ประทับตราบริษัท ) ( ............................................................................... )\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "falseStatementWarningNotice",
+      "label": "Statutory false-statement / late-filing warning notice",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "คำเตือน 1. ผู้ใดแจ้งข้อความอันเป็นเท็จแก่เจ้าพนักงานมีความผิด ตามประมวลกฎหมายอาญา มาตรา 137, 267 และ 268 2. นายทะเบียนอาจเพิกถอนการจดทะเบียน ถ้าปรากฏว่าข้อความอันเป็นสาระสำคัญที่จดทะเบียนไม่ถูกต้องหรือเป็นเท็จ 3. การไม่ยื่นคำขอจดทะเบียนภายในเวลาที่กฎหมายกำหนดจะมีความผิด ตามพระราชบัญญัติกำหนดความผิดเกี่ยวกับห้างหุ้นส่วนจดทะเบียน ห้างหุ้นส่วนจำกัด บริษัทจำกัด สมาคม และมูลนิธิ พ.ศ.2499 (\"Warning: 1. Anyone giving a false statement to an official commits an offense under Criminal Code sections 137, 267 and 268. 2. The Registrar may revoke a registration if a materially registered particular is found incorrect or false. 3. Failing to file a registration application within the legally prescribed time is an offense under the Act Prescribing Offenses Relating to Registered Partnerships, Limited Partnerships, Limited Companies, Associations and Foundations B.E. 2499.\")",
+      "sourceRef": "Page 1 footer: \"คำเตือน\" (three numbered warnings)"
+    }
+  ]
+}
