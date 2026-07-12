@@ -1,0 +1,1472 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gh/nia/ghana-card-application-form-1a",
+  "version": "1.0.0",
+  "title": "Ghana Card Application Form 1-A (Form One)",
+  "description": "Ghana's national form for applying for a Ghana Card (national identity card) — \"Form One\", printed as made under \"regulation 3(1)\" (the form's own header citation; the specific regulations instrument is not further identified on the form itself), and administered by the National Identification Authority (NIA), a statutory body established by the National Identification Authority Act, 2006 (Act 707). The form serves citizens, permanently resident non-citizens, persons with a residence permit, and refugees alike, and covers first-time issuance as well as update, replacement, and re-issue of a previously issued card. Opens Ghana as the registry's 41st jurisdiction, via the National ID & Civic Documents vertical. This schema models the form's full applicant-facing content across both pages: applicant/request type, personal particulars (name, sex, marital status, height, colour of eyes/hair, disability code, level of education), birth/nationality particulars and place of birth/hometown, occupation, residential address, up to 14 languages spoken, the applicant's parentage (father's and mother's particulars, including whether each is alive), next of kin, a bounded list of up to 5 spouses (the form's own footnote directs applicants with more spouses to a separate \"Spouses Form\"), non-citizen-only particulars (residence-permit and employer details), the verification document presented, dual-citizenship-only particulars, contact numbers and email, a set of institutional ID numbers (SSNIT, Voter ID, Passport, National Health Insurance, Driver's Licence, Tax Identification Number), and the applicant's declaration. It deliberately does NOT model three widgets that are populated by NIA staff during in-person registration rather than supplied by the applicant (the \"MRW Number\", \"Registration Centre Number\", and \"Interviewer NID No.\" fields printed in the form's header strip), nor the raw signature/thumbprint capture widget — consistent with this registry's general practice of excluding staff-populated and raw-biometric-capture widgets. Applying for a Ghana Card requires in-person attendance at an NIA registration centre for biometric capture; this schema does not submit the application itself, and the live source (nia.gov.gh) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Ghana or the National Identification Authority.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Identification Authority",
+    "abbreviation": "NIA",
+    "url": "https://nia.gov.gh"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://nia.gov.gh/wp-content/uploads/Ghana-Card-Application-Form-Form-1-A.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "Form One (regulation 3(1)), \"National Identity Card Application Form\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2510 (child of GOV-2507). Opens Ghana's National ID & Civic Documents vertical (1 of 6), via NIA's 'Form One' (regulation 3(1)), the National Identity Card Application Form. Fetched directly from nia.gov.gh (HTTP 200, application/pdf, 498,907 bytes, sha256:3f401681db2e6d1f39fcc16b78c6b69a71d81a43075789513de29d00593bc5fa, Last-Modified 2026-02-16), re-confirmed live and unauthenticated at verification time. The GOV-2510 issue's inherited claim of a 'byte-identical mirror at fims.org.gh' did not hold up on independent re-check: that path 404s, and fims.org.gh in fact hosts a different NIA form entirely (the Non-Citizen/Refugee Ghana Card application), not a mirror of this schema's source PDF — disclosed as a correction rather than repeated; the issue's 129-widget field-count claim, by contrast, did independently reproduce exactly against this schema's own from-scratch pdfjs-dist extraction (84 widgets page 1, 45 page 2). Unlike several other jurisdictions' forms in this registry, most widgets carry descriptive, self-documenting internal field names rather than generic XFA tokens, though coordinate-correlation against getTextContent() was still needed for repeated generic names (Village/Village_2.../Country/Country_2.../District/District_2...) and two ambiguous, effectively unlabelled widgets. Every Tx widget's own AcroForm charLimit was read via getFieldObjects() and used directly as validation.maxLength; this surfaced that all nationality-family fields and the 14 language-spoken blanks carry charLimit 3, and sex carries charLimit 2 — physical constraints too narrow for free text, so sex is modelled as an M/F enum (a deliberate departure from this registry's usual string-only default for unlabelled-option fields, justified here by a structural AcroForm fact rather than a visual estimate) and nationality/language fields as 3-character short-code strings. 129 widgets reconcile to 123 fields[] + 1 documents[] entry: 4 widgets (MRW Number, Registration Centre Number, Interviewer NID No., and the raw signature/thumbprint capture widget) are excluded as staff-populated or raw-biometric-capture, consistent with this registry's general practice, and the two genuine two-option AcroForm radio fields (Is Father/Mother alive) each collapse to one boolean field. Four checkbox groups (applicant type, request type, marital status, education level) are each independent Btn widgets, not true radio fields, and are modelled as N boolean fields plus an exclusivityGroups entry enforcing 'at most one true'; the form's own mandatory '*' marking (\"exactly one\") is disclosed in prose since exclusivityGroups only expresses the 'at most one' half. Non-citizen-only and dual-citizenship-only sections carry a visibleWhen keyed off applicantTypeCitizen, a disclosed inference from the section headings. The spouse list is bounded at 5, per the form's own printed escape hatch to a separate 'Spouses Form' for a 6th+ spouse. Confirmed via a fresh web search that the National Identification Authority Act, 2006 (Act 707) establishes NIA and that the National Identity Register Act, 2008 (Act 750) — the exact instrument the form's own declaration text cites for its Section 40 penalty — remains the governing statute, with NIA confirmed as a live, currently operating agency in 2026. See VERIFICATION.md for the full sourcing record, field-scoping decisions, and the conformance run writeup (2 valid fixtures, 0 errors each; 5 mutation-control fixtures, exactly 1 error each, including a dedicated exclusivityGroups-violation case)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantTypeCitizen",
+      "label": "CITIZEN",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant is applying as a Ghanaian citizen. One of four mutually exclusive applicant-type checkboxes printed under \"TYPE OF APPLICANT *\"; the form requires exactly one to be ticked, but that overall choice is not machine-enforceable beyond the mutual-exclusivity captured in exclusivityGroups (see notes).",
+      "sourceRef": "Header — TYPE OF APPLICANT *: CITIZEN"
+    },
+    {
+      "name": "applicantTypePermanentlyResident",
+      "label": "PERMANENTLY RESIDENT",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant is applying as a permanently resident non-citizen.",
+      "sourceRef": "Header — TYPE OF APPLICANT *: PERMANENTLY RESIDENT"
+    },
+    {
+      "name": "applicantTypePersonWithResidencePermit",
+      "label": "PERSON WITH RESIDENCE PERMIT",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant is applying as a non-citizen holding a residence permit.",
+      "sourceRef": "Header — TYPE OF APPLICANT *: PERSON WITH RESIDENCE PERMIT"
+    },
+    {
+      "name": "applicantTypeRefugee",
+      "label": "REFUGEE",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant is applying as a refugee.",
+      "sourceRef": "Header — TYPE OF APPLICANT *: REFUGEE"
+    },
+    {
+      "name": "requestTypeIssuance",
+      "label": "Issuance",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether this application is for first-time issuance of a Ghana Card. One of four mutually exclusive request-type checkboxes printed under \"TYPE OF REQUEST*\".",
+      "sourceRef": "Header — TYPE OF REQUEST*: Issuance"
+    },
+    {
+      "name": "requestTypeUpdate",
+      "label": "Update",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether this application is to update particulars on an existing Ghana Card.",
+      "sourceRef": "Header — TYPE OF REQUEST*: Update"
+    },
+    {
+      "name": "requestTypeReplacement",
+      "label": "Replacement",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether this application is to replace a lost, damaged, or stolen Ghana Card.",
+      "sourceRef": "Header — TYPE OF REQUEST*: Replacement"
+    },
+    {
+      "name": "requestTypeReIssue",
+      "label": "Re-Issue",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether this application is to re-issue a Ghana Card.",
+      "sourceRef": "Header — TYPE OF REQUEST*: Re-Issue"
+    },
+    {
+      "name": "dateOfApplication",
+      "label": "Date of Application",
+      "type": "date",
+      "required": true,
+      "description": "The date this application is submitted.",
+      "sourceRef": "Header — Date of Application (DD/MM/YYYY)*"
+    },
+    {
+      "name": "existingNidNumber",
+      "label": "EXISTING NID NUMBER",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's existing Ghana Card / National ID number, when this application is an Update, Replacement, or Re-Issue rather than a first-time Issuance.",
+      "sourceRef": "Header — EXISTING NID NUMBER",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "surname",
+      "label": "SURNAME",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's surname.",
+      "sourceRef": "SURNAME *:",
+      "validation": {
+        "maxLength": 24
+      }
+    },
+    {
+      "name": "sex",
+      "label": "SEX",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's sex. The source form prints only a 2-character-wide combed text box with no printed candidate values; \"M\"/\"F\" is modelled here as the universal single-letter convention this box's width structurally accommodates (see VERIFICATION.md).",
+      "sourceRef": "SEX *:",
+      "validation": {
+        "enum": [
+          "M",
+          "F"
+        ]
+      }
+    },
+    {
+      "name": "forenames",
+      "label": "FORENAMES (First name and Other Names)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first name and other given names.",
+      "sourceRef": "FORENAMES *: (First name and Other Names)",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "maritalStatusSingle",
+      "label": "Single",
+      "type": "boolean",
+      "required": false,
+      "description": "One of five mutually exclusive marital-status checkboxes printed under \"Marital Status *:\".",
+      "sourceRef": "Marital Status *: Single"
+    },
+    {
+      "name": "maritalStatusMarried",
+      "label": "Married",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Marital Status *: Married"
+    },
+    {
+      "name": "maritalStatusLegallySeparated",
+      "label": "Legally Separated",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Marital Status *: Legally Separated"
+    },
+    {
+      "name": "maritalStatusDivorced",
+      "label": "Divorced",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Marital Status *: Divorced"
+    },
+    {
+      "name": "maritalStatusWidowed",
+      "label": "Widowed",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Marital Status *: Widowed"
+    },
+    {
+      "name": "previousOrMaidenNames",
+      "label": "PREVIOUS OR MAIDEN NAMES",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Any previous or maiden names the applicant has used.",
+      "sourceRef": "PREVIOUS OR MAIDEN NAMES :",
+      "validation": {
+        "maxLength": 35
+      }
+    },
+    {
+      "name": "height",
+      "label": "Height (cm)",
+      "type": "integer",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's height in centimetres.",
+      "sourceRef": "Height * (cm) :",
+      "validation": {
+        "minimum": 0,
+        "maximum": 999
+      }
+    },
+    {
+      "name": "colourOfEyes",
+      "label": "Colour of Eyes",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's eye colour.",
+      "sourceRef": "Colour of Eyes * :",
+      "validation": {
+        "maxLength": 6
+      }
+    },
+    {
+      "name": "colourOfHair",
+      "label": "Colour of Hair",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's hair colour.",
+      "sourceRef": "Colour of Hair * :",
+      "validation": {
+        "maxLength": 8
+      }
+    },
+    {
+      "name": "disabilityCode",
+      "label": "Disability Code",
+      "type": "string",
+      "required": false,
+      "classification": "health",
+      "description": "A disability code, per the form's own \"Disability / Code:\" label. The form does not print a lookup table of valid codes.",
+      "sourceRef": "Disability / Code :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "educationLevelNone",
+      "label": "None",
+      "type": "boolean",
+      "required": false,
+      "description": "One of five mutually exclusive education-level checkboxes printed under \"Level of Education *:\".",
+      "sourceRef": "Level of Education *: None"
+    },
+    {
+      "name": "educationLevelBasic",
+      "label": "Basic",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Level of Education *: Basic"
+    },
+    {
+      "name": "educationLevelSecondary",
+      "label": "Secondary",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Level of Education *: Secondary"
+    },
+    {
+      "name": "educationLevelTertiary",
+      "label": "Tertiary",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Level of Education *: Tertiary"
+    },
+    {
+      "name": "educationLevelHigher",
+      "label": "Higher",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Level of Education *: Higher"
+    },
+    {
+      "name": "birthCertificateNo",
+      "label": "Birth Certificate No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's birth certificate number.",
+      "sourceRef": "Birth Certicate No.",
+      "validation": {
+        "maxLength": 22
+      }
+    },
+    {
+      "name": "birthCertificateIssuedDate",
+      "label": "Birth Certificate Date Issued",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant's birth certificate was issued.",
+      "sourceRef": "Birth Certicate No. — Date Issued (DD/MM/YYYY)"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "DATE OF BIRTH",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's date of birth.",
+      "sourceRef": "DATE OF BIRTH * (DD/MM/YYYY)"
+    },
+    {
+      "name": "dateOfBirthEstimated",
+      "label": "If Estimated Date of Birth",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the date of birth entered is an estimate rather than a confirmed date.",
+      "sourceRef": "If Estimated Date of Birth :"
+    },
+    {
+      "name": "nationalityAtBirth",
+      "label": "Nationality at Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's nationality at birth. The 3-character-wide combed box indicates a short nationality code is expected, not a full country name (see VERIFICATION.md).",
+      "sourceRef": "Nationality at Birth *:",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "currentNationality",
+      "label": "Current Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's current nationality, as a short code (see nationalityAtBirth).",
+      "sourceRef": "Current Nationality *:",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "placeOfBirthVillageTown",
+      "label": "Place of Birth — Village/Town",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The village or town where the applicant was born.",
+      "sourceRef": "PLACE OF BIRTH — Village :/Town :",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "placeOfBirthRegionCountry",
+      "label": "Place of Birth — Region/Country",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The region (if born in Ghana) or country (if born abroad) where the applicant was born, as a short code.",
+      "sourceRef": "PLACE OF BIRTH — Region :/Country:",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "placeOfBirthDistrictState",
+      "label": "Place of Birth — District/State",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The district (if born in Ghana) or state (if born abroad) where the applicant was born.",
+      "sourceRef": "PLACE OF BIRTH — District :/State :",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "hometownVillageTown",
+      "label": "Hometown — Village/Town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's hometown village or town.",
+      "sourceRef": "HOMETOWN * — Village :/Town :",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "hometownRegionCountry",
+      "label": "Hometown — Region/Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's hometown region or country, as a short code.",
+      "sourceRef": "HOMETOWN * — Region :/Country:",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "hometownDistrictState",
+      "label": "Hometown — District/State",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's hometown district or state.",
+      "sourceRef": "HOMETOWN * — District :/State :",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "OCCUPATION",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's occupation. The 4-character-wide combed box indicates a short occupation code is expected rather than a free-text job title (see VERIFICATION.md).",
+      "sourceRef": "OCCUPATION * :",
+      "validation": {
+        "maxLength": 4
+      }
+    },
+    {
+      "name": "residentialVillageTown",
+      "label": "Residential Address — Village/Town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The village or town of the applicant's residential address.",
+      "sourceRef": "RESIDENTIAL ADDRESS * — Village :/Town :",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "residentialRegionCountry",
+      "label": "Residential Address — Region/Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The region or country of the applicant's residential address, as a short code.",
+      "sourceRef": "RESIDENTIAL ADDRESS * — Region :/Country :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "residentialDistrictState",
+      "label": "Residential Address — District/State",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The district or state of the applicant's residential address.",
+      "sourceRef": "RESIDENTIAL ADDRESS * — District :/State :",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "houseNo",
+      "label": "House No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The house number of the applicant's residential address.",
+      "sourceRef": "House No.:",
+      "validation": {
+        "maxLength": 12
+      }
+    },
+    {
+      "name": "streetName",
+      "label": "Street Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The street name of the applicant's residential address.",
+      "sourceRef": "Street Name :",
+      "validation": {
+        "maxLength": 19
+      }
+    },
+    {
+      "name": "communityAreaName",
+      "label": "Community Area Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The community/area name of the applicant's residential address.",
+      "sourceRef": "Community Area Name :",
+      "validation": {
+        "maxLength": 21
+      }
+    },
+    {
+      "name": "zipPostalCode",
+      "label": "ZIP/Postal Code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The ZIP/postal code of the applicant's residential address.",
+      "sourceRef": "ZIP/Postal Code :",
+      "validation": {
+        "maxLength": 7
+      }
+    },
+    {
+      "name": "postalAddress",
+      "label": "Postal Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's postal address.",
+      "sourceRef": "Postal Address :",
+      "validation": {
+        "maxLength": 31
+      }
+    },
+    {
+      "name": "digitalAddressCode",
+      "label": "Digital Address Code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's Ghana Post GPS digital address code.",
+      "sourceRef": "Digital Address Code :",
+      "validation": {
+        "maxLength": 18
+      }
+    },
+    {
+      "name": "languageSpoken1",
+      "label": "Language Spoken 1",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant. The form prints 14 identical blank boxes (numbered 1-14) under \"LANGUAGE(S) SPOKEN :\"; each is independently optional. The 3-character-wide combed box on each suggests a short language code, not a full language name (see VERIFICATION.md).",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 1",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken2",
+      "label": "Language Spoken 2",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 2 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 2",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken3",
+      "label": "Language Spoken 3",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 3 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 3",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken4",
+      "label": "Language Spoken 4",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 4 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 4",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken5",
+      "label": "Language Spoken 5",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 5 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 5",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken6",
+      "label": "Language Spoken 6",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 6 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 6",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken7",
+      "label": "Language Spoken 7",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 7 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 7",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken8",
+      "label": "Language Spoken 8",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 8 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 8",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken9",
+      "label": "Language Spoken 9",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 9 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 9",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken10",
+      "label": "Language Spoken 10",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 10 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 10",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken11",
+      "label": "Language Spoken 11",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 11 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 11",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken12",
+      "label": "Language Spoken 12",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 12 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 12",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken13",
+      "label": "Language Spoken 13",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 13 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 13",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "languageSpoken14",
+      "label": "Language Spoken 14",
+      "type": "string",
+      "required": false,
+      "description": "A language spoken by the applicant (blank 14 of 14 under \"LANGUAGE(S) SPOKEN :\").",
+      "sourceRef": "LANGUAGE(S) SPOKEN : blank 14",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "fathersFullName",
+      "label": "Full Name of Father",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's father's full name.",
+      "sourceRef": "APPLICANT'S PARENTAGE * — Full Name of Father :",
+      "validation": {
+        "maxLength": 29
+      }
+    },
+    {
+      "name": "fathersNationality",
+      "label": "Father's Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's father's nationality, as a short code.",
+      "sourceRef": "APPLICANT'S PARENTAGE — Full Name of Father : Nationality",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "fathersHometownVillageTown",
+      "label": "Father's Home Town — Village/Town",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The village or town of the applicant's father's home town.",
+      "sourceRef": "FATHER'S HOME TOWN — Village :/Town :",
+      "validation": {
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "fathersHometownRegionCountry",
+      "label": "Father's Home Town — Region/Country",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The region or country of the applicant's father's home town, as a short code.",
+      "sourceRef": "FATHER'S HOME TOWN — Region :/Country:",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "fathersHometownDistrictState",
+      "label": "Father's Home Town — District/State",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The district or state of the applicant's father's home town.",
+      "sourceRef": "FATHER'S HOME TOWN — District :/State :",
+      "validation": {
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "isFatherAlive",
+      "label": "Is Father alive?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's father is alive. A genuine two-option AcroForm radio-button field (export values Yes/No), unlike the checkbox groups elsewhere on this form.",
+      "sourceRef": "Is Father alive ? Yes/No"
+    },
+    {
+      "name": "mothersFullName",
+      "label": "Full Name of Mother",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mother's full name.",
+      "sourceRef": "APPLICANT'S PARENTAGE * — Full Name of Mother :",
+      "validation": {
+        "maxLength": 29
+      }
+    },
+    {
+      "name": "mothersMaidenName",
+      "label": "Mother's Maiden Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's mother's maiden name.",
+      "sourceRef": "Mother's Maiden Name :",
+      "validation": {
+        "maxLength": 29
+      }
+    },
+    {
+      "name": "mothersNationality",
+      "label": "Mother's Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's mother's nationality, as a short code.",
+      "sourceRef": "APPLICANT'S PARENTAGE — Full Name of Mother : Nationality",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "mothersHometownVillageTown",
+      "label": "Mother's Home Town — Village/Town",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The village or town of the applicant's mother's home town.",
+      "sourceRef": "MOTHER'S HOME TOWN — Village :/Town :",
+      "validation": {
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "mothersHometownRegionCountry",
+      "label": "Mother's Home Town — Region/Country",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The region or country of the applicant's mother's home town, as a short code.",
+      "sourceRef": "MOTHER'S HOME TOWN — Region :/Country :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "mothersHometownDistrictState",
+      "label": "Mother's Home Town — District/State",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The district or state of the applicant's mother's home town.",
+      "sourceRef": "MOTHER'S HOME TOWN — District :/State :",
+      "validation": {
+        "maxLength": 13
+      }
+    },
+    {
+      "name": "isMotherAlive",
+      "label": "Is Mother alive?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's mother is alive. A genuine two-option AcroForm radio-button field (export values Yes_2/No_2).",
+      "sourceRef": "Is Mother alive ? Yes/No"
+    },
+    {
+      "name": "nextOfKinFullName",
+      "label": "Next of Kin",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The full name of the applicant's next of kin.",
+      "sourceRef": "Next of Kin :",
+      "validation": {
+        "maxLength": 32
+      }
+    },
+    {
+      "name": "nextOfKinAddress",
+      "label": "Next of Kin — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The address of the applicant's next of kin.",
+      "sourceRef": "Next of Kin — Address :",
+      "validation": {
+        "maxLength": 32
+      }
+    },
+    {
+      "name": "spouse1FullName",
+      "label": "Spouse 1 — Full Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The full name of a spouse of the applicant. The form's own SPOUSE(S) LIST bounds this at 5 spouses, printing: \"Note: In case of more than five (5) Spouses, please use Spouses Form\" — a companion form outside this schema's scope for a 6th+ spouse.",
+      "sourceRef": "SPOUSE(S) LIST : 1. Full Name :",
+      "validation": {
+        "maxLength": 24
+      }
+    },
+    {
+      "name": "spouse1Nationality",
+      "label": "Spouse 1 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The nationality of spouse 1 of the applicant, as a short code.",
+      "sourceRef": "SPOUSE(S) LIST : 1. Nationality :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "spouse2FullName",
+      "label": "Spouse 2 — Full Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The full name of spouse 2 of the applicant.",
+      "sourceRef": "SPOUSE(S) LIST : 2. Full Name :",
+      "validation": {
+        "maxLength": 24
+      }
+    },
+    {
+      "name": "spouse2Nationality",
+      "label": "Spouse 2 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The nationality of spouse 2 of the applicant, as a short code.",
+      "sourceRef": "SPOUSE(S) LIST : 2. Nationality :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "spouse3FullName",
+      "label": "Spouse 3 — Full Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The full name of spouse 3 of the applicant.",
+      "sourceRef": "SPOUSE(S) LIST : 3. Full Name :",
+      "validation": {
+        "maxLength": 24
+      }
+    },
+    {
+      "name": "spouse3Nationality",
+      "label": "Spouse 3 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The nationality of spouse 3 of the applicant, as a short code.",
+      "sourceRef": "SPOUSE(S) LIST : 3. Nationality :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "spouse4FullName",
+      "label": "Spouse 4 — Full Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The full name of spouse 4 of the applicant.",
+      "sourceRef": "SPOUSE(S) LIST : 4. Full Name :",
+      "validation": {
+        "maxLength": 24
+      }
+    },
+    {
+      "name": "spouse4Nationality",
+      "label": "Spouse 4 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The nationality of spouse 4 of the applicant, as a short code.",
+      "sourceRef": "SPOUSE(S) LIST : 4. Nationality :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "spouse5FullName",
+      "label": "Spouse 5 — Full Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The full name of spouse 5 of the applicant.",
+      "sourceRef": "SPOUSE(S) LIST : 5. Full Name :",
+      "validation": {
+        "maxLength": 24
+      }
+    },
+    {
+      "name": "spouse5Nationality",
+      "label": "Spouse 5 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The nationality of spouse 5 of the applicant, as a short code.",
+      "sourceRef": "SPOUSE(S) LIST : 5. Nationality :",
+      "validation": {
+        "maxLength": 3
+      }
+    },
+    {
+      "name": "dateOfFirstResidenceInGhana",
+      "label": "Date of First Residence in Ghana",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant first took up residence in Ghana. Printed under \"NON CITIZEN ONLY :\".",
+      "sourceRef": "NON CITIZEN ONLY — Date of First Residence in Ghana *:",
+      "visibleWhen": {
+        "not": {
+          "field": "applicantTypeCitizen",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "issueDateOfLastResidencePermit",
+      "label": "Issue Date of Last Residence Permit",
+      "type": "date",
+      "required": false,
+      "description": "The issue date of the applicant's most recent residence permit.",
+      "sourceRef": "NON CITIZEN ONLY — Issue Date of Last Residence Permit :",
+      "visibleWhen": {
+        "not": {
+          "field": "applicantTypeCitizen",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "expiryDateOfLastResidencePermit",
+      "label": "Expiry Date of Last Residence Permit",
+      "type": "date",
+      "required": false,
+      "description": "The expiry date of the applicant's most recent residence permit.",
+      "sourceRef": "NON CITIZEN ONLY — Expiry Date of Last Residence Permit :",
+      "visibleWhen": {
+        "not": {
+          "field": "applicantTypeCitizen",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "employerName",
+      "label": "Employer Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The name of the applicant's employer.",
+      "sourceRef": "NON CITIZEN ONLY — Employer Name :",
+      "validation": {
+        "maxLength": 16
+      },
+      "visibleWhen": {
+        "not": {
+          "field": "applicantTypeCitizen",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "employerAddress",
+      "label": "Employer Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The address of the applicant's employer.",
+      "sourceRef": "NON CITIZEN ONLY — Employer Address :",
+      "validation": {
+        "maxLength": 31
+      },
+      "visibleWhen": {
+        "not": {
+          "field": "applicantTypeCitizen",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "employerTelNumber1",
+      "label": "Employer Tel Number 1",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The employer's first telephone number.",
+      "sourceRef": "NON CITIZEN ONLY — Employer Tel Number 1 :",
+      "validation": {
+        "maxLength": 10
+      },
+      "visibleWhen": {
+        "not": {
+          "field": "applicantTypeCitizen",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "employerTelNumber2",
+      "label": "Employer Tel Number 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The employer's second telephone number.",
+      "sourceRef": "NON CITIZEN ONLY — Employer Tel Number 2 :",
+      "validation": {
+        "maxLength": 10
+      },
+      "visibleWhen": {
+        "not": {
+          "field": "applicantTypeCitizen",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "verificationDocumentType",
+      "label": "Verification Document (Type)",
+      "type": "string",
+      "required": false,
+      "description": "The type of document presented to verify the applicant's identity/particulars.",
+      "sourceRef": "VERIFICATION DOCUMENT (TYPE) :",
+      "validation": {
+        "maxLength": 17
+      }
+    },
+    {
+      "name": "verificationDocumentNumber",
+      "label": "Verification Document No. / NID",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The document number, or National ID number, of the verification document.",
+      "sourceRef": "Document No. / NID :",
+      "validation": {
+        "maxLength": 16
+      }
+    },
+    {
+      "name": "verificationDocumentDateIssued",
+      "label": "Verification Document — Date Issued",
+      "type": "date",
+      "required": false,
+      "description": "The date the verification document was issued.",
+      "sourceRef": "VERIFICATION DOCUMENT (TYPE) — Date Issued (DD/MM/YYYY)"
+    },
+    {
+      "name": "verificationDocumentAdditionalNumber",
+      "label": "Verification Document — Additional Number",
+      "type": "string",
+      "required": false,
+      "description": "A second combed text widget positioned directly beneath the \"Document No. / NID\" field, with no printed label of its own anywhere on the form. Its purpose is undefined by the source; modelled here as an optional field on the same basis as the printed field immediately above it, not asserted to carry any specific meaning (see VERIFICATION.md).",
+      "sourceRef": "VERIFICATION DOCUMENT (TYPE) — unlabelled widget beneath Document No. / NID",
+      "validation": {
+        "maxLength": 16
+      }
+    },
+    {
+      "name": "otherCountryOfNationality",
+      "label": "Other Country of Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "For a dual citizen, the applicant's other country of nationality, as a short code. Printed under \"DUAL CITIZENSHIP ONLY :\".",
+      "sourceRef": "DUAL CITIZENSHIP ONLY — Other Country of Nationality :",
+      "validation": {
+        "maxLength": 3
+      },
+      "visibleWhen": {
+        "field": "applicantTypeCitizen",
+        "equals": true
+      }
+    },
+    {
+      "name": "dualNationalityCertificateNo",
+      "label": "Dual Nationality Certificate No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's dual nationality certificate number.",
+      "sourceRef": "DUAL CITIZENSHIP ONLY — Dual Nationality Certicate No. :",
+      "validation": {
+        "maxLength": 16
+      },
+      "visibleWhen": {
+        "field": "applicantTypeCitizen",
+        "equals": true
+      }
+    },
+    {
+      "name": "naturalizationRegistrationCertNo",
+      "label": "Naturalization/Registration Certificate No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's naturalization or registration certificate number.",
+      "sourceRef": "NATURALIZATION / REGISTRATION CERT. NO.:",
+      "validation": {
+        "maxLength": 22
+      },
+      "visibleWhen": {
+        "field": "applicantTypeCitizen",
+        "equals": true
+      }
+    },
+    {
+      "name": "localPhoneNumber1",
+      "label": "Local Phone Number 1",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A local (Ghana) telephone number for the applicant. Printed as 4 blank boxes under \"Local Phone Numbers :\".",
+      "sourceRef": "Local Phone Numbers : blank 1",
+      "validation": {
+        "maxLength": 14
+      }
+    },
+    {
+      "name": "localPhoneNumber2",
+      "label": "Local Phone Number 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Local phone number 2 of 4.",
+      "sourceRef": "Local Phone Numbers : blank 2",
+      "validation": {
+        "maxLength": 14
+      }
+    },
+    {
+      "name": "localPhoneNumber3",
+      "label": "Local Phone Number 3",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Local phone number 3 of 4.",
+      "sourceRef": "Local Phone Numbers : blank 3",
+      "validation": {
+        "maxLength": 14
+      }
+    },
+    {
+      "name": "localPhoneNumber4",
+      "label": "Local Phone Number 4",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Local phone number 4 of 4.",
+      "sourceRef": "Local Phone Numbers : blank 4",
+      "validation": {
+        "maxLength": 14
+      }
+    },
+    {
+      "name": "foreignPhoneNumber1",
+      "label": "Foreign Phone Number 1",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "A foreign telephone number for the applicant. Printed as 2 blank boxes under \"Foreign Numbers :\".",
+      "sourceRef": "Foreign Numbers : blank 1",
+      "validation": {
+        "maxLength": 14
+      }
+    },
+    {
+      "name": "foreignPhoneNumber2",
+      "label": "Foreign Phone Number 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Foreign phone number 2 of 2.",
+      "sourceRef": "Foreign Numbers : blank 2",
+      "validation": {
+        "maxLength": 14
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's email address.",
+      "sourceRef": "Email Address :",
+      "validation": {
+        "maxLength": 31,
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "ssnitNo",
+      "label": "SSNIT No.",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "description": "The applicant's Social Security and National Insurance Trust (SSNIT) number.",
+      "sourceRef": "INSTITUTIONAL Ids : SSNIT No.",
+      "validation": {
+        "maxLength": 22
+      }
+    },
+    {
+      "name": "ssnitDateJoined",
+      "label": "SSNIT — Date Joined",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant joined SSNIT.",
+      "sourceRef": "SSNIT No. — Date Joined (DD/MM/YYYY)"
+    },
+    {
+      "name": "voterIdNo",
+      "label": "Voter ID No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's Voter ID number.",
+      "sourceRef": "INSTITUTIONAL Ids : Voter ID No.",
+      "validation": {
+        "maxLength": 22
+      }
+    },
+    {
+      "name": "voterIdDateIssued",
+      "label": "Voter ID — Date Issued",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant's Voter ID was issued.",
+      "sourceRef": "Voter ID No. — Date Issued (DD/MM/YYYY)"
+    },
+    {
+      "name": "passportNo",
+      "label": "Passport No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport number.",
+      "sourceRef": "INSTITUTIONAL Ids : Passport No.",
+      "validation": {
+        "maxLength": 22
+      }
+    },
+    {
+      "name": "passportDateIssued",
+      "label": "Passport — Date Issued",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant's passport was issued.",
+      "sourceRef": "Passport No. — Date Issued (DD/MM/YYYY)"
+    },
+    {
+      "name": "nationalHealthInsuranceNo",
+      "label": "National Health Insurance Scheme No.",
+      "type": "string",
+      "required": false,
+      "classification": "health",
+      "description": "The applicant's National Health Insurance Scheme (NHIS) number.",
+      "sourceRef": "INSTITUTIONAL Ids : National Health Insurance Scheme No.",
+      "validation": {
+        "maxLength": 22
+      }
+    },
+    {
+      "name": "nationalHealthInsuranceExpiryDate",
+      "label": "National Health Insurance — Expiry Date",
+      "type": "date",
+      "required": false,
+      "description": "The expiry date of the applicant's NHIS card.",
+      "sourceRef": "National Health Insurance Scheme No. — Expiry Date (DD/MM/YYYY)"
+    },
+    {
+      "name": "driverLicenceNo",
+      "label": "Driver Licence No.",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's driver's licence number.",
+      "sourceRef": "INSTITUTIONAL Ids : Driver Licence No.",
+      "validation": {
+        "maxLength": 22
+      }
+    },
+    {
+      "name": "driverLicenceDateIssued",
+      "label": "Driver Licence — Date Issued",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant's driver's licence was issued.",
+      "sourceRef": "Driver Licence No. — Date Issued (DD/MM/YYYY)"
+    },
+    {
+      "name": "taxIdentificationNumber",
+      "label": "Tax Identification Number (TIN)",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "description": "The applicant's Tax Identification Number.",
+      "sourceRef": "Tax Identication Number (TIN) :",
+      "validation": {
+        "maxLength": 22
+      }
+    },
+    {
+      "name": "tinDateIssued",
+      "label": "TIN — Date Issued",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant's TIN was issued.",
+      "sourceRef": "Tax Identication Number (TIN) — Date Issued (DD/MM/YYYY)"
+    },
+    {
+      "name": "applicantIsChallenged",
+      "label": "Challenged",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant is a challenged (disabled) person, printed immediately above the form's declaration text describing an applicant whose \"hand was guided to make my mark\" in place of a signature.",
+      "sourceRef": "Challenged :"
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantDeclaration",
+      "label": "Applicant's declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I declare that all the information presented for this application is true and correct and that all documents that I have provided for the purposes of this application are genuine. I understand that if any information I have provided for this application is false or incorrect, I will be liable to prosecution in accordance with Section 40 of the National Identity Register Act, 2008 (Act 750) as well as any other law or regulation which may be in force at the time. I understand that the information and documents I have provided in respect of this application are stored and handled by the NIA and I have the right to have them updated should they change. I declare that all the information contained in this application form has been read, interpreted and explained to me in a language I understand and I perfectly understood and approved same before my hand was guided to make my mark.",
+      "sourceRef": "Page 2, declaration paragraph above APPLICANT'S SIGNATURE OR THUMBPRINT *"
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "applicant_type",
+      "fields": [
+        "applicantTypeCitizen",
+        "applicantTypePermanentlyResident",
+        "applicantTypePersonWithResidencePermit",
+        "applicantTypeRefugee"
+      ]
+    },
+    {
+      "id": "request_type",
+      "fields": [
+        "requestTypeIssuance",
+        "requestTypeUpdate",
+        "requestTypeReplacement",
+        "requestTypeReIssue"
+      ]
+    },
+    {
+      "id": "marital_status",
+      "fields": [
+        "maritalStatusSingle",
+        "maritalStatusMarried",
+        "maritalStatusLegallySeparated",
+        "maritalStatusDivorced",
+        "maritalStatusWidowed"
+      ]
+    },
+    {
+      "id": "education_level",
+      "fields": [
+        "educationLevelNone",
+        "educationLevelBasic",
+        "educationLevelSecondary",
+        "educationLevelTertiary",
+        "educationLevelHigher"
+      ]
+    }
+  ]
+}
