@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **382 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **383 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2544, "GovSchema Standard Research"): Rwanda's
+> Visa vertical opens (2 of 6)**, via `rw/dgie/visa-application` (Directorate
+> General of Immigration and Emigration's standard "VISA APPLICATION"
+> specimen used at Rwandan diplomatic missions abroad), resolving GOV-2526's
+> disclosed open, unresolved Visa candidate. The specimen is a flat,
+> print-and-hand-fill PDF with **0 AcroForm widgets** (unlike
+> `rw/rra/vrf-e06-motor-vehicle-registration-form`'s genuine AcroForm/XFA),
+> confirmed byte-identical (`sha256:
+> 01ffbc05db088ece045c25867f791892dc3b9eed808b1445867f3d29946378c0`, 233,226
+> bytes) across two independent embassy mirrors (Rwandan embassies in the UK
+> and the USA) whose differing `Last-Modified` headers (2021 vs. 2024)
+> independently corroborate this as DGIE's one current standard specimen
+> rather than a stale single copy; migration.gov.rw's own visitors-visa page
+> confirms "the office of a diplomatic mission of Rwanda" as a current
+> issuance channel. Covers 27 numbered items across 2 pages (identity/
+> passport particulars, parents' and conditionally-required spouse
+> particulars, prior travel history, host/purpose of travel, and a bounded
+> 4-slot printed repeating group for accompanying children), modelled as 48
+> `fields[]` (several numbered items split into multiple side-by-side printed
+> blanks) plus 2 `documents[]` entries (a coloured-photo requirement and a
+> printed certification statement). Two mock conformance scenarios (a single
+> first-time tourist; a married applicant with 2 accompanying children) found
+> 0 errors each, plus 4 mutation controls (a missing required field, an
+> invalid date format, an invalid enum value, and a missing conditional
+> spouse field) each correctly raised exactly 1 error. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> judgment call, including why the children sub-fields are deliberately left
+> without a machine-checked `requiredWhen` gate. **Rwanda now stands at 2 of
+> 6 verticals** (DMV, Visa); Business Formation, National ID, Passport, and
+> Taxes remain confirmed dead ends per GOV-2526.
 
 > **Update (2026-07-12, GOV-2535, "GovSchema Standard Research"): Kenya's
 > Taxes vertical closes (3 of 6)**, via
@@ -8114,7 +8145,15 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (31/40 jurisdictions — 78%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (32/40 jurisdictions — 80%)
+
+**Rwanda's Visa vertical opens (2 of 6) (GOV-2544)**, via
+`rw/dgie/visa-application` (Directorate General of Immigration and
+Emigration's standard "VISA APPLICATION" specimen used at Rwandan diplomatic
+missions abroad), resolving GOV-2526's disclosed open, unresolved Visa
+candidate. See the Executive Summary update above and the document's own
+VERIFICATION.md for the full sourcing record and every disclosed judgment
+call.
 
 **Vietnam's Visa vertical opens (5 of 6) (GOV-2486)**, via
 `vn/bca/to-khai-de-nghi-cap-thi-thuc-viet-nam` (Mẫu NA1, "Tờ khai đề nghị
@@ -10101,6 +10140,53 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Formation, National ID, Taxes); Passport, DMV, and Visa remain
     confirmed dead ends, so no vertical remains open-and-unscreened for
     Kenya.
+25. **Rwanda's Visa vertical opens (2 of 6) (GOV-2544)**, via
+    `rw/dgie/visa-application` (Directorate General of Immigration and
+    Emigration's standard "VISA APPLICATION" specimen used at Rwandan
+    diplomatic missions abroad), resolving item 23's disclosed open,
+    unresolved Visa candidate. Independently re-fetched both cited embassy
+    mirrors directly (Rwandan embassies in the UK and the USA): both HTTP
+    200, `application/pdf`, 233,226 bytes, `sha256:
+    01ffbc05db088ece045c25867f791892dc3b9eed808b1445867f3d29946378c0` —
+    confirmed byte-identical to each other and to the issue's own citation,
+    despite materially different `Last-Modified` headers (2021-03-22 vs.
+    2024-09-03), corroborating this as DGIE's one current standard specimen
+    rather than a stale single copy. Re-fetched
+    `migration.gov.rw/visa/visitors-visa/` directly and confirmed its own
+    printed text names "the office of a diplomatic mission of Rwanda in the
+    applicant's country of residence" as a current issuance channel. Unlike
+    `rw/rra/vrf-e06-motor-vehicle-registration-form`, this specimen carries
+    **0 AcroForm widgets** — a flat, print-and-hand-fill form (the same
+    pattern already established by `pe/sunat`, `uy/dgi`, and `ke/brs` in this
+    registry) — so every field was derived directly from the extracted text
+    layer's printed numbering (27 numbered items across 2 pages) rather than
+    AcroForm widget names. 48 `fields[]` were modelled (several numbered
+    items split into multiple side-by-side printed blanks, e.g. item 6
+    "Place of Birth" -> district/country; a spouse block gated
+    `requiredWhen` against `maritalStatus`, matching this registry's ph/bi,
+    ph/dfa, ph/lto, and us/uscis precedent; item 27's printed 2x2 children
+    table flattened to 4 numbered child slots, matching fi/migri's bounded-
+    repeating-group convention — deliberately left without a machine-checked
+    `requiredWhen` gate on the child sub-fields, since the sibling
+    `childNName` field is itself optional and genuinely absent rather than
+    empty-string for a childless applicant, the same
+    `notequals-empty-string-absent-field-bug` class this registry has hit
+    and fixed before), plus 2 `documents[]` entries (a coloured-photo
+    requirement and a printed certification statement). Also caught and
+    fixed, before commit, an invalid `validation.format: "email"` keyword
+    (not permitted under spec v0.3's `nonFileValidation` definition) via
+    `tools/validate-ajv.mjs`, replacing it with a `pattern` regex matching
+    `ae/rta/vehicle-registration-renewal`'s existing convention. Two mock
+    conformance scenarios (a single first-time tourist; a married applicant
+    with 2 accompanying children) found 0 errors each, plus 4 mutation
+    controls (a missing required field, an invalid date format, an invalid
+    enum value, and a missing conditional spouse field) each correctly
+    raised exactly 1 error. See the Executive Summary update above, the
+    "Visa" vertical section above, and the document's own VERIFICATION.md
+    for the full sourcing record and every disclosed judgment call.
+    **Rwanda now stands at 2 of 6 verticals** (DMV, Visa); Business
+    Formation, National ID, Passport, and Taxes remain confirmed dead ends
+    per item 23/GOV-2526.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
