@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **385 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **386 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2569, "GovSchema Standard Research"): Nigeria's
+> National ID & Civic Documents vertical closes (4 of 6)**, via
+> `ng/nimc/nin-enrolment-form`, the National Identity Management Commission's
+> (NIMC) "National Identification Number (NIN) Enrolment Form" v2.0 — a
+> pre-enrolment form completed before an in-person biometric-capture
+> appointment at an NIMC enrolment centre. Scouted this cycle (child of
+> [GOV-2567](/GOV/issues/GOV-2567)) alongside NG Passport (NIS "Form C1", a
+> Nigeria High Commission London mirror) and RW Business Formation (RDB
+> "RF-001 Domestic Company Application"), both strong candidates left as
+> backlog for a future cycle. Fetched directly from an official `.gov.ng`
+> mirror (`bern.foreignaffairs.gov.ng`, the Nigerian Ministry of Foreign
+> Affairs' own Bern embassy subsite, since NIMC's own historical static PDF
+> path now 404s after a 2024 site redesign to a JS SPA, per Wayback CDX
+> history): HTTP 200, `application/pdf`, 1,677,660 bytes, `sha256:
+> 99200bb832d4463e6bcdf8be78dd08ed14241d614a407830dc86093855af9638`. A flat,
+> non-AcroForm print-and-fill specimen (0 widgets across both pages,
+> confirmed via a fresh `pdfjs-dist` extraction); required fields were
+> determined by cross-checking every printed `*` glyph's own coordinate
+> against its nearest field label, per the form's own footer instruction
+> "ALL FIELDS MARKED * MUST BE FILLED." 104 `fields[]` + 1 `documents[]`
+> entry across the form's 18 lettered sections (A–R): names and any prior
+> name change, residence/homelessness status, date/place of birth, place of
+> origin (the applicant's own, father's, and mother's), physical features
+> and disability, residence status and nationality, requested card type, an
+> existing-NIN field for personal-data-update requests only, up to 9
+> optional supporting identity documents (number + expiry each), marital
+> status, languages, education, religion, occupation, employment,
+> card-delivery preference, contact details, both parents' particulars
+> (including each parent's NIN if available), guardian details, next of kin
+> and their address, and the applicant's declaration. Two mock conformance
+> scenarios (an unmarried first-time applicant; a married personal-data-update
+> applicant with a supporting document and physical-challenge disclosure)
+> found 0 errors each, plus 5 mutation controls (a missing required field, an
+> invalid date format, an invalid enum value, a missing conditional field, a
+> missing required document) each correctly raised exactly 1 error. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call, including the Guardian Details section's
+> unconditional printed asterisks (no minor/adult-applicant toggle exists on
+> the form to gate them). **Nigeria now stands at 4 of 6 verticals**
+> (Business Formation, Taxes, Visa, National ID); DMV was confirmed a dead
+> end in a prior cycle (GOV-2561); Passport is the sole remaining open
+> backlog vertical, with the NIS Form C1 candidate identified above ready to
+> author next cycle.
 
 > **Update (2026-07-12, GOV-2561, "GovSchema Standard Research"): Nigeria's
 > Visa vertical opens (3 of 6)**, via
@@ -8602,7 +8646,18 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (29/40 jurisdictions — 73%)
+### National ID & Civic Documents (30/40 jurisdictions — 75%)
+
+**Nigeria's National ID & Civic Documents vertical closes (4 of 6) (GOV-2569)**,
+via `ng/nimc/nin-enrolment-form` — the National Identity Management
+Commission's (NIMC) "National Identification Number (NIN) Enrolment Form"
+v2.0, a pre-enrolment form completed before an in-person biometric-capture
+appointment at an NIMC enrolment centre. See the Executive Summary's
+GOV-2569 update above for the full sourcing record and the document's own
+VERIFICATION.md for every disclosed scoping/judgment call. Nigeria now
+stands at 4 of 6 verticals (Business Formation, Taxes, Visa, National ID);
+DMV is a confirmed dead end; Passport remains open, with a strong candidate
+(NIS Form C1) already identified for a future cycle.
 
 **Kenya's National ID & Civic Documents vertical opens (2 of 6) (GOV-2500)**,
 via `ke/nrb/application-for-identity-card` — Form Reg. 136A, "Ombi ya
@@ -8909,7 +8964,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **NG** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **NG** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -10424,6 +10479,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     (state/FRSC licensing is SSO-portal-gated with no downloadable
     specimen); Passport and National ID remain open, unscreened backlog for
     a future cycle.
+21. **Nigeria's National ID gap is now closed too (GOV-2569)**, via
+    `ng/nimc/nin-enrolment-form` — NIMC's "National Identification Number
+    (NIN) Enrolment Form" v2.0, sourced from an official `.gov.ng` mirror
+    (`bern.foreignaffairs.gov.ng`) after NIMC's own historical static PDF
+    path was found 404-redirecting to a JS SPA following a 2024 site
+    redesign. See the Executive Summary update above and the document's own
+    VERIFICATION.md for the full sourcing record. **Nigeria now stands at 4
+    of 6 verticals** (Business Formation, Taxes, Visa, National ID); DMV
+    remains a confirmed dead end; Passport is the sole remaining open
+    vertical, with a strong candidate already identified: NIS "Form C1"
+    (Application for Nigeria Standard Passport), reachable unauthenticated
+    via the Nigeria High Commission London's own mirror
+    (`nigeriahc.org.uk/wp-content/uploads/2023/05/LostReqForm.pdf`). This
+    cycle also scouted and confirmed strong (but did not author) Rwanda's
+    Business Formation candidate — RDB "RF-001 Domestic Company Application
+    for Incorporation"
+    (`businessprocedures.rdb.rw/media/2.5_rf-001%20domestic%20company.pdf`,
+    18 numbered sections, no login/CAPTCHA gate) — left open for a future
+    cycle; Rwanda currently stands at 2 of 6 verticals (DMV, Visa).
+
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
