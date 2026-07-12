@@ -4,7 +4,63 @@
 
 ## Executive Summary
 
-**40 jurisdictions** | **378 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**41 jurisdictions** | **379 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, "GovSchema Standard Research"): Ghana opens as this
+> registry's 41st jurisdiction**, via its National ID & Civic Documents
+> vertical (1 of 6), `gh/nia/ghana-card-application-form-1a` — the National
+> Identification Authority's (NIA) "Ghana Card Application Form 1-A" ("Form
+> One (regulation 3(1))", "NATIONAL IDENTITY CARD APPLICATION FORM"),
+> prescribed under regulation 3(1) of the National Identity Register
+> Regulations, 2012 (L.I. 2111), made under the National Identity Register
+> Act, 2008 (Act 750); NIA itself is established by the National
+> Identification Authority Act, 2006 (Act 707). Re-fetched and re-derived
+> from scratch rather than trusting the prior scouting note: fetched
+> directly from `nia.gov.gh` (HTTP 200, 498,907 bytes,
+> `sha256:3f401681db2e6d1f39fcc16b78c6b69a71d81a43075789513de29d00593bc5fa`),
+> independently confirmed still linked from NIA's own current Forms page
+> today. The prior scouting note's specific claim of a byte-identical
+> `fims.org.gh` mirror did **not** reproduce — that site turns out to host
+> an unrelated Non-Citizen Ghana Card form at different paths, and the
+> scouted path 404s there — corrected in this schema's own VERIFICATION.md,
+> with a genuine independent third-party mirror (a flat scanned copy on
+> `gtlegalafrica.com`, 0 AcroForm fields, corroborating content/layout only)
+> found in its place. `pdfjs-dist` extraction (own re-derivation) confirms
+> 129 real AcroForm widgets across exactly 2 pages (84 + 45), correlated to
+> printed labels via widget-rect/text-content coordinate matching — most of
+> this form's own field names are human-readable, unlike Kenya's Reg. 136A,
+> but five repeated Village/Country/District widget triples (each serving a
+> dual domestic/foreign printed label) and 14 bare numeric-named language
+> boxes still required coordinate correlation to resolve. 109 `fields[]`
+> (6 printed checkbox/radio groups consolidated to enum/boolean fields,
+> matching this registry's established checkbox-group convention; 4 widgets
+> — an interviewer/centre/MRW administrative block and the applicant's own
+> signature/thumbprint capture — deliberately excluded and disclosed) and 1
+> `documents[]` attestation (the applicant's declaration, quoting the form's
+> own text referencing Section 40 of the National Identity Register Act,
+> 2008). Two mock conformance scenarios (a citizen first-time issuance; a
+> non-citizen refugee replacement, exercising the schema's sole
+> `requiredWhen` gate) found 0 errors each, plus 5 mutation controls (a
+> missing required field, an email pattern violation, a missing required
+> document, a `sex` enum violation, and a missing conditionally-required
+> field) each correctly raised exactly 1 error. This cycle also screened
+> Ghana's other five verticals: DMV (DVLA, exclusively login-gated
+> `online.dvla.gov.gh`) and Visa (`evisa.immigration.gov.gh`, a fully
+> online Cloudflare-Turnstile + Sumsub-biometric + payment-gated portal)
+> are confirmed dead ends, independently re-fetched live this cycle;
+> Passport (Ghana MFA's text-layer-only passport-form PDF, independently
+> re-fetched live this cycle) is a ready-to-author backlog candidate;
+> Business Formation (RGD/ORC's "Form 3", text layer, 0 AcroForm fields per
+> the prior scouting note — this cycle's own refetch of `orc.gov.gh` hit a
+> transient HTTP 500 and could not reconfirm it) and Taxes (GRA's
+> DT_0104/DT_0104a provisional self-assessment AcroForms per the prior
+> scouting note, not independently re-fetched this cycle) are also
+> ready-to-author backlog, but need a fresh re-fetch before authoring. See
+> the document's own VERIFICATION.md for the full sourcing record —
+> including the complete widget-to-label correlation and every disclosed
+> scoping/judgment call. **Ghana now stands at 1 of 6 verticals** (National
+> ID); Passport, Business Formation, and Taxes remain open backlog for a
+> future cycle; DMV and Visa are confirmed dead ends.
 
 > **Update (2026-07-12, GOV-2500, "GovSchema Standard Research"): Kenya's
 > National ID & Civic Documents vertical opens (2 of 6)**, via
@@ -6280,7 +6336,7 @@
 
 ## By Vertical
 
-### Passport (29/40 jurisdictions — 73%)
+### Passport (29/41 jurisdictions — 71%)
 
 **Vietnam opens as this registry's 37th jurisdiction (GOV-2404)**, via
 `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc` — the current
@@ -6497,7 +6553,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (37/40 jurisdictions — 93%)
+### DMV — Vehicle Registration, Licensing, Permits (37/41 jurisdictions — 90%)
 
 **Vietnam's DMV vertical opens (4 of 6) (GOV-2479)**, via
 `vn/bca/to-khai-dang-ky-xe` (Mẫu ĐKX10, "Giấy khai đăng ký xe," issued under
@@ -6806,7 +6862,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (37/40 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (37/41 jurisdictions — 90%)
 
 **Kenya opens as this registry's 40th jurisdiction via this vertical
 (GOV-2493)**, via `ke/brs/cr1-application-to-register-a-company` —
@@ -7286,7 +7342,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (35/40 jurisdictions — 88%)
+### Taxes — Income Tax Return, Tax Filing (35/41 jurisdictions — 85%)
 
 **Peru's Taxes vertical opens** (`pe/sunat/formulario-virtual-709-declaracion-renta`,
 GOV-2465) — SUNAT's Formulario Virtual N° 709, "Declaración Jurada Anual
@@ -7859,7 +7915,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (31/40 jurisdictions — 78%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (31/41 jurisdictions — 76%)
 
 **Vietnam's Visa vertical opens (5 of 6) (GOV-2486)**, via
 `vn/bca/to-khai-de-nghi-cap-thi-thuc-viet-nam` (Mẫu NA1, "Tờ khai đề nghị
@@ -8168,7 +8224,24 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (29/40 jurisdictions — 73%)
+### National ID & Civic Documents (30/41 jurisdictions — 73%)
+
+**Ghana opens as this registry's 41st jurisdiction via this vertical**, via
+`gh/nia/ghana-card-application-form-1a` — NIA's "Ghana Card Application Form
+1-A" ("Form One (regulation 3(1))"), prescribed under regulation 3(1) of the
+National Identity Register Regulations, 2012 (L.I. 2111). A prior scouting
+pass claimed a byte-identical third-party mirror on `fims.org.gh`; this did
+not reproduce on independent re-fetch (that site hosts an unrelated
+Non-Citizen Ghana Card form instead) — corrected in this schema's own
+VERIFICATION.md, with NIA's own live-linked copy and a genuine independent
+scanned mirror (`gtlegalafrica.com`) used in its place. See the Executive
+Summary update above for the full sourcing record — including the 129-widget
+AcroForm extraction, the widget-to-label coordinate-correlation technique,
+and the parallel screening of Ghana's other five verticals — and the
+document's own VERIFICATION.md for every disclosed scoping/judgment call.
+Ghana now stands at 1 of 6 verticals (National ID); Passport, Business
+Formation, and Taxes remain open backlog for a future cycle; DMV and Visa
+are confirmed dead ends.
 
 **Kenya's National ID & Civic Documents vertical opens (2 of 6) (GOV-2500)**,
 via `ke/nrb/application-for-identity-card` — Form Reg. 136A, "Ombi ya
@@ -8464,6 +8537,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -9695,6 +9769,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     **Kenya now stands at 2 of 6 verticals** (Business Formation, National
     ID); Taxes remains Kenya's sole open, unscreened-in-depth vertical for a
     future cycle.
+20. **Ghana opens as the registry's 41st jurisdiction**, via its National ID
+    & Civic Documents vertical, `gh/nia/ghana-card-application-form-1a`
+    (NIA's "Ghana Card Application Form 1-A", "Form One (regulation 3(1))",
+    National Identity Register Regulations 2012 L.I. 2111 reg. 3(1)). A
+    prior scouting pass's claim of a byte-identical `fims.org.gh` mirror did
+    not reproduce on independent re-fetch; corrected in this schema's own
+    VERIFICATION.md. This cycle screened Ghana's remaining five verticals in
+    parallel: DMV and Visa each independently re-confirmed dead ends
+    (login-gated DVLA portal; fully online e-visa portal with no static
+    specimen); Passport, Business Formation, and Taxes are open backlog
+    candidates (Business Formation and Taxes need a fresh re-fetch before
+    authoring — this cycle's own refetch of `orc.gov.gh` hit a transient
+    HTTP 500). See the Executive Summary update above and the "National ID &
+    Civic Documents" vertical section above for the full sourcing record,
+    including the 129-widget AcroForm extraction and the widget-to-label
+    coordinate-correlation table, and the document's own VERIFICATION.md for
+    every disclosed scoping/judgment call. **Ghana now stands at 1 of 6
+    verticals** (National ID); Passport, Business Formation, and Taxes
+    remain open backlog for a future cycle.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
