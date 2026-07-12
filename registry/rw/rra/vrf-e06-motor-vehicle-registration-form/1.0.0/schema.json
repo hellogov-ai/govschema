@@ -1,0 +1,285 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "rw/rra/vrf-e06-motor-vehicle-registration-form",
+  "version": "1.0.0",
+  "title": "Rwanda Motor Vehicle Registration Form (RRA-MVD-VRF-E06)",
+  "description": "Rwanda Revenue Authority (RRA)'s Motor Vehicle Registration Form (printed form code RRA-MVD-VRF-E06), used to register a motor vehicle with RRA's Motor Vehicle Division — Rwandan law assigns motor-vehicle registration to the tax authority rather than to a separate transport/transit agency, unlike most jurisdictions in this registry. Opens Rwanda as GovSchema's 43rd jurisdiction, via the DMV vertical (1 of 6). The specimen is a single-page, genuine AcroForm/XFA PDF (`form1[0]`) published directly and unauthenticated from rra.gov.rw, covering four applicant-facing sections: Owner Identification (A), Registration Information (B, including customs-regime particulars for an imported vehicle), Vehicle Information (C), and Certification (D). A fifth section, \"For RRA Use Only\" (E), is a printed office block (cashier/clearance signatures, assigned plate/card numbers, receipt particulars) and is out of scope of `fields[]`; see VERIFICATION.md for the full section-by-section exclusion rationale. The underlying PDF has a genuine authoring defect: a single AcroForm radio-button field object (`RadioButtonList[0]`) is reused across two unrelated printed questions — the Section C \"Steering Wheel\" selector (Left/Right/N-A) and the Section B \"Customs Regime\" selector (Consumption/Suspension) — meaning in a real PDF viewer, selecting one of these would silently clear a selection made for the other, since PDF radio widgets sharing one fully-qualified field name are mutually exclusive across their combined kid set. This schema does not preserve that defect: the two questions are modelled as two independent `enum` fields (`steeringWheelPosition`, `customsRegime`), disclosed here and in VERIFICATION.md rather than silently \"fixed\" without comment, per this registry's established field-name-reuse-across-repeating-elements disclosure precedent (cf. `ng/cac`, `no/brreg`). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Rwanda or the Rwanda Revenue Authority.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "RW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Rwanda Revenue Authority",
+    "abbreviation": "RRA",
+    "url": "https://rra.gov.rw"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://rra.gov.rw/fileadmin/user_upload/mvregistrationform.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "\"Motor Vehicle Registration Form\", form code RRA-MVD-VRF-E06 (Rwanda Revenue Authority, Motor Vehicle Division), 1-page fillable AcroForm/XFA PDF (46 widgets: 37 text, 5 radio-button, 4 signature), Last-Modified 2022-07-25."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2526. Opens Rwanda (43rd jurisdiction, confirmed by counting registry/ directories before/after this schema — 42 jurisdiction directories before, 43 after) via the DMV vertical (1 of 6). Fetched the PDF directly via curl: HTTP 200, Content-Type application/pdf, 191,913 bytes, sha256 1c580d7766fb2c7dad73aa627d5e634256e27f1475e104fb8e9728137a3337b7, Last-Modified Mon 2022-07-25 — matches a prior scouting pass's cited byte size exactly, independently re-derived rather than trusted. pdfjs-dist getAnnotations()/getFieldObjects() found 46 real Widget annotations, all on the form's single page: 37 Tx (text), 5 Btn (radio buttons, all children of one shared field object `form1[0].#subform[0].RadioButtonList[0]`), 4 Sig (signature) — this corrects the prior scouting pass's cited breakdown of '42 text, 3 signature, 1 button/radio': the actual composition is 37 text + 4 signature + 1 radio-button field object (5 export values), though the total widget count of 46 the prior pass cited is exactly right. Every widget's alternativeText tooltip (populated on nearly every Tx widget) plus a getTextContent() dump of the page's printed captions, correlated by rect/transform coordinates, was used to map each widget to its printed label and section (A-E, all explicitly printed as section headings on the form itself). Section E ('FOR RRA USE ONLY') and all 4 Sig widgets are excluded from fields[] as office-only/signature-capture, documented in VERIFICATION.md along with the shared-radio-field-name defect and the full field-by-field sourcing record. 28 of the 46 widgets are modelled as fields[] (26 Tx-derived + 2 enums from 5 radio widgets); 1 documents[] attestation entry captures Section D's printed certification statement. Conformance run: 2 valid mock scenarios (0 errors each) and 4 mutation-control fixtures (exactly 1 error each) — see VERIFICATION.md for the full write-up."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "ownerTin",
+      "label": "Owner: TIN",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The vehicle owner's Tax Identification Number (TIN), issued by RRA.",
+      "sourceRef": "Section A: Owner Identification — \"TIN\""
+    },
+    {
+      "name": "ownerName",
+      "label": "Owner: Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section A: Owner Identification — \"Name\""
+    },
+    {
+      "name": "ownerIdentityCardNumber",
+      "label": "Owner: Identity Card Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section A: Owner Identification — \"Identity card Number\""
+    },
+    {
+      "name": "identityCardIssueDate",
+      "label": "Identity card: issue date",
+      "type": "date",
+      "required": true,
+      "description": "The issue date of the identity card cited in ownerIdentityCardNumber; printed immediately beside it on the same row.",
+      "sourceRef": "Section A: Owner Identification — \"Issue Date\" (DD/MM/AAAA)"
+    },
+    {
+      "name": "registrationDate",
+      "label": "Registration Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section B: Registration Information — \"Registration Date\" (DD/MM/AAAA)"
+    },
+    {
+      "name": "vehicleUsage",
+      "label": "Usage",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's declared use. Printed as an open text box with no enumerated option list anywhere on the form, so modelled as free text rather than an invented enum.",
+      "sourceRef": "Section B: Registration Information — \"Usage\""
+    },
+    {
+      "name": "amountPaidRwf",
+      "label": "Amount Paid (RWF)",
+      "type": "number",
+      "required": false,
+      "description": "Amount paid, in Rwandan francs (RWF), printed on the same row as Registration Date and Usage in the applicant-facing Registration Information section — distinct from the office-only \"Amount Paid\"/\"Receipt No\"/\"Payment Date\" cluster in Section E (For RRA Use Only), which is excluded. See VERIFICATION.md for this section-boundary judgment call.",
+      "sourceRef": "Section B: Registration Information — \"Amount Paid:\" (RWF)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "acquisitionDate",
+      "label": "Acquisition Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section B: Registration Information — \"Acquisition Date\""
+    },
+    {
+      "name": "invoiceNo",
+      "label": "Invoice No",
+      "type": "string",
+      "required": false,
+      "description": "Purchase invoice number; relevant chiefly to an imported or dealer-sold vehicle. The form gives no boolean gating field for this condition, so this is left optional rather than a fabricated requiredWhen — see VERIFICATION.md.",
+      "sourceRef": "Section B: Registration Information — \"Invoice No\""
+    },
+    {
+      "name": "dealerTin",
+      "label": "Dealer's TIN",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section B: Registration Information — \"Dealer's TIN\""
+    },
+    {
+      "name": "consumptionDate",
+      "label": "Consumption Date",
+      "type": "date",
+      "required": false,
+      "description": "The date of the customs \"home use\"/consumption entry for an imported vehicle.",
+      "sourceRef": "Section B: Registration Information — \"Consumption Date\""
+    },
+    {
+      "name": "consumptionEntryNo",
+      "label": "Consumption Entry No.",
+      "type": "string",
+      "required": false,
+      "description": "The form prints only a bare \"No\" caption for this box, immediately beside \"Consumption Date\"; labelled here by position as the corresponding customs consumption-entry number rather than left as a literal, unhelpful \"No\" label. Disclosed as an interpretive judgment call in VERIFICATION.md.",
+      "sourceRef": "Section B: Registration Information — \"No\" (printed immediately beside \"Consumption Date\")"
+    },
+    {
+      "name": "clearingAgentTin",
+      "label": "Clearing Agent TIN",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "TIN of the customs clearing agent who handled the vehicle's import, when applicable. The printed caption wraps across two lines (\"Clearing\" / \"Agent TIN\").",
+      "sourceRef": "Section B: Registration Information — \"Clearing\" / \"Agent TIN\""
+    },
+    {
+      "name": "customsRegime",
+      "label": "Customs Regime",
+      "type": "enum",
+      "required": false,
+      "description": "The customs regime under which an imported vehicle is declared: home use/\"Consumption\", or a bonded \"Suspension\" regime. On the underlying PDF, this printed radio-button pair shares one AcroForm field object with the unrelated Section C \"Steering Wheel\" selector (see this schema's top-level description and VERIFICATION.md for the full defect writeup); modelled here as its own independent enum, not preserving that defect.",
+      "sourceRef": "Section B: Registration Information — \"Customs Regime\" — \"Consumption\" / \"Suspension\" (radio buttons)",
+      "validation": { "enum": ["consumption", "suspension"] }
+    },
+    {
+      "name": "vehicleType",
+      "label": "Type",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's type/body category. Printed as an open text box with no enumerated option list on this specimen, so modelled as free text.",
+      "sourceRef": "Section C: Vehicle Information — \"Type\""
+    },
+    {
+      "name": "manufacturer",
+      "label": "Manufacturer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section C: Vehicle Information — \"Manufacturer\""
+    },
+    {
+      "name": "model",
+      "label": "Model",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section C: Vehicle Information — \"Model\""
+    },
+    {
+      "name": "frameNo",
+      "label": "Frame No.",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's frame/chassis number.",
+      "sourceRef": "Section C: Vehicle Information — \"Frame No:\""
+    },
+    {
+      "name": "engineNo",
+      "label": "Engine No.",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section C: Vehicle Information — \"Engine No:\""
+    },
+    {
+      "name": "engineVolumeCc",
+      "label": "Volume (cc)",
+      "type": "number",
+      "required": false,
+      "description": "Engine displacement volume, in cubic centimetres (unit \"cc\" printed directly beneath the box).",
+      "sourceRef": "Section C: Vehicle Information — \"Volume\" (\"cc\")",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "yearOfManufacture",
+      "label": "Year",
+      "type": "integer",
+      "required": true,
+      "description": "The vehicle's model/manufacture year (unit \"AAAA\", i.e. a 4-digit year, printed directly beneath the box).",
+      "sourceRef": "Section C: Vehicle Information — \"Year\" (\"AAAA\")",
+      "validation": { "minimum": 1900, "maximum": 2100 }
+    },
+    {
+      "name": "weightKg",
+      "label": "Weight (Kg)",
+      "type": "number",
+      "required": false,
+      "description": "The vehicle's weight, in kilograms (unit \"Kg\" printed directly beneath the box).",
+      "sourceRef": "Section C: Vehicle Information — \"Weight\" (\"Kg\")",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "powerCv",
+      "label": "Power (CV)",
+      "type": "number",
+      "required": false,
+      "description": "The vehicle's engine power, in CV/fiscal horsepower (unit \"CV\" printed directly beneath the box).",
+      "sourceRef": "Section C: Vehicle Information — \"Power\" (\"CV\")",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "steeringWheelPosition",
+      "label": "Steering Wheel Position",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the vehicle's steering wheel is on the left, right, or not applicable. On the underlying PDF, this printed 3-option radio group shares one AcroForm field object with the unrelated Section B \"Customs Regime\" selector (see this schema's top-level description and VERIFICATION.md for the full defect writeup); modelled here as its own independent enum, not preserving that defect.",
+      "sourceRef": "Section C: Vehicle Information — \"Steering Wheel :\" — \"Left\" / \"Right\" / \"N/A\" (radio buttons)",
+      "validation": { "enum": ["left", "right", "na"] }
+    },
+    {
+      "name": "color",
+      "label": "Color",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section C: Vehicle Information — \"Color\""
+    },
+    {
+      "name": "certificationPlace",
+      "label": "Signed at (place)",
+      "type": "string",
+      "required": false,
+      "description": "The place where the certification is signed, printed as \"Sign in:\" directly above the certification date/signature row.",
+      "sourceRef": "Section D: Certification — \"Sign in:\""
+    },
+    {
+      "name": "certificationDate",
+      "label": "Certification date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section D: Certification — \"Date\" (DD/MM/AAAA)"
+    },
+    {
+      "name": "certificationTitle",
+      "label": "Title (of person certifying)",
+      "type": "string",
+      "required": false,
+      "description": "The job title/capacity of the person signing the certification, e.g. when the signer is an authorized representative of the owner rather than the owner personally.",
+      "sourceRef": "Section D: Certification — \"Title\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "ownerCertificationAttestation",
+      "label": "Owner/authorized representative certification of accuracy",
+      "category": "attestation",
+      "required": true,
+      "statement": "I certify that the information provided above is true and correct in accordance with the Motor Vehicle Law articles discussing the registration of Motor Vehicle and that I'm an authorized representative of the vehicle's owner.",
+      "sourceRef": "Section D: Certification"
+    }
+  ]
+}
