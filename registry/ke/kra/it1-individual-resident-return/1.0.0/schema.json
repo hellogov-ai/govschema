@@ -1,0 +1,888 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ke/kra/it1-individual-resident-return",
+  "version": "1.0.0",
+  "title": "Kenya Individual Resident Income Tax Return (IT1)",
+  "description": "Kenya Revenue Authority's (KRA) \"IT1 Individual Resident Return\" workbook (edition 18.0.1), the downloadable Microsoft Excel return template for a resident individual's annual income tax return under the Income Tax Act (Cap. 470). Closes Kenya's Taxes vertical (3 of 6; National ID via ke/nrb/application-for-identity-card and Business Formation via ke/brs/cr1-application-to-register-a-company already modelled). The live workbook is a 34-sheet, multi-pathway return covering employment income, self-employment/business income, farming, partnerships, estates/trusts, capital allowances, rental income, and a long tail of tax-credit and relief schedules. This v1.0.0 deliberately bounds scope to the most common \"employed resident individual\" filing pathway, modelling only five of the workbook's 34 sheets: A_Basic_Info (basic taxpayer identification, return-type, and gating questions), F_Employment_Income (employment income declarations), M_Details_of_PAYE_Deducted (PAYE already withheld by employer(s)), T_Income_Computation_Self (the taxpayer's own non-employment income aggregation, modelled at its \"Consolidated\" column only), and T_Tax_Computation (the final tax computation, reliefs, credits, and tax payable/refund). Every other sheet — self-employment/business Profit & Loss and Balance Sheet, Stock Analysis, Capital Allowances, Partnership Income, Estate/Trust Income, Car Benefit/Mortgage/Home Ownership Savings Plan/Insurance Relief computations, Installment/Withholding/Advance/DTAA tax credit schedules, Previous Years' Losses, and the entire mirrored \"Wife\" income-declaration pathway (Kenyan tax law permits spousal joint election) — is explicitly out of scope for this v1.0.0 and disclosed as a companion-schedule candidate for a future cycle in VERIFICATION.md. Bounded repeating groups (employer records, spanning both F_Employment_Income and M_Details_of_PAYE_Deducted) are flattened to a disclosed cap of 2 slots, per this registry's bounded-repeating-group convention. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Kenya or KRA.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Kenya Revenue Authority",
+    "abbreviation": "KRA",
+    "url": "https://www.kra.go.ke"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.kra.go.ke/images/publications/IT1_Individual_Resident_Return_18.0.1latest.xls",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "\"IT1 Individual Resident Return\", workbook edition 18.0.1 (cell B1/I1/J1 of A_Basic_Info: \"Resident Individual Income Tax Return\" / \"18.0.1\" / \"EXCEL 1997-2003\"), a 34-sheet Microsoft Excel (BIFF8 .xls) workbook published on KRA's own Publications page (kra.go.ke). A newer sibling edition, \"Updated-IT1_Individual_Resident_Return_XLS-18.0.9-2024.xls\", is also live on the same host and was cross-checked (see VERIFICATION.md); a differently-named sibling, \"IT1_Individual_Resident_Return_Version-18.03-Revised.xls\", is genuinely password/MS-Office-encrypted and was NOT used as a source."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2535. Closes Kenya's Taxes vertical (3 of 6). Fetched IT1_Individual_Resident_Return_18.0.1latest.xls directly from www.kra.go.ke (HTTP 200 via both `curl -sSkL`, which requires -k for a real TLS certificate/apex-domain mismatch and -L to follow the kra.go.ke -> www.kra.go.ke redirect, and Node's native fetch(), which resolved the same URL with a plain HEAD request and no TLS override needed; 3,323,904 bytes; sha256:7c85241bbabc797b9e3c6b708209a32866c4ec9131f9d845d0b87c9734e939e2). Parsed with the `xlsx` npm package: confirmed live, unencrypted, and exactly the described 34 sheets (Data, Read Me, Errors, Validations, ValidationList, Macros_Disabled, ImportCsv, A_Basic_Info, B_Profit_Loss_Account_Self, B_Profit_Loss_Account_Wife, C_Balance_Sheet, D_Stock_Analysis, E1_IDA_CA, E2_CA_WTA_WDV, E2_CA_WTA_SLM, E_Summary_of_Capital_Allowance, F_Employment_Income, G_Partnership_Income, H_Estate_Trust_Income, I_Computation_of_Car_Benefit, J_Computation_of_Mortgage, K_Home_Ownership_Saving_Plan, L_Computation_of_Insu_Relief, M_Details_of_PAYE_Deducted, N_Installment_Tax_Credits, O_WHT_Credits, P_Advance_Tax_Credits, Q_IT_Payment_Credits, R_DTAA_Credits, S_Previous_Years_Losses, T_Income_Computation_Self, T_Income_Computation_Wife, T_Tax_Computation, Sheet1). Also fetched the sibling Updated-IT1_Individual_Resident_Return_XLS-18.0.9-2024.xls (HTTP 200, 3,406,336 bytes, sha256:e7eafe532f472a4d55b5a0d982ee030886be6856e1b40d5cab60a8c0464f2256) as a cross-check; its A_Basic_Info/F_Employment_Income/M_Details_of_PAYE_Deducted/T_Income_Computation_Self/T_Tax_Computation sheets carry the same field labels, row layout, and sr.-no. numbering as 18.0.1, so this schema is authored against the 18.0.1 edition without material difference from 18.0.9. Field-by-field content was read cell-by-cell from the 5 in-scope sheets, plus the workbook's own Validations and ValidationList sheets (which record each field's mandatory flag, length limits, and named-range/validation-macro references) to determine requiredness — not guessed from visual asterisks alone (see the disclosed bankName/etc. asterisk-vs-Validations-sheet discrepancy in this schema's field descriptions). The workbook's own macros are disabled/stripped in this published edition (confirmed via its own \"Macros_Disabled\" sheet), so exact validation-macro logic (e.g. validatePIN()) is not independently inspectable; PIN pattern validation in this schema is instead based on Kenya's publicly documented KRA PIN format. Out of scope for this v1.0.0, with reasons: B_Profit_Loss_Account_Self/Wife, C_Balance_Sheet, D_Stock_Analysis (self-employment/business income — a materially different filing pathway from pure employment income); E1_IDA_CA, E2_CA_WTA_WDV, E2_CA_WTA_SLM, E_Summary_of_Capital_Allowance (capital allowances, dependent on the business-income pathway above); G_Partnership_Income (partnership income); H_Estate_Trust_Income (estate/trust income); I_Computation_of_Car_Benefit, J_Computation_of_Mortgage, K_Home_Ownership_Saving_Plan, L_Computation_of_Insu_Relief (each is a detailed sub-computation whose resulting total already surfaces as a field on an in-scope sheet — see employer1CarBenefitValue, mortgageInterestDeduction, homeOwnershipSavingsPlanDeduction, insuranceRelief); N_Installment_Tax_Credits, O_WHT_Credits, P_Advance_Tax_Credits, Q_IT_Payment_Credits, R_DTAA_Credits (tax-credit schedules whose totals likewise surface on T_Tax_Computation); S_Previous_Years_Losses (prior-year loss carryforward, surfaces on T_Income_Computation_Self as nonEmploymentLossBroughtForward); T_Income_Computation_Wife and every sheet's mirrored \"(Wife)\" section (Kenyan tax law permits a married taxpayer to elect joint spousal filing — this v1.0.0 models the taxpayer's own \"Self\" computation only; the declareSpouseIncome/spousePin gating fields are modelled since they are real fields on the in-scope A_Basic_Info sheet, but no downstream spousal computation is modelled); Read Me, Errors, Validations, ValidationList, Macros_Disabled, ImportCsv, Data, Sheet1 (workbook plumbing/reference-list sheets, not form content, though Data and Validations/ValidationList were both read as supporting evidence for field enumerations and requiredness, as described above). Disclosed ambiguities/defects (not silently resolved): (1) A_Basic_Info's printed Bank Details labels (\"Bank Name *\", \"Branch Name *\", \"City *\", \"Account Holder's Name *\", \"Account Number *\") all carry a visual \"*\" implying mandatory, but the workbook's own Validations sheet (rows 16-21) records their Mandatory flag as \"N\" — this schema follows the authoritative Validations sheet and models them as optional. (2) T_Tax_Computation's own column F6 comment flags an unresolved design question about whether the mortgage-interest deduction (11.2) and home-ownership-savings-plan deduction (11.3) are meant to be mutually exclusive (\"Check required that either of the two deductions will be available. Check to be given here or sections or on validation?\") — quoted verbatim in mortgageInterestDeduction's description, not resolved by this schema. (3) T_Tax_Computation's own column F18 comment (\"Keep it 13,944 but make it configurable\") flags the embedded personal-relief default as a template value, not an asserted-current legal figure — quoted verbatim in personalRelief's description; this schema does not independently verify Kenya's currently legislated personal relief amount. (4) T_Tax_Computation's own row 15 tax-slab comment uses Indian-style digit grouping (\"1,21,968\"), preserved verbatim as a direct quotation in taxOnTaxableIncome's description without reformatting or independent verification of current accuracy. See conformance/ke/kra/it1-individual-resident-return/1.0.0/ for a worked example (an employed Kenyan resident individual with one employer, PAYE already withheld, and a small tax payable) and mutation-control fixtures exercising required-field enforcement."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "personalIdentificationNumber",
+      "label": "Personal Identification Number",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's KRA Personal Identification Number (PIN). The workbook's own Validations sheet (row 2) records this field's length as fixed at 11 characters and cites an internal validatePIN() macro; the macro logic itself is not inspectable in this published edition (macros are stripped/disabled — see the workbook's own \"Macros_Disabled\" sheet), so the pattern below is modeled on Kenya's well-documented public KRA PIN format (one letter, nine digits, one letter) rather than decompiled from the source macro.",
+      "classification": "pii",
+      "sourceRef": "A_Basic_Info, row 3, cell A3: \"Personal Identification Number *\"",
+      "validation": {
+        "pattern": "^[A-Z]\\d{9}[A-Z]$",
+        "minLength": 11,
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "typeOfReturn",
+      "label": "Type of Return",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this is the taxpayer's original return for the period, or an amended return replacing a previously filed one.",
+      "sourceRef": "A_Basic_Info, row 4, cell A4: \"Type of Return *\"; enumerated on the Data sheet (column D/E, \"ReturnType\"/\"Return type code\") as Original/Amended",
+      "validation": {
+        "enum": [
+          "original",
+          "amended"
+        ]
+      }
+    },
+    {
+      "name": "returnPeriodFrom",
+      "label": "Return Period From",
+      "type": "date",
+      "required": true,
+      "description": "Start date of the tax period this return covers (Kenya's individual income tax year runs 1 January to 31 December).",
+      "sourceRef": "A_Basic_Info, row 5, cell A5: \"Return Period From *\""
+    },
+    {
+      "name": "returnPeriodTo",
+      "label": "Return Period To",
+      "type": "date",
+      "required": true,
+      "description": "End date of the tax period this return covers.",
+      "sourceRef": "A_Basic_Info, row 6, cell A6: \"Return Period To *\""
+    },
+    {
+      "name": "hasNonEmploymentIncome",
+      "label": "Do you have any income other than employment income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the source workbook's Business/Profit-and-Loss, Balance Sheet, Stock Analysis, and Capital Allowance schedules (sheets B, C, D, E1, E2, E), all of which are out of scope for this v1.0.0 (see this document's own VERIFICATION.md). This schema targets the pure-employment filing pathway, where the answer is \"No\"; the field is still modeled because it is a real, always-present gating question on the in-scope A_Basic_Info sheet.",
+      "sourceRef": "A_Basic_Info, row 7, cell A7: \"Do you have any income other than employment income? *\""
+    },
+    {
+      "name": "hasPartnershipIncome",
+      "label": "Do you have partnership income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope G_Partnership_Income sheet (not modeled in this v1.0.0).",
+      "sourceRef": "A_Basic_Info, row 8, cell A8: \"Do you have partnership income? *\""
+    },
+    {
+      "name": "hasEstateOrTrustIncome",
+      "label": "Do you have estate trust income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope H_Estate_Trust_Income sheet (not modeled in this v1.0.0).",
+      "sourceRef": "A_Basic_Info, row 9, cell A9: \"Do you have estate trust income? *\""
+    },
+    {
+      "name": "employerProvidedCar",
+      "label": "Has your employer provided you with a car?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope I_Computation_of_Car_Benefit sheet. The resulting \"Value of Car Benefit\" total still surfaces as a top-level entry field on F_Employment_Income (see employer1CarBenefitValue/employer2CarBenefitValue), which this schema does model.",
+      "sourceRef": "A_Basic_Info, row 10, cell A10: \"Has your employer provided you with a car? *\""
+    },
+    {
+      "name": "hasMortgage",
+      "label": "Do you have a mortgage?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope J_Computation_of_Mortgage sheet. The resulting \"Mortgage Interest\" total still surfaces as a top-level entry field on T_Tax_Computation (see mortgageInterestDeduction), which this schema does model.",
+      "sourceRef": "A_Basic_Info, row 11, cell A11: \"Do you have a mortgage? *\""
+    },
+    {
+      "name": "hasHomeOwnershipSavingsPlan",
+      "label": "Do you have a Home Ownership Savings Plan?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope K_Home_Ownership_Saving_Plan sheet. The resulting deposit total still surfaces as a top-level entry field on T_Tax_Computation (see homeOwnershipSavingsPlanDeduction), which this schema does model.",
+      "sourceRef": "A_Basic_Info, row 12, cell A12: \"Do you have a Home Ownership Savings Plan? *\""
+    },
+    {
+      "name": "hasLifeInsurancePolicy",
+      "label": "Do you have a life insurance policy?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope L_Computation_of_Insu_Relief sheet. The resulting insurance relief total still surfaces as a top-level entry field on T_Tax_Computation (see insuranceRelief), which this schema does model.",
+      "sourceRef": "A_Basic_Info, row 13, cell A13: \"Do you have a life insurance policy? *\""
+    },
+    {
+      "name": "hasCommercialVehicle",
+      "label": "Do you have a commercial vehicle?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope P_Advance_Tax_Credits sheet. The resulting advance tax credit total still surfaces as a top-level entry field on T_Tax_Computation (see commercialVehicleAdvanceTaxCredit), which this schema does model.",
+      "sourceRef": "A_Basic_Info, row 14, cell A14: \"Do you have a commercial vehicle? *\""
+    },
+    {
+      "name": "hasForeignIncome",
+      "label": "Do you earn any income from a foreign country?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates the out-of-scope R_DTAA_Credits sheet (double tax agreement relief). The resulting credit total still surfaces as a top-level entry field on T_Tax_Computation (see dtaaTaxCredit), which this schema does model.",
+      "sourceRef": "A_Basic_Info, row 15, cell A15: \"Do you earn any income from a foreign country? *\""
+    },
+    {
+      "name": "hasDisabilityExemptionCertificate",
+      "label": "Have you been issued the Exemption Certificate for disability?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer holds a KRA-issued tax exemption certificate for disability. Gates disabilityExemptionCertificateNumber/DateFrom/DateTo below, and the resulting exemption amount surfaces on T_Tax_Computation as disabilityTaxExemptionAmount.",
+      "sourceRef": "A_Basic_Info, row 16, cell A16: \"Have you been issued the Exemption Certificate for disablity? *\" [sic, source spelling]"
+    },
+    {
+      "name": "declareSpouseIncome",
+      "label": "Do you want to declare Wife's Income?",
+      "type": "boolean",
+      "required": true,
+      "description": "Kenyan tax law allows a married taxpayer to elect to declare a spouse's income jointly on the same return. This schema deliberately scopes to the taxpayer's own (\"Self\") computation only, per this document's own out-of-scope disclosures (T_Income_Computation_Wife, and every sheet's mirrored \"(Wife)\" section) — if this field is true, the source workbook requires a full parallel set of spouse fields (spouse employment income, spouse PAYE deducted, spouse tax computation) that this v1.0.0 does not model. Included here because it is a real, always-present field on the in-scope A_Basic_Info sheet.",
+      "sourceRef": "A_Basic_Info, row 17, cell A17: \"Do you want to declare Wife's Income? *\""
+    },
+    {
+      "name": "spousePin",
+      "label": "Wife's PIN",
+      "type": "string",
+      "requiredWhen": {
+        "field": "declareSpouseIncome",
+        "equals": true
+      },
+      "description": "The spouse's KRA PIN, collected when declareSpouseIncome is true. See declareSpouseIncome's description — the spouse's own income/computation sections are out of scope for this v1.0.0.",
+      "classification": "pii",
+      "sourceRef": "A_Basic_Info, row 18, cell A18: \"Wife's PIN *\"",
+      "validation": {
+        "pattern": "^[A-Z]\\d{9}[A-Z]$",
+        "minLength": 11,
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "disabilityExemptionCertificateNumber",
+      "label": "Exemption Certificate Number",
+      "type": "string",
+      "requiredWhen": {
+        "field": "hasDisabilityExemptionCertificate",
+        "equals": true
+      },
+      "description": "Bounded to a single certificate slot for this v1.0.0; the source sheet's underlying named range (ExemptCerti.ListS) is a repeating list, but a resident individual is only issued one active disability exemption certificate at a time in practice.",
+      "sourceRef": "A_Basic_Info, row 67, cell A67: \"Exemption Certificate Number\" (Section A Part 6: Details of Exemption Certificate for disability (Self))"
+    },
+    {
+      "name": "disabilityExemptionCertificateDateFrom",
+      "label": "Date From",
+      "type": "date",
+      "requiredWhen": {
+        "field": "hasDisabilityExemptionCertificate",
+        "equals": true
+      },
+      "sourceRef": "A_Basic_Info, row 67, cell B67: \"Date From\" (Section A Part 6: Details of Exemption Certificate for disability (Self))"
+    },
+    {
+      "name": "disabilityExemptionCertificateDateTo",
+      "label": "Date To",
+      "type": "date",
+      "requiredWhen": {
+        "field": "hasDisabilityExemptionCertificate",
+        "equals": true
+      },
+      "sourceRef": "A_Basic_Info, row 67, cell C67: \"Date To\" (Section A Part 6: Details of Exemption Certificate for disability (Self))"
+    },
+    {
+      "name": "bankName",
+      "label": "Bank Name",
+      "type": "string",
+      "description": "Used by KRA to pay out a refund when the return's final tax computation (see taxDueOrRefundDue) is negative. DISCLOSED DISCREPANCY: the printed label carries a \"*\" (visually implying mandatory), but the workbook's own machine-readable Validations sheet (row 16) records this field's Mandatory flag as \"N\". This schema follows the authoritative Validations sheet and models the field as optional — see VERIFICATION.md.",
+      "sourceRef": "A_Basic_Info, row 23, cell A23: \"Bank Name *\" (Section A Part 2: Bank Details)"
+    },
+    {
+      "name": "bankBranchName",
+      "label": "Branch Name",
+      "type": "string",
+      "description": "Same asterisk-vs-Validations-sheet discrepancy as bankName; modeled as optional per the Validations sheet (row 17, Mandatory \"N\").",
+      "sourceRef": "A_Basic_Info, row 24, cell A24: \"Branch Name *\" (Section A Part 2: Bank Details)"
+    },
+    {
+      "name": "bankCity",
+      "label": "City",
+      "type": "string",
+      "description": "Same asterisk-vs-Validations-sheet discrepancy as bankName; modeled as optional per the Validations sheet (row 18, Mandatory \"N\").",
+      "sourceRef": "A_Basic_Info, row 25, cell A25: \"City *\" (Section A Part 2: Bank Details)"
+    },
+    {
+      "name": "bankAccountHolderName",
+      "label": "Account Holder's Name",
+      "type": "string",
+      "description": "Same asterisk-vs-Validations-sheet discrepancy as bankName; modeled as optional per the Validations sheet (row 19, Mandatory \"N\").",
+      "classification": "pii",
+      "sourceRef": "A_Basic_Info, row 26, cell A26: \"Account Holder's Name *\" (Section A Part 2: Bank Details)"
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Account Number",
+      "type": "string",
+      "description": "Same asterisk-vs-Validations-sheet discrepancy as bankName; modeled as optional per the Validations sheet (row 21, Mandatory \"N\").",
+      "classification": "pii",
+      "sourceRef": "A_Basic_Info, row 27, cell A27: \"Account Number *\" (Section A Part 2: Bank Details)"
+    },
+    {
+      "name": "employer1Pin",
+      "label": "PIN of Employer",
+      "type": "string",
+      "required": true,
+      "description": "Employer identity is shared across F_Employment_Income and M_Details_of_PAYE_Deducted in this schema: both source sheets separately list \"PIN of Employer\"/\"Name of Employer\" columns for what is, in substance, the same employer per taxpayer, so this schema consolidates them into one employerN identity rather than duplicating PIN/Name fields per sheet — a disclosed synthesis judgment call, see VERIFICATION.md.",
+      "classification": "pii",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column A: \"PIN of Employer\"; row 3 is the data-entry row for employer 1"
+    },
+    {
+      "name": "employer1Name",
+      "label": "Name of Employer",
+      "type": "string",
+      "required": true,
+      "sourceRef": "F_Employment_Income, row 2 (Self), column B: \"Name of Employer\""
+    },
+    {
+      "name": "employer1GrossPay",
+      "label": "Gross Pay (Ksh) (A)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column C: \"Gross Pay (Ksh)\\n(A)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1OtherAllowancesAndBenefits",
+      "label": "Allowances and Benefits from Employment (Other than Car and Housing) (Ksh) (B)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column D",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1CarBenefitValue",
+      "label": "Value of Car Benefit (Ksh) (C)",
+      "type": "number",
+      "required": true,
+      "description": "Total pulled from the out-of-scope I_Computation_of_Car_Benefit sheet (not modeled in this v1.0.0); this schema surfaces only the resulting total, as it is the field the in-scope F_Employment_Income sheet itself presents.",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column E: \"Value of Car Benefit (Total of \\\"Value of Car Benefit\\\" from I_Computation_of_Car_Benefit)(Ksh) (C)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1NetHousingValue",
+      "label": "Net Value of Housing (Ksh) (D)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column F: \"Net Value of Housing (Ksh)\\n(D)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1PensionExcess300000",
+      "label": "Pension if in excess of 300,000 (Ksh) (E)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column G: \"Pension if in excess of 300,000 (Ksh)\\n(E)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1TotalEmploymentIncome",
+      "label": "Total Employment Income (Ksh) (F) = (A+B+C+D+E)",
+      "type": "number",
+      "required": true,
+      "description": "Sum of this employer's Gross Pay, Other Allowances and Benefits, Car Benefit Value, Net Housing Value, and Pension Excess. The source workbook presents this as a literal cell (typically computed by KRA's iTax system rather than hand-entered); modeled as a field because the in-scope sheet presents it as one.",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column H",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2Pin",
+      "label": "PIN of Employer",
+      "type": "string",
+      "description": "Second employer slot, per this schema's disclosed bounded cap of 2 (see employer1Pin's description). All of employer 2's fields are optional, since the source sheet's base printed table has only one visible blank data-entry row (row 3) before its Total row (row 5).",
+      "classification": "pii",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column A: \"PIN of Employer\"; row 4 is the data-entry row for employer 2"
+    },
+    {
+      "name": "employer2Name",
+      "label": "Name of Employer",
+      "type": "string",
+      "description": "Second employer slot (see employer1Name's description); optional.",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column B: \"Name of Employer\""
+    },
+    {
+      "name": "employer2GrossPay",
+      "label": "Gross Pay (Ksh) (A)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column C: \"Gross Pay (Ksh)\\n(A)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2OtherAllowancesAndBenefits",
+      "label": "Allowances and Benefits from Employment (Other than Car and Housing) (Ksh) (B)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column D",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2CarBenefitValue",
+      "label": "Value of Car Benefit (Ksh) (C)",
+      "type": "number",
+      "description": "Total pulled from the out-of-scope I_Computation_of_Car_Benefit sheet (not modeled in this v1.0.0); this schema surfaces only the resulting total, as it is the field the in-scope F_Employment_Income sheet itself presents.",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column E: \"Value of Car Benefit (Total of \\\"Value of Car Benefit\\\" from I_Computation_of_Car_Benefit)(Ksh) (C)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2NetHousingValue",
+      "label": "Net Value of Housing (Ksh) (D)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column F: \"Net Value of Housing (Ksh)\\n(D)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2PensionExcess300000",
+      "label": "Pension if in excess of 300,000 (Ksh) (E)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column G: \"Pension if in excess of 300,000 (Ksh)\\n(E)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2TotalEmploymentIncome",
+      "label": "Total Employment Income (Ksh) (F) = (A+B+C+D+E)",
+      "type": "number",
+      "description": "Sum of this employer's Gross Pay, Other Allowances and Benefits, Car Benefit Value, Net Housing Value, and Pension Excess. The source workbook presents this as a literal cell (typically computed by KRA's iTax system rather than hand-entered); modeled as a field because the in-scope sheet presents it as one.",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 2 (Self), column H",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncomeJanuaryToMarch",
+      "label": "January - March: Income",
+      "type": "number",
+      "required": true,
+      "description": "Total employment income (across all employers) for the January-March portion of the year, entered separately from the April-December portion for historical reasons: Kenya's Finance Act 2020 temporarily changed PAYE bands for part of that year, and this workbook template's period split (retained through the current 18.0.1 edition) reconciles income earned under differing rate periods. Cross-references taxOnTaxableEmploymentIncomeJanuaryToMarch on T_Tax_Computation.",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 6 (Self): \"January - March:  Income\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncomeAprilToDecember",
+      "label": "April-December: Income",
+      "type": "number",
+      "required": true,
+      "description": "Total employment income (across all employers) for the April-December portion of the year. See employmentIncomeJanuaryToMarch's description.",
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 8 (Self): \"April-December:  Income\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentPensionJanuaryToMarch",
+      "label": "January - March: Pension",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 7 (Self): \"January - March: Pension\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentPensionAprilToDecember",
+      "label": "April - December: Pension",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "F_Employment_Income, row 9 (Self): \"April - December: Pension\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1TaxableSalary",
+      "label": "Taxable Salary (Ksh)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column C: \"Taxable Salary (Ksh)\" (row 3 is the data-entry row for employer 1); PIN/Name of employer identity is shared with employer1Pin/employer1Name from F_Employment_Income — see employer1Pin's description",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1TaxPayableOnTaxableSalary",
+      "label": "Tax Payable on Taxable Salary (Ksh) (A)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column D",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1TaxDeductedPaye",
+      "label": "Amount of Tax Deducted (PAYE) (Ksh) (B)",
+      "type": "number",
+      "required": true,
+      "description": "The PAYE this employer already withheld and remitted to KRA on the taxpayer's behalf. Cross-references payeDeductedFromSalaryTotal on T_Tax_Computation (item 13.1), which the source describes as the \"Total of 'Amount of Tax Deducted (PAYE)' from M_Details_of_PAYE_Deducted\".",
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column E: \"Amount of Tax Deducted(PAYE) (Ksh)\\n(B)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1TaxPayableOrRefundablePaye",
+      "label": "Amount of Tax Payable or Refundable (PAYE) (Ksh) (C) = (A-B)",
+      "type": "number",
+      "required": true,
+      "description": "A-B for this employer's PAYE reconciliation. Source workbook presents this as a literal cell (typically computed).",
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column F"
+    },
+    {
+      "name": "employer2TaxableSalary",
+      "label": "Taxable Salary (Ksh)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column C: \"Taxable Salary (Ksh)\" (row 4 is the data-entry row for employer 2); PIN/Name of employer identity is shared with employer2Pin/employer2Name from F_Employment_Income — see employer1Pin's description",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2TaxPayableOnTaxableSalary",
+      "label": "Tax Payable on Taxable Salary (Ksh) (A)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column D",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2TaxDeductedPaye",
+      "label": "Amount of Tax Deducted (PAYE) (Ksh) (B)",
+      "type": "number",
+      "description": "The PAYE this employer already withheld and remitted to KRA on the taxpayer's behalf. Cross-references payeDeductedFromSalaryTotal on T_Tax_Computation (item 13.1), which the source describes as the \"Total of 'Amount of Tax Deducted (PAYE)' from M_Details_of_PAYE_Deducted\".",
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column E: \"Amount of Tax Deducted(PAYE) (Ksh)\\n(B)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2TaxPayableOrRefundablePaye",
+      "label": "Amount of Tax Payable or Refundable (PAYE) (Ksh) (C) = (A-B)",
+      "type": "number",
+      "description": "A-B for this employer's PAYE reconciliation. Source workbook presents this as a literal cell (typically computed).",
+      "classification": "financial",
+      "sourceRef": "M_Details_of_PAYE_Deducted, row 2 (Self), column F"
+    },
+    {
+      "name": "nonEmploymentProfitOrLoss",
+      "label": "1. Profit / Surplus / Loss as per Profit / Surplus & Loss Account (Consolidated)",
+      "type": "number",
+      "description": "Consolidated bottom line of the taxpayer's Profit/Surplus/Loss Account. This schema models only the sheet's \"Consolidated (Ksh)\" column (column I); the six category sub-columns (Business/Farming/Rental/Interest/Commission/Other) that build up to each Consolidated line depend entirely on out-of-scope schedules (B_Profit_Loss_Account_Self, C_Balance_Sheet, D_Stock_Analysis, E1/E2/E capital allowances, G_Partnership_Income, S_Previous_Years_Losses) and on the Landlord/Tenant rental detail in A_Basic_Info, which this v1.0.0 also does not model. For the pure-employment filing pathway this schema targets, every one of these ten lines is normally 0; they are modeled because the source lists them as real, always-present fields on this in-scope sheet.",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 3, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentExemptIncomeDeduction",
+      "label": "2. Less Exempt income (if included in Profit / Surplus and Loss Account)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 4, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentAdjustedProfitOrLoss",
+      "label": "3. Adjusted Profit / Surplus / Loss as per Profit / Surplus & Loss Account (1-2)",
+      "type": "number",
+      "description": "Line 1 minus line 2. Source workbook presents this as a literal cell (typically computed).",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 5, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentDisallowableDeductionsAddBack",
+      "label": "4. Add Back: Disallowable Deductions (4.1 to 4.13)",
+      "type": "number",
+      "description": "Sum of the sheet's disallowable-deduction sub-items 4.1-4.13 (depreciation, entertainment expenses, donations, etc.), each of which in turn pulls from the out-of-scope B_Profit_Loss_Account_Self sheet or the sheet's own \"Part I: Other Disallowable Deductions\" itemized table (rows 37-45, also not separately modeled in this v1.0.0).",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 7, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentAllowableDeductionsDeduct",
+      "label": "5. Deduct: Allowable Deductions (5.1 to 5.5)",
+      "type": "number",
+      "description": "Sum of the sheet's allowable-deduction sub-items 5.1-5.5 (capital allowances, scientific research expenditure, etc.), each of which in turn pulls from out-of-scope schedules or the sheet's own \"Part II: Other Allowable Deductions\" itemized table (rows 48-56, also not separately modeled).",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 23, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentPartnershipIncome",
+      "label": "6. Taxable Income from Partnership Firm(s)",
+      "type": "number",
+      "description": "Pulled from the out-of-scope G_Partnership_Income sheet.",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 31, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentTaxableIncome",
+      "label": "7. Taxable Income (3+4-5+6)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 32, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentLossBroughtForward",
+      "label": "8. Less: Loss B/F from previous year offset against current year of income",
+      "type": "number",
+      "description": "Pulled from the out-of-scope S_Previous_Years_Losses sheet.",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 33, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentAdjustedTaxableIncome",
+      "label": "9. Adjusted Taxable Income (If 7-8 is positive, else 0)",
+      "type": "number",
+      "description": "The figure the source describes as feeding directly into T_Tax_Computation item 12.4 (\"Net Taxable Income\") as \"Line Number 9 (Consolidated)\"; see netTaxableIncome. For the pure-employment pathway this schema targets, this is 0.",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 34, column I (Consolidated)"
+    },
+    {
+      "name": "nonEmploymentLossCarriedForward",
+      "label": "10. Loss to be carried forward to next year for set off (If 7-8 is negative, else 0)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "T_Income_Computation_Self, row 35, column I (Consolidated)"
+    },
+    {
+      "name": "pensionContributionDeduction",
+      "label": "11.1 Defined / Pension Contribution",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 5, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "mortgageInterestDeduction",
+      "label": "11.2 Mortgage Interest (max Ksh 300,000)",
+      "type": "number",
+      "description": "Total pulled from the out-of-scope J_Computation_of_Mortgage sheet, capped at Ksh 300,000. This schema surfaces only the resulting capped total, as it is the field the in-scope T_Tax_Computation sheet itself presents. The source's own column F5 comment flags an unresolved design question (\"Check required that either of the two deductions will be available. Check to be given here or sections or on validation?\") about mutual exclusivity with homeOwnershipSavingsPlanDeduction — disclosed verbatim in VERIFICATION.md, not resolved by this schema.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 6, column C (Self): \"Mortgage Interest (Total of Amount of Interest Paid from J_Computation_of_Mortgage but subject to Maximum 300,000 Ksh)\"",
+      "validation": {
+        "minimum": 0,
+        "maximum": 300000
+      }
+    },
+    {
+      "name": "homeOwnershipSavingsPlanDeduction",
+      "label": "11.3 Deposit in Home Ownership Saving Plan (max Ksh 72,000)",
+      "type": "number",
+      "description": "Total pulled from the out-of-scope K_Home_Ownership_Saving_Plan sheet, capped at Ksh 72,000.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 7, column C (Self): \"Deposit in Home Ownership Saving Plan (Total of \\\"Total Deposit for the Year\\\" from K_Home_Ownership_Saving_Plan but subject to Maximum 72,000 Ksh)\"",
+      "validation": {
+        "minimum": 0,
+        "maximum": 72000
+      }
+    },
+    {
+      "name": "totalDeduction",
+      "label": "11. Total Deduction (11.1 + Higher value of 11.2 or 11.3)",
+      "type": "number",
+      "description": "Pension/defined contribution deduction, plus whichever of the mortgage-interest or home-ownership-savings-plan deduction is larger (the source treats 11.2/11.3 as mutually-exclusive alternatives — see mortgageInterestDeduction's description). Source workbook presents this as a literal cell (typically computed).",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 3, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxableEmploymentIncomeTotal",
+      "label": "12.1 Employment Income",
+      "type": "number",
+      "description": "Cross-references the sum of employer1TotalEmploymentIncome and employer2TotalEmploymentIncome from F_Employment_Income.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 11, column C (Self): \"Employment Income (\\\"Total Taxable Employment Income\\\" from F_Employement_Income)\" [sic, source typo]",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxableEstateTrustIncome",
+      "label": "12.2 Taxable Income from Estate(s)/Trust(s)/Settlement",
+      "type": "number",
+      "description": "Pulled from the out-of-scope H_Estate_Trust_Income sheet.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 12, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "disabilityTaxExemptionAmount",
+      "label": "12.3 Allowable Tax Exemption in case of Person with Disability",
+      "type": "number",
+      "description": "Applies only when hasDisabilityExemptionCertificate is true; the source does not publish the computation formula for this amount within the in-scope sheets (it is not simply the certificate presence — KRA disability tax exemption is a statutory relief against taxable income up to a legislated ceiling, computed by KRA's iTax system).",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 13, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netTaxableIncome",
+      "label": "12.4 Net Taxable Income (12.1 + 12.2 + Line 9 (Consolidated) - 11 - 12.3)",
+      "type": "number",
+      "description": "12.1 (taxableEmploymentIncomeTotal) + 12.2 (taxableEstateTrustIncome) + line 9 of T_Income_Computation_Self (nonEmploymentAdjustedTaxableIncome) - 11 (totalDeduction) - 12.3 (disabilityTaxExemptionAmount). Source workbook presents this as a literal cell (typically computed).",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 14, column C (Self)"
+    },
+    {
+      "name": "taxOnTaxableIncome",
+      "label": "12.5 Tax on Taxable Income (12.4 * applicable rates)",
+      "type": "number",
+      "description": "Computed by applying Kenya's graduated resident individual income tax bands to netTaxableIncome. The source workbook's own column F15 comment records these bands verbatim as: \"Tax Slabs: 0 to 1,21,968 (10%); 1,21,969 to 2,36,880 (15%); 2,36,881 to 3,51,792 (20%); 3,51,793 to 4,66,704 (25%); Over 4,66,704 (30%)\" [figures as printed in the source, Indian-style digit grouping preserved verbatim] — quoted here for reference; this schema does not independently verify these are Kenya's currently legislated 2026 bands, since the Income Tax Act's rate bands have changed by Finance Act amendment in the past and this workbook edition's embedded comment may lag the law. See VERIFICATION.md.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 15, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxOnTaxableEmploymentIncomeJanuaryToMarch",
+      "label": "12.5a Tax on Taxable Employment Income January-March Period",
+      "type": "number",
+      "description": "See employmentIncomeJanuaryToMarch's description for why the source retains this period split.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 16, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxOnTaxableEmploymentIncomeAprilToDecember",
+      "label": "12.5b Tax on Taxable Employment Income April-December Period",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 17, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "personalRelief",
+      "label": "12.6 Personal Relief",
+      "type": "number",
+      "description": "Kenya's flat annual personal relief, deducted from tax on taxable income. DISCLOSED CAVEAT: the source workbook's own column F18 comment reads \"Keep it 13,944 but make it configurable\", i.e. the workbook's own authors flagged 13,944 (Ksh/year) as a template default rather than an asserted-current legal figure. This schema does not assert 13,944 is Kenya's currently legislated personal relief amount — the conformance examples in this document use it only because it is the figure the source itself embeds, and this is flagged as a fact needing independent confirmation before production use. See VERIFICATION.md.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 18, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "insuranceRelief",
+      "label": "12.7 Insurance Relief (max Ksh 60,000)",
+      "type": "number",
+      "description": "Total pulled from the out-of-scope L_Computation_of_Insu_Relief sheet, capped at Ksh 60,000.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 19, column C (Self): \"Insurance Relief (Total of \\\"Amount of Insurance Relief\\\" from L_Computation_of_Insu_Relief but subject to Maximum 60,000 Ksh)\"",
+      "validation": {
+        "minimum": 0,
+        "maximum": 60000
+      }
+    },
+    {
+      "name": "totalTaxPayableLessReliefs",
+      "label": "12. Total of Tax Payable Less Reliefs and Exemptions (12.5 - 12.6 - 12.7)",
+      "type": "number",
+      "description": "Source workbook presents this as a literal cell (typically computed).",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 9, column C (Self)"
+    },
+    {
+      "name": "payeDeductedFromSalaryTotal",
+      "label": "13.1 PAYE Deducted from Salary",
+      "type": "number",
+      "description": "Cross-references the sum of employer1TaxDeductedPaye and employer2TaxDeductedPaye from M_Details_of_PAYE_Deducted.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 22, column C (Self): \"PAYE Deducted from Salary (Total of \\\"Amount of Tax Deducted (PAYE)\\\" from M_Details_of_PAYE_Deducted)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "estateTrustTaxCredit",
+      "label": "13.2 Allowable Tax in case of Estate(s)/Trust(s)/Settlement",
+      "type": "number",
+      "description": "30% of taxableEstateTrustIncome per the source's own formula note; pulled from the out-of-scope H_Estate_Trust_Income sheet.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 23, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "installmentTaxPaidTotal",
+      "label": "13.3 Total Installment Tax Paid",
+      "type": "number",
+      "description": "Pulled from the out-of-scope N_Installment_Tax_Credits sheet.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 24, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "withholdingTaxCredit",
+      "label": "13.4 Withholding Tax",
+      "type": "number",
+      "description": "Pulled from the out-of-scope O_WHT_Credits sheet. Common even for an otherwise pure-employment filer (e.g. withholding tax on bank interest), so unlike several of this sheet's other out-of-scope-linked totals this one is not necessarily 0 in practice.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 25, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "commercialVehicleAdvanceTaxCredit",
+      "label": "13.5 Credits u/s 12A - Advance Tax on Commercial Vehicle",
+      "type": "number",
+      "description": "Pulled from the out-of-scope P_Advance_Tax_Credits sheet; only relevant when hasCommercialVehicle is true.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 26, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeTaxPaidInAdvance",
+      "label": "13.6 Income Tax Paid in Advance",
+      "type": "number",
+      "description": "Pulled from the out-of-scope Q_IT_Payment_Credits sheet.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 27, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "dtaaTaxCredit",
+      "label": "13.7 Credits u/s 41",
+      "type": "number",
+      "description": "Pulled from the out-of-scope R_DTAA_Credits sheet; only relevant when hasForeignIncome is true.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 28, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "rentalWithholdingTaxCredit",
+      "label": "13.8 Withholding Tax of Monthly Rental Income",
+      "type": "number",
+      "description": "Withholding tax on rental income; the underlying rental income detail (Landlord/Tenant sections of A_Basic_Info) is out of scope for this v1.0.0.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 29, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalTaxCredits",
+      "label": "13. Tax Credits (13.1+13.2+13.3+13.4+13.5+13.6+13.7+13.8)",
+      "type": "number",
+      "description": "Source workbook presents this as a literal cell (typically computed).",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 21, column C (Self)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxDueOrRefundDue",
+      "label": "14. Tax Due / (Refund Due) (12 (Self) + 12 (Wife) - 13 (Self) - 13 (Wife))",
+      "type": "number",
+      "description": "The return's bottom-line figure: a positive value is tax still owed to KRA, a negative value is a refund due to the taxpayer. The source's own column F31 comment notes \"System should enable section A Part 2 only if this is negative\" — i.e. KRA's iTax system only requires the bankName/bankBranchName/bankCity/bankAccountHolderName/bankAccountNumber fields on A_Basic_Info when this figure is negative (a refund is due). This v1.0.0 does not encode that as a requiredWhen condition on the bank fields, since taxDueOrRefundDue is itself a computed/derived field rather than a fixed applicant answer at fill time — disclosed here rather than silently modeled as a hard requirement.",
+      "classification": "financial",
+      "sourceRef": "T_Tax_Computation, row 31, column C (Self)"
+    }
+  ]
+}
