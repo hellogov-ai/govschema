@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**38 jurisdictions** | **369 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**38 jurisdictions** | **370 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2443, "GovSchema Standard Research"): Vietnam's
+> Business Formation vertical opens (3 of 6)**, via
+> `vn/dangkykinhdoanh/dang-ky-doanh-nghiep-tnhh-mot-thanh-vien` v1.0.0,
+> sourced from Mẫu số 2, Phụ lục I, "Giấy đề nghị đăng ký doanh nghiệp — Công
+> ty trách nhiệm hữu hạn một thành viên" (Enterprise Registration
+> Application for a single-member LLC), under Thông tư 68/2025/TT-BTC
+> (effective 1 July 2025). Phụ lục I is itself one 80-template appendix
+> spanning every Vietnamese enterprise-registration scenario; this schema
+> deliberately scopes to only Mẫu số 2 (the single-member LLC template),
+> disclosing as out of scope the sibling Mẫu số 1/3/4/5 (sole
+> proprietorship/multi-member LLC/joint-stock/partnership) and their own
+> member-list companion forms (Mẫu số 6-9), which cannot apply once a
+> company has only one owner. The primary host named in this cycle's own
+> brief, `dangkykinhdoanh.gov.vn`, turned out TCP-unreachable and
+> TLS-handshake-failing this cycle (despite a prior cycle's note that it was
+> reachable) — this schema instead sources the current template directly
+> from Công báo (the Official Gazette of the Government of Vietnam, via
+> `congbao.chinhphu.vn`), a stronger first-party citation than either of
+> this cycle's own named fallbacks. A legal-currency check (searching for
+> any circular amending or superseding Thông tư 68/2025/TT-BTC) found none
+> as of this update. The schema's 126 `fields[]` cover the registrant's
+> identity, the establishment-status declaration, company name and head
+> office, the primary business line, the single owner's own identity —
+> modelled for both an individual owner and an organizational owner (which
+> must appoint an authorized representative and choose a Members'-Council-
+> or Company-President management model) — charter capital, its sources,
+> and any non-cash contributed assets, the legal representative, tax
+> registration, and the beneficial-owner declaration the 2025 Enterprise Law
+> amendment added to this form. 7 `documents[]` include the company charter
+> (always required) and the companion Mẫu số 10 beneficial-owner-detail
+> form (disclosed only by reference, requiredWhen a beneficial owner is
+> declared). Two mock conformance scenarios (an individual owner's new
+> establishment; an organization owner's type-conversion establishment with
+> a beneficial-owner declaration) found 0 errors each, plus 4 mutation
+> controls each correctly raised exactly 1 error — including one targeting
+> `documents[]` requiredness specifically, per this registry's own
+> conformance-checker documents-blind-spot postmortem. See the document's
+> own VERIFICATION.md for the full sourcing record, the legal-currency
+> check, and every disclosed scoping/judgment call. **Vietnam now stands at
+> 3 of 6 verticals** (Passport, Taxes, Business Formation); DMV and Visa
+> remain open, unscreened-or-weak backlog candidates, and National ID
+> remains a confirmed dead end (per the GOV-2411 cycle) — see "Known Gaps"
+> below.
 
 > **Update (2026-07-12, GOV-2434, "GovSchema Standard Research"): Peru's
 > DMV vertical opens (3 of 6)**, via
@@ -6390,7 +6434,25 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (34/38 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (35/38 jurisdictions — 92%)
+
+**Vietnam's Business Formation vertical opens (GOV-2443)**, via
+`vn/dangkykinhdoanh/dang-ky-doanh-nghiep-tnhh-mot-thanh-vien` — Mẫu số 2,
+Phụ lục I, "Giấy đề nghị đăng ký doanh nghiệp — Công ty trách nhiệm hữu hạn
+một thành viên" (Enterprise Registration Application for a single-member
+LLC), issued under Thông tư 68/2025/TT-BTC. Scoped deliberately to the
+single-member LLC pathway within Phụ lục I's own 80-template appendix,
+disclosing the sibling sole-proprietorship/multi-member-LLC/joint-stock/
+partnership templates (and their own member-list companion forms) as out
+of scope, since none of them apply once a company has only one owner. See
+the Executive Summary's GOV-2443 update above for the full sourcing
+record — including the primary `dangkykinhdoanh.gov.vn` host turning out
+unreachable this cycle despite a prior cycle's note to the contrary, and
+this schema instead sourcing directly from Công báo, the Official Gazette
+of the Government of Vietnam — and the document's own VERIFICATION.md for
+every scoping and judgment call. Vietnam now stands at 3 of its 6
+verticals (Passport, Taxes, Business Formation); DMV and Visa remain open
+backlog candidates, and National ID is a confirmed dead end.
 
 **Norway opens as this registry's 35th jurisdiction via this vertical
 (GOV-2316)**, via `no/brreg/samordnet-registermelding` —
@@ -8975,13 +9037,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Taxes vertical is now open too (GOV-2411)**, via
     `vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan` (Mẫu 02/QTT-TNCN,
     Thông tư 80/2021/TT-BTC as amended by Thông tư 40/2025/TT-BTC and Thông
-    tư 94/2025/TT-BTC) — **Vietnam now stands at 2 of 6 verticals**
-    (Passport, Taxes). Vietnam's remaining four verticals are open backlog
-    candidates of varying strength: **Business Formation** and **Visa**
-    each have only weak pre-scouted leads; **DMV** is inconclusive, having
-    hit a 503 from the relevant gov host during prior scouting; **National
-    ID** is a confirmed dead end (in-person/biometric CCCD issuance only,
-    no downloadable form) — see "Confirmed dead ends" below. The two
+    tư 94/2025/TT-BTC) — Vietnam then stood at 2 of 6 verticals (Passport,
+    Taxes). **Vietnam's Business Formation vertical is now open too
+    (GOV-2443)**, via
+    `vn/dangkykinhdoanh/dang-ky-doanh-nghiep-tnhh-mot-thanh-vien` (Mẫu số 2,
+    Phụ lục I, Thông tư 68/2025/TT-BTC), scoped to the single-member-LLC
+    enterprise-registration pathway — see the Executive Summary's GOV-2443
+    update above for the full record. **Vietnam now stands at 3 of 6
+    verticals** (Passport, Taxes, Business Formation). Vietnam's remaining
+    two open verticals are backlog candidates of varying strength: **Visa**
+    has only a weak pre-scouted lead; **DMV** is inconclusive, having hit a
+    503 from the relevant gov host during prior scouting. **National ID**
+    is a confirmed dead end (in-person/biometric CCCD issuance only, no
+    downloadable form) — see "Confirmed dead ends" below. The two
     runner-up candidates scouted the GOV-2404 cycle remain open backlog
     candidates too: **Greece** (Business Formation/DMV/National ID
     confirmed in-person-only or telematic-only dead ends; Passport's only
