@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**45 jurisdictions** | **392 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **393 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-12, GOV-2611, "GovSchema Standard Research"): Greece
 > opens as this registry's 45th jurisdiction, via its Visa vertical (1 of
@@ -49,6 +49,47 @@
 > date) each correctly raised exactly **1 error**. See GOV-2611 and this
 > schema's own `VERIFICATION.md` for the full sourcing record and every
 > scoping/disclosure judgment call.
+>
+> **Update (2026-07-12, GOV-2612, "GovSchema Standard Research"): Bangladesh
+> opens as this registry's 46th jurisdiction, via its Taxes vertical (1 of
+> 6)**, via `bd/nbr/individual-income-tax-return-form-it-11ga` — the
+> National Board of Revenue's (NBR) IT-11GA, "Form of Return of Income for
+> Individual Person," 2023 edition. Scouted in GOV-2591's prior cycle
+> alongside Rwanda's dead-end verticals: DMV (BRTA) has AcroForm fields over
+> a scanned raster background with no OCR text layer, and Business
+> Formation/Passport/National ID were confirmed dead ends, leaving Taxes as
+> the strongest candidate. That prior cycle recorded no exact URL/hash to
+> reproduce, so this cycle independently re-located the source from scratch
+> via NBR's own English income-tax-forms page
+> (`nbr.gov.bd/form/income-tax/eng`, HTTP 403 without a browser
+> `User-Agent`, HTTP 200 with one) and re-fetched the linked PDF directly:
+> HTTP 200, `application/pdf`, 381,696 bytes, `sha256:
+> 2a7f51e37ac8f6e61fd153f002b799f36ca8ced56b0013ca5ff7d1459f76f724`. Parsed
+> with `pdfjs-dist`: **10 pages, 0 AcroForm widgets** — a printed,
+> text-layer-only form, confirming GOV-2591's prior characterization. Every
+> field was extracted by reading the position-sorted text layer directly.
+> The live 10-page source is a wide return: a 3-page main return (identity,
+> income/tax-computation summary, tax-payment particulars, verification)
+> plus five annexed schedules, a lifestyle-expense statement (IT-10BB), and
+> a wealth statement (IT-10B). This v1.0.0 deliberately scopes to the
+> general/salaried resident-individual filing pathway: the full 3-page main
+> return, and Schedule 1's part (b) (income from employment for employees
+> other than those on a government pay scale — the general/private-sector
+> salaried case). Out of scope, disclosed in VERIFICATION.md: Schedule 1
+> part (a) (government-pay-scale employees), Schedules 2-4 (rent,
+> agriculture, business), Schedule 5's itemized investment-tax-credit
+> breakdown (its bottom-line tax-rebate figure is still modeled as a
+> pass-through field), and the IT-10BB/IT-10B companion statements (both
+> mandatory per the source's own instructions for individual filers meeting
+> certain thresholds, disclosed via an unmodeled `documents[]` entry rather
+> than field-modeled). 78 `fields[]` and 3 `documents[]` entries. Two mock
+> conformance scenarios (0 errors each) plus 5 mutation-control fixtures
+> (each raising exactly 1 error) passed. Bangladesh now stands at 1 of 6
+> verticals (Taxes); DMV, Business Formation, Passport, and National ID were
+> screened in GOV-2591's prior cycle and found weak/dead-end — a future
+> cycle re-confirming those before treating them as permanent would be
+> prudent. See GOV-2612 and this schema's own `VERIFICATION.md` for the full
+> sourcing record and every scoping/disclosure judgment call.
 >
 > **Update (2026-07-12, GOV-2601, "GovSchema Standard Research"): Thailand's
 > Business Formation vertical opens (2 of 6)**, via
@@ -8019,7 +8060,33 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (38/41 jurisdictions — 93%)
+### Taxes — Income Tax Return, Tax Filing (39/46 jurisdictions — 85%)
+
+**Bangladesh opens (46th jurisdiction) via Taxes**
+(`bd/nbr/individual-income-tax-return-form-it-11ga`, GOV-2612) — the
+National Board of Revenue (NBR)'s IT-11GA, "Form of Return of Income for
+Individual Person," 2023 edition, scouted in GOV-2591's prior cycle
+alongside Rwanda/Thailand candidates after Bangladesh's other four
+verticals (DMV, Business Formation, Passport, National ID) were confirmed
+weak/dead-end. Independently re-located this cycle (no exact prior-cycle
+URL/hash had been recorded) via NBR's own English income-tax-forms page,
+then re-fetched the linked PDF directly: HTTP 200, `application/pdf`,
+381,696 bytes, `sha256:
+2a7f51e37ac8f6e61fd153f002b799f36ca8ced56b0013ca5ff7d1459f76f724`. Parsed
+with `pdfjs-dist`: 10 pages, 0 AcroForm widgets — a printed, text-layer-only
+form, confirming GOV-2591's prior characterization. IT-11GA is a wide
+return spanning a 3-page main return, five annexed schedules, a
+lifestyle-expense statement (IT-10BB), and a wealth statement (IT-10B);
+this schema deliberately bounds scope to the general/salaried-income filing
+pathway — the full 3-page main return plus Schedule 1's part (b) (income
+from employment for non-government-pay-scale employees). Schedule 1 part
+(a) (government-pay-scale employees), Schedules 2-4 (rent, agriculture,
+business), Schedule 5's itemized breakdown, and the IT-10BB/IT-10B
+companion statements are out of scope, disclosed in VERIFICATION.md. 78
+`fields[]`, 3 `documents[]`. Two mock conformance scenarios plus 5
+mutation-control fixtures passed; both registry validators pass. See
+GOV-2612 and this schema's own `VERIFICATION.md` for the full sourcing
+record and every scoping/disclosure judgment call.
 
 **Thailand opens (44th jurisdiction) via Taxes**
 (`th/rd/pit-90-personal-income-tax-return`, GOV-2593) — the Revenue
@@ -9313,6 +9380,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **BD** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
