@@ -1,0 +1,544 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "uy/imm/empadronamiento-vehiculos-nacionales",
+  "version": "1.0.0",
+  "title": "Uruguay (Montevideo) Vehicle Registration (Formulario F19 — Empadronamiento de Vehículos Nacionales/Importados)",
+  "description": "Register a nationally-manufactured or imported motor vehicle for the first time with the Intendencia de Montevideo's (IMM) Servicio de Contralor y Registro de Vehículos, using Formulario F19, \"Empadronamiento de Vehículos,\" per Ley Nº 19.061 and Decreto Nº 187/014. Filing this form assigns the vehicle its Uruguayan license plates (chapas matrículas) and vehicle-circulation booklet (libreta de circulación). Opens Uruguay's DMV vertical (2 of 6), following the Business Formation vertical opened by `uy/dgi/inscripcion-actualizacion-empresas-formulario-0351`. The single-form, 2-page AcroForm covers: the identity of whoever physically files the request (gestionante — always a natural person on this form), the identity of the vehicle's seller/importer (vendedor, who may be a natural person or a RUT-bearing entity), the vehicle's technical data (make, model, year, fuel, chassis/engine numbers, body type, displacement, horsepower, cylinder count, passenger/cargo capacity, gross weight, axles, tires, insurance company and policy validity), a checkbox pair recording whether the vehicle is imported or domestic and new (cero km) or used, a checkbox pair recording whether the vehicle's use is \"particular\" or some other declared affectation, and up to two vehicle owners (titular #1, required; titular #2, an optional second/co-owner using the same field set). Vehicle registration in Uruguay is administered at the departmental (Intendencia) level, not nationally — this document is scoped to Montevideo specifically, the same way this registry already scopes `br/mg/detran/comunicacao-de-venda-de-veiculo` and `ca/on/mto/vehicle-registration` to their own subnational authorities; Uruguay's other 18 departments would each need their own future schema, since each Intendencia runs its own vehicle registry and (per Ley Nº 19.061) its own SUCIVE-integrated circulation-permit process. Out of scope for v1.0.0, and disclosed rather than silently dropped, are: four AcroForm text-field widgets under the printed header row labeled \"ID\" / \"CÓDIGO NACIONAL\" whose internal AcroForm field names (`NumTelGestor_2` through `NumTelGestor_5`) are duplicated, unrelated copy-paste artifacts of the unrelated gestionante-phone-number field family, and whose exact semantic scope (an applicant-entered national vehicle-catalog lookup code vs. an office-assigned reference) could not be confidently determined from the source PDF alone; and the \"RECIBE DOCUMENTOS\" and \"FUNCIONARIOS ACTUANTES\" sections (plate/D.I.V. receipt acknowledgment boxes and staff-only signature/stamp fields), which record the outcome of the in-person appointment rather than applicant-supplied input to the registration request. See VERIFICATION.md for the full field inventory, the coordinate-correlation extraction method, and every disclosed scoping and naming-anomaly judgment call.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UY",
+    "level": "subnational",
+    "subdivision": "UY-MO"
+  },
+  "authority": {
+    "name": "Intendencia de Montevideo, Servicio de Contralor y Registro de Vehículos",
+    "abbreviation": "IMM",
+    "url": "https://montevideo.gub.uy"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://tramites.montevideo.gub.uy/sites/tramites.montevideo.gub.uy/files/tramites/documentos/F19%20-%20EmpadronamientoVehiculosImportados-cp-V6_10.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "Formulario F19, \"Empadronamiento de Vehículos\" (edition \"Formulario agosto 2024\", per the Intendencia de Montevideo's own trámite pages)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2456. Opens Uruguay's DMV vertical (2 of 6), following Business Formation (`uy/dgi/inscripcion-actualizacion-empresas-formulario-0351`, GOV-2449). Fetched directly from tramites.montevideo.gub.uy (HTTP 200, no login/CAPTCHA/WAF), sha256:a6e5bd2b53304dab88dd15afc7d742033008127665a8c6881823b37849397fec, 138,349 bytes, PDF 1.6, Producer LibreOffice 7.3, CreationDate 2024-07-27, matching the \"Formulario agosto 2024\" label and the HTTP Last-Modified header (2024-08-24) on both of IMM's own trámite landing pages for this form (empadronamiento-de-vehiculos-nacionales and empadronamiento-de-vehiculos-importados, which both link the identical PDF and describe the same single AcroForm covering both paths via its own IMPORTADO/NACIONAL checkbox pair). pdfjs-dist@3.11.174 `getAnnotations()` confirms a genuine 81-widget AcroForm across 2 pages (65 uniquely named fields — 49 widgets/page 1, 32 widgets/page 2 — matching this cycle's own prior scouting pass exactly), cross-correlated against `getTextContent()` item coordinates to recover every printed label, since the AcroForm carries no per-field tooltips (`alternativeText` is empty on every widget). This document models 53 of those fields (covering 68 of the 81 widgets); 9 named fields (13 widgets, 2 disclosed groups) are excluded — see the top-level description and VERIFICATION.md. Documents[] is sourced from both of IMM's own trámite landing pages' \"Documentación a presentar\" sections (fetched live, HTTP 200 each), which mostly overlap but diverge on one point (an unconditional SOA insurance-policy requirement on the imports path vs. a deferred, post-filing SOA arrangement on the domestic path) — modeled as a `requiredWhen` gate tied to this schema's own `tipoOrigen` field. See VERIFICATION.md for the full sourcing record, the field-by-field coordinate correlation, every disclosed judgment call, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "fechaSolicitud",
+      "label": "Fecha",
+      "type": "date",
+      "required": true,
+      "description": "Date this registration request is filed. Consolidated from the source's separate Día/Mes/Año boxes into a single date field, per this registry's date-consolidation convention.",
+      "sourceRef": "Page 1 header, \"FECHA\" (Día/Mes/Año)"
+    },
+    {
+      "name": "tipoOrigen",
+      "label": "Importado / Nacional",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the vehicle being registered is imported or of domestic (Uruguayan) manufacture. The source's own printed form, filename, and both of IMM's trámite landing pages (\"Empadronamiento de Vehículos Nacionales\" and \"Empadronamiento de Vehículos Importados\") confirm this single form/AcroForm serves both paths via this one checkbox pair.",
+      "sourceRef": "Page 1 header checkbox pair, \"IMPORTADO\" / \"NACIONAL\" (AcroForm field `ImpoSINO`)",
+      "validation": { "enum": ["importado", "nacional"] }
+    },
+    {
+      "name": "tipoCondicion",
+      "label": "Cero KM. / Usado",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the vehicle is brand new (cero kilómetros) or used at the time of registration.",
+      "sourceRef": "Page 1 header checkbox pair, \"CERO KM.\" / \"USADO\" (AcroForm field `CEROSINO`)",
+      "validation": { "enum": ["cero_km", "usado"] }
+    },
+    {
+      "name": "gestionanteTipoDocumento",
+      "label": "Tipo del documento (Gestionante)",
+      "type": "enum",
+      "required": true,
+      "description": "Identity-document type of the person physically filing this request (gestionante). Unlike the vendedor/titular document-type fields below, this checkbox group has no RUT option — the gestionante is always modeled as a natural person on this form.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL GESTIONANTE DEL TRÁMITE\", \"Tipo del documento\" (Cédula de identidad / Pasaporte / Carné diplomático; AcroForm field `TipoDocGes`)",
+      "validation": { "enum": ["CI", "PASAPORTE", "CARNE_DIPLOMATICO"] }
+    },
+    {
+      "name": "gestionanteNombre",
+      "label": "Nombre y apellido (Gestionante)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the person physically filing this request.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL GESTIONANTE DEL TRÁMITE\", \"Nombre y apellido\" (AcroForm field `NomGestor`)"
+    },
+    {
+      "name": "gestionanteTelefono",
+      "label": "Teléfono (Gestionante)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Contact phone number of the gestionante. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL GESTIONANTE DEL TRÁMITE\", \"Teléfono\" (AcroForm field `NumTelGestor`)"
+    },
+    {
+      "name": "gestionanteNumeroDocumento",
+      "label": "Número del documento (Gestionante)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Identity-document number of the gestionante, for the document type selected in gestionanteTipoDocumento. Modeled as a plain string rather than a single fixed pattern, since the field is shared across CI/Pasaporte/Carné diplomático formats.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL GESTIONANTE DEL TRÁMITE\", \"Número del documento\" (AcroForm field `NumDocGestor`)"
+    },
+    {
+      "name": "gestionantePaisDocumento",
+      "label": "País del documento (Gestionante)",
+      "type": "string",
+      "description": "Country that issued the gestionante's identity document. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL GESTIONANTE DEL TRÁMITE\", \"País del documento\" (AcroForm field `PaisDocGestor`)"
+    },
+    {
+      "name": "vendedorNombre",
+      "label": "Nombres y apellidos o Razón social (Vendedor)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name or company name (razón social) of the vehicle's seller/importer.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"Nombres y apellidos o Razón social\" (AcroForm field `NomVen`)"
+    },
+    {
+      "name": "vendedorTelefono",
+      "label": "Número de teléfono (Vendedor)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Contact phone number of the seller/importer. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"Número de teléfono\" (AcroForm field `NumTelVen`)"
+    },
+    {
+      "name": "vendedorTipoDocumento",
+      "label": "Tipo de documento (Vendedor)",
+      "type": "enum",
+      "required": true,
+      "description": "Identity-document type of the seller/importer. Unlike gestionanteTipoDocumento, this checkbox group adds a fourth option, RUT, since a seller is commonly a business entity (e.g. a dealership or importer).",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"Tipo de documento\" (Cédula de identidad / Pasaporte / Carné diplomático / RUT; AcroForm field `TipoDocVen`)",
+      "validation": { "enum": ["CI", "PASAPORTE", "CARNE_DIPLOMATICO", "RUT"] }
+    },
+    {
+      "name": "vendedorNumeroDocumento",
+      "label": "Número del documento (Vendedor)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Identity-document (or RUT) number of the seller/importer.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"Número del documento\" (AcroForm field `NumDocVen`)"
+    },
+    {
+      "name": "vendedorPaisDocumento",
+      "label": "País del documento (Vendedor)",
+      "type": "string",
+      "description": "Country that issued the seller/importer's identity document. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"País del documento\" (AcroForm field `PaisDocVen`)"
+    },
+    {
+      "name": "vendedorDomicilio",
+      "label": "Domicilio (Vendedor)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Address of the seller/importer, as a single free-text field (the source does not split it into street/number/locality sub-boxes).",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"Domicilio\" (AcroForm field `DomVen`)"
+    },
+    {
+      "name": "vendedorCodigoPostal",
+      "label": "Código postal (Vendedor)",
+      "type": "string",
+      "description": "Postal code of the seller/importer's address. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"Código postal\" (AcroForm field `CodPosVen`)"
+    },
+    {
+      "name": "vendedorDomicilioElectronico",
+      "label": "Domicilio electrónico (Vendedor)",
+      "type": "string",
+      "description": "Email address of the seller/importer. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"IDENTIFICACIÓN DEL VENDEDOR\", \"Domicilio electrónico\" (AcroForm field `MailVen`)",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "vehiculoMarca",
+      "label": "Marca",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle make/brand.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Marca\" (AcroForm field `Marca`)"
+    },
+    {
+      "name": "vehiculoModelo",
+      "label": "Modelo",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle model.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Modelo\" (AcroForm field `Modelo`)"
+    },
+    {
+      "name": "vehiculoAnio",
+      "label": "Año",
+      "type": "integer",
+      "required": true,
+      "description": "Vehicle model/manufacture year.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Año\" (AcroForm field `Anio_2`)",
+      "validation": { "minimum": 1900, "maximum": 2100 }
+    },
+    {
+      "name": "vehiculoCombustible",
+      "label": "Combustible",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle fuel type (e.g. nafta, diésel, eléctrico, híbrido). Modeled as free text rather than a closed enum, since the printed form provides only a blank, not a checkbox list.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Combustible\" (AcroForm field `Combustible`)"
+    },
+    {
+      "name": "vehiculoChasis",
+      "label": "Número de chasis",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle chassis number (VIN or national chassis identifier).",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Número de chasis\" (AcroForm field `Chasis`)"
+    },
+    {
+      "name": "vehiculoMotor",
+      "label": "Número de motor",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle engine number.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Número de motor\" (AcroForm field `Motor`)"
+    },
+    {
+      "name": "vehiculoTipo",
+      "label": "Tipo",
+      "type": "string",
+      "required": true,
+      "description": "Vehicle body/category type (e.g. automóvil, camioneta, moto, remolque).",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Tipo\" (AcroForm field `Tipo`)"
+    },
+    {
+      "name": "vehiculoCilindrada",
+      "label": "C.C.",
+      "type": "integer",
+      "description": "Engine displacement in cubic centimeters. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"C.C.\" (AcroForm field `CC`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoPotencia",
+      "label": "H.P.",
+      "type": "number",
+      "description": "Engine power in horsepower. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"H.P.\" (AcroForm field `HP`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoCilindros",
+      "label": "Cilindros",
+      "type": "integer",
+      "description": "Number of engine cylinders. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Cilindros\" (AcroForm field `Cilindros`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoPasajeros",
+      "label": "Pasajeros",
+      "type": "integer",
+      "description": "Passenger seating capacity. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Pasajeros\" (AcroForm field `Pasajeros`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoCarga",
+      "label": "Carga",
+      "type": "number",
+      "description": "Cargo capacity in kilograms. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Carga\" (AcroForm field `Carga`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoPbt",
+      "label": "P.B.T.",
+      "type": "number",
+      "description": "Peso Bruto Total (gross vehicle weight) in kilograms. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"P.B.T.\" (AcroForm field `PBT`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoEjes",
+      "label": "Ejes",
+      "type": "integer",
+      "description": "Number of axles. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Ejes\" (AcroForm field `Ejes`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoCubiertas",
+      "label": "Cubiertas",
+      "type": "integer",
+      "description": "Number of tires. Not marked as obligatory by the source.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Cubiertas\" (AcroForm field `Cubiertas`)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehiculoAtributos",
+      "label": "Atributo",
+      "type": "string",
+      "description": "Free-text field for additional declared vehicle attributes (e.g. color, special equipment). Not marked as obligatory by the source; the printed form gives no closed list for this box.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Atributo\" (AcroForm field `Atributos`)"
+    },
+    {
+      "name": "seguroEmpresa",
+      "label": "Empresa seguro",
+      "type": "string",
+      "requiredWhen": { "field": "tipoOrigen", "equals": "importado" },
+      "description": "Name of the insurance company providing the vehicle's mandatory third-party liability insurance (SOA). IMM's own \"Empadronamiento de Vehículos Importados\" trámite page requires a valid SOA policy at filing time for imported vehicles; the \"Empadronamiento de Vehículos Nacionales\" page instead describes SOA being arranged afterward, during a five-day provisional circulation permit — a disclosed distinction, see VERIFICATION.md.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Empresa seguro\" (AcroForm field `Empresa Seguro`)"
+    },
+    {
+      "name": "seguroVigencia",
+      "label": "Vigencia seguro",
+      "type": "date",
+      "requiredWhen": { "field": "tipoOrigen", "equals": "importado" },
+      "description": "Expiry/validity date of the insurance policy. Consolidated from the source's separate Día/Mes/Año boxes into a single date field. See seguroEmpresa for the requiredWhen disclosure.",
+      "sourceRef": "Page 1, \"DATOS DEL VEHÍCULO\", \"Vigencia seguro\" (Día/Mes/Año; AcroForm fields `DiaS`/`MesS`/`AnioS`)"
+    },
+    {
+      "name": "tipoAfectacion",
+      "label": "Tipo de afectación",
+      "type": "enum",
+      "required": true,
+      "description": "Declared use of the vehicle: private/personal use (particular) or some other declared affectation (e.g. commercial, rental, official).",
+      "sourceRef": "Page 2 header, \"TIPO DE AFECTACIÓN\" (PARTICULAR / OTRO; AcroForm field `TipoAfe`)",
+      "validation": { "enum": ["particular", "otro"] }
+    },
+    {
+      "name": "afectacionDetalle",
+      "label": "Afectación (detalle)",
+      "type": "string",
+      "requiredWhen": { "field": "tipoAfectacion", "equals": "otro" },
+      "description": "Free-text description of the declared affectation, only completed when tipoAfectacion is \"otro\".",
+      "sourceRef": "Page 2 header, blank beside \"OTRO\" (AcroForm field `Afectacion`)"
+    },
+    {
+      "name": "titular1Nombre",
+      "label": "Nombres y apellidos o Razón social (Titular #1)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name or company name of the vehicle's first (primary) owner, the person or entity the vehicle is being registered to.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"Nombres y apellidos o Razón social\" (AcroForm field `NomTit1`)"
+    },
+    {
+      "name": "titular1Telefono",
+      "label": "Número de teléfono (Titular #1)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Contact phone number of titular #1. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"Número de teléfono\" (AcroForm field `NumTelTit1`)"
+    },
+    {
+      "name": "titular1TipoDocumento",
+      "label": "Tipo de documento (Titular #1)",
+      "type": "enum",
+      "required": true,
+      "description": "Identity-document type of titular #1 (natural person or RUT-bearing entity).",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"Tipo de documento\" (Cédula de identidad / Pasaporte / Carné diplomático / RUT; AcroForm field `TipoDocTit1`)",
+      "validation": { "enum": ["CI", "PASAPORTE", "CARNE_DIPLOMATICO", "RUT"] }
+    },
+    {
+      "name": "titular1NumeroDocumento",
+      "label": "Número del documento (Titular #1)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Identity-document (or RUT) number of titular #1.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"Número del documento\" (AcroForm field `NumDocTit1`)"
+    },
+    {
+      "name": "titular1PaisDocumento",
+      "label": "País del documento (Titular #1)",
+      "type": "string",
+      "description": "Country that issued titular #1's identity document. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"País del documento\" (AcroForm field `PaisDocTit1`)"
+    },
+    {
+      "name": "titular1Domicilio",
+      "label": "Domicilio (Titular #1)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Address of titular #1, as a single free-text field.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"Domicilio\" (AcroForm field `DomTit1`)"
+    },
+    {
+      "name": "titular1CodigoPostal",
+      "label": "Código postal (Titular #1)",
+      "type": "string",
+      "description": "Postal code of titular #1's address. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"Código postal\" (AcroForm field `CodPosTit1`)"
+    },
+    {
+      "name": "titular1DomicilioElectronico",
+      "label": "Domicilio electrónico (Titular #1)",
+      "type": "string",
+      "description": "Email address of titular #1. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #1\", \"Domicilio electrónico\" (AcroForm field `MailTit1`)",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "titular2Presente",
+      "label": "Segundo Titular Presente",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether a second vehicle owner (co-titular) is being registered in the source's second, structurally identical \"IDENTIFICACIÓN DEL TITULAR #2\" block. The source form provides no explicit yes/no checkbox for this — it is simply an optional repeated block — so this schema adds a synthetic gating boolean, per this registry's established convention (cf. `uy/dgi/inscripcion-actualizacion-empresas-formulario-0351`'s own `segundoTitularPresente`).",
+      "sourceRef": "Page 2, presence of a completed \"IDENTIFICACIÓN DEL TITULAR #2\" block (synthetic gating field, not itself a source form box)"
+    },
+    {
+      "name": "titular2Nombre",
+      "label": "Nombres y apellidos o Razón social (Titular #2)",
+      "type": "string",
+      "requiredWhen": { "field": "titular2Presente", "equals": true },
+      "classification": "pii",
+      "description": "Full name or company name of the vehicle's second (co-)owner.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"Nombres y apellidos o Razón social\" (AcroForm field `NomTit2`)"
+    },
+    {
+      "name": "titular2Telefono",
+      "label": "Número de teléfono (Titular #2)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Contact phone number of titular #2. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"Número de teléfono\" (AcroForm field `NumTelTit2`)"
+    },
+    {
+      "name": "titular2TipoDocumento",
+      "label": "Tipo de documento (Titular #2)",
+      "type": "enum",
+      "requiredWhen": { "field": "titular2Presente", "equals": true },
+      "description": "Identity-document type of titular #2.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"Tipo de documento\" (Cédula de identidad / Pasaporte / Carné diplomático / RUT; AcroForm field `TipoDocTit2`)",
+      "validation": { "enum": ["CI", "PASAPORTE", "CARNE_DIPLOMATICO", "RUT"] }
+    },
+    {
+      "name": "titular2NumeroDocumento",
+      "label": "Número del documento (Titular #2)",
+      "type": "string",
+      "requiredWhen": { "field": "titular2Presente", "equals": true },
+      "classification": "pii",
+      "description": "Identity-document (or RUT) number of titular #2.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"Número del documento\" (AcroForm field `NumDocTit2`)"
+    },
+    {
+      "name": "titular2PaisDocumento",
+      "label": "País del documento (Titular #2)",
+      "type": "string",
+      "description": "Country that issued titular #2's identity document. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"País del documento\" (AcroForm field `PaisDocTit2`)"
+    },
+    {
+      "name": "titular2Domicilio",
+      "label": "Domicilio (Titular #2)",
+      "type": "string",
+      "requiredWhen": { "field": "titular2Presente", "equals": true },
+      "classification": "pii",
+      "description": "Address of titular #2, as a single free-text field. This schema field is sourced from the AcroForm widget internally named `MailTit2_2` — a mislabeled/copy-paste artifact of the unrelated email-field family, confirmed by coordinate correlation against the printed \"Domicilio\" label (the genuine email field for titular #2 is the separate, correctly-named `MailTit2` widget) — see VERIFICATION.md.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"Domicilio\" (AcroForm field `MailTit2_2`)"
+    },
+    {
+      "name": "titular2CodigoPostal",
+      "label": "Código postal (Titular #2)",
+      "type": "string",
+      "description": "Postal code of titular #2's address. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"Código postal\" (AcroForm field `CodPosTit2`)"
+    },
+    {
+      "name": "titular2DomicilioElectronico",
+      "label": "Domicilio electrónico (Titular #2)",
+      "type": "string",
+      "description": "Email address of titular #2. Not marked as obligatory by the source.",
+      "sourceRef": "Page 2, \"IDENTIFICACIÓN DEL TITULAR #2\", \"Domicilio electrónico\" (AcroForm field `MailTit2`)",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    }
+  ],
+  "documents": [
+    {
+      "id": "gestionanteIdentityDocumentFile",
+      "label": "Cédula de identidad, pasaporte o carné diplomático vigente de quien realiza el trámite",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": ["application/pdf", "image/jpeg", "image/png"]
+      },
+      "sourceRef": "IMM trámite pages \"Empadronamiento de vehículos nacionales\"/\"...importados\", \"Documentación a presentar\": \"Formulario completo y firmado por quien realiza el trámite, con cédula de identidad, pasaporte o carné diplomático vigente.\""
+    },
+    {
+      "id": "vehicleOriginProofDocumentFile",
+      "label": "Comprobante de origen del vehículo (factura de compra, formulario de empadronamiento firmado por el vendedor/importador, o carta de empadronamiento)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": ["factura_compra", "formulario_empadronamiento_firmado_vendedor", "carta_empadronamiento_venta"],
+      "constraints": {
+        "mediaTypes": ["application/pdf", "image/jpeg", "image/png"]
+      },
+      "sourceRef": "IMM trámite pages, \"Documentación a presentar\": one of \"Factura de compra (boleta/factura/e-ticket)\", \"Formulario de empadronamiento firmado y sellado por el vendedor y/o importador\", or \"Carta de empadronamiento (carta de venta) en papel membretado y firmado por el vendedor\". A fourth, narrower alternative for self-built (\"fabricación con mano de obra propia\") vehicles — a notarized sworn declaration/anexo — is out of scope for this version; see VERIFICATION.md."
+    },
+    {
+      "id": "seguroObligatorioDocumentFile",
+      "label": "Seguro obligatorio (SOA) vigente con los datos del vehículo",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "tipoOrigen", "equals": "importado" },
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": ["application/pdf", "image/jpeg", "image/png"]
+      },
+      "sourceRef": "IMM trámite page \"Empadronamiento de vehículos importados\", \"Documentación a presentar\": \"Seguro obligatorio (SOA) vigente con los datos del vehículo según artículo 27 Ley 18.412.\" The domestic-vehicle trámite page instead describes SOA being arranged after filing, via a five-day provisional circulation permit — a disclosed divergence, see VERIFICATION.md."
+    },
+    {
+      "id": "vendorIdentityDocumentFile",
+      "label": "Fotocopia de cédula de identidad vigente del vendedor particular y boleta/factura/e-ticket a su nombre",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "other",
+      "constraints": {
+        "mediaTypes": ["application/pdf", "image/jpeg", "image/png"]
+      },
+      "sourceRef": "IMM trámite pages, \"Casos especiales\": \"En caso de que el vendedor del vehículo sea una persona particular debe adjuntar fotocopia de cédula de identidad vigente y boleta/factura/e-ticket (original y fotocopia) a su nombre.\" Not marked as unconditionally required, since it applies only when the seller is an individual rather than a business; this schema does not model a dedicated gating field for that condition, so requiredness is left to the filer's own judgment for this v1.0.0 — a disclosed scoping decision (see VERIFICATION.md)."
+    },
+    {
+      "id": "titularRepresentativeIdentityDocumentFile",
+      "label": "Fotocopia de documento vigente del titular (cuando quien concurre no es el interesado)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "constraints": {
+        "mediaTypes": ["application/pdf", "image/jpeg", "image/png"]
+      },
+      "sourceRef": "IMM trámite pages, \"Otras opciones de actuación\": \"Si quien concurre a gestionar el trámite no es el interesado, debe presentar fotocopia de alguno de los siguientes documentos vigentes del titular o titulares: Cédula de identidad / Pasaporte / Carné diplomático.\" Covers only the general representative case; the minor/tutor-curador/poder/company-titular sub-cases each carry their own further document requirements (birth certificate, tutela/curatela, notarized power of attorney, notarial certificate or RUT card) that are out of scope for this version — a disclosed omission, see VERIFICATION.md."
+    }
+  ]
+}
