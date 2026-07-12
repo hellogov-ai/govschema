@@ -1,0 +1,626 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "uy/dgi/inscripcion-actualizacion-empresas-formulario-0351",
+  "version": "1.0.0",
+  "title": "Uruguay DGI/BPS Business Entity Registration (Formulario 0351)",
+  "description": "Register a business entity — or communicate a restart of activities or an update to registered data — jointly with Uruguay's Dirección General Impositiva (DGI, the tax authority) and Banco de Previsión Social (BPS, the social-security bank) using DGI/BPS Formulario 0351, \"Declaración de Registro: Inscripción y Actualización — Empresas y Otras Entidades Unipersonales o Pluripersonales.\" A single filing updates both organisms' registries at once. Opens Uruguay as GovSchema's 39th jurisdiction, via the Business Formation vertical (1 of 6). Formulario 0351 is a 501-widget, 2-page AcroForm covering both the unipersonal (sole-proprietor) and pluripersonal (multi-partner company) registration paths at once, plus BPS-specific contribution-regime data, a 267-widget tax-obligation election matrix, and business-succession/transfer data. This schema v1.0.0 is scoped deliberately to the most common path: a first-time individual (persona física / unipersonal) registering their own sole proprietorship (Rubro 1 Identificación, Rubro 2 Datos de la Entidad, Rubro 3 Domicilio Fiscal, Rubro 4 Domicilio Constituido, Rubro 5 Actividad Económica, Rubro 8 Régimen de Aportación al BPS, and Rubro 9 Datos del Titular, which the form's own instructivo restricts to unipersonal filings with up to two linked physical persons — modeled here as the owner plus an optional second person, e.g. a third-party representative). Out of scope for v1.0.0, and disclosed rather than silently dropped: the pluripersonal/multi-partner registration path itself (Rubro 2's 23 non-\"persona física\" entity types are still enumerated as valid values, since they share the same field, but this schema does not model the additional partner/officer roster that a pluripersonal filing requires — that roster is in fact captured by a separate companion form, Formulario 0352, \"Inscripción, Actualización o Baja de Personas Físicas Vinculadas,\" not by Formulario 0351 itself); Rubro 6's full obligation-election matrix (~20 named DGI/BPS tax obligations × Alta/Baja × 5 \"características\" sub-roles × per-obligation registration numbers, 171 widgets) beyond four boolean flags for the obligations most common to a sole proprietor (IVA, IRPF, IRAE, Monotributo); Rubro 7's special-regime condition flags (Zona Franca, Imprenta Autorizada, INAC-CVA, etc.) and its business-succession/transfer (\"Antecedentes\") section, both only applicable to specific, less-common regimes or successor registrations; and the DGI-internal/office-use boxes. Formulario 0351 also supports a \"Modificación\" act type where only the fields being changed are completed; this schema models the full first-time-registration field set and does not separately encode that partial-update semantics.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UY",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Dirección General Impositiva",
+    "abbreviation": "DGI",
+    "url": "https://www.gub.uy/direccion-general-impositiva"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://www.gub.uy/direccion-general-impositiva/sites/direccion-general-impositiva/files/2023-09/Formulario%2B0351%2BV05.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "Formulario 0351, \"Declaración de Registro: Inscripción y Actualización — Empresas y Otras Entidades Unipersonales o Pluripersonales\" (Versión 05)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2449. Opens Uruguay (39th jurisdiction) via Business Formation (1 of 6). Fetched directly from gub.uy (HTTP 200, no login/CAPTCHA/WAF), sha256:339eb84796fa651c4c1354e4677c216d57048c575eb6d12b96864466861fbf69, 499,137 bytes. pdfjs-dist getAnnotations() confirms a genuine 501-widget AcroForm across 2 pages (267 Btn, 224 Tx, 10 Ch), matching the prior scouting pass exactly. Rendered both pages to PNG via pdfjs-dist + node-canvas to visually confirm the Rubro layout and disambiguate several field-name-prefix/Rubro-number mismatches (the AcroForm's internal field names run R1..R11, but the printed form has only 9 Rubros — R10/R11-prefixed fields belong to the two repeatable person-slots inside Rubro 9, not to non-existent Rubros 10/11). Also fetched DGI/BPS's own instructivo (bps.gub.uy/1150/instructivo-form-351-inscripcion-y-actualizacion.html) for casilla-level requiredness rules, cited per-field below and in VERIFICATION.md. See VERIFICATION.md for the full extraction method, widget inventory, every scoping/disclosure judgment call, the legal-currency check, and the conformance run writeup."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "tipoActo",
+      "label": "Acto que se realiza",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this filing is a first-time start of activities, a restart of previously ceased activities, or a modification of already-registered data. The source form has separate BPS and DGI checkbox columns for this same election; both organisms must be marked consistently, so this schema models it as one shared field (a disclosed simplification — see VERIFICATION.md for the exportValue-collision note on the underlying widgets).",
+      "sourceRef": "Rubro 1 - Identificación, \"Acto que se realiza\" (Inicio de actividades / Reinicio de actividades / Modificación)",
+      "validation": { "enum": ["inicio_actividades", "reinicio_actividades", "modificacion"] }
+    },
+    {
+      "name": "vigenciaActoFecha",
+      "label": "Vigencia del Acto",
+      "type": "date",
+      "required": true,
+      "description": "Effective date of the act being registered. Consolidated from the source's separate Día/Mes/Año boxes into a single date field, per this registry's date-consolidation convention.",
+      "sourceRef": "Rubro 1 - Identificación, \"Vigencia del acto\" (Día/Mes/Año)"
+    },
+    {
+      "name": "rut",
+      "label": "Nº de RUT",
+      "type": "string",
+      "requiredWhen": { "field": "tipoActo", "in": ["reinicio_actividades", "modificacion"] },
+      "classification": "pii",
+      "description": "The entity's 12-digit Registro Único Tributario number. Per DGI/BPS's own instructivo, only required for a restart-of-activities or modification filing; a first-time start-of-activities filing has no RUT yet, since obtaining one is the point of the filing.",
+      "sourceRef": "Rubro 1 - Identificación, \"Nº DE RUT\"; instructivo: \"Se deberá completar el campo correspondiente a Nº. de RUT cuando se trate de una modificación o reinicio de actividades\"",
+      "validation": { "pattern": "^[0-9]{12}$" }
+    },
+    {
+      "name": "numeroRegistroContribuyenteBps",
+      "label": "Nº de Registro de Contribuyente (BPS)",
+      "type": "string",
+      "description": "BPS's own contributor registration number, when one already exists. Not marked as obligatory by the source for a first-time filing.",
+      "sourceRef": "Rubro 1 - Identificación, \"Nº de REGISTRO DE CONTRIBUYENTE\" (BPS column)"
+    },
+    {
+      "name": "numeroRegistroEmpresaDgi",
+      "label": "Nº de Registro de Empresa (DGI)",
+      "type": "string",
+      "description": "DGI's own business registration number, when one already exists. Not marked as obligatory by the source for a first-time filing.",
+      "sourceRef": "Rubro 1 - Identificación, \"Nº de REGISTRO EMPRESA\" (DGI column)"
+    },
+    {
+      "name": "tipoEntidad",
+      "label": "Tipo de Entidad",
+      "type": "enum",
+      "required": true,
+      "description": "Legal form of the registering entity, per the source's 24-option checkbox group. This schema's core field set beyond this point (Rubro 9's owner/representative data) is scoped to the \"persona física\" (individual/sole-proprietor) path; the other 23 entity types are enumerated here since they share this one field, but their additional pluripersonal registration requirements (multi-partner rosters, corporate governance data) are out of scope — see the top-level description.",
+      "sourceRef": "Rubro 2 - Datos de la Entidad, \"Tipo de entidad\"",
+      "validation": {
+        "enum": [
+          "persona_fisica",
+          "nucleo_familiar",
+          "condominio",
+          "sucesion_indivisa",
+          "sociedad_de_hecho",
+          "sociedad_colectiva",
+          "sociedad_de_responsabilidad_limitada",
+          "sociedad_en_comandita_simple",
+          "sociedad_en_comandita_por_acciones",
+          "sociedad_anonima_acciones_nominativas",
+          "sociedad_anonima_acciones_al_portador",
+          "cooperativas",
+          "persona_de_derecho_publico",
+          "asociaciones_fundaciones",
+          "entidad_pluripersonal_no_residente",
+          "sas_acciones_nominativas",
+          "sas_acciones_escriturales",
+          "fideicomiso",
+          "grupo_de_interes_economico",
+          "asociaciones_sociedades_agrarias",
+          "otros",
+          "comision_administradora",
+          "representaciones_diplomaticas_extranjeras",
+          "organismos_internacionales"
+        ]
+      }
+    },
+    {
+      "name": "nombreDenominacion",
+      "label": "Nombre o Denominación",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The entity's registered name — for a persona física, the individual's own name.",
+      "sourceRef": "Rubro 2 - Datos de la Entidad, \"Nombre o denominación\""
+    },
+    {
+      "name": "nombreFantasia",
+      "label": "Nombre de Fantasía",
+      "type": "string",
+      "description": "Trade name, only completed if the individual or entity uses one.",
+      "sourceRef": "Rubro 2 - Datos de la Entidad, \"Nombre de fantasía\"; instructivo: \"Se completa si la persona física o la entidad pluripersonal posee dicho nombre\""
+    },
+    {
+      "name": "esResidente",
+      "label": "Residente",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the individual/entity is a tax resident of Uruguay. Per the instructivo this must be stated in every case.",
+      "sourceRef": "Rubro 2 - Datos de la Entidad, \"Residente\" (Si/No); instructivo: \"En todos los casos se deberá consignar ... si son residentes o no\""
+    },
+    {
+      "name": "tieneEstablecimientoPermanente",
+      "label": "No Residente con Establecimiento Permanente",
+      "type": "boolean",
+      "requiredWhen": { "field": "esResidente", "equals": false },
+      "description": "Whether a non-resident has a permanent establishment in Uruguay. Per the instructivo, only completed for non-residents.",
+      "sourceRef": "Rubro 2 - Datos de la Entidad, \"No residente con Establecimiento permanente\" (Si/No)"
+    },
+    {
+      "name": "paisResidencia",
+      "label": "País de Residencia",
+      "type": "string",
+      "requiredWhen": { "field": "esResidente", "equals": false },
+      "description": "Country of residence. Per the instructivo, only completed for non-residents.",
+      "sourceRef": "Rubro 2 - Datos de la Entidad, \"País de residencia\""
+    },
+    {
+      "name": "domicilioFiscalCalidadOcupante",
+      "label": "Calidad en que Ocupa el Domicilio Fiscal",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's legal relationship to the registered tax-address property.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Calidad en que ocupa el domicilio fiscal\"",
+      "validation": { "enum": ["propietario", "arrendatario", "subarrendatario", "comodatario", "usufructuario", "otros"] }
+    },
+    {
+      "name": "domicilioFiscalDepartamento",
+      "label": "Departamento (Domicilio Fiscal)",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Uruguayan department of the registered tax address (domicilio fiscal del local principal).",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Departamento\"",
+      "validation": {
+        "enum": [
+          "Artigas", "Canelones", "Cerro Largo", "Colonia", "Durazno", "Flores", "Florida",
+          "Lavalleja", "Maldonado", "Montevideo", "Paysandú", "Río Negro", "Rivera", "Rocha",
+          "Salto", "San José", "Soriano", "Tacuarembó", "Treinta y Tres"
+        ]
+      }
+    },
+    {
+      "name": "domicilioFiscalLocalidad",
+      "label": "Localidad (Domicilio Fiscal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Locality of the registered tax address.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Localidad\""
+    },
+    {
+      "name": "domicilioFiscalCalle",
+      "label": "Calle (Domicilio Fiscal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street of the registered tax address.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Calle\""
+    },
+    {
+      "name": "domicilioFiscalNumero",
+      "label": "Número (Domicilio Fiscal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street number of the registered tax address.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Número\""
+    },
+    {
+      "name": "domicilioFiscalApartamento",
+      "label": "Apartamento (Domicilio Fiscal)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Apartment/unit number of the registered tax address, if applicable. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Apart.\""
+    },
+    {
+      "name": "domicilioFiscalCodigoPostal",
+      "label": "Código Postal (Domicilio Fiscal)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Postal code of the registered tax address. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Código postal\""
+    },
+    {
+      "name": "domicilioFiscalTelefonoFijo",
+      "label": "Teléfono Fijo (Domicilio Fiscal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Landline phone number for the tax address. The instructivo requires at least one of Teléfono fijo/Teléfono móvil to be completed; the GovSchema condition grammar has no clean \"at least one of N\" primitive (see VERIFICATION.md), so this schema models Teléfono fijo as the required representative of that pair and Teléfono móvil as optional — a disclosed simplification.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, Contactos, \"Teléfono fijo\"; instructivo: \"Teléfono fijo/móvil: debe completar por lo menos uno de ellos\""
+    },
+    {
+      "name": "domicilioFiscalTelefonoMovil",
+      "label": "Teléfono Móvil (Domicilio Fiscal)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Mobile phone number for the tax address. See domicilioFiscalTelefonoFijo for the at-least-one-of-two disclosure.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, Contactos, \"Teléfono móvil\""
+    },
+    {
+      "name": "domicilioFiscalCorreoElectronico",
+      "label": "Correo Electrónico (Domicilio Fiscal)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Contact email address for the tax address. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, Contactos, \"Correo electrónico\"",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "domicilioFiscalOtrosDetalles",
+      "label": "Otros Detalles de Ubicación (Domicilio Fiscal)",
+      "type": "string",
+      "description": "Free-text location hint (e.g. \"between such-and-such streets\"). Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 3 - Domicilio Fiscal del Local Principal, \"Otros detalles de ubicación: (Ej. Entre calle y calle)\""
+    },
+    {
+      "name": "domicilioConstituidoIgualAlFiscal",
+      "label": "Domicilio Constituido Igual al Fiscal",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the constituted domicile (the legal address for official notifications) is the same as the tax address above. Per the instructivo, when true the rest of Rubro 4 is not completed at all; when false, the source requires a full separate address for the constituted domicile, which this schema does not model field-by-field beyond this flag — a disclosed exclusion (see VERIFICATION.md). This mirrors the same address structure as domicilioFiscal* above.",
+      "sourceRef": "Rubro 4 - Domicilio Constituido, \"Indicar si el Domicilio Constituido es igual al Fiscal\"; instructivo: \"En ese caso no se completa este Rubro\""
+    },
+    {
+      "name": "actividadPrincipalDescripcion",
+      "label": "Actividad Principal",
+      "type": "string",
+      "required": true,
+      "description": "Free-text description of the entity's main economic activity. Per the instructivo, at least one activity is required for a start/restart-of-activities filing.",
+      "sourceRef": "Rubro 5 - Actividad Económica, \"Actividad Principal\"; instructivo: \"En caso de inicio o Reinicio de actividades: se debe ingresar por lo menos una actividad\""
+    },
+    {
+      "name": "actividadPrincipalGrupo",
+      "label": "Grupo (Actividad Principal)",
+      "type": "string",
+      "description": "Economic-activity classification group code. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 5 - Actividad Económica, \"Grupo\""
+    },
+    {
+      "name": "actividadPrincipalSubgrupo",
+      "label": "Sub Grupo (Actividad Principal)",
+      "type": "string",
+      "description": "Economic-activity classification subgroup code. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 5 - Actividad Económica, \"Sub G\""
+    },
+    {
+      "name": "actividadPrincipalCap",
+      "label": "Cap (Actividad Principal)",
+      "type": "string",
+      "description": "Economic-activity classification \"Cap\" sub-code. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 5 - Actividad Económica, \"Cap\""
+    },
+    {
+      "name": "actividadPrincipalBanda",
+      "label": "Band (Actividad Principal)",
+      "type": "string",
+      "description": "Economic-activity classification \"Band\" sub-code. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 5 - Actividad Económica, \"Band\""
+    },
+    {
+      "name": "obligacionIva",
+      "label": "Obligación: IVA",
+      "type": "boolean",
+      "description": "Whether the entity is registering for any variant of Impuesto al Valor Agregado (IVA). A simplification of the source's IVA-Gral/IVA-Agrop/IVA-Serv.Pers/IVA-Construcc/IVA-Peq.Emp sub-variants — see VERIFICATION.md.",
+      "sourceRef": "Rubro 6 - Obligaciones, \"Obligación\" column (IVA rows), \"Alta\""
+    },
+    {
+      "name": "obligacionIrpf",
+      "label": "Obligación: IRPF",
+      "type": "boolean",
+      "description": "Whether the entity is registering for Impuesto a la Renta de las Personas Físicas (IRPF, either category I or II). A simplification of the source's separate IRPF I / IRPF II rows — see VERIFICATION.md.",
+      "sourceRef": "Rubro 6 - Obligaciones, \"Obligación\" column (IRPF I / IRPF II rows), \"Alta\""
+    },
+    {
+      "name": "obligacionIrae",
+      "label": "Obligación: IRAE",
+      "type": "boolean",
+      "description": "Whether the entity is registering for Impuesto a las Rentas de las Actividades Económicas (IRAE).",
+      "sourceRef": "Rubro 6 - Obligaciones, \"Obligación\" column (IRAE row), \"Alta\""
+    },
+    {
+      "name": "obligacionMonotributo",
+      "label": "Obligación: Monotributo",
+      "type": "boolean",
+      "description": "Whether the entity is registering under the Monotributo small-taxpayer regime — the obligation most commonly selected by a first-time individual sole-proprietor registrant.",
+      "sourceRef": "Rubro 6 - Obligaciones, \"Obligación\" column (MONOTRIBUTO row), \"Alta\""
+    },
+    {
+      "name": "combinaCapitalYTrabajo",
+      "label": "Combina Capital y Trabajo",
+      "type": "boolean",
+      "description": "Whether the activity combines capital and labor, per the source's own bottom-of-Rubro-6 flag. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 6 - Obligaciones, \"Combina Capital y Trabajo\" (SI/NO)"
+    },
+    {
+      "name": "fechaBalance",
+      "label": "Fecha de Balance (Día/Mes)",
+      "type": "string",
+      "required": true,
+      "description": "Fiscal year-end (day and month, no year — an annually-recurring date), formatted MM-DD. The instructivo marks this obligatory for a start/restart-of-activities filing. The source form provides three repeatable Día/Mes balance-date slots in total; this schema models the first (primary) slot, per this registry's bounded-repeating-group convention.",
+      "sourceRef": "Rubro 7 - Otros Datos, \"Balance\" (Día/Mes); instructivo: \"Fecha de balance: En los casos de inicio o reinicio de actividades es un campo obligatorio\"",
+      "validation": { "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$" }
+    },
+    {
+      "name": "regimenAportacionBps",
+      "label": "Régimen de Aportación al B.P.S.",
+      "type": "enum",
+      "required": true,
+      "description": "The BPS social-security contribution regime classification for the activity.",
+      "sourceRef": "Rubro 8 - Régimen de Aportación al B.P.S.; instructivo: \"Se debe seleccionar el régimen de aportación al Banco de Previsión Social\"",
+      "validation": { "enum": ["industria_comercio", "servicios_personales", "rural", "construccion", "civil"] }
+    },
+    {
+      "name": "titularTipoDocumento",
+      "label": "Tipo de Documento (Titular)",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Identity-document type of the individual owner (titular dueño). Rubro 9 is used, per the instructivo, only for unipersonal filings with up to two linked physical persons.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Tipo de documento\" (C.I. / DNI / Pasaporte)",
+      "validation": { "enum": ["CI", "DNI", "PASAPORTE"] }
+    },
+    {
+      "name": "titularNumeroDocumento",
+      "label": "Nº de Documento (Titular)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Identity-document number of the individual owner. Modeled as a loose digit pattern rather than enforcing Uruguay's Cédula de Identidad check-digit algorithm — a disclosed simplification.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Nº de documento\"",
+      "validation": { "pattern": "^[0-9]{6,9}$" }
+    },
+    {
+      "name": "titularPaisOrigenDocumento",
+      "label": "País de Origen del Documento (Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Country that issued the owner's identity document. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"País de origen del documento\""
+    },
+    {
+      "name": "titularPrimerApellido",
+      "label": "1º Apellido (Titular)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Owner's first surname.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"1º Apellido\""
+    },
+    {
+      "name": "titularSegundoApellido",
+      "label": "2º Apellido (Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Owner's second surname, if any. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"2º Apellido\""
+    },
+    {
+      "name": "titularPrimerNombre",
+      "label": "1º Nombre (Titular)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Owner's first given name.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"1º Nombre\""
+    },
+    {
+      "name": "titularSegundoNombre",
+      "label": "2º Nombre (Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Owner's second given name, if any. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"2º Nombre\""
+    },
+    {
+      "name": "titularFechaNacimiento",
+      "label": "Fecha de Nacimiento (Titular)",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Owner's date of birth.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Fecha de Nacimiento\""
+    },
+    {
+      "name": "titularEstadoCivil",
+      "label": "Estado Civil (Titular)",
+      "type": "enum",
+      "classification": "pii",
+      "description": "Owner's marital status. Not marked as obligatory by the source; the printed form has a free box rather than a checkbox group, so this enum is this schema's own vocabulary rather than the source's own closed list — a disclosed judgment call.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Estado Civil\"",
+      "validation": { "enum": ["soltero", "casado", "divorciado", "viudo", "concubinato"] }
+    },
+    {
+      "name": "titularSexo",
+      "label": "Sexo (Titular)",
+      "type": "enum",
+      "classification": "pii",
+      "description": "Owner's sex. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Sexo\"",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "titularTipoResidencia",
+      "label": "Tipo de Residencia (Titular)",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the owner is a tax resident of Uruguay.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Tipo de residencia\" (NO Residente / Residente)",
+      "validation": { "enum": ["residente", "no_residente"] }
+    },
+    {
+      "name": "titularPaisResidencia",
+      "label": "País de Residencia (Titular)",
+      "type": "string",
+      "requiredWhen": { "field": "titularTipoResidencia", "equals": "no_residente" },
+      "description": "Owner's country of residence, only completed when the owner is not a Uruguayan tax resident.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"País de residencia\""
+    },
+    {
+      "name": "titularDomicilioDepartamento",
+      "label": "Departamento (Domicilio Particular del Titular)",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Uruguayan department of the owner's personal residential address.",
+      "sourceRef": "Rubro 9 - Datos del Titular, Domicilio Particular, \"Departamento\"",
+      "validation": {
+        "enum": [
+          "Artigas", "Canelones", "Cerro Largo", "Colonia", "Durazno", "Flores", "Florida",
+          "Lavalleja", "Maldonado", "Montevideo", "Paysandú", "Río Negro", "Rivera", "Rocha",
+          "Salto", "San José", "Soriano", "Tacuarembó", "Treinta y Tres"
+        ]
+      }
+    },
+    {
+      "name": "titularDomicilioLocalidad",
+      "label": "Localidad (Domicilio Particular del Titular)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Locality of the owner's personal residential address.",
+      "sourceRef": "Rubro 9 - Datos del Titular, Domicilio Particular, \"Localidad\""
+    },
+    {
+      "name": "titularDomicilioCalle",
+      "label": "Calle (Domicilio Particular del Titular)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street of the owner's personal residential address.",
+      "sourceRef": "Rubro 9 - Datos del Titular, Domicilio Particular, \"Calle\""
+    },
+    {
+      "name": "titularDomicilioNumero",
+      "label": "Número (Domicilio Particular del Titular)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street number of the owner's personal residential address.",
+      "sourceRef": "Rubro 9 - Datos del Titular, Domicilio Particular, \"Número\""
+    },
+    {
+      "name": "titularDomicilioApartamento",
+      "label": "Apartamento (Domicilio Particular del Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Apartment/unit number of the owner's personal residential address, if applicable. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, Domicilio Particular, \"Apart.\""
+    },
+    {
+      "name": "titularDomicilioCodigoPostal",
+      "label": "Código Postal (Domicilio Particular del Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Postal code of the owner's personal residential address. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, Domicilio Particular, \"Código postal\""
+    },
+    {
+      "name": "titularTelefonoFijo",
+      "label": "Teléfono Fijo (Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Owner's landline phone number. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Teléfono fijo\""
+    },
+    {
+      "name": "titularTelefonoMovil",
+      "label": "Teléfono Móvil (Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Owner's mobile phone number. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Teléfono móvil\""
+    },
+    {
+      "name": "titularCorreoElectronico",
+      "label": "Correo Electrónico (Titular)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Owner's contact email address. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Correo electrónico\"",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "segundoTitularPresente",
+      "label": "Segunda Persona Física Vinculada Presente",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether a second physical person is being registered in Rubro 9's second \"Persona Física\" block — e.g. a third-party representative/authorized filer (Representante or Repte. Legal SAS), a co-owner, or a collaborating spouse (Cónyuge Colaborador). The source's own Rubro 9 repeats its full person-data block twice (\"hasta con dos personas físicas\" per the instructivo); this schema gates the second person's fields on this single boolean rather than modeling the source's full 12-role checkbox matrix per person-slot — a disclosed simplification (see VERIFICATION.md).",
+      "sourceRef": "Rubro 9 - Datos del Titular, second \"Persona Física (indicar)\" block; instructivo: \"Este rubro se utiliza solamente en las inscripciones de entidades hasta con dos personas físicas\""
+    },
+    {
+      "name": "segundoTitularVinculo",
+      "label": "Tipo de Vínculo (Segunda Persona)",
+      "type": "enum",
+      "requiredWhen": { "field": "segundoTitularPresente", "equals": true },
+      "description": "The second person's relationship to the entity. Collapses the source's 12-option \"Tipo de Vínculos\" checkbox row (Dueño/Director/Socio/Cónyuge Colab./Administrador/Síndico/Socio sin Administración/Socio Administrador conjunto/Socio Administrador indistinto/Representante/Repte. Legal SAS/Otro) into a single enum — see VERIFICATION.md.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Tipo de Vínculos\" (second person-slot)",
+      "validation": {
+        "enum": ["dueno", "conyuge_colaborador", "representante", "representante_legal_sas", "otro"]
+      }
+    },
+    {
+      "name": "segundoTitularTipoDocumento",
+      "label": "Tipo de Documento (Segunda Persona)",
+      "type": "enum",
+      "requiredWhen": { "field": "segundoTitularPresente", "equals": true },
+      "classification": "pii",
+      "description": "Identity-document type of the second linked physical person.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Tipo de documento\" (second person-slot)",
+      "validation": { "enum": ["CI", "DNI", "PASAPORTE"] }
+    },
+    {
+      "name": "segundoTitularNumeroDocumento",
+      "label": "Nº de Documento (Segunda Persona)",
+      "type": "string",
+      "requiredWhen": { "field": "segundoTitularPresente", "equals": true },
+      "classification": "pii",
+      "description": "Identity-document number of the second linked physical person.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Nº de documento\" (second person-slot)",
+      "validation": { "pattern": "^[0-9]{6,9}$" }
+    },
+    {
+      "name": "segundoTitularPaisOrigenDocumento",
+      "label": "País de Origen del Documento (Segunda Persona)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Country that issued the second person's identity document. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"País de origen del documento\" (second person-slot)"
+    },
+    {
+      "name": "segundoTitularPrimerApellido",
+      "label": "1º Apellido (Segunda Persona)",
+      "type": "string",
+      "requiredWhen": { "field": "segundoTitularPresente", "equals": true },
+      "classification": "pii",
+      "description": "Second linked physical person's first surname.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"1º Apellido\" (second person-slot)"
+    },
+    {
+      "name": "segundoTitularPrimerNombre",
+      "label": "1º Nombre (Segunda Persona)",
+      "type": "string",
+      "requiredWhen": { "field": "segundoTitularPresente", "equals": true },
+      "classification": "pii",
+      "description": "Second linked physical person's first given name.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"1º Nombre\" (second person-slot)"
+    },
+    {
+      "name": "observaciones",
+      "label": "Observaciones",
+      "type": "string",
+      "description": "Free-text remarks field at the end of Rubro 9. Not marked as obligatory by the source.",
+      "sourceRef": "Rubro 9 - Datos del Titular, \"Observaciones\""
+    }
+  ]
+}

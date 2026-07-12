@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**38 jurisdictions** | **370 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**39 jurisdictions** | **371 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2449, "GovSchema Standard Research"): Uruguay
+> opens as this registry's 39th jurisdiction**, via
+> `uy/dgi/inscripcion-actualizacion-empresas-formulario-0351` v1.0.0, opening
+> the Business Formation vertical (1 of 6). Sourced from DGI/BPS's
+> Formulario 0351, "Declaración de Registro: Inscripción y Actualización —
+> Empresas y Otras Entidades Unipersonales o Pluripersonales" (Versión 05,
+> 2023-09) — a joint declaration that updates both the tax authority
+> (Dirección General Impositiva, DGI) and the social-security bank (Banco
+> de Previsión Social, BPS) registries in one filing. Fetched directly from
+> `gub.uy` (HTTP 200, no login/CAPTCHA/WAF,
+> `sha256:339eb84796fa651c4c1354e4677c216d57048c575eb6d12b96864466861fbf69`);
+> `pdfjs-dist` confirms a genuine 501-widget AcroForm across 2 pages (267
+> `Btn`, 224 `Tx`, 10 `Ch`), matching this cycle's own re-derivation exactly.
+> A web search for a superseding V06 or newer DGI/BPS resolution found none;
+> V05 remains current. Formulario 0351 covers both the unipersonal
+> (sole-proprietor) and pluripersonal (multi-partner company) paths at
+> once, plus a 267-widget tax-obligation election matrix and business-
+> succession/transfer data; this schema scopes deliberately to the most
+> common path — a first-time individual registering their own sole
+> proprietorship — modelling 64 `fields[]` across identification, entity
+> data, fiscal and constituted domicile, principal economic activity, a
+> simplified four-flag tax-obligation election (IVA/IRPF/IRAE/Monotributo),
+> the BPS contribution regime, and the owner's own identity/address, plus
+> an optional second linked person (e.g. an authorized third-party
+> representative) gated by `requiredWhen`. Disclosed out of scope: the full
+> pluripersonal multi-partner roster (which DGI/BPS's own companion form,
+> Formulario 0352, in fact captures separately), Rubro 6's full ~20-
+> obligation × Alta/Baja × 5-características matrix beyond the four
+> named flags, Rubro 7's special-regime condition flags and business-
+> succession/transfer section, and the DGI-internal/office-use boxes. No
+> `documents[]` are modelled — DGI/BPS's own instructivo states required
+> documentation is determined case-by-case, not a fixed checklist. Two mock
+> conformance scenarios (a first-time individual retail registration; a
+> first-time individual services registration with an authorized
+> third-party representative) found 0 errors each, plus 3 mutation controls
+> each correctly raised exactly 1 error (a missing required field, a
+> pattern violation, and a missing `requiredWhen`-gated field). See the
+> document's own VERIFICATION.md for the full sourcing record, the visual
+> page-render method used to resolve several field-name-prefix-vs-Rubro-
+> number ambiguities, the legal-currency check, and every disclosed
+> scoping/judgment call. **Uruguay now stands at 1 of 6 verticals**
+> (Business Formation); DMV, Passport, Taxes, Visa, and National ID remain
+> open backlog for future cycles.
 
 > **Update (2026-07-12, GOV-2443, "GovSchema Standard Research"): Vietnam's
 > Business Formation vertical opens (3 of 6)**, via
@@ -5922,7 +5966,7 @@
 
 ## By Vertical
 
-### Passport (29/38 jurisdictions — 76%)
+### Passport (29/39 jurisdictions — 74%)
 
 **Vietnam opens as this registry's 37th jurisdiction (GOV-2404)**, via
 `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc` — the current
@@ -6139,7 +6183,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (34/38 jurisdictions — 89%)
+### DMV — Vehicle Registration, Licensing, Permits (34/39 jurisdictions — 87%)
 
 **Finland's DMV vertical is now closed (GOV-2356)**, via
 `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — Traficom's
@@ -6434,7 +6478,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (35/38 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (36/39 jurisdictions — 92%)
 
 **Vietnam's Business Formation vertical opens (GOV-2443)**, via
 `vn/dangkykinhdoanh/dang-ky-doanh-nghiep-tnhh-mot-thanh-vien` — Mẫu số 2,
@@ -6897,7 +6941,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (34/38 jurisdictions — 89%)
+### Taxes — Income Tax Return, Tax Filing (34/39 jurisdictions — 87%)
 
 **Vietnam's Taxes vertical opens** (`vn/gdt/to-khai-quyet-toan-thue-thu-nhap-ca-nhan`,
 GOV-2411) — Mẫu số 02/QTT-TNCN, "Tờ khai quyết toán thuế thu nhập cá nhân"
@@ -7433,7 +7477,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (29/38 jurisdictions — 76%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (29/39 jurisdictions — 74%)
 
 **Peru opens as this registry's 38th jurisdiction (GOV-2419)**, via
 `pe/cancilleria/solicitud-visa-dgc-005` — Formulario DGC-005, "Solicitud de
@@ -7723,7 +7767,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (28/38 jurisdictions — 74%)
+### National ID & Civic Documents (28/39 jurisdictions — 72%)
 
 **Sweden**'s National ID & Civic Documents gap is now closed (GOV-2372),
 via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
@@ -8026,6 +8070,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **UY** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **VN** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
