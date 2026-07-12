@@ -4,8 +4,53 @@
 
 ## Executive Summary
 
-**44 jurisdictions** | **389 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**44 jurisdictions** | **390 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-12, GOV-2601, "GovSchema Standard Research"): Thailand's
+> Business Formation vertical opens (2 of 6)**, via
+> `th/dbd/boj-1-application-to-register-a-limited-company`, the Department
+> of Business Development (DBD)'s "แบบ บอจ.1" (Form บอจ.1) — a candidate
+> scouted alongside a Visa candidate in GOV-2591's prior cycle and delegated
+> in parallel (GOV-2599) after Taxes opened Thailand as this registry's 44th
+> jurisdiction (GOV-2593). Independently re-fetched the source directly this
+> cycle: HTTP 200, `application/pdf`, 801,091 bytes, `sha256:
+> 433aace18e925d75236afe99e08796763744040e5f10f5781445e77d70796f72` —
+> matching the task's own cited hash and size exactly. A 2-page, 101-
+> AcroForm-widget specimen (45/56 per page, both re-confirmed via
+> `pdfjs-dist`, correlating checkbox/text labels on **both** sides of each
+> widget's rect after an early scratch pass showed left-only correlation
+> returns empty checkbox labels on this form). Full-text reading of both
+> pages found this form is not the comprehensive company-details form a
+> naive reading of "application to register a limited company" might
+> suggest: page 1 is a registrar-facing routing/cover form whose 20
+> checkboxes are a 17-value registration-action-type selector (new
+> incorporation, standalone Memorandum-of-Association registration,
+> partnership conversion, capital increase/decrease/merger special
+> resolution, five distinct Memorandum/Articles amendment sub-types, a
+> merger, a director change, and others) plus 3 independent post-
+> registration add-on requests (labor-bylaw copy, trademark registration,
+> import/export ID card) — not, as initially anticipated, a document-
+> attachment checklist. Page 2 is a bundled "หนังสือรับรอง" (Certificate of
+> Incorporation) template the Registrar completes and issues after
+> approval, not an applicant input. This v1.0.0 scopes to the new-
+> incorporation (`จัดตั้งบริษัทจำกัด`) action pathway: the full 17-value
+> `registrationActionType` enum (self-contained per the source's own single
+> checkbox group), the 3 post-registration add-on checkboxes, company-name/
+> existing-registration identification, a two-signatory signature block,
+> and the page-1 footer's statutory false-statement warning notice — 10
+> `fields[]` and 1 `documents[]` entry. The 16 non-formation action types'
+> own dependent free-text sub-fields (14 widgets), the Registrar/witness
+> certification block, and the entirety of page 2 (56 widgets) are
+> explicitly out of scope and disclosed in `VERIFICATION.md`. Two mock
+> conformance scenarios (0 errors each) plus 5 mutation-control fixtures
+> (each raising exactly 1 error) passed. **Thailand now stands at 2 of 6
+> verticals** (Taxes, Business Formation); DMV, Passport, and National ID
+> were screened in GOV-2591/GOV-2593's prior cycle and found weak/dead-end;
+> Visa (MFA Non-Immigrant Visa B/Employment, 58 AcroForm fields) was
+> delegated in parallel to GOV-2602. See GOV-2601 and this schema's own
+> `VERIFICATION.md` for the full sourcing record and every scoping/
+> disclosure judgment call.
+>
 > **Update (2026-07-12, GOV-2593, "GovSchema Standard Research"): Thailand
 > opens as this registry's 44th jurisdiction, via its Taxes vertical (1 of
 > 6)**, via `th/rd/pit-90-personal-income-tax-return`, the Revenue
@@ -7331,7 +7376,48 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (40/43 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (41/44 jurisdictions — 93%)
+
+**Thailand's Business Formation vertical opens (2 of 6) (GOV-2601)**, via
+`th/dbd/boj-1-application-to-register-a-limited-company` — the Department
+of Business Development (DBD)'s "แบบ บอจ.1" (Form บอจ.1), a candidate
+scouted alongside a Visa candidate in GOV-2591's prior cycle and delegated
+in parallel (GOV-2599) after Taxes opened Thailand as this registry's 44th
+jurisdiction (GOV-2593). A 2-page, 101-AcroForm-widget specimen,
+independently re-fetched and re-hashed this cycle (`sha256:
+433aace18e925d75236afe99e08796763744040e5f10f5781445e77d70796f72`, matching
+the task's own citation exactly; per-page widget counts 45/56 also
+independently reproduced via `pdfjs-dist`, this time correlating checkbox/
+text labels on both sides of each widget's rect after an early scratch pass
+showed left-only correlation returns empty checkbox labels on this
+particular form). Full-text reading of both pages found this form is not
+the comprehensive company-details form its title might suggest: page 1 is
+a registrar-facing routing/cover form whose 20 checkboxes are a 17-value
+registration-action-type selector (new incorporation, standalone
+Memorandum-of-Association registration, partnership conversion, capital
+increase/decrease/merger special resolution, five distinct Memorandum/
+Articles amendment sub-types, a merger, a director change, and others) plus
+3 independent post-registration add-on requests (labor-bylaw copy,
+trademark registration, import/export ID card) — not, as initially
+anticipated, a document-attachment checklist; page 2 is a bundled
+"หนังสือรับรอง" (Certificate of Incorporation) template the Registrar
+completes and issues after approval, not an applicant input. This v1.0.0
+scopes to the new-incorporation (`จัดตั้งบริษัทจำกัด`) action pathway — the
+full 17-value `registrationActionType` enum, the 3 post-registration add-on
+checkboxes, company-name/existing-registration identification, a
+two-signatory signature block, and the page-1 footer's statutory
+false-statement warning notice — 10 `fields[]` and 1 `documents[]` entry.
+The 16 non-formation action types' own dependent free-text sub-fields, the
+Registrar/witness certification block, and the entirety of page 2 are
+explicitly out of scope and disclosed in the schema's own VERIFICATION.md.
+Two mock conformance scenarios (0 errors each) plus 5 mutation controls
+(each raising exactly 1 error) passed. **Thailand now stands at 2 of 6
+verticals** (Taxes, Business Formation); DMV, Passport, and National ID
+were screened and found weak/dead-end in the prior cycle; Visa (MFA
+Non-Immigrant Visa B/Employment) was delegated in parallel to GOV-2602. See
+the Executive Summary's GOV-2601 update above for the full sourcing record
+and the document's own VERIFICATION.md for every scoping/disclosure
+judgment call.
 
 **Rwanda's Business Formation vertical opens (3 of 6) (GOV-2585)**, via
 `rw/rdb/rf-001-domestic-company-application-for-incorporation` — the Rwanda
@@ -9174,7 +9260,7 @@ now closed.
 | **RW** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TH** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **TH** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -10777,6 +10863,47 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     DBD Form บอจ.1 for Business Formation (101 AcroForm fields, `dbd.go.th`)
     and the MFA Non-Immigrant Visa B/Employment application for Visa (58
     AcroForm fields, served from an `mfa.go.th` CDN).
+25. **Thailand's Business Formation vertical opens too (GOV-2601)**, via
+    `th/dbd/boj-1-application-to-register-a-limited-company` — the
+    Department of Business Development (DBD)'s "แบบ บอจ.1" (Form บอจ.1), the
+    candidate scouted in item 24 above and delegated in parallel (GOV-2599)
+    alongside a Visa candidate. Independently re-fetched the source directly
+    this cycle (HTTP 200, `application/pdf`, 801,091 bytes,
+    `sha256:433aace18e925d75236afe99e08796763744040e5f10f5781445e77d70796f72`
+    — matching the prior scouting citation exactly), and confirmed via
+    `pdfjs-dist` that this 2-page specimen carries 101 AcroForm widgets
+    (45/56 per page, also matching exactly — correlating checkbox/text
+    labels on both sides of each widget's rect, since an early scratch pass
+    found left-only correlation returns empty checkbox labels on this
+    particular form). A full top-to-bottom text read of both pages found
+    this form is not the comprehensive company-details form its title might
+    suggest: page 1 is a registrar-facing routing/cover form whose 20
+    checkboxes are actually a 17-value registration-action-type selector
+    (new incorporation; standalone Memorandum-of-Association registration;
+    partnership conversion; a capital increase/decrease/merger special
+    resolution; five distinct Memorandum/Articles amendment sub-types; a
+    merger; a director change; and others) plus 3 independent
+    post-registration add-on requests (labor-bylaw copy, trademark
+    registration, import/export ID card) — not, as initially anticipated, a
+    document-attachment checklist; page 2 is a bundled "หนังสือรับรอง"
+    (Certificate of Incorporation) template the Registrar completes and
+    issues after approval, not an applicant input. This v1.0.0 scopes to the
+    new-incorporation (`จัดตั้งบริษัทจำกัด`) action pathway — the full
+    17-value `registrationActionType` enum, the 3 post-registration add-on
+    checkboxes, company-name/existing-registration identification, a
+    two-signatory signature block, and the page-1 footer's statutory
+    false-statement warning notice — as 10 `fields[]` + 1 `documents[]`
+    entry. The 16 non-formation action types' own dependent free-text
+    sub-fields, the Registrar/witness certification block, and the entirety
+    of page 2 are out of scope and disclosed with reasons in the document's
+    own VERIFICATION.md. Two mock conformance scenarios found 0 errors each,
+    plus 5 mutation controls each correctly raised exactly 1 error. See the
+    Executive Summary update above and the document's own VERIFICATION.md
+    for the full sourcing record and every disclosed scoping/judgment call.
+    **Thailand now stands at 2 of 6 verticals** (Taxes, Business Formation);
+    DMV, Passport, and National ID remain confirmed weak/dead-end from item
+    24 above; Visa (MFA Non-Immigrant Visa B/Employment, 58 AcroForm fields)
+    was delegated in parallel to GOV-2602.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
