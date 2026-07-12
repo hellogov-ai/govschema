@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**42 jurisdictions** | **380 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **381 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2526, "GovSchema Standard Research"): Rwanda
+> opens as this registry's 43rd jurisdiction**, via its DMV vertical (1 of
+> 6), sourced from the Rwanda Revenue Authority (RRA)'s Motor Vehicle
+> Registration Form (form code RRA-MVD-VRF-E06) — Rwandan law assigns motor-
+> vehicle registration to the tax authority rather than a separate transport
+> agency. A prior scouting pass (GOV-2507, see the Known Gaps entry below)
+> had cited this form's byte size and a widget-type breakdown; independently
+> re-fetching and re-deriving from scratch confirmed the byte size exactly
+> (191,913 bytes, `sha256:
+> 1c580d7766fb2c7dad73aa627d5e634256e27f1475e104fb8e9728137a3337b7`, fetched
+> unauthenticated directly from `rra.gov.rw`), but **corrected the cited
+> widget-type breakdown** — a fresh `pdfjs-dist` extraction found 46 widgets
+> (37 text, 5 radio-button, 4 signature), not the "42 text, 3 signature, 1
+> button/radio" the prior pass had cited (the overall widget count of 46 was
+> exactly right; the per-type split was off). Extraction also surfaced a
+> genuine AcroForm authoring defect: a single shared radio-button field
+> object spans two unrelated printed questions — the Section C "Steering
+> Wheel" selector (Left/Right/N-A) and the Section B "Customs Regime"
+> selector (Consumption/Suspension) — meaning in a real PDF viewer, selecting
+> one would silently clear a selection made for the other. This schema does
+> not preserve that defect, modelling the two questions as independent
+> `enum` fields, with the shared-field bug disclosed rather than silently
+> fixed without comment. 28 `fields[]` (of 46 widgets; the office-only "For
+> RRA Use Only" section and all 4 signature widgets are excluded, per this
+> registry's usual signature-capture convention) cover owner identification,
+> registration information (including an imported vehicle's customs/clearing-
+> agent particulars), vehicle information, and certification; 1
+> `documents[]` attestation entry captures the printed certification
+> statement. Two mock conformance scenarios (a domestic registration; an
+> imported vehicle with the full customs block) found 0 errors each, plus 4
+> mutation controls (a missing required field, an enum violation, a missing
+> required document, and a numeric-range violation) each correctly raised
+> exactly 1 error. This cycle's own re-check of Rwanda's other five
+> verticals confirmed Business Formation, National ID, Passport, and Taxes
+> all remain dead ends (routing exclusively through the login/payment-gated
+> IremboGov one-stop portal or an in-person-only RRA process), but found
+> Visa is **not** a clean dead end as the prior pass's blanket claim had it —
+> two PDF candidates (a 2021 embassy mirror, a 2013 RDB-hosted form) were not
+> conclusively resolved either way this cycle and are left as an open,
+> unresolved candidate rather than force-fitted or asserted dead. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call. **Rwanda now stands at 1 of 6 verticals**
+> (DMV).
 
 > **Update (2026-07-12, GOV-2518, "GovSchema Standard Research"): Nigeria
 > opens as this registry's 42nd jurisdiction**, via its Business Formation
@@ -6601,7 +6645,16 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (37/40 jurisdictions — 93%)
+### DMV — Vehicle Registration, Licensing, Permits (38/41 jurisdictions — 93%)
+
+**Rwanda opens as the registry's 43rd jurisdiction via its DMV vertical
+(GOV-2526)**, via `rw/rra/vrf-e06-motor-vehicle-registration-form` (Rwanda
+Revenue Authority's Motor Vehicle Registration Form, RRA-MVD-VRF-E06). See
+the Executive Summary update above and the document's own VERIFICATION.md
+for the full sourcing record, including a corrected widget-type breakdown
+against a prior scouting pass and a disclosed shared-radio-field-object
+defect (the Steering Wheel and Customs Regime selectors share one AcroForm
+field).
 
 **Vietnam's DMV vertical opens (4 of 6) (GOV-2479)**, via
 `vn/bca/to-khai-dang-ky-xe` (Mẫu ĐKX10, "Giấy khai đăng ký xe," issued under
@@ -8609,6 +8662,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **RW** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -9891,6 +9945,47 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     National ID (NIDA), Passport (DGIE), and Visa all route exclusively
     through the login/payment-gated IremboGov one-stop portal with no
     downloadable citizen-facing form found anywhere.
+23. **Rwanda opens as the registry's 43rd jurisdiction (GOV-2526)**, via its
+    DMV vertical, `rw/rra/vrf-e06-motor-vehicle-registration-form` (Rwanda
+    Revenue Authority's Motor Vehicle Registration Form, form code
+    RRA-MVD-VRF-E06). A prior scouting pass (GOV-2507, item 22 above) had
+    cited this form's byte size (independently reconfirmed exactly:
+    191,913 bytes,
+    `sha256:1c580d7766fb2c7dad73aa627d5e634256e27f1475e104fb8e9728137a3337b7`)
+    and a widget-type breakdown that this cycle's own `pdfjs-dist`
+    extraction corrected — 46 widgets: 37 text, 5 radio-button, 4 signature
+    (not the "42 text, 3 signature, 1 button/radio" originally cited; the
+    overall count of 46 was exactly right, the per-type split was not).
+    Extraction also surfaced a genuine field-name-reuse defect: one shared
+    AcroForm radio-button field object spans two unrelated printed
+    questions — Section C's "Steering Wheel" selector (Left/Right/N-A) and
+    Section B's "Customs Regime" selector (Consumption/Suspension) — so in a
+    real PDF viewer, selecting one would silently clear the other; this
+    schema models them as two independent `enum` fields instead, with the
+    defect disclosed rather than silently fixed. See the Executive Summary
+    update above and the document's own VERIFICATION.md for the full
+    sourcing record. **Rwanda now stands at 1 of 6 verticals** (DMV).
+    This cycle's own re-check of item 22's blanket "all other five
+    verticals are confirmed dead ends" claim mostly held up — Business
+    Formation (RDB/ORG, online-only via `businessprocedures.rdb.rw`/
+    IremboGov), National ID (NIDA, IremboGov-only per its own support
+    articles), Passport (e-passport "completed and submitted online through
+    the Irembo Portal only"), and Taxes (RRA's own site: published forms
+    "are just samples," real declarations require an in-person/portal
+    RRA-office registration) all reconfirmed as dead ends — **but Visa does
+    not**: two candidate PDFs surfaced this cycle (a Rwandan-embassy-in-UK
+    mirror, Last-Modified 2021-03-22, and an RDB-hosted "Proposed New visa
+    application form," Last-Modified 2013-11-14), both reachable
+    unauthenticated (HTTP 200, `application/pdf`). Neither was verified for
+    AcroForm field content this cycle, and Rwanda's Directorate General of
+    Immigration and Emigration's own current guidance ("How to Apply for a
+    Visa on IremboGov") points at the same online portal as the other
+    verticals, so these are plausibly stale consular mirrors rather than a
+    live current form — left as an **open, unresolved candidate** for a
+    future cycle rather than asserted as either a confirmed live source or a
+    confirmed dead end. Rwanda's remaining sub-process backlog: Business
+    Formation, National ID, Passport, and Taxes are confirmed dead ends per
+    the above; Visa is unresolved backlog.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
