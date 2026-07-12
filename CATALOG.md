@@ -4,7 +4,61 @@
 
 ## Executive Summary
 
-**39 jurisdictions** | **371 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**39 jurisdictions** | **372 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2456, "GovSchema Standard Research"): Uruguay's
+> DMV vertical opens (2 of 6)**, via
+> `uy/imm/empadronamiento-vehiculos-nacionales` v1.0.0, sourced from the
+> Intendencia de Montevideo's (IMM) Formulario F19, "Empadronamiento de
+> Vehículos" (per Ley Nº 19.061, Decreto Nº 187/014). Vehicle registration in
+> Uruguay is administered departmentally, not nationally, so this document is
+> scoped to Montevideo (`jurisdiction.level: "subnational"`,
+> `subdivision: "UY-MO"`), the same tier this registry already uses for
+> `br/mg/detran/comunicacao-de-venda-de-veiculo` and
+> `ca/on/mto/vehicle-registration`; Uruguay's other 18 departments would need
+> their own future schema. Fetched directly from
+> `tramites.montevideo.gub.uy` (HTTP 200, no login/CAPTCHA/WAF,
+> `sha256:a6e5bd2b53304dab88dd15afc7d742033008127665a8c6881823b37849397fec`,
+> 138,349 bytes, PDF 1.6, LibreOffice 7.3, CreationDate 2024-07-27);
+> `pdfjs-dist` independently re-confirms a genuine 81-widget AcroForm across
+> 2 pages (49 widgets/page 1, 32/page 2), resolving to 65 uniquely named
+> fields, matching this cycle's own prior scouting pass exactly. The single
+> PDF/AcroForm covers both the domestic and imported-vehicle paths at once
+> via its own IMPORTADO/NACIONAL checkbox pair, corroborated by fetching
+> both of IMM's own trámite landing pages ("...vehiculos-nacionales" and
+> "...vehiculos-importados"), which link the identical file and whose
+> "Documentación a presentar" sections this schema's `documents[]` block is
+> sourced from. This schema models 53 `fields[]` (covering 68 of the 81
+> widgets) across the gestionante (filer), vendedor (seller/importer),
+> vehicle technical data, and up to two vehicle owners (titular #1 required,
+> titular #2 optional and `requiredWhen`-gated), plus 5 `documents[]` entries
+> for the gestionante's ID, the vehicle's origin-proof document, a
+> conditionally-required SOA insurance policy (only for imports, per a
+> genuine divergence between IMM's two trámite pages), and two
+> representative/private-seller ID copies. Disclosed out of scope: 9 named
+> fields across 13 widgets — 4 widgets under an ambiguous "ID"/"CÓDIGO
+> NACIONAL" header whose AcroForm field names are unrelated copy-paste
+> duplicates of the gestionante-phone-number field family, and the 7-widget
+> "RECIBE DOCUMENTOS" office-receipt-acknowledgment section — plus the
+> narrower special-case documents (self-built-vehicle declarations, minor/
+> tutor/power-of-attorney packets, classic-import ministerial resolutions,
+> municipal/Interior-Defensa fleet paperwork). A genuine field-naming
+> anomaly was also caught and disclosed rather than silently "corrected":
+> the widget internally named `MailTit2_2` is actually the second owner's
+> **address** field, not an email field, confirmed by coordinate correlation
+> against the printed "Domicilio" label. Two mock conformance scenarios (a
+> domestic/used/single-titular registration; an imported/cero-km/two-
+> titulares registration) found 0 errors each, plus 3 mutation controls each
+> correctly raised exactly 1 error (a missing required field, an email
+> pattern violation, and a missing `requiredWhen`-gated field). See the
+> document's own VERIFICATION.md for the full sourcing record, the
+> coordinate-correlation extraction method, and every disclosed scoping/
+> judgment call. **Uruguay now stands at 2 of 6 verticals** (Business
+> Formation, DMV); this cycle also screened Uruguay's Passport (DNIC,
+> login-gated appointment scheduling only) and National ID (DNIC, in-person
+> biometric only) and confirmed both are dead ends for now — see "Known Gaps
+> & Opportunities" below. Visa and Taxes remain open backlog for future
+> cycles.
 
 > **Update (2026-07-12, GOV-2449, "GovSchema Standard Research"): Uruguay
 > opens as this registry's 39th jurisdiction**, via
@@ -6183,7 +6237,14 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (34/39 jurisdictions — 87%)
+### DMV — Vehicle Registration, Licensing, Permits (36/39 jurisdictions — 92%)
+
+**Uruguay's DMV vertical opens (2 of 6) (GOV-2456)**, via
+`uy/imm/empadronamiento-vehiculos-nacionales` (Formulario F19,
+"Empadronamiento de Vehículos," Intendencia de Montevideo's Servicio de
+Contralor y Registro de Vehículos). See the Executive Summary update above
+and the document's own VERIFICATION.md for the full sourcing record, field
+inventory, and every disclosed judgment call.
 
 **Finland's DMV vertical is now closed (GOV-2356)**, via
 `fi/traficom/luovutuskirja-ajoneuvon-omistusoikeuden-siirrosta` — Traficom's
@@ -8070,7 +8131,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **UY** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **UY** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **VN** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
@@ -9179,6 +9240,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     `pe/mtc/solicitud-licencia-conducir-012-17`'s own VERIFICATION.md for
     the full sourcing record, the checkbox-matrix reconstruction method, and
     every disclosed judgment call.
+15. **Peru's Taxes vertical: SUNAT Formulario Virtual 709, "Declaración de
+    Renta Persona Natural"** (individual income tax return) — independently
+    scouted in GOV-2456 (2026-07-12) and confirmed a strong pre-scouted
+    candidate, ready to author in a future cycle. Source:
+    <https://renta.sunat.gob.pe/sites/default/files/inline-files/AYUDA%20FV_%20709_2024__0.pdf>,
+    a genuine, unauthenticated, directly fetchable (HTTP 200, no login/
+    CAPTCHA/WAF) 36-page prose guide ("Ayuda FV-709") with dozens of
+    numbered casillas/fields walked through field-by-field. Formulario
+    Virtual 709 itself is filed through SUNAT's Clave-SOL-authenticated
+    online portal (matching this registry's prior finding that SUNAT is
+    login-gated for the individual RUC-registration path), so no live
+    AcroForm/HTML form exists to extract directly — but this guide's own
+    casilla-numbered walkthrough is a strong enough field-by-field source to
+    author a structural-reference schema from, the same tier as this
+    registry's existing text-layer-only precedents (e.g. `jp/houmukyoku`,
+    `pe/sunat/solicitud-inscripcion-ruc-persona-natural`). Not yet authored
+    this cycle — GOV-2456's own deliverable was Uruguay's DMV vertical (see
+    the Executive Summary update above); flagged here for a future cycle.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -9400,6 +9479,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   the main flow, the same in-person-only pattern this registry has
   repeatedly confirmed dead-end elsewhere (CZ, MY, IT — see above). Do not
   re-attempt without a genuinely new source.
+- **PE Passport (Migraciones/RENIEC)** — GOV-2456, screened 2026-07-12
+  (re-confirming prior cycles' GOV-2404/GOV-2419/GOV-2426/GOV-2434 notes).
+  Passport issuance requires an in-person appointment with mandatory
+  biometric capture; no downloadable citizen-facing application form
+  exists for the main flow. Do not re-attempt without a genuinely new
+  source.
+- **PE National ID (RENIEC DNI)** — GOV-2456, screened 2026-07-12
+  (re-confirming prior cycles' notes). DNI issuance/renewal is either
+  in-person-biometric or gated behind RENIEC's own authenticated online
+  portal, with no unauthenticated field-by-field source found. Do not
+  re-attempt without a genuinely new source.
+- **UY Passport (DNIC)** — GOV-2456, screened 2026-07-12. Uruguay's
+  Dirección Nacional de Identificación Civil (DNIC) issues passports only
+  through a login-gated appointment-scheduling channel; `dnic.gub.uy` is
+  also TCP-unreachable from this environment on every attempt (an
+  infrastructure limitation, not itself the basis for this finding). No
+  downloadable, unauthenticated, citizen-facing application form was found.
+  Do not re-attempt without a genuinely new source.
+- **UY National ID (DNIC cédula de identidad)** — GOV-2456, screened
+  2026-07-12. The same DNIC-administered, in-person-biometric-enrollment
+  pattern as UY Passport above — no downloadable application form exists
+  for the main flow. Do not re-attempt without a genuinely new source.
 
 ---
 
