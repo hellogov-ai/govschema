@@ -4,7 +4,65 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **384 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **385 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2561, "GovSchema Standard Research"): Nigeria's
+> Visa vertical opens (3 of 6)**, via
+> `ng/nis/application-for-visa-entry-permit`, the Nigeria Immigration
+> Service's "Form Imm. 22 — Application Form for Visa/Entry Permit", scoped
+> to embassy/consular use abroad. Independently re-fetched two of the three
+> cited mirrors directly: the Embassy of Nigeria in Vietnam's own government
+> domain (`nigeriaembassy.org.vn`, HTTP 200, `application/pdf`, 373,872
+> bytes, Last-Modified 2020-11-21, matching the citation exactly) — a
+> simplified 2-page, 25-question edition used as this schema's primary
+> `source` since it is the only own-government-domain copy — and a
+> Nigerian-Embassy-Washington-DC-letterheaded copy on a third-party domain
+> (`samspassport.com`, HTTP 200, `application/pdf`, 43,156 bytes), a fuller
+> 3-page, 31-question edition that itself prints the form's own designation
+> "Form Imm. 22" and supplies this schema's base field structure. A third
+> cited mirror (`nigerianvisaservices.com`) returned a Cloudflare
+> human-verification challenge page on an early fetch attempt this cycle,
+> but a later independent re-fetch (both with and without a browser-like
+> User-Agent) found it live — `application/pdf`, 88,509 bytes — confirming
+> the earlier challenge was a transient failure, not a genuine access gate;
+> its content is a separately re-typeset rendering (not byte-identical to
+> either other mirror) but carries the same "Form Imm. 22" title and item
+> numbering, corroborating rather than contradicting the other two sources.
+> Both verified editions carry **0 AcroForm widgets** (flat, print-and-hand-fill
+> forms, the same tier as this registry's `rw/dgie` specimen). Independent
+> side-by-side extraction of both editions' full printed text found the
+> child issue's framing of the DC edition as a strict superset of the
+> Vietnam edition does not hold exactly: the DC edition's 31 items do add
+> substantial content (number-of-entries, funds available, employment/
+> spouse-in-Nigeria particulars, prior Nigerian-visa history,
+> immigration/criminal/health-history screening, countries lived-in/visited
+> in the last 5 years/12 months, and the fee/attachments schedule), but the
+> Vietnam edition also independently asks 6 items the DC edition omits
+> entirely (e-mail address, complexion, academic qualifications, source of
+> sponsorship, and a mission-localized "reference in [country]" name/
+> address/telephone) — corrected and disclosed rather than silently adopting
+> the issue's characterization. This schema models the union: 93 `fields[]`
+> entries (86 from the DC edition's 31-item structure, including a bounded
+> 3-slot prior-visit table and two bounded 4-slot countries-lived-in/visited
+> tables per this registry's established repeating-group convention, plus 7
+> from the Vietnam edition's edition-unique items, modeled as independently
+> optional fields) and 9 `documents[]` entries (the photograph requirement
+> printed on both editions, the DC edition's attachments-and-fee schedule —
+> original passport, letter of invitation, prepaid return mailer, an online
+> visa-fee payment, a $20 money-order processing fee, an optional $65
+> expedited fee — its under-16 accompanying-child document bundle, and its
+> wet-ink certification statement). Two mock conformance scenarios (a
+> single, first-time tourist applicant; a married business applicant with a
+> prior rejected visa application and a prior visit) found 0 errors each,
+> plus 5 mutation controls (a missing required field, an invalid date
+> format, an invalid enum value, a missing conditional field, and a missing
+> required document) each correctly raised exactly 1 error. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call. **Nigeria now stands at 3 of 6 verticals**
+> (Business Formation, Taxes, Visa); DMV was screened this cycle and
+> confirmed a dead end (state/FRSC licensing is SSO-portal-gated with no
+> downloadable specimen); Passport and National ID remain open, unscreened
+> backlog for a future cycle.
 
 > **Update (2026-07-12, GOV-2553, "GovSchema Standard Research"): Nigeria's
 > Taxes vertical closes (2 of 6)**, via
@@ -8851,7 +8909,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **NG** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **NG** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -8859,7 +8917,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RW** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **RW** | 2 | ✗ | ✓ | ✗ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -10320,6 +10378,52 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     **Nigeria now stands at 2 of 6 verticals** (Business Formation, Taxes);
     Passport, DMV, Visa, and National ID remain open, unscreened backlog
     for a future cycle.
+27. **Nigeria's Visa vertical opens (3 of 6) (GOV-2561)**, via
+    `ng/nis/application-for-visa-entry-permit` (the Nigeria Immigration
+    Service's "Form Imm. 22 — Application Form for Visa/Entry Permit",
+    scoped to embassy/consular use abroad). Resolves item 26's disclosed
+    open Visa backlog for Nigeria. Independently re-fetched two of the three
+    cited mirrors directly: the Embassy of Nigeria in Vietnam's own
+    government domain (`nigeriaembassy.org.vn`, HTTP 200, `application/pdf`,
+    373,872 bytes, Last-Modified 2020-11-21, matching the citation exactly)
+    — the only own-government-domain copy, used as this schema's primary
+    `source` — and a Nigerian-Embassy-Washington-DC-letterheaded copy on a
+    third-party domain (`samspassport.com`, HTTP 200, `application/pdf`,
+    43,156 bytes), a fuller 3-page, 31-question edition printing the form's
+    own designation "Form Imm. 22". A third cited mirror
+    (`nigerianvisaservices.com`) returned a Cloudflare human-verification
+    challenge page on an early attempt this cycle, but a later independent
+    re-fetch found it live (`application/pdf`, 88,509 bytes) — the earlier
+    challenge was a transient failure, not a genuine access gate; its
+    content is a separately re-typeset rendering, not byte-identical to
+    either other mirror, but carries the same "Form Imm. 22" title and item
+    numbering. Both verified editions carry **0 AcroForm widgets** (flat,
+    print-and-hand-fill forms,
+    the same tier as `rw/dgie`). Independent side-by-side extraction found
+    the child issue's framing of the DC edition as a strict superset of the
+    Vietnam edition does not hold exactly: the Vietnam edition also
+    independently asks 6 items the DC edition omits entirely (e-mail
+    address, complexion, academic qualifications, source of sponsorship,
+    and a mission-localized "reference in [country]" name/address/
+    telephone) — corrected and disclosed rather than silently adopting the
+    issue's characterization. This schema models the union: 93 `fields[]`
+    entries (86 from the DC edition's 31-item structure, including a
+    bounded 3-slot prior-visit table and two bounded 4-slot
+    countries-lived-in/visited tables per this registry's established
+    repeating-group convention, plus 7 from the Vietnam edition's
+    edition-unique items, modeled as independently optional fields) and 9
+    `documents[]` entries (the photograph requirement printed on both
+    editions, the DC edition's attachments-and-fee schedule, its under-16
+    accompanying-child document bundle, and its wet-ink certification
+    statement). Two mock conformance scenarios found 0 errors each, plus 5
+    mutation controls each correctly raised exactly 1 error. See the
+    Executive Summary update above and the document's own VERIFICATION.md
+    for the full sourcing record and every disclosed scoping/judgment call.
+    **Nigeria now stands at 3 of 6 verticals** (Business Formation, Taxes,
+    Visa); DMV was screened this cycle and confirmed a dead end
+    (state/FRSC licensing is SSO-portal-gated with no downloadable
+    specimen); Passport and National ID remain open, unscreened backlog for
+    a future cycle.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
@@ -10664,6 +10768,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   second candidate (`docuest.aaip.gob.ar`, for flagging a lost/stolen DNI)
   is a distinct, login-gated AAIP fraud-prevention SPA, not DNI issuance.
   Do not re-attempt without a genuinely new source.
+- **NG DMV** — GOV-2551/GOV-2561, screened 2026-07-12. Driving-licence
+  issuance is run by the Federal Road Safety Corps (FRSC) nationally and by
+  state motor-licensing authorities, both exclusively through SSO/
+  login-gated online portals (e.g. the FRSC's own `nigeriadriverslicense.org`
+  / `frsc.gov.ng` licence application flow); no downloadable blank specimen
+  PDF was found at any tier. Not a hard dead end if a genuinely new
+  third-party-republished specimen surfaces; a dead end for the current
+  official publishing pattern.
 
 ---
 
