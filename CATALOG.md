@@ -4,7 +4,62 @@
 
 ## Executive Summary
 
-**40 jurisdictions** | **377 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**40 jurisdictions** | **378 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2500, "GovSchema Standard Research"): Kenya's
+> National ID & Civic Documents vertical opens (2 of 6)**, via
+> `ke/nrb/application-for-identity-card` v1.0.0, sourced from Form Reg. 136A,
+> "Ombi ya Kitambulisho / Application for Identity Card," prescribed under
+> the Registration of Persons Act, Cap. 107, and administered by the
+> National Registration Bureau (NRB, under the State Department for
+> Immigration and Citizen Services, Ministry of Interior and National
+> Administration). This cycle screened all five of Kenya's remaining open
+> verticals in parallel: Passport (Directorate of Immigration
+> Services/eCitizen), DMV (NTSA TIMS/eCitizen), and Visa (the eTA system,
+> `etakenya.go.ke`) all resolved to fully online, login-and-payment-gated
+> processes with no genuine unauthenticated specimen currently published by
+> the responsible agency — the same "strong legacy AcroForm superseded by a
+> mandatory e-channel" dead end this registry has seen elsewhere (cf.
+> GOV-2449's note on Thailand); Taxes (KRA's `IT1_Individual_Resident_Return`
+> Excel workbook, version 19.0.3/March 2026) is a genuine, currently
+> maintained, richly structured (34-sheet) candidate, set aside this cycle
+> only in favour of National ID's more tractable single-form scope and
+> flagged as next cycle's strongest backlog candidate. Reg. 136A itself has
+> no official `.go.ke`-hosted copy — NRB's own current intake channel
+> (`usajili.go.ke/nrb`) is eCitizen-only with no downloadable specimen — so
+> this schema cites a Kenyan diplomatic mission's own mirror
+> (`kenyaembassystockholm.com`, fetched directly, HTTP 200, 40,414 bytes,
+> `sha256:54466885dc7d70f3f0efacc63385dd6206337ed7f160b1114b719cf092183b9b`),
+> cross-checked byte-for-byte structure against a second independent
+> embassy mirror (a different hash/size but an identical 33-widget AcroForm
+> confirmed via `pdfjs-dist`, i.e. the same form re-saved, not a different
+> edition). Every widget carries a generic XFA-style internal name with no
+> semantic content, so each of the 33 widgets was mapped to its printed
+> label by correlating widget `rect` against `getTextContent()` position —
+> a coordinate-correlation technique this registry has used before (cf.
+> `dk/skattestyrelsen`, GOV-2253). 33 `fields[]` covering personal
+> particulars (name, date of birth, sex, parents' names, marital status,
+> spouse details when applicable, birth district, tribe/clan/family, the
+> full home-area administrative breakdown down to village/estate, address,
+> occupation), contact details, and supporting-evidence reference numbers
+> (birth certificate / passport / parent's ID / naturalization certificate /
+> other document, per the form's own "Documents in support of Application
+> (TICK WHERE APPLICABLE)" instruction — modelled as independently optional
+> fields since the AcroForm itself has no checkbox/radio widgets for this
+> choice, with the "at least one" requirement captured instead as a
+> `documents[]` entry); 2 `documents[]` (the supporting-identity-document
+> requirement just described, and the applicant's declaration attestation).
+> Two mock conformance scenarios (a first-time unmarried applicant using a
+> birth certificate; a married applicant replacing an existing card using a
+> parent's ID and passport together) found 0 errors each, plus 4 mutation
+> controls (a missing required field, an email pattern violation, a missing
+> required document, and a `sex` enum violation) each correctly raised
+> exactly 1 error. See the document's own VERIFICATION.md for the full
+> sourcing record — including the complete widget-to-label correlation
+> table and every disclosed scoping/judgment call. **Kenya now stands at 2
+> of 6 verticals** (Business Formation, National ID); Passport, DMV, and
+> Visa are confirmed dead ends; Taxes remains open, flagged backlog for a
+> future cycle.
 
 > **Update (2026-07-12, GOV-2493, "GovSchema Standard Research"): Kenya
 > opens as this registry's 40th jurisdiction**, via
@@ -8113,7 +8168,19 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (28/40 jurisdictions — 70%)
+### National ID & Civic Documents (29/40 jurisdictions — 73%)
+
+**Kenya's National ID & Civic Documents vertical opens (2 of 6) (GOV-2500)**,
+via `ke/nrb/application-for-identity-card` — Form Reg. 136A, "Ombi ya
+Kitambulisho / Application for Identity Card," prescribed under the
+Registration of Persons Act, Cap. 107, and administered by the National
+Registration Bureau (NRB). See the Executive Summary's GOV-2500 update above
+for the full sourcing record — including the parallel screening of Kenya's
+other four remaining verticals and the widget-to-label coordinate-correlation
+technique — and the document's own VERIFICATION.md for every disclosed
+scoping/judgment call. Kenya now stands at 2 of 6 verticals (Business
+Formation, National ID); Passport, DMV, and Visa are confirmed dead ends;
+Taxes remains open, unscreened-in-depth backlog for a future cycle.
 
 **Sweden**'s National ID & Civic Documents gap is now closed (GOV-2372),
 via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
@@ -8403,7 +8470,7 @@ now closed.
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KE** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **KE** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -9611,6 +9678,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Passport, DMV, Taxes, Visa, and National ID — are open, unscreened
     backlog candidates for a future cycle; none of them has been scouted or
     screened yet.
+19. **Kenya's National ID & Civic Documents vertical opens (2 of 6)
+    (GOV-2500)**, via `ke/nrb/application-for-identity-card` (Form Reg. 136A,
+    "Ombi ya Kitambulisho / Application for Identity Card," Registration of
+    Persons Act Cap. 107, administered by the National Registration Bureau).
+    This cycle screened Kenya's remaining four verticals in parallel:
+    Passport, DMV, and Visa each confirmed dead ends (fully online,
+    login/payment-gated processes with no unauthenticated specimen); Taxes
+    (KRA's IT1 Excel return, version 19.0.3/March 2026) is a genuine, strong,
+    currently-maintained candidate, set aside this cycle in favour of
+    National ID's more tractable scope. See the Executive Summary update
+    above and the "National ID & Civic Documents" vertical section above for
+    the full sourcing record, including the two-mirror byte/AcroForm
+    cross-check and the widget-to-label coordinate-correlation table, and the
+    document's own VERIFICATION.md for every disclosed scoping/judgment call.
+    **Kenya now stands at 2 of 6 verticals** (Business Formation, National
+    ID); Taxes remains Kenya's sole open, unscreened-in-depth vertical for a
+    future cycle.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
@@ -9880,6 +9964,27 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   2026-07-12. The same DNIC-administered, in-person-biometric-enrollment
   pattern as UY Passport above — no downloadable application form exists
   for the main flow. Do not re-attempt without a genuinely new source.
+- **KE Passport** — GOV-2500, screened 2026-07-12. Kenya's Directorate of
+  Immigration Services issues the ePassport entirely through eCitizen
+  (application/payment online, then mandatory in-person biometric
+  enrollment). A legacy bilingual "Form 19 (Revised 2012)" AcroForm (88
+  widgets) still circulates on embassy mirrors but is not confirmed current
+  — the classic "strong legacy AcroForm superseded by mandatory e-channel"
+  pattern. Do not re-attempt without a genuinely new, currently-authoritative
+  source.
+- **KE DMV (NTSA)** — GOV-2500, screened 2026-07-12. Both driving-licence
+  application/renewal and vehicle registration/transfer are handled
+  exclusively through the login-gated NTSA TIMS/eCitizen portal; "NTSA Form
+  C" (Traffic Act, Cap. 403 §9) still circulates as a 0-AcroForm-widget flat
+  PDF on third-party mirrors, described by current guides only as a
+  conditional/legacy artifact. Do not re-attempt without a genuinely new
+  source.
+- **KE Visa (eTA)** — GOV-2500, screened 2026-07-12. Kenya's Electronic
+  Travel Authorization system (`etakenya.go.ke`, replacing evisa.go.ke since
+  2024-01-05) is a pure online wizard with a hard payment gate (~US$34) and
+  no government-published specimen form; only a third-party travel-agency
+  guide reconstructs the field list. Do not re-attempt without a genuinely
+  new, government-published source.
 
 ---
 

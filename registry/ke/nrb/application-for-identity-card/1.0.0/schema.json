@@ -1,0 +1,459 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ke/nrb/application-for-identity-card",
+  "version": "1.0.0",
+  "title": "Kenya Application for Identity Card (Form Reg. 136A)",
+  "description": "Kenya's national form for applying for a national identity card — \"Reg. 136 A (D)\", \"OMBI YA KITAMBULISHO / APPLICATION FOR IDENTITY CARD\" — prescribed under the Registration of Persons Act (Cap. 107) and the Registration of Persons Rules, used for both a person's first-ever national ID card and for replacing a previously issued card (e.g. lost, damaged, or requiring updated particulars). Administered by the National Registration Bureau (NRB), part of the State Department for Immigration and Citizen Services within the Ministry of Interior and National Administration. Opens Kenya's National ID & Civic Documents vertical (2 of 6; Business Formation already modelled via ke/brs/cr1-application-to-register-a-company). This schema models the form's own bilingual (Swahili/English) applicant-facing section in full — personal particulars (items 1–20: name, date of birth, sex, parents' names, marital status, spouse details, birth district, tribe/clan/family, home-area administrative breakdown down to village/estate, address, occupation), contact details and supporting-evidence reference numbers (item 21–22: telephone, email, and the applicant's choice of birth certificate / passport / parent's ID / naturalization certificate / other document as proof of identity, per the form's own \"Documents in support of Application (TICK WHERE APPLICABLE)\" instruction), and the applicant's declaration date (item 23). It deliberately does NOT model the form's own \"FOR OFFICIAL USE ONLY\" section — the witness's own name/ID/address/signature (item 24), the identifying officer's and registration officer's name/signature/office of issue (items 25–26), the right/left thumbprint capture boxes, and the pre-printed serial-number/fingerprint-classification header — because these are populated by NRB staff and a witness during in-person processing, not supplied by the applicant, and (for the thumbprint boxes and header) carry no corresponding fillable widget on the source form at all. Registering for or replacing a national ID card requires in-person attendance at an NRB registration centre or Huduma Centre with supporting identity documentation and biometric (fingerprint) capture per the Registration of Persons Act; this schema does not submit the application itself, and the live source (the applicant's own NRB registration centre; interior.go.ke / usajili.go.ke for current guidance) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Kenya, its Ministry of Interior and National Administration, or the National Registration Bureau.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Registration Bureau",
+    "abbreviation": "NRB",
+    "url": "https://usajili.go.ke/nrb"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "http://www.kenyaembassystockholm.com/pdfs/REG_136Dx.pdf",
+    "retrievedAt": "2026-07-12",
+    "documentRef": "Form Reg. 136 A (D), \"Ombi ya Kitambulisho / Application for Identity Card\", prescribed under the Registration of Persons Act, Cap. 107 (Kifungu 107)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-12",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-12",
+    "notes": "GovSchema Standard Research cycle GOV-2500. Opens Kenya's National ID & Civic Documents vertical (2 of 6). This cycle screened all five of Kenya's remaining open verticals in parallel (Passport, DMV, Taxes, Visa, National ID); Passport (Directorate of Immigration Services/eCitizen), DMV (NTSA TIMS/eCitizen), and Visa (the eTA system, etakenya.go.ke) all resolved to fully online, login-and-payment-gated processes with no genuine unauthenticated specimen form currently published by the responsible agency — the classic 'strong legacy AcroForm superseded by a mandatory e-channel' dead end already seen elsewhere in this registry (cf. GOV-2449's note on Thailand). Taxes (KRA's IT1 Excel return) was a genuine, currently-maintained, richly structured candidate but was set aside in favour of National ID this cycle as the more tractable single-form scope; it remains a strong backlog candidate for a future cycle. Fetched Reg. 136A directly (HTTP 200, application/pdf, 40,414 bytes, sha256:54466885dc7d70f3f0efacc63385dd6206337ed7f160b1114b719cf092183b9b, Last-Modified 2022-07-04) from a Kenyan diplomatic mission's own site (kenyaembassystockholm.com); NRB's own current intake channel (usajili.go.ke/nrb, ecitizen) publishes no downloadable specimen of this form, so — following this registry's established practice of citing an embassy-hosted mirror when the origin agency itself has moved to a login-gated-only intake channel (cf. several other jurisdictions' Reg./legacy forms) — this schema cites the embassy copy directly. Cross-checked byte-for-byte against a second independent mirror (kenyaembassydc.org/wp-content/uploads/REG_136Dx.pdf, 40,889 bytes, a different hash but pdfjs-dist confirms an identical 33-widget AcroForm field-name/count structure — i.e. the same form, re-saved, not a different edition). pdfjs-dist getAnnotations()/getTextContent() extraction (own re-derivation, not trusted from a prior scouting pass) confirms 33 real Tx (text) AcroForm widgets across pages 1–2 (21 on page 1, 12 on page 2; page 3 has 0), every one mapped to its printed label by correlating each widget's PDF-space rect against the nearest text-content item at matching y-coordinate — necessary because every widget's own internal fieldName is a generic XFA-style token (e.g. topmostSubform[0].Page1[0].TextField1[4]) carrying no semantic information. Two disclosed judgment calls: (1) the unlabelled 'Nambari ya Kitambulisho (Identity Card No.)' field printed immediately above the form's numbered item list (before item 1) is modelled as an optional existingIdCardNumber field, on the reading that this single form serves both first-time applicants (who leave it blank) and applicants replacing a previously issued card (who enter their existing number) — the form's own text does not use the words 'replacement' or 'first-time', so this is an inference from the field's position and the general dual-purpose framing NRB's own public guidance gives this process, not a printed instruction; (2) 'Marital Status' (item 6) is modelled as free-text `string`, not `enum`, because the form prints only a blank line with no candidate values, and inventing an enum not present on the source would violate source-fidelity. The 'Documents in support of Application (TICK WHERE APPLICABLE)' instruction (item 22) has no corresponding checkbox/radio widgets in the AcroForm — confirmed independently (all 33 widgets are Tx type, none Btn) — so the five alternative reference-number fields (birth certificate, passport [+ a second 'R.Number' field whose exact meaning the form itself does not spell out], parent's ID, parent's passport [+ R.Number], certificate of registration/naturalization, any other document) are each modelled as independently optional string fields rather than a single required choice, with the requirement that at least one be supplied captured instead at the `documents[]` level (`supportingIdentityDocument`, category identity-document, required true) — the spec's `exclusivityGroups` construct (§8.4) does not fit here since it is restricted to boolean fields, and `crossFieldValidation`'s `requirePresent` (§8.3) needs a triggering `when` condition rather than expressing 'at least one of N optional fields', so an 'at least one' constraint across these five fields is disclosed in prose rather than encoded. Confirmed via a fresh web search that the Registration of Persons Act, Cap. 107, and the Registration of Persons Rules, 2024 (interior.go.ke) both remain in force in 2026, that the National Registration Bureau (confirmed via usajili.go.ke/nrb, live HTTP 200) sits under the State Department for Immigration and Citizen Services within the Ministry of Interior and National Administration (interior.go.ke), and that Kifungu 107 (the Act's own citation printed on the form) matches Cap. 107's numbering. See VERIFICATION.md for the full sourcing record, the complete widget-to-label coordinate-correlation table, and the conformance run writeup (2 valid fixtures, 0 errors each; 4 mutation-control fixtures, exactly 1 error each; documents[] requiredness explicitly exercised)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-12"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "existingIdCardNumber",
+      "label": "Nambari ya Kitambulisho (Identity Card No.)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's existing national ID card number, if this application is to replace a previously issued card. Left blank for a first-time application.",
+      "sourceRef": "Header line above item 1 — Nambari ya Kitambulisho (Identity Card No.)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "fullName",
+      "label": "Majina Kamili (Full Names)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full names.",
+      "sourceRef": "Item 1 — Majina Kamili (Full Names)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Tarehe ya Kuzaliwa (Date of birth)",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's date of birth.",
+      "sourceRef": "Item 2 — Tarehe ya Kuzaliwa (Date of birth)"
+    },
+    {
+      "name": "sex",
+      "label": "Mume/Mke (Male/Female)",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's sex, as printed on the form.",
+      "sourceRef": "Item 3 — Mume/Mke (Male/Female)",
+      "validation": {
+        "enum": ["male", "female"]
+      }
+    },
+    {
+      "name": "fathersName",
+      "label": "Majina ya baba (Father's name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's father's full name.",
+      "sourceRef": "Item 4 — Majina ya baba (Father's name)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "mothersName",
+      "label": "Majina ya Mama (Mother's Name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mother's full name.",
+      "sourceRef": "Item 5 — Majina ya Mama (Mother's Name)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's marital status, as freely written on the form (the source prints a blank line with no candidate options).",
+      "sourceRef": "Item 6 — Marital Status",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "husbandsFullName",
+      "label": "Majina ya Mume (Husband's full names)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's husband's full names, when applicable (e.g. a married female applicant).",
+      "sourceRef": "Item 7 — Majina ya Mume (Husband's full names)",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "husbandsIdNumber",
+      "label": "Nambari ya kitambulisho ya Mume (Husband's ID/No.)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's husband's national ID number, when applicable.",
+      "sourceRef": "Item 8 — Nambari ya kitambulisho ya Mume (Husband's ID/No.)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "districtOfBirth",
+      "label": "Wilaya ya kuzaliwa (District Of Birth)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The district in which the applicant was born.",
+      "sourceRef": "Item 9 — Wilaya ya kuzaliwa (District Of Birth)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "tribe",
+      "label": "Kabila (Tribe)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's tribe/ethnic community.",
+      "sourceRef": "Item 10 — Kabila (Tribe)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "clan",
+      "label": "Ukoo (Clan)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's clan, when applicable to the applicant's community.",
+      "sourceRef": "Item 11 — Ukoo (Clan)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "family",
+      "label": "Mlango (Family)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's family/sub-clan grouping, when applicable to the applicant's community.",
+      "sourceRef": "Item 12 — Mlango (Family)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "homeDistrict",
+      "label": "Wilaya ya Makao (Home District)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The district of the applicant's home area.",
+      "sourceRef": "Item 13 — Wilaya ya Makao (Home District)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "division",
+      "label": "Tarafa (Division)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The administrative division of the applicant's home area.",
+      "sourceRef": "Item 14 — Tarafa (Division)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "constituency",
+      "label": "Eneo la Bunge (Constituency)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The parliamentary constituency of the applicant's home area.",
+      "sourceRef": "Item 15 — Eneo la Bunge (Constituency)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "location",
+      "label": "Mtaa (Location)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The administrative location of the applicant's home area.",
+      "sourceRef": "Item 16 — Mtaa (Location)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "subLocation",
+      "label": "Mtaa Mdogo (Sub-location)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The administrative sub-location of the applicant's home area.",
+      "sourceRef": "Item 17 — Mtaa Mdogo (Sub-location)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "villageOrEstate",
+      "label": "Kijiji (Village/Estate)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The village or estate of the applicant's home area.",
+      "sourceRef": "Item 18 — Kijiji (Village/Estate)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "homeAddress",
+      "label": "Anwani (Home Address)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's postal or home address.",
+      "sourceRef": "Item 19 — Anwani (Home Address)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Kazi (Occupation)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's occupation.",
+      "sourceRef": "Item 20 — Kazi (Occupation)",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's telephone number.",
+      "sourceRef": "Item 21(a) — Telephone Number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's email address.",
+      "sourceRef": "Item 21(b) — Email",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "birthCertificateNumber",
+      "label": "Applicant's Birth Certificate Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's birth certificate number, when the birth certificate is the supporting document offered in item 22.",
+      "sourceRef": "Item 22(1)(a) — Applicant's Birth Certificate Number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Applicant's Passport Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport number, when the passport is the supporting document offered in item 22.",
+      "sourceRef": "Item 22(1)(b) — Applicant's Passport Number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "passportRNumber",
+      "label": "R.Number",
+      "type": "string",
+      "required": false,
+      "description": "A further reference number printed alongside the applicant's passport number on the form as \"R.Number\"; the form itself does not define what this reference number is.",
+      "sourceRef": "Item 22(1)(b) — R.Number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "parentIdNumber",
+      "label": "Parent's Identity card Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "A parent's national ID card number, when a parent's ID is the supporting document offered in item 22.",
+      "sourceRef": "Item 22(2)(a) — Parent's Identity card Number",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "parentPassportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "A parent's passport number, when a parent's passport is the supporting document offered in item 22.",
+      "sourceRef": "Item 22(2)(b) — Passport number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "parentPassportRNumber",
+      "label": "R. Number",
+      "type": "string",
+      "required": false,
+      "description": "A further reference number printed alongside the parent's passport number on the form as \"R. Number\"; the form itself does not define what this reference number is.",
+      "sourceRef": "Item 22(2)(b) — R. Number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "registrationOrNaturalizationCertificateNumber",
+      "label": "Certificate of registration or naturalization Certificate Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's certificate of registration or naturalization certificate number, when this certificate is the supporting document offered in item 22.",
+      "sourceRef": "Item 22(3) — Certificate of registration or naturalization Certificate Number",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "otherSupportingDocumentDescription",
+      "label": "Any other Document",
+      "type": "string",
+      "required": false,
+      "description": "A description of another document offered as supporting evidence in item 22, when none of the listed document types apply.",
+      "sourceRef": "Item 22(4) — Any other Document",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "otherSupportingDocumentNumber",
+      "label": "Any other Document — number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The reference number of the other document described in otherSupportingDocumentDescription.",
+      "sourceRef": "Item 22(4) — Any other Document (reference number line)",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Tarehe (Date)",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant signs the declaration certifying that all information given is correct.",
+      "sourceRef": "Item 23 — Tarehe (Date)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "supportingIdentityDocument",
+      "label": "Documents in support of Application (Vyeti vya ushahidi ya Maombi)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "birth-certificate",
+        "passport",
+        "parent-identity-card",
+        "certificate-of-registration-or-naturalization",
+        "other"
+      ],
+      "sourceRef": "Item 22 — Vyeti vya ushahidi ya Maombi (Documents in support of Application), \"TICK WHERE APPLICABLE\""
+    },
+    {
+      "id": "applicantDeclaration",
+      "label": "Applicant's declaration",
+      "category": "attestation",
+      "required": true,
+      "statement": "Nathibitisha kuwa maelezo yote niliyoyatoa Ni ya kweli. (I certify that all the information I have given is correct.)",
+      "sourceRef": "Item 23"
+    }
+  ]
+}
