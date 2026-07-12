@@ -1,10 +1,48 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-11** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-12** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**38 jurisdictions** | **367 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**38 jurisdictions** | **368 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2426, "GovSchema Standard Research"): Peru's
+> Business Formation vertical opens (2 of 6)**, via
+> `pe/sunat/solicitud-inscripcion-ruc-persona-natural` v1.0.0, sourced from
+> SUNAT's Formulario 2119, "Solicitud de Inscripción o Comunicación de
+> Afectación de Tributos," scoped to the natural-person/conjugal-partnership/
+> undivided-estate registration path (54 fields). CATALOG.md's own "Known
+> Gaps" section (item 12, the GOV-2419 cycle's own note) had flagged this
+> form as Peru's strongest pre-scouted Business Formation candidate, but
+> also flagged it as "not re-screened this cycle for a possible AcroForm
+> revision of their own — worth checking," since a sibling Peru form
+> (DGC-005) had just turned out to carry a genuine AcroForm revision hidden
+> behind its Ministry institutional page rather than the consulate mirror
+> previously examined. This cycle re-checked that specific possibility:
+> three independent copies (SUNAT's own canonical host, and two byte-
+> identical `gob.pe` institutional-page mirrors under different upload IDs)
+> were fetched and cross-hashed, and none carries any AcroForm widget —
+> re-confirming, not overturning, the prior finding. Formulario 2119 remains
+> a genuine, unauthenticated, text-layer-only PDF, the same tier as this
+> registry's `jp/houmukyoku` and `vn/gdt` precedents, independently
+> confirmed still "VIGENTE" (in force) via SUNAT's own orientación portal.
+> All 54 `fields[]` are cited to their own numbered casilla (per the form's
+> companion instructions document) or Tabla Anexa reference; large external
+> code tables (CIIU economic-activity codes, profession codes, tax-regime
+> codes) are modelled as free-text pattern-validated codes rather than full
+> enums, per this registry's established convention. Two mock conformance
+> scenarios (a first-time natural-person business inscription; a foreign,
+> domiciled taxpayer's post-inscription tax-affectation/exemption
+> communication with an authorized third-party filer) found **0 errors**
+> each, plus 3 mutation controls (missing required field, a CIIU-code
+> pattern violation, a `requiredWhen`-gated authorized-third-party field left
+> absent) each correctly raised exactly 1 error class. **Peru now stands at
+> 2 of 6 verticals** (Visa, Business Formation); DMV (MTC's driver's-licence
+> application) remains the strongest pre-scouted backlog candidate, Taxes is
+> Clave-SOL-login-gated, and Passport/National ID are appointment/biometric-
+> gated — see the Known Gaps section below. See
+> `pe/sunat/solicitud-inscripcion-ruc-persona-natural`'s own VERIFICATION.md
+> for the full sourcing record and every disclosed judgment call.
 
 > **Update (2026-07-11, GOV-2419, "GovSchema Standard Research"): Peru opens
 > as this registry's 38th jurisdiction**, via `pe/cancilleria/solicitud-visa-dgc-005`
@@ -8930,6 +8968,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     own — worth checking in a future cycle, given this cycle's own finding);
     Taxes (SUNAT) is Clave-SOL-login-gated; Passport (Migraciones) and
     National ID (RENIEC DNI) are appointment/biometric-gated.
+13. **Peru's Business Formation vertical opens (2 of 6) (GOV-2426)**, via
+    `pe/sunat/solicitud-inscripcion-ruc-persona-natural` (Formulario 2119,
+    "Solicitud de Inscripción o Comunicación de Afectación de Tributos").
+    **Re-confirms, rather than overturns, item 12's own open question**: this
+    cycle re-checked whether Formulario 2119 might also carry a hidden
+    AcroForm revision (as DGC-005 turned out to, per item 12) by fetching and
+    cross-hashing three independent copies (SUNAT's own canonical host, plus
+    two byte-identical `gob.pe` institutional-page mirrors under different
+    upload IDs) — none carries any AcroForm widget, confirming the GOV-2404
+    cycle's original text-layer-only characterization still holds. Peru now
+    stands at 2 of 6 verticals (Visa, Business Formation); DMV (MTC
+    driver's-licence application) remains the strongest pre-scouted backlog
+    candidate (also not yet re-screened for a hidden AcroForm revision);
+    Taxes (SUNAT) is Clave-SOL-login-gated; Passport (Migraciones) and
+    National ID (RENIEC DNI) remain appointment/biometric-gated. See
+    `pe/sunat/solicitud-inscripcion-ruc-persona-natural`'s own
+    VERIFICATION.md for the full sourcing record.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
