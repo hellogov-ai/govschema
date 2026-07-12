@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**43 jurisdictions** | **386 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**43 jurisdictions** | **387 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2577, "GovSchema Standard Research"): Nigeria's
+> Passport vertical closes (5 of 6)**, via
+> `ng/nis/application-for-nigeria-standard-passport`, the Nigeria
+> Immigration Service's (NIS) "Form C1 — Application for Nigeria Standard
+> Passport" (Adult pathway), continuing Nigeria's research thread from
+> GOV-2567/GOV-2569, where this candidate was first identified and left as
+> backlog. Independently re-fetched the Nigeria High Commission, London's
+> own mirror this cycle: HTTP 200, `application/pdf`, 170,446 bytes,
+> `Last-Modified: Tue, 06 Jun 2023`, `sha256:
+> 85d970ee602c3bb9d98e1fd850541a8d63d9fd2f5c45c5a6b2281cf98bc317a4` —
+> matching the byte count already recorded in the GOV-2569 update exactly.
+> A flat, print-and-hand-fill 6-page PDF bundle (0 AcroForm widgets across
+> all pages, confirmed via a fresh `pdfjs-dist` extraction) whose misleading
+> filename (`LostReqForm.pdf`) belies its actual scope: Form C1 itself
+> occupies only page 1, while the bundle also carries three distinct
+> companion documents disclosed rather than dropped — a guarantor affidavit
+> ("Form of Undertaking and Guarantee," Form P/21, pages 2-3, its own Parts
+> I-III), a "Statutory Declaration of Lost Passport" (page 4), and a
+> "Statutory Declaration of Age" (page 5) — each modelled as a
+> conditionally-required `documents[]` entry rather than as this schema's
+> own `fields[]`, since each is separately executed/signed by a guarantor
+> or declarant distinct from the passport applicant. 40 `fields[]` entries
+> cover Form C1's applicant-particulars section (identity, physical
+> description, next-of-kin, a bounded 4-row "particulars of children to be
+> endorsed on Mother's passport" table) plus a `reasonForApplication` field
+> modelled at its full 6-value printed breadth (First Issue / Re-issue /
+> Damaged / Lost / Change of data / Dual National) rather than narrowed to
+> first-time-adult only, since the specimen is structurally one form
+> serving all six reasons with equal footing — disclosed as appearing only
+> within the specimen's "For Official Use Only"/receipt-counterfoil
+> section rather than the applicant-facing top section, yet modelled as
+> core applicant data since it reflects the applicant's own stated reason.
+> 5 `documents[]` entries in total (the three companion documents above,
+> plus a false-declaration caution acknowledgement quoted verbatim and a
+> passport fee payment with no fixed amount printed on this specimen). Two
+> mock conformance scenarios (a first-issue single applicant; a lost-
+> passport married applicant with a child to endorse) found 0 errors each,
+> plus 5 mutation controls (a missing required field, an invalid date
+> format, an invalid enum value, a missing conditional field, a missing
+> required document) each correctly raised exactly 1 error. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call, including the Adult-pathway scoping
+> decision and the absence of any printed photograph requirement on this
+> specimen (flagged as a real-world gap for a future cycle, unlike the
+> Visa sibling's specimen, which does print one). **Nigeria now stands at
+> 5 of 6 verticals** (Business Formation, Taxes, Visa, National ID,
+> Passport); DMV remains the sole confirmed dead end.
 
 > **Update (2026-07-12, GOV-2569, "GovSchema Standard Research"): Nigeria's
 > National ID & Civic Documents vertical closes (4 of 6)**, via
@@ -6654,7 +6702,16 @@
 
 ## By Vertical
 
-### Passport (29/40 jurisdictions — 73%)
+### Passport (30/40 jurisdictions — 75%)
+
+**Nigeria's Passport vertical closes (5 of 6) (GOV-2577)**, via
+`ng/nis/application-for-nigeria-standard-passport` — NIS "Form C1 —
+Application for Nigeria Standard Passport" (Adult pathway), sourced from
+the Nigeria High Commission, London's own mirror. See the Executive
+Summary's GOV-2577 update above and the document's own VERIFICATION.md for
+the full sourcing record and every disclosed scoping/judgment call. Nigeria
+now stands at 5 of 6 verticals (Business Formation, Taxes, Visa, National
+ID, Passport); DMV remains the sole confirmed dead end.
 
 **Vietnam opens as this registry's 37th jurisdiction (GOV-2404)**, via
 `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc` — the current
@@ -8654,10 +8711,11 @@ Commission's (NIMC) "National Identification Number (NIN) Enrolment Form"
 v2.0, a pre-enrolment form completed before an in-person biometric-capture
 appointment at an NIMC enrolment centre. See the Executive Summary's
 GOV-2569 update above for the full sourcing record and the document's own
-VERIFICATION.md for every disclosed scoping/judgment call. Nigeria now
-stands at 4 of 6 verticals (Business Formation, Taxes, Visa, National ID);
-DMV is a confirmed dead end; Passport remains open, with a strong candidate
-(NIS Form C1) already identified for a future cycle.
+VERIFICATION.md for every disclosed scoping/judgment call. Nigeria stood at
+4 of 6 verticals (Business Formation, Taxes, Visa, National ID) after this
+update, with DMV a confirmed dead end and Passport the sole remaining open
+vertical; Passport has since closed too (GOV-2577, see the Executive
+Summary and Passport-vertical updates above), bringing Nigeria to 5 of 6.
 
 **Kenya's National ID & Civic Documents vertical opens (2 of 6) (GOV-2500)**,
 via `ke/nrb/application-for-identity-card` — Form Reg. 136A, "Ombi ya
@@ -8964,7 +9022,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **NG** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -10498,6 +10556,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     (`businessprocedures.rdb.rw/media/2.5_rf-001%20domestic%20company.pdf`,
     18 numbered sections, no login/CAPTCHA gate) — left open for a future
     cycle; Rwanda currently stands at 2 of 6 verticals (DMV, Visa).
+22. **Nigeria's Passport gap is now closed too (GOV-2577)**, via
+    `ng/nis/application-for-nigeria-standard-passport` — NIS "Form C1 —
+    Application for Nigeria Standard Passport" (Adult pathway), the strong
+    candidate identified in item 21 above, sourced from the Nigeria High
+    Commission London's own mirror. See the Executive Summary update above
+    and the document's own VERIFICATION.md for the full sourcing record and
+    every disclosed scoping/judgment call, including the Adult-pathway
+    scope, the full-breadth `reasonForApplication` enum, and the
+    companion-document scoping of the bundled Form P/21 guarantor
+    affidavit and two statutory declarations. **Nigeria now stands at 5 of
+    6 verticals** (Business Formation, Taxes, Visa, National ID, Passport);
+    DMV remains the sole confirmed dead end.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
