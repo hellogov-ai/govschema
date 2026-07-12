@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**39 jurisdictions** | **375 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**39 jurisdictions** | **376 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2486, "GovSchema Standard Research"): Vietnam's
+> Visa vertical opens (5 of 6)**, via
+> `vn/bca/to-khai-de-nghi-cap-thi-thuc-viet-nam` v1.0.0, sourced from Mẫu
+> NA1, "Tờ khai đề nghị cấp thị thực Việt Nam" (Vietnamese Visa Application
+> Form). Flagged as a ready-to-author candidate in the prior GOV-2479 cycle
+> (then cited to its original Thông tư 04/2015/TT-BCA); this cycle's own
+> re-verification-from-scratch caught that the pre-scouted source had gone
+> stale in the interim — a legal-currency check surfaced **Thông tư
+> 70/2026/TT-BCA ngày 25/5/2026, hiệu lực 01/7/2026**, which explicitly
+> republishes Mẫu NA1's own template (not just its parent circular),
+> already in force as of this verification date. That finding was
+> corroborated three independent ways before being trusted (a deliberate
+> extra step, since a prior VN cycle's own gotcha was a WebSearch AI summary
+> once hallucinating a same-number-different-year superseding circular that
+> did not exist): `luatvietnam.vn`'s own page carries machine-readable
+> `schema.org` `Legislation` markup confirming the circular number/dates and
+> embeds the complete new NA1 template text; two independent official
+> provincial-police `.gov.vn` portals (`congan.laichau.gov.vn`,
+> `congan.ninhbinh.gov.vn`) both independently state the same circular
+> number, issue date, and effective date. This schema models **initial
+> entry visa applications only** — filed with a Vietnamese diplomatic
+> mission abroad or presented at a border-checkpoint immigration unit
+> before entry — and deliberately excludes both Mẫu NA5 (the separate
+> in-country visa/stay-extension form) and Mẫu NA1a (the distinct
+> electronic-visa information form amended by the same circular). 55
+> `fields[]`, 4 `documents[]` (a passport/travel-document copy, applicant
+> photos, a conditionally-disclosed accompanying-children photos entry, and
+> a declaration attestation). Two mock conformance scenarios (a single-entry
+> tourist application with no family members or accompanying children; a
+> multiple-entry work-purpose application sponsored by a hosting
+> organization, with a spouse and one accompanying child) found 0 errors
+> each, plus 3 mutation controls (a missing required field, a `sex` enum
+> violation, and a missing required document) each correctly raised exactly
+> 1 error. **Vietnam now stands at 5 of 6 verticals** (Business Formation,
+> Passport, Taxes, DMV, Visa); National ID remains Vietnam's sole open
+> vertical, previously confirmed a dead end (not re-screened this cycle) —
+> see the Visa vertical section and the document's own VERIFICATION.md for
+> the full sourcing record.
 
 > **Update (2026-07-12, GOV-2479, "GovSchema Standard Research"): Vietnam's
 > DMV vertical opens (4 of 6)**, via `vn/bca/to-khai-dang-ky-xe` v1.0.0,
@@ -7698,7 +7737,17 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (30/39 jurisdictions — 77%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (31/39 jurisdictions — 79%)
+
+**Vietnam's Visa vertical opens (5 of 6) (GOV-2486)**, via
+`vn/bca/to-khai-de-nghi-cap-thi-thuc-viet-nam` (Mẫu NA1, "Tờ khai đề nghị
+cấp thị thực Việt Nam," most recently republished by Thông tư
+70/2026/TT-BCA ngày 25/5/2026, hiệu lực 01/7/2026). See the Executive
+Summary update above and the document's own VERIFICATION.md for the full
+sourcing record, including the three-way independent corroboration of the
+2026 republication (the pre-scouted 2015-era source and its third-party
+`.doc` mirror had gone stale by this cycle) and every disclosed
+scoping/judgment call.
 
 **Uruguay's Visa vertical opens (GOV-2472)**, via
 `uy/mrree/formulario-unificado-de-visas` — MRREE's "Formulario Unificado de
@@ -8301,7 +8350,7 @@ now closed.
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **VN** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
@@ -9462,6 +9511,27 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Vietnam now stands at 4 of 6 verticals (Business Formation, Passport,
     Taxes, DMV); Visa (Mẫu NA1) remains a ready-to-author backlog candidate,
     and National ID remains a confirmed dead end.
+17. **Vietnam's Visa vertical opens (5 of 6) (GOV-2486)**, via
+    `vn/bca/to-khai-de-nghi-cap-thi-thuc-viet-nam`, Mẫu NA1 — the candidate
+    flagged as ready-to-author in item 16 above, this time independently
+    re-verified from scratch rather than taken on faith. That
+    re-verification caught that the pre-scouted source (originally cited to
+    Thông tư 04/2015/TT-BCA, with a freely-downloadable third-party `.doc`
+    mirror) had gone stale: a legal-currency check found **Thông tư
+    70/2026/TT-BCA ngày 25/5/2026, hiệu lực 01/7/2026**, which republishes
+    Mẫu NA1's own template (not merely its parent circular), already in
+    force as of this verification date. This claim was independently
+    corroborated three separate ways — `luatvietnam.vn`'s own
+    `schema.org`-tagged article page (which also embeds the complete new
+    NA1 text, this schema's actual field source), and two independent
+    official provincial-police `.gov.vn` portals — before being trusted,
+    given this registry's own prior gotcha of a WebSearch AI summary once
+    hallucinating an unrelated same-number-different-year superseding
+    circular in an earlier VN cycle. See the Executive Summary update above
+    and the document's own VERIFICATION.md for the full sourcing record.
+    Vietnam now stands at 5 of 6 verticals (Business Formation, Passport,
+    Taxes, DMV, Visa); National ID remains Vietnam's sole open vertical, a
+    previously-confirmed dead end not re-screened this cycle.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
