@@ -4,7 +4,57 @@
 
 ## Executive Summary
 
-**39 jurisdictions** | **376 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**40 jurisdictions** | **377 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-12, GOV-2493, "GovSchema Standard Research"): Kenya
+> opens as this registry's 40th jurisdiction**, via
+> `ke/brs/cr1-application-to-register-a-company` v1.0.0, opening the
+> Business Formation vertical (1 of 6). Sourced from Kenya's Business
+> Registration Service (BRS) Form CR1, "Application to Register a Company"
+> (Section 13 of the Companies Act, 2015; Registrar of Companies (Forms)
+> Rules, Legal Notice 103 of 2017). A prior scouting pass had reported a
+> plain, two-page, 0-AcroForm-widget PDF specimen (dated 2016-02) hosted on
+> a Kenya Investment Authority eProcedures mirror; independently re-fetching
+> and re-deriving from scratch found BRS's own currently-linked Forms page
+> (`brs.go.ke/forms/`) instead serves a materially richer `.docx` template
+> (internally dated 2017-11, uploaded 2022-11) that cleanly resolves — via
+> two genuine mark-one-of-N selection mechanisms (empty drawn boxes, not
+> AcroForm fields, confirmed by inspecting the docx's raw `word/document.xml`
+> drawing anchors) — both the private/public company-type distinction and
+> the shares/guarantee/unlimited liability-type distinction that the older
+> PDF specimen leaves ambiguous (its own printed text stops after only the
+> first branch of each pairing, with no visible second option). This schema
+> therefore models the full 4-way company type
+> (`public_company_limited_by_shares` / `private_company_limited_by_shares` /
+> `company_limited_by_guarantee` / `private_unlimited_company`) directly from
+> the docx, rather than scoping down to a private-limited-by-shares-only
+> path. `pdfjs-dist` independently re-confirms the older PDF specimen has 0
+> AcroForm widgets across its 2 pages (`IsAcroFormPresent: false`) — a
+> genuine blank-line text form. A fresh legal-currency check confirmed the
+> Companies Act, 2015 and Legal Notice 103 of 2017 both remain in force, and
+> that CR1 remains a standard incorporation form in current legal-practice
+> guides even though company registration itself is now filed
+> electronically through BRS/eCitizen — this schema follows this registry's
+> established "structural reference over a now-primarily-online process"
+> framing (cf. `pe/sunat`, `uy/dgi`). 89 `fields[]` across company details,
+> registered-office/contact address, proposed officers (bounded to 2
+> slots), statement of capital and initial shareholding (share classes and
+> subscribers each bounded to 2 slots), statement of guarantee (bounded to
+> 2 slots), and additional PIN/NSSF/NHIF registration data; 4 `documents[]`
+> (a national-ID-or-passport copy, a KRA PIN certificate copy, a passport
+> photo, and an officers'-consent attestation). Two mock conformance
+> scenarios (a private company limited by shares with a single
+> director/secretary; a company limited by guarantee with two officers,
+> one a passport holder, and two guarantee members) found 0 errors each,
+> plus 4 mutation controls (a missing required field, an email pattern
+> violation, a missing conditionally-required passport field, and a missing
+> required document) each correctly raised exactly 1 error. See the
+> document's own VERIFICATION.md for the full sourcing record — including
+> the docx-vs-PDF discovery, every bounded-repeating-group cap, the
+> officer-role best-effort enum, and the documents[] nationality carve-out
+> — and every disclosed scoping/judgment call. **Kenya now stands at 1 of 6
+> verticals** (Business Formation); Passport, DMV, Taxes, Visa, and National
+> ID remain open, unscreened backlog for future cycles.
 
 > **Update (2026-07-12, GOV-2486, "GovSchema Standard Research"): Vietnam's
 > Visa vertical opens (5 of 6)**, via
@@ -6175,7 +6225,7 @@
 
 ## By Vertical
 
-### Passport (29/39 jurisdictions — 74%)
+### Passport (29/40 jurisdictions — 73%)
 
 **Vietnam opens as this registry's 37th jurisdiction (GOV-2404)**, via
 `vn/xuatnhapcanh/to-khai-cap-ho-chieu-pho-thong-trong-nuoc` — the current
@@ -6392,7 +6442,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (37/39 jurisdictions — 95%)
+### DMV — Vehicle Registration, Licensing, Permits (37/40 jurisdictions — 93%)
 
 **Vietnam's DMV vertical opens (4 of 6) (GOV-2479)**, via
 `vn/bca/to-khai-dang-ky-xe` (Mẫu ĐKX10, "Giấy khai đăng ký xe," issued under
@@ -6701,7 +6751,24 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (36/39 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (37/40 jurisdictions — 93%)
+
+**Kenya opens as this registry's 40th jurisdiction via this vertical
+(GOV-2493)**, via `ke/brs/cr1-application-to-register-a-company` —
+Kenya's Business Registration Service (BRS) Form CR1, "Application to
+Register a Company" (Section 13 of the Companies Act, 2015; Registrar of
+Companies (Forms) Rules, Legal Notice 103 of 2017). A prior scouting pass
+had reported an older, plainer 2016 PDF specimen with only 0 AcroForm
+widgets and an apparently-truncated private/public and
+shares/guarantee/unlimited selection (each printed only its first branch,
+with no visible alternative); independently re-fetching found BRS's own
+currently-linked docx template instead, which resolves both distinctions
+cleanly via two genuine mark-one-of-N drawn-box selections. See the
+Executive Summary's GOV-2493 update above for the full sourcing record —
+including the docx-vs-PDF discovery — and the document's own
+VERIFICATION.md for every scoping/disclosure judgment call. Kenya now
+stands at 1 of 6 verticals (Business Formation); Passport, DMV, Taxes,
+Visa, and National ID remain open, unscreened backlog for future cycles.
 
 **Vietnam's Business Formation vertical opens (GOV-2443)**, via
 `vn/dangkykinhdoanh/dang-ky-doanh-nghiep-tnhh-mot-thanh-vien` — Mẫu số 2,
@@ -7164,7 +7231,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (35/39 jurisdictions — 90%)
+### Taxes — Income Tax Return, Tax Filing (35/40 jurisdictions — 88%)
 
 **Peru's Taxes vertical opens** (`pe/sunat/formulario-virtual-709-declaracion-renta`,
 GOV-2465) — SUNAT's Formulario Virtual N° 709, "Declaración Jurada Anual
@@ -7737,7 +7804,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (31/39 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (31/40 jurisdictions — 78%)
 
 **Vietnam's Visa vertical opens (5 of 6) (GOV-2486)**, via
 `vn/bca/to-khai-de-nghi-cap-thi-thuc-viet-nam` (Mẫu NA1, "Tờ khai đề nghị
@@ -8046,7 +8113,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (28/39 jurisdictions — 72%)
+### National ID & Civic Documents (28/40 jurisdictions — 70%)
 
 **Sweden**'s National ID & Civic Documents gap is now closed (GOV-2372),
 via `se/skatteverket/samordningsnummer-ansokan` — Skatteverket's form
@@ -8336,6 +8403,7 @@ now closed.
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **KE** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -9532,6 +9600,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Vietnam now stands at 5 of 6 verticals (Business Formation, Passport,
     Taxes, DMV, Visa); National ID remains Vietnam's sole open vertical, a
     previously-confirmed dead end not re-screened this cycle.
+18. **Kenya opens as the registry's 40th jurisdiction (GOV-2493)**, via its
+    Business Formation vertical, `ke/brs/cr1-application-to-register-a-company`
+    (BRS Form CR1, "Application to Register a Company," Companies Act 2015
+    §13, Legal Notice 103 of 2017). See the Executive Summary update above
+    and the "Business Formation" vertical section above for the full
+    sourcing record, including the docx-vs-PDF discovery that resolved this
+    schema's two selection-mechanism ambiguities. **Kenya now stands at 1 of
+    6 verticals** (Business Formation); Kenya's other five verticals —
+    Passport, DMV, Taxes, Visa, and National ID — are open, unscreened
+    backlog candidates for a future cycle; none of them has been scouted or
+    screened yet.
 ### Confirmed dead ends (do not re-attempt without new information)
 
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
