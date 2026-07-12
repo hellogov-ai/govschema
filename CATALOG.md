@@ -30,7 +30,7 @@
 > unauthenticated, text-layer PDFs. The form is a single "menu" cover sheet
 > spanning ~20 DCV procedure codes (first issuance, renewal, category
 > upgrade, military/diplomatic/refugee exchange, duplicate, information
-> correction, hazmat endorsement); this schema scopes its 25 `fields[]` to
+> correction, hazmat endorsement); this schema scopes its 27 `fields[]` to
 > the nine procedure codes most relevant to an individual citizen obtaining,
 > renewing, upgrading, or replacing their own Clase A licence, disclosing the
 > military/diplomatic/refugee/foreign-exchange/MATPEL/correction codes as out

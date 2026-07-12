@@ -165,7 +165,7 @@ numbering (page 2), which runs one Rubro ahead of the older, superseded
 | `pagoNumeroRecibo` | N° de Recibo | Rubro V | `"00-2026-778341"` |
 | `pagoFechaPago` | Fecha de Pago | Rubro V | `"2026-06-22"` |
 
-**25 fields total.** No `documents[]` entries are modelled: the printed form's
+**27 fields total.** No `documents[]` entries are modelled: the printed form's
 own general instructions only say attached documents "must be current"
 (instruction 3) without enumerating a specific attachment list on this cover
 form itself — the specific requisitos/attachments for each of the ~20 DCV
