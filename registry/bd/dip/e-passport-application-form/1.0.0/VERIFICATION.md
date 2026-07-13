@@ -106,39 +106,108 @@ widget, alongside items 1-3 (see below).
 
 ## Combobox option-list check
 
-`getFieldObjects()` exposes each combobox's embedded `/Opt` option array (via
+**Corrected 2026-07-13 per GOV-2672** (review gate GOV-2668 requested changes
+on PR #438). The original claim below was **false** and is struck through for
+the record; see "GOV-2672 correction" immediately after it for what actually
+holds.
+
+~~`getFieldObjects()` exposes each combobox's embedded `/Opt` option array (via
 its `options` member). All 33 combobox-typed fields in this document returned
-`options: null` — **no embedded option list on any of them** — so, per this
+`options: null` — no embedded option list on any of them — so, per this
 registry's own established convention (`bd/brta`, `th/dlt`), none is modeled
-as `enum` purely on the basis of being rendered as a dropdown. Two disclosed
-exceptions:
+as `enum` purely on the basis of being rendered as a dropdown.~~
+
+### GOV-2672 correction
+
+The `.options` member checked above **does not exist** on pdfjs-dist's
+`getFieldObjects()` result — it always reads `undefined` (loosely `null`),
+regardless of whether the combobox has an option list. The correct property
+is **`.items`** (an array of `{exportValue, displayValue}`), confirmed by
+re-reading pdfjs-dist@4's own `FieldObject` type. Independent re-extraction
+against the same freshly re-downloaded, hash-verified PDF (see "Source
+verification" above — unchanged, same `sha256`) using `.items` found **24 of
+this form's combobox-typed fields do carry a genuine embedded option list**,
+not the near-blanket "options: null" the v1.0.0 draft reported.
+
+Every one of these 24 comboboxes is also flagged `editable: true` in its
+field object (an "editable combo box": the AcroForm widget lets the user type
+a value outside the printed list, not just pick one) — checked directly
+against the PDF's own field flags, not inferred. This matters for the
+enum-vs-free-text call below: `editable: true` alone does not disqualify a
+field from `enum` (`passportType`/`gender`, discussed next, are themselves
+editable combos, corroborated instead by independent form text), but it does
+mean "this combobox has a dropdown" is not, by itself, evidence the value
+space is closed — the form's authors may have made a list editable
+specifically because it is not exhaustive.
+
+Fields converted from free-text `string` to `enum` this correction, each
+backed by either an explicit "OTHER(S)" catch-all in the source's own list or
+a functionally exhaustive world country/nationality/calling-code list (this
+registry already accepts large genuine-source enums at this scale — see
+`ph/comelec/overseas-voter-registration`'s and
+`nl/denhaag/voter-registration-abroad`'s 247-value country enums):
+
+- `numberOfPages` (2: `48 PAGES`/`64 PAGES`), `durationOfPassport` (2: `5
+  YEARS`/`10 YEARS`), `typeOfDelivery` (3: `REGULAR`/`EXPRESS`/`SUPER
+  EXPRESS`) — the three smallest, most clearly closed sets.
+- `religion` (8 values + `OTHERS`), `typeOfCitizenship` (6, incl. `OTHER`),
+  `maritalStatus` (5), `emergencyContactRelationship` (26 + `OTHERS`).
+- `profession`/`fatherProfession`/`motherProfession`/`guardianProfession`/
+  `spouseProfession` (61 values + `OTHERS`, one shared list).
+- `countryOfBirth`/`countryOfOtherCitizenship`/`presentCountry`/
+  `emergencyContactCountry` (244 values, one shared world-country list).
+- `fatherNationality`/`motherNationality`/`guardianNationality`/
+  `spouseNationality` (236 values, one shared world-nationality list).
+- `contactCountryCode`/`emergencyContactCountryCode` (226 distinct calling
+  codes after de-duplication — the source list repeats a code once per
+  country that shares it, e.g. `"1"` for every NANP country; de-duplicated
+  before use as an `enum`, order otherwise preserved).
+- `passportOfficeOrMission` (154 values after de-duplication: DIP's own
+  passport offices plus Bangladesh's diplomatic missions — the authoritative,
+  DIP-controlled set of places this application can be filed).
+
+Fields where `.items` returned a genuine list but the field is **deliberately
+kept free-text** (disclosed in each field's own `description`):
+
+- **`districtOfBirth`, `permanentDistrict`, `presentDistrict`,
+  `emergencyContactDistrict`** — all four share one 64-value list of
+  Bangladesh's own administrative districts only, with **no catch-all**, and
+  the source's own dependent-field JavaScript (attached to `permanentDistrict`
+  and `presentDistrict`'s underlying widgets) keys the adjacent Post
+  Office/Police Station comboboxes off this same district list — clear
+  evidence the list is meant to be exhaustive **for a Bangladesh address**.
+  But this schema already discloses (and a committed conformance fixture
+  already exercises) present/emergency-contact addresses **abroad**
+  (`presentCountry`/`emergencyContactCountry` are not Bangladesh-restricted),
+  and `countryOfBirth` is a full 244-country list, so an applicant can
+  legitimately be born abroad or reside abroad while this district combobox's
+  option list offers no matching (or "other") value. Enum-ing these four
+  would make a real, already-disclosed scenario inexpressible, so — unlike
+  every other corrected field above — they remain `string`.
+- **Permanent/Present/Emergency-Contact Police Station and Post Office**
+  fields — re-checked and confirmed genuinely blank (`.items` returns a
+  single empty-string entry); the v1.0.0 draft's finding for these
+  specifically was correct, just for the wrong reason (it read `.options`,
+  which is also blank/absent here, coincidentally reaching the right
+  conclusion).
+
+`passportType` and `gender` were already correctly modeled as `enum`
+pre-correction, from independent textual corroboration rather than the
+(broken) combobox check, and are unchanged:
 
 - **`passportType`** — modeled as a 3-value `enum` (`ordinary`/`official`/
   `diplomatic`) because two independent pieces of the form's own text
   corroborate a closed 3-way set: the combobox's own default value is
   `"ORDINARY"`, and the form's own "Additional Information for **Official**
   and **Diplomatic** Passport" section heading (items 32-37) independently
-  names the other two categories.
+  names the other two categories. Its combobox's `.items` now also directly
+  confirm the same 3-value set (`ORDINARY`/`OFFICIAL`/`DIPLOMATIC`).
 - **`gender`** — modeled as a 3-value `enum` (`female`/`male`/`other`)
   because its own printed Bengali parenthetical translation literally lists
   the three options ("নারী/ পুরুষ / অন্যান্য" — "Female/Male/Other"), the
   same class of exception this registry already uses for `bd/brta`'s
-  `vehicleOrTrailer` field (a printed label naming exact mutually-exclusive
-  options, even without a checkbox/radio widget).
-
-Every other combobox-typed item (`numberOfPages`, `durationOfPassport`,
-`typeOfDelivery`, `countryOfBirth`, `districtOfBirth`, `religion`,
-`typeOfCitizenship`, `countryOfOtherCitizenship`, `maritalStatus`,
-`profession`, and every address-block District/Police-Station/Post-Office/
-Country field) is modeled as free-text `string`, each disclosed in its own
-`description`. Several of these (e.g. `numberOfPages` default `"48 PAGES"`,
-`durationOfPassport` default `"5 YEARS"`, `typeOfDelivery` default
-`"REGULAR"`, `typeOfCitizenship` default `"BY BIRTH"`) have a plausible,
-publicly-known closed set (Bangladesh e-passports are commonly issued at
-48/68 pages, 5/10-year validity, Regular/Express/Super-Express delivery), but
-because no second part of *this form's own text* corroborates those option
-sets the way it does for `passportType`, this schema does not invent an enum
-for them — only the field's own observed default value is recorded.
+  `vehicleOrTrailer` field. `.items` confirms the same 3-value set
+  (`MALE`/`FEMALE`/`OTHER`).
 
 ## Split-widget fields
 
@@ -150,15 +219,19 @@ one, and are modeled as two fields each:
   `contactCountryCode` + `contactNumber`.
 - **Item 76** ("Contact No.", Emergency Contact) — the same pattern →
   `emergencyContactCountryCode` + `emergencyContactNumber`.
-- **Item 87** ("Paid Amount") — a free-text amount field plus an adjacent
-  blank-default combobox with no distinguishing printed sub-label of its
-  own. Only the amount (`paidAmount`) is modeled; the companion combobox is
-  excluded as unclear, the same treatment given to the unlabeled `"88"`
-  widget above.
+- **Item 87** ("Paid Amount") — a free-text amount field (`paidAmount`) plus
+  an adjacent combobox. The v1.0.0 draft excluded this companion combobox as
+  "unclear" (a blank-default widget with no distinguishing printed
+  sub-label). **Corrected 2026-07-13 per GOV-2672**: the same `.items`
+  re-extraction that fixed the combobox option-list check (above) found this
+  companion combobox in fact carries a genuine 2-value list (`BDT`/`USD`),
+  so it is no longer excluded — it is now modeled as `paidAmountCurrency`,
+  an `enum` field. The unlabeled `"88"` widget is unrelated (not a combobox)
+  and remains excluded on its own basis.
 
 ## Scoping decision
 
-### In scope (71 `fields[]` + 5 `documents[]` entries)
+### In scope (72 `fields[]` + 5 `documents[]` entries — 71 + `paidAmountCurrency`, added per the GOV-2672 correction above)
 
 This v1.0.0 scopes to the **first-time (new) applicant** pathway of this
 combined New/Re-Issue form:
@@ -284,6 +357,20 @@ English-only text layers). Every field label on this form is bilingual
 a judgment call, since the form is functionally usable in either language.
 
 ## Conformance run
+
+**Re-run 2026-07-13 per GOV-2672.** Converting 24 fields from free-text
+`string` to `enum` (see "GOV-2672 correction" above) invalidated several
+fixture values that were free-form prose standing in for what are now closed
+sets (e.g. `maritalStatus: "Unmarried"` — not a member of the corrected
+5-value enum; `countryOfBirth: "Bangladesh"` — the corrected enum's actual
+member is the source's own verbatim casing, `"BANGLADESH"`). All 8 fixtures
+were updated to use real enum member values (verbatim source casing, e.g.
+`"ENGINEER"`, `"BANGLADESHI"`, `"SINGLE"`) wherever a field they populate was
+converted; fields kept free-text (the four district fields, Police
+Station/Post Office, City/Village/House, etc.) are untouched. The
+`valid-married-dual-citizen-applicant-with-guardian.json` fixture also gained
+a `paidAmountCurrency: "BDT"` entry alongside its existing `paidAmount`, to
+exercise the new field.
 
 Two hand-authored valid fixtures under
 `conformance/bd/dip/e-passport-application-form/1.0.0/`:

@@ -33,13 +33,33 @@
 > Guardian/Spouse Information, Emergency Contact, and Bank Payment
 > Information (independently confirmed to be ordinary fillable applicant
 > fields, not an office-only receipt, deviating from the task's own
-> suggested scoping) — 71 `fields[]` and 5 `documents[]` entries.
+> suggested scoping) — 72 `fields[]` and 5 `documents[]` entries.
 > Re-issue-only content (Previous Passport particulars, Pre-Police
 > Clearance, Lost/Stolen Passport information), the Official/Diplomatic
 > Passport additional-information block, and 6 of the attachment
 > checklist's 10 checkboxes are out of scope, disclosed in VERIFICATION.md.
 > Two valid conformance fixtures plus 6 mutation-control fixtures (each
 > raising exactly 1 error) are committed under `conformance/bd/dip/`.
+>
+> **Update (2026-07-13, GOV-2672): combobox `enum` correction.** Review gate
+> GOV-2668 requested changes on PR #438: the draft's combobox check queried a
+> nonexistent `.options` property (always null) instead of pdfjs-dist's real
+> `.items`, wrongly concluding almost none of this form's comboboxes carry an
+> embedded option list. Corrected re-extraction found 24 do; those fields
+> (`numberOfPages`, `durationOfPassport`, `typeOfDelivery`, `religion`,
+> `typeOfCitizenship`, `maritalStatus`, `profession` and its
+> father/mother/guardian/spouse counterparts, `countryOfBirth` and its
+> other-citizenship/present/emergency-contact counterparts,
+> `fatherNationality` and its mother/guardian/spouse counterparts,
+> `emergencyContactRelationship`, `contactCountryCode` and its
+> emergency-contact counterpart, and `passportOfficeOrMission`) are now
+> modeled as `enum`; a new `paidAmountCurrency` field (`BDT`/`USD`) was added
+> after the same re-extraction found a previously-excluded companion
+> combobox also carries a real option list. The four Bangladesh-district
+> fields were deliberately kept free-text despite carrying a real option
+> list, since that list has no "other" catch-all and this schema already
+> discloses present/emergency-contact addresses abroad. See
+> VERIFICATION.md's "GOV-2672 correction" section for the full reasoning.
 > Bangladesh now stands at 3 of 6 verticals (Taxes, DMV, Passport); Business
 > Formation, Visa, and National ID remain open backlog. See GOV-2666 and
 > this schema's own `VERIFICATION.md` for the full sourcing record.
@@ -7232,7 +7252,9 @@ Passports' (DIP) "e-Passport Application Form (New/Re-Issue)", distributed
 for offline/embassy submission via the Ministry of Foreign Affairs' forms
 portal. Reverses GOV-2591's prior dead-end verdict for this vertical (a
 fillable AcroForm specimen was not previously located). Scopes to the
-first-time (new) applicant pathway: 71 `fields[]`, 5 `documents[]`. See the
+first-time (new) applicant pathway: 72 `fields[]`, 5 `documents[]` (GOV-2672
+corrected 24 fields' modeling from free-text to `enum` and added
+`paidAmountCurrency`). See the
 Executive Summary's GOV-2666 update above and the document's own
 VERIFICATION.md for the full sourcing record, including the finding that
 this PDF's internal AcroForm field names do not reliably track its own
