@@ -4,7 +4,59 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **400 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **401 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2675/GOV-2677, "GovSchema Standard Research"):
+> Bangladesh's Visa vertical opens (4 of 6)**, via
+> `bd/dip/machine-readable-visa-application-form` — the Department of
+> Immigration and Passports' (DIP) "Machine Readable Visa Application Form"
+> (D.I.P Form-4), distributed via Bangladesh's Online MRV Portal
+> (visa.gov.bd) for foreign nationals applying for a Bangladeshi visa. This
+> cycle scouted three candidates in parallel — this form, Bangladesh's
+> Business Formation vertical (via RJSC's company-incorporation forms), and
+> Greece's Passport vertical — and picked this one as the strongest: an
+> official government-portal PDF, independently re-fetched (HTTP 200,
+> `application/pdf`, 124,451 bytes, `sha256:
+> fb2d675a5a98f7ed9a06a11699cdf426cb6a8a26d34ca1c2da89fd58fa353f7d`) and
+> cross-checked against a byte-near-identical embassy mirror. A genuine
+> 4-page, plain print-and-fill PDF (no AcroForm, confirmed via pdfjs-dist:
+> zero annotations across all 4 pages) with a clean, complete extractable
+> text layer. This single physical form is shared by five distinct
+> application pathways (New Visa, Extension of Visa, No Visa Required,
+> Transit/On Arrival Visa, and a Police Verification/Official Use
+> back-office block); this v1.0.0 scopes to the New Visa pathway only — the
+> pathway a first-time foreign applicant uses — comprising Personal Details,
+> Travel Document Details, Payment Details, and the New Visa section itself
+> (36 `fields[]`, 8 `documents[]`). The source prints no required-field
+> asterisks anywhere (confirmed via a zero-occurrence text-layer grep for
+> `*`), so only fields unconditionally essential to any visa request
+> (identity, passport particulars, and the requested visa's own purpose/
+> duration/arrival-date/entry-count) are marked `required`, a disclosed
+> judgment call consistent with this registry's own `bd/brta`/`th/dlt`
+> precedent for source forms without printed requiredness markup. Checkbox
+> groups with no AcroForm widget but an explicit printed option list (Sex,
+> Marital Status, Purpose of Visit, Intended Number of Entries) are modeled
+> as `enum`, consistent with this jurisdiction's own `bd/dip/e-passport-
+> application-form` `gender` precedent. Page 3's shared 19-item supporting-
+> document checklist is scoped to the 6 items applicable to a general New
+> Visa applicant (passport copy, photograph, payment slip, and three
+> purpose-conditional documents); the remaining category-specific items
+> (marriage/birth certificate, a parent's/spouse's visa or passport copy, an
+> affidavit, a Sri-Lankan-national-specific NOC, company income-tax/TIN
+> documents, a bilateral-agreement reference, security clearance, and an
+> overstay payment slip) are disclosed out of scope. Two valid conformance
+> fixtures plus 6 mutation-control fixtures (each raising exactly 1 error)
+> are committed under `conformance/bd/dip/machine-readable-visa-application-
+> form/1.0.0/`. Bangladesh Business Formation (RJSC) and Greece Passport were
+> also scouted this cycle: RJSC's numbered incorporation forms are a viable
+> but weaker candidate (only mirrored on a third-party legal-services site,
+> not RJSC's own domain) — left as open backlog; Greece Passport is a
+> confirmed weak/likely-dead-end candidate (in-person-only, only a
+> non-fillable scanned specimen available, the online `myPhoto` adjunct is
+> SSO-gated and photo-only) — not pursued. **Bangladesh now stands at 4 of 6
+> verticals** (DMV, Taxes, Passport, Visa); Business Formation and National
+> ID remain open backlog. See GOV-2677 and this schema's own `VERIFICATION.md`
+> for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2666, "GovSchema Standard Research"): Bangladesh's
 > Passport vertical opens (3 of 6)**, via
@@ -9149,7 +9201,23 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (33/41 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (34/41 jurisdictions — 83%)
+
+**Bangladesh's Visa vertical opens (4 of 6) (GOV-2675/GOV-2677)**, via
+`bd/dip/machine-readable-visa-application-form` — the Department of
+Immigration and Passports' (DIP) "Machine Readable Visa Application Form"
+(D.I.P Form-4), distributed via Bangladesh's Online MRV Portal (visa.gov.bd).
+A genuine 4-page, plain print-and-fill PDF (no AcroForm, confirmed via
+pdfjs-dist: zero annotations across all 4 pages), independently re-fetched
+this cycle and cross-checked against a byte-near-identical embassy mirror.
+This single physical form is shared by five distinct application pathways;
+this v1.0.0 scopes to the New Visa pathway only (Personal Details, Travel
+Document Details, Payment Details, and the New Visa section), disclosing the
+Extension of Visa/No Visa Required/Transit pathways as out of scope for a
+future revision. See the Executive Summary update above and the document's
+own VERIFICATION.md for the full sourcing record and every disclosed
+judgment call. Bangladesh now stands at 4 of 6 verticals (DMV, Taxes,
+Passport, Visa).
 
 **Greece opens as this registry's 45th jurisdiction, via Visa (GOV-2611)**,
 via `gr/mfa/application-for-schengen-visa` — the EU-wide "Harmonised
@@ -9771,7 +9839,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BD** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **BD** | 3 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
