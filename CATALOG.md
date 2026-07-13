@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **395 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **396 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2637, "GovSchema Standard Research"): Thailand's
+> DMV vertical opens (4 of 6)**, via
+> `th/dlt/vehicle-registration-application` — the Department of Land
+> Transport's (DLT) "แบบคำขอจดทะเบียนรถ" (Vehicle Registration Application
+> Form, internal code ขส.บ. 10). A prior cycle (GOV-2593, item 24 below)
+> had screened DLT vehicle registration and confirmed it weak/dead-end,
+> finding no unauthenticated fillable specimen; this cycle's task briefing
+> supplied a specimen this prior pass missed — a third-party document-mirror
+> copy (sc-broker.com), since the DLT's own e-form portal (dlt.go.th)
+> remains unreachable from this environment (SSL/TLS connect error,
+> consistent with the prior cycle's own note). Independently re-fetched this
+> cycle: an initial attempt returned a transient HTTP 404, but three
+> subsequent retries all returned HTTP 200 with a real, non-scanned,
+> 2-page `application/pdf`
+> (`sha256:0b73ac4ad06c9430dd46ece1cf0863b7127ff5f62a08bf7516fcba548d5f4d55`),
+> byte-identical to an independently-fetched 2025-09-17 Wayback Machine
+> snapshot of the same URL — ruling out a stale or tampered mirror.
+> Corroborated as the DLT's current official form via a second source, a
+> Chaiyaphum provincial DLT office's citizen-service manual
+> (chaiyaphumdlt.go.th), which lists this exact form under its own official
+> forms/guide section. Extracted full text from both pages via `pdfjs-dist`:
+> page 1 is the applicant-facing request (name/age/nationality, a Thai-style
+> address broken into house number/moo/soi/road/tambon/amphoe/changwat/
+> phone, a new-vehicle-vs-type-change registration choice carrying an
+> existing plate number for the latter, vehicle type/chassis number/engine
+> type-number/intended-use purpose, a supporting-evidence checklist, and the
+> applicant's own certification/signature); page 2 is a vehicle-inspection
+> record (weight, engine specs, lighting, brakes, tires, emissions, and a
+> numbered 1-27 checkpoint grid) completed by DLT inspection staff, not the
+> applicant, and is out of scope for this v1.0.0 — including the single
+> applicant-facing acknowledgment-of-inspection-result signature line that
+> appears on that page, disclosed but not modelled since it depends on a
+> staff inspection outcome this schema does not otherwise carry. Modelled as
+> 18 `fields[]` + 8 `documents[]` entries, covering both the new-vehicle and
+> type/characteristic-change registration pathways. Two mock conformance
+> scenarios found 0 errors each, plus 4 mutation controls each correctly
+> raised exactly 1 error. See the document's own VERIFICATION.md for the
+> full sourcing record and every disclosed scoping/judgment call. **Thailand
+> now stands at 4 of 6 verticals** (Taxes, Business Formation, Visa, DMV);
+> Passport and National ID remain confirmed weak/dead-end per GOV-2593's
+> screening (in-person/biometric-only processes with no unauthenticated
+> fillable specimen found at the time). Thailand's confirmed driver's-licence
+> dead end (in-person DLT Smart Queue booking only, no downloadable form)
+> stands independent of this vehicle-registration schema.
 
 > **Update (2026-07-13, GOV-2629, "GovSchema Standard Research"): Rwanda's
 > Passport vertical opens (4 of 6)**, via
@@ -7295,7 +7340,22 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (38/41 jurisdictions — 93%)
+### DMV — Vehicle Registration, Licensing, Permits (39/41 jurisdictions — 95%)
+
+**Thailand's DMV vertical opens (4 of 6) (GOV-2637)**, via
+`th/dlt/vehicle-registration-application` — the Department of Land
+Transport's (DLT) "แบบคำขอจดทะเบียนรถ" (Vehicle Registration Application
+Form, ขส.บ. 10). This reverses GOV-2593's own prior-cycle dead-end
+assessment of this vertical (below): that cycle checked only dlt.go.th
+directly (unreachable, SSL/TLS error) and found no fillable specimen; this
+cycle's task briefing supplied a third-party document-mirror copy
+(sc-broker.com) that prior pass had not found. See the Executive Summary
+update above and the document's own VERIFICATION.md for the full sourcing
+record — including a transient HTTP 404 on first fetch that three retries
+and a Wayback Machine cross-check both resolved as a one-off availability
+blip, not a dead source — and every disclosed scoping/judgment call
+(most notably, the page-2 vehicle-inspection record is DLT-staff-completed
+and out of scope). **Thailand now stands at 4 of 6 verticals.**
 
 **Rwanda opens as the registry's 43rd jurisdiction via its DMV vertical
 (GOV-2526)**, via `rw/rra/vrf-e06-motor-vehicle-registration-form` (Rwanda
@@ -9563,7 +9623,7 @@ now closed.
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TH** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **TH** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -11281,6 +11341,60 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     full standalone return — flagged as a possible narrower
     companion-schedule candidate for a future cycle, not a full
     Taxes-vertical closure.
+28. **Thailand's DMV vertical opens (4 of 6) (GOV-2637)**, via
+    `th/dlt/vehicle-registration-application` — the Department of Land
+    Transport's (DLT) "แบบคำขอจดทะเบียนรถ" (Vehicle Registration Application
+    Form, internal code ขส.บ. 10). This **reverses item 24 above's own
+    dead-end assessment** of Thailand's DMV vertical: that GOV-2593 cycle
+    checked only dlt.go.th directly (found unreachable) and concluded no
+    unauthenticated fillable specimen existed; this cycle's task briefing
+    supplied a specimen that prior pass had not found — a third-party
+    document-mirror copy at sc-broker.com. Independently re-fetched this
+    cycle: an initial fetch attempt returned a transient HTTP 404 (a real
+    finding, disclosed rather than silently retried away), but three
+    subsequent retries all returned HTTP 200 with a real, 2-page,
+    non-scanned `application/pdf`
+    (`sha256:0b73ac4ad06c9430dd46ece1cf0863b7127ff5f62a08bf7516fcba548d5f4d55`,
+    1,025,611 bytes) — byte-identical to an independently-fetched Wayback
+    Machine snapshot of the same URL from 2025-09-17, which rules out both
+    a dead source and a since-tampered one. dlt.go.th itself remained
+    unreachable this cycle too (`curl` exit 35, SSL/TLS connect error),
+    consistent with item 24's own finding and the task's own note. Further
+    corroborated the form's current official status via a second,
+    independently-fetched source: a Chaiyaphum provincial DLT office's
+    citizen-service manual (chaiyaphumdlt.go.th, HTTP 200,
+    `sha256:11d27992812879c548e7e6dca5a7fab8504a16caa9e339953b63acdb2adb7bbb`),
+    whose own "Forms, samples, and filling guide" section lists this exact
+    form as the office's official vehicle-registration form. Extracted full
+    text from both pages via `pdfjs-dist`: page 1 (3,339 characters) is the
+    applicant-facing request — applicant particulars, a Thai-style address
+    (house number/moo/soi/road/tambon/amphoe/changwat/phone), a
+    new-vehicle-vs-type/characteristic-change registration choice (the
+    latter carrying an existing plate number), vehicle
+    type/chassis-number/engine type-number/intended-use purpose, a
+    supporting-evidence checklist, and the applicant's own
+    certification/signature; page 2 (3,628 characters) is a
+    vehicle-inspection record (weight, engine specs, lighting, brakes,
+    tires, emissions, a numbered 1-27 checkpoint grid) completed and signed
+    by DLT inspection staff, not the applicant, and is out of scope for
+    this v1.0.0 — including the one applicant-facing
+    acknowledgment-of-inspection-result signature line that does appear on
+    that page, disclosed but not modelled since it presupposes a completed
+    staff inspection outcome this schema does not otherwise carry. Modelled
+    as 18 `fields[]` + 8 `documents[]` entries (the supporting-evidence
+    checklist as `documents[]`, left unconditionally optional since the
+    source's own checklist does not tie any item to a specific
+    `registrationType` value), covering both the new-vehicle and
+    type/characteristic-change registration pathways. Two mock conformance
+    scenarios found 0 errors each, plus 4 mutation controls each correctly
+    raised exactly 1 error. See the Executive Summary update above and the
+    document's own VERIFICATION.md for the full sourcing record and every
+    disclosed scoping/judgment call. **Thailand now stands at 4 of 6
+    verticals** (Taxes, Business Formation, Visa, DMV); Passport and
+    National ID remain confirmed weak/dead-end per item 24's screening.
+    Thailand's separately-confirmed driver's-licence dead end (in-person
+    DLT Smart Queue booking only, no downloadable form) was not
+    re-investigated this cycle and stands as previously recorded.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
