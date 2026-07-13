@@ -1,0 +1,789 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "jo/istd/pit-return-employee",
+  "version": "1.0.0",
+  "title": "Jordan — PIT Return / Employee (Natural Person) (Form QP170-F1 / HADEEL 3785)",
+  "description": "The Income and Sales Tax Department's (ISTD, under the Ministry of Finance) \"PIT Return / Employee (natural person)\" (Form QP170-F1, internal code HADEEL 3785), the annual personal income tax return filed by an employee/pensioner taxpayer, distributed as a free English-language download from ISTD's own document host. Opens Jordan's Taxes vertical, Jordan's first published schema (49th jurisdiction). The source is a genuine 2-page print-and-fill specimen — confirmed via pdfjs-dist to carry zero AcroForm/Widget annotations on either page — with a real, fully extractable English text layer; every text item's (x, y) transform was grouped into rows and read in full, and both pages were also rendered to PNG via pdfjs-dist + node-canvas and visually cross-checked against the transcript before modeling any field, resolving the top-of-form \"Type of Return\"/\"Tax Period\" checkbox-and-year block (whose printed labels sit above the form's own title line in reading order but render as a boxed control at the top of the page) and confirming the page-2 dependents table (headed on page 1, continued as 6 blank rows on page 2) has a fixed 6-row printed capacity. The form's own structure runs: a filing-identification header (Type of Return — Regular/Amended — and Tax Period); §Personal/Contact Information (name, TIN, National ID/Passport, ISTD office, address, city, P.O. Box, telephone, zip code, mobile, email, family status, Wife income Yes/No, Joint income Yes/No, Nationality Jordanian/Non-Jordanian, Residency Resident/Non-resident); an unlabeled income-and-exemptions worksheet using ISTD's own numbered box codes (339, 3303, 3305, 3307, 99310, 993104, 9027–9029, 993105, 99110, 991201, 99130); a \"Calculation of tax liability (table 99000)\" worksheet (99510, 995201, 995211, 99540, 99171, 991311, 99131, 99513, 995212, 99541, 99132, 99514, 995213, 99542, 99590); a 6-row Dependent table (name, relationship, National ID/passport, nationality, year of birth); and a Declaration (spouse's name/signature/TIN/National ID when filing jointly, and the taxpayer's/agent's own name, signature, date, and optional tax agent TIN/National ID). This v1.0.0 models the form's full structure end to end: 84 fields plus 1 documents[] entry (the declaration's own verbatim attestation text). Every numbered worksheet box is modeled as its own field, named descriptively but cross-referenced to ISTD's own box code in `sourceRef`; box codes that are themselves computed subtotals/totals per the form's own printed formula (339, 99310, 993104, 99110, 99130, 99510, 99540, 99590) are modeled as required, while itemized component lines beneath them (e.g. 3303/3305/3307, 9027–9029, 995201/995211, the full end-of-service-indemnity block 99171–99541, and the full National Contribution block 99132–99542) are modeled as optional, since the specimen prints no explicit yes/no gate for the end-of-service-indemnity or National Contribution sections (unlike e.g. this registry's gh/gra Ghana DT0103 precedent, which does print explicit section gates) — a taxpayer without end-of-service indemnity or income subject to National Contribution simply leaves that block blank, disclosed here rather than an invented gate field. \"Family status\" is printed as a single blank fillable cell with no options text anywhere on the specimen and is modeled as a free-text string, consistent with this registry's established precedent for unprinted-option fields (e.g. gh/gra's landlord fields). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of Jordan or the Income and Sales Tax Department.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "JO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Income and Sales Tax Department",
+    "abbreviation": "ISTD",
+    "url": "https://istd.gov.jo"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://istd.gov.jo/ebv4.0/root_storage/en/eb_list_page/tax_returns_(natural_person_-_employee).pdf",
+    "retrievedAt": "2026-07-13",
+    "documentRef": "Income and Sales Tax Department, \"PIT Return / Employee (natural person)\" (Form QP170-F1, HADEEL 3785), updated Jan 28, 2020"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-13",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-13",
+    "notes": "GovSchema Standard Research cycle GOV-2731. Opens Jordan's Taxes vertical (Jordan's first published schema, 49th jurisdiction). This candidate was scouted and left open in the GOV-2716 cycle; independently re-fetched and re-verified from scratch this cycle rather than trusting the prior scouting pass. See this schema's own VERIFICATION.md for the full sourcing record."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-13"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "typeOfReturn",
+      "label": "Type of Return",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this filing is a regular original return or an amended return.",
+      "sourceRef": "Page 1, header box: \"Type of Return\" — \"Regular\" / \"Amended\"",
+      "validation": { "enum": ["regular", "amended"] }
+    },
+    {
+      "name": "taxPeriod",
+      "label": "Tax Period",
+      "type": "string",
+      "required": true,
+      "description": "The 4-digit tax year this return covers, printed alongside Type of Return in the form's header box (this specimen prints the example year \"2019\").",
+      "sourceRef": "Page 1, header box: \"Tax Period\"",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "taxpayerName",
+      "label": "Name of taxpayer",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's full name.",
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Name of taxpayer\""
+    },
+    {
+      "name": "tin",
+      "label": "TIN",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's Tax Identification Number.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1: \"TIN\""
+    },
+    {
+      "name": "nationalIdOrPassport",
+      "label": "National ID/ Passport",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's National ID number or passport number.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1: \"National ID/ Passport\""
+    },
+    {
+      "name": "istdOffice",
+      "label": "ISTD Office",
+      "type": "string",
+      "required": false,
+      "description": "The specific ISTD office administering this return.",
+      "sourceRef": "Page 1: \"ISTD Office\""
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's address.",
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Address\""
+    },
+    {
+      "name": "familyStatus",
+      "label": "Family status",
+      "type": "string",
+      "required": false,
+      "description": "The taxpayer's family status, printed as a single blank fillable cell with no options text anywhere on the specimen.",
+      "sourceRef": "Page 1: \"Family status\""
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "type": "string",
+      "required": false,
+      "description": "The city of the taxpayer's address.",
+      "sourceRef": "Page 1: \"City\""
+    },
+    {
+      "name": "poBox",
+      "label": "P.O. Box",
+      "type": "string",
+      "required": false,
+      "description": "The taxpayer's post office box.",
+      "sourceRef": "Page 1: \"P.O. Box\""
+    },
+    {
+      "name": "telephone",
+      "label": "Telephone",
+      "type": "string",
+      "required": false,
+      "description": "The taxpayer's telephone number.",
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Telephone\""
+    },
+    {
+      "name": "wifeIncome",
+      "label": "Wife income",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer's wife has income, printed as an unlabeled Yes/No tick-box pair (not extractable as text on this non-AcroForm specimen).",
+      "sourceRef": "Page 1: \"Wife income\" — \"Yes\" / \"No\""
+    },
+    {
+      "name": "zipCode",
+      "label": "Zip code",
+      "type": "string",
+      "required": false,
+      "description": "The zip code of the taxpayer's address.",
+      "sourceRef": "Page 1: \"Zip code\""
+    },
+    {
+      "name": "mobile",
+      "label": "Mobile",
+      "type": "string",
+      "required": false,
+      "description": "The taxpayer's mobile phone number.",
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Mobile\""
+    },
+    {
+      "name": "jointIncome",
+      "label": "Joint income",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether this return is filed jointly with the taxpayer's spouse, printed as an unlabeled Yes/No tick-box pair. Gates the Declaration's spouse-particulars fields.",
+      "sourceRef": "Page 1: \"Joint income\" — \"Yes\" / \"No\""
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": false,
+      "description": "The taxpayer's email address.",
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Email\""
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the taxpayer is Jordanian or non-Jordanian, gating certain personal-exemption entitlements (box 9028).",
+      "sourceRef": "Page 1: \"Nationality\" — \"Jordanian\" / \"Non-Jordanian\"",
+      "validation": { "enum": ["jordanian", "non-jordanian"] }
+    },
+    {
+      "name": "residency",
+      "label": "Residency",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the taxpayer is a resident or non-resident, gating certain personal-exemption entitlements (box 9028).",
+      "sourceRef": "Page 1: \"Residency\" — \"Resident\" / \"Non-resident\"",
+      "validation": { "enum": ["resident", "non-resident"] }
+    },
+    {
+      "name": "incomeFromSalariesWagesAllowances",
+      "label": "Income from salaries, wages, allowances, rewards and benefits — excluding end-of-service indemnity",
+      "type": "number",
+      "required": true,
+      "description": "Box 339: income from salaries, wages, allowances, rewards and benefits, excluding end-of-service indemnity — computed as (3303 + 3305) − 3307.",
+      "sourceRef": "Page 1, box 339: \"Income from salaries, wages, allowances, rewards and benefits - excluding end-of-service indemnity (3303 + 3305) - 3307\""
+    },
+    {
+      "name": "grossSalariesWagesAllowancesRewardsBenefits",
+      "label": "Gross income from salaries, wages, allowances, rewards, including rewards for board of directors, and benefits",
+      "type": "number",
+      "required": false,
+      "description": "Box 3303: gross income from salaries, wages, allowances, rewards (including board-of-directors rewards), and benefits, excluding end-of-service gratuity.",
+      "sourceRef": "Page 1, box 3303",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "grossAnnualPensionIncome",
+      "label": "Gross income from annual pension, including illness annuity, exceeding JD 2,500 per month",
+      "type": "number",
+      "required": false,
+      "description": "Box 3305: gross income from annual pension, including illness annuity, exceeding JD 2,500 per month.",
+      "sourceRef": "Page 1, box 3305",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "dependentDisabilityDeduction",
+      "label": "Minus 2000 JD for every dependent with permanent or temporary disability",
+      "type": "number",
+      "required": false,
+      "description": "Box 3307: deduction of JD 2,000 for every dependent with a permanent or temporary disability.",
+      "sourceRef": "Page 1, box 3307",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalExemptionsAndDeductions",
+      "label": "Total exemptions and deductions",
+      "type": "number",
+      "required": true,
+      "description": "Box 99310: total exemptions and deductions, computed as 993104 + 993105.",
+      "sourceRef": "Page 1, box 99310"
+    },
+    {
+      "name": "totalPersonalExemptions",
+      "label": "Total personal exemptions for individual and dependents and others",
+      "type": "number",
+      "required": true,
+      "description": "Box 993104: total personal exemptions for individual, dependents, and others, computed as 9027 + 9028 + 9029, up to JD 23,000.",
+      "sourceRef": "Page 1, box 993104",
+      "validation": { "maximum": 23000 }
+    },
+    {
+      "name": "individualExemption",
+      "label": "Individual exemption",
+      "type": "number",
+      "required": false,
+      "description": "Box 9027: individual exemption, in full or in part, up to JD 10,000 per year (granted to residents).",
+      "sourceRef": "Page 1, box 9027",
+      "validation": { "minimum": 0, "maximum": 10000 }
+    },
+    {
+      "name": "dependentsExemption",
+      "label": "Dependents' exemption",
+      "type": "number",
+      "required": false,
+      "description": "Box 9028: dependents' exemption, in full or in part, up to JD 10,000 per year (granted to Jordanian and non-Jordanian residents and their resident or non-resident dependents, and to non-resident Jordanian on their resident dependents; not granted to non-resident Jordanian on their non-resident dependents, or to non-Jordanian not residing in the country on their resident or non-resident dependents).",
+      "sourceRef": "Page 1, box 9028",
+      "validation": { "minimum": 0, "maximum": 10000 }
+    },
+    {
+      "name": "otherExemptions",
+      "label": "Other exemptions",
+      "type": "number",
+      "required": false,
+      "description": "Box 9029: other exemptions (medicine, education, rent, interest or Murabaha on housing loans), in full or in part, up to JD 1,000 for each child, up to JD 3,000 for only 3 children.",
+      "sourceRef": "Page 1, box 9029",
+      "validation": { "minimum": 0, "maximum": 3000 }
+    },
+    {
+      "name": "donationsToGovernmentDepartments",
+      "label": "Donations paid to government departments, public institutions and municipalities",
+      "type": "number",
+      "required": false,
+      "description": "Box 993105: donations paid to government departments, public institutions, and municipalities.",
+      "sourceRef": "Page 1, box 993105",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "taxableIncome",
+      "label": "Taxable income",
+      "type": "number",
+      "required": true,
+      "description": "Box 99110: taxable income, computed as box 339 minus box 99310.",
+      "sourceRef": "Page 1, box 99110: \"Taxable income (1 – 99310)\""
+    },
+    {
+      "name": "donationsSubscriptionsDeduction",
+      "label": "Minus donations and subscriptions paid in the country",
+      "type": "number",
+      "required": false,
+      "description": "Box 991201: donations and subscriptions paid in the country for religious, charitable, humanitarian, scientific, sport, or professional purposes, or for parties, up to 25% of the amount in box 99110.",
+      "sourceRef": "Page 1, box 991201",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "adjustedTaxableIncome",
+      "label": "Adjusted taxable income",
+      "type": "number",
+      "required": true,
+      "description": "Box 99130: adjusted taxable income, computed as box 99110 minus box 991201; carried into the box-99510 tax calculation.",
+      "sourceRef": "Page 1, box 99130"
+    },
+    {
+      "name": "incomeTaxDue",
+      "label": "Income tax due on the adjusted taxable income",
+      "type": "number",
+      "required": true,
+      "description": "Box 99510: income tax due, computed by applying Jordan's personal income tax rate bands to box 99130.",
+      "sourceRef": "Page 1, box 99510",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "withheldTaxOffsetSalaries",
+      "label": "Offset against income tax withheld from salaries, wages and allowances",
+      "type": "number",
+      "required": false,
+      "description": "Box 995201: income tax already withheld from salaries, wages, and allowances, offset against box 99510.",
+      "sourceRef": "Page 1, box 995201",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "carCustomsTaxPaid",
+      "label": "Tax paid for the customs of a car imported by the taxpayer himself and still in his ownership",
+      "type": "number",
+      "required": false,
+      "description": "Box 995211: tax paid for the customs of a car imported by the taxpayer and still in the taxpayer's ownership, offset against box 99510.",
+      "sourceRef": "Page 1, box 995211",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "netIncomeTaxLiability",
+      "label": "Net income tax liability",
+      "type": "number",
+      "required": true,
+      "description": "Box 99540: net income tax liability, computed as box 99510 minus box 995201 minus box 995211.",
+      "sourceRef": "Page 1, box 99540"
+    },
+    {
+      "name": "grossEndOfServiceIndemnity",
+      "label": "Gross end of service indemnity",
+      "type": "number",
+      "required": false,
+      "description": "Box 99171: gross end-of-service indemnity received. The specimen prints no explicit yes/no gate for this section; a taxpayer without end-of-service indemnity leaves this block blank.",
+      "sourceRef": "Page 1, box 99171",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "endOfServiceIndemnityExemption",
+      "label": "End-of-service indemnity exemption",
+      "type": "number",
+      "required": false,
+      "description": "Box 991311: the exempt portion of end-of-service indemnity, computed per the source's own tiered rule — the full amount before 31/12/2009, 50% of the amount from 1/1/2010 to 31/12/2014, and the first JD 15,000 for the period from 1/1/2015.",
+      "sourceRef": "Page 1, box 991311: \"- End of service indemnity before 31/12/2009 -50% of the end of service indemnity from 1/1/2010 till 31/12/2014 -First JD 15000 for the period from 1/1/2015\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "taxableEndOfServiceIndemnityIncome",
+      "label": "Taxable income of the end-of-service indemnity",
+      "type": "number",
+      "required": false,
+      "description": "Box 99131: taxable income of the end-of-service indemnity, computed as box 99171 minus box 991311.",
+      "sourceRef": "Page 1, box 99131"
+    },
+    {
+      "name": "endOfServiceIndemnityTaxPayable",
+      "label": "Income tax payable on the end-of-service indemnity",
+      "type": "number",
+      "required": false,
+      "description": "Box 99513: income tax payable on the end-of-service indemnity, at 9%, after deducting the exempted amounts calculated in box 99131.",
+      "sourceRef": "Page 1, box 99513",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "withheldTaxOffsetEndOfServiceIndemnity",
+      "label": "Withheld income tax offset from the end-of-service indemnity",
+      "type": "number",
+      "required": false,
+      "description": "Box 995212: income tax already withheld from the end-of-service indemnity, offset against box 99513.",
+      "sourceRef": "Page 1, box 995212",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "endOfServiceIndemnityTaxBalance",
+      "label": "Income tax balance payable on the end of service indemnity",
+      "type": "number",
+      "required": false,
+      "description": "Box 99541: income tax balance payable on the end-of-service indemnity, computed as box 99513 minus box 995212.",
+      "sourceRef": "Page 1, box 99541"
+    },
+    {
+      "name": "incomeSubjectToNationalContribution",
+      "label": "Income subject to National Contribution",
+      "type": "number",
+      "required": false,
+      "description": "Box 99132: income subject to the National Contribution, computed as (box 99130 + box 99131) minus JD 200,000, only if the result is positive. The specimen prints no explicit yes/no gate for this section.",
+      "sourceRef": "Page 1, box 99132: \"Income subject to National Contribution ((99130+99131)-200000JD) if the amount was positive\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "nationalContributionDue",
+      "label": "The 1% National Contribution",
+      "type": "number",
+      "required": false,
+      "description": "Box 99514: the 1% National Contribution due on box 99132.",
+      "sourceRef": "Page 1, box 99514",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "withheldNationalContribution",
+      "label": "Withheld National Contribution",
+      "type": "number",
+      "required": false,
+      "description": "Box 995213: National Contribution already withheld, offset against box 99514.",
+      "sourceRef": "Page 1, box 995213",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "nationalContributionBalance",
+      "label": "National Contribution balance",
+      "type": "number",
+      "required": false,
+      "description": "Box 99542: National Contribution balance, computed as box 99514 minus box 995213.",
+      "sourceRef": "Page 1, box 99542"
+    },
+    {
+      "name": "totalTaxAndContributionBalance",
+      "label": "Income tax balance & end-of-service indemnity tax balance",
+      "type": "number",
+      "required": true,
+      "description": "Box 99590: the return's final combined balance, computed as box 99540 plus box 99541.",
+      "sourceRef": "Page 1, box 99590"
+    },
+    {
+      "name": "dependent1Name",
+      "label": "Dependent name (1)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the first listed dependent. The Dependent table has a fixed 6-row printed capacity, spanning the bottom of page 1 (header) and all 6 blank rows on page 2.",
+      "classification": "pii",
+      "sourceRef": "Page 1/2, Dependent table row 1: \"Dependent name\""
+    },
+    {
+      "name": "dependent1Relationship",
+      "label": "Relationship (1)",
+      "type": "string",
+      "required": false,
+      "description": "Relationship of the first listed dependent to the taxpayer.",
+      "sourceRef": "Page 1/2, Dependent table row 1: \"Relationship\""
+    },
+    {
+      "name": "dependent1NationalIdOrPassport",
+      "label": "National ID/ passport (1)",
+      "type": "string",
+      "required": false,
+      "description": "National ID or passport number of the first listed dependent.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1/2, Dependent table row 1: \"National ID/ passport\""
+    },
+    {
+      "name": "dependent1Nationality",
+      "label": "Nationality (1)",
+      "type": "string",
+      "required": false,
+      "description": "Nationality of the first listed dependent.",
+      "sourceRef": "Page 1/2, Dependent table row 1: \"Nationality\""
+    },
+    {
+      "name": "dependent1YearOfBirth",
+      "label": "Year of birth (1)",
+      "type": "string",
+      "required": false,
+      "description": "Year of birth of the first listed dependent.",
+      "sourceRef": "Page 1/2, Dependent table row 1: \"Year of birth\"",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "dependent2Name",
+      "label": "Dependent name (2)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the second listed dependent.",
+      "classification": "pii",
+      "sourceRef": "Page 2, Dependent table row 2: \"Dependent name\""
+    },
+    {
+      "name": "dependent2Relationship",
+      "label": "Relationship (2)",
+      "type": "string",
+      "required": false,
+      "description": "Relationship of the second listed dependent to the taxpayer.",
+      "sourceRef": "Page 2, Dependent table row 2: \"Relationship\""
+    },
+    {
+      "name": "dependent2NationalIdOrPassport",
+      "label": "National ID/ passport (2)",
+      "type": "string",
+      "required": false,
+      "description": "National ID or passport number of the second listed dependent.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Dependent table row 2: \"National ID/ passport\""
+    },
+    {
+      "name": "dependent2Nationality",
+      "label": "Nationality (2)",
+      "type": "string",
+      "required": false,
+      "description": "Nationality of the second listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 2: \"Nationality\""
+    },
+    {
+      "name": "dependent2YearOfBirth",
+      "label": "Year of birth (2)",
+      "type": "string",
+      "required": false,
+      "description": "Year of birth of the second listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 2: \"Year of birth\"",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "dependent3Name",
+      "label": "Dependent name (3)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the third listed dependent.",
+      "classification": "pii",
+      "sourceRef": "Page 2, Dependent table row 3: \"Dependent name\""
+    },
+    {
+      "name": "dependent3Relationship",
+      "label": "Relationship (3)",
+      "type": "string",
+      "required": false,
+      "description": "Relationship of the third listed dependent to the taxpayer.",
+      "sourceRef": "Page 2, Dependent table row 3: \"Relationship\""
+    },
+    {
+      "name": "dependent3NationalIdOrPassport",
+      "label": "National ID/ passport (3)",
+      "type": "string",
+      "required": false,
+      "description": "National ID or passport number of the third listed dependent.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Dependent table row 3: \"National ID/ passport\""
+    },
+    {
+      "name": "dependent3Nationality",
+      "label": "Nationality (3)",
+      "type": "string",
+      "required": false,
+      "description": "Nationality of the third listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 3: \"Nationality\""
+    },
+    {
+      "name": "dependent3YearOfBirth",
+      "label": "Year of birth (3)",
+      "type": "string",
+      "required": false,
+      "description": "Year of birth of the third listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 3: \"Year of birth\"",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "dependent4Name",
+      "label": "Dependent name (4)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the fourth listed dependent.",
+      "classification": "pii",
+      "sourceRef": "Page 2, Dependent table row 4: \"Dependent name\""
+    },
+    {
+      "name": "dependent4Relationship",
+      "label": "Relationship (4)",
+      "type": "string",
+      "required": false,
+      "description": "Relationship of the fourth listed dependent to the taxpayer.",
+      "sourceRef": "Page 2, Dependent table row 4: \"Relationship\""
+    },
+    {
+      "name": "dependent4NationalIdOrPassport",
+      "label": "National ID/ passport (4)",
+      "type": "string",
+      "required": false,
+      "description": "National ID or passport number of the fourth listed dependent.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Dependent table row 4: \"National ID/ passport\""
+    },
+    {
+      "name": "dependent4Nationality",
+      "label": "Nationality (4)",
+      "type": "string",
+      "required": false,
+      "description": "Nationality of the fourth listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 4: \"Nationality\""
+    },
+    {
+      "name": "dependent4YearOfBirth",
+      "label": "Year of birth (4)",
+      "type": "string",
+      "required": false,
+      "description": "Year of birth of the fourth listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 4: \"Year of birth\"",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "dependent5Name",
+      "label": "Dependent name (5)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the fifth listed dependent.",
+      "classification": "pii",
+      "sourceRef": "Page 2, Dependent table row 5: \"Dependent name\""
+    },
+    {
+      "name": "dependent5Relationship",
+      "label": "Relationship (5)",
+      "type": "string",
+      "required": false,
+      "description": "Relationship of the fifth listed dependent to the taxpayer.",
+      "sourceRef": "Page 2, Dependent table row 5: \"Relationship\""
+    },
+    {
+      "name": "dependent5NationalIdOrPassport",
+      "label": "National ID/ passport (5)",
+      "type": "string",
+      "required": false,
+      "description": "National ID or passport number of the fifth listed dependent.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Dependent table row 5: \"National ID/ passport\""
+    },
+    {
+      "name": "dependent5Nationality",
+      "label": "Nationality (5)",
+      "type": "string",
+      "required": false,
+      "description": "Nationality of the fifth listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 5: \"Nationality\""
+    },
+    {
+      "name": "dependent5YearOfBirth",
+      "label": "Year of birth (5)",
+      "type": "string",
+      "required": false,
+      "description": "Year of birth of the fifth listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 5: \"Year of birth\"",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "dependent6Name",
+      "label": "Dependent name (6)",
+      "type": "string",
+      "required": false,
+      "description": "Name of the sixth listed dependent.",
+      "classification": "pii",
+      "sourceRef": "Page 2, Dependent table row 6: \"Dependent name\""
+    },
+    {
+      "name": "dependent6Relationship",
+      "label": "Relationship (6)",
+      "type": "string",
+      "required": false,
+      "description": "Relationship of the sixth listed dependent to the taxpayer.",
+      "sourceRef": "Page 2, Dependent table row 6: \"Relationship\""
+    },
+    {
+      "name": "dependent6NationalIdOrPassport",
+      "label": "National ID/ passport (6)",
+      "type": "string",
+      "required": false,
+      "description": "National ID or passport number of the sixth listed dependent.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Dependent table row 6: \"National ID/ passport\""
+    },
+    {
+      "name": "dependent6Nationality",
+      "label": "Nationality (6)",
+      "type": "string",
+      "required": false,
+      "description": "Nationality of the sixth listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 6: \"Nationality\""
+    },
+    {
+      "name": "dependent6YearOfBirth",
+      "label": "Year of birth (6)",
+      "type": "string",
+      "required": false,
+      "description": "Year of birth of the sixth listed dependent.",
+      "sourceRef": "Page 2, Dependent table row 6: \"Year of birth\"",
+      "validation": { "pattern": "^[0-9]{4}$" }
+    },
+    {
+      "name": "spouseNameAndSignature",
+      "label": "Name and signature of spouse, if joint income",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "jointIncome", "equals": true },
+      "description": "The spouse's name (standing in for their physical signature), required only when this return is filed jointly.",
+      "classification": "pii",
+      "sourceRef": "Page 2, Declaration: \"Name and signature of spouse, if joint income\""
+    },
+    {
+      "name": "spouseTin",
+      "label": "TIN of the spouse",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "jointIncome", "equals": true },
+      "description": "The spouse's Tax Identification Number, required only when this return is filed jointly.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Declaration: \"TIN of the spouse\""
+    },
+    {
+      "name": "spouseNationalId",
+      "label": "National ID of the spouse",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "jointIncome", "equals": true },
+      "description": "The spouse's National ID number, required only when this return is filed jointly.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Declaration: \"National ID of the spouse\""
+    },
+    {
+      "name": "spouseDeclarationDate",
+      "label": "Date (spouse)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "jointIncome", "equals": true },
+      "description": "The date the spouse's declaration was signed, required only when this return is filed jointly.",
+      "sourceRef": "Page 2, Declaration (left column): \"Date\""
+    },
+    {
+      "name": "taxpayerOrAgentNameAndSignature",
+      "label": "Taxpayer's/ agent's name and signature",
+      "type": "string",
+      "required": true,
+      "description": "The name of the taxpayer or their tax agent, standing in for their physical signature, declaring this return.",
+      "classification": "pii",
+      "sourceRef": "Page 2, Declaration: \"Taxpayer's/ agent's name and signature\""
+    },
+    {
+      "name": "taxpayerDeclarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "The date the taxpayer's/agent's declaration was signed.",
+      "sourceRef": "Page 2, Declaration (right column): \"Date\""
+    },
+    {
+      "name": "taxAgentTin",
+      "label": "Tax agent's TIN",
+      "type": "string",
+      "required": false,
+      "description": "The tax agent's Tax Identification Number, when this return is declared by a tax agent rather than the taxpayer personally.",
+      "sourceRef": "Page 2, Declaration: \"Tax agent's TIN\""
+    },
+    {
+      "name": "taxAgentNationalId",
+      "label": "Tax agent's national ID",
+      "type": "string",
+      "required": false,
+      "description": "The tax agent's National ID number, when this return is declared by a tax agent rather than the taxpayer personally.",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Declaration: \"Tax agent's national ID\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "declarationAttestation",
+      "label": "Declarant's attestation",
+      "category": "attestation",
+      "belongsTo": "applicant",
+      "required": true,
+      "statement": "I, hereby, certify that all information given in this declaration is true, correct and complete, that I have no other source of income other than employment, under liability, and that the address provided is valid for notification purposes in accordance with the law.",
+      "sourceRef": "Page 2, Declaration: \"I, hereby, certify that all information given in this declaration is true, correct and complete, that I have no other source of income other than employment, under liability, and that the address provided is valid for notification purposes in accordance with the law.\""
+    }
+  ]
+}

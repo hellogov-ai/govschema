@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**48 jurisdictions** | **410 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **411 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2731, "GovSchema Standard Research"): Jordan
+> opens as the registry's 49th jurisdiction**, via its Taxes vertical,
+> `jo/istd/pit-return-employee` — the Income and Sales Tax Department's
+> (ISTD, under the Ministry of Finance) "PIT Return / Employee (natural
+> person)" (Form QP170-F1, internal code HADEEL 3785). This candidate was
+> scouted and left open in the GOV-2716 cycle (alongside Sri Lanka, authored
+> that same cycle, and Serbia, authored in GOV-2725); this cycle
+> independently re-fetched and re-verified the source from scratch rather
+> than trusting the prior scouting pass's figures verbatim, confirming the
+> exact pre-scouted URL is still live and unauthenticated (HTTP 200,
+> `application/pdf`, 189,206 bytes, `sha256:
+> a25b8676a670e026f59b127a6d41f06ce501c48f570d42d0acbfbc633a4e2029`). A
+> flat, non-AcroForm 2-page specimen (zero Widget annotations on either page,
+> confirmed via `pdfjs-dist`) with a genuine, fully extractable English text
+> layer; both pages were also rendered to PNG via `pdfjs-dist` + `node-canvas`
+> and visually cross-checked, resolving the header's "Type of
+> Return"/"Tax Period" control and confirming the Dependent table's fixed
+> 6-row printed capacity (headed on page 1, continued as 6 blank rows on page
+> 2). Models 84 `fields[]` plus 1 `documents[]` entry (the declaration's own
+> attestation text): filing identification (Type of Return Regular/Amended,
+> Tax Period); personal/contact information (name, TIN, National ID/
+> Passport, ISTD office, address, city, P.O. Box, telephone, zip code,
+> mobile, email, family status, Wife income Yes/No, Joint income Yes/No,
+> Nationality Jordanian/Non-Jordanian, Residency Resident/Non-resident); the
+> full income-and-exemptions worksheet using ISTD's own numbered box codes
+> (339, 3303, 3305, 3307, 99310, 993104, 9027–9029, 993105, 99110, 991201,
+> 99130); the "Calculation of tax liability (table 99000)" worksheet (99510,
+> 995201, 995211, 99540, 99171, 991311, 99131, 99513, 995212, 99541, 99132,
+> 99514, 995213, 99542, 99590); a 6-row bounded Dependent repeating group
+> (name, relationship, National ID/passport, nationality, year of birth);
+> and the Declaration (spouse particulars gated `requiredWhen` joint filing,
+> taxpayer's/agent's own name/signature/date, optional tax agent TIN/
+> National ID). Unlike this registry's `gh/gra` Ghana DT0103 precedent, the
+> specimen prints no explicit yes/no gate ahead of the end-of-service-
+> indemnity or National Contribution worksheet blocks, disclosed rather than
+> invented; computed subtotal/total boxes are modeled required, itemized
+> component boxes optional. 2 valid conformance fixtures (0 errors each) plus
+> 6 mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/jo/istd/pit-return-employee/1.0.0/`. **Jordan now stands
+> at 1 of 6 verticals**; DMV, Business Formation, Visa, Passport, and
+> National ID & Civic Documents are open, unscreened backlog candidates. See
+> GOV-2731 and this schema's own VERIFICATION.md for the full sourcing
+> record.
 
 > **Update (2026-07-13, GOV-2725, "GovSchema Standard Research"): Serbia
 > opens as the registry's 48th jurisdiction**, via its Business Formation
@@ -10401,6 +10445,7 @@ now closed.
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **JO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -12566,15 +12611,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
-- **Jordan — Taxes.** ISTD's (Income and Sales Tax Department) "PIT Return /
-  Employee (natural person)" form (HADEEL 3785 / QP170-F11),
-  `istd.gov.jo/ebv4.0/root_storage/en/eb_list_page/tax_returns_(natural_person_-_employee).pdf`.
-  A flat, non-AcroForm PDF with a genuine, fully coded line-item English
-  text layer (comparable in richness to this registry's other Taxes-vertical
-  schemas, e.g. Peru FV-709, Greece E1, Ghana DT0103). A companion
-  self-employed-individual return and a corporate return exist at the same
-  directory. Screened alongside Sri Lanka and Serbia in the GOV-2716 cycle;
-  ready to author in a future cycle.
+- **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
+  return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
+  jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
+  forms remain in the same ISTD directory as open backlog candidates for a
+  future cycle: a self-employed-individual PIT return and a corporate
+  income tax return (both un-screened this cycle).
 
 ---
 
