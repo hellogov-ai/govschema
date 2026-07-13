@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**50 jurisdictions** | **421 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**50 jurisdictions** | **422 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2813, "GovSchema Standard Research"): Romania's
+> Business Formation vertical opens (3 of 6)**, via
+> `ro/onrc/cerere-inregistrare-persoane-juridice` — the Oficiul Național al
+> Registrului Comerțului's (ONRC, Romania's National Trade Register Office,
+> under the Ministry of Justice) "Anexa nr. 2a — Cerere de înregistrare -
+> persoane juridice" (Annex no. 2a — Request for Registration — Legal
+> Entities), the omnibus request form filed with a county Trade Register
+> Office (ORCT) for any registrar operation concerning a legal entity.
+> Independently re-fetched the source
+> (`www.onrc.ro/templates/site/formulare/11-10-150.pdf`, HTTP 200,
+> `application/pdf`, 560,332 bytes, sha256:
+> `a468c682e442b5ed886289b0ba5235407d7ae4fa18443ae66dafc430aa99c243`) and
+> confirmed via `pdfjs-dist@3` that it is a genuine 4-page AcroForm with 445
+> Widget annotations (307 text + 138 checkbox/button fields across 429
+> distinct field names — a deviation from the task brief's own "13 pages"
+> estimate, traced to 6 incremental-save revisions leaving stale orphaned
+> page objects in the raw byte stream that `pdfjs-dist`'s own xref-following
+> page count correctly ignores). The form's own top "solicit:" list offers
+> eight mutually exclusive request types; this v1.0.0 is scoped to
+> **legal-entity registration only** (new-entity registration, and
+> registration of a branch of a Romanian or a foreign legal entity),
+> modeled via a single `exclusivityGroups` entry, leaving the five
+> post-registration lifecycle operations (amendments, authority-communicated
+> operations, deregistration, material-error correction, CAEN classification
+> update — roughly half the form's own widgets) as a disclosed backlog
+> candidate for a future, separately-versioned schema. Models 221 of the 445
+> source widgets as `fields[]`; the source's own fixed 7-row submitted-
+> documents manifest is modeled as a bounded `document1`…`document7`
+> repeating group (a natural fit to the source's own row count, not an
+> artificially imposed cap). **Romania now stands at 3 of 6 verticals**;
+> Passport, Visa, and National ID & Civic Documents remain open, unscreened
+> backlog candidates — not screened this cycle. See GOV-2813 and this
+> schema's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2804, "GovSchema Standard Research"): Romania's
 > DMV vertical opens (2 of 6)**, via
@@ -8847,7 +8881,30 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (44/45 jurisdictions — 98%)
+### Business Formation — Incorporation, LLC, Company Registration (45/45 jurisdictions — 100%)
+
+**Romania's Business Formation vertical opens (3 of 6) (GOV-2813)**, via
+`ro/onrc/cerere-inregistrare-persoane-juridice` — the Oficiul Național al
+Registrului Comerțului's (ONRC) "Anexa nr. 2a — Cerere de înregistrare -
+persoane juridice," the omnibus request form filed with a county Trade
+Register Office (ORCT) for any registrar operation concerning a legal
+entity. Independently re-fetched from `www.onrc.ro` (HTTP 200,
+`application/pdf`, 560,332 bytes, `sha256:
+a468c682e442b5ed886289b0ba5235407d7ae4fa18443ae66dafc430aa99c243`). A
+genuine 4-page AcroForm confirmed via `pdfjs-dist@3`: 445 Widget
+annotations (307 text + 138 checkbox/button fields across 429 distinct
+field names). The form's own top "solicit:" list offers eight mutually
+exclusive request types; this v1.0.0 is scoped to legal-entity registration
+only (new-entity registration, and registration of a branch of a Romanian
+or a foreign legal entity), modeled via a single `exclusivityGroups` entry,
+leaving the five post-registration lifecycle operations (amendments,
+authority-communicated operations, deregistration, material-error
+correction, CAEN classification update) as disclosed backlog. Models 221 of
+the 445 source widgets as `fields[]`; the source's own fixed 7-row
+submitted-documents manifest is modeled as a bounded `document1`…
+`document7` repeating group. This closes the registry's last open Business
+Formation gap, restoring **global Business Formation coverage to 100%**
+(45/45 jurisdictions).
 
 **Serbia opens (1 of 6) via Business Formation (GOV-2725)**, via
 `rs/apr/jrpps-pr-sole-proprietor-registration` — the Agency for Business
@@ -11100,7 +11157,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RO** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **RO** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -13399,6 +13456,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Romania's remaining four verticals (Passport, Business Formation, Visa,
   National ID & Civic Documents) are open, unscreened backlog — not
   screened this cycle.
+- **Romania — Business Formation: opened (GOV-2813), advances to 3 of 6.**
+  `ro/onrc/cerere-inregistrare-persoane-juridice` opened Romania's Business
+  Formation vertical — see the Executive Summary's GOV-2813 update. This
+  supersedes the GOV-2804 cycle's "remaining four verticals" note: Business
+  Formation is now covered, scoped to the source form's own registration-
+  type request options (new-entity registration, and registration of a
+  branch of a Romanian or a foreign legal entity); its five post-
+  registration lifecycle operations (amendments, authority-communicated
+  operations, deregistration, material-error correction, CAEN
+  classification update) are disclosed as a deferred backlog candidate for
+  a future, separately-versioned schema. **Romania now stands at 3 of 6
+  verticals** (Taxes, DMV, Business Formation); Passport, Visa, and
+  National ID & Civic Documents remain open, unscreened backlog
+  candidates for a future cycle.
 
 ---
 
