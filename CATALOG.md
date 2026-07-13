@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **399 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **400 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2666, "GovSchema Standard Research"): Bangladesh's
+> Passport vertical opens (3 of 6)**, via
+> `bd/dip/e-passport-application-form` — the Department of Immigration and
+> Passports' (DIP) "e-Passport Application Form (New/Re-Issue)", distributed
+> for offline/embassy submission via the Ministry of Foreign Affairs' (MOFA)
+> forms portal. This **reverses a prior dead-end verdict**: GOV-2591's cycle
+> screened Bangladesh's Passport vertical and found it weak/dead-end (an
+> online-portal-only e-passport process with no fillable specimen located at
+> the time). This cycle found MOFA's own forms portal hosts a genuine,
+> unauthenticated, interactive AcroForm PDF for exactly this process — the
+> same class of reversal already recorded for Bangladesh's DMV vertical
+> (GOV-2644's BRTA finding). Independently re-fetched this cycle: HTTP 200,
+> `application/pdf`, 4,114,743 bytes, `sha256:
+> 477e229ac2869691f6bd2a09be01af0d7ebb22cdae0e4591db7687e6ac7dd862` —
+> matching the task's own cited size/hash exactly. A genuine 3-page,
+> 111-AcroForm-field, bilingual (Bengali/English) specimen, confirmed via
+> `pdfjs-dist`. A significant data-quality finding: the PDF's internal
+> AcroForm field names (plain numeric strings) do not reliably correspond to
+> the form's own printed item numbers (e.g. printed items 9/10/11/12 carry
+> internal names "9"/"11"/"12"/"10"), so every field was identified by
+> on-page position and printed label, not by trusting the internal field
+> name. This is a combined New/Re-Issue form; this v1.0.0 scopes to the
+> first-time (new) applicant pathway: Passport Office/Type/Pages/Duration/
+> Delivery, Personal Information, Permanent/Present Address, Parental/
+> Guardian/Spouse Information, Emergency Contact, and Bank Payment
+> Information (independently confirmed to be ordinary fillable applicant
+> fields, not an office-only receipt, deviating from the task's own
+> suggested scoping) — 71 `fields[]` and 5 `documents[]` entries.
+> Re-issue-only content (Previous Passport particulars, Pre-Police
+> Clearance, Lost/Stolen Passport information), the Official/Diplomatic
+> Passport additional-information block, and 6 of the attachment
+> checklist's 10 checkboxes are out of scope, disclosed in VERIFICATION.md.
+> Two valid conformance fixtures plus 6 mutation-control fixtures (each
+> raising exactly 1 error) are committed under `conformance/bd/dip/`.
+> Bangladesh now stands at 3 of 6 verticals (Taxes, DMV, Passport); Business
+> Formation, Visa, and National ID remain open backlog. See GOV-2666 and
+> this schema's own `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2656, "GovSchema Standard Research"): Greece adds
 > a third Taxes-vertical schema**, via
@@ -7186,7 +7224,21 @@
 
 ## By Vertical
 
-### Passport (31/40 jurisdictions — 78%)
+### Passport (32/40 jurisdictions — 80%)
+
+**Bangladesh's Passport vertical opens (3 of 6) (GOV-2666)**, via
+`bd/dip/e-passport-application-form` — the Department of Immigration and
+Passports' (DIP) "e-Passport Application Form (New/Re-Issue)", distributed
+for offline/embassy submission via the Ministry of Foreign Affairs' forms
+portal. Reverses GOV-2591's prior dead-end verdict for this vertical (a
+fillable AcroForm specimen was not previously located). Scopes to the
+first-time (new) applicant pathway: 71 `fields[]`, 5 `documents[]`. See the
+Executive Summary's GOV-2666 update above and the document's own
+VERIFICATION.md for the full sourcing record, including the finding that
+this PDF's internal AcroForm field names do not reliably track its own
+printed item numbers. Bangladesh now stands at 3 of 6 verticals (Taxes,
+DMV, Passport); Business Formation, Visa, and National ID remain open
+backlog.
 
 **Rwanda's Passport vertical opens (4 of 6) (GOV-2629)**, via
 `rw/dgie/passport-application-first-adult` — the Directorate General of
@@ -9697,7 +9749,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BD** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **BD** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
