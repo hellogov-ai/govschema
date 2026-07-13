@@ -4,7 +4,60 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **408 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**47 jurisdictions** | **409 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2716, "GovSchema Standard Research"): Sri Lanka
+> opens as the registry's 47th jurisdiction**, via its Passport vertical,
+> `lk/imm/application-for-a-sri-lankan-passport-emergency-identity-certificate`
+> — the Department of Immigration & Emigration's paper passport/emergency-
+> certificate/identity-certificate application. This cycle first re-screened
+> the one previously-flagged open gap in an already-open jurisdiction —
+> **Ghana's DMV vertical is now a confirmed dead end**: `dvla.gov.gh` has
+> been rebuilt on a modern stack (Next.js marketing site, Nuxt.js "online
+> services" SPA at `service.dvla.gov.gh`), but the online system is fully
+> login-gated with no public registration/application form exposed before
+> authentication, the paper Forms F/F1 are purchase-in-person-only per every
+> source found, and a Wayback Machine sweep of `dvla.gov.gh`'s historical
+> forms/publications paths surfaced only a driving-school-registration form
+> and public notices, no citizen-fillable DMV application. Also
+> re-confirmed Italy's four remaining verticals (Passport, Business
+> Formation, National ID, Visa) remain dead ends per the prior GOV-2382
+> finding (direct fetch now returns an "Accesso negato" access-denied page).
+> With both leads dead, this cycle scouted three new-jurisdiction candidates
+> in parallel — Sri Lanka, Serbia, and Jordan — each producing at least one
+> strong, unauthenticated, field-rich candidate; Sri Lanka's passport form
+> was selected as the only genuine **AcroForm-fillable** PDF among the three
+> (35 Widget annotations, independently re-fetched and sha256-verified:
+> `02c3c01165f6bccd19a2295e4e40437d519e1f82e079936b0572e041df4760a1`, HTTP
+> 200, 1,200,324 bytes). Models 24 `fields[]`: service/travel-document-type
+> selection, National ID number, surname/other names (each collapsing two
+> printed comb text boxes into one logical field), permanent address and
+> district, date of birth, birth certificate number/district, place of
+> birth, sex, profession, a dual-citizenship yes/no gate with its own
+> `requiredWhen`-linked citizenship number/foreign nationality/foreign
+> passport number fields, mobile number, e-mail, both parents'/guardians'
+> National ID or travel-document numbers (for applicants under 16, disclosed
+> as ungated since the form itself has no applicant-fillable "child under
+> 16" checkbox to condition on), and the declaration date. Two of the form's
+> printed checkbox groups (a two-way "Type of Service" pair and a four-way
+> "Type of Travel Document" group) are implemented in the underlying AcroForm
+> as independently-named sibling widgets rather than true PDF radio groups;
+> modelled as single `enum` fields per the form's own clear single-choice
+> intent, disclosed as a judgment call. No `documents[]` checklist is printed
+> on the form itself, and the department's separate "Instructions to
+> Passport Applicants" PDF is a 6.5MB scanned-image document with zero
+> extractable text — disclosed as an out-of-scope gap. 2 valid conformance
+> fixtures plus 6 mutation-control fixtures (each raising exactly 1 error)
+> are committed under
+> `conformance/lk/imm/application-for-a-sri-lankan-passport-emergency-identity-certificate/1.0.0/`.
+> Serbia (Business Formation, APR's JRPPS-PR sole-proprietor registration —
+> also AcroForm-fillable, 150+ fields, but the host is intermittently flaky)
+> and Jordan (Taxes, ISTD's employee income tax return — a flat, coded
+> text-layer PDF) were both scouted to strong, ready-to-author candidates
+> this cycle and remain open for a future cycle. **Sri Lanka now stands at 1
+> of 6 verticals**; DMV, Business Formation, Taxes, Visa, and National ID are
+> open, unscreened backlog candidates. See GOV-2716 and this schema's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2709, "GovSchema Standard Research"): Thailand's
 > Passport vertical opens (5 of 6)**, via
@@ -49,8 +102,12 @@
 > concurrent same-day PRs; each update below independently reports "4 of 6"
 > as true at its own authoring time. Combined, **Ghana now stands at 5 of 6
 > verticals** (National ID & Civic Documents, Taxes, Visa, Business
-> Formation, Passport) — **DMV is the sole remaining open backlog
-> vertical.**
+> Formation, Passport) — **DMV is now a confirmed dead end (GOV-2716):**
+> `dvla.gov.gh`'s online system is fully login-gated with no public
+> application form, and the paper Forms F/F1 are purchase-in-person-only
+> with no downloadable specimen found anywhere, including in Wayback
+> Machine's archive of the agency's own historical forms/publications
+> paths — see the Executive Summary's GOV-2716 update above.
 
 > **Update (2026-07-13, GOV-2704, "GovSchema Standard Research"): Ghana's
 > Business Formation vertical opens (4 of 6)**, via
@@ -10279,6 +10336,7 @@ now closed.
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **LK** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -12418,6 +12476,46 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   new source. This closes out Thailand's screening backlog: Thailand now
   stands at 5 of 6 verticals, with National ID as its sole remaining, and
   now confirmed-dead-end, vertical.
+- **GH DMV** — GOV-2716, screened 2026-07-13. `dvla.gov.gh` has been rebuilt
+  on a modern stack (Next.js marketing site, Nuxt.js "online services" SPA
+  at `service.dvla.gov.gh`), but the online system is fully login-gated
+  (email/password wall, no public registration/application form exposed
+  before authentication — confirmed by fetching the raw login-page HTML).
+  Every web search result confirms the paper driving-licence Forms F/F1 are
+  purchased in person at DVLA offices, not published as a downloadable
+  specimen. A Wayback Machine CDX sweep of `dvla.gov.gh`'s historical
+  `/assets/dvla/media/forms` and `/publications` paths surfaced only a
+  driving-school-registration form and non-form publications (public
+  notices, e.g. "Change of Ownership of Motor Vehicle" — prose, 0 form
+  fields, confirmed via `pdfjs-dist`) — no citizen-fillable driver's-licence
+  or vehicle-registration application at any tier found this cycle. Not a
+  hard dead end if a genuinely new source (e.g. a leaked/third-party-
+  republished Form F/F1 specimen) surfaces; a dead end for the current
+  official publishing pattern. This was Ghana's sole remaining open
+  vertical — Ghana now stands at 5 of 6 with no open, unscreened backlog
+  candidate remaining.
+
+## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **Serbia — Business Formation.** APR's (Agencija za privredne registre)
+  "JRPPS" Unified Registration Application for Establishment of Legal
+  Entities (2025 edition, sole-proprietor/`preduzetnik` pathway),
+  `apr.gov.rs/upload/Portals/0/preduzetnici/2025/JRPPS_PR___Osnivanje_2025_T.pdf`.
+  Genuinely AcroForm-fillable (150+ named fields, confirmed via `pdfjs-dist`
+  this cycle), but the host is intermittently flaky (returns HTTP 500 on
+  some fetch attempts; a retry loop reliably gets HTTP 200). Screened
+  alongside Sri Lanka and Jordan in the GOV-2716 cycle; not selected only
+  because Sri Lanka's candidate was a cleaner AcroForm on a more reliable
+  host. Ready to author in a future cycle.
+- **Jordan — Taxes.** ISTD's (Income and Sales Tax Department) "PIT Return /
+  Employee (natural person)" form (HADEEL 3785 / QP170-F11),
+  `istd.gov.jo/ebv4.0/root_storage/en/eb_list_page/tax_returns_(natural_person_-_employee).pdf`.
+  A flat, non-AcroForm PDF with a genuine, fully coded line-item English
+  text layer (comparable in richness to this registry's other Taxes-vertical
+  schemas, e.g. Peru FV-709, Greece E1, Ghana DT0103). A companion
+  self-employed-individual return and a corporate return exist at the same
+  directory. Screened alongside Sri Lanka and Serbia in the GOV-2716 cycle;
+  ready to author in a future cycle.
 
 ---
 
