@@ -4,7 +4,84 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **403 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **405 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2697, "GovSchema Standard Research"): Ghana's
+> Taxes vertical opens**, via `gh/gra/personal-income-tax-return-dt-0103` —
+> the Ghana Revenue Authority's (GRA) Domestic Tax Revenue Division
+> "Personal Income Tax Return" (Form DT 0103, edition "ver 1.1"), the annual
+> return an individual files reporting business/employment/investment
+> income and computing tax payable. A genuine 4-page print-and-fill
+> specimen hosted unauthenticated on `gra.gov.gh`'s own forms listing,
+> independently re-fetched this cycle (HTTP 200, `application/pdf`,
+> 461,527 bytes, `sha256:
+> b394df0bf108c710f6d681c3b261a8af11af35623c56436fb9e77b75c91c8359`,
+> matching the task's own pre-scouted figures exactly) and confirmed via
+> `pdfjs-dist` to carry zero AcroForm/Widget annotations across all 4
+> pages — every field read from the extracted text layer's own (x, y)
+> coordinates, row-grouped and column-sorted, since no interactive field
+> metadata exists. Models the form's full structure end to end (80
+> `fields[]` plus 2 `documents[]`): filing identification (tax office
+> LTO/MTO/STO, year of assessment, return period), personal/business
+> (including landlord particulars, gated to a rented tenancy
+> status)/employment information, the §4 Sources of Income breakdown
+> (business, employment, and investment income, each gated behind its own
+> printed yes/no question), the full §5 Tax Computation worksheet (add
+> backs, deductions, reliefs) through to chargeable income and tax
+> payable/(overpaid), and a two-branch Declaration (self or
+> representative). Two source-form artifacts are disclosed rather than
+> silently corrected: the employment-income breakdown's own item list
+> skips from 'v' to 'vii' (no 'vi' printed) while its total caption still
+> reads "Sum i to vi", and the reliefs list skips from 'viii' to 'x' (no
+> 'ix' printed) while its own total caption reads "Sum of i to ix" — both
+> modeled verbatim, with the caption/item-list mismatch disclosed on each
+> total field rather than corrected. A page-image cross-check was attempted
+> but a `pdfjs-dist`/`node-canvas` inline-image rendering incompatibility
+> prevented a usable render this cycle, so the exact box mechanics of a
+> disclosed Signature/"OR"/"R.T.P." (Registered Tax Practitioner)
+> co-certification block are modeled as a best-effort boolean rather than
+> invented structure. Two valid conformance fixtures plus 6 mutation-control
+> fixtures (each raising exactly 1 error) are committed under
+> `conformance/gh/gra/`. See GOV-2697 and this schema's own
+> `VERIFICATION.md` for the full sourcing record. (Ghana's Visa vertical
+> opens the same cycle in the sibling update immediately above, via
+> GOV-2698 — together the two updates bring Ghana to 3 of 6 verticals.)
+
+> **Update (2026-07-13, GOV-2698, "GovSchema Standard Research"): Ghana's
+> Visa vertical opens (2 of 6)**, via
+> `gh/gis/application-for-grant-of-visa-and-permit-for-return-to-ghana` — the
+> Ghana Immigration Service's (GIS) "Application Form for Grant of a
+> Visa/Permit for Return to Ghana," GIS's Re-Entry Visa/Permit specimen,
+> distributed unauthenticated from `gis.gov.gh/gis-forms/` and independently
+> re-fetched this cycle (HTTP 200, `application/pdf`, 1,500,822 bytes,
+> `sha256:14bdb332f24b1fd172db3b851fa369b2235d9ba9710f58cbbc545b5f9fdc470b`,
+> matching the GOV-2698 issue's own citation exactly). A genuinely scanned
+> specimen — `pdfjs-dist` confirms 0 AcroForm/Widget annotations and 0
+> extractable text items across both pages — rendered via a custom
+> `NodeCanvasFactory` (`node-canvas`) at 2.5x scale and read visually,
+> field-by-field, against targeted crops of every numbered item. Models the
+> form's 14 numbered items (33 `fields[]`): full name and previous name,
+> nationality and date/place of birth, passport particulars, address in
+> Ghana (a general entry plus separately-lettered postal/residential
+> sub-items, each with its own telephone), overseas address, education and
+> occupation, residency duration and arrival dates, destination abroad,
+> departure date, object of journey and proposed stay, reasons for return
+> (which the form itself flags for documentary support), marital status —
+> modelled as free text since the specimen prints no enumerated options
+> anywhere, unlike this registry's other `maritalStatus` fields — and
+> spouse particulars, closing with a signature date. 3 `documents[]`
+> entries capture the two-photograph requirement, the item-12 documentary
+> evidence for reasons-for-return, and the solemn-declaration attestation;
+> the page-2 "FOR OFFICIAL USE ONLY" block (fee, receipt, cashier
+> signature, stamp) is excluded as staff-populated. Confirmed via
+> `gis.gov.gh/visas/` that this specimen is GIS's Re-Entry Visa pathway,
+> distinct from the first-time tourist e-Visa, which remains a login-gated
+> online portal with no downloadable specimen found at any tier — disclosed
+> as out of scope rather than silently conflated. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed judgment
+> call. Ghana now stands at 2 of 6 verticals (National ID & Civic
+> Documents, Visa); Passport, DMV, Business Formation, and Taxes remain
+> open backlog for a future cycle.
 
 > **Update (2026-07-13, GOV-2688, "GovSchema Standard Research"): Bangladesh's
 > National ID & Civic Documents vertical opens, closing Bangladesh to 6 of
@@ -9294,7 +9371,31 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (34/41 jurisdictions — 83%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (35/41 jurisdictions — 85%)
+
+**Ghana's Visa vertical opens (2 of 6) (GOV-2698)**, via
+`gh/gis/application-for-grant-of-visa-and-permit-for-return-to-ghana` — the
+Ghana Immigration Service's (GIS) Re-Entry Visa/Permit specimen,
+"Application Form for Grant of a Visa/Permit for Return to Ghana,"
+distributed unauthenticated from `gis.gov.gh/gis-forms/`. A genuinely
+scanned specimen (`pdfjs-dist` confirms 0 AcroForm/Widget annotations and 0
+extractable text items across both pages), rendered via a custom
+`NodeCanvasFactory` and read visually against targeted per-item crops. 33
+`fields[]` model the form's 14 numbered items, including an
+`addressInGhana` general field kept distinct from item 5's lettered
+postal/residential sub-items (a structural difference from items 3/4, which
+carry no such preceding header blank) and a free-text `maritalStatus` field
+(the specimen prints no enumerated options anywhere, unlike this registry's
+other `maritalStatus` fields). 3 `documents[]` entries cover the
+two-photograph requirement, the item-12 documentary evidence for
+reasons-for-return, and the solemn-declaration attestation. Confirmed via
+`gis.gov.gh/visas/` that this specimen is GIS's Re-Entry Visa pathway,
+distinct from the first-time tourist e-Visa (a login-gated online portal
+with no downloadable specimen found at any tier), disclosed as out of scope
+rather than silently conflated. See the Executive Summary update above and
+the document's own VERIFICATION.md for the full sourcing record and every
+disclosed judgment call. Ghana now stands at 2 of 6 verticals (National ID
+& Civic Documents, Visa).
 
 **Bangladesh's Visa vertical opens (4 of 6) (GOV-2675/GOV-2677)**, via
 `bd/dip/machine-readable-visa-application-form` — the Department of
@@ -9958,7 +10059,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **GH** | 3 | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
