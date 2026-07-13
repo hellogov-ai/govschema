@@ -1,0 +1,887 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "bd/dip/e-passport-application-form",
+  "version": "1.0.0",
+  "title": "Bangladesh e-Passport Application Form (New/Re-Issue) (Department of Immigration and Passports)",
+  "description": "The Department of Immigration and Passports' (DIP) \"e-Passport Application Form (New/Re-Issue)\", the offline/embassy-submission specimen distributed via the Ministry of Foreign Affairs' (MOFA) forms portal for applicants who cannot or do not use the online e-passport portal (epassport.gov.bd). Opens Bangladesh's Passport vertical (3 of 6, alongside the already-published Taxes vertical (bd/nbr/individual-income-tax-return-form-it-11ga) and DMV vertical (bd/brta/motor-vehicle-registration-application)) and reverses a prior dead-end verdict: GOV-2591's cycle screened Bangladesh's Passport vertical and found it weak/dead-end (an online-portal-only e-passport process with no fillable specimen located at the time); this cycle found MOFA's own forms portal hosts a genuine, unauthenticated, interactive AcroForm PDF for exactly this process. A genuine 3-page, 111-AcroForm-widget specimen (independently confirmed via pdfjs-dist), bilingual (Bengali primary, English secondary) on every label. This is a combined New/Re-Issue form; this v1.0.0 scopes to the first-time (new) applicant pathway. Page 1's items 1-3 (Online Registration ID/Payment Reference/Payment Amount) are confirmed, from the PDF's own embedded default field values (\"OFFLINE APPLICATION\", \"N/A\", \"N/A\"), to be online-system-populated and inapplicable to this offline specimen, so they are excluded as non-applicant-entered. Item 4 (Passport Office/Bangladesh Mission) through item 8 (Type of Delivery) are modeled. Items 9-12 (Previous Passport No./Date of Issue/Date of Expiry/Reason for Re-Issue) are re-issue-only and out of scope. Personal Information (items 13-31), the Permanent Address (38-43), Present Address (44-50), Parental Information (51-58), Guardian Information (59-62, modeled as unconditionally optional: the form's own item 59 label reads \"Guardian's Name – if applicable\" and its page-3 declaration signature line reads \"Signature of Applicant/Guardian (if Applicant is minor)\", implying the guardian block applies when the applicant is a minor, but the form provides no dedicated minor/adult boolean field to gate a requiredWhen condition against), Spouse Information (63-66), and Emergency Contact (67-77) blocks are all modeled in full. Items 32-37 (\"Additional Information for Official and Diplomatic Passport\") are out of scope, as is items 78-79 (Pre-Police Clearance, itself printed \"if applicable\" with no gating field disclosed by the source) and items 80-83 (Information for Lost/Stolen Passports, a re-issue-only scenario that cannot apply to a first-time applicant). Items 84-87 (Bank Payment Information: Bank Name, Payment Reference No., Payment Date, Paid Amount) are, on independent inspection, ordinary fillable AcroForm widgets with no \"for office use\" heading anywhere near them (unlike this registry's bd/brta schema's office-only intake box), consistent with Bangladesh's common offline practice of paying the passport fee via a bank challan and citing that receipt's own particulars on the application; they are therefore modeled as applicant-supplied fields, not excluded as a receipt artifact. The List of Attachments checklist (10 checkboxes) is modeled for the 4 checkboxes applicable to a first-time applicant (National ID photocopy, Birth Registration Certificate photocopy, Marriage Certificate photocopy, Other); the remaining 6 (Previous Passport photocopy, NOC, GO, Retirement Document, Pre-Police Clearance Certificate, G.D.) are tied to re-issue or official/diplomatic-passport scenarios and out of scope. The Declaration (page 3) is modeled as an attestation document plus a companion declarationDate field (a genuine, if unusually positioned, AcroForm text widget found near the signature block, disclosed as a judgment call in VERIFICATION.md). A significant data-quality finding from this cycle's own independent extraction: the PDF's internal AcroForm field *names* (mostly plain numeric strings) do **not** reliably correspond to the form's own printed item numbers — e.g. printed items 9/10/11/12 carry internal field names \"9\"/\"11\"/\"12\"/\"10\" respectively — so every field in this schema was identified by its on-page position and printed label, cross-checked against the form's own text layer, never by trusting the internal PDF field name. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Bangladesh or the Department of Immigration and Passports.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BD",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Immigration and Passports",
+    "abbreviation": "DIP",
+    "url": "https://www.dip.gov.bd"
+  },
+  "process": {
+    "type": "application",
+    "language": "bn"
+  },
+  "source": {
+    "url": "https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-mofa/2026/1/a04a6c52-75cf-4edb-820c-0f4dd0f9ecfe.pdf",
+    "retrievedAt": "2026-07-13",
+    "documentRef": "\"e-Passport Application Form (New/Re-Issue)\", Department of Immigration and Passports (footer: \"Government of the People's Republic of Bangladesh, Department of Immigration and Passports, www.dip.gov.bd\"), distributed for offline/embassy submission via the Ministry of Foreign Affairs' forms portal at https://mofa.gov.bd/pages/forms/69959494fcf25ca2d1011a0e"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-13",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-13",
+    "notes": "GovSchema Standard Research cycle GOV-2666. Opens Bangladesh's Passport vertical (3 of 6), reversing GOV-2591's prior dead-end verdict for this vertical. Independently re-fetched both cited sources this cycle via curl -sk with a Chrome-like User-Agent (both mofa.gov.bd and the oraclecloud object-storage host fail default TLS certificate verification, consistent with the task briefing's note and the same pattern already seen for BRTA/RJSC/ECS elsewhere in this registry): the MOFA landing page (HTTP 200, text/html, 72,484 bytes) and the direct PDF (HTTP 200, application/pdf, 4,114,743 bytes, sha256 477e229ac2869691f6bd2a09be01af0d7ebb22cdae0e4591db7687e6ac7dd862) — matching the task briefing's own cited size/hash exactly, independently re-derived. Parsed the downloaded PDF with pdfjs-dist@4 (legacy build): 3 pages, getFieldObjects() returned 111 distinct field names across 114 Widget annotations (a handful of named fields, e.g. Road_block_info, repeat across multiple widgets as decorative per-section \"i\" info-icon buttons, not data fields). getTextContent() returned a full, clean bilingual (Bengali/English) text layer across all 3 pages. Every field below was extracted by (1) reading the position-sorted text layer to recover the form's own printed item numbers, labels, and required-field asterisks, matching the task briefing's own transcription exactly field-for-field, and (2) independently correlating every AcroForm widget's page/rect coordinates against those same printed item-number rows to determine each item's actual field type (text/combobox/checkbox), discovering along the way that internal AcroForm field *names* do not reliably track the printed item numbers (see the schema's own description for the item-9-12 example). Comboboxes were inspected for embedded /Opt option lists via getFieldObjects(); none of the form's 33 combobox-typed items carry an embedded option list (all return options: null), so none are modeled as enum except passportType, which has independent corroborating evidence: its own combobox default value is \"ORDINARY\" and the form's own \"Additional Information for Official and Diplomatic Passport\" section heading independently names the other two categories (\"Official\", \"Diplomatic\"), giving a 3-way closed set corroborated by two independent pieces of the form's own text, unlike every other combobox field (modeled as free-text string, consistent with this registry's own bd/brta and th/dlt precedent of not inventing enum values with no printed or embedded option list). gender is modeled as a 3-value enum because its own Bengali parenthetical translation literally lists the three options (নারী/পুরুষ/অন্যান্য — \"Female/Male/Other\"), the same class of exception this registry already uses for bd/brta's vehicleOrTrailer. Contact-number items (30 and 76) are each genuinely two adjacent AcroForm widgets (a country-code combobox, both defaulting to \"880\", Bangladesh's calling code, plus a free-text number field), modeled as two fields each. Item 87 (Paid Amount) is likewise two widgets (a text amount field plus an adjacent blank-default combobox with no distinguishing printed sub-label); only the text amount is modeled, the companion combobox excluded as unclear, mirroring how an unlabeled extra widget positioned between items 3 and 4 (internal name \"88\", default value \"N/A\") is also excluded. Two valid conformance fixtures (0 errors each) plus 6 mutation-control fixtures (each raising exactly 1 error) are committed under conformance/bd/dip/e-passport-application-form/1.0.0/. See VERIFICATION.md for the full sourcing record, every scoping/disclosure judgment call, and the complete item-to-field-type derivation."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-13"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "passportOfficeOrMission",
+      "label": "Passport Office/Bangladesh Mission",
+      "type": "string",
+      "required": true,
+      "description": "The passport office or Bangladesh diplomatic mission (embassy/consulate) where this application is being submitted. Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 1, item 4.*: \"Passport Office/Bangladesh Mission (পাসেপোর্ত অফিস/বাংলাদেশ মিশন)\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "passportType",
+      "label": "Passport Type",
+      "type": "enum",
+      "required": true,
+      "description": "The combobox's own default value is \"ORDINARY\", and the form's own \"Additional Information for Official and Diplomatic Passport\" heading (items 32-37, out of scope for this v1.0.0) independently names the other two categories, giving a corroborated 3-way closed set.",
+      "sourceRef": "Page 1, item 5.*: \"Passport Type (পাসেপোর্টের ধরণ)\"; combobox default \"ORDINARY\"; item 32's own section heading \"Additional Information for Official and Diplomatic Passport\"",
+      "validation": {
+        "enum": [
+          "ordinary",
+          "official",
+          "diplomatic"
+        ]
+      }
+    },
+    {
+      "name": "numberOfPages",
+      "label": "Number of Pages",
+      "type": "string",
+      "required": true,
+      "description": "Rendered as a combobox defaulting to \"48 PAGES\", with no embedded option list, so modeled as free-text rather than an invented enum.",
+      "sourceRef": "Page 1, item 6.*: \"Number of Pages (পাতার সংখ্যা)\"; combobox default \"48 PAGES\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "durationOfPassport",
+      "label": "Duration of Passport",
+      "type": "string",
+      "required": true,
+      "description": "Rendered as a combobox defaulting to \"5 YEARS\", with no embedded option list, so modeled as free-text rather than an invented enum.",
+      "sourceRef": "Page 1, item 7.*: \"Duration of Passport (পাসেপোর্টের মেয়াদ)\"; combobox default \"5 YEARS\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "typeOfDelivery",
+      "label": "Type of Delivery",
+      "type": "string",
+      "required": true,
+      "description": "Rendered as a combobox defaulting to \"REGULAR\", with no embedded option list, so modeled as free-text rather than an invented enum.",
+      "sourceRef": "Page 1, item 8.*: \"Type of Delivery (বিতরণের ধরণ)\"; combobox default \"REGULAR\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "fullName",
+      "label": "Full Name (as per NID/BRC)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, item 13.*: \"Full Name (as per NID/BRC)\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "givenName",
+      "label": "Given Name",
+      "type": "string",
+      "classification": "pii",
+      "sourceRef": "Page 1, item 14: \"Given Name (প্রদত্ত নাম / নামের প্রথম অংশ)\", no printed asterisk",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, item 15.*: \"Surname (বংশগত নাম/নামের শেষ অংশ)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1, item 16.*: \"Date of Birth (জন্ম তারিখ)\""
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text rather than an invented country enum, consistent with this registry's established convention.",
+      "sourceRef": "Page 1, item 17.*: \"Country of Birth (জন্মভূমি)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "districtOfBirth",
+      "label": "District of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 1, item 18.*: \"District of Birth (জন্ম েজলা)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1, item 19.*: \"Place of Birth (জন্মস্থান)\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own Bengali parenthetical translation literally lists the three options (Female/Male/Other), the same class of exception this registry already uses for bd/brta's vehicleOrTrailer field (a printed label naming exact mutually-exclusive options, even without a checkbox/radio widget).",
+      "sourceRef": "Page 1, item 20.*: \"Gender (নারী/ পুরুষ / অন্যান্য)\" — \"Female/Male/Other\"",
+      "validation": {
+        "enum": [
+          "female",
+          "male",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 1, item 21.*: \"Religion (ধমর্)\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "nationalIdNo",
+      "label": "National ID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1, item 22: \"National ID No. (জাতীয় পরিচয়পত্র নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "birthRegistrationNo",
+      "label": "Birth Registration No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1, item 23: \"Birth Registration No. (জন্ম নিবন্ধন নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "typeOfCitizenship",
+      "label": "Type of Citizenship",
+      "type": "string",
+      "required": true,
+      "description": "Rendered as a combobox defaulting to \"BY BIRTH\", with no embedded option list, so modeled as free-text rather than an invented enum (unlike passportType, no second part of the form independently corroborates a closed set for this field).",
+      "sourceRef": "Page 1, item 24.*: \"Type of Citizenship (নাগরিকত্বের ধরণ)\"; combobox default \"BY BIRTH\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "dualCitizenshipStatus",
+      "label": "Dual Citizenship Status",
+      "type": "boolean",
+      "description": "A checkbox internally named \"Dual\" with a single \"Yes\" export value (checked = dual citizenship declared). Gates countryOfOtherCitizenship and foreignPassportNo below.",
+      "sourceRef": "Page 1, item 25: \"Dual Citizenship Status (দবৈত নাগরিকত্ব)\", no printed asterisk"
+    },
+    {
+      "name": "countryOfOtherCitizenship",
+      "label": "Country of Other Citizenship",
+      "type": "string",
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "dualCitizenshipStatus",
+        "equals": true
+      },
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text. Gated on dualCitizenshipStatus, a checkbox with a definite present/checked-or-not state (not an absent-vs-empty-string sibling field), so a requiredWhen condition here does not carry this registry's previously-identified notEquals-empty-string-absent-field risk.",
+      "sourceRef": "Page 1, item 26: \"Country of Other Citizenship (অন্য দেশের নাগরিকত্ব থাকলে সেই দেশের নাম)\", no printed asterisk",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "foreignPassportNo",
+      "label": "Foreign Passport No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "dualCitizenshipStatus",
+        "equals": true
+      },
+      "sourceRef": "Page 1, item 27: \"Foreign Passport No. (বিদেশি পাসেপোর্ট নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 1, item 28.*: \"Marital Status (বৈবাহিক অবস্থা)\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "profession",
+      "label": "Profession",
+      "type": "string",
+      "required": true,
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 1, item 29.*: \"Profession (পেশা)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactCountryCode",
+      "label": "Contact No.: country code",
+      "type": "string",
+      "required": true,
+      "description": "First of two adjacent AcroForm widgets making up item 30 (\"Contact No.\"): a combobox defaulting to \"880\" (Bangladesh's own calling code), paired with the free-text contactNumber field below.",
+      "sourceRef": "Page 1, item 30.*: \"Contact No. (যোগাযোগের নমবর)\"; combobox default \"880\"",
+      "validation": {
+        "maxLength": 5
+      }
+    },
+    {
+      "name": "contactNumber",
+      "label": "Contact No.: number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Second of the two item-30 widgets: the free-text phone number itself, following the contactCountryCode selector.",
+      "sourceRef": "Page 1, item 30.*: \"Contact No. (যোগাযোগের নমবর)\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "classification": "pii",
+      "sourceRef": "Page 1, item 31: \"E-mail (ই-মেইল)\", no printed asterisk",
+      "validation": {
+        "maxLength": 150,
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "permanentDistrict",
+      "label": "Permanent Address: District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 38.*: \"District (েজলা)\" — Applicant's Permanent Address",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentPoliceStation",
+      "label": "Permanent Address: Police Station",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 39.*: \"Police Station (থানা)\" — Applicant's Permanent Address",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentPostOffice",
+      "label": "Permanent Address: Post Office",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 40.*: \"Post Office (ডাকঘর)\" — Applicant's Permanent Address",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentPostalCode",
+      "label": "Permanent Address: Postal Code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 41.*: \"Postal Code (পোস্টাল কোড)\" — Applicant's Permanent Address",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "permanentCityVillageHouse",
+      "label": "Permanent Address: City/Village/House",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 42.*: \"City/Village/House (শহর/গ্রাম/বাড়ি)\" — Applicant's Permanent Address",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "permanentRoadBlockSector",
+      "label": "Permanent Address: Road/Block/Sector",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 43.*: \"Road/Block/Sector (রাস্তা/ব্লক/সেক্টর)\" — Applicant's Permanent Address",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "presentCountry",
+      "label": "Present Address: Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 44.*: \"Country (দেশ)\" — Applicant's Present Address (Bangladesh or abroad)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "presentDistrict",
+      "label": "Present Address: District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 45.*: \"District (েজলা)\" — Applicant's Present Address",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "presentPoliceStation",
+      "label": "Present Address: Police Station",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 46.*: \"Police Station (থানা)\" — Applicant's Present Address",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "presentPostOffice",
+      "label": "Present Address: Post Office",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 47.*: \"Post Office (ডাকঘর)\" — Applicant's Present Address",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "presentPostalCode",
+      "label": "Present Address: Postal Code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 48.*: \"Postal Code (পোস্টাল কোড)\" — Applicant's Present Address",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "presentCityVillageHouse",
+      "label": "Present Address: City/Village/House",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 49.*: \"City/Village/House (শহর/গ্রাম/বাড়ি)\" — Applicant's Present Address",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "presentRoadBlockSector",
+      "label": "Present Address: Road/Block/Sector",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 50.*: \"Road/Block/Sector (রাস্তা/ব্লক/সেক্টর)\" — Applicant's Present Address",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "fatherName",
+      "label": "Father's Name (as per NID/BRC)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 51.*: \"Father's Name (as per NID/BRC) (পিতার নাম)\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Father's Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 52.*: \"Father's Nationality (পিতার জাতীয়তা)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "fatherNationalIdNo",
+      "label": "Father's National ID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, item 53: \"Father's National ID No. (পিতার জাতীয় পরিচয়পত্র নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "fatherProfession",
+      "label": "Father's Profession",
+      "type": "string",
+      "required": true,
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 54.*: \"Father's Profession (পিতার পেশা)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherName",
+      "label": "Mother's Name (as per NID/BRC)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 55.*: \"Mother's Name (as per NID/BRC) (মাতার নাম)\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "motherNationality",
+      "label": "Mother's Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 56.*: \"Mother's Nationality (মাতার জাতীয়তা)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "motherNationalIdNo",
+      "label": "Mother's National ID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, item 57: \"Mother's National ID No. (মাতার জাতীয় পরিচয়পত্র নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "motherProfession",
+      "label": "Mother's Profession",
+      "type": "string",
+      "required": true,
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 58.*: \"Mother's Profession (মাতার পেশা)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "guardianName",
+      "label": "Guardian's Name – if applicable (as per NID/BRC)",
+      "type": "string",
+      "classification": "pii",
+      "description": "The source's own label reads \"if applicable\"; combined with the page-3 declaration's \"Signature of Applicant/Guardian (if Applicant is minor)\" line, this block appears intended for a minor applicant, but the form provides no dedicated age/minor boolean field to gate a requiredWhen condition against, so guardianName/guardianNationality/guardianNationalIdNo/guardianProfession are all left unconditionally optional.",
+      "sourceRef": "Page 2, item 59: \"Guardian's Name – if applicable (as per NID/BRC) (অভিভাবকের নাম - প্রযোজ্য হলে)\", no printed asterisk",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "guardianNationality",
+      "label": "Guardian's Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 60: \"Guardian's Nationality (অভিভাবকের জাতীয়তা)\", no printed asterisk",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "guardianNationalIdNo",
+      "label": "Guardian's National ID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, item 61: \"Guardian's National ID No. (অভিভাবকের জাতীয় পরিচয়পত্র নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "guardianProfession",
+      "label": "Guardian's Profession",
+      "type": "string",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 62: \"Guardian's Profession (অভিভাবকের পেশা)\", no printed asterisk",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse's Name (as per NID/BRC)",
+      "type": "string",
+      "classification": "pii",
+      "sourceRef": "Page 2, item 63: \"Spouse's Name (as per NID/BRC) (স্বামী/স্ত্রীর নাম)\", no printed asterisk",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "spouseNationality",
+      "label": "Spouse's Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 64: \"Spouse's Nationality (স্বামী/স্ত্রীর জাতীয়তা)\", no printed asterisk",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "spouseNationalIdNo",
+      "label": "Spouse's National ID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, item 65: \"Spouse's National ID No. (স্বামী/স্ত্রীর জাতীয় পরিচয়পত্র নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "spouseProfession",
+      "label": "Spouse's Profession",
+      "type": "string",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 66: \"Spouse's Profession (স্বামী/ স্ত্রীর পেশা)\", no printed asterisk",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency Contact: Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 67.*: \"Name (নাম)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "emergencyContactRelationship",
+      "label": "Emergency Contact: Relationship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 68.*: \"Relationship (আবেদনকারীর সাথে সম্পর্ক)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "emergencyContactCountry",
+      "label": "Emergency Contact: Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 69.*: \"Country (দেশের নাম)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "emergencyContactDistrict",
+      "label": "Emergency Contact: District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 70.*: \"District (েজলা)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "emergencyContactPoliceStation",
+      "label": "Emergency Contact: Police Station",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 71.*: \"Police Station (থানা)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "emergencyContactPostOffice",
+      "label": "Emergency Contact: Post Office",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text.",
+      "sourceRef": "Page 2, item 72.*: \"Post Office (ডাকঘর)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "emergencyContactPostalCode",
+      "label": "Emergency Contact: Postal Code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 73.*: \"Postal Code (পোস্টাল কোড)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "emergencyContactCityVillageHouse",
+      "label": "Emergency Contact: City/Village/House",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 74.*: \"City/Village/House (শহর/গ্রাম/বাড়ি)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "emergencyContactRoadBlockSector",
+      "label": "Emergency Contact: Road/Block/Sector",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, item 75.*: \"Road/Block/Sector (রাস্তা/ব্লক/সেক্টর)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "emergencyContactCountryCode",
+      "label": "Emergency Contact: Contact No. country code",
+      "type": "string",
+      "required": true,
+      "description": "First of two adjacent AcroForm widgets making up item 76 (\"Contact No.\"): a combobox defaulting to \"880\" (Bangladesh's own calling code), paired with the free-text emergencyContactNumber field below.",
+      "sourceRef": "Page 2, item 76.*: \"Contact No. (যোগাযোগের নমবর)\" — Emergency Contact; combobox default \"880\"",
+      "validation": {
+        "maxLength": 5
+      }
+    },
+    {
+      "name": "emergencyContactNumber",
+      "label": "Emergency Contact: Contact No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Second of the two item-76 widgets: the free-text phone number itself.",
+      "sourceRef": "Page 2, item 76.*: \"Contact No. (যোগাযোগের নমবর)\" — Emergency Contact",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "emergencyContactEmail",
+      "label": "Emergency Contact: E-mail",
+      "type": "string",
+      "classification": "pii",
+      "sourceRef": "Page 2, item 77: \"E-mail (ই-মেইল)\" — Emergency Contact, no printed asterisk",
+      "validation": {
+        "maxLength": 150,
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "bankName",
+      "label": "Bank Name",
+      "type": "string",
+      "classification": "financial",
+      "description": "Rendered as a combobox with no embedded option list, so modeled as free-text. Part of the Bank Payment Information block (items 84-87); independently confirmed as ordinary fillable AcroForm widgets with no \"for office use\" heading nearby, consistent with citing a manually-paid bank challan's own particulars.",
+      "sourceRef": "Page 3, item 84: \"Bank Name (ব্যাংকের নাম)\", no printed asterisk",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "paymentReferenceNo",
+      "label": "Payment Reference No.",
+      "type": "string",
+      "classification": "financial",
+      "sourceRef": "Page 3, item 85: \"Payment Reference No. (ফি'র রেফারেন্স নং)\", no printed asterisk",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "paymentDate",
+      "label": "Payment Date",
+      "type": "date",
+      "classification": "financial",
+      "sourceRef": "Page 3, item 86: \"Payment Date (ফি প্রদানের তারিখ)\", no printed asterisk"
+    },
+    {
+      "name": "paidAmount",
+      "label": "Paid Amount",
+      "type": "number",
+      "classification": "financial",
+      "description": "Item 87 is genuinely two adjacent widgets (a text amount field plus a blank-default companion combobox with no distinguishing printed sub-label); only the text amount field is modeled here, the companion combobox excluded as unclear.",
+      "sourceRef": "Page 3, item 87: \"Paid Amount (জমাকৃত ফি)\", no printed asterisk",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date (Declaration)",
+      "type": "date",
+      "description": "A genuine AcroForm text widget found in the page-3 declaration/signature block. Its position (roughly 70-90pt below the printed \"Date ___ Signature ___\" line) does not sit directly beneath either printed blank, but it is the only unclaimed fillable widget in that region of page 3, so it is modeled here as the date accompanying the applicant's/guardian's signature; disclosed as a judgment call in VERIFICATION.md.",
+      "sourceRef": "Page 3, Declaration block: \"Date (তারিখ) _________________________ ... Signature of Applicant/Guardian (if Applicant is minor)\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "declarationAttestation",
+      "label": "Applicant's declaration of accuracy",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I solemnly declare that all the information provided in this application is true. I am aware of the rules and regulations of Passport Act. I will be subjected to said passport act/regulations for any false information or hiding of any such information.",
+      "sourceRef": "Page 3, \"Declaration (অঙ্গিকারনামা)\""
+    },
+    {
+      "id": "nationalIdCopy",
+      "label": "Photocopy of National ID",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 3, List of Attachments: \"Photocopy of National ID (জাতীয় পরিচয়পত্রের ফটোকপি)\" checkbox (internal field name \"NationalID\")",
+      "handling": "The form's own header instruction (\"Please fill up the application form page 1 to 3 as per National ID/Birth Registration Certificate\") implies at least one of nationalIdCopy or birthRegistrationCertificateCopy is expected, but this is disclosed in prose rather than machine-encoded, consistent with this registry's own established convention for disjunctive \"at least one of\" requirements the source does not itself gate with a boolean."
+    },
+    {
+      "id": "birthRegistrationCertificateCopy",
+      "label": "Photocopy of Birth Registration Certificate",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 3, List of Attachments: \"Photocopy of Birth Registration Certificate (জন্মনিবন্ধন সনেদের ফটোকপি)\" checkbox (internal field name \"BRC\")",
+      "handling": "See nationalIdCopy's description for the disclosed \"at least one of National ID or Birth Registration Certificate\" business rule."
+    },
+    {
+      "id": "marriageCertificateCopy",
+      "label": "Photocopy of Marriage Certificate",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 3, List of Attachments: \"Photocopy of Marriage Certificate (নিকাহনামার ফটোকপি)\" checkbox (internal field name \"Marriage_cert\")",
+      "handling": "Applicable when the applicant's marital status or name has changed due to marriage."
+    },
+    {
+      "id": "otherDocument",
+      "label": "Other",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 3, List of Attachments: \"Others (অন্যান্য)\" checkbox (internal field name \"Other\")",
+      "handling": "A catch-all checkbox for any other supporting document not covered by the checklist's other entries; the form provides no companion free-text field to specify what \"Other\" refers to."
+    }
+  ]
+}
