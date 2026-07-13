@@ -299,7 +299,7 @@ used for PDF extraction and rendering were both done in isolated `/tmp`
 scratch directories, never inside `tools/` or `tools/govschema-client/`.
 
 `tools/govschema-client/registry-index.json` was regenerated via `npm run
-build-index` inside `tools/govschema-client/` (413 → 414 entries).
+build-index` inside `tools/govschema-client/` (412 → 413 entries).
 
 ## Scope and jurisdiction notes
 
