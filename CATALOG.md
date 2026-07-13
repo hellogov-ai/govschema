@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **398 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **399 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2654, "GovSchema Standard Research"): Greece adds
+> a third Taxes-vertical schema**, via
+> `gr/aade/katastasi-oikonomikon-stoicheion-apo-epicheirimatiki-drastiriotita-e3`
+> — the Independent Authority for Public Revenue's (AADE) Form Ε3, "Κατάσταση
+> Οικονομικών Στοιχείων από Επιχειρηματική Δραστηριότητα" (Statement of
+> Economic Data from Business Activity), the third companion schedule to the
+> already-published Form Ε1
+> (`gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3`, GOV-2621) and Form Ε2
+> (`gr/aade/analytiki-katastasi-misthomaton-akinitis-periousias-e2`,
+> GOV-2644). A prior cycle (GOV-2644) reported having already located "a
+> specimen PDF, a sub-tables companion, an 89-page instructions manual, and
+> an FAQ" for Ε3 but recorded no URLs in any committed file; this cycle
+> treated that claim as unconfirmed and independently re-derived all four
+> sources from scratch via the Wayback Machine CDX API (the primary
+> `aade.gr` host remains Akamai-403-blocked from this sandbox, consistent
+> with every other Greek AADE source in this registry). Independently
+> re-fetched this cycle: HTTP 200, `application/pdf`, 434,154 bytes,
+> `sha256:
+> 72d4c0e9c8529cc510e4e40b6e3eb4d77a1094ab7544031712566f55f8ad2b31`
+> (specimen) — the 89-page instructions-manual claim was also independently
+> reproduced exactly. Ε3 is a large, 12-page, ~130-code, 12-table document;
+> this v1.0.0 scopes to the primary/core case — a single individual
+> (freelancer/sole-proprietor) business activity's income statement —
+> modeling Πίνακας Α' (taxpayer/business identification) plus the "Σύνολο"
+> (Total) column only of Πίνακας Δ' (the income statement itself: revenue,
+> cost of goods sold, gross profit, EBITDA, EBIT, pre-tax result) and
+> Πίνακας ΣΤ' (literally titled "Determination of taxable profits of
+> INDIVIDUAL businesses," the adjustment chain that converts the accounting
+> pre-tax result into the taxable net profit transferred into Form Ε1). 39
+> `fields[]` total, 7 statically `required`. Πίνακας Β' (company/employment
+> metadata), Πίνακας Γ' (rents paid/agricultural subsidies), the
+> per-activity-type (Commercial/Production/Agricultural-Biological/Services)
+> breakdown columns of Πίνακες Δ'/ΣΤ' and their granular cost sub-schedules,
+> Πίνακας Ε' (accounting-tax basis differences), Πίνακας Ζ' (general
+> financial information that most of Πίνακας Δ''s codes are transferred
+> from or computed against), Πίνακας Η' (construction companies), Πίνακες
+> Θ'/ΙΒ' (multinational-group reporting), Πίνακας Ι' (anti-money-
+> laundering), and Πίνακας ΙΑ' (legal-person tax exemptions) are out of
+> scope, disclosed in VERIFICATION.md. Two valid conformance fixtures plus 7
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/gr/aade/`. This closes out the Greek AADE Ε1/Ε2/Ε3
+> companion-form family named together since GOV-2591. See GOV-2654 and
+> this schema's own `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2644, "GovSchema Standard Research"): Bangladesh's
 > DMV vertical opens (2 of 6)**, via
@@ -8313,6 +8357,36 @@ conformance scenarios plus 5 mutation-control fixtures passed; both registry
 validators pass. See GOV-2621 and this schema's own `VERIFICATION.md` for the
 full sourcing record and every scoping/disclosure judgment call.
 
+**Greece's Taxes vertical adds a third companion schema (Form Ε3)**
+(`gr/aade/katastasi-oikonomikon-stoicheion-apo-epicheirimatiki-drastiriotita-e3`,
+GOV-2654) — AADE's Form Ε3, "Κατάσταση Οικονομικών Στοιχείων από
+Επιχειρηματική Δραστηριότητα" (Statement of Economic Data from Business
+Activity), tax year 2025 edition, the third companion schedule alongside
+Form Ε1 (`gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3`, GOV-2621) and
+Form Ε2 (`gr/aade/analytiki-katastasi-misthomaton-akinitis-periousias-e2`,
+GOV-2644). A prior cycle (GOV-2644) had reported locating Ε3's sources but
+recorded no URLs; this cycle independently re-derived all four (specimen,
+sub-tables companion, 89-page instructions manual, FAQ) from scratch via the
+Wayback Machine CDX API, since the primary `aade.gr` host remains
+Akamai-403-blocked from this sandbox. Independently re-fetched this cycle:
+HTTP 200, `application/pdf`, 434,154 bytes, `sha256:
+72d4c0e9c8529cc510e4e40b6e3eb4d77a1094ab7544031712566f55f8ad2b31`
+(specimen), parsed with `pdfjs-dist`: 12 pages, 0 AcroForm widgets — a
+static specimen. Ε3 is a large 12-table document; this v1.0.0 scopes to the
+primary/core case (a single individual/sole-proprietor business activity's
+income statement), modeling Πίνακας Α' (taxpayer/business identification)
+plus the "Σύνολο" (Total) column only of Πίνακας Δ' (the income statement:
+revenue, cost of goods sold, gross profit, EBITDA, EBIT, pre-tax result) and
+Πίνακας ΣΤ' (the individual-business-specific taxable-profit determination
+that feeds into Form Ε1). 39 `fields[]`, 7 statically `required`. Πίνακας
+Β'/Γ'/Ε'/Ζ'/Η'/Θ'/Ι'/ΙΑ'/ΙΒ', the per-activity-type breakdown columns of
+Πίνακες Δ'/ΣΤ', and their granular cost sub-schedules are out of scope,
+disclosed in VERIFICATION.md. Two valid conformance fixtures plus 7
+mutation-control fixtures (each raising exactly 1 error) passed; both
+registry validators pass. This closes out the Ε1/Ε2/Ε3 companion-form
+family named together since GOV-2591. See GOV-2654 and this schema's own
+`VERIFICATION.md` for the full sourcing record.
+
 **Bangladesh opens (46th jurisdiction) via Taxes**
 (`bd/nbr/individual-income-tax-return-form-it-11ga`, GOV-2612) — the
 National Board of Revenue (NBR)'s IT-11GA, "Form of Return of Income for
@@ -10705,9 +10779,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     text; **Taxes is now open too (GOV-2621)**, via
     `gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3` (AADE's Form Ε1,
     salaried-employment/pension-income pathway) — see the Executive Summary
-    update above; Form Ε2 (rental income) and Form Ε3 (business activity),
-    named alongside Ε1 in the Government Gazette ΦΕΚ Β' 1280/2026 specimen
-    per GOV-2591, remain open companion-schema backlog candidates. **Peru** (Passport/National
+    update above; Form Ε2 (rental income, GOV-2644) and Form Ε3 (business
+    activity, GOV-2654), named alongside Ε1 in the Government Gazette ΦΕΚ Β'
+    1280/2026 specimen per GOV-2591, are **both now closed too** — see the
+    Executive Summary updates above. **Peru** (Passport/National
     ID re-confirmed appointment/biometric-gated; Taxes is Clave-SOL-gated;
     Business Formation's primary SUNARP channel is login-gated, but a
     sibling SUNAT RUC-registration form, Business Formation's DMV, and
