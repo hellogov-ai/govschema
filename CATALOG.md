@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **417 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **418 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2781, "GovSchema Standard Research"): Sri
+> Lanka's DMV vertical opens (3 of 6)**, via
+> `lk/dmt/application-for-a-revenue-licence-for-a-motor-vehicle`, the
+> Department of Motor Traffic's (DMT) "Application for a Revenue Licence
+> for a Motor Vehicle" under Section 30(1) of the Motor Traffic Act,
+> printed form CMT 11 / M.T.A. 11 — Sri Lanka's annual vehicle-tax-disc
+> renewal (or first-issuance, following first registration) form. This
+> cycle screened Sri Lanka's four remaining open verticals (DMV, Business
+> Formation, Taxes, Visa) in parallel: **Taxes is a confirmed dead end**
+> (IRD's current 2025/2026 Individual Income Tax Return states filing is
+> mandatorily electronic via the login-gated RAMIS portal, with no
+> paper-filing exception found for any taxpayer category); **Business
+> Formation** has only a provincial-level candidate (Western Province's
+> BNR-01 business-name-registration form; national company incorporation
+> is now eROC-portal-only) and is left as backlog; **Visa** has a strong,
+> ready-to-author national candidate (the Department of Immigration &
+> Emigration's Form B entry-visa application, ~45-55 fields, confirmed
+> current and not superseded by the ETA online system) also left as
+> backlog for a future cycle. Fetched directly and unauthenticated from
+> `dmt.gov.lk` (HTTP 200, `application/pdf`, 100,140 bytes, sha256:
+> `c24259f9f021b0122bcdcf22138275bee2de9aa0d651cca8fb4e633b284618c4`). This
+> is a flat, non-AcroForm 2-page form (confirmed via pdfjs-dist@3: zero
+> Widget annotations, zero `getFieldObjects()` entries), with a genuine
+> positioned text layer extracted via pdfjs-dist and cross-checked by
+> rendering both pages to PNG via pdfjs-dist + node-canvas. Page 1 is the
+> trilingual (Sinhala/Tamil/English) applicant-facing form; page 2 is
+> entirely a Sinhala/Tamil "for use in CMT's office / Kachcheri" block (fee
+> schedule plus seven office-verification items) and is excluded as
+> office-intake content, consistent with this registry's established
+> convention for the same class of content. This v1.0.0 models 19
+> applicant-facing fields[] — vehicle identification, the licensing
+> authority addressee, registered-owner name/address, the licence year
+> sought, chassis/engine numbers, date of first registration, passenger
+> seats, the vehicle's tare weight in both imperial and metric units, tyre
+> type, a conditional delivery-address block, and the application date —
+> plus 6 documents[] entries drawn from the Northern Provincial Council's
+> own published "Documents required for Revenue Licence" list
+> (`np.gov.lk/documents-for-revenue-licence/`, updated 29 Nov 2024), since
+> Sri Lanka's Provincial Councils, not DMT itself, are the licence-issuing
+> authorities. **Sri Lanka now stands at 3 of 6 verticals** (Passport,
+> National ID, DMV); Business Formation, Taxes, and Visa remain open —
+> Taxes is a confirmed dead end, Business Formation and Visa both have
+> disclosed backlog candidates for a future cycle. See GOV-2781 and this
+> schema's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2774, "GovSchema Standard Research"): Serbia's
 > DMV vertical opens (4 of 6)**, via
@@ -8258,7 +8303,26 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (40/42 jurisdictions — 95%)
+### DMV — Vehicle Registration, Licensing, Permits (41/42 jurisdictions — 98%)
+
+**Sri Lanka's DMV vertical opens (3 of 6) (GOV-2781)**, via
+`lk/dmt/application-for-a-revenue-licence-for-a-motor-vehicle` — the
+Department of Motor Traffic's (DMT) "Application for a Revenue Licence for
+a Motor Vehicle" (Section 30(1), Form CMT 11 / M.T.A. 11), Sri Lanka's
+annual vehicle-tax-disc renewal/first-issuance form. Fetched directly from
+`dmt.gov.lk` (HTTP 200, `application/pdf`, 100,140 bytes, `sha256:
+c24259f9f021b0122bcdcf22138275bee2de9aa0d651cca8fb4e633b284618c4`). A flat,
+non-AcroForm 2-page trilingual (Sinhala/Tamil/English) form (zero Widget
+annotations); page 2 is entirely a Sinhala/Tamil office-verification block
+and is excluded as office-intake content. Models 19 applicant-facing
+`fields[]` plus 6 `documents[]` sourced from the Northern Provincial
+Council's own published "Documents required for Revenue Licence" list,
+since Sri Lanka's Provincial Councils, not DMT itself, are the actual
+licence-issuing authorities. See the document's own VERIFICATION.md for the
+full sourcing record, including the disclosed Business Formation (provincial
+candidate only) and Visa (strong national candidate) backlog left open this
+cycle, and Taxes' confirmed e-filing-mandatory dead end. Sri Lanka now
+stands at 3 of 6 verticals (Passport, National ID, DMV).
 
 **Serbia's DMV vertical opens (4 of 6) (GOV-2774)**, via
 `rs/mup/registracioni-list-za-motorno-prikljucno-vozilo` — the Ministry of
@@ -10816,7 +10880,7 @@ now closed.
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LK** | 2 | ✓ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **LK** | 3 | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -13078,6 +13142,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   National ID are both confirmed dead ends under this registry's current
   sourcing standards, so Serbia has reached its practical maximum vertical
   coverage unless one of those dead ends' underlying blocker changes.
+- **Sri Lanka — DMV: opened (GOV-2781), advances to 3 of 6.**
+  `lk/dmt/application-for-a-revenue-licence-for-a-motor-vehicle` opened Sri
+  Lanka's DMV vertical — see the Executive Summary's GOV-2781 update. This
+  cycle also screened Sri Lanka's three remaining verticals: **Taxes is a
+  confirmed dead end** (IRD's current 2025/2026 individual income tax
+  return requires mandatory e-filing via the login-gated RAMIS portal, no
+  paper-filing exception found for any category); **Business Formation**
+  has only a provincial-level candidate (Western Province's BNR-01
+  business-name-registration form, `bnr.wp.gov.lk`, ~15 fields, scanned/flat
+  3-page PDF — national company incorporation is now eROC-portal-only) left
+  as backlog; **Visa** has a strong, ready-to-author national candidate
+  (Department of Immigration & Emigration's Form B entry-visa application,
+  `immigration.gov.lk/content/files/visa/entry_visit_visa.pdf`, ~45-55
+  fields, confirmed current and not superseded by the ETA online system)
+  also left as backlog for a future cycle. **Sri Lanka now stands at 3 of 6
+  verticals** (Passport, National ID, DMV).
 
 ---
 
