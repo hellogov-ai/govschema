@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **418 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **419 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2789, "GovSchema Standard Research"): Sri
+> Lanka's Visa vertical opens (4 of 6)**, via
+> `lk/imm/application-for-a-entry-visa`, the Department of Immigration &
+> Emigration's "Application for a Entry Visa," Form B (Regulations 6) — the
+> general entry-visa application (tourist, resident, or other purpose)
+> disclosed as the strongest ready-to-author backlog candidate in
+> GOV-2781's own record. This cycle independently re-verified that claim
+> before authoring: the source (`immigration.gov.lk/content/files/visa/
+> entry_visit_visa.pdf`) is still live and unauthenticated (HTTP 200,
+> `application/pdf`, 359,721 bytes, sha256:
+> `78dfa0be2ee5d9afe32cfd37ae8083ab8f3dbe75a53065221614760ee74aa22`,
+> matching GOV-2781's own reported hash byte-for-byte), and the separate
+> online ETA (Electronic Travel Authorization) system was independently
+> re-checked (`eta.gov.lk`) and confirmed to cover tourist visas only for a
+> fixed list of ETA-eligible countries, with no static form of its own —
+> Form B is not superseded. Unlike the sibling `lk/dmt`/`lk/drp` forms,
+> this 5-page specimen has zero extractable text (confirmed via
+> `pdfjs-dist@3`: `getFieldObjects()` returns none, `getTextContent()`
+> returns zero items on every page even with `standardFontDataUrl` set,
+> ruling out a font-loading artifact) — a genuinely scanned/rasterized PDF,
+> so every field was read directly off page renders (`pdfjs-dist` +
+> `node-canvas`). Pages 1-4 are applicant-facing; page 5 is entirely
+> "Office Use Only" content (visa grant particulars, officer name/
+> designation, visa endorsement, duplicate office-copy photograph/
+> finger-mark boxes) and is excluded, consistent with this registry's
+> established convention. This v1.0.0 models 61 applicant-facing fields[]
+> — passport particulars, a conditional spouse block gated on civil status,
+> a conditional "previously in Sri Lanka" / last-visa-obtained block, two
+> fixed reference-contact blocks (a person in Sri Lanka; a responsible
+> person in the home country), funds available, and optional credit-card
+> detail — plus 1 documents[] entry (the applicant's photograph, the only
+> document requirement printed on the form itself). One disclosed printed-
+> form artifact: the source's own roman-numeral sub-item labels repeat
+> `iii)` across the page 1/page 2 boundary for the spouse block's passport
+> continuation, modeled as two additional gated fields rather than dropped
+> or treated as a duplicate. Two disclosed apparent typos ("Pecularities,"
+> "employee" where context indicates "employer") are preserved verbatim in
+> `label`, explained in `description`. **Sri Lanka now stands at 4 of 6
+> verticals** (Passport, National ID, DMV, Visa); Business Formation and
+> Taxes remain open — Taxes is a confirmed dead end (e-filing-mandatory, no
+> exception found), Business Formation has only a provincial (not
+> national) candidate. See GOV-2789 and this schema's own VERIFICATION.md
+> for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2781, "GovSchema Standard Research"): Sri
 > Lanka's DMV vertical opens (3 of 6)**, via
@@ -10125,7 +10169,29 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (37/42 jurisdictions — 88%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (38/42 jurisdictions — 90%)
+
+**Sri Lanka's Visa vertical opens (4 of 6) (GOV-2789)**, via
+`lk/imm/application-for-a-entry-visa` — the Department of Immigration &
+Emigration's "Application for a Entry Visa," Form B (Regulations 6), the
+general entry-visa application (tourist, resident, or other purpose)
+disclosed as the strongest backlog candidate in GOV-2781's own record and
+independently re-verified before authoring. Fetched directly from
+`immigration.gov.lk` (HTTP 200, `application/pdf`, 359,721 bytes, `sha256:
+78dfa0be2ee5d9afe32cfd37ae8083ab8f3dbe75a53065221614760ee74aa22`), confirmed
+not superseded by the separate tourist-only ETA online system. A flat,
+non-AcroForm 5-page form with zero extractable text (a genuinely scanned/
+rasterized specimen, unlike the sibling `lk/dmt`/`lk/drp` forms) — every
+field was read directly off page renders via `pdfjs-dist` + `node-canvas`;
+page 5 is entirely "Office Use Only" content and is excluded. Models 61
+applicant-facing `fields[]` — including a conditional spouse block gated on
+civil status and a conditional "previously in Sri Lanka"/last-visa-obtained
+block — plus 1 `documents[]` entry (the applicant's photograph). See the
+document's own VERIFICATION.md for the full sourcing record, including two
+disclosed printed-form artifacts (a repeated `iii)` roman-numeral label
+across the page 1/page 2 boundary, and two apparent source typos preserved
+verbatim). Sri Lanka now stands at 4 of 6 verticals (Passport, National ID,
+DMV, Visa); Business Formation and Taxes remain open.
 
 **Serbia's Visa vertical opens (2 of 6) (GOV-2760)**, via
 `rs/mfa/visa-application` — the Ministry of Foreign Affairs' bilingual
@@ -10880,7 +10946,7 @@ now closed.
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LK** | 3 | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ |
+| **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -13158,6 +13224,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   fields, confirmed current and not superseded by the ETA online system)
   also left as backlog for a future cycle. **Sri Lanka now stands at 3 of 6
   verticals** (Passport, National ID, DMV).
+- **Sri Lanka — Visa: opened (GOV-2789), advances to 4 of 6.**
+  `lk/imm/application-for-a-entry-visa` opened Sri Lanka's Visa vertical —
+  see the Executive Summary's GOV-2789 update. This cycle independently
+  re-verified GOV-2781's disclosed backlog candidate before authoring: the
+  source PDF is still live (hash matches byte-for-byte) and the ETA online
+  system was re-confirmed to be tourist-only with no static form, so Form B
+  is not superseded. **Sri Lanka now stands at 4 of 6 verticals** (Passport,
+  National ID, DMV, Visa); Business Formation (provincial-only candidate)
+  and Taxes (confirmed e-filing-mandatory dead end) remain open.
 
 ---
 
