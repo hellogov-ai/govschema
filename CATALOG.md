@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **413 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **414 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2753, "GovSchema Standard Research"): Sri
+> Lanka's National ID & Civic Documents vertical closes (2 of 6)**, via
+> `lk/drp/application-for-a-national-identity-card`, the Department for
+> Registration of Persons' (DRP) combined "Form 'B'" (DRP 1,7,8) —
+> "Application for an Identity Card under sections 9, 16 and 17 of the
+> Registration of Persons Act, No 32 of 1968." Fetched directly and
+> unauthenticated from `drp.gov.lk` (HTTP 200, `application/pdf`, 608,290
+> bytes, `sha256:
+> da659f8c67ddb335111e13e91fd493843ab44b5bed7b3d952fe52726b21b73f6`); a flat,
+> non-AcroForm 8-page trilingual (Sinhala/Tamil/English) specimen (0 Widget
+> annotations, confirmed via `pdfjs-dist`) with a genuine, fully extractable
+> English-readable text layer covering first-time issuance as well as
+> duplicate/change/renewal requests in one form. Pages 1-5 were rendered to
+> PNG (`pdfjs-dist@3` legacy build + `node-canvas`, with the bundled
+> standard-fonts data supplied) and visually cross-checked, confirming the
+> top-of-form District/D.S. Division/G.N. Number routing box is a genuine
+> applicant-facing field distinct from the shaded "FOR OFFICE USE" panel
+> beneath it, that Sex/Civil Status are independent per-option tick-boxes
+> (modelled as `enum`), and that the payment/fee-receipt page is entirely
+> office-processing with no printed fee amount (excluded). Models 45
+> `fields[]` plus 10 `documents[]` entries sourced from this same PDF's own
+> printed instructions-manual checklist (pages 6-8) — unlike this registry's
+> `lk/imm` Passport schema, whose separate instructions PDF was a zero-text
+> scanned image. Two disclosed judgment calls: Item 8.2's printed heading
+> ("Postal Address") conflicts with the instructions manual's own prose,
+> which describes the same cage as a different current-residence address,
+> not a mailing address — the printed heading is followed rather than the
+> conflict resolved by inference; and Declaration item 4's blank
+> identity-card-number line is cross-referenced to Item 10.5 rather than
+> modelled as a duplicate field. Items 7.6-7.8 (birth-abroad citizenship
+> details) and Item 9 (citizenship/dual-citizenship certificate) have no
+> applicant-fillable gating checkbox on the form, so both are modelled
+> optional with the conditional context recorded in each field's own
+> description, consistent with `lk/imm`'s precedent for the same pattern. 2
+> valid conformance fixtures (0 errors each) plus 8 mutation-control
+> fixtures (each raising exactly 1 error) are committed under
+> `conformance/lk/drp/application-for-a-national-identity-card/1.0.0/`.
+> **Sri Lanka now stands at 2 of 6 verticals** (Passport, National ID); DMV,
+> Business Formation, Taxes, and Visa remain open, unscreened backlog
+> candidates. See GOV-2753 and this schema's own VERIFICATION.md for the
+> full sourcing record.
 
 > **Update (2026-07-13, GOV-2746, "GovSchema Standard Research"): Jordan's
 > Visa vertical closes (3 of 6)**, via `jo/mfa/visa-application`, the
@@ -10221,7 +10263,20 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (31/40 jurisdictions — 78%)
+### National ID & Civic Documents (32/40 jurisdictions — 80%)
+
+**Sri Lanka's National ID & Civic Documents vertical closes (2 of 6)
+(GOV-2753)**, via `lk/drp/application-for-a-national-identity-card` — the
+Department for Registration of Persons' (DRP) combined "Form 'B'" (DRP
+1,7,8), "Application for an Identity Card under sections 9, 16 and 17 of
+the Registration of Persons Act, No 32 of 1968." See the Executive
+Summary's GOV-2753 update above for the full sourcing record — including
+the render-confirmed office-use-panel/routing-box distinction, the
+Item 8.2 printed-heading-vs-instructions-manual discrepancy, and every
+other disclosed scoping/judgment call — and the document's own
+VERIFICATION.md. **Sri Lanka now stands at 2 of 6 verticals** (Passport,
+National ID); DMV, Business Formation, Taxes, and Visa remain open,
+unscreened backlog candidates.
 
 **Bangladesh's National ID & Civic Documents vertical opens, closing
 Bangladesh to 6 of 6 verticals (GOV-2688)**, via
@@ -10553,7 +10608,7 @@ now closed.
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LK** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **LK** | 2 | ✓ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -12768,6 +12823,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   confirmed dead ends (GOV-2739), so Jordan has reached its practical
   maximum vertical coverage under this registry's current sourcing
   standards unless one of those dead ends' underlying blocker changes.
+- **Sri Lanka — National ID: authored (GOV-2753), closes 2 of 6.**
+  `lk/drp/application-for-a-national-identity-card` closed Sri Lanka's
+  National ID & Civic Documents vertical — see the Executive Summary's
+  GOV-2753 update. This supersedes the GOV-2716 cycle's open-backlog note
+  for Sri Lanka: National ID was screened this cycle and found a genuine,
+  first-party, unauthenticated, field-rich AcroForm-free specimen on
+  `drp.gov.lk`. **Sri Lanka now stands at 2 of 6 verticals** (Passport,
+  National ID); DMV, Business Formation, Taxes, and Visa remain open,
+  unscreened backlog candidates for a future cycle.
 
 ---
 
