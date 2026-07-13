@@ -4,8 +4,68 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **394 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **395 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-13, GOV-2629, "GovSchema Standard Research"): Rwanda's
+> Passport vertical opens (4 of 6)**, via
+> `rw/dgie/passport-application-first-adult` — the Directorate General of
+> Immigration and Emigration's (DGIE) first-time adult e-passport
+> application, submitted exclusively through the Government of Rwanda's
+> IremboGov online portal (irembo.gov.rw). There is no downloadable/fillable
+> PDF specimen for this process (a pure portal-only SPA workflow), so this
+> document is instead sourced from IremboGov's own official Support Center
+> walkthrough article — the same accepted authoring pattern already used by
+> `id/imigrasi/passport-application-first-adult` (Indonesia's M-Paspor) for a
+> portal-only process. Independently re-fetched all four cited sources this
+> cycle: the primary support article (HTTP 200, `text/html; charset=utf-8`,
+> 106,136 bytes), a corroborating FAQ article confirming guest/no-login
+> submission (HTTP 200, `text/html; charset=utf-8`, 62,228 bytes), a
+> Canva-made screenshot-walkthrough PDF corroborating the same field set
+> (HTTP 200, `application/pdf`, 149,839 bytes, confirmed **0 extractable
+> text**/AcroForm content via zlib-stream inspection — a visual aid, not a
+> specimen), and the DGIE's own service page (HTTP 200, `text/html;
+> charset=utf-8`, 26,800 bytes). Read the primary article's full extracted
+> plain-text body directly, and additionally fetched and visually inspected
+> its own embedded screenshots of the live "Applicant Details" and "Passport
+> & Travel Details" screens to confirm exact field labels, required-field
+> asterisks, and dropdown option values (rather than relying on the
+> article's prose alone). This v1.0.0 scopes to the single adult (18+),
+> first-time-applicant pathway: 17 `fields[]` (ID number; profession/
+> employer; height in cm; other-nationality/passport (optional); residence
+> and birth-location country; street/house number (optional); contact phone/
+> email; passport type — Service/Ordinary/Diplomatic — and validity; travel
+> purpose, destination country, and destination city) and 6 `documents[]`
+> entries (national ID copy, passport photo, signature, a
+> passport-type-conditional recommendation letter, a Diplomatic-only
+> appointment letter, and a verification-checkbox attestation). Disclosed
+> scoping gap: the source's own screenshots confirm only a top-level
+> "Country" select for both Residence Details and Birth Location, captured
+> in their default unselected state, so this document does not confirm or
+> model a deeper Province/District/Sector/Cell administrative-unit cascade
+> (as this registry's own `rw/rdb/rf-001-domestic-company-application-for-
+> incorporation` models for other Rwandan forms) — flagged for a future
+> revision rather than invented. Also disclosed: a three-way discrepancy
+> across sources on the signature attachment's exact format/size, resolved
+> by trusting the live in-app "Attachments" screen's own notice as most
+> authoritative. The minor/child applicant pathway, the passport-replacement
+> pathway, and post-submission biometric-capture/collection steps are out of
+> scope. Two mock conformance scenarios (0 errors each) plus 3 mutation-
+> control fixtures (missing required field, invalid enum value, pattern
+> violation — each raising exactly 1 error) passed. **Rwanda now stands at 4
+> of 6 verticals** (DMV, Visa, Business Formation, Passport). Rwanda's
+> remaining two verticals were screened this same research cycle (reported
+> per the parent "GovSchema Standard Research" routine, not independently
+> re-verified as part of this Passport-vertical authoring pass): **National
+> ID is a confirmed dead end** (the Indangamuntu National ID is entirely
+> Irembo-portal-gated plus in-person biometric/RIB verification, with no
+> fillable specimen or field-by-field guide found); **Taxes surfaced only a
+> companion annex form** (RRA's Annexe A, "RRA-PIT-ANA-E11"), not a full
+> standalone return — flagged as a possible narrower companion-schedule
+> candidate for a future cycle, not a full Taxes-vertical closure. See
+> GOV-2629 and this schema's own
+> `VERIFICATION.md` for the full sourcing record and every scoping/
+> disclosure judgment call.
+>
 > **Update (2026-07-13, GOV-2621, "GovSchema Standard Research"): Greece's
 > Taxes vertical opens (2 of 6)**, via
 > `gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3` — the Independent
@@ -6991,7 +7051,25 @@
 
 ## By Vertical
 
-### Passport (30/40 jurisdictions — 75%)
+### Passport (31/40 jurisdictions — 78%)
+
+**Rwanda's Passport vertical opens (4 of 6) (GOV-2629)**, via
+`rw/dgie/passport-application-first-adult` — the Directorate General of
+Immigration and Emigration's (DGIE) first-time adult e-passport
+application, submitted exclusively through the IremboGov online portal
+(irembo.gov.rw). No downloadable/fillable PDF specimen exists for this pure
+portal-only SPA process; sourced instead from IremboGov's own official
+Support Center walkthrough article (including its own embedded screenshots
+of the live "Applicant Details" and "Passport & Travel Details" screens),
+the same accepted pattern already used by
+`id/imigrasi/passport-application-first-adult` for a portal-only process.
+17 `fields[]`, 6 `documents[]`. See the Executive Summary's GOV-2629 update
+above and the document's own VERIFICATION.md for the full sourcing record,
+the disclosed Residence-Details/Birth-Location administrative-subdivision
+scoping gap, and every other disclosed judgment call. Rwanda now stands at
+4 of 6 verticals (DMV, Visa, Business Formation, Passport); National ID is
+a confirmed dead end and Taxes has only a companion annex form (RRA-PIT-
+ANA-E11), not a full return.
 
 **Nigeria's Passport vertical closes (5 of 6) (GOV-2577)**, via
 `ng/nis/application-for-nigeria-standard-passport` — NIS "Form C1 —
@@ -9482,7 +9560,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RW** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TH** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -11163,6 +11241,46 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     **Thailand now stands at 3 of 6 verticals** (Taxes, Business Formation,
     Visa), combining this item with item 25 above; DMV, Passport, and
     National ID remain screened dead-end/backlog.
+27. **Rwanda's Passport vertical opens (4 of 6) (GOV-2629)**, via
+    `rw/dgie/passport-application-first-adult` — the previously open,
+    unscreened Passport backlog item (item 23 above) left after Rwanda's
+    Business Formation gap closed. There is no downloadable/fillable PDF
+    specimen for this process: Rwanda's e-passport application is a pure
+    IremboGov (irembo.gov.rw) online SPA workflow. Sourced instead from
+    IremboGov's own official Support Center walkthrough article (a genuine
+    field-by-field guide, including its own embedded screenshots of the
+    live "Applicant Details" and "Passport & Travel Details" screens),
+    corroborated by a second IremboGov FAQ article and the DGIE's own
+    service page — independently re-fetched all four this cycle (HTTP 200
+    on each; `text/html` at 106,136 / 62,228 / 26,800 bytes respectively,
+    plus a Canva-made screenshot-walkthrough PDF at 149,839 bytes confirmed
+    to carry 0 extractable text/AcroForm content). This is the same
+    accepted authoring pattern already used by
+    `id/imigrasi/passport-application-first-adult` for a portal-only
+    process. Scopes to the single adult (18+), first-time-applicant
+    pathway: 17 `fields[]` and 6 `documents[]` entries. Disclosed scoping
+    gap: the source's own screenshots confirm only a top-level "Country"
+    select for both Residence Details and Birth Location (captured in
+    their default unselected state), so this document does not model a
+    deeper Province/District/Sector/Cell administrative-unit cascade (as
+    `rw/rdb/rf-001-domestic-company-application-for-incorporation` models
+    for other Rwandan forms) — flagged for a future revision rather than
+    invented. Two mock conformance scenarios found 0 errors each, plus 3
+    mutation controls (missing required field, invalid enum value, pattern
+    violation) each correctly raised exactly 1 error. See the Executive
+    Summary update above and the document's own VERIFICATION.md for the
+    full sourcing record and every disclosed scoping/judgment call.
+    **Rwanda now stands at 4 of 6 verticals** (DMV, Visa, Business
+    Formation, Passport). Rwanda's remaining two verticals were screened
+    this same research cycle (reported per the parent research routine, not
+    independently re-verified as part of this authoring pass): **National
+    ID is a confirmed dead end** (the Indangamuntu National ID is entirely
+    Irembo-portal-gated plus in-person biometric/RIB verification, with no
+    fillable specimen or field-by-field guide found); **Taxes surfaced only
+    a companion annex form** (RRA's Annexe A, "RRA-PIT-ANA-E11"), not a
+    full standalone return — flagged as a possible narrower
+    companion-schedule candidate for a future cycle, not a full
+    Taxes-vertical closure.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -11516,6 +11634,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   PDF was found at any tier. Not a hard dead end if a genuinely new
   third-party-republished specimen surfaces; a dead end for the current
   official publishing pattern.
+- **RW National ID (Indangamuntu)** — GOV-2629, screened this cycle. Issuance
+  and renewal are entirely IremboGov-portal-gated plus an in-person
+  biometric/RIB (National Identification Agency) verification step; no
+  fillable specimen or field-by-field walkthrough guide (of the kind that
+  made `rw/dgie/passport-application-first-adult` possible) was found for
+  this process. Not a hard dead end if a genuinely new source (e.g. a
+  support-article walkthrough of the live enrolment SPA) surfaces; a dead
+  end for the current official publishing pattern.
 
 ---
 
