@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **398 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **399 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2656, "GovSchema Standard Research"): Greece adds
+> a third Taxes-vertical schema**, via
+> `gr/aade/katastasi-oikonomikon-stoicheion-apo-epicheirimatiki-drastiriotita-e3`
+> — the Independent Authority for Public Revenue's (AADE) Form Ε3, "Κατάσταση
+> Οικονομικών Στοιχείων από Επιχειρηματική Δραστηριότητα" (business/
+> professional-activity income statement), the second of two companion
+> schedules flagged as open backlog when Form Ε1
+> (`gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3`, GOV-2621) was authored,
+> and the strongest ready-to-author candidate identified by the GOV-2644
+> cycle that authored Form Ε2. All four of this cycle's sources (the Ε3
+> specimen, its own sub-tables companion, an 89-page instructions manual,
+> and an FAQ) were independently re-fetched via Wayback Machine mirror (the
+> primary `aade.gr` host remains Akamai-403-blocked from this sandbox):
+> HTTP 200, `application/pdf`, 434,154 bytes, `sha256:
+> 72d4c0e9c8529cc510e4e40b6e3eb4d77a1094ab7544031712566f55f8ad2b31` for the
+> Ε3 specimen itself. Reading the instructions manual's own code-by-code
+> narrative revealed that the source's Πίνακας Δ (gross profit/EBITDA/EBIT)
+> and most of Πίνακας ΣΤ (final taxable-profit determination) are almost
+> entirely **system-computed derivations** of Πίνακας Ζ1/Ζ2's own
+> filer-entered revenue/expense figures, not independent filer input — so
+> this v1.0.0 models the cover-sheet/registration identification, Πίνακας Α'
+> taxpayer identification, Πίνακας Β' core employee-count fields, and
+> Πίνακας Ζ1/Ζ2's total-revenue/total-expense line items restricted to the
+> single "Εμπορική δραστηριότητα" (commercial/trading) activity-type column
+> — the source's own first and most common of its four parallel
+> activity-type columns. 43 `fields[]` total, 5 statically `required`; the
+> production/agricultural-biological/services activity columns and the
+> system-derived Πίνακας Δ/Ε/ΣΤ tax-computation tables, plus numerous niche
+> compliance panels (rent-paid statement, construction-company profit
+> calculation, country-by-country reporting, anti-money-laundering
+> reporting, ν.4935/2022 group tax exemptions, Pillar Two top-up tax), are
+> out of scope, disclosed in VERIFICATION.md. Two valid conformance fixtures
+> plus 7 mutation-control fixtures (each raising exactly 1 error) are
+> committed under `conformance/gr/aade/`. Greece's Taxes vertical now
+> comprises Forms Ε1, Ε2, and Ε3. See GOV-2656 and this schema's own
+> `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2644, "GovSchema Standard Research"): Bangladesh's
 > DMV vertical opens (2 of 6)**, via
@@ -8284,6 +8321,35 @@ panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partn
 v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (40/46 jurisdictions — 87%)
+
+**Greece adds a third Taxes-vertical schema, Form Ε3 (GOV-2656)**
+(`gr/aade/katastasi-oikonomikon-stoicheion-apo-epicheirimatiki-drastiriotita-e3`)
+— AADE's Form Ε3, "Κατάσταση Οικονομικών Στοιχείων από Επιχειρηματική
+Δραστηριότητα" (business/professional-activity income statement), a
+companion to Form Ε1 (`gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3`,
+immediately below) and Form Ε2
+(`gr/aade/analytiki-katastasi-misthomaton-akinitis-periousias-e2`, GOV-2644).
+All four sources (the Ε3 specimen, its sub-tables companion, an 89-page
+instructions manual, and an FAQ) were independently re-fetched via Wayback
+Machine mirror, the primary `aade.gr` host remaining Akamai-403-blocked from
+this sandbox. Reading the instructions manual's own code-by-code narrative
+established that Πίνακας Δ (gross profit/EBITDA/EBIT) and most of Πίνακας ΣΤ
+(final taxable-profit determination) are system-computed derivations of
+Πίνακας Ζ1/Ζ2's own filer-entered revenue/expense figures, not independent
+input — so this v1.0.0 models the cover-sheet/registration identification,
+Πίνακας Α' taxpayer identification, Πίνακας Β' core employee-count fields,
+and Πίνακας Ζ1/Ζ2's revenue/expense line items restricted to the single
+"Εμπορική δραστηριότητα" (commercial/trading) activity-type column — the
+source's own first and most common of its four parallel activity-type
+columns. 43 `fields[]`, 5 statically `required`; the parallel activity
+columns and the system-derived Πίνακας Δ/Ε/ΣΤ tables, plus niche compliance
+panels (rent-paid statement, construction-company profit calculation,
+country-by-country reporting, anti-money-laundering reporting, ν.4935/2022
+group tax exemptions, Pillar Two top-up tax), are out of scope, disclosed in
+VERIFICATION.md. Two valid conformance fixtures plus 7 mutation-control
+fixtures (each raising exactly 1 error) are committed under
+`conformance/gr/aade/`. See GOV-2656 and this schema's own `VERIFICATION.md`
+for the full sourcing record.
 
 **Greece's Taxes vertical opens (2 of 6)**
 (`gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3`, GOV-2621) — the
