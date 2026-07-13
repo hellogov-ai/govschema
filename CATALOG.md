@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **395 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **396 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2637, "GovSchema Standard Research"): Thailand's
+> DMV vertical opens (4 of 6)**, via `th/dlt/vehicle-registration-application`,
+> the Department of Land Transport's (DLT) "แบบคำขอจดทะเบียนรถ" (Vehicle
+> Registration Application, form code ขส.บ. 10 ท.-9) — a candidate scouted in
+> GOV-2635's prior cycle after the DLT's own e-form portal (dlt.go.th) proved
+> network-unreachable from this environment (independently re-confirmed this
+> cycle: a direct `curl` attempt against both `www.dlt.go.th` and
+> `web.dlt.go.th` returned a TLS connection failure). Sourced instead from an
+> unauthenticated commercial print-shop mirror (sc-broker.com), independently
+> located and re-fetched this cycle (HTTP 200, `application/pdf`, 548,979
+> bytes, sha256 `be2e76...80213`). Parsed with `pdfjs-dist`: **zero AcroForm
+> widgets on either page** — a plain print-and-fill form, not a fillable
+> AcroForm — and a garbled text layer (no usable `ToUnicode`/cmap), worked
+> around by rendering both pages to PNG and reading the glyphs directly.
+> Independently corroborated via a second, different chaiyaphumdlt.go.th
+> citizen-service manual than the one first found: an initial same-domain
+> candidate was fetched and ruled out (it covers a different legal basis,
+> the Land Transport Act for commercial vehicles, and its own forms section
+> states "no form provided"), before locating the correct manual — for
+> exactly this form's new-vehicle/type-change process under the Motor
+> Vehicle Act — whose own forms-list page names this form and its power-of-
+> attorney requirement by title. This v1.0.0 scopes to page 1's
+> applicant-facing content only (21 `fields[]`: identity, address, a
+> new-vehicle/type-change purpose selector, vehicle/chassis/engine
+> identification, and a free-text "other document" description; plus 7
+> `documents[]` checklist entries) — page 1's own "staff only" intake/fee
+> block, and the entirety of page 2 ("บันทึกการตรวจสภาพรถ", a 27-item vehicle
+> condition inspection record across four inspection stations, entirely
+> completed by DLT inspectors during in-person inspection, not the
+> applicant) are out of scope, disclosed in VERIFICATION.md. Two hand-
+> authored valid fixtures (0 errors each) plus 6 mutation-control fixtures
+> (each raising exactly 1 error) passed. **Thailand now stands at 4 of 6
+> verticals** (Taxes, Business Formation, Visa, DMV); the driver's-licence
+> application was separately screened this same research cycle and confirmed
+> a dead end (in-person only, staff-filled, no downloadable specimen).
+> Passport and National ID remain screened/backlog. See GOV-2637 and this
+> schema's own `VERIFICATION.md` for the full sourcing record and every
+> scoping/disclosure judgment call.
 
 > **Update (2026-07-13, GOV-2629, "GovSchema Standard Research"): Rwanda's
 > Passport vertical opens (4 of 6)**, via
@@ -7295,7 +7334,14 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (38/41 jurisdictions — 93%)
+### DMV — Vehicle Registration, Licensing, Permits (39/41 jurisdictions — 95%)
+
+**Thailand's DMV vertical opens (4 of 6) (GOV-2637)**, via
+`th/dlt/vehicle-registration-application` (Form ขส.บ. 10, the Department of
+Land Transport's "แบบคำขอจดทะเบียนรถ"). See the Executive Summary update
+above and the document's own VERIFICATION.md for the full sourcing record —
+including the ruled-out corroborating-source false lead and the disclosed
+staff/inspector-completed content excluded from scope.
 
 **Rwanda opens as the registry's 43rd jurisdiction via its DMV vertical
 (GOV-2526)**, via `rw/rra/vrf-e06-motor-vehicle-registration-form` (Rwanda
@@ -9563,7 +9609,7 @@ now closed.
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TH** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **TH** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
