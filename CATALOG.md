@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **406 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **407 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Note:** GOV-2704 (Business Formation) and GOV-2703 (Passport) landed as
+> concurrent same-day PRs; each update below independently reports "4 of 6"
+> as true at its own authoring time. Combined, **Ghana now stands at 5 of 6
+> verticals** (National ID & Civic Documents, Taxes, Visa, Business
+> Formation, Passport) — **DMV is the sole remaining open backlog
+> vertical.**
+
+> **Update (2026-07-13, GOV-2704, "GovSchema Standard Research"): Ghana's
+> Business Formation vertical opens (4 of 6)**, via
+> `gh/orc/registration-of-a-subsidiary-business-name` — the Office of the
+> Registrar of Companies' (ORC, successor to the Registrar-General's
+> Department) Form C, "Registration of a Subsidiary Business Name," under
+> the Business Names Act, 1962 (Act 151). A flat, non-AcroForm print
+> specimen (zero Widget annotations across all 3 pages, confirmed via
+> `pdfjs-dist`), independently re-fetched this cycle from ORC's own asset
+> host (HTTP 200, `application/pdf`, 445,953 bytes, `sha256:
+> 15e0184521e6dd118dcafe226ce02ea3955b629b8a0189a72779a4e86f38efe4`,
+> matching the task's own pre-scouted figures exactly) after independently
+> re-confirming the live link from `orc.gov.gh/forms-fees/`'s own
+> Subsidiary Business Names accordion. Models 74 `fields[]` plus 1
+> `documents[]` entry across the form's own lettered sections (A)–(K):
+> business/parent-company identification; a 27-item Nature of Business
+> sector tick-box grid (each sector modeled as its own boolean field, since
+> v0.3's field model has no multi-select/labelled-option member) plus an
+> "Others" escape hatch; up to three ISIC codes or a free-text activity
+> description; a Principal Place of Business address; a Registered Address
+> gated by a same-as-principal-place yes/no question; an optional Other
+> Place of Business for multi-location businesses; a Postal Address; Contact
+> details; MSME Details (revenue/employee counts feeding the source's own
+> downstream Micro/Small/Medium classification table, not modeled as a
+> field); a Business Operating Permit request (gating a reference number
+> when already held); and a Director/Secretary Declaration. One specimen
+> artifact is disclosed rather than silently corrected: the sector grid
+> prints "Estate/Housing" twice across two different grid cells, modeled as
+> a single boolean field with the duplication disclosed. Section (L), "For
+> Office Use Only," and the Declaration's Stamp/Seal and Signature lines are
+> excluded as staff-populated/physical artifacts, consistent with this
+> registry's `gh/nia`/`gh/gis` precedent; no verbatim declaration statement
+> exists on the specimen to anchor an `attestation`-category document.
+> Scoping note: ORC's primary one-person business-name registration form
+> ("Form A") remains undownloadable (pick-up only, per this catalog's prior
+> scouting pass) — this schema covers subsidiary/branch registration only,
+> disclosed as an open gap rather than silently conflated. 2 valid
+> conformance fixtures plus 7 mutation-control fixtures (each raising
+> exactly 1 error) are committed under `conformance/gh/orc/`. See GOV-2704
+> and this schema's own `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2703, "GovSchema Standard Research"): Ghana's
 > Passport vertical opens (4 of 6)**, via
@@ -48,8 +95,6 @@
 > and the truth-of-particulars attestation. 2 valid conformance fixtures
 > plus 6 mutation-control fixtures (each raising exactly 1 error, including
 > a dedicated `requiredWhen` case) are committed under `conformance/gh/mfa/`.
-> Ghana now stands at 4 of 6 verticals (National ID & Civic Documents,
-> Taxes, Visa, Passport); DMV and Business Formation remain open backlog.
 > See GOV-2703 and this schema's own `VERIFICATION.md` for the full
 > sourcing record.
 
@@ -8085,7 +8130,38 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (42/44 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (43/44 jurisdictions — 98%)
+
+**Ghana's Business Formation vertical opens (4 of 6) (GOV-2704)**, via
+`gh/orc/registration-of-a-subsidiary-business-name` — the Office of the
+Registrar of Companies' (ORC) Form C, "Registration of a Subsidiary
+Business Name," under the Business Names Act, 1962 (Act 151). A flat,
+non-AcroForm print specimen independently re-fetched this cycle (HTTP 200,
+`application/pdf`, 445,953 bytes, `sha256:
+15e0184521e6dd118dcafe226ce02ea3955b629b8a0189a72779a4e86f38efe4`, matching
+the task's own pre-scouted figures exactly) after independently
+re-confirming the live link from `orc.gov.gh/forms-fees/`'s own accordion.
+74 `fields[]` + 1 `documents[]` entry: business/parent-company
+identification; a 27-item sector tick-box grid (each modeled as its own
+boolean field, since v0.3 has no multi-select/labelled-option member) plus
+an "Others" escape hatch; up to three ISIC codes or a free-text activity
+description; a Principal Place of Business address; a Registered Address
+gated by a same-as-principal-place question; an optional multi-location
+Other Place of Business; a Postal Address; Contact details; MSME Details
+feeding the source's own downstream Micro/Small/Medium classification
+table; a Business Operating Permit request; and a Director/Secretary
+Declaration. A disclosed specimen artifact: the sector grid prints
+"Estate/Housing" twice, modeled as one boolean field. Section (L), "For
+Office Use Only," and the Declaration's Stamp/Seal and Signature lines are
+excluded as staff-populated/physical, consistent with `gh/nia`/`gh/gis`
+precedent. Scoping note: ORC's primary one-person business-name
+registration form ("Form A") remains undownloadable; this schema covers
+subsidiary/branch registration only, disclosed as an open gap. 2 valid
+plus 7 mutation-control conformance fixtures (each raising exactly 1
+error) passed. **Ghana now stands at 4 of 6 verticals** (National ID &
+Civic Documents, Taxes, Visa, Business Formation); Passport and DMV remain
+open backlog. See GOV-2704 and this schema's own `VERIFICATION.md` for the
+full sourcing record.
 
 **Bangladesh's Business Formation vertical opens (5 of 6) (GOV-2687)**, via
 `bd/roc/declaration-on-registration-of-company-form-i` — the Registrar of
@@ -10143,7 +10219,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GH** | 4 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
+| **GH** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
