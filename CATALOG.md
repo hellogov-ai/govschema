@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**50 jurisdictions** | **420 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**50 jurisdictions** | **421 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2804, "GovSchema Standard Research"): Romania's
+> DMV vertical opens (2 of 6)**, via
+> `ro/dgpci/cerere-operatiune-inmatriculari-transcrieri-radieri-provizorii`
+> — the Direcția Generală Permise de Conducere și Înmatriculări's (DGPCI,
+> Romania's General Directorate for Driving Licenses and Vehicle
+> Registrations) "Cerere Operațiune Înmatriculări, Transcrieri, Radieri
+> Provizorii" (Request — Registration/Transfer/Provisional-Deregistration
+> Operation), a single-page, nationally-uniform "formular tipizat"
+> distributed identically by every county's SPCRPCIV (the operational unit
+> that actually processes these requests). Independently re-fetched the
+> source (`db.prefectura.mai.gov.ro/wp-content/uploads/sites/43/2023/07/
+> CERERE-OPERATIUNE-INMATRICULARI-TRANSCRIERI-RADIERI-PROVIZORII.pdf`, HTTP
+> 200, `application/pdf`, 201,447 bytes, sha256:
+> `4669a2bd525ae3b3d3efe551c0ddea17e4e4e41bb51c13e52a3a8c8dc60ecc8e`) and
+> confirmed via `pdfjs-dist@3` that it is a genuine one-page AcroForm with
+> 34 Widget annotations, all on the applicant-facing half of the page (the
+> authority-completed half carries zero widgets and is excluded). Despite
+> the title naming three operation families, the form's own checkbox list
+> covers **nine** independent, mutually-exclusive operation types
+> (registration, temporary registration, ownership-transfer transcription,
+> duplicate-certificate issuance, new-certificate-after-data-change
+> issuance, deregistration, provisional authorization, duplicate/
+> supplementary plate, and retention of the existing plate-number
+> combination) — modeled in full via a single `exclusivityGroups` entry
+> rather than narrowed to the title's three-word summary. Chose `dgpci` as
+> the agency code (the national policy/design authority behind this
+> nationally uniform form) rather than the hosting county Prefecture or the
+> operational SPCRPCIV unit, per this registry's established convention of
+> attributing a nationally-uniform, locally-administered form to its
+> national issuing authority (e.g. `rs/mup`). Models all 34 `fields[]` the
+> source's own AcroForm exposes, a 1:1 mapping from widget to field; no
+> `documents[]` are modeled, since the form itself prints no attachment
+> checklist and DGPCI's own online document-requirements page is a
+> JavaScript-rendered single-page application whose content could not be
+> independently and reliably retrieved this cycle (disclosed as a known gap
+> in this schema's own VERIFICATION.md, rather than sourcing a document list
+> from an unverified third-party aggregator). **Romania now stands at 2 of 6
+> verticals**; Passport, Business Formation, Visa, and National ID & Civic
+> Documents remain open, unscreened backlog candidates — not screened this
+> cycle. See GOV-2804 and this schema's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-13, GOV-2797, "GovSchema Standard Research"): Romania
 > opens as the registry's 50th jurisdiction**, via its Taxes vertical,
@@ -8410,7 +8452,25 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (41/42 jurisdictions — 98%)
+### DMV — Vehicle Registration, Licensing, Permits (42/43 jurisdictions — 98%)
+
+**Romania's DMV vertical opens (2 of 6) (GOV-2804)**, via
+`ro/dgpci/cerere-operatiune-inmatriculari-transcrieri-radieri-provizorii` —
+DGPCI's (Direcția Generală Permise de Conducere și Înmatriculări) "Cerere
+Operațiune Înmatriculări, Transcrieri, Radieri Provizorii," a single-page,
+nationally-uniform request form used identically by every county's
+SPCRPCIV. Fetched directly from a county Prefecture's document host
+(`db.prefectura.mai.gov.ro`, HTTP 200, `application/pdf`, 201,447 bytes,
+`sha256: 4669a2bd525ae3b3d3efe551c0ddea17e4e4e41bb51c13e52a3a8c8dc60ecc8e`).
+A genuine one-page AcroForm (34 Widget annotations, confirmed via
+`pdfjs-dist@3`), all on the applicant-facing half of the page; the
+authority-completed half carries zero widgets and is excluded. The form's
+own checkbox list covers nine independent, mutually-exclusive operation
+types (not the three named in the title), modeled via a single
+`exclusivityGroups` entry. Models all 34 `fields[]`, a 1:1 mapping from
+widget to field; no `documents[]` modeled, disclosed as a known gap (see
+the schema's own VERIFICATION.md). Romania now stands at 2 of 6 verticals
+(Taxes, DMV).
 
 **Sri Lanka's DMV vertical opens (3 of 6) (GOV-2781)**, via
 `lk/dmt/application-for-a-revenue-licence-for-a-motor-vehicle` — the
@@ -11040,7 +11100,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **RO** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -13327,6 +13387,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   income are likely the next-most-common, after independent activities).
   Romania's other five verticals (Passport, DMV, Business Formation, Visa,
   National ID & Civic Documents) are also open, unscreened backlog — not
+  screened this cycle.
+- **Romania — DMV: opened (GOV-2804).** DGPCI's nationally-uniform vehicle
+  registration/transfer/provisional-deregistration request form above
+  (`ro/dgpci/cerere-operatiune-inmatriculari-transcrieri-radieri-provizorii`)
+  opens Romania's DMV vertical (2 of 6) — see the Executive Summary's
+  GOV-2804 update. No `documents[]` are modeled, since DGPCI's own online
+  document-requirements page is a JavaScript-rendered SPA that could not be
+  independently retrieved this cycle; a future review with direct
+  browser-rendered access should add a verified `documents[]` array.
+  Romania's remaining four verticals (Passport, Business Formation, Visa,
+  National ID & Civic Documents) are open, unscreened backlog — not
   screened this cycle.
 
 ---
