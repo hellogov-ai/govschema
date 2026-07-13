@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **414 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **415 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2760, "GovSchema Standard Research"): Serbia's
+> Visa vertical opens (2 of 6)**, via `rs/mfa/visa-application`, the
+> Ministry of Foreign Affairs' bilingual (Serbian Cyrillic/English)
+> "Захтев за издавање визе / Visa Application Form" (Образац бр. 1 / Form
+> No. 1). This candidate was pre-scouted and left open in GOV-2753's own
+> screening pass, alongside a Taxes candidate (PPDG-2R, re-confirmed live
+> this cycle and left as an open, ready-to-author backlog item). Fetched
+> directly and unauthenticated from `mfa.gov.rs` (HTTP 200,
+> `application/pdf`, 280,901 bytes, `sha256:
+> 427776bc0cfd58ef509ec973b6f3858ecb29b838102aa26af0d5539af012d146`). A
+> flat, non-AcroForm 2-page specimen (zero Widget annotations on either
+> page, confirmed via `pdfjs-dist`) with a genuine, fully extractable
+> bilingual text layer; both pages were also rendered to PNG (`pdfjs-dist`
+> legacy build + `node-canvas`, bundled standard-fonts data supplied) and
+> visually cross-checked, confirming a boxed, consular-only "For embassy/
+> consulate use only" column running the full height of both pages
+> (excluded from `fields[]`, consistent with this registry's established
+> office-use-only convention) and every checkbox group's exact option
+> count. Models 71 `fields[]` plus 2 `documents[]` entries (1 attestation
+> quoting the form's own verbatim declaration; 1 identity-document for the
+> printed 3.5cm x 4.5cm photograph requirement): personal/passport/contact
+> particulars; trip/visa particulars including a return-permission and a
+> transit-entry-permit Yes/No gate each with `requiredWhen`-linked
+> companion fields; travel details including six independent means-of-
+> support booleans (matching this registry's established multi-checkbox
+> convention) and a separate travel/health-insurance checkbox with its own
+> validity companion; optional spouse particulars and a bounded 3-row
+> children table (matching the source's own printed capacity and its own
+> instruction that a separate form must be submitted per child's
+> passport); and the closing declaration, contact details, and signature.
+> Two disclosed judgment calls: item 45's combined "Phone, E-mail" caption
+> is split into two fields for consistency with item 34's own separately-
+> boxed Phone/E-mail fields; and the consular-only "Additional documents"
+> checklist is disclosed rather than modeled as invented `documents[]`
+> entries, since it is the receiving officer's own intake record, not an
+> applicant-facing instruction list. 2 valid conformance fixtures (0
+> errors each) plus 8 mutation-control fixtures (each raising exactly 1
+> error) are committed under `conformance/rs/mfa/visa-application/1.0.0/`.
+> **Serbia now stands at 2 of 6 verticals** (Business Formation, Visa);
+> DMV, Taxes, National ID, and Passport remain open, unscreened-this-cycle
+> backlog candidates, with Taxes (PPDG-2R) the strongest pre-identified
+> candidate. See GOV-2760 and this schema's own VERIFICATION.md for the
+> full sourcing record.
 
 > **Update (2026-07-13, GOV-2753, "GovSchema Standard Research"): Sri
 > Lanka's National ID & Civic Documents vertical closes (2 of 6)**, via
@@ -9874,7 +9918,28 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (36/41 jurisdictions — 88%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (37/42 jurisdictions — 88%)
+
+**Serbia's Visa vertical opens (2 of 6) (GOV-2760)**, via
+`rs/mfa/visa-application` — the Ministry of Foreign Affairs' bilingual
+(Serbian Cyrillic/English) "Захтев за издавање визе / Visa Application
+Form," fetched directly and unauthenticated from `mfa.gov.rs`. This
+candidate was pre-scouted and left open in GOV-2753's own screening pass,
+alongside a Taxes candidate (PPDG-2R) left as the strongest remaining
+backlog item. A flat, non-AcroForm 2-page specimen (zero Widget
+annotations, confirmed via `pdfjs-dist`) with a genuine, fully extractable
+bilingual text layer; both pages were rendered to PNG and visually
+cross-checked, confirming a boxed consular-only "For embassy/consulate use
+only" column (excluded) and every checkbox group's exact option count,
+including six independently-checkable means-of-support booleans and a
+separate travel/health-insurance checkbox. Models 71 `fields[]` plus 2
+`documents[]` entries, including a return-permission and a
+transit-entry-permit Yes/No gate each with `requiredWhen`-linked companion
+fields, and a bounded 3-row children table matching the source's own
+printed capacity. See the Executive Summary's GOV-2760 update above and
+the document's own VERIFICATION.md for the full sourcing record. Serbia
+now stands at 2 of 6 verticals (Business Formation, Visa); DMV, Taxes,
+National ID, and Passport remain open backlog candidates.
 
 **Jordan's Visa vertical closes (3 of 6) (GOV-2746)**, via
 `jo/mfa/visa-application` — the Ministry of Foreign Affairs and
@@ -10619,7 +10684,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RS** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **RS** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -12832,6 +12897,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   `drp.gov.lk`. **Sri Lanka now stands at 2 of 6 verticals** (Passport,
   National ID); DMV, Business Formation, Taxes, and Visa remain open,
   unscreened backlog candidates for a future cycle.
+- **Serbia — Visa: authored (GOV-2760), opens 2 of 6.**
+  `rs/mfa/visa-application` opened Serbia's Visa vertical — see the
+  Executive Summary's GOV-2760 update. This supersedes the GOV-2753 cycle's
+  open-backlog note for Serbia's Visa candidate: independently re-fetched
+  from `mfa.gov.rs` and confirmed a genuine, first-party, unauthenticated,
+  71-field bilingual specimen. **Serbia now stands at 2 of 6 verticals**
+  (Business Formation, Visa); DMV, Taxes, National ID, and Passport remain
+  open backlog candidates, with Taxes (PPDG-2R, `purs.gov.rs`, re-confirmed
+  live this cycle) the strongest pre-identified candidate for a future
+  cycle.
 
 ---
 
