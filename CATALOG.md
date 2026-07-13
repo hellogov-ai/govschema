@@ -4,7 +4,58 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **416 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **417 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2774, "GovSchema Standard Research"): Serbia's
+> DMV vertical opens (4 of 6)**, via
+> `rs/mup/registracioni-list-za-motorno-prikljucno-vozilo`, the Ministry of
+> Interior's (MUP) "Registracioni list za motorno-priključno vozilo"
+> (Registration sheet for a motor/trailer vehicle), Obrazac 1, printed on
+> pages 37-39 of the consolidated "Pravilnik o registraciji motornih i
+> priključnih vozila" (Rulebook on registration of motor and trailer
+> vehicles). Fetched directly and unauthenticated from `mup.gov.rs` (HTTP
+> 200, `application/pdf`, 2,018,355 bytes, `sha256:
+> 6d41e2f39d056f9ce8651104e83c0965c64eed53ece983e326aeb4b80939a965`), a
+> flat, non-AcroForm 92-page consolidated legal text (zero Widget
+> annotations on every page, confirmed via `pdfjs-dist@3`); Obrazac 1 itself
+> is a plain caption-and-blank-line layout with no boxes, checkboxes, or
+> table rulings, confirmed both from the positioned text layer and from a
+> `pdfjs-dist` + `node-canvas` page render of pages 37-39. Cross-checked
+> every printed field and EU-style vehicle code (J, D.1-D.3, E, F.1, G, K,
+> P.1-P.3, Q, S.1-S.2, P5, L, R) against the Rulebook's own Article 4 (which
+> defines the codes) and Article 5 (which legally itemizes, 1-14,
+> everything the form contains) — the strongest grounding this registry has
+> had yet for a scope decision, since Article 5 itself distinguishes
+> applicant-facing content from the deciding authority's own intake/
+> decision/processing-officer data, rather than that boundary being
+> inferred from layout alone. This single form covers every stage of a
+> vehicle's registration lifecycle (first registration, sticker issuance,
+> temporary registration, change of plates/permit/sticker, deregistration),
+> selected via the form's own "VRSTA POSTUPKA" procedure code; each
+> lifecycle-specific block of fields is `requiredWhen`-gated on that code,
+> directly grounded in Article 5's own text rather than an invented gate.
+> Models 64 `fields[]` plus 6 `documents[]` (Article 5's own list of
+> mandatory attachments: technical-soundness certificate, mandatory
+> third-party liability insurance policy, proof of settled customs/tax
+> duties, proof of payment of the registration fee, proof of ownership/
+> origin — gated to the first-registration/ownership-change procedure code
+> — and proof of the owner's identity). Excludes Article 5's own items 2
+> (date of request receipt), 3 (the deciding authority's own
+> identification: police administration/station, or the authorized
+> sticker-issuing entity), 13 (the decision on the request), and 14 (the
+> processing officer's own identity/signature) as office/decision content,
+> not applicant-submitted data — consistent with this registry's
+> established office-only-content convention (e.g. `co/runt`'s excluded
+> "Organismo de Tránsito" box, `rs/mfa`'s excluded consular-only column).
+> Two valid conformance fixtures (0 errors each) plus 8 mutation-control
+> fixtures (each raising exactly 1 error) are committed under
+> `conformance/rs/mup/registracioni-list-za-motorno-prikljucno-vozilo/1.0.0/`.
+> **Serbia now stands at 4 of 6 verticals** (Business Formation, Visa,
+> Taxes, DMV); Passport and National ID are both confirmed dead ends this
+> cycle (in-person/biometric appointment only, no downloadable current
+> form), with a weak voter-registration-abroad candidate at MFA left as
+> thin backlog (~10 fields, `.doc` format). See GOV-2774 and this schema's
+> own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2767, "GovSchema Standard Research"): Serbia's
 > Taxes vertical advances (3 of 6)**, via
@@ -8207,7 +8258,40 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (39/41 jurisdictions — 95%)
+### DMV — Vehicle Registration, Licensing, Permits (40/42 jurisdictions — 95%)
+
+**Serbia's DMV vertical opens (4 of 6) (GOV-2774)**, via
+`rs/mup/registracioni-list-za-motorno-prikljucno-vozilo` — the Ministry of
+Interior's (MUP) "Registracioni list za motorno-priključno vozilo"
+(Registration sheet for a motor/trailer vehicle, Obrazac 1), the annex
+printed on pages 37-39 of the consolidated "Pravilnik o registraciji
+motornih i priključnih vozila" (Rulebook on registration of motor and
+trailer vehicles), fetched directly from `mup.gov.rs` (HTTP 200,
+`application/pdf`, 2,018,355 bytes, `sha256:
+6d41e2f39d056f9ce8651104e83c0965c64eed53ece983e326aeb4b80939a965`). A flat,
+non-AcroForm 92-page consolidated legal text (zero Widget annotations on
+every page); the annex itself is a plain caption-and-blank-line layout with
+no boxes/checkboxes/table rulings, confirmed via `pdfjs-dist` text-layer
+extraction and a `pdfjs-dist` + `node-canvas` page render. This single form
+is used across every stage of a vehicle's registration lifecycle — first
+registration, sticker issuance, temporary registration, a change of plates/
+permit/sticker, or deregistration — keyed off the form's own "VRSTA
+POSTUPKA" procedure code, with each lifecycle-specific block's fields
+`requiredWhen`-gated on that code per the Rulebook's own Article 5. Models
+64 `fields[]` plus 6 `documents[]` (the mandatory attachments Article 5's
+own closing paragraph lists: technical-soundness certificate, mandatory
+liability insurance policy, proof of settled customs/tax duties, proof of
+payment of the registration fee, proof of ownership/origin, and proof of
+identity). Excludes the deciding authority's own intake/decision/
+processing-officer data (Article 5's own items 2, 3, 13, and 14 — the
+police administration/station or authorized sticker-issuing entity's
+identification, the decision on the request, and the processing officer's
+identity/signature), consistent with this registry's established
+office-only-content convention. See the document's own VERIFICATION.md for
+the full sourcing record and every disclosed scoping/judgment call. Serbia
+now stands at 4 of 6 verticals (Business Formation, Visa, Taxes, DMV);
+Passport and National ID are both confirmed dead ends (in-person/biometric
+appointment only, no downloadable current form) — see "Known Gaps" below.
 
 **Thailand's DMV vertical opens (4 of 6) (GOV-2637)**, via
 `th/dlt/vehicle-registration-application` (Form ขส.บ. 10, the Department of
@@ -10743,7 +10827,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RS** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -12979,6 +13063,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   user-instructions PDF instead. **Serbia now stands at 3 of 6 verticals**
   (Business Formation, Visa, Taxes); DMV, National ID, and Passport remain
   open, unscreened-this-cycle backlog candidates for a future cycle.
+- **Serbia — DMV: opened (GOV-2774), advances to 4 of 6.**
+  `rs/mup/registracioni-list-za-motorno-prikljucno-vozilo` opened Serbia's
+  DMV vertical — see the Executive Summary's GOV-2774 update. This cycle
+  also screened Serbia's two remaining verticals and confirmed both are
+  dead ends: **Passport** (in-person/biometric-enrollment appointment only
+  at MUP, no downloadable current application form) and **National ID/
+  lična karta** (same in-person/biometric-enrollment constraint). A weak
+  voter-registration-abroad candidate was found at MFA
+  (`mfa.gov.rs/sites/default/files/inline-files/Zahtev-za-glasanje-u-inostranstvu.doc`,
+  ~10 fields, `.doc` format, not a passport/national-ID form) and is left
+  as thin backlog rather than authored this cycle. **Serbia now stands at
+  4 of 6 verticals** (Business Formation, Visa, Taxes, DMV); Passport and
+  National ID are both confirmed dead ends under this registry's current
+  sourcing standards, so Serbia has reached its practical maximum vertical
+  coverage unless one of those dead ends' underlying blocker changes.
 
 ---
 
