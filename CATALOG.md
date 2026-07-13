@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **411 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **412 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2739, "GovSchema Standard Research"): Jordan's
+> Passport vertical opens (2 of 6)**, via `jo/cspd/passport-application`, the
+> Civil Status and Passports Department's (CSPD) "Passport Application" form
+> (Form No. PASS-ALL-01) — a single coded specimen covering first-time
+> issuance, renewal, and replacement in one form. Fetched directly and
+> unauthenticated from `cspd.gov.jo` (HTTP 200, 322,949 bytes, `sha256:
+> 5ce6f4c47e42b2ac89914c98fcf3bd1a61bcfeb6ce3322fb5ccce9251d7aa4f4`); a flat
+> non-AcroForm 2-page specimen (zero Widget annotations, confirmed via
+> `pdfjs-dist`) with a genuine, fully extractable English text layer. Both
+> pages were also rendered to PNG (`pdfjs-dist` + `node-canvas`, with the
+> bundled standard-fonts data supplied — without it this specimen's
+> non-embedded base fonts render every glyph blank) and visually
+> cross-checked, correcting an earlier text-only-based scouting guess that
+> "Passport Application Type" was a checkbox control — the render confirms
+> it is a plain blank dotted line, modeled as free text rather than an
+> invented enum. This cycle scouted Jordan's five remaining open verticals in
+> parallel: Business Formation (CCD company e-registration) and DMV (DVLD
+> driver/vehicle licensing) are both login-gated e-services portals with no
+> downloadable/fillable paper form found; National ID (CSPD smart ID card) is
+> in-person/biometric-only; Jordan's voter registration has no
+> applicant-facing form at all (election cards auto-generate from the
+> civil-status database). A Visa candidate (a Jordanian embassy's own
+> 23-field AcroForm visa application) was also found and independently
+> re-verified, but only via third-party visa-expediting mirrors, not a
+> first-party government host, so this first-party CSPD Passport candidate
+> was preferred — the Visa candidate is left as an open backlog item. Models
+> 21 `fields[]` plus 1 `documents[]` entry (the declaration's own attestation
+> text); Husband/Wife Data, Bridge-crossing-card, and representative-filer
+> blocks are all modeled optional since the specimen prints no explicit gate
+> ahead of any of them. Two mock conformance scenarios (0 errors) plus four
+> mutation controls (each raising exactly 1 error) all behaved as expected.
+> **Jordan now stands at 2 of 6 verticals** (Taxes, Passport) — see the
+> Passport vertical section and the document's own VERIFICATION.md for the
+> full sourcing record.
 
 > **Update (2026-07-13, GOV-2731, "GovSchema Standard Research"): Jordan
 > opens as the registry's 49th jurisdiction**, via its Taxes vertical,
@@ -7710,7 +7745,19 @@
 
 ## By Vertical
 
-### Passport (34/40 jurisdictions — 85%)
+### Passport (35/40 jurisdictions — 88%)
+
+**Jordan's Passport vertical opens (2 of 6) (GOV-2739)**, via
+`jo/cspd/passport-application` — the Civil Status and Passports Department's
+(CSPD) "Passport Application" form (Form No. PASS-ALL-01), a single coded
+specimen covering first-time issuance, renewal, and replacement in one form.
+See the Executive Summary's GOV-2739 update above and the document's own
+VERIFICATION.md for the full sourcing record, the parallel scouting pass
+across Jordan's other four remaining verticals, and every disclosed
+scoping/judgment call. Jordan now stands at 2 of 6 verticals (Taxes,
+Passport); Business Formation, DMV, and National ID were confirmed dead ends
+this cycle, and Visa has an open, well-sourced-but-third-party-hosted
+candidate left as backlog.
 
 **Thailand's Passport vertical opens (5 of 6) (GOV-2709)**, via
 `th/mfa/passport-application-royal-thai-embassy-london` — the Ministry of
@@ -10445,7 +10492,7 @@ now closed.
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
-| **JO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **JO** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -12608,6 +12655,33 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   official publishing pattern. This was Ghana's sole remaining open
   vertical — Ghana now stands at 5 of 6 with no open, unscreened backlog
   candidate remaining.
+- **JO Business Formation** — GOV-2739, screened 2026-07-13. The Companies
+  Control Department (CCD) publishes no fillable registration PDF —
+  `www.ccd.gov.jo` itself returns HTTP 451 to a direct fetch, and a Wayback
+  capture of its LLC-registration service-description PDF states the
+  application is submitted entirely online at `portal.ccd.gov.jo`, which
+  exposes only `/account/login` and `/account/companylogin` (no guest/
+  unauthenticated "new application" path). A `usermanual.pdf` on the same
+  portal describes the e-registration wizard at category/step level only, no
+  field-by-field labels. Not a hard dead end if a genuinely new source (a
+  field-level guide to the wizard, or a leaked/republished paper form)
+  surfaces; a dead end for the current official publishing pattern.
+- **JO DMV** — GOV-2739, screened 2026-07-13. The Drivers and Vehicles
+  License Department (DVLD) is unreachable at every domain tried this cycle
+  (`www.dvld.gov.jo`, `dvld.gov.jo`, `eservices.dvld.gov.jo`, and the Land
+  Transport Regulatory Commission's `form.jordan.gov.jo`/
+  `portal.jordan.gov.jo` service pages all timed out). The one reachable
+  candidate, `gsc.jo/Doc/dll.pdf`, is a flat "Required Documents" checklist
+  with no `/AcroForm` — a service-window document list, not an application
+  form. Not a hard dead end if the agency domain comes back online or a
+  genuinely new source surfaces; a dead end for this cycle.
+- **JO National ID & Civic Documents** — GOV-2739, screened 2026-07-13.
+  CSPD's own smart ID card service-guide page states the ID card application
+  form is obtainable only in person, requiring in-person biometric capture
+  (fingerprints, iris). Jordan's voter registration (Independent Election
+  Commission) has no applicant-facing registration form at all — election
+  cards are auto-generated for every citizen 18+ directly from the
+  civil-status database. Do not re-attempt without a genuinely new source.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
@@ -12617,6 +12691,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   forms remain in the same ISTD directory as open backlog candidates for a
   future cycle: a self-employed-individual PIT return and a corporate
   income tax return (both un-screened this cycle).
+- **Jordan — Passport: authored (GOV-2739).** `jo/cspd/passport-application`
+  opened Jordan's Passport vertical (2 of 6) — see the Executive Summary's
+  GOV-2739 update. **Jordan — Business Formation, DMV, and National ID &
+  Civic Documents are now confirmed dead ends** (login-gated e-services
+  portals with no downloadable form, or in-person/biometric-only processes —
+  see this document's own VERIFICATION.md for the full per-vertical
+  screening record). **Jordan — Visa remains open backlog**: a genuine
+  23-field AcroForm ("Visa Application for US & EU countries," a Jordanian
+  embassy's own form) was found and independently re-verified, but only via
+  third-party visa-expediting mirrors (`traveldocument.com`,
+  `traveldocs.com`), not a first-party Jordanian government host — a future
+  cycle should either locate a first-party mirror or make an explicit call
+  on whether the third-party-hosted copy is an acceptable source.
 
 ---
 
