@@ -323,7 +323,7 @@ mutation-control-invalid-tax-year-pattern.json: 1 error(s)
 mutation-control-invalid-activity-code-pattern.json: 1 error(s)
   - primaryActivityCode: value "123456789" does not match pattern ^[0-9]{2,8}$
 mutation-control-wrong-type-pretax-result.json: 1 error(s)
-  - pretaxAccountingResult: value "zero" is not of type number
+  - pretaxAccountingResult: expected number, got string
 ```
 
 All seven negative controls raised exactly one error each, and neither valid
