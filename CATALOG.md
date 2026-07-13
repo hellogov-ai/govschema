@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **396 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **397 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2644, "GovSchema Standard Research"): Bangladesh's
+> DMV vertical opens (2 of 6)**, via
+> `bd/brta/motor-vehicle-registration-application` — the Bangladesh Road
+> Transport Authority's (BRTA) vehicle-registration application form. This
+> **reverses a prior dead-end verdict**: GOV-2591's cycle screened BD DMV via
+> BRTA's driving-licence forms (AcroForm fields over a scanned raster
+> background with no OCR text layer) and called the whole vertical weak/
+> dead-end. This cycle found BRTA's site has since been rebuilt (a new
+> `brta.gov.bd/pages/forms/*` structure, PDFs re-hosted on Oracle Cloud
+> object storage, uploaded December 2024) and now serves the
+> vehicle-registration form — a distinct form from driving-licence — as a
+> genuine, unauthenticated, plain **text-layer** PDF (no AcroForm).
+> Independently re-fetched this cycle: HTTP 200, `application/pdf`, 71,911
+> bytes, `sha256:
+> 96d0e10bcb05988ec2cb31419656121440b5602353493c33e91b38d412721223`. This
+> v1.0.0 models the applicant-facing owner/vehicle-identification and
+> technical-specification content (63 `fields[]`, 3 `documents[]`);
+> office-only intake/certificate/fee/signature-date content and a duplicate
+> owner-particulars/specimen-signature page are out of scope, disclosed in
+> VERIFICATION.md. Sex, owner type, class of vehicle, and fuel-used carry no
+> printed enum options in the source text, so they are modelled as
+> free-text strings rather than invented enums, consistent with this
+> registry's own `th/dlt` precedent for the same situation. The
+> driving-licence forms were independently re-screened this cycle too and
+> remain a confirmed dead end (still garbled/generic AcroForm field names,
+> no legible text layer) — not attempted. Two valid conformance fixtures
+> plus 5 mutation-control fixtures (each raising exactly 1 error) are
+> committed under `conformance/bd/brta/`. See GOV-2644 and this schema's own
+> `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2637, "GovSchema Standard Research"): Thailand's
 > DMV vertical opens (4 of 6)**, via `th/dlt/vehicle-registration-application`,
@@ -9572,7 +9602,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BD** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **BD** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
