@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **402 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **403 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2688, "GovSchema Standard Research"): Bangladesh's
+> National ID & Civic Documents vertical opens, closing Bangladesh to 6 of
+> 6 verticals**, via `bd/nidw/nid-correction-application-form-1` — the
+> National Identity Registration Wing's (NIDW, operating under the
+> Bangladesh Election Commission) "Form-1," the "Application for Correction
+> of Error(s) in the National ID Card or Preserved Data," issued under Rule
+> 3 of the National Identity Registration Rules. This closes Bangladesh's
+> last remaining unscouted vertical; the sibling GOV-2687 update immediately
+> below opened Business Formation in parallel this same cycle, so together
+> the two bring **Bangladesh to full, 6-of-6 coverage** (Taxes, DMV,
+> Passport, Visa, Business Formation, National ID). A genuine, independently
+> re-fetched (HTTP 200, `application/pdf`, 146,866 bytes, `sha256:
+> a80ee2b64d89d5a540eeac21bbe2fff0c69b28e4df1da5bdec475e8a78ef593d`) static
+> print-and-fill specimen with zero AcroForm/Widget annotations (confirmed
+> via pdfjs-dist across both pages) — a genuinely Bengali-only source,
+> unlike this jurisdiction's bilingual `bd/dip` schemas. This cycle's own
+> extraction found pdfjs-dist's raw Bengali text order unreadable without
+> correction: three pre-base Bengali dependent vowel signs (ি/ে/ৈ) are
+> painted before, but logically stored after, the consonant they modify, so
+> raw extraction interleaves them out of order; a small post-processing
+> regex reordering pass (moving each pre-base vowel sign after its consonant
+> cluster) made the text substantially and legibly correct Bengali,
+> cross-checked against the form's own repeated government-form vocabulary.
+> Models the applicant's (or, for a minor/court-declared-incompetent NID
+> holder, their legal guardian's) identity, the Urgent/Regular
+> application-type selection, all 9 rows of the correction table (Name in
+> Bengali/English, Father's/Mother's/Spouse's Name, Date of Birth, Address,
+> Blood Group, Other) as current-value/requested-new-value field pairs, and
+> the applicant's/guardian's contact particulars (30 `fields[]`, 4
+> `documents[]`). The form's own tear-off acknowledgement-receipt section and
+> office-only fields (Serial Number, Application Date) are excluded as
+> duplicate/office-entered content; the form's own instruction 5 confirms no
+> fee/charge applies, so no payment requirement is modeled. Two valid
+> conformance fixtures plus 6 mutation-control fixtures (each raising
+> exactly 1 error) are committed under
+> `conformance/bd/nidw/nid-correction-application-form-1/1.0.0/`. See
+> GOV-2688 and this schema's own `VERIFICATION.md` for the full sourcing
+> record.
 
 > **Update (2026-07-13, GOV-2687, "GovSchema Standard Research"): Bangladesh's
 > Business Formation vertical opens (5 of 6)**, via
@@ -9598,7 +9637,19 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (30/40 jurisdictions — 75%)
+### National ID & Civic Documents (31/40 jurisdictions — 78%)
+
+**Bangladesh's National ID & Civic Documents vertical opens, closing
+Bangladesh to 6 of 6 verticals (GOV-2688)**, via
+`bd/nidw/nid-correction-application-form-1` — NIDW's Form-1, "Application
+for Correction of Error(s) in the National ID Card or Preserved Data." See
+the Executive Summary's GOV-2688 update above for the full sourcing record —
+including the Bengali text-extraction reordering fix and every disclosed
+scoping/judgment call — and the document's own VERIFICATION.md. A sibling
+update (GOV-2687, `bd/roc`) opened Business Formation in parallel this same
+cycle, so together **Bangladesh now stands at 6 of 6 verticals** (Taxes,
+DMV, Passport, Visa, Business Formation, National ID) — no vertical remains
+open for Bangladesh.
 
 **Nigeria's National ID & Civic Documents vertical closes (4 of 6) (GOV-2569)**,
 via `ng/nimc/nin-enrolment-form` — the National Identity Management
@@ -9893,7 +9944,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BD** | 4 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -11666,6 +11717,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     record. **Bangladesh now stands at 5 of 6 verticals** (Taxes, DMV,
     Passport, Visa, Business Formation); **National ID is the sole
     remaining open backlog vertical**, tracked separately.
+29. **Bangladesh's National ID & Civic Documents vertical opens, closing
+    Bangladesh to 6 of 6 verticals (GOV-2688)**, via
+    `bd/nidw/nid-correction-application-form-1` — NIDW's Form-1, the
+    National Identity Registration Wing's "Application for Correction of
+    Error(s) in the National ID Card or Preserved Data," issued under Rule 3
+    of the National Identity Registration Rules. Closes the sole remaining
+    open backlog vertical noted in item 28 immediately above. A genuine
+    static print-and-fill specimen with zero AcroForm/Widget annotations;
+    this cycle's own Bengali text extraction required a post-processing fix
+    for a pre-base-vowel-sign reordering artifact in pdfjs-dist's raw output
+    before the text was legible. See the National ID & Civic Documents
+    vertical section above and the document's own VERIFICATION.md for the
+    full sourcing record. **Bangladesh now stands at 6 of 6 verticals**
+    (Taxes, DMV, Passport, Visa, Business Formation, National ID) — no
+    vertical remains open for Bangladesh.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
