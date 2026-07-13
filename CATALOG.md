@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **412 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **413 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2746, "GovSchema Standard Research"): Jordan's
+> Visa vertical closes (3 of 6)**, via `jo/mfa/visa-application`, the
+> Ministry of Foreign Affairs and Expatriates' (MFA) bilingual (English/
+> Arabic) "Visa Application to Enter the Hashemite Kingdom of Jordan" form,
+> fetched directly and unauthenticated from `mfa.gov.jo` (HTTP 200,
+> `application/pdf`, 419,769 bytes, `sha256:
+> 665961cc2d7746b6fdb8fa43e9c4153704f18fcb01e995c332223c37bfc7cc71`) — this
+> candidate was left as open, well-sourced backlog in GOV-2739's own
+> screening pass, which had preferred a first-party Passport candidate over
+> a competing 23-field embassy Visa AcroForm found only on third-party
+> visa-expediting mirrors. A flat, non-AcroForm 2-page specimen (zero Widget
+> annotations on either page, confirmed independently via both
+> `pdfjs-dist@4` and `pdfjs-dist@3`) with a genuine, fully extractable
+> bilingual text layer; both pages were also rendered to PNG (`pdfjs-dist@3`
+> legacy build + `node-canvas`, with the bundled standard-fonts data
+> supplied) and visually cross-checked, confirming a boxed, consular-only
+> "For Official Use" sidebar spanning page 1's full right margin (excluded
+> from `fields[]`) and that Sex/Marital status/Type of Passport/Number of
+> Entries are genuine printed checkbox controls (modeled as `enum`), while
+> §6's five Y/N gate questions (other nationality, name change, criminal
+> conviction, armed forces service, expulsion) print no checkbox glyph at
+> all yet are still modeled as required `boolean` fields, each paired with
+> an optional, ungated "if yes" detail companion field. Models 48
+> `fields[]` plus 1 `documents[]` entry (the certification's own attestation
+> text). 2 valid conformance fixtures (0 errors each) plus 6
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/jo/mfa/visa-application/1.0.0/`. **Jordan now stands at
+> 3 of 6 verticals** (Taxes, Passport, Visa); Business Formation, DMV, and
+> National ID & Civic Documents remain confirmed dead ends from GOV-2739's
+> own screening pass — Jordan has reached its practical maximum vertical
+> coverage under this registry's current sourcing standards unless one of
+> those dead ends' underlying blocker changes. See the Visa vertical
+> section and this schema's own VERIFICATION.md for the full sourcing
+> record.
 
 > **Update (2026-07-13, GOV-2739, "GovSchema Standard Research"): Jordan's
 > Passport vertical opens (2 of 6)**, via `jo/cspd/passport-application`, the
@@ -9797,7 +9832,29 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (35/41 jurisdictions — 85%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (36/41 jurisdictions — 88%)
+
+**Jordan's Visa vertical closes (3 of 6) (GOV-2746)**, via
+`jo/mfa/visa-application` — the Ministry of Foreign Affairs and
+Expatriates' (MFA) bilingual "Visa Application to Enter the Hashemite
+Kingdom of Jordan" form, fetched directly and unauthenticated from
+`mfa.gov.jo`. This candidate was left as open, well-sourced backlog in
+GOV-2739's own screening pass, which preferred a first-party Passport
+candidate over a competing 23-field embassy Visa AcroForm found only on
+third-party visa-expediting mirrors. A flat, non-AcroForm 2-page specimen
+(zero Widget annotations, confirmed via `pdfjs-dist`) with a genuine,
+fully extractable bilingual text layer; both pages were rendered to PNG
+and visually cross-checked, confirming a boxed consular-only "For
+Official Use" sidebar (excluded) and that Sex/Marital status/Type of
+Passport/Number of Entries are genuine checkbox controls, while §6's five
+Y/N gate questions print no checkbox glyph yet are still modeled as
+required `boolean` fields paired with optional, ungated "if yes" detail
+companions. See the Executive Summary's GOV-2746 update above and the
+document's own VERIFICATION.md for the full sourcing record. Jordan now
+stands at 3 of 6 verticals (Taxes, Passport, Visa); Business Formation,
+DMV, and National ID & Civic Documents remain confirmed dead ends from
+GOV-2739 — Jordan has reached its practical maximum vertical coverage
+under this registry's current sourcing standards.
 
 **Ghana's Visa vertical opens (2 of 6) (GOV-2698)**, via
 `gh/gis/application-for-grant-of-visa-and-permit-for-return-to-ghana` — the
@@ -10492,7 +10549,7 @@ now closed.
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
-| **JO** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -12697,13 +12754,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Civic Documents are now confirmed dead ends** (login-gated e-services
   portals with no downloadable form, or in-person/biometric-only processes —
   see this document's own VERIFICATION.md for the full per-vertical
-  screening record). **Jordan — Visa remains open backlog**: a genuine
-  23-field AcroForm ("Visa Application for US & EU countries," a Jordanian
-  embassy's own form) was found and independently re-verified, but only via
-  third-party visa-expediting mirrors (`traveldocument.com`,
-  `traveldocs.com`), not a first-party Jordanian government host — a future
-  cycle should either locate a first-party mirror or make an explicit call
-  on whether the third-party-hosted copy is an acceptable source.
+  screening record).
+- **Jordan — Visa: authored (GOV-2746), backlog item resolved.**
+  `jo/mfa/visa-application` closed Jordan's Visa vertical (3 of 6) — see the
+  Executive Summary's GOV-2746 update. This supersedes the prior cycle's
+  open-backlog note above: rather than pursuing the third-party-hosted
+  23-field embassy AcroForm ("Visa Application for US & EU countries," found
+  only on `traveldocument.com`/`traveldocs.com` mirrors, not a first-party
+  government host), this cycle located and authored from a genuine
+  first-party MFA specimen (`mfa.gov.jo`) instead. **Jordan now stands at 3
+  of 6 verticals with no open, unscreened backlog candidate remaining** —
+  Business Formation, DMV, and National ID & Civic Documents are all
+  confirmed dead ends (GOV-2739), so Jordan has reached its practical
+  maximum vertical coverage under this registry's current sourcing
+  standards unless one of those dead ends' underlying blocker changes.
 
 ---
 
