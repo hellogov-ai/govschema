@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **403 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **404 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2697, "GovSchema Standard Research"): Ghana's
+> Taxes vertical opens**, via
+> `gh/gra/personal-income-tax-return-dt-0103` — the Ghana Revenue
+> Authority's (GRA) Domestic Tax Revenue Division form DT 0103, "Personal
+> Income Tax Return" (ver. 1.1). Ghana was opened as this registry's 41st
+> jurisdiction via GOV-2510 (National ID & Civic Documents, via
+> `gh/nia/ghana-card-application-form-1a`); this cycle adds its second
+> vertical. Independently re-fetched (not copied from the task's own
+> scouting-pass note) from GRA's public forms library
+> (`gra.gov.gh/forms/`): HTTP 200, `application/pdf`, 461,527 bytes,
+> `sha256: b394df0bf108c710f6d681c3b261a8af11af35623c56436fb9e77b75c91c8359`.
+> A printed, text-layer-only PDF with zero AcroForm widgets across all 4
+> pages (confirmed via pdfjs-dist) — every field was read from the
+> position-sorted text layer, not widget metadata. Unlike several other
+> jurisdictions' Taxes-vertical forms in this registry (which annex separate
+> schedules), DT 0103 is a single continuous 4-page return, so this v1.0.0
+> models it in full: current-tax-office identification, personal/business/
+> employment information (with a landlord-particulars sub-section gated by
+> a genuine `requiredWhen` on a business-premises tenancy-status checkbox),
+> all four Sources-of-Income categories, the full tax computation, and a
+> two-path declaration (self vs. filing on behalf of another person). The
+> `taxpayerTin` field models Ghana's post-April-2021 standard of using the
+> Ghana Card Personal Identification Number (Ghana Card PIN) as an
+> individual's TIN, per GRA's own published policy — a disclosed judgment
+> call, since this specific form predates/coincides with that changeover
+> and gives no digit-count guide of its own on its printed TIN blank. Two
+> numbering gaps printed on the source itself (page 2's Employment Income
+> items skip from "v." to "vii."; page 3's Reliefs items skip from "viii."
+> to "x.", each with their own totals still citing the skipped numeral) were
+> independently confirmed as genuine source artifacts — not extraction bugs
+> — by rendering both pages to PNG via pdfjs-dist + node canvas and visually
+> inspecting the printed item labels. 81 `fields[]`, 2 `documents[]`, 2
+> `exclusivityGroups`. Two valid conformance fixtures plus 7
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/gh/gra/personal-income-tax-return-dt-0103/1.0.0/`.
+> Ghana's DMV vertical was independently re-confirmed a dead end this
+> cycle: the Driver and Vehicle Licensing Authority's (DVLA) rebuilt
+> Next.js site describes its forms (Form A, Form C, VRC) in prose but
+> exposes no downloadable form PDFs anywhere on its public site. Ghana's
+> Passport, Business Formation, and Visa verticals are being scouted/
+> authored in parallel by sibling issues GOV-2696/GOV-2698 and are not
+> claimed as closed or opened by this update. See GOV-2697 and this
+> schema's own `VERIFICATION.md` for the full sourcing record and every
+> scoping/disclosure judgment call.
 
 > **Update (2026-07-13, GOV-2688, "GovSchema Standard Research"): Bangladesh's
 > National ID & Civic Documents vertical opens, closing Bangladesh to 6 of
@@ -8539,7 +8584,47 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (40/46 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (41/46 jurisdictions — 89%)
+
+**Ghana's Taxes vertical opens**
+(`gh/gra/personal-income-tax-return-dt-0103`, GOV-2697) — the Ghana Revenue
+Authority's (GRA) Domestic Tax Revenue Division form DT 0103, "Personal
+Income Tax Return" (ver. 1.1), independently re-fetched this cycle from
+GRA's own forms library (`gra.gov.gh/forms/`): HTTP 200, `application/pdf`,
+461,527 bytes, `sha256:
+b394df0bf108c710f6d681c3b261a8af11af35623c56436fb9e77b75c91c8359`. A
+printed, text-layer-only PDF with zero AcroForm widgets across all 4 pages
+(confirmed via pdfjs-dist); every field was read from the position-sorted
+text layer. Unlike several other jurisdictions' Taxes-vertical forms in this
+registry, this is a single continuous 4-page return (not annexed schedules),
+so this v1.0.0 models the full form: current-tax-office identification,
+personal/business/employment information (with a landlord-particulars
+sub-section gated by a genuine `requiredWhen` on the business-premises
+tenancy-status checkbox), all four Sources-of-Income categories, the full
+tax computation (add-backs, deductions, reliefs, chargeable income, tax
+charged, payments, tax payable/(overpaid)), and the two-path declaration
+(filing on one's own behalf, or on behalf of another person). The
+`taxpayerTin` field models Ghana's post-2021 standard of using the Ghana
+Card Personal Identification Number (Ghana Card PIN, format
+`GHA-########[#]-X`) as an individual's TIN, per GRA's own published policy
+— a disclosed judgment call, since this specific form predates/coincides
+with that changeover and gives no digit-count guide of its own. Two
+independently confirmed numbering gaps in the source's own printed item
+labels (page 2's Employment Income items skip from "v." to "vii."; page 3's
+Reliefs items skip from "viii." to "x.") are disclosed rather than silently
+renumbered, verified as genuine source artifacts (not extraction bugs) by
+rendering both pages to PNG and visually inspecting the printed labels. 81
+`fields[]`, 2 `documents[]`, 2 `exclusivityGroups`. Two valid conformance
+fixtures plus 7 mutation-control fixtures (each raising exactly 1 error) are
+committed under `conformance/gh/gra/personal-income-tax-return-dt-0103/1.0.0/`.
+Ghana's DMV vertical was independently re-confirmed a dead end this cycle:
+the Driver and Vehicle Licensing Authority's (DVLA) rebuilt Next.js site
+describes its forms (Form A, Form C, VRC) in prose but exposes no
+downloadable form PDFs anywhere on its public site. Ghana's Passport,
+Business Formation, and Visa verticals are being scouted/authored in
+parallel by sibling issues GOV-2696/GOV-2698 and are not addressed by this
+schema. See GOV-2697 and this schema's own `VERIFICATION.md` for the full
+sourcing record and every scoping/disclosure judgment call.
 
 **Greece adds a third Taxes-vertical schema, Form Ε3 (GOV-2656)**
 (`gr/aade/katastasi-oikonomikon-stoicheion-apo-epicheirimatiki-drastiriotita-e3`)
@@ -9958,7 +10043,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **GH** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
