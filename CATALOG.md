@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **401 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **402 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2687, "GovSchema Standard Research"): Bangladesh's
+> Business Formation vertical opens (5 of 6)**, via
+> `bd/roc/declaration-on-registration-of-company-form-i` — the Registrar of
+> Joint Stock Companies and Firms' (RJSC) "Form-I: Declaration on
+> Registration of Company", the statutory declaration of compliance
+> prescribed under section 25 of the Companies Act, 1994. This **reverses a
+> prior finding** in this catalog: RJSC's numbered incorporation forms were
+> previously recorded as "only mirrored on a third-party legal-services
+> site, not RJSC's own domain" — RJSC's own forms portal (`roc.gov.bd`) has
+> since been rebuilt on the same Oracle Cloud object-storage pattern already
+> seen for Bangladesh's BRTA/DIP forms, and now hosts this form (plus
+> companion Forms IX/XII) first-party. Independently re-fetched this cycle:
+> HTTP 200, `application/pdf`, 83,237 bytes — matching the task's own cited
+> size exactly. A genuine single-page, plain print-and-fill specimen (zero
+> AcroForm annotations, confirmed via `pdfjs-dist`), independently
+> cross-checked by rendering the page to an image via `pdfjs-dist` +
+> `node-canvas`. The declaration's central strike-out construction (Advocate/
+> Attorney/Pleader engaged in formation, or Director/Manager/Secretary named
+> in the Articles) is modeled as a single 6-value enum, with the officer
+> branch's own company-name blank gated `requiredWhen` on that choice; a
+> verbatim source artifact (a printed double "and and") is disclosed rather
+> than silently corrected. **Bangladesh now stands at 5 of 6 verticals**
+> (Taxes, DMV, Passport, Visa, Business Formation); only National ID remains
+> open backlog, tracked separately. See GOV-2687 and this schema's own
+> `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2675/GOV-2677, "GovSchema Standard Research"):
 > Bangladesh's Visa vertical opens (4 of 6)**, via
@@ -7881,7 +7907,35 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (41/44 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (42/44 jurisdictions — 95%)
+
+**Bangladesh's Business Formation vertical opens (5 of 6) (GOV-2687)**, via
+`bd/roc/declaration-on-registration-of-company-form-i` — the Registrar of
+Joint Stock Companies and Firms' (RJSC) "Form-I: Declaration on Registration
+of Company", the statutory declaration of compliance prescribed under
+section 25 of the Companies Act, 1994. Reverses this catalog's own prior
+finding that RJSC's numbered incorporation forms were "only mirrored on a
+third-party legal-services site, not RJSC's own domain": RJSC's own forms
+portal (`roc.gov.bd`) has since been rebuilt on the same Oracle Cloud
+object-storage distribution pattern already seen elsewhere in this registry
+for Bangladesh's BRTA/DIP forms, and now hosts this and companion forms
+first-party (independently re-fetched this cycle: HTTP 200, `application/
+pdf`, 83,237 bytes — matching the task's own cited size exactly). A genuine
+single-page, plain print-and-fill specimen (confirmed via `pdfjs-dist`: zero
+AcroForm annotations), independently cross-checked by rendering the page to
+an image via `pdfjs-dist` + `node-canvas`. The form's own central declaration
+is a strike-out construction (the declarant is either an Advocate/Attorney/
+Pleader engaged in the company's formation, or a Director/Manager/Secretary
+named in its Articles), modeled as a single 6-value enum consistent with
+this registry's precedent for slash-separated printed choice lists; the
+officer branch's own trailing company-name blank is gated `requiredWhen` on
+that choice. A verbatim source artifact (the printed text reads "___ and and
+that all the requirements", the word "and" twice in succession) is disclosed
+rather than silently corrected. 6 `fields[]` + 1 `documents[]` entry; two
+valid plus three mutation-control conformance fixtures passed. **Bangladesh
+now stands at 5 of 6 verticals** (Taxes, DMV, Passport, Visa, Business
+Formation); only National ID remains open backlog. See GOV-2687 and this
+schema's own `VERIFICATION.md` for the full sourcing record.
 
 **Thailand's Business Formation vertical opens (2 of 6) (GOV-2601)**, via
 `th/dbd/boj-1-application-to-register-a-limited-company` — the Department
@@ -9839,7 +9893,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BD** | 3 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **BD** | 4 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -11594,6 +11648,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     full standalone return — flagged as a possible narrower
     companion-schedule candidate for a future cycle, not a full
     Taxes-vertical closure.
+28. **Bangladesh's Business Formation vertical opens (5 of 6) (GOV-2687)**,
+    via `bd/roc/declaration-on-registration-of-company-form-i` — the
+    Registrar of Joint Stock Companies and Firms' (RJSC) "Form-I:
+    Declaration on Registration of Company", the statutory declaration of
+    compliance prescribed under section 25 of the Companies Act, 1994. This
+    reverses this catalog's own prior finding (recorded alongside the Visa
+    vertical's GOV-2677 update) that RJSC's numbered incorporation forms
+    were "only mirrored on a third-party legal-services site, not RJSC's own
+    domain" — RJSC's own forms portal (`roc.gov.bd`) has since been rebuilt
+    on the same Oracle Cloud object-storage pattern already documented
+    elsewhere in this registry for Bangladesh's BRTA/DIP forms, and now
+    hosts this and companion forms (Form IX, Consent of Director; Form XII,
+    Particulars of Directors — disclosed as future companion-schema
+    candidates) first-party. See the Business Formation vertical section
+    above and the document's own VERIFICATION.md for the full sourcing
+    record. **Bangladesh now stands at 5 of 6 verticals** (Taxes, DMV,
+    Passport, Visa, Business Formation); **National ID is the sole
+    remaining open backlog vertical**, tracked separately.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
