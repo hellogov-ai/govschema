@@ -1,0 +1,825 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "gh/gra/personal-income-tax-return-dt-0103",
+  "version": "1.0.0",
+  "title": "Ghana Personal Income Tax Return (Form DT 0103, ver. 1.1)",
+  "description": "The Ghana Revenue Authority's (GRA) Domestic Tax Revenue Division form DT 0103, \"Personal Income Tax Return\" (ver. 1.1). Opens Ghana's Taxes vertical, via a single continuous 4-page return (not an annexed-schedule form): page 1 covers current-tax-office identification, the assessment year and return period, personal information, business information (with landlord particulars when the business premises are rented), and employment information; page 2 covers the four Sources-of-Income categories (net business income/loss, employment income with its own benefit-in-kind breakdown, investment and other income, and total income); pages 3-4 cover the full tax computation (add-backs, deductions, assessable income, reliefs, chargeable income, tax charged, payments, and tax payable/(overpaid)); page 4 closes with a two-path declaration (filing on one's own behalf, or on behalf of another person). This v1.0.0 models every applicant-facing field across all 4 pages. It deliberately does NOT model the raw signature-mark widgets (physical signature lines under both declaration paths are not data fields), consistent with this registry's general practice of excluding raw-signature/mark capture. The source is a printed, text-layer-only PDF with no AcroForm widgets (confirmed via pdfjs-dist: 0 widgets across all 4 pages) — every field below was extracted from the position-sorted text layer, not from widget metadata. Two numbering gaps are printed on the source itself (disclosed in VERIFICATION.md, not extraction artifacts, confirmed by rendering the page): page 2's Employment Income items jump from \"v.\" directly to \"vii.\" with no \"vi.\" printed, and page 3's Reliefs items jump from \"viii.\" directly to \"x.\" with no \"ix.\" printed; both totals' own parenthetical formulas (\"Sum i to vi\", \"Sum of i to ix\") still cite the skipped numeral. Ghana was opened as this registry's 41st jurisdiction via GOV-2510 (National ID vertical, gh/nia/ghana-card-application-form-1a). GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Ghana or the Ghana Revenue Authority.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ghana Revenue Authority",
+    "abbreviation": "GRA",
+    "url": "https://gra.gov.gh"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://gra.gov.gh/wp-content/uploads/2020/09/DT_0103_personal_income_tax_return_form_v103-ver-1.1..-1.pdf",
+    "retrievedAt": "2026-07-13",
+    "documentRef": "DT 0103 (ver 1.1), \"Personal Income Tax Return\", Domestic Tax Revenue Division, Ghana Revenue Authority, published on GRA's Forms page (gra.gov.gh/forms/)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-13",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-13",
+    "notes": "GovSchema Standard Research cycle GOV-2697. Ghana was opened as this registry's 41st jurisdiction via GOV-2510 (National ID vertical, gh/nia/ghana-card-application-form-1a). This cycle opens Ghana's Taxes vertical via the Ghana Revenue Authority's (GRA) DT 0103 Personal Income Tax Return, located this cycle via a fresh fetch of gra.gov.gh/forms/ (HTTP 200) and independently re-derived (not copied from the task description): HTTP 200, application/pdf, 461527 bytes, sha256 b394df0bf108c710f6d681c3b261a8af11af35623c56436fb9e77b75c91c8359. Parsed with pdfjs-dist@3 (legacy build): getAnnotations({intent:'display'}) filtered to subtype==='Widget' confirmed 4 pages, 0 AcroForm widgets on every page — a printed, text-layer-only form. Every field was instead extracted by reading getTextContent()'s position-sorted text rows (grouped by rounded y, sorted by x within each row) directly. Two apparent numbering gaps (page 2 Employment Income items skip from v. to vii.; page 3 Reliefs items skip from viii. to x.) were independently confirmed as genuine source artifacts, not extraction bugs, by rendering both pages to PNG via pdfjs-dist + node canvas and visually inspecting the printed item labels. DMV (DVLA) was confirmed a dead end this cycle: DVLA's rebuilt site removed its old form PDFs. Passport, Business Formation, and Visa are being scouted/authored in parallel by sibling issues GOV-2696/GOV-2698 and were not touched by this schema. See VERIFICATION.md for the full sourcing record, field-scoping decisions (including the Ghana Card PIN TIN-format judgment call), and the conformance run writeup."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-13"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "currentTaxOfficeLto",
+      "label": "Current tax office: LTO (Large Taxpayer Office)",
+      "type": "boolean",
+      "description": "One of three mutually-exclusive current-tax-office-type checkboxes (\"Tick One\").",
+      "sourceRef": "Page 1, \"CURRENT TAX OFFICE (Tick One)\": \"LTO\""
+    },
+    {
+      "name": "currentTaxOfficeMto",
+      "label": "Current tax office: MTO (Medium Taxpayer Office)",
+      "type": "boolean",
+      "sourceRef": "Page 1, \"CURRENT TAX OFFICE (Tick One)\": \"MTO\""
+    },
+    {
+      "name": "currentTaxOfficeSto",
+      "label": "Current tax office: STO (Small Taxpayer Office)",
+      "type": "boolean",
+      "sourceRef": "Page 1, \"CURRENT TAX OFFICE (Tick One)\": \"STO\""
+    },
+    {
+      "name": "graOfficeName",
+      "label": "Name of GRA Office",
+      "type": "string",
+      "sourceRef": "Page 1, \"CURRENT TAX OFFICE\": \"Name of GRA Office\""
+    },
+    {
+      "name": "assessmentYear",
+      "label": "Year of Assessment",
+      "type": "string",
+      "required": true,
+      "description": "The calendar year this return assesses, in 4-digit form.",
+      "sourceRef": "Page 1: \"YEAR OF ASSESSMENT (yyyy)\"",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "returnPeriodFrom",
+      "label": "Return period: from (dd/mm)",
+      "type": "string",
+      "required": true,
+      "description": "The start of the return's basis period, printed as day/month only (no year on the source). Disclosed as the applicable accounting/basis period for the income being returned, since the source does not further describe its scope.",
+      "sourceRef": "Page 1: \"PERIOD: FROM (dd / mm)\"",
+      "validation": {
+        "pattern": "^[0-9]{2}/[0-9]{2}$"
+      }
+    },
+    {
+      "name": "returnPeriodTo",
+      "label": "Return period: to (dd/mm)",
+      "type": "string",
+      "required": true,
+      "description": "The end of the return's basis period, printed as day/month only (no year on the source).",
+      "sourceRef": "Page 1: \"PERIOD: ... TO (dd / mm)\"",
+      "validation": {
+        "pattern": "^[0-9]{2}/[0-9]{2}$"
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, item 1 (PERSONAL INFORMATION): \"SURNAME\""
+    },
+    {
+      "name": "taxpayerTin",
+      "label": "TIN",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The taxpayer's Taxpayer Identification Number. Since 1 April 2021, GRA no longer issues a separate individual TIN: an individual's Ghana Card Personal Identification Number (Ghana Card PIN) is used as their TIN instead (per GRA's own published policy, \"Commencement of the use of Ghana Card Personal Identification Number as Taxpayer Identification Number\"). The Ghana Card PIN's own published structure is \"GHA-\" followed by an 8- or 9-digit system-generated number and a 1-character checksum, hyphen-separated (e.g. \"GHA-123456789-0\") — sources are not fully consistent on 8 vs. 9 digits for the system-generated segment, so this pattern accepts either length, a disclosed judgment call since this specific form's own blank TIN line (printed 2020, before the PIN changeover) carries no digit-count guide of its own.",
+      "sourceRef": "Page 1, item 1 (PERSONAL INFORMATION): \"TIN\"",
+      "validation": {
+        "pattern": "^GHA-[0-9]{8,9}-[0-9A-Z]$"
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, item 1 (PERSONAL INFORMATION): \"FIRST NAME\""
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone No.",
+      "type": "string",
+      "sourceRef": "Page 1, item 1 (PERSONAL INFORMATION): \"TELEPHONE NO.\""
+    },
+    {
+      "name": "otherNames",
+      "label": "Other Name(s)",
+      "type": "string",
+      "sourceRef": "Page 1, item 1 (PERSONAL INFORMATION): \"OTHER NAME(S)\""
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, item 1 (PERSONAL INFORMATION): \"NATIONALITY\""
+    },
+    {
+      "name": "businessDigitalAddress",
+      "label": "Location/GhanaPost Digital Address",
+      "type": "string",
+      "description": "Applicable only when the filer reports business income; the source has no discrete boolean widget gating this on netBusinessIncomeOrLoss, so it is left optional rather than encoded with an unsupported requiredWhen.",
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"LOCATION/GHANAPOST DIGITAL ADDRESS\""
+    },
+    {
+      "name": "businessName",
+      "label": "Business Name(s)",
+      "type": "string",
+      "description": "The source instructs: \"If more than ONE provide the same information on a separate sheet.\"",
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"BUSINESS NAME(S)\""
+    },
+    {
+      "name": "businessActivity",
+      "label": "Business Activity",
+      "type": "string",
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"BUSINESS ACTIVITY\""
+    },
+    {
+      "name": "businessTenancyStatusRented",
+      "label": "Tenancy status of business: Rented",
+      "type": "boolean",
+      "description": "One of two mutually-exclusive business-premises tenancy checkboxes. When ticked, the source directs the filer to \"provide particulars of Landlord\" (landlordName/landlordTelephoneNumbers/landlordTin below).",
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"Tenancy status of Business ... Rented\""
+    },
+    {
+      "name": "businessTenancyStatusOwned",
+      "label": "Tenancy status of business: Owned",
+      "type": "boolean",
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"Tenancy status of Business ... Owned\""
+    },
+    {
+      "name": "landlordName",
+      "label": "Name of Landlord",
+      "type": "string",
+      "requiredWhen": {
+        "field": "businessTenancyStatusRented",
+        "equals": true
+      },
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"(If rented provide particulars of Landlord) Name of Landlord\""
+    },
+    {
+      "name": "landlordTelephoneNumbers",
+      "label": "Landlord's Telephone Number(s)",
+      "type": "string",
+      "requiredWhen": {
+        "field": "businessTenancyStatusRented",
+        "equals": true
+      },
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"Telephone Number(s)\""
+    },
+    {
+      "name": "landlordTin",
+      "label": "Landlord's TIN",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "requiredWhen": {
+        "field": "businessTenancyStatusRented",
+        "equals": true
+      },
+      "description": "The source gives no format guide, and a landlord may be an individual (Ghana Card PIN) or a corporate entity (GRA's own legacy business-TIN format); no single pattern is asserted here, a disclosed judgment call.",
+      "sourceRef": "Page 1, item 2 (BUSINESS INFORMATION): \"TIN\" (landlord particulars)"
+    },
+    {
+      "name": "employerTin",
+      "label": "TIN of Employer",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Applicable only if employed; the source has no discrete boolean widget gating this, so it is left optional. No single pattern is asserted since an employer may be an individual or a corporate entity, each with a different TIN format — a disclosed judgment call.",
+      "sourceRef": "Page 1, item 3 (EMPLOYMENT INFORMATION): \"TIN OF EMPLOYER\""
+    },
+    {
+      "name": "employerName",
+      "label": "Name of Employer",
+      "type": "string",
+      "sourceRef": "Page 1, item 3 (EMPLOYMENT INFORMATION): \"NAME OF EMPLOYER\""
+    },
+    {
+      "name": "employerAddress",
+      "label": "Employer's Address",
+      "type": "string",
+      "sourceRef": "Page 1, item 3 (EMPLOYMENT INFORMATION): \"ADDRESS\""
+    },
+    {
+      "name": "netBusinessIncomeOrLoss",
+      "label": "A. Net Business Income/Loss",
+      "type": "number",
+      "classification": "financial",
+      "description": "As per the financial statement attached (see the businessFinancialStatement document requirement). Can be negative (a loss); optional pass-through, 0/absent when the filer has no business income. The source's own instruction reads: \"(Do you earn income from business? If No proceed to B)\" — an instructional cue, not a discrete boolean widget, so it is not itself modeled as a field.",
+      "sourceRef": "Page 2, item 4A: \"NET BUSINESS INCOME/LOSS (As per financial Statement attached)\""
+    },
+    {
+      "name": "salaryBasicPay",
+      "label": "4B.i. Basic salary",
+      "type": "number",
+      "classification": "financial",
+      "description": "Optional pass-through, 0/absent when not applicable. The source's own instruction reads: \"(Do you earn income from employment? If No proceed to C)\" — instructional only, not a discrete boolean widget.",
+      "sourceRef": "Page 2, item 4B.i: \"Basic salary\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salaryCashAllowances",
+      "label": "4B.ii. Cash Allowances",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4B.ii: \"Cash Allowances\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salaryOtherCashBenefit",
+      "label": "4B.iii. Other Cash Benefit",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4B.iii: \"Other Cash Benefit\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salaryExcessBonus",
+      "label": "4B.iv. Excess Bonus",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4B.iv: \"Excess Bonus\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "benefitInKindAccommodation",
+      "label": "4B, Benefit in Kind, 1. Accommodation Benefit",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, Benefit in Kind, item 1: \"Accommodation Benefit\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "benefitInKindVehicle",
+      "label": "4B, Benefit in Kind, 2. Vehicle Benefit",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, Benefit in Kind, item 2: \"Vehicle Benefit\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "benefitInKindOthers",
+      "label": "4B, Benefit in Kind, 3. Others (e.g. Loan Benefit & Share Benefit etc.)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, Benefit in Kind, item 3: \"Others e.g. Loan Benefit & Share Benefit etc.\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "benefitInKindTotal",
+      "label": "4B.v. Total Benefits in kind (sum of 1, 2 and 3)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4B.v: \"Total Benefits in kind (The sum of 1,2 and 3)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentOtherIncome",
+      "label": "4B.vii. Others (e.g. Director's Fees)",
+      "type": "number",
+      "classification": "financial",
+      "description": "Printed immediately after item v. (Total Benefits in kind), with no item \"vi.\" printed anywhere on the source — a numbering gap in the original form, confirmed by rendering the page (not an extraction artifact), disclosed in VERIFICATION.md.",
+      "sourceRef": "Page 2, item 4B.vii: \"Others (e.g. Director's Fees)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalEmploymentIncome",
+      "label": "4B. TOTAL EMPLOYMENT INCOME (Sum i to vi)",
+      "type": "number",
+      "classification": "financial",
+      "description": "The source's own parenthetical still reads \"Sum i to vi\" despite the last printed Employment Income line being labelled \"vii.\" (see employmentOtherIncome) — the same disclosed numbering gap.",
+      "sourceRef": "Page 2: \"TOTAL EMPLOYMENT INCOME ( Sum i to vi)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentIncomeRoyalty",
+      "label": "4C.i. Royalty",
+      "type": "number",
+      "classification": "financial",
+      "description": "Optional pass-through, 0/absent when not applicable. The source's own instruction reads: \"Do you [have] any investment income? (If No proceed to D)\" — instructional only, not a discrete boolean widget.",
+      "sourceRef": "Page 2, item 4C.i: \"Royalty\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentIncomeInterest",
+      "label": "4C.ii. Interest",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4C.ii: \"Interest\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentIncomeDividendNonResident",
+      "label": "4C.iii. Dividend (Received from Non-Resident Person)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4C.iii: \"Dividend (Received from Non-Resident Person)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentIncomeTaxableRent",
+      "label": "4C.iv. Taxable Rent Income",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4C.iv: \"Taxable Rent Income (See Notes)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentIncomeForeignSource",
+      "label": "4C.v. Income from Foreign Source",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4C.v: \"Income from Foreign Source\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentIncomeOther",
+      "label": "4C.vi. Other (e.g. Premium, Annuity, Discount etc.)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2, item 4C.vi: \"Other ( e.g. Premium, Annuity, Discount etc.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalInvestmentAndOtherIncome",
+      "label": "4C. TOTAL INVESTMENT INCOME & OTHER INCOMES (Sum i to vi)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 2: \"TOTAL INVESTMENT INCOME & OTHER INCOMES (Sum i to vi)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalIncome",
+      "label": "4D. TOTAL INCOME (Sum A, B, and C)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "Aggregate of Business, Employment, Investment & Other Income.",
+      "sourceRef": "Page 2: \"D. TOTAL INCOME (Sum A, B, and C) (Business, Employment Investment & Other Income)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netBusinessProfitOrLoss",
+      "label": "5A. Net Business Profit/Loss (same as 4A)",
+      "type": "number",
+      "classification": "financial",
+      "description": "Carried from netBusinessIncomeOrLoss (item 4A). Can be negative (a loss).",
+      "sourceRef": "Page 3, item 5A: \"NET BUSINESS PROFIT/LOSS ( Same as 4A )\""
+    },
+    {
+      "name": "addBackDepreciation",
+      "label": "5, Add Backs, i. Depreciation",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Add Backs, item i: \"Depreciation\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "addBackNonAllowableDeductions",
+      "label": "5, Add Backs, ii. Non-allowable deductions",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Add Backs, item ii: \"Non-allowable deductions\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAddBacks",
+      "label": "5B. Total Add Backs (sum i and ii)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, item 5B: \"Total Add Backs (sum i and ii )\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "adjustedBusinessProfitOrLoss",
+      "label": "5C. Adjusted Business Profit/Loss (Sum A and B)",
+      "type": "number",
+      "classification": "financial",
+      "description": "Can be negative (an adjusted loss).",
+      "sourceRef": "Page 3, item 5C: \"ADJUSTED BUSINESS PROFIT/LOSS (Sum A and B)\""
+    },
+    {
+      "name": "deductNonTaxableIncome",
+      "label": "5, Deduct, i. Non-Taxable income",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct, item i: \"Non-Taxable income\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "deductAllowableDeduction",
+      "label": "5, Deduct, ii. Allowable Deduction (Capital Allowance, Carry Forward Losses etc.)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct, item ii: \"Allowable Deduction (Capital Allowance, Carry Forward Losses etc.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalDeductions",
+      "label": "5D. Total Deductions (sum i and ii)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, item 5D: \"TOTAL DEDUCTIONS ( sum i and ii )\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netAdjustedBusinessProfitOrLoss",
+      "label": "5E. Net Adjusted Business Profit/Loss (E = C - D)",
+      "type": "number",
+      "classification": "financial",
+      "description": "Can be negative (a net adjusted loss).",
+      "sourceRef": "Page 3, item 5E: \"NET ADJUSTED BUSINESS PROFIT/LOSS (E=C-D)\""
+    },
+    {
+      "name": "totalInvestmentIncomeCarried",
+      "label": "5F. Add Total Investment Income (same as 4C)",
+      "type": "number",
+      "classification": "financial",
+      "description": "Carried from totalInvestmentAndOtherIncome (item 4C).",
+      "sourceRef": "Page 3, item 5F: \"ADD TOTAL INVESTMENT INCOME (same as 4C)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalEmploymentIncomeCarried",
+      "label": "5G. Add Total Employment Income (same as 4B)",
+      "type": "number",
+      "classification": "financial",
+      "description": "Carried from totalEmploymentIncome (item 4B).",
+      "sourceRef": "Page 3, item 5G: \"ADD TOTALEMPLOYMENT INCOME (same as 4B)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAssessableIncome",
+      "label": "5H. Total Assessable Income (sum 5E, 5F, and 5G)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 3, item 5H: \"TOTAL ASSESSABLE INCOME (sum 5E,5F, and 5G)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeTaxedAtDifferentRates",
+      "label": "5I. Income Taxed at Different Rates",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, item 5I: \"INCOME TAXED AT DIFFERENT RATES\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netAssessableIncome",
+      "label": "5J. Net Assessable Income (5H minus 5I)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 3, item 5J: \"NET ASSESSABLE INCOME ( 5H Minus 5I)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefSocialSecurity",
+      "label": "Deduct: Reliefs, i. Social Security",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct: Reliefs, item i: \"Social Security\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefMarriageOrResponsibility",
+      "label": "Deduct: Reliefs, ii. Marriage / Responsibility",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct: Reliefs, item ii: \"Marriage / Responsibility\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefChildrensEducation",
+      "label": "Deduct: Reliefs, iii. Children's Education (up to 3 Children)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct: Reliefs, item iii: \"Children's education (up to 3 Children)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefOldAge",
+      "label": "Deduct: Reliefs, iv. Old Age (employees aged 60 years or above)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct: Reliefs, item iv: \"Old Age (For employees aged 60 years above)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefAgedDependents",
+      "label": "Deduct: Reliefs, v. Aged Dependents (up to 2 aged dependants)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct: Reliefs, item v: \"Aged Dependents (up to 2 aged dependants.)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefDisability",
+      "label": "Deduct: Reliefs, vi. Disability",
+      "type": "number",
+      "classification": "financial",
+      "description": "Printed as \"vi Disability\", without the trailing period used by its neighboring items.",
+      "sourceRef": "Page 3, Deduct: Reliefs, item vi: \"Disability\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefCostOfTraining",
+      "label": "Deduct: Reliefs, vii. Cost of Training",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct: Reliefs, item vii: \"Cost of Training\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefVoluntaryPensionContribution",
+      "label": "Deduct: Reliefs, viii. Voluntary Pension contribution (3rd tier provident fund)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 3, Deduct: Reliefs, item viii: \"Voluntary Pension contribution (3rd tier provident fund)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefOtherAllowableDeductions",
+      "label": "Deduct: Reliefs, x. Other allowable deductions",
+      "type": "number",
+      "classification": "financial",
+      "description": "Printed immediately after item viii. (Voluntary Pension contribution), with no item \"ix.\" printed anywhere on the source — a second numbering gap in the original form, confirmed by rendering the page (not an extraction artifact), disclosed in VERIFICATION.md.",
+      "sourceRef": "Page 3, Deduct: Reliefs, item x: \"Other allowable deductions\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAllowableDeductionsReliefs",
+      "label": "5K. Total Allowable Deductions/Reliefs (Sum of i to ix)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "The source's own parenthetical still reads \"Sum of i to ix\" despite the last printed Reliefs line being labelled \"x.\" (see reliefOtherAllowableDeductions) — the same disclosed numbering gap.",
+      "sourceRef": "Page 3, item 5K: \"Total allowable deductions/reliefs (Sum of i to ix)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "chargeableIncome",
+      "label": "5L. Chargeable Income (5J - 5K)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, item 5L: \"CHARGEABLE INCOME ( 5J – 5K)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxCharged",
+      "label": "5M. Tax Charged",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "Computed per Ghana's statutory progressive personal income tax bands (the current rate table published by GRA). This schema does not itself assert or embed the current band table; the field is modeled because the source itself presents it as a line the filer/preparer completes.",
+      "sourceRef": "Page 4, item 5M: \"Tax Charged\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "paymentTaxCredits",
+      "label": "Less Payments, i. Tax Credits",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 4, Less Payments, item i: \"Tax Credits\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "paymentOnAccount",
+      "label": "Less Payments, ii. Payment on Account (All Sources)",
+      "type": "number",
+      "classification": "financial",
+      "sourceRef": "Page 4, Less Payments, item ii: \"Payment on Account (All Sources)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalPayments",
+      "label": "5N. Total Payments (Sum of i to ii)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "sourceRef": "Page 4, item 5N: \"TOTAL PAYMENTS (Sum of i to ii)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxPayableOrOverpaid",
+      "label": "5O. Tax Payable / (Overpaid) (M - N)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "Can be negative, indicating an overpaid/refund position.",
+      "sourceRef": "Page 4, item 5O: \"TAX PAYABLE / (OVERPAID) (M-N)\""
+    },
+    {
+      "name": "declarantNameSelf",
+      "label": "Declaration (a): declarant's name, filing on own behalf",
+      "type": "string",
+      "description": "The blank in \"I, [name], do hereby declare that the information contained in this return to the best of my knowledge is true, correct and complete.\" Only applicable when the filer signs the return themselves (declaration path (a)); the source presents two parallel declaration paragraphs, (a) and (b), with no discrete boolean widget selecting between them, so this and declarantNameOnBehalf are both left optional rather than encoded with an unsupported requiredWhen — disclosed in VERIFICATION.md.",
+      "sourceRef": "Page 4, DECLARATION (a) \"For persons making return on their own behalf\": \"I ..., do hereby declare that the information contained in this return to the best of my knowledge is true, correct and complete.\""
+    },
+    {
+      "name": "declarationDateSelf",
+      "label": "Declaration (a): date",
+      "type": "date",
+      "sourceRef": "Page 4, DECLARATION (a): \"Date\""
+    },
+    {
+      "name": "preparerRtpDetails",
+      "label": "Declaration (a): Registered Tax Practitioner (R.T.P.) details, if applicable",
+      "type": "string",
+      "description": "The source prints \"Signature ... OR\" and, on the row below, \"Date ... R.T.P\" — read here as an alternative signing path where a Registered Tax Practitioner (R.T.P.) signs in place of the taxpayer, with no further discrete sub-fields printed for the R.T.P.'s own identifying/registration details. Modeled as a single free-text field for that information, a disclosed judgment call given the source's own terse layout.",
+      "sourceRef": "Page 4, DECLARATION (a): \"Signature ... OR\" / \"Date ... R.T.P\""
+    },
+    {
+      "name": "declarantNameOnBehalf",
+      "label": "Declaration (b): declarant's own name, filing on behalf of another person",
+      "type": "string",
+      "description": "The blank in \"I, [declarant's name] on behalf of [taxpayer's name], do hereby declare...\". Only applicable under declaration path (b); see declarantNameSelf for the disclosed reasoning on why both paths' fields are optional.",
+      "sourceRef": "Page 4, DECLARATION (b) \"For persons making return on behalf of another person\": \"I ... on behalf of ...\""
+    },
+    {
+      "name": "taxpayerNameOnBehalf",
+      "label": "Declaration (b): name of the taxpayer being represented",
+      "type": "string",
+      "description": "The second blank in \"I, [declarant's name] on behalf of [taxpayer's name], do hereby declare...\".",
+      "sourceRef": "Page 4, DECLARATION (b): \"... on behalf of ...\""
+    },
+    {
+      "name": "declarantAddressOnBehalf",
+      "label": "Declaration (b): declarant's address",
+      "type": "string",
+      "sourceRef": "Page 4, DECLARATION (b): \"Address\""
+    },
+    {
+      "name": "relationshipToTaxpayer",
+      "label": "Declaration (b): declarant's relationship to the taxpayer",
+      "type": "string",
+      "sourceRef": "Page 4, DECLARATION (b): \"Relationship to taxpayer\""
+    },
+    {
+      "name": "declarationDateOnBehalf",
+      "label": "Declaration (b): date",
+      "type": "date",
+      "sourceRef": "Page 4, DECLARATION (b): \"Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "certificationStatement",
+      "label": "Declaration that the return's information is true, correct and complete",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I ... do hereby declare that the information contained in this return to the best of my knowledge is true, correct and complete.",
+      "sourceRef": "Page 4, \"DECLARATION\": paths (a) \"For persons making return on their own behalf\" and (b) \"For persons making return on behalf of another person\" share this same core statement."
+    },
+    {
+      "id": "businessFinancialStatement",
+      "label": "Financial statement supporting the Net Business Income/Loss figure",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "Enclosed in support of the netBusinessIncomeOrLoss figure, applicable only to a filer reporting business income.",
+      "sourceRef": "Page 2, item 4A: \"NET BUSINESS INCOME/LOSS (As per financial Statement attached)\""
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "current_tax_office",
+      "fields": [
+        "currentTaxOfficeLto",
+        "currentTaxOfficeMto",
+        "currentTaxOfficeSto"
+      ]
+    },
+    {
+      "id": "business_tenancy_status",
+      "fields": [
+        "businessTenancyStatusRented",
+        "businessTenancyStatusOwned"
+      ]
+    }
+  ]
+}
