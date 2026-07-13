@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **403 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **404 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2698, "GovSchema Standard Research"): Ghana's
+> Visa vertical opens (1 of 6)**, via
+> `gh/gis/grant-of-visa-and-permit-for-return-to-ghana` — the Ghana
+> Immigration Service's (GIS) "Application Form for Grant of a Visa/Permit
+> for Return to Ghana," GIS's Re-Entry Visa/Permit specimen, independently
+> re-fetched directly from GIS's own public forms library (`gis.gov.gh/gis-
+> forms/`; HTTP 200, `application/pdf`, 1,500,822 bytes, `sha256:
+> 14bdb332f24b1fd172db3b851fa369b2235d9ba9710f58cbbc545b5f9fdc470b`). A
+> genuine 2-page scanned/rasterized specimen (0 extractable text layer, 0
+> AcroForm widgets, confirmed via pdfjs-dist across both pages); this
+> cycle's own `pdfjs-dist` + `node-canvas` rendering attempt failed inside
+> pdfjs-dist's internal JPEG-drawing helper in this environment, so the two
+> embedded `/DCTDecode` (JPEG) page images were instead extracted directly
+> from the raw PDF bytes and transcribed visually from the extracted `.jpg`
+> files. Scoped strictly to GIS's **Re-Entry Visa/Permit** pathway
+> (independently confirmed live and distinctly named at `gis.gov.gh/visas/`)
+> — explicitly **not** Ghana's first-time tourist e-Visa, re-confirmed this
+> cycle to remain an exclusively online, login-gated wizard
+> (`evisa.immigration.gov.gh`) with no downloadable specimen. Page 2's "FOR
+> OFFICIAL USE ONLY" block (fee paid, receipt no., cashier signature, stamp)
+> is disclosed and excluded as staff-populated. See the document's own
+> VERIFICATION.md for the full sourcing record, every field-decomposition
+> judgment call, and the conformance run. Ghana now stands at 2 of 6
+> verticals (National ID, Visa); DMV was screened this cycle and confirmed a
+> dead end (the Driver and Vehicle Licensing Authority's site was rebuilt
+> and no longer hosts any downloadable form PDF or forms page — independently
+> re-checked this cycle). Passport and Business Formation were being
+> scouted/authored in parallel this same cycle by sibling issues GOV-2696
+> and GOV-2697; Taxes remains open, unscreened backlog.
 
 > **Update (2026-07-13, GOV-2688, "GovSchema Standard Research"): Bangladesh's
 > National ID & Civic Documents vertical opens, closing Bangladesh to 6 of
@@ -9294,7 +9324,23 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (34/41 jurisdictions — 83%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (35/41 jurisdictions — 85%)
+
+**Ghana's Visa vertical opens (1 of 6) (GOV-2698)**, via
+`gh/gis/grant-of-visa-and-permit-for-return-to-ghana` — the Ghana
+Immigration Service's (GIS) "Application Form for Grant of a Visa/Permit
+for Return to Ghana," scoped to GIS's Re-Entry Visa/Permit pathway only
+(explicitly not Ghana's first-time tourist e-Visa, which remains an
+exclusively online, login-gated portal with no downloadable specimen). A
+genuine 2-page scanned/rasterized specimen (0 AcroForm widgets), fetched
+directly from GIS's own public forms library and transcribed from the raw
+embedded JPEG page images after this cycle's `pdfjs-dist` canvas-rendering
+attempt failed in this environment. See the Executive Summary update above
+and the document's own VERIFICATION.md for the full sourcing record and
+every disclosed field-decomposition/scoping judgment call. Ghana now stands
+at 2 of 6 verticals (National ID, Visa); DMV is a confirmed dead end this
+cycle, and Passport/Business Formation were being scouted/authored in
+parallel by sibling issues (GOV-2696/GOV-2697).
 
 **Bangladesh's Visa vertical opens (4 of 6) (GOV-2675/GOV-2677)**, via
 `bd/dip/machine-readable-visa-application-form` — the Department of
@@ -9958,7 +10004,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **GH** | 2 | ✗ | ✗ | ✗ | ✗ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -11735,6 +11781,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **GH DMV** — GOV-2698, 2026-07-13. The Driver and Vehicle Licensing
+  Authority's (DVLA) public site (`dvla.gov.gh`) has been rebuilt (a
+  Next.js site) since prior scouting passes and no longer hosts any
+  downloadable licence/registration form PDF or a dedicated forms page;
+  its homepage and `/services` page were independently re-checked this
+  cycle and list only an `online.dvla.gov.gh` account-gated portal.  Not a
+  hard dead end if a genuinely new third-party-republished specimen
+  surfaces.
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
   `portal.gov.cz` state identically that citizens do not complete a printed
   application form for a passport: a clerk enters the applicant's data
