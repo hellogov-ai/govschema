@@ -1,11 +1,51 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-12** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-13** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**46 jurisdictions** | **393 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **394 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-13, GOV-2621, "GovSchema Standard Research"): Greece's
+> Taxes vertical opens (2 of 6)**, via
+> `gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3` — the Independent
+> Authority for Public Revenue's (AADE) Form Ε1 annual personal income tax
+> return, tax year 2025 edition. The primary `www.aade.gr` host remains
+> Akamai-403-blocked from this sandbox, consistent with `gr/mfa`'s own
+> finding for the same sandbox; the source used is AADE's own 153-page
+> instructions manual ("Οδηγίες Συμπλήρωσης Δήλωσης Ε1 2025", edition dated
+> 16 March 2026, under AADE decision Α.1062/2026, ΦΕΚ Β' 1280/09.03.2026),
+> independently re-fetched this cycle via its Wayback Machine mirror: HTTP
+> 200, `application/pdf`, 1,169,825 bytes, `sha256:
+> 6055bc761a7ea193657176e80bbc0be68369f31aa26708c469b5c529310a3235`. Unlike
+> `gr/mfa`'s Schengen-visa source (a numbered-item form facsimile), this
+> source is a narrative field-by-field manual with zero AcroForm widgets and
+> no form facsimile of its own — every field was read from the position-
+> sorted text layer of the manual's own prose, navigated via the PDF's own
+> table of contents. This v1.0.0 scopes to the salaried-employment/pension-
+> income filing pathway: full taxpayer/spouse identification (Πίνακας 1, 17
+> fields), all 24 informational/clearance Yes-No codes of Πίνακας 2 (39
+> fields — 20 simple booleans, plus Κωδικοί 029-030's foreign-income/assets
+> country-and-category sub-panel, Κωδικοί 007-008's hosted-person
+> ΑΦΜ/months/area triple, and Κωδικοί 045-046/047-048's 6- and 5-item
+> selectable sub-panels, none modeled as plain booleans once read
+> individually), and all 19 employment/pension income-and-withholding code
+> pairs of Υποπίνακας 4Α (41 fields, modeled as filer/spouse column pairs
+> matching the source's own two-column structure). 98 `fields[]` total, 1
+> `documents[]` entry (a tax-residence certificate, produced only on
+> request). Πίνακας 3 (disability reduction), Υποπίνακας 4Β/4Γ1/4Γ2/4Δ1/4Δ2/
+> 4Ε (seafarers, agricultural/business income, dividends/interest, rental
+> income, capital gains), Πίνακες 5-9, and companion Forms Ε2/Ε3 are all
+> out of scope, disclosed in VERIFICATION.md along with every Πίνακας-2
+> multi-field modeling judgment call. Two mock conformance scenarios (a
+> single unmarried filer; a married couple with foreign-account and
+> hosting declarations) found **0 errors** each, plus 5 mutation-control
+> fixtures (missing required field, a missing `requiredWhen` spouse field,
+> an enum violation, a `pattern` violation, and a `maximum` violation) each
+> correctly raised exactly **1 error**. See GOV-2621 and this schema's own
+> `VERIFICATION.md` for the full sourcing record and every scoping/
+> disclosure judgment call.
+>
 > **Update (2026-07-12, GOV-2611, "GovSchema Standard Research"): Greece
 > opens as this registry's 45th jurisdiction, via its Visa vertical (1 of
 > 6)**, via `gr/mfa/application-for-schengen-visa` — the EU-wide "Harmonised
@@ -8060,7 +8100,35 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (39/46 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (40/46 jurisdictions — 87%)
+
+**Greece's Taxes vertical opens (2 of 6)**
+(`gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3`, GOV-2621) — the
+Independent Authority for Public Revenue (AADE)'s Form Ε1 annual personal
+income tax return, tax year 2025 edition. The primary `www.aade.gr` host is
+Akamai-403-blocked from this sandbox, consistent with `gr/mfa`'s own finding
+for the same sandbox; the source used is AADE's own 153-page instructions
+manual ("Οδηγίες Συμπλήρωσης Δήλωσης Ε1 2025", edition dated 16 March 2026,
+under AADE decision Α.1062/2026), independently re-fetched this cycle via its
+Wayback Machine mirror: HTTP 200, `application/pdf`, 1,169,825 bytes,
+`sha256: 6055bc761a7ea193657176e80bbc0be68369f31aa26708c469b5c529310a3235`.
+Unlike `gr/mfa`'s Schengen-visa source (a numbered-item form facsimile), this
+is a narrative field-by-field manual with zero AcroForm widgets and no form
+facsimile of its own; every field was read from the manual's own
+position-sorted text layer, navigated via its own table of contents. This
+v1.0.0 scopes to the salaried-employment/pension-income filing pathway: full
+taxpayer/spouse identification (Πίνακας 1), all 24 informational/clearance
+Yes-No codes of Πίνακας 2 (several modeled with more than a single boolean
+once read individually — a country-and-category sub-panel, a hosted-person
+ΑΦΜ/months/area triple, and two multi-item selectable sub-panels), and all 19
+employment/pension income-and-withholding code pairs of Υποπίνακας 4Α
+(modeled as filer/spouse column pairs matching the source's own two-column
+structure). 98 `fields[]`, 1 `documents[]` entry. Πίνακας 3 (disability
+reduction), Υποπίνακας 4Β/4Γ1/4Γ2/4Δ1/4Δ2/4Ε, Πίνακες 5-9, and companion
+Forms Ε2/Ε3 are out of scope, disclosed in VERIFICATION.md. Two mock
+conformance scenarios plus 5 mutation-control fixtures passed; both registry
+validators pass. See GOV-2621 and this schema's own `VERIFICATION.md` for the
+full sourcing record and every scoping/disclosure judgment call.
 
 **Bangladesh opens (46th jurisdiction) via Taxes**
 (`bd/nbr/individual-income-tax-return-form-it-11ga`, GOV-2612) — the
@@ -9395,7 +9463,7 @@ now closed.
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
-| **GR** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -10451,8 +10519,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Greece's Business Formation/DMV/National ID remain confirmed
     in-person-only or telematic-only dead ends, and Passport's only
     downloadable artifact remains a scanned "sample" with zero extractable
-    text; Taxes (Government Gazette ΦΕΚ Β' 1280/2026's Ε1/Ε2/Ε3 specimen,
-    per GOV-2591) remains an open backlog candidate. **Peru** (Passport/National
+    text; **Taxes is now open too (GOV-2621)**, via
+    `gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3` (AADE's Form Ε1,
+    salaried-employment/pension-income pathway) — see the Executive Summary
+    update above; Form Ε2 (rental income) and Form Ε3 (business activity),
+    named alongside Ε1 in the Government Gazette ΦΕΚ Β' 1280/2026 specimen
+    per GOV-2591, remain open companion-schema backlog candidates. **Peru** (Passport/National
     ID re-confirmed appointment/biometric-gated; Taxes is Clave-SOL-gated;
     Business Formation's primary SUNARP channel is login-gated, but a
     sibling SUNAT RUC-registration form, Business Formation's DMV, and
