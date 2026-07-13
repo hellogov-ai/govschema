@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **396 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **397 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2644, "GovSchema Standard Research"): Greece adds
+> a second Taxes-vertical schema**, via
+> `gr/aade/analytiki-katastasi-misthomaton-akinitis-periousias-e2` — the
+> Independent Authority for Public Revenue's (AADE) Form Ε2, "Αναλυτική
+> Κατάσταση Μισθωμάτων Ακίνητης Περιουσίας" (rental/real-estate income
+> declaration), a companion schedule to the already-published Form Ε1
+> (`gr/aade/dilosi-forologias-eisodimatos-e1-e2-e3`, GOV-2621). Both Ε2 and
+> Ε3 were flagged as open companion-schema backlog when Ε1 was authored;
+> unlike Ε1 (sourced from a narrative instructions manual), Ε2 has its own
+> dedicated static specimen PDF and FAQ, both fetched via Wayback Machine
+> mirror (the primary `aade.gr` host remains Akamai-403-blocked from this
+> sandbox, consistent with every other Greek AADE source in this registry).
+> Independently re-fetched this cycle: HTTP 200, `application/pdf`, 76,961
+> bytes, `sha256:
+> 86c0ea9303799e7101c476fa3192bd7fbf2056e1bddeaf58d36ddbdd6ba58cbf`. This
+> v1.0.0 models the primary rented-out-to-a-tenant case as a bounded
+> 10-property repeating group (matching the specimen's own 10 pre-printed
+> blank rows), 168 `fields[]` total; the co-ownership/sub-lessor
+> supplementary panel and a separate unfinished/transferred/acquired-property
+> table (both on page 2) are out of scope, disclosed in VERIFICATION.md. Two
+> valid conformance fixtures plus 6 mutation-control fixtures (each raising
+> exactly 1 error) are committed under `conformance/gr/aade/`. Form Ε3
+> (business/professional activity income), also flagged as an open
+> companion candidate when Ε1 was authored, remains backlog for a future
+> cycle — this cycle's scouting confirmed it has its own strong dedicated
+> sources (a specimen PDF, a sub-tables companion, an 89-page instructions
+> manual, and an FAQ), just not yet authored. See GOV-2644 and this
+> schema's own `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2637, "GovSchema Standard Research"): Thailand's
 > DMV vertical opens (4 of 6)**, via `th/dlt/vehicle-registration-application`,
