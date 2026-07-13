@@ -9201,7 +9201,23 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (33/41 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (34/41 jurisdictions — 83%)
+
+**Bangladesh's Visa vertical opens (4 of 6) (GOV-2675/GOV-2677)**, via
+`bd/dip/machine-readable-visa-application-form` — the Department of
+Immigration and Passports' (DIP) "Machine Readable Visa Application Form"
+(D.I.P Form-4), distributed via Bangladesh's Online MRV Portal (visa.gov.bd).
+A genuine 4-page, plain print-and-fill PDF (no AcroForm, confirmed via
+pdfjs-dist: zero annotations across all 4 pages), independently re-fetched
+this cycle and cross-checked against a byte-near-identical embassy mirror.
+This single physical form is shared by five distinct application pathways;
+this v1.0.0 scopes to the New Visa pathway only (Personal Details, Travel
+Document Details, Payment Details, and the New Visa section), disclosing the
+Extension of Visa/No Visa Required/Transit pathways as out of scope for a
+future revision. See the Executive Summary update above and the document's
+own VERIFICATION.md for the full sourcing record and every disclosed
+judgment call. Bangladesh now stands at 4 of 6 verticals (DMV, Taxes,
+Passport, Visa).
 
 **Greece opens as this registry's 45th jurisdiction, via Visa (GOV-2611)**,
 via `gr/mfa/application-for-schengen-visa` — the EU-wide "Harmonised
