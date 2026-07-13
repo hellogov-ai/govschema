@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **403 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **404 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2698, "GovSchema Standard Research"): Ghana's
+> Visa vertical opens (2 of 6)**, via
+> `gh/gis/application-for-grant-of-visa-and-permit-for-return-to-ghana` — the
+> Ghana Immigration Service's (GIS) "Application Form for Grant of a
+> Visa/Permit for Return to Ghana," GIS's Re-Entry Visa/Permit specimen,
+> distributed unauthenticated from `gis.gov.gh/gis-forms/` and independently
+> re-fetched this cycle (HTTP 200, `application/pdf`, 1,500,822 bytes,
+> `sha256:14bdb332f24b1fd172db3b851fa369b2235d9ba9710f58cbbc545b5f9fdc470b`,
+> matching the GOV-2698 issue's own citation exactly). A genuinely scanned
+> specimen — `pdfjs-dist` confirms 0 AcroForm/Widget annotations and 0
+> extractable text items across both pages — rendered via a custom
+> `NodeCanvasFactory` (`node-canvas`) at 2.5x scale and read visually,
+> field-by-field, against targeted crops of every numbered item. Models the
+> form's 14 numbered items (33 `fields[]`): full name and previous name,
+> nationality and date/place of birth, passport particulars, address in
+> Ghana (a general entry plus separately-lettered postal/residential
+> sub-items, each with its own telephone), overseas address, education and
+> occupation, residency duration and arrival dates, destination abroad,
+> departure date, object of journey and proposed stay, reasons for return
+> (which the form itself flags for documentary support), marital status —
+> modelled as free text since the specimen prints no enumerated options
+> anywhere, unlike this registry's other `maritalStatus` fields — and
+> spouse particulars, closing with a signature date. 3 `documents[]`
+> entries capture the two-photograph requirement, the item-12 documentary
+> evidence for reasons-for-return, and the solemn-declaration attestation;
+> the page-2 "FOR OFFICIAL USE ONLY" block (fee, receipt, cashier
+> signature, stamp) is excluded as staff-populated. Confirmed via
+> `gis.gov.gh/visas/` that this specimen is GIS's Re-Entry Visa pathway,
+> distinct from the first-time tourist e-Visa, which remains a login-gated
+> online portal with no downloadable specimen found at any tier — disclosed
+> as out of scope rather than silently conflated. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed judgment
+> call. Ghana now stands at 2 of 6 verticals (National ID & Civic
+> Documents, Visa); Passport, DMV, Business Formation, and Taxes remain
+> open backlog for a future cycle.
 
 > **Update (2026-07-13, GOV-2688, "GovSchema Standard Research"): Bangladesh's
 > National ID & Civic Documents vertical opens, closing Bangladesh to 6 of
@@ -9294,7 +9330,31 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (34/41 jurisdictions — 83%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (35/41 jurisdictions — 85%)
+
+**Ghana's Visa vertical opens (2 of 6) (GOV-2698)**, via
+`gh/gis/application-for-grant-of-visa-and-permit-for-return-to-ghana` — the
+Ghana Immigration Service's (GIS) Re-Entry Visa/Permit specimen,
+"Application Form for Grant of a Visa/Permit for Return to Ghana,"
+distributed unauthenticated from `gis.gov.gh/gis-forms/`. A genuinely
+scanned specimen (`pdfjs-dist` confirms 0 AcroForm/Widget annotations and 0
+extractable text items across both pages), rendered via a custom
+`NodeCanvasFactory` and read visually against targeted per-item crops. 33
+`fields[]` model the form's 14 numbered items, including an
+`addressInGhana` general field kept distinct from item 5's lettered
+postal/residential sub-items (a structural difference from items 3/4, which
+carry no such preceding header blank) and a free-text `maritalStatus` field
+(the specimen prints no enumerated options anywhere, unlike this registry's
+other `maritalStatus` fields). 3 `documents[]` entries cover the
+two-photograph requirement, the item-12 documentary evidence for
+reasons-for-return, and the solemn-declaration attestation. Confirmed via
+`gis.gov.gh/visas/` that this specimen is GIS's Re-Entry Visa pathway,
+distinct from the first-time tourist e-Visa (a login-gated online portal
+with no downloadable specimen found at any tier), disclosed as out of scope
+rather than silently conflated. See the Executive Summary update above and
+the document's own VERIFICATION.md for the full sourcing record and every
+disclosed judgment call. Ghana now stands at 2 of 6 verticals (National ID
+& Civic Documents, Visa).
 
 **Bangladesh's Visa vertical opens (4 of 6) (GOV-2675/GOV-2677)**, via
 `bd/dip/machine-readable-visa-application-form` — the Department of
@@ -9958,7 +10018,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GH** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **GH** | 3 | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
