@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **404 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **405 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2697, "GovSchema Standard Research"): Ghana's
+> Taxes vertical opens**, via `gh/gra/personal-income-tax-return-dt-0103` —
+> the Ghana Revenue Authority's (GRA) Domestic Tax Revenue Division
+> "Personal Income Tax Return" (Form DT 0103, edition "ver 1.1"), the annual
+> return an individual files reporting business/employment/investment
+> income and computing tax payable. A genuine 4-page print-and-fill
+> specimen hosted unauthenticated on `gra.gov.gh`'s own forms listing,
+> independently re-fetched this cycle (HTTP 200, `application/pdf`,
+> 461,527 bytes, `sha256:
+> b394df0bf108c710f6d681c3b261a8af11af35623c56436fb9e77b75c91c8359`,
+> matching the task's own pre-scouted figures exactly) and confirmed via
+> `pdfjs-dist` to carry zero AcroForm/Widget annotations across all 4
+> pages — every field read from the extracted text layer's own (x, y)
+> coordinates, row-grouped and column-sorted, since no interactive field
+> metadata exists. Models the form's full structure end to end (80
+> `fields[]` plus 2 `documents[]`): filing identification (tax office
+> LTO/MTO/STO, year of assessment, return period), personal/business
+> (including landlord particulars, gated to a rented tenancy
+> status)/employment information, the §4 Sources of Income breakdown
+> (business, employment, and investment income, each gated behind its own
+> printed yes/no question), the full §5 Tax Computation worksheet (add
+> backs, deductions, reliefs) through to chargeable income and tax
+> payable/(overpaid), and a two-branch Declaration (self or
+> representative). Two source-form artifacts are disclosed rather than
+> silently corrected: the employment-income breakdown's own item list
+> skips from 'v' to 'vii' (no 'vi' printed) while its total caption still
+> reads "Sum i to vi", and the reliefs list skips from 'viii' to 'x' (no
+> 'ix' printed) while its own total caption reads "Sum of i to ix" — both
+> modeled verbatim, with the caption/item-list mismatch disclosed on each
+> total field rather than corrected. A page-image cross-check was attempted
+> but a `pdfjs-dist`/`node-canvas` inline-image rendering incompatibility
+> prevented a usable render this cycle, so the exact box mechanics of a
+> disclosed Signature/"OR"/"R.T.P." (Registered Tax Practitioner)
+> co-certification block are modeled as a best-effort boolean rather than
+> invented structure. Two valid conformance fixtures plus 6 mutation-control
+> fixtures (each raising exactly 1 error) are committed under
+> `conformance/gh/gra/`. See GOV-2697 and this schema's own
+> `VERIFICATION.md` for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2698, "GovSchema Standard Research"): Ghana's
 > Visa vertical opens (2 of 6)**, via
@@ -8575,7 +8614,29 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (40/46 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (41/46 jurisdictions — 89%)
+
+**Ghana's Taxes vertical opens (GOV-2697)**
+(`gh/gra/personal-income-tax-return-dt-0103`) — the Ghana Revenue
+Authority's (GRA) Domestic Tax Revenue Division "Personal Income Tax
+Return" (Form DT 0103, edition "ver 1.1"). A genuine 4-page print-and-fill
+specimen hosted unauthenticated on `gra.gov.gh`'s own forms listing,
+confirmed via `pdfjs-dist` to carry zero AcroForm/Widget annotations across
+all 4 pages; every field read from the extracted text layer's own
+row-grouped, column-sorted coordinates. Models the form's full structure
+end to end (80 `fields[]` plus 2 `documents[]`): filing identification,
+personal/business (including landlord particulars gated to a rented
+tenancy status)/employment information, the §4 Sources of Income breakdown
+(business/employment/investment income, each gated behind its own printed
+yes/no question), the full §5 Tax Computation worksheet through to
+chargeable income and tax payable/(overpaid), and a two-branch Declaration
+(self or representative). Two disclosed source-form artifacts (an
+employment-income item list that skips 'vi' and a reliefs list that skips
+'ix', each leaving its own total caption's item count stale) are modeled
+verbatim rather than silently corrected. Two valid conformance fixtures
+plus 6 mutation-control fixtures (each raising exactly 1 error) are
+committed under `conformance/gh/gra/`. See GOV-2697 and this schema's own
+`VERIFICATION.md` for the full sourcing record.
 
 **Greece adds a third Taxes-vertical schema, Form Ε3 (GOV-2656)**
 (`gr/aade/katastasi-oikonomikon-stoicheion-apo-epicheirimatiki-drastiriotita-e3`)
