@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **407 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **408 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2709, "GovSchema Standard Research"): Thailand's
+> Passport vertical opens (5 of 6)**, via
+> `th/mfa/passport-application-royal-thai-embassy-london` — the Ministry of
+> Foreign Affairs' "Form 1" (แบบฟอร์ม 1, คำร้องขอหนังสือเดินทางไปต่างประเทศ),
+> distributed by the Royal Thai Embassy, London for Thai nationals resident
+> in the United Kingdom or Ireland. Independently re-fetched directly from
+> MFA's own `image.mfa.go.th` CDN (HTTP 200, `application/pdf`, 295,714
+> bytes, `sha256: da567c0215b34de801b6929708819e86a52d81188993cc18a504d73d8a5d36a5`).
+> A flat, non-AcroForm print specimen (zero Widget annotations, confirmed via
+> `pdfjs-dist`) with a real, fully extractable Thai-language text layer.
+> Models 22 `fields[]`: applicant identity (name, English block-capital name,
+> 13-digit National ID number, ethnicity, birth province/date, age/height/
+> occupation), separate Thailand and UK/Ireland address/email/phone blocks,
+> both parents' name and National ID number, both a Thailand and a UK/Ireland
+> emergency reference contact, and an optional postal-return-vs-in-person-
+> collection `deliveryPreference` (the form's own instruction frames this
+> choice as optional), with the in-person option's contact phone number
+> gated by `requiredWhen`. `สัญชาติ` (Nationality) is printed as a fixed
+> "Thai" value, not a blank, and is excluded from `fields[]` entirely rather
+> than modelled as a redundant single-value enum; no `documents[]` checklist
+> is printed on this single-page specimen, disclosed as an out-of-scope gap
+> rather than an assumption. This is an embassy-specific specimen (scoped to
+> Thai nationals resident in the UK or Ireland applying at the Royal Thai
+> Embassy, London), consistent with this registry's
+> `pt/mne/requerimento-passaporte-consular` precedent for a single-post
+> passport form. Thailand's own domestic/National ID candidate (DOPA
+> บัตรประจำตัวประชาชน) was screened the same cycle and confirmed a dead end:
+> every fetchable PDF is a non-fillable public-service-guide document, and
+> the id-card process itself is in-person/counter-only, officer-driven, and
+> biometric, with no citizen-fillable paper form at any stage. 2 valid
+> conformance fixtures plus 6 mutation-control fixtures (each raising exactly
+> 1 error) are committed under
+> `conformance/th/mfa/passport-application-royal-thai-embassy-london/`.
+> **Thailand now stands at 5 of 6 verticals** (Taxes, Business Formation,
+> Visa, DMV, Passport); National ID is Thailand's sole remaining open
+> vertical, and a confirmed dead end for the candidate screened this cycle.
+> See GOV-2709 and this schema's own `VERIFICATION.md` for the full sourcing
+> record.
 
 > **Note:** GOV-2704 (Business Formation) and GOV-2703 (Passport) landed as
 > concurrent same-day PRs; each update below independently reports "4 of 6"
@@ -7528,7 +7567,18 @@
 
 ## By Vertical
 
-### Passport (33/40 jurisdictions — 83%)
+### Passport (34/40 jurisdictions — 85%)
+
+**Thailand's Passport vertical opens (5 of 6) (GOV-2709)**, via
+`th/mfa/passport-application-royal-thai-embassy-london` — the Ministry of
+Foreign Affairs' "Form 1" (แบบฟอร์ม 1), distributed by the Royal Thai
+Embassy, London for Thai nationals resident in the UK or Ireland. See the
+Executive Summary's GOV-2709 update above and the document's own
+VERIFICATION.md for the full sourcing record, the National ID dead-end
+screening finding, and every disclosed scoping/judgment call. Thailand now
+stands at 5 of 6 verticals (Taxes, Business Formation, Visa, DMV, Passport);
+National ID is Thailand's sole remaining vertical, a confirmed dead end for
+the candidate screened this cycle.
 
 **Ghana's Passport vertical opens (4 of 6) (GOV-2703)**, via
 `gh/mfa/application-for-a-republic-of-ghana-passport` — the Ministry of
@@ -10242,7 +10292,7 @@ now closed.
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TH** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -12354,6 +12404,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   this process. Not a hard dead end if a genuinely new source (e.g. a
   support-article walkthrough of the live enrolment SPA) surfaces; a dead
   end for the current official publishing pattern.
+- **TH National ID (บัตรประจำตัวประชาชน)** — GOV-2709, screened 2026-07-13.
+  Every fetchable PDF (district/amphoe-office "public service guide"
+  documents, e.g. `tasailuad.go.th/pdf/sg1_4.pdf` and `kabin.go.th`'s
+  equivalent) is a non-fillable, no-`/AcroForm` process manual, not a blank
+  application form; DOPA/BORA's own download page
+  (`bora.dopa.go.th/download/`) lists only training/legal material, no
+  citizen-facing application PDF. Issuance is strictly in-person and
+  counter-only: an officer enters data directly into the BORA system and
+  captures a live photograph/fingerprint biometrically, printing the
+  internal บ.ป.1 request form from the system itself — the applicant never
+  fills out a paper form in advance. Do not re-attempt without a genuinely
+  new source. This closes out Thailand's screening backlog: Thailand now
+  stands at 5 of 6 verticals, with National ID as its sole remaining, and
+  now confirmed-dead-end, vertical.
 
 ---
 
