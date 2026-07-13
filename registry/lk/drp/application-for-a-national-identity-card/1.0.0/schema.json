@@ -1,0 +1,676 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "lk/drp/application-for-a-national-identity-card",
+  "version": "1.0.0",
+  "title": "Application for a National Identity Card (Form \"B\", DRP 1,7,8)",
+  "description": "The Department for Registration of Persons' (DRP) combined \"Form 'B'\" (DRP 1,7,8) — \"Application for an Identity Card under sections 9, 16 and 17 of the Registration of Persons Act, No 32 of 1968\". A single, trilingual (Sinhala/Tamil/English) 8-page specimen, fetched directly and unauthenticated from the department's own domain, that covers first-time issuance as well as duplicate/replacement, information-change, and validity-renewal requests for an existing card in one form (Part One, Items 1-11 plus the Declaration). A genuine, fully extractable English text layer confirmed via pdfjs-dist (0 AcroForm Widget annotations — a flat, non-fillable print specimen, not an AcroForm), cross-checked against rendered page images (pdfjs-dist legacy build + node-canvas, with the bundled standard-fonts data supplied) to resolve every checkbox group's printed layout and to confirm the top-of-form District/D.S. Division/G.N. Number routing box is a genuine applicant-facing field, visually distinct from the shaded 'FOR OFFICE USE' panel (Identity Card No., Registration Officer's Code & Initials) directly beneath it. Item 10 (Purpose of Application) and everything gated on it are modelled optional per the form's own instruction that cage 10 is completed only when a duplicate/change/renewal/replacement is requested. Item 8.2's printed sub-heading reads 'Postal Address', but the form's own instructions manual (instruction vi) describes this same cage as a different *current residence* address rather than a mailing address — a genuine discrepancy between the printed field heading and the instructions manual's prose, disclosed here rather than silently resolved by inference; this schema follows the printed heading. Neither the conditional birth-abroad citizenship fields (Items 7.6-7.8) nor the citizenship/dual-citizenship certificate fields (Item 9) have an applicant-fillable gating checkbox anywhere on the form, so both are modelled optional with the conditional context recorded in each field's own `description`, consistent with this registry's `lk/imm` (Sri Lankan passport) precedent for the same pattern. Models the instructions manual's own printed Item 10 supporting-documents checklist (pages 6-8 of this same PDF) as `documents[]` — unlike `lk/imm`, whose separate instructions PDF was a zero-text scanned image, this form's instructions are part of the same extractable specimen. Part Two (Certifying Officer attestation), Part Three (Acknowledgment slip), the payment/fee-receipt page (page 5, a physical stamp/receipt-affixing panel with no printed fee amount), and the applicant's/officer's own signature or left-thumb-impression are all staff-only or physical artifacts, out of scope, consistent with this registry's general practice of not modelling fee amounts or signature/biometric capture. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Sri Lanka or the Department for Registration of Persons.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "LK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department for Registration of Persons",
+    "abbreviation": "DRP",
+    "url": "https://drp.gov.lk"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://drp.gov.lk/en/assets/formats/application.pdf",
+    "retrievedAt": "2026-07-13",
+    "documentRef": "Form \"B\" (DRP 1,7,8) — Application for an Identity Card under sections 9, 16 and 17 of the Registration of Persons Act, No 32 of 1968"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-13",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-13",
+    "notes": "GovSchema Standard Research cycle GOV-2753. Closes Sri Lanka's National ID & Civic Documents vertical, bringing Sri Lanka to 2 of 6 verticals (Passport, authored GOV-2716; National ID, this schema) alongside its already-open Passport vertical. Independently fetched via curl: https://drp.gov.lk/en/assets/formats/application.pdf — HTTP 200, Content-Type: application/pdf, Content-Length 608,290 bytes, Last-Modified: Sat, 16 Sep 2023 16:29:03 GMT, sha256: da659f8c67ddb335111e13e91fd493843ab44b5bed7b3d952fe52726b21b73f6. The department's own homepage (drp.gov.lk/en/) returned HTTP 403 to a direct curl fetch in this environment (with and without a browser User-Agent header) — consistent with generic bot-mitigation on the marketing site rather than a login/authentication gate on the form itself, which this same domain's /en/assets/formats/ path serves with no such restriction. Text layer extracted via pdfjs-dist@3 (legacy build) getTextContent() across all 8 pages: a full, clean, genuinely extractable trilingual text layer (not a scanned image). getFieldObjects() confirms null/0 AcroForm fields — this is a flat print-and-fill specimen, not a fillable PDF form, unlike this registry's `lk/imm` (Sri Lankan passport) schema. Pages 1, 2, 3, 4, and 5 were also rendered to PNG via pdfjs-dist@3 legacy build + node-canvas (canvas@3, freshly installed for this cycle), with the bundled standard_fonts data directory supplied as `standardFontDataUrl` (without it this specimen's non-embedded base fonts render blank) — visually confirmed: (1) the top-of-page-1 District/D.S. Division/G.N. Number routing box is a genuine applicant-facing text box, distinct from the shaded 'FOR OFFICE USE' panel directly beneath it; (2) Items 1-3's Family Name/Name/Surname comb-box grids; (3) Item 4 (Sex) and Item 5 (Civil Status) are independent per-option tick-boxes, each modelled as a single-choice `enum`; (4) Item 8's two address blocks (8.1 'Permanent Address', 8.2 'Postal Address') each break into the same five sub-fields (house name/number, building name, road/street/lane/place/garden, village/city, postal code); (5) Item 10's four purpose-of-application tick-boxes (10.1-10.4) and the conditional 10.5-10.7 fields; (6) page 4's Declaration and page 5's payment/fee-receipt and 'FOR OFFICE USE ONLY' Notes panel, confirming page 5 is entirely office/payment-processing (a physical stamp/receipt-affixing panel with no printed fee amount) and out of scope. Comb-style character-box grids on this flat (non-AcroForm) specimen are a handwriting aid, not an enforced technical constraint (unlike an AcroForm's own 'comb' flag with a printed charLimit, as seen in `lk/imm`); `maxLength` values on this schema are therefore reasonable editorial estimates, not extracted metadata — disclosed as a judgment call rather than presented as a form-derived constraint. Declaration item 4's blank identity-card-number line ('I hereby hand over the Identity Card bearing number.../Police report obtained in lieu of the lost Identity Card bearing number...') was cross-checked against Item 10.5 ('Lost or last obtained Identity Card Number') and found to reference the same underlying value — modelled once as `lastOrCurrentIdentityCardNumber` rather than as two duplicate fields. This form has no printed required-field asterisk markup anywhere; requiredness was assigned per this registry's established practice of marking core/unconditional identity and address fields required and leaving conditionally-relevant or explicitly-optional ('if any'/no printed cue) fields optional, consistent with `lk/imm`'s own precedent. 2 valid conformance fixtures (0 errors each) plus 8 mutation-control fixtures (each raising exactly 1 error) are committed under conformance/lk/drp/application-for-a-national-identity-card/1.0.0/ and were checked against this schema.json with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, plus a from-scratch conformance-checker script (scratch, not committed) evaluating required/requiredWhen/validation.pattern/maxLength/enum against each fixture."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-13"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "district",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "description": "Administrative district of the office handling this application, entered in the routing box printed above the shaded 'FOR OFFICE USE' panel (confirmed via rendered page 1: this box is a plain applicant-facing text field, visually distinct from the 'IDENTITY CARD NO.'/'REGISTRATION OFFICER'S CODE & INITIALS' office-only panel directly beneath it).",
+      "sourceRef": "District / D.S. Division / G.N. Number and Division routing box, top of page 1 (above 'FOR OFFICE USE')",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "dsDivision",
+      "label": "D.S. Division",
+      "type": "string",
+      "required": true,
+      "description": "Divisional Secretariat (D.S.) Division of the office handling this application, part of the same top-of-form routing box as `district`.",
+      "sourceRef": "District / D.S. Division / G.N. Number and Division routing box, top of page 1",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "gnNumberAndDivision",
+      "label": "G.N. Number and Division",
+      "type": "string",
+      "required": true,
+      "description": "Grama Niladhari (G.N.) number and division of the office handling this application, part of the same top-of-form routing box as `district`.",
+      "sourceRef": "District / D.S. Division / G.N. Number and Division routing box, top of page 1",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "nameSinhalaTamilFamilyName",
+      "label": "Family Name (in Sinhala or Tamil)",
+      "type": "string",
+      "required": false,
+      "description": "Item 1. The instructions manual (page 6) states: 'If there is no family name or surname leave the cage blank' — modelled as optional accordingly.",
+      "sourceRef": "1. Name in Full (in Sinhala or Tamil) — Family Name",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "nameSinhalaTamilGivenName",
+      "label": "Name (in Sinhala or Tamil)",
+      "type": "string",
+      "required": true,
+      "description": "Item 1. The applicant's given name, written in Sinhala or Tamil characters per the form's own instruction ('Cage 1 should be filled in Sinhala or Tamil characters').",
+      "sourceRef": "1. Name in Full (in Sinhala or Tamil) — Name",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "nameSinhalaTamilSurname",
+      "label": "Surname (in Sinhala or Tamil)",
+      "type": "string",
+      "required": false,
+      "description": "Item 1. Per the instructions manual, left blank if the applicant has no surname/father's name to record.",
+      "sourceRef": "1. Name in Full (in Sinhala or Tamil) — Surname",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "nameEnglishFamilyName",
+      "label": "Family Name (English Block Letters)",
+      "type": "string",
+      "required": false,
+      "description": "Item 2. The English-block-letter transliteration of `nameSinhalaTamilFamilyName`; left blank under the same no-family-name instruction.",
+      "sourceRef": "2. Name in Full (English Block Letters) — Family Name",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "nameEnglishGivenName",
+      "label": "Name (English Block Letters)",
+      "type": "string",
+      "required": true,
+      "description": "Item 2. The English-block-letter transliteration of `nameSinhalaTamilGivenName`, per instruction ii: 'The Name written in Sinhala or Tamil Characters in Cage 1 should be written in English block letters in cage 2.'",
+      "sourceRef": "2. Name in Full (English Block Letters) — Name",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "nameEnglishSurname",
+      "label": "Surname (English Block Letters)",
+      "type": "string",
+      "required": false,
+      "description": "Item 2. The English-block-letter transliteration of `nameSinhalaTamilSurname`.",
+      "sourceRef": "2. Name in Full (English Block Letters) — Surname",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "identityCardFamilyName",
+      "label": "Family Name to appear in Identity Card (if different)",
+      "type": "string",
+      "required": false,
+      "description": "Item 3. Only completed if the name to appear on the Identity Card is different from the name given in Item 1, per instruction iii, which also requires supporting documents proving the different name if it differs from the Birth Certificate.",
+      "sourceRef": "3. Name to be appeared in the Identity Card (If the name is different to the name in cage 1) — Family Name",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "identityCardGivenName",
+      "label": "Name to appear in Identity Card (if different)",
+      "type": "string",
+      "required": false,
+      "description": "Item 3. See `identityCardFamilyName`.",
+      "sourceRef": "3. Name to be appeared in the Identity Card (If the name is different to the name in cage 1) — Name",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "identityCardSurname",
+      "label": "Surname to appear in Identity Card (if different)",
+      "type": "string",
+      "required": false,
+      "description": "Item 3. See `identityCardFamilyName`.",
+      "sourceRef": "3. Name to be appeared in the Identity Card (If the name is different to the name in cage 1) — Surname",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "description": "Item 4. The applicant's sex as printed on the form (two checkboxes: Female, Male — visually confirmed via rendered page 2).",
+      "sourceRef": "4. Sex : Female ▢ Male ▢",
+      "classification": "pii",
+      "validation": {
+        "enum": [
+          "female",
+          "male"
+        ]
+      }
+    },
+    {
+      "name": "civilStatus",
+      "label": "Civil Status",
+      "type": "enum",
+      "required": true,
+      "description": "Item 5. The applicant's civil status (four checkboxes: Married, Single, Widowed, Divorced — visually confirmed via rendered page 2).",
+      "sourceRef": "5. Civil Status : Married ▢ Single ▢ Widowed ▢ Divorced ▢",
+      "validation": {
+        "enum": [
+          "married",
+          "single",
+          "widowed",
+          "divorced"
+        ]
+      }
+    },
+    {
+      "name": "profession",
+      "label": "Profession/Occupation/Designation",
+      "type": "string",
+      "required": false,
+      "description": "Item 6. No printed requiredness cue; left optional, consistent with this registry's `lk/imm` precedent for the same field on Sri Lanka's passport application.",
+      "sourceRef": "6. Profession/Occupation/Designation",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "description": "Item 7.1. Printed as separate comb boxes (Y Y Y Y M M D D); modelled here as a single canonical ISO date.",
+      "sourceRef": "7.1 Date of Birth"
+    },
+    {
+      "name": "birthCertificateNumber",
+      "label": "Birth Certificate No.",
+      "type": "string",
+      "required": false,
+      "description": "Item 7.2. No printed requiredness cue; an applicant relying instead on a Probable Age Certificate (see `documents[]`) may have none.",
+      "sourceRef": "7.2 Birth Certificate No",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "description": "Item 7.3. Completed in accordance with the Birth Certificate, per instruction v.",
+      "sourceRef": "7.3 Place of Birth",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "birthDivision",
+      "label": "Division (of birth)",
+      "type": "string",
+      "required": false,
+      "description": "Item 7.4. The D.S. Division in which the applicant's birth was registered.",
+      "sourceRef": "7.4 Division",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "birthDistrict",
+      "label": "District (of birth)",
+      "type": "string",
+      "required": false,
+      "description": "Item 7.5. The district in which the applicant's birth was registered.",
+      "sourceRef": "7.5 District",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": false,
+      "description": "Item 7.6, printed under the heading 'If the applicant is born outside of Sri Lanka, details of Citizenship Certificate issued under Section 5(2) of the Citizenship Act, No.18 of 1948'. Applicable only to applicants born outside Sri Lanka; the form itself has no separate applicant-fillable gating checkbox for this, so it is modelled as optional rather than wired to a fabricated condition — a consuming agent can derive applicability from context.",
+      "sourceRef": "7.6 Country of Birth",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "cityOfBirthAbroad",
+      "label": "City (of birth, if abroad)",
+      "type": "string",
+      "required": false,
+      "description": "Item 7.7. See `countryOfBirth`.",
+      "sourceRef": "7.7 City",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "section52CitizenshipCertificateNumber",
+      "label": "Certificate No. (Section 5(2) Citizenship Certificate)",
+      "type": "string",
+      "required": false,
+      "description": "Item 7.8. The number of the Citizenship Certificate issued under Section 5(2) of the Citizenship Act, No.18 of 1948, for an applicant born outside Sri Lanka to at least one Sri Lankan parent. Distinct from `citizenshipCertificateNumber` (Item 9.1), which covers citizenship-by-registration/dual-citizenship generally.",
+      "sourceRef": "7.8 Certificate No.",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "permanentAddressHouseNameOrNumber",
+      "label": "Permanent Address — Name or Number of the House",
+      "type": "string",
+      "required": true,
+      "description": "Item 8.1. Per instruction vi: 'In cage 8.1 permanent address should be written.'",
+      "sourceRef": "8.1 Name or number of the House",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentAddressBuildingName",
+      "label": "Permanent Address — Name of Condominium/Flat/Scheme/Quarters/Estate/Other Building",
+      "type": "string",
+      "required": false,
+      "description": "Item 8.1. Only applicable if the applicant's house is part of a named building/scheme/estate.",
+      "sourceRef": "8.1 Name of Condominium, flat, scheme, quarters, estate or any other buildings",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentAddressRoadStreetLane",
+      "label": "Permanent Address — Road/Street/Lane/Place/Garden",
+      "type": "string",
+      "required": true,
+      "description": "Item 8.1.",
+      "sourceRef": "8.1 Road/Street/Lane/Place/Garden",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentAddressVillageCity",
+      "label": "Permanent Address — Village/City",
+      "type": "string",
+      "required": true,
+      "description": "Item 8.1.",
+      "sourceRef": "8.1 Village/City",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentAddressPostalCode",
+      "label": "Permanent Address — Postal Code",
+      "type": "string",
+      "required": true,
+      "description": "Item 8.1. Sri Lankan postal codes are 5 digits.",
+      "sourceRef": "8.1 Postal Code",
+      "classification": "pii",
+      "validation": {
+        "pattern": "^[0-9]{5}$"
+      }
+    },
+    {
+      "name": "postalAddressHouseNameOrNumber",
+      "label": "Postal Address — Name or Number of the House",
+      "type": "string",
+      "required": false,
+      "description": "Item 8.2, printed under the heading 'Postal Address'. Judgment call disclosed in VERIFICATION.md: the form's own instructions manual (instruction vi) describes cage 8.2 as a *different current residence* ('Cage 8.2 should be filled only if the applicant is residing in a different address other than the address indicated in 8.1'), which does not exactly match the printed 'Postal Address' sub-heading directly above it — this schema follows the printed field heading rather than resolving the discrepancy by inference.",
+      "sourceRef": "8.2 Name or number of the House (heading: Postal Address)",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalAddressBuildingName",
+      "label": "Postal Address — Name of Condominium/Flat/Scheme/Quarters/Estate/Other Building",
+      "type": "string",
+      "required": false,
+      "description": "Item 8.2. See `postalAddressHouseNameOrNumber` for the printed-heading-vs-instructions discrepancy disclosed in VERIFICATION.md.",
+      "sourceRef": "8.2 Name of Condominium, flat, scheme, quarters, estate or any other buildings",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalAddressRoadStreetLane",
+      "label": "Postal Address — Road/Street/Lane/Place/Garden",
+      "type": "string",
+      "required": false,
+      "description": "Item 8.2.",
+      "sourceRef": "8.2 Road/Street/Lane/Place/Garden",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalAddressVillageCity",
+      "label": "Postal Address — Village/City",
+      "type": "string",
+      "required": false,
+      "description": "Item 8.2.",
+      "sourceRef": "8.2 Village/City",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "postalAddressPostalCode",
+      "label": "Postal Address — Postal Code",
+      "type": "string",
+      "required": false,
+      "description": "Item 8.2.",
+      "sourceRef": "8.2 Postal Code",
+      "classification": "pii",
+      "validation": {
+        "pattern": "^[0-9]{5}$"
+      }
+    },
+    {
+      "name": "citizenshipCertificateNumber",
+      "label": "Certificate Number (Citizenship/Dual Citizenship)",
+      "type": "string",
+      "required": false,
+      "description": "Item 9.1, printed under 'Details of Citizenship Certificate/Dual Citizenship Certificate (strike off whichever is inapplicable)'. Per instruction vii (page 7), applicable only to applicants who hold dual citizenship or received Sri Lankan citizenship by registration; the form has no separate applicant-fillable gating checkbox for this, so it is modelled as optional rather than wired to a fabricated condition.",
+      "sourceRef": "9.1 Certificate Number",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "citizenshipCertificateIssueDate",
+      "label": "Date of Issue of Certificate (Citizenship/Dual Citizenship)",
+      "type": "date",
+      "required": false,
+      "description": "Item 9.2. See `citizenshipCertificateNumber`.",
+      "sourceRef": "9.2 Date of issue of Certificate"
+    },
+    {
+      "name": "purposeOfApplication",
+      "label": "Purpose of Application",
+      "type": "enum",
+      "required": false,
+      "description": "Item 10. Per the form's own instruction ('If the duplicate of the Identity Card is applied for, please complete cage No.10') this whole item, and everything gated on it below, applies only when the applicant is requesting a duplicate, change, renewal, or replacement of an existing card rather than a first-time issuance — left optional accordingly. Visually confirmed via rendered page 3: four independent tick-boxes, one per option.",
+      "sourceRef": "10. Purpose of application (Mark ✓ in the relevant cage): 10.1 if the Identity Card is lost / 10.2 to make changes to the Identity Card / 10.3 to renew the period of validity / 10.4 if the Identity card is damaged/defaced/illegible",
+      "validation": {
+        "enum": [
+          "lost",
+          "changes",
+          "renewal-of-validity",
+          "damaged-defaced-illegible"
+        ]
+      }
+    },
+    {
+      "name": "lastOrCurrentIdentityCardNumber",
+      "label": "Lost or Last Obtained Identity Card Number",
+      "type": "string",
+      "required": false,
+      "description": "Item 10.5. Required whenever a duplicate/change/renewal/replacement is being requested (Item 10 completed). Also corresponds to the number the Declaration's item 4 asks the applicant to hand over to the certifying officer ('I hereby hand over the Identity Card bearing number.../Police report obtained in lieu of the lost Identity Card bearing number...') — modelled once here rather than as a duplicate field.",
+      "sourceRef": "10.5 Lost or last obtained Identity Card Number",
+      "requiredWhen": {
+        "field": "purposeOfApplication",
+        "in": [
+          "lost",
+          "changes",
+          "renewal-of-validity",
+          "damaged-defaced-illegible"
+        ]
+      },
+      "classification": "sensitive-pii",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "dateOfIssueOfLastIdentityCard",
+      "label": "Date of the Issue of the (Lost/Last) Identity Card",
+      "type": "date",
+      "required": false,
+      "description": "Item 10.6. See `lastOrCurrentIdentityCardNumber`.",
+      "sourceRef": "10.6 Date of the issue of the Identity Card",
+      "requiredWhen": {
+        "field": "purposeOfApplication",
+        "in": [
+          "lost",
+          "changes",
+          "renewal-of-validity",
+          "damaged-defaced-illegible"
+        ]
+      }
+    },
+    {
+      "name": "policeStationName",
+      "label": "Name of the Police Station",
+      "type": "string",
+      "required": false,
+      "description": "Item 10.7, printed under 'Details of the police report or other document pertaining to the lost Identity Card'. Applicable specifically when Item 10.1 (lost) is selected.",
+      "sourceRef": "10.7 Name of the Police Station",
+      "requiredWhen": {
+        "field": "purposeOfApplication",
+        "equals": "lost"
+      },
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "policeReportIssueDate",
+      "label": "Date of the Issue of the Police Report",
+      "type": "date",
+      "required": false,
+      "description": "Item 10.7. See `policeStationName`.",
+      "sourceRef": "10.7 Date of the issue of the Police report",
+      "requiredWhen": {
+        "field": "purposeOfApplication",
+        "equals": "lost"
+      }
+    },
+    {
+      "name": "residenceTelephoneNumber",
+      "label": "Telephone No. (Residence)",
+      "type": "string",
+      "required": false,
+      "description": "Item 11.1. No printed requiredness cue.",
+      "sourceRef": "11.1 Telephone No — Residence",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "mobileTelephoneNumber",
+      "label": "Telephone No. (Mobile)",
+      "type": "string",
+      "required": false,
+      "description": "Item 11.1. No printed requiredness cue.",
+      "sourceRef": "11.1 Telephone No — Mobile",
+      "classification": "pii",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "description": "Item 11.2.",
+      "sourceRef": "11.2 E-mail",
+      "classification": "pii",
+      "validation": {
+        "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$",
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "previousApplicationMade",
+      "label": "Have you made any other application previous to this application?",
+      "type": "boolean",
+      "required": true,
+      "description": "Declaration item 5: 'I declare that I have/have not made any other application previous to this application (strike off whichever is inapplicable).'",
+      "sourceRef": "Declaration of the Applicant, item 5"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant signs the Declaration, printed above the applicant's signature/left-thumb-impression block on page 4. Printed as separate comb boxes (Y Y Y Y M M D D).",
+      "sourceRef": "Declaration of the Applicant — Date"
+    }
+  ],
+  "documents": [
+    {
+      "id": "photographs",
+      "label": "Two colour photographs",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions to complete Application Form 'B', item 1 ('Photograph should be 35 mm width x 45 mm height colour photographs...'); Declaration item 3 ('I enclose two copies of my photographs')"
+    },
+    {
+      "id": "birthCertificateOrProbableAgeCertificateCopy",
+      "label": "Photocopy of the Birth Certificate or Probable Age Certificate, authenticated by the certifying officer",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions, item 10.i"
+    },
+    {
+      "id": "birthRegistrationSearchAffidavit",
+      "label": "Affidavit with search-result document under Section 56 of the Birth and Death Registration Act, No.17 of 1951, and any other document proving name and date of birth",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions, item 10.ii"
+    },
+    {
+      "id": "marriageCertificateCopy",
+      "label": "Photocopy of the Marriage Certificate, authenticated by the certifying officer",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions, item 10.iii ('If the name of the husband is required to be included in the Identity Card by a married woman')"
+    },
+    {
+      "id": "citizenshipOrDualCitizenshipCertificateCopy",
+      "label": "Photocopy of the Citizenship Certificate / Dual Citizenship Certificate, authenticated by the certifying officer",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions, item 10.iv"
+    },
+    {
+      "id": "priesthoodOrdinationCertificateCopy",
+      "label": "Photocopy of the Novice/Higher Ordination Certificate of priesthood, authenticated by the certifying officer",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions, item 10.v ('when applying for Identity Cards in priesthood name')"
+    },
+    {
+      "id": "disrobeCertificateCopy",
+      "label": "Photocopy of the certificate of disrobe, authenticated by the certifying officer",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions, item 10.vi ('when applying for Identity Cards in lay name after disrobing')"
+    },
+    {
+      "id": "religiousAuthorityConfirmationCertificateCopy",
+      "label": "Photocopy of a certificate issued by the relevant Ministry/department confirming religious clergy status",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Instructions, item 10.vii"
+    },
+    {
+      "id": "divisionalSecretaryLateApplicationReport",
+      "label": "Divisional Secretary's report including reasons for inability to apply during the due period",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "other",
+      "sourceRef": "Instructions, item 10.viii"
+    },
+    {
+      "id": "policeReportForLostIdentityCard",
+      "label": "Copy of the police report regarding the lost Identity Card",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "purposeOfApplication",
+        "equals": "lost"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Item 10.7 / Instructions item ix ('A copy of the police entry in respect of the lost Identity Card should be attached')"
+    }
+  ]
+}
