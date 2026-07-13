@@ -4,7 +4,70 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **419 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**50 jurisdictions** | **420 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2797, "GovSchema Standard Research"): Romania
+> opens as the registry's 50th jurisdiction**, via its Taxes vertical,
+> `ro/anaf/declaratie-unica-activitati-independente` — the Agenția Națională
+> de Administrare Fiscală's (ANAF) Formulary 212, "Declarație unică privind
+> impozitul pe venit și contribuțiile sociale datorate de persoanele fizice"
+> (Single Declaration on income tax and social contributions owed by
+> individuals), the annual combined self-assessment declaration Romanian
+> individual taxpayers file. Independently re-verified this cycle rather than
+> trusting the pre-cycle briefing verbatim: re-fetched the source
+> (`static.anaf.ro/static/10/Anaf/formulare/D_212_2736_2025.pdf`, HTTP 200,
+> `application/pdf`, 620,762 bytes, sha256:
+> `fb6822ac5feb35c99ebdb8dd29a74e284a4ab101a6a1431ccaeb42ea4731f9b2`,
+> matching the briefing's truncated hash byte-for-byte) and confirmed via
+> `pdfjs-dist@3` that it is a genuine static AcroForm (has `/AcroForm`, no
+> `/XFA`, no `NeedsRendering`) with 189 Widget annotations across 12 of 14
+> pages. Independently discovered a correction to the briefing along the way:
+> the 2 non-widget pages are not generic "instructions" but the form's own
+> Secțiunea 4/4.1/4.2/5/5.1/6 tax-computation worksheets, which carry zero
+> fillable AcroForm widgets at all (apparently auto-computed by ANAF's own
+> e-filing system from data entered elsewhere in the form) — a materially
+> more precise finding, disclosed in full in this schema's own
+> VERIFICATION.md. Also found that `pdfjs-dist`'s own per-widget field-type
+> metadata (`Tx`/`Btn`, `checkBox`/`radioButton`) was unreliable for this
+> specimen (a likely malformed Parent/Kids field hierarchy makes dozens of
+> visually-obvious text boxes report as unflagged `Btn`), so every field's
+> true type was determined from page renders (`pdfjs-dist` + `node-canvas`)
+> cross-checked against the row-grouped text layer, not from the AcroForm's
+> own type metadata — the opposite of what the briefing expected to be more
+> reliable for a genuine AcroForm. Formulary 212 is a single combined
+> declaration spanning many mutually distinct income categories and
+> contribution bases; this v1.0.0 scopes to the single most common profile:
+> an individual with independent-activity income ("activități independente")
+> taxed under the real accounting system ("sistem real," not the flat-rate
+> expense-quota alternative), owing both annual income tax and the CAS
+> (pension) and CASS (health) social contributions, filing as a single
+> individual. Models 71 `fields[]` plus 1 `documents[]` entry (the
+> declaration's own verbatim attestation text): taxpayer identification, the
+> top-of-form section-completed toggles relevant to this profile, the
+> independent-activities business-detail and income/expense worksheet
+> (gated by the form's own Category-of-income and net-income-determination-
+> method selectors via `requiredWhen`, consistent with this registry's
+> `rs/mup` procedure-code-gated precedent — the first documented use of the
+> `all` composite `Condition` in this registry's own `requiredWhen` usage),
+> the CAS worksheet with its own printed income-threshold-bracket gate, the
+> CASS worksheet for independent-activity income, and the declaration/
+> signature block. Explicitly out of scope and disclosed rather than
+> silently dropped: every other income category (IP rights, every rental-
+> income variant, agricultural/forestry/fish-farming income, securities
+> transfers, bond interest, the art.114 "other sources" categories); the
+> flat-rate-expense-quota alternative; income taxed on a fixed norm, tourism-
+> rental income, and agricultural income on a norm; all foreign-sourced
+> income; CASS for non-independent-activity income; Secțiunea 4/5/6's own
+> recomputation (zero-widget, as above); Secțiunea 7/8 (summary/bonus,
+> disclosed as a distinct out-of-scope item, not zero-widget); and the
+> entirety of Capitolul II (the voluntary CASS-opt-in chapter). Two valid
+> conformance fixtures plus 6 mutation-control fixtures (each raising exactly
+> 1 error) are committed under
+> `conformance/ro/anaf/declaratie-unica-activitati-independente/1.0.0/`.
+> **Romania now stands at 1 of 6 verticals**; Passport, DMV, Business
+> Formation, Visa, and National ID & Civic Documents are open, unscreened
+> backlog candidates — not screened this cycle. See GOV-2797 and this
+> schema's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2789, "GovSchema Standard Research"): Sri
 > Lanka's Visa vertical opens (4 of 6)**, via
@@ -9374,7 +9437,27 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (42/46 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (43/47 jurisdictions — 91%)
+
+**Romania opens (1 of 6) via Taxes (GOV-2797)**, via
+`ro/anaf/declaratie-unica-activitati-independente` — ANAF's Formulary 212,
+"Declarație unică privind impozitul pe venit și contribuțiile sociale
+datorate de persoanele fizice." Scoped to the single most common filer
+profile (independent-activity income under the real accounting system,
+owing both income tax and CAS/CASS social contributions); every other income
+category the combined declaration covers (IP rights, rental income in every
+variant, agricultural/forestry/fish-farming income, securities/bond income,
+foreign-sourced income of any kind, the flat-rate-expense-quota alternative,
+and the voluntary-CASS-opt-in chapter) is explicitly disclosed as out of
+scope rather than silently dropped. Models 71 `fields[]` plus 1
+`documents[]` entry. See the Executive Summary's GOV-2797 update above and
+the document's own VERIFICATION.md for the full sourcing record, including a
+correction to this cycle's own pre-authoring briefing (2 pages the briefing
+described as generic "instructions" are actually zero-widget, auto-computed
+tax-recomputation worksheets) and a finding that `pdfjs-dist`'s own
+per-widget field-type metadata was unreliable for this specimen. Romania now
+stands at 1 of 6 verticals; Passport, DMV, Business Formation, Visa, and
+National ID & Civic Documents are open, unscreened backlog candidates.
 
 **Serbia's Taxes vertical advances (3 of 6) (GOV-2767)**, via
 `rs/purs/pp-gpdg-godisnji-porez-na-dohodak-gradjana` — the Tax
@@ -10957,6 +11040,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **RO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -13233,6 +13317,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   is not superseded. **Sri Lanka now stands at 4 of 6 verticals** (Passport,
   National ID, DMV, Visa); Business Formation (provincial-only candidate)
   and Taxes (confirmed e-filing-mandatory dead end) remain open.
+- **Romania — Taxes: authored (GOV-2797).** The independent-activities/
+  real-system Single Declaration above
+  (`ro/anaf/declaratie-unica-activitati-independente`) opened Romania as the
+  50th jurisdiction — see the Executive Summary's GOV-2797 update. Formulary
+  212 is a single combined declaration spanning many other income
+  categories and a voluntary-CASS-opt-in chapter, all left as disclosed,
+  un-screened backlog candidates for a future cycle (IP rights and rental
+  income are likely the next-most-common, after independent activities).
+  Romania's other five verticals (Passport, DMV, Business Formation, Visa,
+  National ID & Civic Documents) are also open, unscreened backlog — not
+  screened this cycle.
 
 ---
 
