@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**46 jurisdictions** | **405 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**46 jurisdictions** | **406 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2703, "GovSchema Standard Research"): Ghana's
+> Passport vertical opens (4 of 6)**, via
+> `gh/mfa/application-for-a-republic-of-ghana-passport` — the Ministry of
+> Foreign Affairs and Regional Integration (MFA) Passport Office's manual
+> application form, citing the Passport and Travel Certificate Decree
+> (NLCD. 155, 1967), distributed as a free download from MFA's own
+> "Passport Manual Forms" page (`mfa.gov.gh/index.php/passport/`) and
+> independently re-fetched this cycle (HTTP 200, `application/pdf`, 248,106
+> bytes, `sha256:
+> e59193adeaf05847042dbd03928f1e7e9bec3b4cf333ee19c048c18e5bb73c9`, matching
+> the issue's own citation exactly). A flat print form: `pdfjs-dist`
+> confirms 0 AcroForm/Widget annotations but a real, fully extractable text
+> layer across all 4 pages, so every field was read via coordinate/
+> text-layout correlation (text items grouped by y-coordinate, ordered by
+> x) rather than an embedded field name. Models the form's 30 numbered
+> items (114 `fields[]`, plus a 3-field header strip): name and any former
+> name, date of birth/gender/physical description, nationality, marital
+> status (free text, no printed options, matching this registry's `gh/gis`
+> precedent for the same jurisdiction), residence address including a
+> GhanaPost GPS Digital Address Code, education, a three-generation
+> evidence-of-citizenship block (father/mother/one grandparent, each with a
+> real `requiredWhen`-gated deceased-last-known-address field), a
+> dual-citizenship declaration, a document-holdings checklist plus an
+> attached-document detail block, two guarantors, the applicant's own
+> declaration (with a `requiredWhen`-gated prior-passport disclosure),
+> parent/guardian consent for minors, a translator block for illiterate
+> applicants, and a mandatory witness section. Also independently
+> re-confirmed the live `mfa.gov.gh/index.php/passport/` page cited in the
+> issue: it describes the manual workflow verbatim (download, pay the
+> processing fee online, receive an SMS Paid Voucher Code, write it on the
+> form, submit at a Passport Application Center), which supplies the only
+> available explanation for the specimen's own unexplained "TRANSACTION
+> NO:" blank (modeled as `paidVoucherCode`) and grounds a `documents[]`
+> payment entry not printed on the PDF itself. Unlike `gh/gis`, this
+> specimen prints no photograph-attachment instruction anywhere across all
+> 4 pages (confirmed in both the extracted text and a full-page render), so
+> no photograph `documents[]` entry is modeled. 4 `documents[]` entries
+> total: citizenship/identity evidence, a police-report requirement gated
+> on the previous passport being reported lost, the processing-fee payment,
+> and the truth-of-particulars attestation. 2 valid conformance fixtures
+> plus 6 mutation-control fixtures (each raising exactly 1 error, including
+> a dedicated `requiredWhen` case) are committed under `conformance/gh/mfa/`.
+> Ghana now stands at 4 of 6 verticals (National ID & Civic Documents,
+> Taxes, Visa, Passport); DMV and Business Formation remain open backlog.
+> See GOV-2703 and this schema's own `VERIFICATION.md` for the full
+> sourcing record.
 
 > **Update (2026-07-13, GOV-2697, "GovSchema Standard Research"): Ghana's
 > Taxes vertical opens**, via `gh/gra/personal-income-tax-return-dt-0103` —
@@ -7436,7 +7483,24 @@
 
 ## By Vertical
 
-### Passport (32/40 jurisdictions — 80%)
+### Passport (33/40 jurisdictions — 83%)
+
+**Ghana's Passport vertical opens (4 of 6) (GOV-2703)**, via
+`gh/mfa/application-for-a-republic-of-ghana-passport` — the Ministry of
+Foreign Affairs and Regional Integration (MFA) Passport Office's manual
+application form (Passport and Travel Certificate Decree, NLCD. 155, 1967),
+independently re-fetched this cycle (HTTP 200, `application/pdf`, 248,106
+bytes, `sha256:
+e59193adeaf05847042dbd03928f1e7e9bec3b4cf333ee19c048c18e5bb73c9`, matching
+the issue's own citation exactly). A flat, non-AcroForm print specimen with
+a real, fully extractable text layer across all 4 pages, read via
+coordinate/text-layout correlation. 114 `fields[]`, 4 `documents[]`. See the
+Executive Summary's GOV-2703 update above and the document's own
+VERIFICATION.md for the full sourcing record, the `requiredWhen`-gated
+evidence-of-citizenship/prior-passport conditionals, and the disclosed
+absence of any photograph requirement on this specimen (unlike `gh/gis`).
+Ghana now stands at 4 of 6 verticals (National ID & Civic Documents, Taxes,
+Visa, Passport); DMV and Business Formation remain open backlog.
 
 **Bangladesh's Passport vertical opens (3 of 6) (GOV-2666)**, via
 `bd/dip/e-passport-application-form` — the Department of Immigration and
@@ -10079,7 +10143,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GH** | 3 | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
+| **GH** | 4 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
