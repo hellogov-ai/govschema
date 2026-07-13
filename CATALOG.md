@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**47 jurisdictions** | **409 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**48 jurisdictions** | **410 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2725, "GovSchema Standard Research"): Serbia
+> opens as the registry's 48th jurisdiction**, via its Business Formation
+> vertical, `rs/apr/jrpps-pr-sole-proprietor-registration` — the Agency for
+> Business Registers' (APR) unified "JRPPS" registration application,
+> sole-proprietor (`preduzetnik`) pathway, 2025 edition. This schema was the
+> Serbia candidate pre-scouted and left open in the GOV-2716 cycle. The live
+> host (`apr.gov.rs`) was found fully down this cycle — 23 consecutive HTTP
+> 500s on the source PDF plus an HTTP 500 on the bare domain root, not
+> merely intermittently flaky as previously observed — so the PDF was
+> instead sourced from three independently-fetched Wayback Machine captures
+> (two replay modes, two snapshot dates from May and September 2025), all
+> byte-identical (`sha256:
+> 0a7ebff903fa896a6b8c3d14f440d087aa7ec341cdb25cfe04b8b04bd0cc69ca`, 412,964
+> bytes). Confirmed genuinely AcroForm-fillable via `pdfjs-dist`: 10 pages,
+> 244 distinct field names (197 anchored to a visible page across 211
+> visible widget entries). All 10 pages were rendered to PNG and visually
+> cross-checked against every widget's rect before modeling, surfacing two
+> disclosed judgment calls: page 1's 11-option register-selection radio
+> group is excluded from `fields[]` since this PR-specific edition's filer
+> always registers in the Register of Business Entities (the other 10
+> options are out-of-scope entity types); and the seat address's house
+> number spans two adjacent widgets with no distinguishing sub-label on this
+> one address block alone (unlike every other combined "Number and letter"
+> block on the form) — the first widget is modelled, the second excluded as
+> an unlabeled structural duplicate. Models 160 `fields[]` plus 7
+> `documents[]` entries (2 `attestation`, each quoting one of the form's own
+> verbatim declaration statements; 1 `identity-document`; 4
+> `supporting-evidence`), including the business-name construction
+> (personal name + `preduzetnik`/`pr` designation + seat place, plus
+> optional fantasy name and up to 4 translations), the seat and postal-
+> receipt addresses, registration duration and activity-start options, a
+> 14-level qualification-code enum, up to 3 joint procurators and up to 3
+> branch operating locations (bounded repeating groups, matching the
+> source's own printed capacity), an optional register annotation
+> (забележба), and the Tax Administration / lump-sum-taxation / VAT-
+> registration sections. 2 valid conformance fixtures (0 errors each) plus 9
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/rs/apr/jrpps-pr-sole-proprietor-registration/1.0.0/`.
+> **Serbia now stands at 1 of 6 verticals**; DMV, Taxes, Visa, National ID,
+> and Passport are open, unscreened backlog candidates. See GOV-2725 and
+> this schema's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2716, "GovSchema Standard Research"): Sri Lanka
 > opens as the registry's 47th jurisdiction**, via its Passport vertical,
@@ -8237,7 +8279,33 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (43/44 jurisdictions — 98%)
+### Business Formation — Incorporation, LLC, Company Registration (44/45 jurisdictions — 98%)
+
+**Serbia opens (1 of 6) via Business Formation (GOV-2725)**, via
+`rs/apr/jrpps-pr-sole-proprietor-registration` — the Agency for Business
+Registers' (APR) unified "JRPPS" registration application, sole-proprietor
+(`preduzetnik`) pathway, 2025 edition. Sourced from a Wayback Machine
+capture (`sha256:
+0a7ebff903fa896a6b8c3d14f440d087aa7ec341cdb25cfe04b8b04bd0cc69ca`, 412,964
+bytes) after the live host (`apr.gov.rs`) was found fully down (23
+consecutive HTTP 500s, including on the bare domain root). Confirmed
+genuinely AcroForm-fillable via `pdfjs-dist`: 10 pages, 244 distinct field
+names (197 anchored to a visible page). 160 `fields[]` + 7 `documents[]`
+entries, covering the business-name construction (personal name +
+`preduzetnik`/`pr` designation + seat place, plus optional fantasy name and
+translations), seat and postal-receipt addresses, registration duration,
+predominant activity, a 14-level qualification-code enum, up to 3 joint
+procurators and up to 3 branch operating locations (bounded repeating
+groups), an optional register annotation, and the Tax
+Administration/lump-sum-taxation/VAT-registration sections. Two disclosed
+judgment calls: page 1's 11-option register-selection radio group is
+excluded (this PR-specific edition always registers in the Register of
+Business Entities); the seat address's house number spans two adjacent
+widgets with no distinguishing sub-label, unique to that one address block
+— the first is modelled, the second excluded as an unlabeled duplicate. 2
+valid plus 9 mutation-control conformance fixtures (each raising exactly 1
+error) passed. **Serbia now stands at 1 of 6 verticals**; DMV, Taxes,
+Visa, National ID, and Passport remain open backlog.
 
 **Ghana's Business Formation vertical opens (4 of 6) (GOV-2704)**, via
 `gh/orc/registration-of-a-subsidiary-business-name` — the Office of the
@@ -10347,6 +10415,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **RS** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -12497,16 +12566,6 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
-- **Serbia — Business Formation.** APR's (Agencija za privredne registre)
-  "JRPPS" Unified Registration Application for Establishment of Legal
-  Entities (2025 edition, sole-proprietor/`preduzetnik` pathway),
-  `apr.gov.rs/upload/Portals/0/preduzetnici/2025/JRPPS_PR___Osnivanje_2025_T.pdf`.
-  Genuinely AcroForm-fillable (150+ named fields, confirmed via `pdfjs-dist`
-  this cycle), but the host is intermittently flaky (returns HTTP 500 on
-  some fetch attempts; a retry loop reliably gets HTTP 200). Screened
-  alongside Sri Lanka and Jordan in the GOV-2716 cycle; not selected only
-  because Sri Lanka's candidate was a cleaner AcroForm on a more reliable
-  host. Ready to author in a future cycle.
 - **Jordan — Taxes.** ISTD's (Income and Sales Tax Department) "PIT Return /
   Employee (natural person)" form (HADEEL 3785 / QP170-F11),
   `istd.gov.jo/ebv4.0/root_storage/en/eb_list_page/tax_returns_(natural_person_-_employee).pdf`.
