@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**49 jurisdictions** | **415 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**49 jurisdictions** | **416 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-13, GOV-2767, "GovSchema Standard Research"): Serbia's
+> Taxes vertical advances (3 of 6)**, via
+> `rs/purs/pp-gpdg-godisnji-porez-na-dohodak-gradjana`, the Tax
+> Administration's (Пореска управа) "Пореска пријава о обрачунатом
+> годишњем порезу на доходак грађана" (Tax return on calculated annual
+> personal income tax of citizens), Form ПП ГПДГ (PP GPDG). This is a
+> disclosed substitution: GOV-2760's own screening pass had left open
+> **PPDG-2R** as the strongest Taxes candidate, and this cycle independently
+> re-confirmed PPDG-2R is still live (`purs.gov.rs`, HTTP 200,
+> `application/pdf`, 254,833 bytes, `sha256:
+> 888aa229a8cd09338055703ada3e195db931ac72e2db4e4ac5ccd4d80ba5be90`) — but
+> found it stale: PPDG-2R governs the pre-2022 "by decision" (по решењу)
+> assessment process, retired starting with the tax calculated for the 2022
+> tax year in favor of a self-assessment (самоопорезивање) system filed
+> exclusively electronically on Form PP GPDG. PP GPDG has no static
+> downloadable blank-form PDF (it lives entirely inside the e-Porezi
+> portal), so this schema is sourced instead from the Tax Administration's
+> own official user-instructions PDF (fetched directly and unauthenticated
+> from `purs.gov.rs`, HTTP 200, `application/pdf`, 1,185,205 bytes, `sha256:
+> 6a453bedd83074b9718858fe609a3e1ff1e075f8348e0bce86f4436aef12cf70`),
+> including two of its embedded portal screenshots rendered via `pdfjs-dist`
+> + `node-canvas` and visually cross-checked against the surrounding
+> instructional text. Models 107 `fields[]` plus 3 `documents[]` entries:
+> filing metadata (type of filing, tax year, and — only for amended/
+> reversed filings — an amendment-type code with a `requiredWhen`-linked
+> filing-identifier companion); taxpayer identification and address;
+> dependent family members (a bounded 6-slot repeating group standing in
+> for the source's own dynamic, up-to-20-entry list); a 3.1-3.20 taxable-
+> income worksheet (withheld-at-source wages, self-employment income,
+> income by Tax Administration decision, self-assessed income, foreign-
+> taxed income, the under-40 additional reduction, personal deductions, and
+> the two-bracket 10%/15% tax calculation); a supporting-evidence list; and
+> a free-text taxpayer note. 2 valid conformance fixtures (0 errors each)
+> plus 8 mutation-control fixtures (each raising exactly 1 error) are
+> committed under
+> `conformance/rs/purs/pp-gpdg-godisnji-porez-na-dohodak-gradjana/1.0.0/`.
+> **Serbia now stands at 3 of 6 verticals** (Business Formation, Visa,
+> Taxes); DMV, National ID, and Passport remain open, unscreened-this-cycle
+> backlog candidates. See GOV-2767 and this schema's own VERIFICATION.md
+> for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2760, "GovSchema Standard Research"): Serbia's
 > Visa vertical opens (2 of 6)**, via `rs/mfa/visa-application`, the
@@ -9141,7 +9182,25 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (41/46 jurisdictions — 89%)
+### Taxes — Income Tax Return, Tax Filing (42/46 jurisdictions — 91%)
+
+**Serbia's Taxes vertical advances (3 of 6) (GOV-2767)**, via
+`rs/purs/pp-gpdg-godisnji-porez-na-dohodak-gradjana` — the Tax
+Administration's "Пореска пријава о обрачунатом годишњем порезу на
+доходак грађана," Form ПП ГПДГ (PP GPDG). A disclosed substitution for the
+pre-scouted PPDG-2R candidate (re-confirmed live but found to govern only
+the retired pre-2022 decision-based assessment process); PP GPDG is filed
+exclusively electronically and has no static blank-form PDF, so this
+schema is sourced from the Tax Administration's own official
+user-instructions PDF, including two of its embedded portal screenshots
+rendered and visually cross-checked. Models 107 `fields[]` plus 3
+`documents[]` entries: filing metadata, taxpayer identification/address, a
+bounded 6-slot dependents group, a 3.1-3.20 taxable-income worksheet, a
+supporting-evidence list, and a free-text note. See the Executive
+Summary's GOV-2767 update above and the document's own VERIFICATION.md for
+the full sourcing record. Serbia now stands at 3 of 6 verticals (Business
+Formation, Visa, Taxes); DMV, National ID, and Passport remain open
+backlog candidates.
 
 **Ghana's Taxes vertical opens (GOV-2697)**
 (`gh/gra/personal-income-tax-return-dt-0103`) — the Ghana Revenue
@@ -10684,7 +10743,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RS** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
+| **RS** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -12907,6 +12966,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   open backlog candidates, with Taxes (PPDG-2R, `purs.gov.rs`, re-confirmed
   live this cycle) the strongest pre-identified candidate for a future
   cycle.
+- **Serbia — Taxes: authored (GOV-2767), advances to 3 of 6.**
+  `rs/purs/pp-gpdg-godisnji-porez-na-dohodak-gradjana` advanced Serbia's
+  Taxes vertical — see the Executive Summary's GOV-2767 update. This
+  supersedes the GOV-2760 cycle's open-backlog note naming PPDG-2R as the
+  strongest Taxes candidate: PPDG-2R was independently re-confirmed live
+  but found to govern only the pre-2022 "by decision" assessment process,
+  retired in favor of the self-assessment Form PP GPDG — a disclosed
+  substitution, not a silent departure from the pre-scouted lead. PP GPDG
+  is filed exclusively electronically with no static blank-form PDF, so
+  this schema is sourced from the Tax Administration's own official
+  user-instructions PDF instead. **Serbia now stands at 3 of 6 verticals**
+  (Business Formation, Visa, Taxes); DMV, National ID, and Passport remain
+  open, unscreened-this-cycle backlog candidates for a future cycle.
 
 ---
 
