@@ -29,12 +29,13 @@ Taxes-vertical schema.
   (Akamai-gated), consistent with this registry's established pattern for
   Greek government hosts and with this schema's Ε1/Ε2 companions' own
   VERIFICATION.md records.
-- **CDX lookup, this cycle:** a fresh `http://web.archive.org/cdx/search/cdx`
-  query for each of the four source URLs below returned the expected
-  snapshot(s), confirming the URLs and timestamps used this cycle resolve to
-  the live Wayback index rather than being guessed or copied verbatim from
-  GOV-2644's own prior scouting notes (which had located the candidate but
-  had not authored it).
+- **CDX lookup, this cycle:** a fresh
+  `http://web.archive.org/cdx/search/cdx?url=aade.gr/sites/default/files/2026-03/entypoE3_fe_2025.pdf&output=json`
+  query (and the equivalent query for each of the other three source URLs
+  below) returned the expected snapshot(s), confirming the URLs and
+  timestamps used this cycle resolve to the live Wayback index rather than
+  being guessed or copied verbatim from GOV-2644's own prior scouting notes
+  (which had located the candidate but had not authored it).
 - **Form Ε3 specimen** — source used (Wayback Machine mirror):
   `http://web.archive.org/web/20260419181557/https://www.aade.gr/sites/default/files/2026-03/entypoE3_fe_2025.pdf`
   — independently re-fetched this session via `curl`: **HTTP 200**,
