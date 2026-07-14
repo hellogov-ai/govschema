@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **439 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **440 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2939, "GovSchema Standard Research"): North
+> Macedonia's Passport vertical advances (2 of 6)**, via
+> `mk/mvr/baranje-za-izdavanje-pasosh` — the Министерство за внатрешни
+> работи's (МВР, Ministry of Internal Affairs) "Барање за издавање пасош,
+> Тип-А" (Application for issuance of a passport, Type A), Прилог бр. 7 of
+> the ministry's own Граѓански постапки (Civil Procedures) forms page.
+> Independently re-fetched directly from `portal.mdt.gov.mk` (HTTP 200,
+> `application/pdf`, 1,440,598 bytes, sha256
+> `09e4cf57ee51fc452c60d7317964c2c180d10788a2c0fe0f8590c59608a2d75c`,
+> matching the task brief's own claim exactly), a genuine 2-page print-and-
+> lodge specimen confirmed via `pdfjs-dist`: zero AcroForm widgets, and font
+> subsetting with no ToUnicode CMap making raw text extraction unusably
+> glyph-garbled, so this cycle independently rendered both pages to PNG
+> images (`pdfjs-dist@3` + `node-canvas`) for a full visual field-by-field
+> read. Models the applicant's selected reason for the application (one of
+> seven grounds), three independent minority-language processing-preference
+> requests, the applicant's identity and family data, an optional two-row
+> parent/guardian consent block, prior-passport data, the requested
+> processing tier, and the form's own attachment checklist and
+> personal-data-use consent as `documents[]` entries (two of which carry
+> `requiredWhen` conditions tied to the selected reason). A near-identical
+> Type B bilingual (Macedonian/Albanian) variant of this same form was also
+> found and independently re-verified, but is disclosed as a distinct,
+> out-of-scope candidate rather than modelled here. North Macedonia now
+> stands at 2 of 6 verticals (Taxes, Passport); Visa was confirmed a dead
+> end this same GOV-2937 cycle. See
+> `mk/mvr/baranje-za-izdavanje-pasosh`'s own VERIFICATION.md for the full
+> sourcing record, the Type A/Type B disambiguation, the conformance-fixture
+> results, and every other disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2928, "GovSchema Standard Research"): Slovenia's
 > National ID & Civic Documents vertical opens (4 of 6)**, via
@@ -8769,7 +8799,24 @@
 
 ## By Vertical
 
-### Passport (38/41 jurisdictions — 93%)
+### Passport (39/42 jurisdictions — 93%)
+
+**North Macedonia's Passport vertical advances (2 of 6) (GOV-2939)**, via
+`mk/mvr/baranje-za-izdavanje-pasosh` — МВР's "Барање за издавање пасош,
+Тип-А", a print-and-lodge specimen (zero AcroForm widgets, glyph-garbled
+text layer, verified instead via rendered-page-image visual read). See the
+Executive Summary's GOV-2939 update above and the document's own
+VERIFICATION.md for the full sourcing record, the Type A/Type B
+disambiguation (a bilingual Macedonian/Albanian Type B variant exists and
+was independently re-verified but is disclosed as out-of-scope, not
+modelled), and every other disclosed judgment call. North Macedonia is a
+newly-added denominator entry here — it opened as the registry's 54th
+jurisdiction this same day via Taxes (GOV-2919) and its Passport candidate
+was only confirmed genuine, not dead-end, by the same-day GOV-2937 cycle's
+screening — so this is the first cycle counting North Macedonia at all for
+this vertical, opened the same cycle it is added, keeping global Passport
+coverage at 93% (39/42). North Macedonia now stands at 2 of 6 verticals
+(Taxes, Passport); Visa was confirmed a dead end this same cycle.
 
 **Slovenia's Passport vertical opens (2 of 6) (GOV-2927)**, via
 `si/mzez/vloga-za-pridobitev-potnega-lista` — MZEZ's consular passport
@@ -12028,7 +12075,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
-| **MK** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **MK** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
