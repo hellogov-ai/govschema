@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **440 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **441 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2940, "GovSchema Standard Research"): North
+> Macedonia's DMV vertical opens (1 of 6)**, via
+> `mk/mvr/baranje-za-izdavanje-na-vozacka-dozvola` — the Ministry of Internal
+> Affairs's (Министерство за внатрешни работи, МВР) universal driving-licence
+> request form (Прилог бр. 2, БАРАЊЕ ЗА ИЗДАВАЊЕ НА ВОЗАЧКА ДОЗВОЛА), which
+> covers eleven distinct procedures (first-time issuance, foreign-licence
+> exchange, expiry/loss/name/category/residence replacement, duplicate
+> issuance, health-restriction/driving-ban recording, and validity
+> extension) via a single reason code rather than separate forms.
+> Independently re-fetched directly from `portal.mdt.gov.mk` (HTTP 200,
+> `application/pdf`, 1,716,897 bytes, sha256
+> `6cc5484a461065ea5a4c20d9960ef7ca125019429ac14bf7596d3ee3f9bf471a`,
+> matching the GOV-2937 scouting cycle's own claim exactly), a genuine
+> print-and-fill PDF (0 AcroForm widgets) confirmed via `pdfjs-dist`, whose
+> text layer's ToUnicode/CID mapping is broken — every field on this schema
+> was instead read from a 3x-scale `node-canvas` render of each page. Two
+> inaccuracies in the GOV-2937 scouting note's own field-content guesses
+> (a 7-item vs. the actual 11-item procedure-reason list, and "Albanian"
+> vs. the actual "Vlach" transliteration-language checkbox) were caught on
+> independent re-verification and corrected. Models the 11-code procedure
+> reason, the applicant's identity/residence block and five independent
+> name-transliteration-language checkboxes, the regular/urgent procedure
+> choice, the previous-licence reference fields (completed by the receiving
+> official), the 12-item required-attachment checklist with its
+> per-procedure conditional requirements, and the ex-officio-data-use
+> consent. Opens North Macedonia's DMV vertical (1 of 6); combined with the
+> concurrently-merged GOV-2939 Passport schema and the existing `mk/ujp`
+> Taxes schema, North Macedonia now stands at 3 of 6 verticals (Taxes,
+> Passport, DMV). See
+> `mk/mvr/baranje-za-izdavanje-na-vozacka-dozvola`'s own VERIFICATION.md for
+> the full sourcing record, the two corrections to the scouting note, and
+> every other disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2939, "GovSchema Standard Research"): North
 > Macedonia's Passport vertical advances (2 of 6)**, via
@@ -29,9 +62,10 @@
 > `requiredWhen` conditions tied to the selected reason). A near-identical
 > Type B bilingual (Macedonian/Albanian) variant of this same form was also
 > found and independently re-verified, but is disclosed as a distinct,
-> out-of-scope candidate rather than modelled here. North Macedonia now
-> stands at 2 of 6 verticals (Taxes, Passport); Visa was confirmed a dead
-> end this same GOV-2937 cycle. See
+> out-of-scope candidate rather than modelled here. Combined with the
+> concurrently-merged GOV-2940 DMV schema and the existing `mk/ujp` Taxes
+> schema, North Macedonia now stands at 3 of 6 verticals (Taxes, Passport,
+> DMV); Visa was confirmed a dead end this same GOV-2937 cycle. See
 > `mk/mvr/baranje-za-izdavanje-pasosh`'s own VERIFICATION.md for the full
 > sourcing record, the Type A/Type B disambiguation, the conformance-fixture
 > results, and every other disclosed judgment call.
@@ -8815,8 +8849,9 @@ jurisdiction this same day via Taxes (GOV-2919) and its Passport candidate
 was only confirmed genuine, not dead-end, by the same-day GOV-2937 cycle's
 screening — so this is the first cycle counting North Macedonia at all for
 this vertical, opened the same cycle it is added, keeping global Passport
-coverage at 93% (39/42). North Macedonia now stands at 2 of 6 verticals
-(Taxes, Passport); Visa was confirmed a dead end this same cycle.
+coverage at 93% (39/42). Combined with the concurrently-merged GOV-2940 DMV
+schema, North Macedonia now stands at 3 of 6 verticals (Taxes, Passport,
+DMV); Visa was confirmed a dead end this same cycle.
 
 **Slovenia's Passport vertical opens (2 of 6) (GOV-2927)**, via
 `si/mzez/vloga-za-pridobitev-potnega-lista` — MZEZ's consular passport
@@ -9159,6 +9194,23 @@ judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (43/43 jurisdictions — 100%)
+
+**North Macedonia's DMV vertical opens (1 of 6) (GOV-2940)**, via
+`mk/mvr/baranje-za-izdavanje-na-vozacka-dozvola` — МВР's universal
+driving-licence request form (Прилог бр. 2), covering eleven procedures
+(first-time issuance through validity extension) via a single reason code.
+See the Executive Summary's GOV-2940 update above and the document's own
+VERIFICATION.md for the full sourcing record, the coordinate-correlation
+method (the source's text layer has a broken ToUnicode/CID mapping, the
+same gotcha as the GOV-2937/GOV-2939 passport sibling), the two corrections
+to the GOV-2937 scouting note's own field-content guesses, and every other
+disclosed judgment call. North Macedonia is a newly-added denominator entry
+here — it did not exist as a jurisdiction when this section's `43/43`
+fraction was last computed, so that fraction predates this addition and was
+not recomputed as part of this cycle (this cycle's scope was authoring the
+North Macedonia candidate, not a full-registry DMV-vertical recount),
+following the same disclosed-staleness convention used for North
+Macedonia's Taxes-vertical entry (GOV-2919) below.
 
 **Bulgaria's DMV vertical opens (3 of 6) (GOV-2853)**, via
 `bg/mvr/zayavlenie-za-izdavane-na-svidetelstvo-za-upravlenie-na-mps` — MVR's
@@ -12075,7 +12127,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
-| **MK** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **MK** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
