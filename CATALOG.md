@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **439 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **440 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2940, "GovSchema Standard Research"): North
+> Macedonia's DMV vertical opens (1 of 6)**, via
+> `mk/mvr/baranje-za-izdavanje-na-vozacka-dozvola` — the Ministry of Internal
+> Affairs's (Министерство за внатрешни работи, МВР) universal driving-licence
+> request form (Прилог бр. 2, БАРАЊЕ ЗА ИЗДАВАЊЕ НА ВОЗАЧКА ДОЗВОЛА), which
+> covers eleven distinct procedures (first-time issuance, foreign-licence
+> exchange, expiry/loss/name/category/residence replacement, duplicate
+> issuance, health-restriction/driving-ban recording, and validity
+> extension) via a single reason code rather than separate forms.
+> Independently re-fetched directly from `portal.mdt.gov.mk` (HTTP 200,
+> `application/pdf`, 1,716,897 bytes, sha256
+> `6cc5484a461065ea5a4c20d9960ef7ca125019429ac14bf7596d3ee3f9bf471a`,
+> matching the GOV-2937 scouting cycle's own claim exactly), a genuine
+> print-and-fill PDF (0 AcroForm widgets) confirmed via `pdfjs-dist`, whose
+> text layer's ToUnicode/CID mapping is broken — every field on this schema
+> was instead read from a 3x-scale `node-canvas` render of each page. Two
+> inaccuracies in the GOV-2937 scouting note's own field-content guesses
+> (a 7-item vs. the actual 11-item procedure-reason list, and "Albanian"
+> vs. the actual "Vlach" transliteration-language checkbox) were caught on
+> independent re-verification and corrected. Models the 11-code procedure
+> reason, the applicant's identity/residence block and five independent
+> name-transliteration-language checkboxes, the regular/urgent procedure
+> choice, the previous-licence reference fields (completed by the receiving
+> official), the 12-item required-attachment checklist with its
+> per-procedure conditional requirements, and the ex-officio-data-use
+> consent. Opens North Macedonia's DMV vertical (1 of 6); combined with the
+> existing `mk/ujp` Taxes schema, North Macedonia now stands at 2 of 6
+> verticals. See
+> `mk/mvr/baranje-za-izdavanje-na-vozacka-dozvola`'s own VERIFICATION.md for
+> the full sourcing record, the two corrections to the scouting note, and
+> every other disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2928, "GovSchema Standard Research"): Slovenia's
 > National ID & Civic Documents vertical opens (4 of 6)**, via
@@ -9113,6 +9145,23 @@ dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (43/43 jurisdictions — 100%)
 
+**North Macedonia's DMV vertical opens (1 of 6) (GOV-2940)**, via
+`mk/mvr/baranje-za-izdavanje-na-vozacka-dozvola` — МВР's universal
+driving-licence request form (Прилог бр. 2), covering eleven procedures
+(first-time issuance through validity extension) via a single reason code.
+See the Executive Summary's GOV-2940 update above and the document's own
+VERIFICATION.md for the full sourcing record, the coordinate-correlation
+method (the source's text layer has a broken ToUnicode/CID mapping, the
+same gotcha as the GOV-2937/GOV-2939 passport sibling), the two corrections
+to the GOV-2937 scouting note's own field-content guesses, and every other
+disclosed judgment call. North Macedonia is a newly-added denominator entry
+here — it did not exist as a jurisdiction when this section's `43/43`
+fraction was last computed, so that fraction predates this addition and was
+not recomputed as part of this cycle (this cycle's scope was authoring the
+North Macedonia candidate, not a full-registry DMV-vertical recount),
+following the same disclosed-staleness convention used for North
+Macedonia's Taxes-vertical entry (GOV-2919) below.
+
 **Bulgaria's DMV vertical opens (3 of 6) (GOV-2853)**, via
 `bg/mvr/zayavlenie-za-izdavane-na-svidetelstvo-za-upravlenie-na-mps` — MVR's
 (Ministerstvo na vatreshnite raboti, Bulgaria's Ministry of Interior)
@@ -12028,7 +12077,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
-| **MK** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **MK** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
