@@ -1,0 +1,817 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mk/ujp/danochna-prijava-na-danokot-na-dodadena-vrednost",
+  "version": "1.0.0",
+  "title": "North Macedonia VAT Return (Обр. ДДВ-04)",
+  "description": "The Public Revenue Office's (Управа за јавни приходи, УЈП) periodic VAT return, Обр. ДДВ-04 (Даночна пријава на данокот на додадена вредност) — the recurring return VAT-registered taxpayers, and certain unregistered tax debtors under чл.32 of the VAT Law (ЗДДВ), file to declare output VAT on supplies made and input VAT deductible on supplies/imports received for a given tax period. Opens North Macedonia as the registry's 54th jurisdiction, via the Taxes vertical. The source is a genuine, unauthenticated, first-party AcroForm PDF distributed directly from the Public Revenue Office's own document host (ujp.gov.mk), confirmed via both a raw byte scan and independent pdfjs-dist field extraction. This v1.0.0 models the return's full output-VAT computation (§ПРОМЕТ НА ДОБРА И УСЛУГИ, fields 01-20: general/reduced-rate supplies, exports, exempt supplies, reverse-charge supplies performed and received, and the output-VAT total), the full input-VAT computation (§ВЛЕЗНИ ИСПОЛНУВАЊА СО ПРАВО НА ОДБИВКА, fields 21-32: ordinary input supplies, reverse-charge input supplies, imports, the deductible-input-tax total, other adjustments, the net tax due/credit result, and the credit-assignment option), the return's header identification and tax-period fields, the correction (Исправка) flag and its companion tax-period reference, the two attachment-report flags for reverse-charge supply/receipt reporting obligations under чл.41-б, and the preparer/signatory identification block. It also models the return's one-time, first-tax-period-only pre-registration input-VAT schedule (ДДВ содржан во залихи на добра наменети за натамошна продажба пред регистрација за целите на ДДВ) as a bounded repeating group capped at 5 of the paper form's own 21 numbered invoice rows (see VERIFICATION.md for the disclosed cap rationale). The underlying AcroForm field tree contains 181 named nodes, but only 161 of them are terminal (leaf) fields with an actual fillable widget; the remaining 20 are non-terminal field-tree parent/organizational nodes with no widget of their own (see VERIFICATION.md 'Field inventory' for the reconciliation). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of North Macedonia or the Public Revenue Office.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Управа за јавни приходи",
+    "abbreviation": "УЈП",
+    "url": "https://www.ujp.gov.mk",
+    "operatedBy": {
+      "name": "Министерство за финансии",
+      "abbreviation": "МФ",
+      "url": "https://finance.gov.mk",
+      "basis": "Закон за данокот на додадена вредност (ЗДДВ) — the form's own instructions and field-level notes cite it repeatedly by abbreviation (e.g. чл.2 и 14, чл.32, чл.32-а, чл.32 точка 4 и 5, чл.41-б, чл.53 став 10, чл.55 став 1 и 2, чл.37), establishing VAT liability, the reverse-charge regime, and the return-filing obligation. The form itself (Обр. ДДВ-04) was published in „Службен весник на РСМ“ (Official Gazette of the Republic of North Macedonia) бр.79/22 and has applied since 30.03.2022, per the form's own footer citation."
+    }
+  },
+  "process": {
+    "type": "filing",
+    "language": "mk-MK"
+  },
+  "source": {
+    "url": "https://www.ujp.gov.mk/files/attachment/0000/0967/sl.79_DDV-04_30.03.2022.pdf",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "Обр. ДДВ-04 — Даночна пријава на данокот на додадена вредност (VAT Return), Службен весник на РСМ бр.79/22"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle (GOV-2919, following the GOV-2916 research cycle that verified this candidate). Opens North Macedonia as the registry's 54th jurisdiction, via the Taxes vertical. Обр. ДДВ-04 was independently re-fetched this cycle directly from ujp.gov.mk (HTTP 200, application/pdf, 346,155 bytes, sha256 2106f99bd113f9599b116f249cd7bef1a7408955b367c5396e046b2882ea3f0e — matching the candidate-verification cycle's own independently-derived hash) and independently re-extracted with pdfjs-dist (legacy/build/pdf.js): 4 pages, a genuine AcroForm with 181 named field-tree nodes across getFieldObjects(), of which 161 are terminal/leaf fields carrying an actual Widget annotation (confirmed via page.getAnnotations({intent:'display'}) on every page) and 20 are non-terminal field-tree parent nodes with no widget of their own (used purely for AcroForm field-name hierarchy, e.g. a shared 'row 18' extension chain '23.18' -> '23.18.1' -> '23.18.1.1' whose actual fillable widgets are named '23.18.0', '23.18.1.0', '23.18.1.1.0', '23.18.1.1.1'). See VERIFICATION.md for the full field inventory and reconciliation of the 161 leaf fields against this schema's 81 modelled fields."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxIdentificationPrefix",
+      "label": "Даночен идентификациски број (прв дел)",
+      "type": "string",
+      "description": "The first, narrow box of the return's Tax Identification Number field. Per the form's own instructional note, taxpayers registered for VAT purposes enter the designation 'MK' here; taxpayers filing only as an unregistered tax debtor under чл.32 точки 3 и 4 ЗДДВ may leave it blank.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 1",
+      "validation": {
+        "maxLength": 2
+      }
+    },
+    {
+      "name": "taxIdentificationNumber",
+      "label": "Даночен идентификациски број",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's tax identification number (the wide box of the header's Tax Identification Number field), identifying who is filing this VAT return.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 2",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "businessNameAndAddress",
+      "label": "Скратен назив и адреса на вистинско седиште за контакт",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's short business name and the address of its actual registered seat, used for contact purposes.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 3",
+      "classification": "pii"
+    },
+    {
+      "name": "phone",
+      "label": "Телефон",
+      "type": "string",
+      "description": "Contact phone number.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 4",
+      "classification": "pii"
+    },
+    {
+      "name": "email",
+      "label": "е-пошта",
+      "type": "string",
+      "description": "Contact email address.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 5",
+      "classification": "pii"
+    },
+    {
+      "name": "taxPeriodFrom",
+      "label": "Даночен период од",
+      "type": "date",
+      "required": true,
+      "description": "Start date of the tax period this VAT return covers.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 6"
+    },
+    {
+      "name": "taxPeriodTo",
+      "label": "Даночен период до",
+      "type": "date",
+      "required": true,
+      "description": "End date of the tax period this VAT return covers.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 8"
+    },
+    {
+      "name": "submissionDeadline",
+      "label": "Рок за поднесување",
+      "type": "date",
+      "description": "The statutory deadline for submitting this return — 25 days after the end of the relevant tax period, per the form's own instructions ('ДДВ-пријавата се поднесува во рок од 25 дена по истекот на соодветниот даночен период').",
+      "sourceRef": "ДДВ-04 p.1, header, поле 9"
+    },
+    {
+      "name": "isCorrection",
+      "label": "Исправка на ДДВ-04",
+      "type": "boolean",
+      "description": "Whether this filing is a correction (исправка) of a previously submitted VAT return for the same tax period, replacing it with fully restated amounts rather than reporting only the differences.",
+      "sourceRef": "ДДВ-04 p.1, header, поле 15"
+    },
+    {
+      "name": "correctedTaxPeriod",
+      "label": "Исправка на ДДВ-04, Број / даночен период",
+      "type": "string",
+      "requiredWhen": {
+        "field": "isCorrection",
+        "equals": true
+      },
+      "description": "The tax period being corrected, required by the form's own instructions when isCorrection is marked ('означете го полето ... и наведете го даночниот период за кој се врши исправката').",
+      "sourceRef": "ДДВ-04 p.1, header, поле 13"
+    },
+    {
+      "name": "outputGeneralRateBase",
+      "label": "Оданочив промет по општа даночна стапка — Даночна основа без ДДВ",
+      "type": "number",
+      "description": "Поле 01 — total taxable supply of goods and services (excluding VAT) taxed at the general (standard) VAT rate.",
+      "sourceRef": "ДДВ-04 p.1, поле 01",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outputGeneralRateVat",
+      "label": "Оданочив промет по општа даночна стапка — ДДВ",
+      "type": "number",
+      "description": "Поле 02 — VAT attributable to the taxable supply of goods and services at the general (standard) rate.",
+      "sourceRef": "ДДВ-04 p.1, поле 02",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outputReducedRate10Base",
+      "label": "Оданочив промет по повластена даночна стапка од 10% — Даночна основа без ДДВ",
+      "type": "number",
+      "description": "Поле 03 — total taxable supply of goods and services (excluding VAT) taxed at the preferential 10% VAT rate.",
+      "sourceRef": "ДДВ-04 p.1, поле 03",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outputReducedRate10Vat",
+      "label": "Оданочив промет по повластена даночна стапка од 10% — ДДВ",
+      "type": "number",
+      "description": "Поле 04 — VAT attributable to the taxable supply of goods and services at the preferential 10% rate.",
+      "sourceRef": "ДДВ-04 p.1, поле 04",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outputReducedRate5Base",
+      "label": "Оданочив промет по повластена стапка од 5% — Даночна основа без ДДВ",
+      "type": "number",
+      "description": "Поле 05 — total taxable supply of goods and services (excluding VAT) taxed at the preferential 5% VAT rate.",
+      "sourceRef": "ДДВ-04 p.1, поле 05",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outputReducedRate5Vat",
+      "label": "Оданочив промет по повластена стапка од 5% — ДДВ",
+      "type": "number",
+      "description": "Поле 06 — VAT attributable to the taxable supply of goods and services at the preferential 5% rate.",
+      "sourceRef": "ДДВ-04 p.1, поле 06",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "exportsBase",
+      "label": "Извоз",
+      "type": "number",
+      "description": "Поле 07 — value of exports (zero-rated, no separate VAT amount box).",
+      "sourceRef": "ДДВ-04 p.1, поле 07",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "exemptWithCreditBase",
+      "label": "Промет ослободен од данок со право на одбивка на претходен данок",
+      "type": "number",
+      "description": "Поле 08 — value of supply exempt from tax, with the right to deduct prior (input) tax.",
+      "sourceRef": "ДДВ-04 p.1, поле 08",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "exemptWithoutCreditBase",
+      "label": "Промет ослободен од данок без право на одбивка на претходен данок",
+      "type": "number",
+      "description": "Поле 09 — value of supply exempt from tax, without the right to deduct prior (input) tax.",
+      "sourceRef": "ДДВ-04 p.1, поле 09",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonResidentNonTaxableSupplyBase",
+      "label": "Промет извршен спрема даночни обврзници кои немаат седиште во земјата, кој не е предмет на оданочување во земјата",
+      "type": "number",
+      "description": "Поле 10 — value of supply performed towards taxpayers without a seat in the country that is not subject to VAT taxation in the country under чл.2 и 14 ЗДДВ. Filled in by the party performing the supply.",
+      "sourceRef": "ДДВ-04 p.1, поле 10",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "domesticReverseChargeSupplyPerformedBase",
+      "label": "Промет во земјата за кој данокот го пресметува примателот на прометот (пренесување на даночна обврска согласно член 32-а)",
+      "type": "number",
+      "description": "Поле 11 — value of domestic supply for which the tax is calculated by the recipient (reverse-charge transfer of the tax obligation under чл.32-а). Filled in by the party performing the supply, who additionally must submit the 'Report on supplies performed' as an attachment (see attachmentReportSuppliesPerformed).",
+      "sourceRef": "ДДВ-04 p.1, поле 11",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "receivedNonResidentSupplyGeneralRateBase",
+      "label": "Примен промет извршен од страна на даночни обврзници кои немаат седиште во земјата по општа даночна стапка — Даночна основа",
+      "type": "number",
+      "description": "Поле 12 — value of supply received from taxpayers without a seat in the country, taxed at the general rate, for which the tax is calculated by the recipient under чл.32 точка 4 и 5 ЗДДВ. Filled in by the recipient of the supply.",
+      "sourceRef": "ДДВ-04 p.1, поле 12",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "receivedNonResidentSupplyGeneralRateVat",
+      "label": "Примен промет извршен од страна на даночни обврзници кои немаат седиште во земјата по општа даночна стапка — ДДВ",
+      "type": "number",
+      "description": "Поле 13 — VAT calculated by the recipient on supply received from taxpayers without a seat in the country, at the general rate, under чл.32 точка 4 и 5 ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 13",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "receivedNonResidentSupplyReducedRateBase",
+      "label": "Примен промет извршен од страна на даночни обврзници кои немаат седиште во земјата по повластена даночна стапка — Даночна основа",
+      "type": "number",
+      "description": "Поле 14 — value of supply received from taxpayers without a seat in the country, taxed at a preferential rate, for which the tax is calculated by the recipient under чл.32 точка 4 и 5 ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 14",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "receivedNonResidentSupplyReducedRateVat",
+      "label": "Примен промет извршен од страна на даночни обврзници кои немаат седиште во земјата по повластена даночна стапка — ДДВ",
+      "type": "number",
+      "description": "Поле 15 — VAT calculated by the recipient on supply received from taxpayers without a seat in the country, at a preferential rate, under чл.32 точка 4 и 5 ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 15",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "domesticReverseChargeReceivedGeneralRateBase",
+      "label": "Примен промет во земјата за кој данокот го пресметува примателот на прометот по општа даночна стапка (член 32-а) — Даночна основа",
+      "type": "number",
+      "description": "Поле 16 — value of domestic supply received, taxed at the general rate, for which the tax is calculated by the recipient under чл.32-а ЗДДВ. Filled in by the recipient of the supply.",
+      "sourceRef": "ДДВ-04 p.1, поле 16",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "domesticReverseChargeReceivedGeneralRateVat",
+      "label": "Примен промет во земјата за кој данокот го пресметува примателот на прометот по општа даночна стапка (член 32-а) — ДДВ",
+      "type": "number",
+      "description": "Поле 17 — VAT calculated by the recipient on domestic supply received at the general rate, under чл.32-а ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 17",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "domesticReverseChargeReceivedReducedRateBase",
+      "label": "Примен промет во земјата за кој данокот го пресметува примателот на прометот по повластена даночна стапка (член 32-а) — Даночна основа",
+      "type": "number",
+      "description": "Поле 18 — value of domestic supply received, taxed at a preferential rate, for which the tax is calculated by the recipient under чл.32-а ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 18",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "domesticReverseChargeReceivedReducedRateVat",
+      "label": "Примен промет во земјата за кој данокот го пресметува примателот на прометот по повластена даночна стапка (член 32-а) — ДДВ",
+      "type": "number",
+      "description": "Поле 19 — VAT calculated by the recipient on domestic supply received at a preferential rate, under чл.32-а ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 19",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalOutputVat",
+      "label": "Вкупен ДДВ (02+04+06+13+15+17+19)",
+      "type": "number",
+      "description": "Поле 20 — total output VAT: the sum of outputGeneralRateVat, outputReducedRate10Vat, outputReducedRate5Vat, receivedNonResidentSupplyGeneralRateVat, receivedNonResidentSupplyReducedRateVat, domesticReverseChargeReceivedGeneralRateVat, and domesticReverseChargeReceivedReducedRateVat. This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "ДДВ-04 p.1, поле 20",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inputSupplyBase",
+      "label": "Влезен промет — Даночна основа без ДДВ",
+      "type": "number",
+      "description": "Поле 21 — value of ordinary input supply with the right to deduct prior (input) tax, excluding VAT (excludes reverse-charge input supply reported in fields 23/25 and imports reported in field 27).",
+      "sourceRef": "ДДВ-04 p.1, поле 21",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inputSupplyVat",
+      "label": "Влезен промет — ДДВ",
+      "type": "number",
+      "description": "Поле 22 — amount of prior (input) tax for deduction on ordinary input supply, excluding input tax calculated by the recipient (fields 24/26) and tax calculated on import (field 28).",
+      "sourceRef": "ДДВ-04 p.1, поле 22",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inputReverseChargeReceivedGeneralBase",
+      "label": "Влезен промет за кој данокот го пресметува примателот на прометот (член 32 точка 4 и 5) — Даночна основа",
+      "type": "number",
+      "description": "Поле 23 — value of input supply, excluding VAT, with the right to deduct prior tax, for which the tax is calculated by the recipient of the supply under чл.32 точка 4 и 5 ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 23",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inputReverseChargeReceivedGeneralVat",
+      "label": "Влезен промет за кој данокот го пресметува примателот на прометот (член 32 точка 4 и 5) — ДДВ",
+      "type": "number",
+      "description": "Поле 24 — amount of prior tax for deduction, calculated by the recipient of the supply under чл.32 точка 4 и 5 ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 24",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inputReverseChargeDomesticBase",
+      "label": "Влезен промет во земјата за кој данокот го пресметува примателот на прометот (член 32-а) — Даночна основа",
+      "type": "number",
+      "description": "Поле 25 — value of domestic input supply, excluding VAT, with the right to deduct prior tax, for which the tax is calculated by the recipient under чл.32-а ЗДДВ. The recipient additionally must submit the 'Report on supplies received' as an attachment (see attachmentReportSuppliesReceived).",
+      "sourceRef": "ДДВ-04 p.1, поле 25",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inputReverseChargeDomesticVat",
+      "label": "Влезен промет во земјата за кој данокот го пресметува примателот на прометот (член 32-а) — ДДВ",
+      "type": "number",
+      "description": "Поле 26 — amount of prior tax for deduction, calculated by the recipient of domestic supply under чл.32-а ЗДДВ.",
+      "sourceRef": "ДДВ-04 p.1, поле 26",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "importsBase",
+      "label": "Увоз — Даночна основа без ДДВ",
+      "type": "number",
+      "description": "Поле 27 — value of imports performed with the right to deduct prior tax, excluding VAT.",
+      "sourceRef": "ДДВ-04 p.1, поле 27",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "importsVat",
+      "label": "Увоз — ДДВ",
+      "type": "number",
+      "description": "Поле 28 — amount of VAT paid on import that may be deducted as prior tax.",
+      "sourceRef": "ДДВ-04 p.1, поле 28",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalDeductibleInputTax",
+      "label": "Претходни даноци за одбивање (22+24+26+28)",
+      "type": "number",
+      "description": "Поле 29 — total deductible prior (input) tax: the sum of inputSupplyVat, inputReverseChargeReceivedGeneralVat, inputReverseChargeDomesticVat, and importsVat. This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "ДДВ-04 p.1, поле 29",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherTaxesAndAdjustments",
+      "label": "Останати даноци, претходни даноци и износи за одбивање",
+      "type": "number",
+      "description": "Поле 30 — other tax amounts due under чл.55 став 1 и 2 and prior taxes under чл.37 that are deducted or paid, tax amounts due or claimed because of a change in the tax rate or contract cancellation, and (once, in the taxpayer's first VAT return only) the VAT contained in stock of goods intended for further resale before VAT registration — entered here with a '-' sign per the form's instructions. Each such amount requires a supporting attachment per the form's instructions.",
+      "sourceRef": "ДДВ-04 p.1, поле 30",
+      "classification": "financial"
+    },
+    {
+      "name": "refundRequested",
+      "label": "Ако барате враќање на данокот, внесете \"x\" пред полето 31",
+      "type": "boolean",
+      "description": "Whether the taxpayer requests payment (refund) of a VAT credit shown in taxDueOrCredit, rather than carrying it forward as an advance credit for the next tax period.",
+      "sourceRef": "ДДВ-04 p.1, поле 31 checkbox"
+    },
+    {
+      "name": "taxDueOrCredit",
+      "label": "Даночен долг / побарување",
+      "type": "number",
+      "required": true,
+      "description": "Поле 31 — the overall result of the return (fields 20-29 and 30): a positive figure representing tax owed, or a negative figure representing a VAT credit. Per the form's own instructions, if fields 01-29 are otherwise left blank, this field alone must still be entered, with the value '0'.",
+      "sourceRef": "ДДВ-04 p.1, поле 31",
+      "classification": "financial"
+    },
+    {
+      "name": "claimAssignmentRequested",
+      "label": "Ако отстапувате побарување, внесете \"x\" пред поле 32",
+      "type": "boolean",
+      "description": "Whether the taxpayer assigns (отстапува) all or part of its VAT credit to settle a tax debt of another taxpayer, rather than receiving the full claimed amount.",
+      "sourceRef": "ДДВ-04 p.1, поле 32 checkbox"
+    },
+    {
+      "name": "claimAssignmentAmount",
+      "label": "Отстапување на побарување",
+      "type": "number",
+      "requiredWhen": {
+        "field": "claimAssignmentRequested",
+        "equals": true
+      },
+      "description": "Поле 32 — the amount of the VAT credit assigned to settle another taxpayer's tax debt, when claimAssignmentRequested is marked.",
+      "sourceRef": "ДДВ-04 p.1, поле 32",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentReportSuppliesPerformed",
+      "label": "Прилог: Извештај за извршени промети на добра и услуги за кои даночен должник е даночниот обврзник кон кого е извршен прометот",
+      "type": "boolean",
+      "description": "Whether the 'Report on supplies of goods and services performed, for which the tax debtor is the taxpayer to whom the supply was performed' is attached to this return, mandatory under чл.41-б став 1 ЗДДВ whenever domesticReverseChargeSupplyPerformedBase (поле 11) is reported.",
+      "sourceRef": "ДДВ-04 p.2, ПРИЛОЗИ"
+    },
+    {
+      "name": "attachmentReportSuppliesReceived",
+      "label": "Прилог: Извештај за примени промети на добра и услуги за кои даночен должник е даночниот обврзник примател на прометот",
+      "type": "boolean",
+      "description": "Whether the 'Report on supplies of goods and services received, for which the tax debtor is the recipient taxpayer' is attached to this return, mandatory under чл.41-б став 2 ЗДДВ whenever inputReverseChargeDomesticBase (поле 25) is reported.",
+      "sourceRef": "ДДВ-04 p.2, ПРИЛОЗИ"
+    },
+    {
+      "name": "stockScheduleAsOfDate",
+      "label": "ДДВ содржан во залихи на добра наменети за натамошна продажба пред регистрација за целите на ДДВ — Со состојба на ден",
+      "type": "date",
+      "description": "The stock-take date (последниот ден пред регистрацијата — the last day before VAT registration) for the one-time pre-registration input-VAT schedule below. Completed only in the taxpayer's first VAT return, when claiming a deduction for VAT on goods held in stock for resale on the date immediately before VAT registration.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи"
+    },
+    {
+      "name": "stockInvoice1LineNumber",
+      "label": "Реден број (1)",
+      "type": "string",
+      "description": "Row 1 of the pre-registration stock schedule's invoice list (capped at 5 of the paper form's own 21 numbered rows — see VERIFICATION.md): the taxpayer-assigned line/sequence number.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 1"
+    },
+    {
+      "name": "stockInvoice1SupplierName",
+      "label": "Име на испорачателот на добрата (1)",
+      "type": "string",
+      "description": "Name of the supplier of the pre-registration stock goods, row 1.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 1",
+      "classification": "pii"
+    },
+    {
+      "name": "stockInvoice1InvoiceAmount",
+      "label": "Износ на фактура (1)",
+      "type": "number",
+      "description": "Invoice amount for the pre-registration stock goods, row 1.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 1",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice1PaymentDate",
+      "label": "Датум на плаќање на фактура (1)",
+      "type": "date",
+      "description": "Date the invoice for the pre-registration stock goods was paid, row 1 — one of the cumulative conditions for the deduction (per the form's instructions, the invoice must be paid no later than the deadline for submitting the first VAT return).",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 1"
+    },
+    {
+      "name": "stockInvoice1VatAmount",
+      "label": "Износ на ДДВ (1)",
+      "type": "number",
+      "description": "VAT amount on the invoice for the pre-registration stock goods, row 1.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 1",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice2LineNumber",
+      "label": "Реден број (2)",
+      "type": "string",
+      "description": "Row 2 of the pre-registration stock schedule's invoice list.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 2"
+    },
+    {
+      "name": "stockInvoice2SupplierName",
+      "label": "Име на испорачателот на добрата (2)",
+      "type": "string",
+      "description": "Name of the supplier of the pre-registration stock goods, row 2.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 2",
+      "classification": "pii"
+    },
+    {
+      "name": "stockInvoice2InvoiceAmount",
+      "label": "Износ на фактура (2)",
+      "type": "number",
+      "description": "Invoice amount for the pre-registration stock goods, row 2.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 2",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice2PaymentDate",
+      "label": "Датум на плаќање на фактура (2)",
+      "type": "date",
+      "description": "Date the invoice for the pre-registration stock goods was paid, row 2.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 2"
+    },
+    {
+      "name": "stockInvoice2VatAmount",
+      "label": "Износ на ДДВ (2)",
+      "type": "number",
+      "description": "VAT amount on the invoice for the pre-registration stock goods, row 2.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 2",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice3LineNumber",
+      "label": "Реден број (3)",
+      "type": "string",
+      "description": "Row 3 of the pre-registration stock schedule's invoice list.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 3"
+    },
+    {
+      "name": "stockInvoice3SupplierName",
+      "label": "Име на испорачателот на добрата (3)",
+      "type": "string",
+      "description": "Name of the supplier of the pre-registration stock goods, row 3.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 3",
+      "classification": "pii"
+    },
+    {
+      "name": "stockInvoice3InvoiceAmount",
+      "label": "Износ на фактура (3)",
+      "type": "number",
+      "description": "Invoice amount for the pre-registration stock goods, row 3.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice3PaymentDate",
+      "label": "Датум на плаќање на фактура (3)",
+      "type": "date",
+      "description": "Date the invoice for the pre-registration stock goods was paid, row 3.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 3"
+    },
+    {
+      "name": "stockInvoice3VatAmount",
+      "label": "Износ на ДДВ (3)",
+      "type": "number",
+      "description": "VAT amount on the invoice for the pre-registration stock goods, row 3.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice4LineNumber",
+      "label": "Реден број (4)",
+      "type": "string",
+      "description": "Row 4 of the pre-registration stock schedule's invoice list.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 4"
+    },
+    {
+      "name": "stockInvoice4SupplierName",
+      "label": "Име на испорачателот на добрата (4)",
+      "type": "string",
+      "description": "Name of the supplier of the pre-registration stock goods, row 4.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 4",
+      "classification": "pii"
+    },
+    {
+      "name": "stockInvoice4InvoiceAmount",
+      "label": "Износ на фактура (4)",
+      "type": "number",
+      "description": "Invoice amount for the pre-registration stock goods, row 4.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice4PaymentDate",
+      "label": "Датум на плаќање на фактура (4)",
+      "type": "date",
+      "description": "Date the invoice for the pre-registration stock goods was paid, row 4.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 4"
+    },
+    {
+      "name": "stockInvoice4VatAmount",
+      "label": "Износ на ДДВ (4)",
+      "type": "number",
+      "description": "VAT amount on the invoice for the pre-registration stock goods, row 4.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice5LineNumber",
+      "label": "Реден број (5)",
+      "type": "string",
+      "description": "Row 5 of the pre-registration stock schedule's invoice list.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 5"
+    },
+    {
+      "name": "stockInvoice5SupplierName",
+      "label": "Име на испорачателот на добрата (5)",
+      "type": "string",
+      "description": "Name of the supplier of the pre-registration stock goods, row 5.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 5",
+      "classification": "pii"
+    },
+    {
+      "name": "stockInvoice5InvoiceAmount",
+      "label": "Износ на фактура (5)",
+      "type": "number",
+      "description": "Invoice amount for the pre-registration stock goods, row 5.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockInvoice5PaymentDate",
+      "label": "Датум на плаќање на фактура (5)",
+      "type": "date",
+      "description": "Date the invoice for the pre-registration stock goods was paid, row 5.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 5"
+    },
+    {
+      "name": "stockInvoice5VatAmount",
+      "label": "Износ на ДДВ (5)",
+      "type": "number",
+      "description": "VAT amount on the invoice for the pre-registration stock goods, row 5.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, ред 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stockScheduleTotalVatAmount",
+      "label": "Вкупно",
+      "type": "number",
+      "description": "Total VAT amount across all rows of the pre-registration stock schedule, transferred once into otherTaxesAndAdjustments (поле 30) with a '-' sign, per the form's instructions.",
+      "sourceRef": "ДДВ-04 p.2, ДДВ содржан во залихи, Вкупно",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "preparerNameOrBusinessName",
+      "label": "Податоци за составувачот — Назив / Име и презиме",
+      "type": "string",
+      "description": "Name of the person or business that prepared this return.",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА СОСТАВУВАЧОТ",
+      "classification": "pii"
+    },
+    {
+      "name": "preparerIdNumber",
+      "label": "Податоци за составувачот — ЕДБ / ЕМБГ",
+      "type": "string",
+      "description": "Tax identification number (ЕДБ) or personal identification number (ЕМБГ) of the preparer.",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА СОСТАВУВАЧОТ",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "preparerCompletionDate",
+      "label": "Податоци за составувачот — Датум на пополнување",
+      "type": "date",
+      "description": "Date the preparer completed this return.",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА СОСТАВУВАЧОТ"
+    },
+    {
+      "name": "preparerCapacity",
+      "label": "Податоци за составувачот — Својство",
+      "type": "string",
+      "description": "The preparer's capacity/role in relation to the taxpayer (e.g. accountant, authorized representative).",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА СОСТАВУВАЧОТ"
+    },
+    {
+      "name": "signatoryFullName",
+      "label": "Податоци за потписникот — Име и презиме",
+      "type": "string",
+      "description": "Full name of the person signing this return.",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА ПОТПИСНИКОТ",
+      "classification": "pii"
+    },
+    {
+      "name": "signatoryEmbg",
+      "label": "Податоци за потписникот — ЕМБГ",
+      "type": "string",
+      "description": "The signatory's ЕМБГ (personal identification number).",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА ПОТПИСНИКОТ",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "signatoryCompletionDate",
+      "label": "Податоци за потписникот — Датум на пополнување",
+      "type": "date",
+      "description": "Date the signatory signed this return.",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА ПОТПИСНИКОТ"
+    },
+    {
+      "name": "signatoryCapacity",
+      "label": "Податоци за потписникот — Својство",
+      "type": "string",
+      "description": "The signatory's capacity/role in relation to the taxpayer (e.g. authorized representative, director).",
+      "sourceRef": "ДДВ-04 p.2, ПОДАТОЦИ ЗА ПОТПИСНИКОТ"
+    }
+  ]
+}

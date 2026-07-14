@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**53 jurisdictions** | **435 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **436 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2919, "GovSchema Standard Research"): North
+> Macedonia opens as the registry's 54th jurisdiction**, via
+> `mk/ujp/danochna-prijava-na-danokot-na-dodadena-vrednost` — УЈП's (Управа за
+> јавни приходи, Public Revenue Office) periodic VAT return, Обр. ДДВ-04.
+> Independently re-fetched directly from `ujp.gov.mk` (HTTP 200,
+> `application/pdf`, 346,155 bytes, sha256
+> `2106f99bd113f9599b116f249cd7bef1a7408955b367c5396e046b2882ea3f0e`), a
+> genuine 4-page AcroForm confirmed via `pdfjs-dist`: 181 named field-tree
+> nodes, of which 161 are terminal/fillable leaf fields (the other 20 are
+> non-terminal field-tree parent nodes with no widget of their own — see the
+> document's own VERIFICATION.md for the full reconciliation). Models the
+> return's full output-VAT computation (fields 01-20), full input-VAT
+> computation (fields 21-32), the correction flag/reference, the two
+> chл.41-б attachment-report flags, and the preparer/signatory block in
+> full, plus a bounded 5-of-21-row subset of the return's narrow,
+> first-tax-period-only pre-registration input-VAT stock schedule. This
+> candidate followed the prior GOV-2908 cycle's own pre-scouted backlog
+> (Slovenia's remaining verticals, Panama, Morocco) turning out to be five
+> consecutive dead ends on independent re-verification. Opens North
+> Macedonia via **Taxes (1 of 6)**. See
+> `mk/ujp/danochna-prijava-na-danokot-na-dodadena-vrednost`'s own
+> VERIFICATION.md for the full sourcing record, the field-count
+> reconciliation, the repeating-group cap rationale, and every other
+> disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2910, "GovSchema Standard Research"): Slovenia
 > opens as the registry's 53rd jurisdiction**, via
@@ -10092,6 +10117,21 @@ panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partn
 v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (44/48 jurisdictions — 92%)
+
+**North Macedonia opens as the registry's 54th jurisdiction via Taxes
+(1 of 6) (GOV-2919)**, via
+`mk/ujp/danochna-prijava-na-danokot-na-dodadena-vrednost` — УЈП's periodic
+VAT return, Обр. ДДВ-04, an unusually self-documenting AcroForm (two of its
+four pages are the agency's own field-by-field filling instructions, quoting
+the exact governing ЗДДВ article for each numbered field). See the Executive
+Summary's GOV-2919 update above and the document's own VERIFICATION.md for
+the full sourcing record, the 181-vs-161-vs-81 field-count reconciliation,
+the pre-registration stock schedule's 5-of-21-row cap rationale, and every
+other disclosed judgment call. North Macedonia is a newly-added denominator
+entry here — opened the same cycle it is added; this section's `44/48`
+fraction predates this addition and was not recomputed as part of this
+cycle (this cycle's scope was authoring the North Macedonia candidate, not a
+full-registry Taxes-vertical recount).
 
 **Bulgaria opens as the registry's 51st jurisdiction, via Taxes (GOV-2821)**,
 via `bg/nra/deklaratsiya-za-registratsiya-na-samoosiguryavashto-se-litse` —
