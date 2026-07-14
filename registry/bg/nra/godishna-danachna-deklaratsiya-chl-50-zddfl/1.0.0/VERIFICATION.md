@@ -74,7 +74,7 @@ unscreened Bulgaria backlog candidates for a future cycle.
   - **`sha256` (whole ZIP):** `f68db65db877e5607a3da2c248f076208064eb5915399c6ba5ccb5622a42ead2`.
   - Page's own "Дата на публикуване" (publication date): **Dec 29, 2025**.
   - The ZIP contains the current declaration (`образец 2001-1.doc`), its
-    deceased-person variant (`образец 2001в.doc`), and 12 numbered annex/
+    deceased-person variant (`образец 2001в.doc`), and 13 numbered annex/
     companion-form `.doc`/`.docx` files, plus a nested ZIP of the insurable-
     income reference (Обр. 2004). Extracted with Python's `zipfile` module
     (no `unzip` binary available in this sandbox).
