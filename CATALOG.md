@@ -4,7 +4,62 @@
 
 ## Executive Summary
 
-**52 jurisdictions** | **433 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**52 jurisdictions** | **434 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2902, "GovSchema Standard Research"): Croatia's
+> Visa vertical opens (3 of 6)**, via
+> `hr/mvep/zahtjev-za-dugotrajnu-vizu-viza-d` --- the Ministarstvo vanjskih i
+> europskih poslova's (MVEP, Ministry of Foreign and European Affairs)
+> "ZAHTJEV ZA DUGOTRAJNU VIZU (VIZA D)" (DODATAK 1.B), Croatia's long-term
+> national (Type D) visa application. A prior cycle (GOV-2883) had screened
+> this same source and, on a shallow comparison, characterized it as a
+> field-for-field duplicate of the already-modelled
+> `de/auswaertiges-amt/national-visa-application`, so it was not authored
+> then. This cycle independently re-fetched the source directly from
+> `mvep.gov.hr` (HTTP 200, `application/pdf`, 678,426 bytes, sha256
+> `09f556946c286a349ecb7cfea2078a6dfd0233c975c252d030fe4faabe857ec3`,
+> confirmed via a fresh `curl` fetch plus an independent `sha256sum`/Python
+> re-hash) and re-extracted it in full with `pdfjs-dist` (3 pages, zero
+> AcroForm Widget annotations across every page --- an even more thoroughly
+> static hand-fill/print template than the task brief's own assumption of
+> one signature widget; the only annotation found was a single page-3
+> `mailto:` Link), then re-fetched and re-read
+> `de/auswaertiges-amt/national-visa-application`'s own committed
+> `schema.json` (81 fields) and source PDF for a genuine field-by-field
+> re-comparison. **Finding: the prior "duplicate" characterization does not
+> hold up.** Past the two forms' shared ~9-item Schengen-harmonized identity
+> block, Croatia's form has substantial content absent from Germany's: the
+> applicant's own national identification number (item 11); a
+> temporary-residence pre-approval sub-block genuinely specific to
+> Croatia's own two-step residence/visa construct (item 21: approval
+> number, issuing police administration/station, validity dates); an
+> 11-category purpose-of-stay taxonomy (item 22) including digital-nomad,
+> EEA-long-term-resident-stay, and posted-worker categories with no
+> counterpart in Germany's own 6-value enum; a family-reunification
+> sponsor sub-block (item 28: relationship, sponsor's name/DOB/nationality/
+> residence-permit/address); and an employer/educational-establishment-in-
+> Croatia contact block (item 29) distinct from the form's own
+> applicant's-home-country employer/school field (item 20). Germany's own
+> form, in turn, has extensive content absent from Croatia's (spouse,
+> children, and unconditional-parents sections, a prior-Germany-stays
+> history, accommodation-type and permanent-residence-abroad questions,
+> references in Germany, health-insurance coverage, and
+> criminal-conviction/notifiable-disease disclosures) --- the same kind of
+> divergent, non-duplicate outcome already established for
+> `es/maec/solicitud-visado-nacional` against this same German template
+> (GOV-1861). Models 51 `fields[]`, 6 `documents[]` entries (a photo, the
+> travel document, an invitation, means-of-transport proof, travel health
+> insurance, and a closing signature declaration, all derived from the
+> form's own "Priložena dokumentacija" checklist and photo box --- notably
+> narrower than this task's own suggested six-item list, since the form's
+> printed checklist does not carry a distinct "prior residence/work permit"
+> line item; see the document's own VERIFICATION.md), and 2
+> `crossFieldValidation` rules. **Croatia now stands at 3 of 6 verticals**
+> (Taxes, Business Formation, Visa); DMV, Passport, and National ID remain
+> confirmed dead ends per GOV-2883's screening. See
+> `hr/mvep/zahtjev-za-dugotrajnu-vizu-viza-d`'s own VERIFICATION.md for the
+> full sourcing record, the field-by-field duplicate-detection comparison,
+> and every disclosed scoping/judgment call.
 
 > **Update (2026-07-14, GOV-2892, "GovSchema Standard Research"): Croatia's
 > Business Formation vertical opens (2 of 6)**, via
@@ -10881,7 +10936,39 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (40/43 jurisdictions — 93%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (41/44 jurisdictions — 93%)
+
+**Croatia's Visa vertical opens (3rd of 6) (GOV-2902)**, via
+`hr/mvep/zahtjev-za-dugotrajnu-vizu-viza-d` — the Ministarstvo vanjskih i
+europskih poslova's (MVEP) "ZAHTJEV ZA DUGOTRAJNU VIZU (VIZA D)" long-term
+national visa application. A prior cycle (GOV-2883) had screened this exact
+source and, without independently re-deriving the comparison, characterized
+it as a field-for-field duplicate of `de/auswaertiges-amt/national-visa-
+application`; this cycle re-fetched the source directly from `mvep.gov.hr`
+(HTTP 200, `application/pdf`, 678,426 bytes, sha256
+`09f556946c286a349ecb7cfea2078a6dfd0233c975c252d030fe4faabe857ec3`) and
+re-extracted it in full with `pdfjs-dist` (3 pages, zero AcroForm Widget
+annotations — a fully static hand-fill/print template), then re-did the
+German comparison field-by-field from scratch. Past the two forms' shared
+~9-item Schengen-harmonized identity block, the two diverge sharply:
+Croatia's own national-identification-number field, a temporary-residence
+pre-approval sub-block (approval number, issuing police administration/
+station, validity dates), an 11-category purpose-of-stay taxonomy
+(including digital-nomad, EEA-long-term-resident-stay, and posted-worker
+categories absent from Germany's 6-value enum), a family-reunification
+sponsor sub-block, and an employer/educational-establishment-in-Croatia
+block all have no German counterpart, while Germany's own spouse/children/
+parents/prior-stays/health/criminal-history sections have no Croatian
+counterpart — the same divergent, non-duplicate outcome this registry
+already established for Spain's own visa form against this same German
+template (GOV-1861). This adds Croatia to the vertical's denominator for
+the first time (it was excluded, not merely unauthored, while flagged as a
+duplicate). Models 51 `fields[]`, 6 `documents[]` entries, and 2
+`crossFieldValidation` rules. See the Executive Summary's GOV-2902 update
+above and the document's own VERIFICATION.md for the full sourcing record
+and the complete duplicate-detection comparison. Croatia now stands at 3 of
+6 verticals (Taxes, Business Formation, Visa); DMV, Passport, and National
+ID remain confirmed dead ends per GOV-2883's screening.
 
 **Romania's Visa vertical opens (4th of 6) (GOV-2837)**, via
 `ro/mae/formular-cerere-viza-de-lunga-sedere` — the Ministry of Foreign
@@ -14250,6 +14337,36 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   duplicate of an already-modelled EU-harmonized template, and DMV,
   Passport, and National ID remain confirmed dead ends per GOV-2883's
   screening — none should be re-attempted without a genuinely new source.
+- **Croatia — Visa: authored (GOV-2902), Croatia now stands at 3 of 6
+  verticals.** `hr/mvep/zahtjev-za-dugotrajnu-vizu-viza-d` (MVEP's
+  long-term Type D national visa application) corrects GOV-2883's own
+  "confirmed field-for-field duplicate" finding above: that screening
+  compared the two forms' shared identity-block field sequence but did not
+  independently re-derive the full comparison. This cycle re-fetched the
+  source directly from `mvep.gov.hr` (HTTP 200, `application/pdf`, 678,426
+  bytes, sha256
+  `09f556946c286a349ecb7cfea2078a6dfd0233c975c252d030fe4faabe857ec3`),
+  re-extracted it in full with `pdfjs-dist` (3 pages, zero AcroForm Widget
+  annotations, confirming an even more thoroughly static hand-fill/print
+  template than assumed going in), and re-read
+  `de/auswaertiges-amt/national-visa-application`'s own committed field
+  list and source PDF for a genuine field-by-field re-comparison. Past the
+  shared ~9-item Schengen-harmonized identity block, Croatia's form has
+  substantial content absent from Germany's (a national-identification-
+  number field, a temporary-residence pre-approval sub-block, an
+  11-category purpose-of-stay taxonomy with three categories Germany's own
+  6-value enum lacks, a family-reunification sponsor sub-block, and an
+  employer/school-in-Croatia block), while Germany's form has substantial
+  content absent from Croatia's (spouse/children/parents, prior-Germany-
+  stays, accommodation/health/criminal-history sections) — the same
+  divergent, non-duplicate outcome already established for
+  `es/maec/solicitud-visado-nacional` against this same German template
+  (GOV-1861). See the Executive Summary's GOV-2902 update above and the
+  document's own VERIFICATION.md for the full sourcing record and
+  duplicate-detection comparison. **Croatia now stands at 3 of 6
+  verticals** (Taxes, Business Formation, Visa); DMV, Passport, and
+  National ID remain confirmed dead ends per GOV-2883's screening — none
+  should be re-attempted without a genuinely new source.
 
 ---
 
