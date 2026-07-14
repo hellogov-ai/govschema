@@ -85,7 +85,7 @@ Summary by page/part:
 | D Prihláška na zdravotné poistenie (p.6) | `foreignIdOrPassportNumber`, `isResidentInsured`/`isNonResidentSelfEmployedInsured`, `healthInsuranceSubmitter*`, plus 1 `documents[]` (signature) | Full, excluding the page's own surname/given-name/personal-number cross-link fields (see judgment call 2) |
 | E Prihláška k registrácii daňovníka (p.7) | `domesticBankName`/`domesticBankAccountIban`, `foreignBankAccountIban`/`foreignBankSwiftCode`, `otherOrganizationalUnitAddress`/`Type`, plus 1 `documents[]` (signature) | Full, excluding the page's own cross-link fields (see judgment call 2) |
 
-Total: **192 `fields[]`** entries (11 unconditionally `required: true`, the
+Total: **192 `fields[]`** entries (17 unconditionally `required: true`, the
 rest `required: false` — some with `requiredWhen`) plus **8 `documents[]`**
 entries, **4 `crossFieldValidation`** rules (one per business-activity
 block, end date not before start date), and **1 `exclusivityGroup`** (Part
