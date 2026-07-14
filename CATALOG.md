@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **450 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **451 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2995, "GovSchema Standard Research"): Slovakia's
+> Business Formation vertical opens (1 of 6, 2 of 6 combined with GOV-2981's
+> Taxes schema opened the same day)**, via
+> `sk/okresny-urad/ohlasenie-zivnosti-fyzicka-osoba` — the standard
+> "Formulár pre fyzickú osobu — ohlásenie voľnej, remeselnej alebo viazanej
+> živnosti / žiadosť o vydanie osvedčenia o živnostenskom oprávnení" (form
+> code T MV SR 2007/60), filed at an Okresný úrad's department of trade
+> licensing under §45/§45a/§46 of Act No. 455/1991 Zb. (živnostenský
+> zákon). A parallel scouting agent this cycle screened both of Slovakia's
+> business-registration tracks: the Obchodný register (company/s.r.o.)
+> track is a confirmed dead end (qualified-electronic-signature-gated
+> e-filing only, per Vyhláška MS SR č. 25/2004 Z.z.), while the
+> živnostenský register (trade licensing, sole traders) track yielded this
+> genuine, unauthenticated, first-party 7-page specimen (HTTP 200,
+> 531,643 bytes, sha256
+> `a78451f134a72785e3e0553b36d1c207be68af8104f88c4fcb157341360fe286`,
+> independently re-verified this cycle, 0 AcroForm widgets). Models all 192
+> `fields[]` the form's own seven-page structure exposes — this single
+> government form bundles the trade-licence notification itself (Parts
+> A-C: applicant identity, up to four declared business activities and
+> their responsible representatives, and criminal-record-extract data)
+> together with mandatory health-insurance registration (Part D) and tax
+> registration (Part E), reflecting Slovakia's "jednotné kontaktné miesto"
+> (single contact point) principle for new sole traders — plus 8
+> `documents[]`, 4 `crossFieldValidation` rules, and 1 `exclusivityGroup`.
+> 2 valid conformance fixtures (0 errors each) plus 8 mutation-control
+> fixtures (each raising exactly 1 error) are committed under
+> `conformance/sk/okresny-urad/ohlasenie-zivnosti-fyzicka-osoba/1.0.0/`.
+> This cycle also confirmed Lithuania's DMV vertical (vehicle
+> registration/driving-licence application) is a **dead end** — both
+> processes are staff-mediated at a Regitra branch or gated behind the
+> authenticated eRegitra.lt self-service portal, with no downloadable
+> citizen-facing application form — and delegated Lithuania's Business
+> Formation vertical as a pre-scouted child issue (a genuine JAR-1 +
+> JAR-S + JAR-VO-V + KD-1 static-form composite, confirmed via Wayback
+> Machine captures after the live registrucentras.lt site returned a
+> Cloudflare bot-challenge on direct fetch). See the document's own
+> VERIFICATION.md for the full sourcing chain and every disclosed scoping
+> decision.
 
 > **Update (2026-07-14, GOV-2986, "GovSchema Standard Research"): Vietnam's
 > National ID vertical closes (6 of 6)**, via
@@ -9993,7 +10033,11 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (49/56 jurisdictions — 88%)
+### Business Formation — Incorporation, LLC, Company Registration (50/56 jurisdictions — 89%)
+
+> **Update (GOV-2995):** Slovakia's Business Formation vertical opens via
+> `sk/okresny-urad/ohlasenie-zivnosti-fyzicka-osoba`; recounted directly
+> from the By-Jurisdiction table (49 + Slovakia = 50).
 
 > **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
 > following Slovakia's addition (Taxes only; Business Formation remains
@@ -12643,7 +12687,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **SK** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **SK** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -14866,6 +14910,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   biometric. Not a hard dead end if a genuinely new source surfaces (e.g. a
   third-party-republished specimen, or a future ThaID-workaround
   technique); a dead end for the current official publishing pattern.
+- **LT DMV (Regitra)** — GOV-2995, 2026-07-14, reinforcing GOV-2969's
+  same-vertical dead-end finding with independent detail. Both vehicle
+  registration and driving-licence application/exchange are staff-mediated
+  at a Regitra branch, or filed online only via the authenticated
+  `eregitra.lt` self-service portal — confirmed directly in the decoded
+  instructions of Regitra's own vehicle purchase-sale contract template
+  (`regitra.lt/wp-content/uploads/2025/03/pirkimo-pardavimo-sutarties-forma-1.pdf`,
+  163-widget genuine AcroForm), which itself tells the buyer/seller to log
+  in to eRegitra and select "Deklaruoti įgijimą" to complete the actual
+  ownership-transfer declaration — that contract is a private civil-law
+  document, not a government application, so it was not authored as a
+  schema. No downloadable citizen-facing government application form was
+  found for either vehicle registration or driving-licence
+  issuance/exchange. Not a hard dead end: an official Regitra
+  Director-General order annexing a "Prašymo išduoti vairuotojo pažymėjimą
+  padalinyje forma" (branch driving-licence application form) is indexed
+  on `e-seimas.lrs.lt`, but that entire domain returned HTTP 522
+  (origin unreachable) on every retry this cycle — a live-site outage, not
+  confirmed auth-gating, worth a retry in a future cycle.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
@@ -14900,6 +14963,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   income, royalties, honoraria) remain as further un-modeled schedules from
   the same combined source PDF, disclosed as future companion-schema
   candidates.
+
+> **Correction (GOV-2995):** Lithuania's Business Formation vertical is
+> **not** a confirmed dead end as this same entry's own GOV-2969 cycle
+> recorded above — that finding relied on a single direct-fetch attempt
+> against `registrucentras.lt`, which returned HTTP 403 (Cloudflare
+> bot-challenge). This cycle located the same live-site path's forms via
+> Wayback Machine capture instead — the identical fallback technique
+> already established for this registry's own `sk/financna-sprava`
+> DPFOAv25 schema when `financnasprava.sk` was verifiably unreachable — and
+> confirmed all four are genuine, unauthenticated static PDFs (no login
+> gate on the paper/notary filing route): **JAR-1** (main application, 5
+> pages, approved by Registrų centras director's order 2016-01-06 No.
+> V-4), **JAR-VO-V** (single-member management body, order 2020-04-28 No.
+> VE-293(1.3E)), **JAR-S** (owner data for individuali įmonė, same order),
+> and **KD-1** (contact info, order 2023-08-21 No. VE-444(1.3E)) — none
+> contain an AcroForm. **Lithuania's Business Formation vertical is
+> delegated as a pre-scouted child issue of GOV-2995** rather than
+> authored inline this cycle.
+
 - **Slovakia — Taxes: scouted, not yet authored (GOV-2969).** The strongest
   candidate found, DPFOAv25 (the individual income tax return,
   `financnasprava.sk`), hit a genuine site-wide outage during this cycle's
@@ -14965,6 +15047,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   live `slovensko.sk` MZV consular eForms noted above (National ID card
   request, driving-licence request) remain unauthored disclosed backlog for
   that future cycle.
+- **Update (GOV-2995, 2026-07-14): Business Formation authored, opens the
+  vertical (1 of 6, 2 of 6 combined with Taxes).**
+  `sk/okresny-urad/ohlasenie-zivnosti-fyzicka-osoba` (192 `fields[]`), the
+  standard trade-notification form (T MV SR 2007/60) filed at an Okresný
+  úrad's department of trade licensing. This is a **different track** from
+  the Ministry of Justice's SSO-gated company-registration wizard the
+  GOV-2969 note above screened and found weak — that finding stands
+  correctly for the Obchodný register (company/s.r.o.) track, confirmed
+  dead again this cycle (qualified-electronic-signature-only e-filing).
+  The živnostenský register (sole-trader trade-licensing) track screened
+  this cycle is a distinct, genuine, unauthenticated static PDF specimen.
+  See the Executive Summary's GOV-2995 update and the schema's own
+  VERIFICATION.md for the full sourcing record. Slovakia's remaining four
+  verticals (Passport, National ID, DMV, Visa) remain
+  undiscovered/unscouted.
 
 - **Vietnam — National ID: scouted, delegated (GOV-2976).** Vietnam is
   otherwise 5 of 6 (only National ID open). `dichvucong.gov.vn` (the
