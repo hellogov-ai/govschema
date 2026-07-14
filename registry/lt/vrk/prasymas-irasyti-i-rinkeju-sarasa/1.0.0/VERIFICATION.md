@@ -79,13 +79,15 @@ trusted as-is; every claim below was independently re-derived.
   drawn as vector graphics, not text or widget annotations, this cycle used
   `page.getOperatorList()` to locate every `constructPath` rectangle-drawing
   operation on page 1 and correlate its coordinates against the nearby text.
-  This located exactly **5 small (~14pt) checkbox squares**: 2 next to the
+  This located exactly **8 small (14.173pt) checkbox squares**: 2 next to the
   applicant-facing "1. Šį adresą esu deklaravęs" / "2. Faktiškai gyvenu šiuo
-  adresu" declaration pair (y≈389), and 3 belonging to the office-only
-  section — one next to "Asmuo yra įrašytas..." (y≈220), one next to "Asmuo
-  nėra įrašytas..." (y≈175), and 4 forming the commission's "A B C D"
-  decision-code row (y≈75, only one further "A B C D" row exists, on page 2,
-  as a legend header, not a fillable checkbox). This independently confirms
+  adresu" declaration pair (y≈389.4, x≈169.8/474.1), and 6 belonging to the
+  office-only section — one next to "Asmuo yra įrašytas..." (y≈220.7), one
+  next to "Asmuo nėra įrašytas..." (y≈175.3), and 4 forming the commission's
+  "A B C D" decision-code row (y≈75.6, x≈180.2/216.1/251.9/287.4; only one
+  further "A B C D" row exists, on page 2, as a legend header confirmed to
+  carry zero checkbox-sized rectangles — not a fillable checkbox). This
+  independently confirms
   the applicant-facing declaration pair is exactly 2 checkboxes, and that
   every other checkbox on the form belongs to the excluded office-only
   section.
@@ -172,7 +174,7 @@ published (see judgment call 4).
    dienos) patikrinimas:" through the commission chairperson's signature
    block), the precinct election commission's own verification/decision
    section, independently confirmed via checkbox-rectangle coordinates to
-   carry 3 of the form's 5 checkbox groups; and (c) page 2 in its entirety,
+   carry 6 of the form's 8 checkbox squares; and (c) page 2 in its entirety,
    which — independently confirmed via `getTextContent()` — contains no
    fields at all, only a legend explaining the commission's four
    lettered decision codes (A. Įrašyti rinkėją... / B. .../ C. .../
@@ -202,11 +204,13 @@ on `declaredAddressConfirmed`.
 
 - `node tools/validate.mjs registry/lt/vrk/prasymas-irasyti-i-rinkeju-sarasa/1.0.0/schema.json` — **ok**.
 - `node tools/validate-ajv.mjs registry/lt/vrk/prasymas-irasyti-i-rinkeju-sarasa/1.0.0/schema.json` (ajv 2020-12 against `spec/v0.3`) — **ok**.
-- Full-registry re-run after adding this document and regenerating
-  `tools/govschema-client/registry-index.json` (454 entries, was 453):
-  `node tools/validate.mjs` → **454/454** documents passed, 3/3
-  `mapping.json` companions passed; `node tools/validate-ajv.mjs` →
-  **454/454** documents validated, 3/3 `mapping.json` companions validated.
+- Full-registry re-run after adding this document, rebasing onto the
+  concurrently-merged GOV-3019/GOV-3014 (sk/mzv) PR, and regenerating
+  `tools/govschema-client/registry-index.json` (455 entries, was 454 after
+  that concurrent merge, 453 before either): `node tools/validate.mjs` →
+  **455/455** documents passed, 3/3 `mapping.json` companions passed;
+  `node tools/validate-ajv.mjs` → **455/455** documents validated, 3/3
+  `mapping.json` companions validated.
 
 ## Maturity
 

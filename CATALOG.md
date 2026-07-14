@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **454 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **455 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-3015, "GovSchema Standard Research"): Lithuania's
+> National ID & Civic Documents vertical opens (now 3 of 6 overall)**, via
+> `lt/vrk/prasymas-irasyti-i-rinkeju-sarasa` — the "Prašymas įrašyti į
+> rinkėjų sąrašą" (Application to Be Entered on the Voters' List), Forma F5,
+> approved by the Lietuvos Respublikos vyriausioji rinkimų komisijos (VRK,
+> Central Electoral Commission) decision No. Sp-80, Annex 5, dated
+> 2022-09-14 — the strong candidate GOV-3010's scouting pass delegated
+> rather than authored inline. The live `rinkejopuslapis.lt` URL 403s behind
+> Cloudflare; independently re-fetched this cycle via a Wayback Machine
+> capture (HTTP 200, application/pdf, 960,453 bytes, sha256
+> `0641521d1b192509e1ed0d023c2a2443ce248280d0fa613d0d6016d42d049137`), and
+> independently confirmed via the CDX API as the form's only archived
+> snapshot and still linked from `vrk.lt/prasymai-vrk` per a 2023-12-01
+> capture. A genuine print-and-hand-fill 2-page PDF (`getFieldObjects()`
+> returns `null`, zero annotations on both pages); vector rectangle-drawing
+> operators were used to independently locate all 8 checkbox squares on the
+> form and confirm exactly 2 belong to the applicant-facing section (the
+> remaining 6 belong to the excluded, office-only precinct-commission
+> decision section). Models all 21 applicant-facing `fields[]` — identity,
+> full address (with both urban and rural addressing schemes), a
+> declared-address-vs-actual-residence checkbox pair, a phone number, the
+> addressee district/precinct election commission, and a signature date —
+> scoped to exclude two office-only registration-number boxes, the
+> commission's own verification/decision section, and page 2 in its
+> entirety (a decision-code legend plus a data-protection notice, no fields
+> at all). No `documents[]` array is published, since the form requests no
+> attached supporting document. 2 valid conformance fixtures (0 errors
+> each) plus 6 mutation-control fixtures (each raising exactly 1 error) are
+> committed under `conformance/lt/vrk/prasymas-irasyti-i-rinkeju-sarasa/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing chain and
+> every disclosed scoping decision.
 
 > **Update (2026-07-14, GOV-3019/GOV-3014, "GovSchema Standard Research"):
 > Slovakia's National ID & Civic Documents vertical opens (1 of 6, now 4 of
@@ -12394,7 +12426,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (40/56 jurisdictions — 71%)
+### National ID & Civic Documents (41/56 jurisdictions — 73%)
 
 **Slovakia's National ID & Civic Documents vertical opens (GOV-3019/GOV-3014)**,
 via `sk/mzv/ziadost-o-obciansky-preukaz` — MZV's consular-channel citizen
@@ -12408,6 +12440,24 @@ Formation, Taxes, DMV, National ID & Civic Documents) — Visa is a
 confirmed duplicate of the common Schengen form and Passport is a
 confirmed dead end (both per GOV-3010's same-cycle screening). Moves this
 vertical's global coverage from 39/56 to 40/56 (71%).
+
+> **Update (GOV-3015):** numerator updated from 40 to 41 (concurrently with
+> Slovakia's own GOV-3019/GOV-3014 addition above) following Lithuania's
+> National ID & Civic Documents vertical opening — see below.
+
+**Lithuania's National ID & Civic Documents vertical opens (3 of 6)
+(GOV-3015)**, via `lt/vrk/prasymas-irasyti-i-rinkeju-sarasa` — VRK's Forma
+F5, "Prašymas įrašyti į rinkėjų sąrašą" (Application to Be Entered on the
+Voters' List). See the Executive Summary's GOV-3015 update above for the
+full sourcing record — including the Wayback-only-snapshot confirmation,
+the vector-graphics checkbox-coordinate technique used to independently
+confirm the applicant-facing/office-only checkbox split, and every disclosed
+scoping decision — and the document's own VERIFICATION.md. **Lithuania now
+stands at 3 of 6 verticals** (Business Formation, Taxes, National ID); DMV,
+Passport, and Visa remain confirmed dead ends (in-person/biometric-only
+issuance or MIGRIS-login-gated, no static downloadable form — see
+"Confirmed dead ends" below). Moves this vertical's global coverage from
+40/56 to 41/56 (73%).
 
 > **Correction (GOV-2981/GOV-2986):** denominator updated from 55 to 56
 > jurisdictions following Slovakia's addition (Taxes only; National ID
@@ -12835,7 +12885,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
-| **LT** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
