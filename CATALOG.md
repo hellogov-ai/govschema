@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**52 jurisdictions** | **432 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**52 jurisdictions** | **433 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2892, "GovSchema Standard Research"): Croatia's
+> Business Formation vertical opens (2 of 6)**, via
+> `hr/portor/prijava-za-upis-u-obrtni-registar` --- PORTOR's (Portal Obrtnog
+> registra Republike Hrvatske, the Ministry of Economy's craft-register
+> portal) generic "PRIJAVA za upis u obrtni registar" (Application for entry
+> in the craft/trade register), a single omnibus form filed with the
+> competent county-level Ured državne uprave covering all three obrtni
+> registar transaction types (new registration, data-change notice, and
+> termination) on one document. This is the exact candidate the prior
+> GOV-2883 cycle screened and left as ready-to-author backlog. Independently
+> re-fetched this cycle (HTTP 200, `application/msword`, 141,824 bytes, sha256
+> `cb809f58ad127ef7297d0e8921fda811f50d2524d1005d65cfabbdd7a767303e`, matching
+> GOV-2883's own figures exactly), a legacy OLE/CFB `.doc` (not AcroForm),
+> independently re-extracted with the npm `word-extractor` package. All three
+> transaction types are modelled via a single `applicationType` enum with
+> `requiredWhen`/`visibleWhen`-gated sub-fields and 4 `crossFieldValidation`
+> rules guarding the mutually exclusive branches, following this registry's
+> established `transactionType`-enum convention (`ca/on/mto/vehicle-
+> registration`, `us/ca/dmv/vehicle-title-transfer`); the source form's own
+> 18-row activities/qualified-persons table is bounded to 3 rows, mirroring
+> the bounding convention `hr/porezna-uprava/prijava-poreza-na-dohodak`
+> already established for this jurisdiction. Models 52 `fields[]`, 1
+> `documents[]` (a signature attestation), 4 `crossFieldValidation` rules,
+> and 1 `exclusivityGroups` entry (the "Stručna osoba" qualified-person-role
+> checkbox pair). **Croatia now stands at 2 of 6 verticals** (Taxes, Business
+> Formation); Visa remains a confirmed duplicate of an already-modelled
+> EU-harmonized template, and DMV, Passport, and National ID remain confirmed
+> dead ends per GOV-2883's screening. See `hr/portor/prijava-za-upis-u-obrtni-
+> registar`'s own VERIFICATION.md for the full sourcing record and every
+> disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2883, "GovSchema Standard Research"): Croatia
 > opens as the registry's 52nd jurisdiction**, via
@@ -9303,7 +9334,22 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (45/45 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (46/46 jurisdictions — 100%)
+
+**Croatia's Business Formation vertical opens (2 of 6) (GOV-2892)**, via
+`hr/portor/prijava-za-upis-u-obrtni-registar` — PORTOR's (Portal Obrtnog
+registra Republike Hrvatske) generic "PRIJAVA za upis u obrtni registar,"
+covering new craft-business registration, a data-change notice, and
+termination on one omnibus form. See the Executive Summary's GOV-2892 update
+above and the document's own VERIFICATION.md for the full sourcing record,
+the three-transaction-type modelling decision, the bounded 3-of-18
+activities table, and every other disclosed judgment call. Croatia is a
+newly-added denominator entry here: it was not yet counted among the 45
+previously-applicable jurisdictions (its Business Formation candidate was
+only confirmed genuine, not dead-end, by the prior GOV-2883 cycle's
+screening), so this is the first cycle counting Croatia at all for this
+vertical — opened the same cycle it is added, keeping global Business
+Formation coverage at 100% (46/46).
 
 **Romania's Business Formation vertical opens (3 of 6) (GOV-2813)**, via
 `ro/onrc/cerere-inregistrare-persoane-juridice` — the Oficiul Național al
@@ -11685,7 +11731,7 @@ now closed.
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
-| **HR** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **HR** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -14186,6 +14232,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   **Croatia's Business Formation vertical remains open, ready-to-author
   backlog; DMV, Passport, and National ID should not be re-attempted
   without a genuinely new source.**
+- **Croatia — Business Formation: authored (GOV-2892), Croatia now stands at
+  2 of 6 verticals.** `hr/portor/prijava-za-upis-u-obrtni-registar` (PORTOR's
+  generic craft/trade-register application, covering new registration, a
+  data-change notice, and termination on one omnibus form) opened the exact
+  candidate the prior GOV-2883 cycle screened and left as backlog — see the
+  Executive Summary's GOV-2892 update above and the document's own
+  VERIFICATION.md for the full sourcing record. Independently re-fetched and
+  re-hashed this cycle, confirming GOV-2883's figures exactly (HTTP 200,
+  `application/msword`, 141,824 bytes, sha256
+  `cb809f58ad127ef7297d0e8921fda811f50d2524d1005d65cfabbdd7a767303e`).
+  Models all three transaction types via a single `applicationType` enum
+  with 4 `crossFieldValidation` rules, and bounds the source's own 18-row
+  activities table to 3 rows, mirroring `hr/porezna-uprava/prijava-poreza-
+  na-dohodak`'s own bounding convention. **Croatia now stands at 2 of 6
+  verticals** (Taxes, Business Formation); Visa remains a confirmed
+  duplicate of an already-modelled EU-harmonized template, and DMV,
+  Passport, and National ID remain confirmed dead ends per GOV-2883's
+  screening — none should be re-attempted without a genuinely new source.
 
 ---
 
