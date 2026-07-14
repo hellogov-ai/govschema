@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**55 jurisdictions** | **447 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**55 jurisdictions** | **448 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2982, "GovSchema Standard Research"): Lithuania's
+> Taxes vertical deepens** with a companion schedule to the GPM311 return
+> (GOV-2969), via `lt/vmi/gpm311c-individualios-veiklos-pajamos` — VMI's
+> individual-activity (self-employment) income schedule, "Pavyzdinės pajamų
+> mokesčio deklaracijos priedas GPM311C," page 3 of the same 9-page annex
+> PDF the GPM311 schema already cites (independently re-fetched and
+> re-verified this cycle: HTTP 200, 681,405 bytes byte-identical to GOV-2969's
+> own citation, sha256
+> `c5fb544043e48230ab3e2ce0a41791dc8da1498bd6695d93160022f8b274ac21`, 9 pages,
+> 0 AcroForm widgets). Models GPM311C's own two-table layout in full: a
+> 6-row Section I (PAJAMOS/Income) table (one fixed row per income-type
+> code — farm activity 35, farm-asset transfer 97, business-certificate
+> rental 90, business-certificate other 92, individual-activity other 93,
+> foster-family support 96 — 9 columns each) and a 5-row Section II
+> (IŠLAIDOS/Expenses) table (codes 35/97/92/93/96, 3 columns each, completed
+> only under the actual-expense deduction method) — 71 `fields[]` total,
+> modeled as bounded `incomeRowN`/`expenseRowN` repeating groups per this
+> registry's established no-array-type convention. This does not change
+> Lithuania's vertical count — Taxes was already counted ✓ from GPM311; this
+> is a companion-schema deepening, the same pattern already established for
+> Romania's Declarația Unică and Greece's Ε1/Ε2/Ε3. 2 valid conformance
+> fixtures (0 errors each) plus 10 mutation-control fixtures (each raising
+> exactly 1 error) are committed under
+> `conformance/lt/vmi/gpm311c-individualios-veiklos-pajamos/1.0.0/`. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment-call decision, including two further un-modeled
+> schedules from the same source PDF (GPM311D1, GPM311F1) noted as future
+> companion-schema candidates.
 
 > **Update (2026-07-14, GOV-2976, "GovSchema Standard Research"): South
 > Africa's Visa vertical closes (6 of 6)**, via
@@ -10629,6 +10658,13 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (49/55 jurisdictions — 89%)
 
+> **Update (GOV-2982): Lithuania's Taxes vertical deepens** with a companion
+> schedule to GPM311, via `lt/vmi/gpm311c-individualios-veiklos-pajamos`
+> (VMI's individual-activity/self-employment income schedule, Form GPM311C)
+> — see the Executive Summary update above for the full sourcing record.
+> Does not change this vertical's jurisdiction count (Lithuania was already
+> counted ✓ from GPM311 itself, GOV-2969).
+
 > **Update (GOV-2969): Lithuania opens Taxes**, via
 > `lt/vmi/pavyzdine-pajamu-mokescio-deklaracija-gpm311` (VMI's model annual
 > personal income tax declaration, Form GPM311) — see the Executive
@@ -14732,9 +14768,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   around Registrų centras' WAF gate, the same technique that closed other
   jurisdictions' JS-gated business-registration portals); dead ends for the
   current official publishing pattern. Lithuania's GPM311C
-  (individual-activity income) schedule is the strongest pre-identified
-  candidate for a future companion-schema cycle deepening Lithuania's Taxes
-  vertical further — see the schema's own VERIFICATION.md.
+  (individual-activity income) schedule — the strongest pre-identified
+  candidate for a companion-schema cycle deepening Lithuania's Taxes vertical
+  further — was **authored this cycle (GOV-2982)**, via
+  `lt/vmi/gpm311c-individualios-veiklos-pajamos`; see the Executive
+  Summary's GOV-2982 update and the schema's own VERIFICATION.md. GPM311D1
+  (property/registrable-movable-asset transfer income) and GPM311F1 (other
+  income — dividends, sole-proprietor profit, board fees, athlete/performer
+  income, royalties, honoraria) remain as further un-modeled schedules from
+  the same combined source PDF, disclosed as future companion-schema
+  candidates.
 - **Slovakia — Taxes: scouted, not yet authored (GOV-2969).** The strongest
   candidate found, DPFOAv25 (the individual income tax return,
   `financnasprava.sk`), hit a genuine site-wide outage during this cycle's
