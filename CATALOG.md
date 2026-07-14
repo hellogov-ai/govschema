@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **423 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **424 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2821 follow-up, "GovSchema Standard Research"):
+> Bulgaria's Taxes vertical gains a second, flagship schema**, via
+> `bg/nra/godishna-danachna-deklaratsiya-chl-50-zddfl` — the same NRA's
+> "Годишна данъчна декларация по чл. 50 от ЗДДФЛ" (Annual tax declaration
+> under Art. 50 of the Personal Income Tax Act), internally numbered Обр.
+> 2001, the omnibus root declaration every Bulgarian individual taxpayer
+> files, checking off which of 13 numbered annexes accompany it. Authored
+> in parallel with the OKD-5 self-employed-registration schema immediately
+> below (a duplicate-concurrent-run on GOV-2821 — both were produced by
+> independent executions of the same authoring run before either was aware
+> of the other); OKD-5 merged first and is treated here as the schema that
+> opened Bulgaria, so this entry is presented as an addition rather than a
+> second "opens" claim. Independently fetched from `nra.bg`'s own document
+> host (a ZIP bundle, HTTP 200, `application/zip`, 638,754 bytes, sha256
+> `f68db65db877e5607a3da2c248f076208064eb5915399c6ba5ccb5622a42ead2`,
+> containing the modeled file `образец 2001-1.doc`, sha256
+> `036d08164ba52cc0c1259bdf087663170d21c1dd620bc101c59c3b225294886e`, 303,616
+> bytes). Like OKD-5, NRA distributes this form only as a Microsoft Word
+> `.doc` template, not a PDF AcroForm — no PDF edition exists on `nra.bg` or
+> any cross-checked mirror — so this schema also used `word-extractor` in
+> place of `pdfjs-dist`, with one disclosed limitation (a symbol-font
+> checkbox glyph that could not be individually resolved for the
+> `filedByRepresentative` field; see VERIFICATION.md). Unlike OKD-5,
+> however, the source's own printed instructions state explicitly which
+> fields are required and under what conditions, so this schema's
+> `required`/`requiredWhen` markers are read directly off the source rather
+> than editorially inferred. Models 86 `fields[]` plus 1 `documents[]` entry
+> across taxpayer/representative identification, the 18-row annex-
+> attachment checklist, the root-level tax computation (including
+> refund-vs-offset elections for any overpaid tax), and the cross-border
+> tax-scheme disclosure block — deliberately excluding, as a disclosed
+> backlog item, the field-by-field content of the 13 numbered annexes the
+> checklist references. See GOV-2821 and this schema's own VERIFICATION.md
+> for the full sourcing record.
 
 > **Update (2026-07-14, GOV-2821, "GovSchema Standard Research"): Bulgaria
 > opens as the registry's 51st jurisdiction**, via its Taxes vertical, via
@@ -9617,6 +9652,27 @@ Bulgaria now stands at 1 of 6 verticals; DMV, Passport, Business Formation,
 Visa, and National ID & Civic Documents are open, unscreened backlog
 candidates.
 
+**Bulgaria's Taxes vertical gains a second schema (GOV-2821 follow-up)**,
+via `bg/nra/godishna-danachna-deklaratsiya-chl-50-zddfl` — the same NRA's
+"Годишна данъчна декларация по чл. 50 от ЗДДФЛ" (Обр. 2001), the omnibus
+root annual income-tax declaration every Bulgarian individual files.
+Authored in parallel with the OKD-5 schema immediately above, as an
+independent execution of the same duplicate-concurrent-run on GOV-2821;
+OKD-5 merged first and carries the "opens Bulgaria" claim, so this entry
+does not change the vertical's own fraction (already counted). Also
+sourced from a Word `.doc` template (no PDF edition exists for this form
+family either), extracted with `word-extractor`; unlike OKD-5, the
+source's own printed instructions state explicitly which fields are
+required and under what conditions, so this schema's 86 `fields[]` (plus 1
+`documents[]` entry) carry source-derived `required`/`requiredWhen`
+markers rather than editorial guesses. Models taxpayer/representative
+identification, the 18-row annex-attachment checklist, the root-level tax
+computation with refund/offset elections, and the cross-border tax-scheme
+disclosure block; excludes, as a disclosed backlog item, the field-by-field
+content of the 13 numbered annexes the checklist references. See this
+schema's own VERIFICATION.md for the full sourcing record, including the
+Business Formation/National ID dead ends screened the same cycle.
+
 **Romania opens (1 of 6) via Taxes (GOV-2797)**, via
 `ro/anaf/declaratie-unica-activitati-independente` — ANAF's Formulary 212,
 "Declarație unică privind impozitul pe venit și contribuțiile sociale
@@ -11183,7 +11239,7 @@ now closed.
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BG** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **BG** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -13405,6 +13461,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Formation, Visa, and National ID & Civic Documents verticals are all open,
   unscreened backlog candidates** — not screened this cycle; a future cycle
   should scout NRA/other agencies for the next Bulgarian schema.
+- **Bulgaria — Taxes: second schema authored (GOV-2821 follow-up).**
+  `bg/nra/godishna-danachna-deklaratsiya-chl-50-zddfl` (NRA's Обр. 2001,
+  the annual individual income-tax return) was authored the same cycle as
+  the OKD-5 schema immediately above, via an independent concurrent
+  execution of the same authoring run — a duplicate-concurrent-run on
+  GOV-2821, reconciled by keeping both as separate, non-overlapping Taxes-
+  vertical schemas rather than discarding either, since both are genuine,
+  independently-sourced NRA forms and the registry does not cap one
+  schema per vertical per jurisdiction. Bulgaria's DMV, Passport, Business
+  Formation (NRA's self-employed-registration lead screened and confirmed
+  weak this same cycle — its `nra.bg` content page carries no fillable-
+  document attachment), Visa, and National ID (MVR's ID-card application
+  screened and confirmed weak — staff-completed at the counter with
+  pre-filled civil-registry data) remain open backlog; DMV/Visa/Passport
+  were not independently fetched this cycle.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
