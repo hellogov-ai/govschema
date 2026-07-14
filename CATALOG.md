@@ -4,7 +4,64 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **429 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **430 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2869, "GovSchema Standard Research"): Bulgaria's
+> National ID & Civic Documents vertical closes, bringing Bulgaria to 6 of 6
+> verticals**, via `bg/mvr/zayavlenie-za-izdavane-na-lichna-karta` — the same
+> Ministerstvo na vatreshnite raboti (MVR) shared civil-identity-document
+> application already modeled scoped to its passport-family pathway as
+> `bg/mvr/zayavlenie-za-izdavane-na-pasport` (GOV-2860), this schema models
+> the identical source scoped the other way: its national-ID-card pathway
+> (лична карта / national ID card, and временна карта за самоличност /
+> temporary ID card), a companion candidate the passport schema's own
+> VERIFICATION.md explicitly flagged as ready to author. Independently
+> re-fetched this cycle (not reused from the passport cycle's own bytes):
+> HTTP 200, `application/pdf`, 304,847 bytes, sha256
+> `9e18af8b38995e069ee981fdb17262aed327d38a6d91fdc690e8c920e4e2ef97` —
+> confirmed to match the passport schema's own recorded digest exactly,
+> i.e. the same underlying source file. A fresh `pdfjs-dist`
+> coordinate-sorted extraction (independent of the passport cycle's own
+> dump) resolved four new ID-card-specific fields the passport schema had
+> named but not modeled: an expedited-service ID-card collection-office
+> selector (`expeditedCollectionOffice`, ЦАО Младост / ЦАО Лъвов мост), a
+> 70+-citizen ID-card validity-period election (`idCardValidityPeriodFor70Plus`
+> — printed as 10 years / 30 years, genuinely different options from the
+> passport schema's own 18+ election of 5/10 years, not a permanent/
+> indefinite choice as might have been assumed), an electronic-identity-
+> certificate (УЕИ) opt-out declaration (`eidCertificateOptOut`, modeled as
+> `boolean`), and an address-abroad field for applicants living
+> predominantly abroad when submitting an ID-card application
+> (`addressAbroad`, a single free-text line, not a structured address —
+> the source's own text explicitly ties this block to "издаване на лична
+> карта," confirming it belongs here and not on the passport schema).
+> Reuses 43 fields verbatim from the passport schema's own `schema.json`
+> (personal-data block, submission section, guardian/proxy/parents blocks),
+> re-confirmed against this cycle's own fresh extraction rather than copied
+> blind. Models 49 `fields[]` total plus the same 3 `documents[]` entries
+> (photograph, signature specimen, criminal-liability truthfulness
+> declaration). Excludes the five passport-family-only
+> `requestedDocumentType` options and the passport-specific 18+
+> validity-period election (both already modeled by the companion passport
+> schema), plus the same six "Вярно/Невярно" confirmation-checkbox pairs and
+> office-intake/office-only fields already excluded there. Two hand-authored
+> mock instances (an adult expedited applicant; a minor first-issuance
+> applicant with a guardian) passed a disposable conformance checker with
+> zero errors; three mutation controls each correctly flagged their one
+> expected violation. See GOV-2869 and this schema's own VERIFICATION.md for
+> the full sourcing record. **Bulgaria now stands at 6 of 6 verticals**
+> (Taxes ×2, Visa, DMV, Passport, National ID) — no vertical remains open
+> for Bulgaria. This cycle's brief framed Bulgaria as "the second
+> non-original jurisdiction after Colombia" to reach full coverage;
+> checking CATALOG.md's own record confirms Colombia
+> (`co/registraduria/duplicado-cedula-ciudadania`, GOV-1616) was indeed
+> first, but CATALOG.md's own text has already separately credited Portugal
+> (GOV-2143) as "the second non-original jurisdiction... to reach 6/6," and
+> several further jurisdictions (Iceland, Finland, Sweden, Norway, Denmark,
+> the Philippines, South Korea, Bangladesh) have each separately reached 6/6
+> since — so Bulgaria is accurately reported here as following Colombia's
+> precedent, not as a literal, uncontested "second," per this schema's own
+> VERIFICATION.md.
 
 > **Update (2026-07-14, GOV-2860, "GovSchema Standard Research"): Bulgaria's
 > Passport vertical opens (4 of 6)**, via
@@ -11211,7 +11268,24 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (32/40 jurisdictions — 80%)
+### National ID & Civic Documents (33/40 jurisdictions — 83%)
+
+**Bulgaria's National ID & Civic Documents vertical closes, bringing
+Bulgaria to 6 of 6 verticals (GOV-2869)**, via
+`bg/mvr/zayavlenie-za-izdavane-na-lichna-karta` — MVR's own shared
+civil-identity-document application (Приложение № 2, the same source
+already modeled scoped to its passport-family pathway as
+`bg/mvr/zayavlenie-za-izdavane-na-pasport`, GOV-2860), scoped instead to
+its national-ID-card pathway (лична карта / временна карта за самоличност).
+See the Executive Summary's GOV-2869 update above for the full sourcing
+record — including the independent re-fetch and sha256 cross-check against
+the passport schema's own recorded digest, the fresh coordinate-sorted
+extraction of the four new ID-card-specific fields
+(`expeditedCollectionOffice`, `idCardValidityPeriodFor70Plus`,
+`eidCertificateOptOut`, `addressAbroad`), and the disclosed caveat on the
+"second non-original jurisdiction" framing — and the document's own
+VERIFICATION.md. **Bulgaria now stands at 6 of 6 verticals** (Taxes ×2,
+Visa, DMV, Passport, National ID) — no vertical remains open for Bulgaria.
 
 **Sri Lanka's National ID & Civic Documents vertical closes (2 of 6)
 (GOV-2753)**, via `lk/drp/application-for-a-national-identity-card` — the
@@ -11532,7 +11606,7 @@ now closed.
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BG** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **BG** | 6 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -13821,6 +13895,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Bulgaria National ID schema. **Bulgaria now stands at 4 of 6 verticals**
   (Taxes ×2, Visa, DMV, Passport); National ID & Civic Documents remains its
   sole open vertical.
+- **Authored (GOV-2869): Bulgaria's National ID & Civic Documents vertical
+  closes, bringing Bulgaria to 6 of 6 verticals — superseding the
+  open-backlog note immediately above.** The National-ID-scoped companion
+  candidate identified in the GOV-2860 note was authored this cycle as
+  `bg/mvr/zayavlenie-za-izdavane-na-lichna-karta`, against the identical
+  source file (sha256-confirmed to match the passport schema's own
+  recorded digest via an independent re-fetch), scoped to the shared form's
+  national-ID-card checkbox pathway. See the Executive Summary's GOV-2869
+  update and the document's own VERIFICATION.md for the full sourcing
+  record, the four newly-modeled ID-card-specific fields, and the
+  disclosed caveat on the "second non-original jurisdiction to reach 6/6"
+  framing (Colombia, GOV-1616, was confirmed first; CATALOG.md's own text
+  had already separately credited Portugal, GOV-2143, as "the second," and
+  several further jurisdictions have reached 6/6 since — so this is
+  reported as following Colombia's precedent, not as an uncontested
+  literal ordinal). **Bulgaria now stands at 6 of 6 verticals** (Taxes ×2,
+  Visa, DMV, Passport, National ID) — no vertical remains open for
+  Bulgaria; this closes out Bulgaria as a "Genuinely open" candidate
+  entirely.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
