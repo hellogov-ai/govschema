@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**52 jurisdictions** | **434 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**53 jurisdictions** | **435 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2910, "GovSchema Standard Research"): Slovenia
+> opens as the registry's 53rd jurisdiction**, via
+> `si/ajpes/prijava-za-vpis-v-poslovni-register-sole-proprietor` — AJPES's
+> (Agencija Republike Slovenije za javnopravne evidence in storitve, an
+> independent public agency) form PRS-1 sp, "Prijava za vpis v Poslovni
+> register Slovenije za samostojnega podjetnika" (sole-proprietor business
+> registration/change/deregistration). Independently re-fetched directly
+> from `ajpes.si` (HTTP 200, `application/pdf`, 1,450,034 bytes, sha256
+> `ded369176dfb9c344039ad73738b14dd157b971e9f85e95424d109fd910f0f58`), a
+> genuine 5-page AcroForm confirmed via `pdfjs-dist@3`: exactly 52 fields,
+> matching the scouting cycle's own claim and re-derived from scratch. Models
+> all three transaction types (registration/change/deregistration) via three
+> genuinely independent checkbox widgets (not a native radio group), plus a
+> single optional branch office, following this registry's established
+> `exclusivityGroups` convention for that AcroForm shape (`ng/cac`,
+> `se/polisen`, `fi/poliisi` precedent). Derives several requiredness rules
+> directly from the form's own footnotes — a deregistration filing needs
+> only a small base field set, not the full owner/activity data a new
+> registration requires — encoded as machine-checkable `requiredWhen`/
+> `crossFieldValidation` rather than left as inert prose. Opens Slovenia via
+> **Business Formation (1 of 6)**. See
+> `si/ajpes/prijava-za-vpis-v-poslovni-register-sole-proprietor`'s own
+> VERIFICATION.md for the full field-by-page tally, the footnote-derived
+> requiredness reasoning, and every other disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2902, "GovSchema Standard Research"): Croatia's
 > Visa vertical opens (3 of 6)**, via
@@ -9366,7 +9391,19 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (46/46 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (47/47 jurisdictions — 100%)
+
+**Slovenia opens as the registry's 53rd jurisdiction via Business Formation
+(1 of 6) (GOV-2910)**, via
+`si/ajpes/prijava-za-vpis-v-poslovni-register-sole-proprietor` — AJPES's
+form PRS-1 sp, covering new sole-proprietor registration, a data-change
+notice, and deregistration on one 52-field AcroForm. See the Executive
+Summary's GOV-2910 update above and the document's own VERIFICATION.md for
+the full sourcing record, the independent-checkbox-vs-radio-group modelling
+distinction, the footnote-derived per-transaction-type requiredness rules,
+and every other disclosed judgment call. Slovenia is a newly-added
+denominator entry here — opened the same cycle it is added, keeping global
+Business Formation coverage at 100% (47/47).
 
 **Croatia's Business Formation vertical opens (2 of 6) (GOV-2892)**, via
 `hr/portor/prijava-za-upis-u-obrtni-registar` — PORTOR's (Portal Obrtnog
@@ -11821,6 +11858,7 @@ now closed.
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **SI** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
