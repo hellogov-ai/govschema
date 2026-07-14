@@ -4,8 +4,45 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **445 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**55 jurisdictions** | **446 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-14, GOV-2969, "GovSchema Standard Research"): Lithuania
+> opens as this registry's 55th jurisdiction**, via its Taxes vertical (1 of
+> 6), `lt/vmi/pavyzdine-pajamu-mokescio-deklaracija-gpm311` — the State Tax
+> Inspectorate's (VMI) model annual personal income tax declaration
+> (GPM311), approved by VMI Order No. VA-93 (2019) and sourced from the
+> Seimas' own legal-acts repository (`e-seimas.lrs.lt`), a first-party,
+> unauthenticated PDF with no login/CAPTCHA/WAF gate. Models the main
+> GPM311 declaration in full (56 `fields[]`) plus its GPM311B
+> (employment-income) schedule's own income table; the remaining seven
+> schedules (individual-activity, property-transfer, rental/other-asset,
+> interest, other income, controlled-foreign-entity, and deductible-expense
+> income) are modeled only at their own gate-and-page-count level, with
+> their internal line items left as disclosed backlog for a future
+> companion schema — the same combined-multi-schedule-form scoping
+> convention already established for Romania's Formulary 212 and Greece's
+> Ε1/Ε2/Ε3 income tax return. This cycle scouted three new jurisdictions in
+> parallel: Hungary's strongest candidate (a "Schengen visa" PDF) was
+> independently re-verified field-for-field against the already-modelled
+> `fr/france-visas/schengen-visa-application` and found to be a confirmed
+> duplicate of the harmonized Annex I template (the same finding already
+> reached for Czechia, Poland, and Switzerland) — Hungary's other five
+> verticals are also confirmed dead ends this cycle (ÁNYK-framework-only
+> Taxes/Business Formation; in-person/biometric-only Passport, National ID,
+> and DMV) — see "Confirmed dead ends" below. Slovakia's strongest
+> candidate (DPFOAv25, the individual income tax return) hit a genuine
+> site-wide `financnasprava.sk` outage mid-scouting and could not be
+> independently re-verified this cycle; two narrower but genuinely live
+> backup candidates (MZV consular eForms for a National ID card request and
+> a driving-licence request, both scoped to citizens abroad) were found
+> instead and left as disclosed backlog — see "Genuinely open, well-sourced
+> candidates" below. **This update also corrects the By-Vertical section
+> headers below** (Passport, DMV, Business Formation, Taxes, Visa, National
+> ID), which had drifted out of sync with the By-Jurisdiction table (a
+> single source of truth for per-vertical ✓/✗) over several prior cycles;
+> each header is recounted directly from the table and updated in place
+> with its own correction note.
+>
 > **Update (2026-07-14, GOV-2955, "GovSchema Standard Research"): Ghana's
 > DMV vertical closes — Ghana now stands at 6 of 6 verticals**, via
 > `gh/dvla/a2-vehicle-registration` — the Driver and Vehicle Licensing
@@ -8993,7 +9030,11 @@
 
 ## By Vertical
 
-### Passport (39/42 jurisdictions — 93%)
+### Passport (40/55 jurisdictions — 73%)
+
+> **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
+> table (this header had drifted out of sync over several prior cycles),
+> and updated for Lithuania's addition as the registry's 55th jurisdiction.
 
 **North Macedonia's Passport vertical advances (2 of 6) (GOV-2939)**, via
 `mk/mvr/baranje-za-izdavanje-pasosh` — МВР's "Барање за издавање пасош,
@@ -9353,7 +9394,15 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (43/43 jurisdictions — 100%)
+### DMV — Vehicle Registration, Licensing, Permits (46/55 jurisdictions — 84%)
+
+> **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
+> table (this header had drifted out of sync over several prior cycles —
+> it was not actually 100%, per the table's own long-standing DMV ✗ entries
+> for e.g. AT/GR/HR/IT/JO/JP/KE/NG), and updated for Lithuania's addition
+> (DMV remains open for Lithuania — Regitra's vehicle-registration process
+> funnels to an online e-service or in-person branch visit with no
+> downloadable form found this cycle) as the registry's 55th jurisdiction.
 
 **Ghana's DMV vertical closes — Ghana now 6 of 6 (GOV-2955)**, via
 `gh/dvla/a2-vehicle-registration` — DVLA's "A2 Vehicle Registration" service
@@ -9801,7 +9850,15 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (49/49 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (49/55 jurisdictions — 89%)
+
+> **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
+> table (this header had drifted out of sync over several prior cycles —
+> it was not actually 100%, per the table's own long-standing Business ✗
+> entries for e.g. CH/GR/IT/JO), and updated for Lithuania's addition
+> (Business Formation remains open for Lithuania — Registrų centras
+> returned HTTP 403 on every fetch attempt this cycle, WAF-gated with no
+> static fallback found) as the registry's 55th jurisdiction.
 
 **Bulgaria's Business Formation vertical closes (6 of 6) (GOV-2954)**, via
 `bg/registry-agency/zayavlenie-a1-vpisvane-obstoyatelstva-ednolichen-targovets`
@@ -10535,7 +10592,15 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (44/48 jurisdictions — 92%)
+### Taxes — Income Tax Return, Tax Filing (49/55 jurisdictions — 89%)
+
+> **Update (GOV-2969): Lithuania opens Taxes**, via
+> `lt/vmi/pavyzdine-pajamu-mokescio-deklaracija-gpm311` (VMI's model annual
+> personal income tax declaration, Form GPM311) — see the Executive
+> Summary update above for the full sourcing record. **Correction
+> (GOV-2969):** this header also had drifted out of sync with the
+> By-Jurisdiction table over several prior cycles (recounted directly here,
+> before adding Lithuania's own tick).
 
 **Slovenia's Taxes vertical advances, 3 of 6 as of this update (GOV-2929;
 see the National ID entry below, GOV-2928, for the current 4 of 6 total)**,
@@ -11432,7 +11497,14 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (41/44 jurisdictions — 93%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (44/55 jurisdictions — 80%)
+
+> **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
+> table (this header had drifted out of sync over several prior cycles),
+> and updated for Lithuania's addition (Visa remains open for Lithuania —
+> all Schengen/national visa applications moved fully into the MIGRIS
+> online portal as of 2025-10-01, no static citizen-fillable form found)
+> as the registry's 55th jurisdiction.
 
 **Croatia's Visa vertical opens (3 of 6) (GOV-2902)**, via
 `hr/mvep/zahtjev-za-dugotrajnu-vizu` — MVEP's (Ministry of Foreign and
@@ -11951,7 +12023,14 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (36/42 jurisdictions — 86%)
+### National ID & Civic Documents (38/55 jurisdictions — 69%)
+
+> **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
+> table (this header had drifted out of sync over several prior cycles),
+> and updated for Lithuania's addition (National ID remains open for
+> Lithuania — issuance is explicitly in-person-only with mandatory
+> biometric enrollment, no downloadable application form found) as the
+> registry's 55th jurisdiction.
 
 **North Macedonia's National ID & Civic Documents vertical opens (4 of 6)
 (GOV-2942)**, via `mk/mvr/baranje-za-izdavanje-na-lichna-karta` — МВР's
@@ -12355,6 +12434,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
+| **LT** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -14550,8 +14630,75 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Commission) has no applicant-facing registration form at all — election
   cards are auto-generated for every citizen 18+ directly from the
   civil-status database. Do not re-attempt without a genuinely new source.
+- **Hungary — all six verticals** — GOV-2969, screened 2026-07-14. **Visa**:
+  the Consular Service's (`konzuliszolgalat.kormany.hu`) visa questionnaire
+  PDF is a confirmed field-for-field duplicate (all 34 numbered fields
+  independently verified) of the harmonized EU Schengen Annex I template
+  already modelled at `fr/france-visas/schengen-visa-application` — the
+  form's own heading reads "Harmonised application form — Application for
+  Schengen Visa," citing Regulation (EU) 2016/399, the same finding already
+  reached for Czechia, Poland, and Switzerland's own copies of this form.
+  **Taxes** (NAV) and **Business Formation** (T101E sole-trader
+  registration) both require the proprietary ÁNYK ("Általános
+  Nyomtatványkitöltő") framework program, not a standard PDF or AcroForm.
+  **Passport** and **National ID** (e-személyi): `police.hu` states both are
+  issued entirely in person, with the licence/card centrally
+  system-generated and biometrics captured at the counter; the one
+  downloadable "ID card" form found on `police.hu` turned out, on
+  inspection, to actually be a private-investigator/security-guard permit,
+  not the citizen national ID card. **DMV**: driving-licence issuance is
+  "centrally issued" and clerk-entered electronically; vehicle registration
+  is explicitly "prepared electronically during proceedings" by the traffic
+  authority, with no citizen-fillable form. Do not re-attempt any of
+  Hungary's six verticals without a genuinely new source.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **Lithuania — Taxes: authored (GOV-2969), opens the registry's 55th
+  jurisdiction.** `lt/vmi/pavyzdine-pajamu-mokescio-deklaracija-gpm311`
+  (VMI's model annual personal income tax declaration, Form GPM311, VMI
+  Order No. VA-93 of 2019) opened Lithuania's Taxes vertical (1 of 6) — see
+  the Executive Summary's GOV-2969 update and the document's own
+  VERIFICATION.md for the full sourcing record. **Lithuania's DMV, Passport,
+  Business Formation, Visa, and National ID & Civic Documents verticals were
+  all screened this cycle and confirmed dead ends**: DMV (Regitra's vehicle
+  registration funnels to the `eregitra.lt` online e-service or an in-person
+  branch visit, no downloadable form found); Visa (all Schengen/national
+  visa applications moved fully into the MIGRIS online portal as of
+  2025-10-01, no static citizen-fillable form); Passport and National ID
+  (both explicitly in-person-only, appointment-based biometric enrollment
+  at the Migracijos departamentas); Business Formation (`registrucentras.lt`
+  returned HTTP 403 on every fetch attempt this cycle, WAF-gated with no
+  static fallback — the individual-activity certificate REG812 is
+  authenticated-"Mano VMI"-portal-only). Not hard dead ends if a genuinely
+  new source surfaces (e.g. a JavaScript-executing browser session working
+  around Registrų centras' WAF gate, the same technique that closed other
+  jurisdictions' JS-gated business-registration portals); dead ends for the
+  current official publishing pattern. Lithuania's GPM311C
+  (individual-activity income) schedule is the strongest pre-identified
+  candidate for a future companion-schema cycle deepening Lithuania's Taxes
+  vertical further — see the schema's own VERIFICATION.md.
+- **Slovakia — Taxes: scouted, not yet authored (GOV-2969).** The strongest
+  candidate found, DPFOAv25 (the individual income tax return,
+  `financnasprava.sk`), hit a genuine site-wide outage during this cycle's
+  scouting (every path 302-redirecting to
+  `servis.financnasprava.sk/odstavka` across multiple retries) and could not
+  be independently re-verified live; a near-current Wayback Machine capture
+  (2026-01-02) shows 57+ numbered field labels matching the real paper
+  form's own line numbers, the strongest lead found this cycle by field
+  count. Two narrower but genuinely **live** backup candidates were also
+  found on `slovensko.sk`: a National ID card request eForm and a driving
+  licence request eForm (both MZV consular-channel forms scoped to citizens
+  abroad, ~40 labeled fields each, no login required to view). Slovakia's
+  Visa (`mzv.sk`, Cloudflare-challenge-gated with no static fallback),
+  Business Formation (Ministry of Justice's company-registration wizard is
+  SSO-gated via `slovensko.sk`, no guest path), and Passport (no
+  downloadable form found on `minv.sk`) were also screened and found weak
+  this cycle. **Left as disclosed backlog, not authored**: a future cycle
+  should first re-check whether `financnasprava.sk`'s outage has cleared
+  and, if so, author DPFOAv25 as Slovakia's Taxes vertical; if the outage
+  persists, author one of the two live consular eForms instead (National ID
+  or DMV) as a narrower, disclosed-scope opening schema.
 
 - **Bulgaria — Taxes: authored (GOV-2821), opens the registry's 51st
   jurisdiction.** `bg/nra/deklaratsiya-za-registratsiya-na-samoosiguryavashto-se-litse`
