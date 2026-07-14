@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **443 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **444 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2954, "GovSchema Standard Research"): Bulgaria's
+> Business Formation vertical closes (6 of 6)**, via
+> `bg/registry-agency/zayavlenie-a1-vpisvane-obstoyatelstva-ednolichen-targovets`
+> — the Агенция по вписванията's (Registry Agency) standard Application A1,
+> a genuine 207-widget XFA fillable form used to file circumstances against
+> the Commercial Register for a sole trader (едноличен търговец). This
+> reverses this registry's own prior GOV-2830/GOV-2837 "confirmed dead end"
+> finding for Bulgaria's Business Formation vertical: that finding was
+> scoped only to `portal.registryagency.bg`'s JavaScript-gated online
+> template portal, not to the vertical as a whole. This cycle (a delegated
+> child issue of GOV-2952) located a genuinely distinct, first-party
+> specimen of the same in-force form hosted on a separate `.government.bg`
+> domain — `iisda.government.bg` (Bulgaria's Integrated Information System
+> for Administrative Services) — reachable by a plain unauthenticated
+> `curl` fetch, cross-referenced against the Registry Agency's own live
+> e-portal help page confirming Form A1 is the current template.
+> Independently re-fetched this cycle (HTTP 200, `application/pdf`,
+> 395,910 bytes, sha256
+> `1681fe286641412216f869530d3974288c0e93505694c969242f1df2357262bf`) and
+> independently re-extracted via `pdfjs-dist`: a genuine 207-widget AcroForm
+> across 3 content pages plus a full field-by-field instructions page (page
+> 4), matching the GOV-2952 scouting note's own claim exactly. This v1.0.0
+> is scoped to the initial-registration transaction type only (the
+> simplest, single-founder path), modelling 24 `fields[]` and 8
+> `documents[]` entries — excluding the identification block that only
+> applies to change/re-registration filings, the three-way
+> transaction-type selector itself, the deregistration flag, and roughly
+> half of the form's own attachment checklist (death/inheritance/
+> guardianship/marriage items, all inapplicable to a living founder's first
+> registration) — with a future re-registration/deregistration companion
+> schema explicitly anticipated. See GOV-2954 and this schema's own
+> VERIFICATION.md for the full sourcing record, the independent-checkbox-
+> vs-radio-group modelling distinction, and every other disclosed scoping
+> judgment call. **Bulgaria now stands at 6 of 6 verticals** — the second
+> non-original jurisdiction (after Colombia) to reach full coverage,
+> correcting the premature "6 of 6" claim GOV-2869's own Executive Summary
+> paragraph made below (see that paragraph's own correction note). (Ghana's
+> DMV vertical also closes 6 of 6 this same cycle via a concurrently
+> authored sibling schema, `gh/dvla/a2-vehicle-registration` — GOV-2955,
+> PR #493 — not detailed in this paragraph since it is tracked on its own
+> branch/PR and its own CATALOG.md update.)
 
 > **Update (2026-07-14, GOV-2942, "GovSchema Standard Research"): North
 > Macedonia's National ID & Civic Documents vertical opens (4 of 6)**, via
@@ -457,10 +499,17 @@
 > ID-card/passport `requestedDocumentType` scoping boundary between the two
 > schemas is actually enforced by the grammar, not merely asserted in
 > prose. See GOV-2869 and this schema's own VERIFICATION.md for the full
-> sourcing record. Business Formation was already confirmed a dead end
-> (GOV-2830/GOV-2837, JS-gated commercial-register portal), so **Bulgaria
-> now stands at 6 of 6 verticals** — the second non-original jurisdiction
-> (after Colombia) to reach full coverage.
+> sourcing record. Business Formation was believed at the time to already
+> be a confirmed dead end (GOV-2830/GOV-2837, JS-gated commercial-register
+> portal), so this paragraph originally claimed **Bulgaria stood at 6 of 6
+> verticals** — **corrected (GOV-2954): that dead-end finding was scoped
+> only to `portal.registryagency.bg`'s JavaScript-gated template portal,
+> not to Business Formation as a whole; Bulgaria actually stood at 5 of 6
+> verticals** at this point, with Business Formation remaining open until
+> GOV-2954 located and authored a genuinely distinct, statically-fetchable
+> specimen of the same form on a separate `.government.bg` domain — see
+> the Executive Summary's GOV-2954 update above (nearer the top of this
+> section) for where Bulgaria actually reaches 6 of 6.
 
 > **Update (2026-07-14, GOV-2860, "GovSchema Standard Research"): Bulgaria's
 > Passport vertical opens (4 of 6)**, via
@@ -9697,7 +9746,21 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (48/48 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (49/49 jurisdictions — 100%)
+
+**Bulgaria's Business Formation vertical closes (6 of 6) (GOV-2954)**, via
+`bg/registry-agency/zayavlenie-a1-vpisvane-obstoyatelstva-ednolichen-targovets`
+— the Registry Agency's Application A1 for a sole trader, reversing this
+registry's own prior GOV-2830/GOV-2837 dead-end finding (which was scoped
+only to the Commercial Register's JavaScript-gated online template portal,
+not to a genuinely distinct static specimen on a separate `.government.bg`
+domain). Bulgaria was not previously counted in this vertical's own
+denominator while its dead-end finding stood; this update adds it to both
+the numerator and denominator in the same edit, keeping this section's own
+fraction internally consistent at 100% (49/49) rather than silently
+inflating the percentage. See the Executive Summary's GOV-2954 update above
+and the document's own VERIFICATION.md for the full sourcing record and
+every disclosed scoping judgment call.
 
 **North Macedonia's Business Formation vertical opens (1 of 6) (GOV-2941)**,
 via `mk/crm/prijava-za-upis-na-osnovanje-trgovec-poedinec` — the Централен
@@ -12210,7 +12273,7 @@ now closed.
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BG** | 6 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -14518,10 +14581,42 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   flagged as unresolved) and the four ID-card-only fields modeled
   (expedited-service collection-office selector, 70+ validity-period
   election, УЕИ e-ID-certificate opt-out, and the address-abroad field).
-  Business Formation was already confirmed a dead end (GOV-2830/GOV-2837).
-  **Bulgaria now stands at 6 of 6 verticals** — the second non-original
-  jurisdiction (after Colombia) to reach full coverage; no vertical remains
-  open for Bulgaria.
+  Business Formation was believed at the time to already be a confirmed
+  dead end (GOV-2830/GOV-2837), so this bullet originally claimed
+  **Bulgaria stood at 6 of 6 verticals** — **corrected (GOV-2954): that
+  dead-end finding was scoped only to `portal.registryagency.bg`'s
+  JavaScript-gated template portal, not to Business Formation as a whole;
+  Bulgaria actually stood at 5 of 6 verticals** at this point, with
+  Business Formation remaining genuinely open backlog until the GOV-2954
+  bullet immediately below closed it.
+- **Authored (GOV-2954): Bulgaria's Business Formation vertical closes (6 of
+  6), correcting the GOV-2869 bullet immediately above.** A delegated child
+  issue of GOV-2952, this cycle located a genuinely distinct, first-party
+  specimen of the Registry Agency's standard Application A1 (sole-trader
+  Commercial Register registration) hosted on `iisda.government.bg`
+  (Bulgaria's Integrated Information System for Administrative Services) —
+  a separate domain from the JavaScript-gated `portal.registryagency.bg`
+  template portal GOV-2830/GOV-2837 correctly found dead, reachable instead
+  by a plain unauthenticated `curl` fetch. Cross-referenced against
+  `portal.registryagency.bg`'s own live help page confirming Form A1 is the
+  current, in-force sole-trader template. Independently re-fetched this
+  cycle (HTTP 200, `application/pdf`, 395,910 bytes, sha256
+  `1681fe286641412216f869530d3974288c0e93505694c969242f1df2357262bf`) and
+  independently re-extracted via `pdfjs-dist`: a genuine 207-widget XFA
+  AcroForm across 3 content pages plus a full field-by-field instructions
+  page. Authored as
+  `bg/registry-agency/zayavlenie-a1-vpisvane-obstoyatelstva-ednolichen-targovets`,
+  scoped to the initial-registration transaction type only (24 `fields[]`,
+  8 `documents[]`) — excluding the identification block that only applies
+  to change/re-registration filings, the three-way transaction-type
+  selector itself, the deregistration flag, and roughly half of the form's
+  own attachment checklist (death/inheritance/guardianship/marriage items,
+  inapplicable to a living founder's first registration), with a future
+  re-registration/deregistration companion schema explicitly anticipated.
+  See GOV-2954 and this schema's own VERIFICATION.md for the full sourcing
+  record and every disclosed scoping judgment call. **Bulgaria now stands
+  at 6 of 6 verticals** — the second non-original jurisdiction (after
+  Colombia) to reach full coverage; no vertical remains open for Bulgaria.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
