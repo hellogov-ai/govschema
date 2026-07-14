@@ -1,10 +1,48 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-13** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-14** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**50 jurisdictions** | **422 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **423 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2821, "GovSchema Standard Research"): Bulgaria
+> opens as the registry's 51st jurisdiction**, via its Taxes vertical, via
+> `bg/nra/deklaratsiya-za-registratsiya-na-samoosiguryavashto-se-litse` —
+> the Natsionalna agentsia za prihodite's (NRA, Bulgaria's National Revenue
+> Agency) Form ОКД-5, "Декларация за регистрация на самоосигуряващо се
+> лице" (Declaration for Registration of a Self-Insured Person), the
+> declaration a sole trader, liberal-profession practitioner, registered
+> farmer, or unincorporated-partnership member files with NRA within 7 days
+> of starting, suspending, resuming, or terminating their self-insured
+> activity, and by which they elect their social-insurance coverage scope.
+> The task briefing itself had not yet located a direct downloadable file
+> (nra.bg's WebSphere Portal CMS obscures a direct link on its own canonical
+> content page, and three named third-party mirrors were unconfirmed); this
+> cycle located and confirmed a genuine first-party direct-download URL
+> live on nra.bg itself (HTTP 200, `application/vnd.ms-excel`, 694,784
+> bytes, sha256 `dbd8905850a43a04e8706a7801bd5740bb66987a15feaf607c45f4fb73b7ce66`),
+> without using any of the three named mirrors. The source is a genuine
+> OLE2 legacy Excel `.xls` binary workbook (confirmed via its file-magic
+> header), not a fillable PDF AcroForm — its visible text is drawn as
+> floating Excel shapes rather than cell values or a flat text layer, so
+> this cycle derived its 28 `fields[]` by extracting UTF-16LE text runs
+> directly from the binary stream rather than via the registry's usual
+> `pdfjs-dist` page-render practice, a deviation fully disclosed in this
+> schema's own VERIFICATION.md, including the resulting limitation that no
+> required/optional marker could be read from the source the way a PDF
+> AcroForm's own field-required bit can. Models the declarant's identity,
+> permanent and correspondence address blocks (each following Bulgaria's
+> standard town/municipality/street/entrance/block/floor/apartment/postal-
+> code breakdown), four independent circumstance-date rows (starting,
+> suspending, resuming, terminating the insured activity — modeled without
+> an artificial mutual-exclusivity constraint since the source itself prints
+> no single either/or selector across them), the two-tier insurance-
+> coverage-scope election, and the declarant's signature. **Bulgaria now
+> stands at 1 of 6 verticals**; DMV, Passport, Business Formation, Visa,
+> and National ID & Civic Documents remain open, unscreened backlog
+> candidates — not screened this cycle. See GOV-2821 and this schema's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-13, GOV-2813, "GovSchema Standard Research"): Romania's
 > Business Formation vertical opens (3 of 6)**, via
@@ -9554,7 +9592,30 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (43/47 jurisdictions — 91%)
+### Taxes — Income Tax Return, Tax Filing (44/48 jurisdictions — 92%)
+
+**Bulgaria opens as the registry's 51st jurisdiction, via Taxes (GOV-2821)**,
+via `bg/nra/deklaratsiya-za-registratsiya-na-samoosiguryavashto-se-litse` —
+NRA's Form ОКД-5, "Декларация за регистрация на самоосигуряващо се лице"
+(Declaration for Registration of a Self-Insured Person). Sourced from a
+genuine first-party direct-download URL found live on nra.bg itself this
+cycle (the task briefing had only located the CMS content page, not a
+working direct link, and named three third-party mirrors that were not
+used). The source is a legacy Excel `.xls` binary workbook, not a PDF
+AcroForm — its visible text is drawn as floating Excel shapes rather than
+cell values, so this schema's 28 `fields[]` were derived by extracting
+UTF-16LE text runs directly from the binary OLE2 stream, a deviation from
+this registry's usual `pdfjs-dist` practice disclosed in full in the
+document's own VERIFICATION.md (including the resulting limitation that no
+required/optional marker could be read from the source format itself).
+Models the declarant's identity, permanent/correspondence address blocks,
+four independent circumstance-date fields (starting/suspending/resuming/
+terminating the insured activity), the insurance-coverage-scope election,
+and the declarant's signature. See the Executive Summary's GOV-2821 update
+above and the document's own VERIFICATION.md for the full sourcing record.
+Bulgaria now stands at 1 of 6 verticals; DMV, Passport, Business Formation,
+Visa, and National ID & Civic Documents are open, unscreened backlog
+candidates.
 
 **Romania opens (1 of 6) via Taxes (GOV-2797)**, via
 `ro/anaf/declaratie-unica-activitati-independente` — ANAF's Formulary 212,
@@ -11122,6 +11183,7 @@ now closed.
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **BG** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -13336,6 +13398,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
+- **Bulgaria — Taxes: authored (GOV-2821), opens the registry's 51st
+  jurisdiction.** `bg/nra/deklaratsiya-za-registratsiya-na-samoosiguryavashto-se-litse`
+  (NRA Form ОКД-5) opened Bulgaria's Taxes vertical (1 of 6) — see the
+  Executive Summary's GOV-2821 update. **Bulgaria's DMV, Passport, Business
+  Formation, Visa, and National ID & Civic Documents verticals are all open,
+  unscreened backlog candidates** — not screened this cycle; a future cycle
+  should scout NRA/other agencies for the next Bulgarian schema.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
