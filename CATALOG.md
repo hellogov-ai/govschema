@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**52 jurisdictions** | **433 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**52 jurisdictions** | **434 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2902, "GovSchema Standard Research"): Croatia's
+> Visa vertical opens (3 of 6)**, via
+> `hr/mvep/zahtjev-za-dugotrajnu-vizu` --- MVEP's (Ministry of Foreign and
+> European Affairs) "ZAHTJEV ZA DUGOTRAJNU VIZU (VIZA D)" (Application for a
+> Long-Term Visa, Visa D), the long-stay national visa filed at a Croatian
+> diplomatic/consular mission. This **reverses the prior GOV-2883 cycle's own
+> unverified "confirmed duplicate" screening note**, which pattern-matched
+> this form against the already-modelled EU-harmonized long-stay-visa
+> template lineage (`de/auswaertiges-amt/national-visa-application`,
+> `bg/mvnr/...natsionalna-viza-tip-d`, `es/maec/solicitud-visado-nacional`)
+> without an independent field-by-field diff --- the same class of reversal
+> already established for Spain (`GOV-1861`). Independently re-fetched this
+> cycle directly from `mvep.gov.hr` (HTTP 200, `application/pdf`, 678,426
+> bytes, sha256 `09f556946c286a349ecb7cfea2078a6dfd0233c975c252d030fe4faabe857ec3`,
+> matching the issue brief's own cited value exactly), a static 3-page PDF
+> with zero AcroForm widgets (confirmed via `pdfjs-dist`, correcting the
+> issue brief's own "1 widget" claim --- see VERIFICATION.md). A field-by-field
+> comparison found this is a materially shorter, differently organized form
+> (30 flat rubrike vs. Germany's 16 labelled sections spanning 99 fields)
+> that omits whole categories the sibling templates carry (parents,
+> criminal-conviction and notifiable-disease declarations) while adding
+> Croatia-specific content none of them carry: a national identification
+> number field, a two-step temporary-residence pre-approval sub-block, an
+> 11-category purpose-of-stay taxonomy (including digital-nomad, EEA-
+> long-term-resident-stay, and posted-worker categories absent from every
+> sibling template), and a named-sponsor family-reunification sub-block.
+> Models 50 `fields[]` and 7 `documents[]` entries. **Croatia now stands at 3
+> of 6 verticals** (Taxes, Business Formation, Visa); DMV, Passport, and
+> National ID remain confirmed dead ends per GOV-2883's screening. See
+> `hr/mvep/zahtjev-za-dugotrajnu-vizu`'s own VERIFICATION.md for the full
+> reconciliation table and every disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2892, "GovSchema Standard Research"): Croatia's
 > Business Formation vertical opens (2 of 6)**, via
@@ -10881,7 +10913,39 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (40/43 jurisdictions — 93%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (41/44 jurisdictions — 93%)
+
+**Croatia's Visa vertical opens (3 of 6) (GOV-2902)**, via
+`hr/mvep/zahtjev-za-dugotrajnu-vizu` — MVEP's (Ministry of Foreign and
+European Affairs) long-term (Type D) national visa application, reversing
+the prior GOV-2883 cycle's own unverified "confirmed duplicate" screening
+note. Independently re-fetched directly from `mvep.gov.hr` (HTTP 200,
+`application/pdf`, 678,426 bytes, `sha256:
+09f556946c286a349ecb7cfea2078a6dfd0233c975c252d030fe4faabe857ec3`,
+matching the value the reversal issue cited exactly). A flat, non-AcroForm
+3-page specimen (zero fillable Widget annotations, confirmed via
+`pdfjs-dist` — correcting the reversal issue's own "1 widget" claim, see
+VERIFICATION.md) with a genuine, fully extractable Croatian text layer
+across all 30 numbered rubrike. A field-by-field comparison against the
+already-modelled EU-harmonized long-stay-visa templates
+(`de/auswaertiges-amt/national-visa-application`,
+`bg/mvnr/zayavlenie-za-izdavane-na-natsionalna-viza-tip-d`,
+`es/maec/solicitud-visado-nacional`) found this is a materially shorter,
+differently organized form (30 flat rubrike vs. Germany's 16 labelled
+sections spanning 99 fields) that omits whole categories the sibling
+templates carry (parents, criminal-conviction and notifiable-disease
+declarations) while adding Croatia-specific content none of them carry: a
+national identification number field, a two-step temporary-residence
+pre-approval sub-block, an 11-category purpose-of-stay taxonomy (including
+digital-nomad, EEA-long-term-resident-stay, and posted-worker categories),
+and a named-sponsor family-reunification sub-block. Models 50 `fields[]`
+and 7 `documents[]` entries, including a conditionally-required
+third-country-residence-permit sub-block and a family-reunification
+sponsor block gated on the purpose-of-stay selection. See the Executive
+Summary's GOV-2902 update above and the document's own VERIFICATION.md for
+the full reconciliation table and sourcing record. Croatia now stands at 3
+of 6 verticals (Taxes, Business Formation, Visa); DMV, Passport, and
+National ID remain confirmed dead ends per GOV-2883's screening.
 
 **Romania's Visa vertical opens (4th of 6) (GOV-2837)**, via
 `ro/mae/formular-cerere-viza-de-lunga-sedere` — the Ministry of Foreign
@@ -11731,7 +11795,7 @@ now closed.
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
-| **HR** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -14246,10 +14310,32 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   with 4 `crossFieldValidation` rules, and bounds the source's own 18-row
   activities table to 3 rows, mirroring `hr/porezna-uprava/prijava-poreza-
   na-dohodak`'s own bounding convention. **Croatia now stands at 2 of 6
-  verticals** (Taxes, Business Formation); Visa remains a confirmed
-  duplicate of an already-modelled EU-harmonized template, and DMV,
-  Passport, and National ID remain confirmed dead ends per GOV-2883's
-  screening — none should be re-attempted without a genuinely new source.
+  verticals** (Taxes, Business Formation); Visa was believed at the time to
+  be a confirmed duplicate of an already-modelled EU-harmonized template
+  (later reversed, see the GOV-2902 entry below), and DMV, Passport, and
+  National ID remain confirmed dead ends per GOV-2883's screening — none
+  should be re-attempted without a genuinely new source.
+- **Croatia — Visa: authored (GOV-2902), reversing the prior GOV-2883
+  cycle's own "confirmed duplicate" finding; Croatia now stands at 3 of 6
+  verticals.** `hr/mvep/zahtjev-za-dugotrajnu-vizu` (MVEP's long-term Type D
+  national visa application) — GOV-2883's own screening compared this form
+  only at the level of rubrika count and general EU-harmonized shape, never
+  performing an actual field-by-field diff. This cycle's independent
+  field-by-field comparison against `de/auswaertiges-amt/national-visa-
+  application`, `bg/mvnr/zayavlenie-za-izdavane-na-natsionalna-viza-tip-d`,
+  and `es/maec/solicitud-visado-nacional` found this is a materially
+  shorter, differently organized 30-rubrika/3-page form (versus e.g.
+  Germany's 16-section/99-field form) that omits whole categories the
+  sibling templates carry (parents, criminal-conviction and notifiable-
+  disease declarations) while adding Croatia-specific content none of them
+  carry (a national identification number field, a two-step temporary-
+  residence pre-approval sub-block, an 11-category purpose-of-stay
+  taxonomy, and a named-sponsor family-reunification sub-block) — see the
+  Executive Summary's GOV-2902 update above and the document's own
+  VERIFICATION.md for the full reconciliation table. **Croatia now stands
+  at 3 of 6 verticals** (Taxes, Business Formation, Visa); DMV, Passport,
+  and National ID remain confirmed dead ends per GOV-2883's screening —
+  none should be re-attempted without a genuinely new source.
 
 ---
 
