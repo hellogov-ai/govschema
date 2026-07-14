@@ -6,8 +6,39 @@
 
 **54 jurisdictions** | **437 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-14, GOV-2929, "GovSchema Standard Research"): Slovenia's
+> Taxes vertical advances, now standing at 3 of 6**, via
+> `si/furs/doh-odm-income-tax-return-instructions` — FURS's (Finančna uprava
+> Republike Slovenije, Financial Administration of the Republic of
+> Slovenia) own numbered instruction booklet for the annual personal income
+> tax assessment return (napoved za odmero dohodnine, "Doh-Odm"). Both the
+> income tax return and the VAT return (DDV-O) are confirmed e-filing-only
+> through the eDavki portal with no downloadable blank specimen (three
+> Uradni list gazette-annex mirrors checked for DDV-O, all genuine static
+> typesetting with 0 AcroForm fields via `pdfjs-dist`); FURS's instruction
+> booklet is the acceptable fallback source type per this registry's
+> existing precedent (e.g. Croatia's own `hr/porezna-uprava/prijava-poreza-
+> na-dohodak`). Independently re-fetched directly from `edavki.durs.si`
+> (HTTP 200, `application/pdf`, 378,024 bytes, sha256
+> `8b0039a128ae1e2e00378eb74d9dedd88e8c55ebe2bf9033d76d658cf8d371b7`,
+> matching the task brief's own claim exactly), confirmed via `pdfjs-dist`
+> to be a genuine 25-page instruction booklet with zero AcroForm widgets.
+> Models the return's header and taxpayer-identity/relief-flag block, a
+> bounded 3-row dependent-family-member table, a bounded 3-row voluntary
+> pension-premium table, and a bounded 5-row income-entry table whose
+> `incomeEntryNCode` enum covers all 24 leaf income-source codes the
+> instructions define (1101-1111, 1210-1230, 2100, 3100, 4200, 6100-6700).
+> Combined with the GOV-2927 cycle immediately below (Passport, also
+> published this same day), Slovenia now stands at **3 of 6 verticals**
+> (Business Formation, Passport, Taxes). See
+> `si/furs/doh-odm-income-tax-return-instructions`'s own VERIFICATION.md for
+> the full sourcing record, the income-source-code enum derivation, the
+> repeating-group row-cap rationale, and every other disclosed judgment
+> call.
+
 > **Update (2026-07-14, GOV-2927, "GovSchema Standard Research"): Slovenia's
-> Passport vertical opens (2 of 6)**, via
+> Passport vertical opens (2 of 6 as of this cycle; see the GOV-2929 update
+> above for the current 3 of 6 total)**, via
 > `si/mzez/vloga-za-pridobitev-potnega-lista` — MZEZ's (Ministrstvo za
 > zunanje in evropske zadeve, Ministry of Foreign and European Affairs)
 > "Vloga za pridobitev potnega lista" (Application for obtaining a
@@ -23,11 +54,9 @@
 > coordinate-correlating several generically-named fields. Models the
 > applicant's personal data, an optional legal-representative
 > name/signature/address block, and the form's own DKP processing/
-> registration fields and tear-off receipt stub in full. Slovenia now
-> stands at 2 of 6 verticals (Business Formation, Passport); DMV and Visa
-> are confirmed dead ends, and National ID and Taxes remain open backlog
-> (also identified by the GOV-2925 cycle, being authored via parallel child
-> issues). See
+> registration fields and tear-off receipt stub in full. DMV and Visa are
+> confirmed dead ends, and National ID remains open backlog (also
+> identified by the GOV-2925 cycle). See
 > `si/mzez/vloga-za-pridobitev-potnega-lista`'s own VERIFICATION.md for the
 > full sourcing record, the coordinate-correlation reasoning, and every
 > other disclosed judgment call.
@@ -10157,6 +10186,26 @@ panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partn
 v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (44/48 jurisdictions — 92%)
+
+**Slovenia's Taxes vertical advances, now 3 of 6 total (GOV-2929)**, via
+`si/furs/doh-odm-income-tax-return-instructions` — FURS's own numbered
+instruction booklet for the annual personal income tax assessment return
+(Doh-Odm), used because both the income tax return and the VAT return
+(DDV-O) are e-filing-only through the eDavki portal with no downloadable
+blank specimen (confirmed this cycle via three gazette-annex mirrors, all
+genuine static typesetting, 0 AcroForm fields). Models the return's header,
+taxpayer-identity/relief-flag block, a bounded 3-row dependent-family-member
+table, a bounded 3-row voluntary pension-premium table, and a bounded 5-row
+income-entry table whose code enum covers all 24 leaf income-source codes
+the instructions define. See the Executive Summary's GOV-2929 update above
+and the document's own VERIFICATION.md for the full sourcing record, the
+income-source-code enum derivation, and every other disclosed judgment
+call. Slovenia was already counted among this section's jurisdictions
+(opened via Business Formation, GOV-2910); this entry does not change the
+global `44/48` fraction, only advances Slovenia's own per-country vertical
+count — now 3 of 6 (Business Formation, Passport via the concurrent
+GOV-2927 cycle, and Taxes) — a status confirmed by cross-checking the
+merged GOV-2927 PR rather than assumed.
 
 **North Macedonia opens as the registry's 54th jurisdiction via Taxes
 (1 of 6) (GOV-2919)**, via
