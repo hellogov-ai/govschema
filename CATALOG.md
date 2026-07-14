@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **428 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **429 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2860, "GovSchema Standard Research"): Bulgaria's
+> Passport vertical opens (4 of 6)**, via
+> `bg/mvr/zayavlenie-za-izdavane-na-pasport` — the Ministerstvo na
+> vatreshnite raboti's (MVR, Bulgaria's Ministry of Interior) "Заявление за
+> издаване на документи за самоличност на български граждани" (Приложение №
+> 2 — Application for Issuance of Identity Documents for Bulgarian Citizens),
+> a **shared civil-identity-document form** covering both a national-ID-card
+> pathway and a six-variant passport-family pathway on one page, published
+> unauthenticated on the same DBDS "Бланки и образци" static-forms page
+> already used for the driving-licence schema (GOV-2853). This schema scopes
+> the shared form to its passport-family pathway only — the ID-card pathway
+> and every field the source ties explicitly to it (an ID-card-specific 70+
+> validity election, an e-ID-certificate opt-out, an expedited-service
+> ID-card collection-office selector, and an "applicant living predominantly
+> abroad" block the source's own text ties to "issuance of an identity
+> card") are excluded, leaving a genuine, ready-to-author companion candidate
+> for a future Bulgaria National ID schema against this same source. Fetched
+> fresh this cycle: HTTP 200, `application/pdf`, 304,847 bytes, sha256
+> `9e18af8b38995e069ee981fdb17262aed327d38a6d91fdc690e8c920e4e2ef97`,
+> cross-checked against an independent scout subagent's own separately
+> computed digest. `pdfjs-dist` confirmed a genuine two-page,
+> non-scanned Cyrillic text layer; a coordinate-sorted text dump (rather
+> than a naive line-join) was used to correctly resolve the source's
+> two-column, nine-option document-type checkbox block. Models 46
+> `fields[]` (requested passport-family document type and service tier,
+> national ID number, date/place of birth, name in Cyrillic and Latin script
+> each with an optional changed-name line, permanent address with an
+> optional changed-address line, sex, height, other nationality/
+> naturalization-decree particulars, eye colour, contact details, a
+> passport-specific 18+ validity-period election, the ID card presented at
+> submission, submission date and signature, a bounded two-row
+> parent/guardian declaration block for minor applicants, an optional
+> authorized-person/proxy block, and an optional mother/father particulars
+> block for first-time issuance) plus 3 `documents[]` entries (photograph,
+> signature specimen, and the form's own criminal-liability truthfulness
+> declaration). Excludes the same six "Вярно/Невярно" confirmation-checkbox
+> pairs already excluded from the driving-licence schema (tied to a
+> system-assisted counter workflow), the office-intake "Вх. номер"/"До"
+> header fields, and the receiving official's own name/signature line. See
+> GOV-2860 and this schema's own VERIFICATION.md for the full sourcing
+> record, including the reasoning resolving this candidate against GOV-2821's
+> earlier, narrower "National ID spot-checked weak" note. **Bulgaria now
+> stands at 4 of 6 verticals** (Taxes ×2, Visa, DMV, Passport); National ID &
+> Civic Documents remains its sole open vertical.
 
 > **Update (2026-07-14, GOV-2853, "GovSchema Standard Research"): Bulgaria's
 > DMV vertical opens (3 of 6)**, via
@@ -8408,7 +8453,24 @@
 
 ## By Vertical
 
-### Passport (36/40 jurisdictions — 90%)
+### Passport (37/40 jurisdictions — 93%)
+
+**Bulgaria's Passport vertical opens (4 of 6) (GOV-2860)**, via
+`bg/mvr/zayavlenie-za-izdavane-na-pasport` — MVR's own shared
+civil-identity-document application (Приложение № 2), the same DBDS
+static-forms page and directorate that hosts the already-modeled
+driving-licence schema (GOV-2853), scoped to its passport-family pathway
+(seven checkbox variants) rather than its national-ID-card pathway. See the
+Executive Summary's GOV-2860 update above and the document's own
+VERIFICATION.md for the full sourcing record, the two-column checkbox-layout
+extraction technique, and every disclosed scoping/judgment call, including
+the reasoning resolving this candidate against GOV-2821's earlier, narrower
+"National ID spot-checked weak" note and the disclosed companion candidate
+this same source leaves open for a future Bulgaria National ID schema.
+Bulgaria now stands at 4 of 6 verticals (Taxes ×2, Visa, DMV, Passport);
+National ID & Civic Documents remains its sole open vertical. **Bulgaria was
+already counted among the 40 applicable jurisdictions prior to this
+schema's authoring; opening it does not add a 41st.**
 
 **Romania's Passport vertical opens (5 of 6) (GOV-2844)**, via
 `ro/mae/cerere-pentru-eliberarea-unui-nou-pasaport` — the Ministerul
@@ -11470,7 +11532,7 @@ now closed.
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BG** | 4 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **BG** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -13744,6 +13806,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   re-derived from scratch this cycle, byte-identical across two fetch
   methods). Bulgaria's Passport and National ID & Civic Documents verticals
   remain open, unscreened backlog.
+- **Authored (GOV-2860): Bulgaria's Passport vertical opens (4 of 6),
+  superseding the open-backlog note immediately above.** MVR's own shared
+  civil-identity-document application (Приложение № 2, linked from the same
+  DBDS static-forms page as the driving-licence specimen) was authored this
+  cycle as `bg/mvr/zayavlenie-za-izdavane-na-pasport`, scoped to its
+  passport-family checkbox pathway only — see the Executive Summary's
+  GOV-2860 update and the document's own VERIFICATION.md for the full
+  sourcing record, the two-column checkbox-layout extraction technique, and
+  the reasoning resolving this candidate against GOV-2821's earlier,
+  narrower "National ID spot-checked weak" note. This same source, scoped to
+  its national-ID-card pathway instead (and the ID-card-specific fields this
+  schema excludes), is a genuine, ready-to-author candidate for a future
+  Bulgaria National ID schema. **Bulgaria now stands at 4 of 6 verticals**
+  (Taxes ×2, Visa, DMV, Passport); National ID & Civic Documents remains its
+  sole open vertical.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
