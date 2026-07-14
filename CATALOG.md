@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **441 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **442 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2942, "GovSchema Standard Research"): North
+> Macedonia's National ID & Civic Documents vertical opens (4 of 6)**, via
+> `mk/mvr/baranje-za-izdavanje-na-lichna-karta` — the Министерство за
+> внатрешни работи's (МВР, Ministry of Interior) "Барање за издавање на
+> лична карта, ТИП-А" (Application for Issuance of a Personal ID Card,
+> Type A), Образец бр. 1 of the ministry's own Граѓански постапки (Civil
+> Procedures) forms page. Independently re-fetched directly from
+> `portal.mdt.gov.mk` (HTTP 200, `application/pdf`, 1,394,396 bytes, sha256
+> `397cdd15d6facac8f849b52ccf0debc2f6bba06e51c33c0313f936b3be570f62`,
+> matching the task brief's own claim exactly), a genuine 2-page print-and-
+> fill specimen confirmed via `pdfjs-dist`: zero AcroForm widgets at all, and
+> a non-standard font encoding making raw text extraction an unreliable
+> substitution cipher, so this cycle independently rendered both pages to
+> PNG images (`pdfjs-dist` + `node-canvas`) for a full visual field-by-field
+> read. Models the applicant's selected reason for the request (one of four
+> grounds), two independent minority-language alternate-script requests, the
+> applicant's identity and family data, a bounded two-row parent/guardian
+> consent block for 15-18-year-old applicants, prior-ID-card data, the
+> application date/place and signature, and the form's own five-item
+> attachment checklist as `documents[]` entries. A companion Образец бр. 2
+> bilingual (Macedonian/Albanian) "ТИП-Б" specimen of this same form was also
+> found and independently re-verified — the GOV-2937 scouting note had
+> flagged its size as possibly mistagged; this cycle confirmed the live file
+> has grown from the scouting pass's own cited 869,878 bytes to 1,842,608
+> bytes since then — and is disclosed as a distinct, out-of-scope candidate
+> rather than modelled here (it adds an ethnicity and a citizenship field
+> Type A lacks). Combined with the existing `mk/ujp` Taxes schema, the
+> `mk/mvr` driving-licence schema (GOV-2940), and the concurrently-merged
+> `mk/mvr` passport schema (GOV-2939), North Macedonia now stands at 4 of 6
+> verticals (Taxes, DMV, Passport, National ID & Civic Documents). See
+> `mk/mvr/baranje-za-izdavanje-na-lichna-karta`'s own VERIFICATION.md for the
+> full sourcing record, the Type A/Type B disambiguation, the
+> conformance-fixture results, and every other disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2940, "GovSchema Standard Research"): North
 > Macedonia's DMV vertical opens (1 of 6)**, via
@@ -11737,7 +11771,21 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (35/41 jurisdictions — 85%)
+### National ID & Civic Documents (36/42 jurisdictions — 86%)
+
+**North Macedonia's National ID & Civic Documents vertical opens (4 of 6)
+(GOV-2942)**, via `mk/mvr/baranje-za-izdavanje-na-lichna-karta` — МВР's
+"Барање за издавање на лична карта, ТИП-А," a print-and-fill specimen with
+zero AcroForm widgets and a non-standard-encoded text layer, read entirely
+via rendered-page visual inspection. See the Executive Summary's GOV-2942
+update above for the full sourcing record — including the Type A/Type B
+(bilingual Macedonian/Albanian) disambiguation and the companion file's own
+grown-since-scouting size discrepancy — and the document's own
+VERIFICATION.md. **North Macedonia now stands at 4 of 6 verticals** (Taxes,
+DMV, Passport, National ID & Civic Documents — the concurrently-merged
+GOV-2939 passport schema landed between this cycle's scouting pass and this
+document's review). North Macedonia is a newly-added denominator entry
+here, moving this vertical's global coverage from 35/41 to 36/42 (86%).
 
 **Slovenia's National ID & Civic Documents vertical opens (GOV-2928)**, via
 `si/mzez/vloga-za-pridobitev-osebne-izkaznice` — MZEZ's consular-channel
@@ -12127,7 +12175,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
-| **MK** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **MK** | 4 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
