@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **442 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **443 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-14, GOV-2942, "GovSchema Standard Research"): North
 > Macedonia's National ID & Civic Documents vertical opens (4 of 6)**, via
@@ -39,6 +39,48 @@
 > `mk/mvr/baranje-za-izdavanje-na-lichna-karta`'s own VERIFICATION.md for the
 > full sourcing record, the Type A/Type B disambiguation, the
 > conformance-fixture results, and every other disclosed judgment call.
+
+> **Update (2026-07-14, GOV-2941, "GovSchema Standard Research"): North
+> Macedonia's Business Formation vertical opens (1 of 6)**, via
+> `mk/crm/prijava-za-upis-na-osnovanje-trgovec-poedinec` — the Централен
+> регистар's (ЦРРСМ, Central Registry of the Republic of North Macedonia)
+> universal founding-registration form, Образец ПО, scoped to its
+> sole-trader (трговец-поединец) registration path, the most common,
+> citizen-relevant single-founder route the form supports. The underlying
+> document is a genuine 537-widget AcroForm across 11 pages (independently
+> re-confirmed via `pdfjs-dist`, matching the GOV-2937 pre-verification
+> exactly, sha256
+> `89f02ea72ff080151b98926fcaf20464480b19c4361543fb03f83cae0c960633`),
+> shared verbatim across every trade-register and other-legal-entity
+> subject type CRM registers; label correlation required rendering each
+> page to an image and visually matching each widget, since every page's
+> own text layer is empty (a rasterized/scanned form background). Models
+> 85 of the 537 widgets — the submitter, the entity's identity/duration/
+> registered-seat data, the trader's self-representation (both as the
+> trader and as the natural person representing the registrant, since a
+> sole trader has no separate management/supervisory bodies), a bounded
+> 5-of-18-row activity subset plus an optional foreign-trade declaration,
+> the predominant-activity/bank/VAT/contact block, a sole-trader-relevant
+> subset of the supporting-document checklist, the decision-delivery
+> channel, and the closing applicant/signature block — excluding share
+> capital, founders, boards, procurators, branch offices, and the
+> other-legal-entities register entirely as genuinely inapplicable to a
+> sole trader, with a future ДООЕЛ/LLC-formation companion schema
+> explicitly anticipated. Opens North Macedonia's Business Formation
+> vertical (1 of 6); combined with the existing `mk/ujp` Taxes schema
+> (GOV-2919), the `mk/mvr` DMV schema (GOV-2940), the `mk/mvr` Passport
+> schema (GOV-2939), and the `mk/mvr` National ID schema (GOV-2942) — all
+> three of which merged after this document was authored but before this
+> review gate — North Macedonia now stands at **5 of 6 verticals** (Taxes,
+> DMV, Passport, National ID, Business Formation); only Visa remains open.
+> This corrects the "3 of 6" this document itself originally claimed
+> (only DMV had merged at authoring time) as well as this issue's own
+> "4 of 6" title, which anticipated a different reason (all four
+> GOV-2937 siblings landing first in that exact combination) than what
+> actually happened. See
+> `mk/crm/prijava-za-upis-na-osnovanje-trgovec-poedinec`'s own
+> VERIFICATION.md for the full 85-of-537 widget-to-field reconciliation and
+> every disclosed scoping judgment call.
 
 > **Update (2026-07-14, GOV-2940, "GovSchema Standard Research"): North
 > Macedonia's DMV vertical opens (1 of 6)**, via
@@ -9655,7 +9697,27 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (47/47 jurisdictions — 100%)
+### Business Formation — Incorporation, LLC, Company Registration (48/48 jurisdictions — 100%)
+
+**North Macedonia's Business Formation vertical opens (1 of 6) (GOV-2941)**,
+via `mk/crm/prijava-za-upis-na-osnovanje-trgovec-poedinec` — the Централен
+регистар's (ЦРРСМ) universal founding-registration form, Образец ПО, scoped
+to its sole-trader (трговец-поединец) registration path per this issue's
+own guidance (mirroring the `si/ajpes` sole-proprietor precedent
+immediately below). A genuine 537-widget AcroForm across 11 pages, of which
+this v1.0.0 models 85 — excluding share capital, founders, boards,
+procurators, branch offices, and the other-legal-entities register
+entirely as inapplicable to a sole trader, with a future ДООЕЛ/LLC-
+formation companion schema explicitly anticipated. See the Executive
+Summary's GOV-2941 update above and the document's own VERIFICATION.md for
+the full 85-of-537 widget-to-field reconciliation and every disclosed
+scoping judgment call. North Macedonia was added to the registry in a
+prior cycle via Taxes (GOV-2919, its 54th jurisdiction) without this
+section's own denominator being recomputed at that time (a disclosed,
+accepted staleness per that cycle's own note); this update both adds North
+Macedonia to this vertical's denominator for the first time and gives it a
+✓ in the same edit, keeping this section's own fraction internally
+consistent at 100% (48/48) rather than compounding the earlier gap.
 
 **Slovenia opens as the registry's 53rd jurisdiction via Business Formation
 (1 of 6) (GOV-2910)**, via
@@ -12175,7 +12237,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
-| **MK** | 4 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
+| **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
