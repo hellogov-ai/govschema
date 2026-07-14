@@ -8719,7 +8719,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (43/44 jurisdictions — 98%)
+### DMV — Vehicle Registration, Licensing, Permits (43/43 jurisdictions — 100%)
 
 **Bulgaria's DMV vertical opens (3 of 6) (GOV-2853)**, via
 `bg/mvr/zayavlenie-za-izdavane-na-svidetelstvo-za-upravlenie-na-mps` — MVR's
@@ -8731,7 +8731,11 @@ VERIFICATION.md for the full sourcing record, including the corrected
 "Bulgaria DMV is a dead end" over-generalization from GOV-2830 (that dead end
 is scoped only to MVR's separate vehicle-registration application) and a
 defect caught and fixed in a salvaged, previously-uncommitted draft (a
-checkbox-pair miscount, five vs. the correct six).
+checkbox-pair miscount, five vs. the correct six). **This closes DMV's last
+remaining jurisdiction gap, bringing the vertical to 43 of 43 (100%)** — the
+base this cycle built from (pre-GOV-2853) already stood at 42 of 43, since
+Bulgaria was already counted among the 43 applicable jurisdictions prior to
+this schema's authoring; opening it does not add a 44th.
 
 **Romania's DMV vertical opens (2 of 6) (GOV-2804)**, via
 `ro/dgpci/cerere-operatiune-inmatriculari-transcrieri-radieri-provizorii` —
