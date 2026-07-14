@@ -1,0 +1,536 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "bg/mvr/zayavlenie-za-izdavane-na-pasport",
+  "version": "1.0.0",
+  "title": "Bulgaria — Application for Issuance of a Passport",
+  "description": "The Ministerstvo na vatreshnite raboti's (MVR, Bulgaria's Ministry of Interior) \"Заявление за издаване на документи за самоличност на български граждани\" (Application for Issuance of Identity Documents for Bulgarian Citizens, filed under MVR's regulation as \"Приложение № 2\"), a two-page specimen published unauthenticated on MVR's own \"Бланки и образци\" (Forms and specimens) static-forms page — the same page, and the same Дирекция \"Български документи за самоличност\" (DBDS) directorate, that hosts the already-modeled driving-licence specimen (`bg/mvr/zayavlenie-za-izdavane-na-svidetelstvo-za-upravlenie-na-mps`, a distinct \"Приложение № 2а\"). This form is a single shared application used for several identity-document types at once (a document-type selector on page 1 offers a national ID card and a temporary ID card alongside six passport-family variants); this schema models it scoped to the passport-family pathway only, opening Bulgaria's Passport vertical (4 of 6, after Taxes/GOV-2821, Visa/GOV-2830, and DMV/GOV-2853) — the two ID-card-only options, and the fields the form itself ties exclusively to the ID-card pathway (an ID-card-specific validity-period election for citizens 70+, an ID-card e-ID-certificate opt-out, an expedited-service ID-card collection-office selector, and an \"applicant living predominantly abroad\" address block the form's own text ties explicitly to \"issuance of an identity card\"), are excluded as out of scope for this v1.0.0; a future Bulgaria National ID schema could model the same source scoped the other way. Models the requested passport-family document type, the requested service tier, the applicant's national identification number, date/place of birth, name in Cyrillic (plus, where changed, a separate changed-name line), name in Latin transliteration (plus, where changed, a separate changed-name line), permanent address (plus, where changed, a separate changed-address line), sex, height, other nationality and naturalization-decree particulars, eye colour, contact details, a passport-specific validity-period election for applicants who have turned 18, the identity document (national ID card) presented at submission, the submission date, the applicant's (or submitting proxy's) printed name and signature, an optional two-row bounded block for a parent/guardian/custodian/other legal representative declaring the application on behalf of an applicant under 18, an optional block for an authorized person (proxy) collecting the finished document on the applicant's behalf, and an optional mother/father particulars block completed only on a first-time identity-document issuance, plus a photograph, a signature specimen, and the form's own printed criminal-liability truthfulness declaration as documents[] entries. Excludes: the \"Вх. номер\" (incoming/office reference number) and \"До\" (addressee) office-intake fields, neither of which carries a printed blank/dotted entry line (matching this registry's established exclusion convention for this same pattern, e.g. the driving-licence schema above); six \"Вярно/Невярно\" (True/False) confirmation-checkbox pairs beside the national-ID number, date of birth, place of birth, Cyrillic name, Latin name, and address fields respectively, tied by the form's own explanatory text to a system-assisted in-person counter workflow (civil-status data auto-filled from Bulgaria's NBD \"Population\"/NAIF \"НРБЛД\" registries for confirmation), a distinct pathway from the plain paper-form completion this schema models — the identical judgment call already made for the driving-licence schema's own six such pairs; the ID-card-only fields and block named above; and \"Имена на служителя, приел заявлението\" / \"Подпис на служителя\" (the receiving official's name/signature), office-only. 46 fields, plus 3 documents[] entries. GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of Bulgaria or the Ministerstvo na vatreshnite raboti.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Министерство на вътрешните работи",
+    "abbreviation": "MVR",
+    "url": "https://mvr.bg"
+  },
+  "process": {
+    "type": "application",
+    "language": "bg"
+  },
+  "source": {
+    "url": "https://mvr.bg/upload/301781/%D0%B7%D0%B0%D1%8F%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%202%20%D0%9B%D0%9A.pdf",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "MVR \"Заявление за издаване на документи за самоличност на български граждани\" (Приложение № 2), published on mvr.bg's own \"Бланки и образци\" (Forms and specimens) static-forms page"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle GOV-2860. Opens Bulgaria's Passport vertical (4 of 6). Independently fetched, sha256-verified, and pdfjs-dist-extracted from scratch this cycle. See this schema's own VERIFICATION.md for the full sourcing record."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestedDocumentType",
+      "label": "Вид на искания документ",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Header, document-type checkboxes",
+      "validation": {
+        "enum": ["passport", "temporary-passport", "diplomatic-passport", "official-passport", "seamans-passport", "official-border-crossing-permit", "temporary-passport-final-departure"]
+      },
+      "description": "The requested passport-family document: паспорт (ordinary passport), временен паспорт (temporary passport), дипломатически паспорт (diplomatic passport), служебен паспорт (official/service passport), моряшки паспорт (seaman's passport), служебен открит лист за преминаване на границата (official open permit for border crossing), or врем. паспорт за окончателно напускане на РБ (temporary passport for final departure from the Republic of Bulgaria). The form's own checkbox set also offers лична карта (national ID card) and временна карта за самоличност (temporary ID card) — both out of scope for this Passport-vertical schema; see this document's own description and VERIFICATION.md."
+    },
+    {
+      "name": "serviceType",
+      "label": "Вид на услугата",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Header, service-type checkboxes",
+      "validation": {
+        "enum": ["standard", "fast", "expedited"]
+      },
+      "description": "The requested processing tier: обикновена (standard), бърза (fast), or експресна (expedited)."
+    },
+    {
+      "name": "nationalId",
+      "label": "ЕГН",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Header, 10-box identification-number grid",
+      "validation": {
+        "pattern": "^[0-9A-Za-z]{1,15}$"
+      },
+      "description": "The applicant's EGN (Bulgarian personal number), printed on the form as a 10-box grid."
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Дата на раждане",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Personal-data section, date-of-birth field"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Място на раждане (Населено място, община, област или държава)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal-data section, place-of-birth field",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "namesInCyrillic",
+      "label": "Имена на кирилица (име, презиме, фамилия)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal-data section, Cyrillic-name line",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "changedNamesInCyrillic",
+      "label": "Променени имена на кирилица (име, презиме, фамилия)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed when the applicant's Cyrillic name has changed since their last-issued identity document.",
+      "sourceRef": "Personal-data section, changed-Cyrillic-name line",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "namesInLatin",
+      "label": "Имена на латиница (име, презиме, фамилия)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal-data section, Latin-transliteration name line",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "changedNamesInLatin",
+      "label": "Променени имена на латиница (име, презиме, фамилия)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed when the applicant's Latin-transliteration name has changed since their last-issued identity document.",
+      "sourceRef": "Personal-data section, changed-Latin-name line",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "address",
+      "label": "Постоянен адрес (област, община, населено място, бул./ул., номер, вход, етаж, апартамент)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal-data section, permanent-address field",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "changedAddress",
+      "label": "Променен постоянен адрес",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed when the applicant's permanent address has changed since their last-issued identity document.",
+      "sourceRef": "Personal-data section, changed-permanent-address field",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Пол",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Personal-data section, \"Пол\" checkboxes (М/Ж)",
+      "validation": {
+        "enum": ["male", "female"]
+      }
+    },
+    {
+      "name": "height",
+      "label": "Ръст",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal-data section, \"Ръст\" field"
+    },
+    {
+      "name": "otherNationality",
+      "label": "Друго гражданство",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed when the applicant holds a nationality in addition to Bulgarian.",
+      "sourceRef": "Personal-data section, \"Друго гражданство\" field",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "citizenshipDecreeNumber",
+      "label": "Указ",
+      "type": "string",
+      "required": false,
+      "description": "The number of the presidential decree under which Bulgarian citizenship was granted, where applicable, per the form's own printed \"Указ\" field alongside otherNationality.",
+      "sourceRef": "Personal-data section, \"Указ\" field",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "eyeColor",
+      "label": "Цвят на очите",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Personal-data section, \"Цвят на очите\" checkboxes",
+      "validation": {
+        "enum": ["black", "brown", "blue", "grey", "green", "red", "multicolored", "different"]
+      },
+      "description": "черни (black), кафяви (brown), сини (blue), сиви (grey), зелени (green), червени (red), пъстри (multicolored), or различни (different)."
+    },
+    {
+      "name": "phone",
+      "label": "Телефон за връзка",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal-data section, \"Телефон за връзка\" field",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "email",
+      "label": "Ел. поща",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per the form's own printed note, an applicant who provides an email address is notified when the finished document is ready and before the document's validity period expires.",
+      "sourceRef": "Personal-data section, \"Ел. поща\" field",
+      "validation": {
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "passportValidityPeriod",
+      "label": "Избор на срок на валидност на паспорт за граждани, навършили 18 г.",
+      "type": "enum",
+      "required": false,
+      "description": "The applicant's chosen passport validity period, 5 or 10 years. The form's own text ties this election to applicants who have turned 18; not completed by or on behalf of a minor applicant.",
+      "sourceRef": "Personal-data section, passport-validity-period row",
+      "validation": {
+        "enum": ["5-years", "10-years"]
+      }
+    },
+    {
+      "name": "submitterName",
+      "label": "Имена",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Submission section, \"Имена\" field preceding the identity-document row",
+      "description": "The printed name of the person appearing in person to submit the application and the accompanying truthfulness declaration — either the applicant or, if designated below, their authorized proxy."
+    },
+    {
+      "name": "idCardNumber",
+      "label": "Лична карта №",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Submission section, \"Лична карта №\" field",
+      "validation": {
+        "maxLength": 30
+      },
+      "description": "The number of the Bulgarian national ID card presented at submission by the submitter (applicant or proxy)."
+    },
+    {
+      "name": "idCardIssueDate",
+      "label": "издадена на",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Submission section, ID-card issue-date field",
+      "description": "The issue date of the ID card named in idCardNumber, issued by MVR."
+    },
+    {
+      "name": "submissionDate",
+      "label": "Дата",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Submission section, \"Дата\" field"
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Подпис на заявителя",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's (or submitting proxy's) name, standing in for a physical signature, per this registry's established convention for paper-form signature blocks.",
+      "sourceRef": "Submission section, final signature block"
+    },
+    {
+      "name": "guardian1Name",
+      "label": "Имена",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "For an applicant under 18, or under guardianship/custodianship: the name of the first parent, guardian, custodian, or other legal representative declaring the application. The form prints no explicit boolean gate tying this block to a specific condition, so it is modeled as unconditionally optional rather than an invented requiredWhen gate.",
+      "sourceRef": "Page 2, first parent/guardian block, \"Имена\" field"
+    },
+    {
+      "name": "guardian1NationalId",
+      "label": "ЕГН",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The first parent/guardian's EGN. Only completed together with guardian1Name.",
+      "sourceRef": "Page 2, first parent/guardian block, \"ЕГН\" field"
+    },
+    {
+      "name": "guardian1IdCardNumber",
+      "label": "Лична карта №",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The first parent/guardian's presented ID-card number. Only completed together with guardian1Name.",
+      "sourceRef": "Page 2, first parent/guardian block, \"Лична карта №\" field",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "guardian1IdCardIssueDate",
+      "label": "издадена на",
+      "type": "date",
+      "required": false,
+      "description": "The issue date of the first parent/guardian's ID card, issued by MVR. Only completed together with guardian1Name.",
+      "sourceRef": "Page 2, first parent/guardian block, ID-card issue-date field"
+    },
+    {
+      "name": "guardian1DeclarationDate",
+      "label": "Дата",
+      "type": "date",
+      "required": false,
+      "description": "The date the first parent/guardian signed the declaration. Only completed together with guardian1Name.",
+      "sourceRef": "Page 2, first parent/guardian block, \"Дата\" field"
+    },
+    {
+      "name": "guardian1Signature",
+      "label": "Подпис",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The first parent/guardian's name, standing in for a physical signature. Only completed together with guardian1Name.",
+      "sourceRef": "Page 2, first parent/guardian block, signature field"
+    },
+    {
+      "name": "guardian2Name",
+      "label": "Имена",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The name of the second parent, guardian, custodian, or other legal representative declaring the application, where a second such person also declares. Only completed together with guardian1Name.",
+      "sourceRef": "Page 2, second parent/guardian block, \"Имена\" field"
+    },
+    {
+      "name": "guardian2NationalId",
+      "label": "ЕГН",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The second parent/guardian's EGN. Only completed together with guardian2Name.",
+      "sourceRef": "Page 2, second parent/guardian block, \"ЕГН\" field"
+    },
+    {
+      "name": "guardian2IdCardNumber",
+      "label": "Лична карта №",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The second parent/guardian's presented ID-card number. Only completed together with guardian2Name.",
+      "sourceRef": "Page 2, second parent/guardian block, \"Лична карта №\" field",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "guardian2IdCardIssueDate",
+      "label": "издадена на",
+      "type": "date",
+      "required": false,
+      "description": "The issue date of the second parent/guardian's ID card, issued by MVR. Only completed together with guardian2Name.",
+      "sourceRef": "Page 2, second parent/guardian block, ID-card issue-date field"
+    },
+    {
+      "name": "guardian2DeclarationDate",
+      "label": "Дата",
+      "type": "date",
+      "required": false,
+      "description": "The date the second parent/guardian signed the declaration. Only completed together with guardian2Name.",
+      "sourceRef": "Page 2, second parent/guardian block, \"Дата\" field"
+    },
+    {
+      "name": "guardian2Signature",
+      "label": "Подпис",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The second parent/guardian's name, standing in for a physical signature. Only completed together with guardian2Name.",
+      "sourceRef": "Page 2, second parent/guardian block, signature field"
+    },
+    {
+      "name": "authorizedPersonName",
+      "label": "Имена",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed if the requested document will be collected by an authorized person (proxy) rather than the applicant themselves, per the form's own printed instruction; the form prints no explicit boolean gate tying this block to a specific condition, so it is modeled as unconditionally optional rather than an invented requiredWhen gate.",
+      "sourceRef": "\"Данни за упълномощено лице\" (authorized-person) block, \"Имена\" field"
+    },
+    {
+      "name": "authorizedPersonNationalId",
+      "label": "ЕГН",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The authorized person's (proxy's) EGN. Only completed together with authorizedPersonName.",
+      "sourceRef": "\"Данни за упълномощено лице\" block, \"ЕГН\" field"
+    },
+    {
+      "name": "authorizedPersonIdCardNumber",
+      "label": "Лична карта №",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The authorized person's (proxy's) presented ID-card number. Only completed together with authorizedPersonName.",
+      "sourceRef": "\"Данни за упълномощено лице\" block, \"Лична карта №\" field",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "authorizedPersonIdCardIssueDate",
+      "label": "издадена на",
+      "type": "date",
+      "required": false,
+      "description": "The issue date of the authorized person's (proxy's) ID card, issued by MVR. Only completed together with authorizedPersonName.",
+      "sourceRef": "\"Данни за упълномощено лице\" block, ID-card issue-date field"
+    },
+    {
+      "name": "authorizationDate",
+      "label": "Дата",
+      "type": "date",
+      "required": false,
+      "description": "The date of the proxy authorization. Only completed together with authorizedPersonName.",
+      "sourceRef": "\"Данни за упълномощено лице\" block, \"Дата\" field"
+    },
+    {
+      "name": "authorizationSignature",
+      "label": "Подпис на заявителя",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's name, standing in for a physical signature, authorizing the named person (proxy) to collect the finished document. Only completed together with authorizedPersonName.",
+      "sourceRef": "\"Данни за упълномощено лице\" block, signature field"
+    },
+    {
+      "name": "motherFullName",
+      "label": "Имена",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's mother's full name. Only completed on a first-time identity-document issuance, per the form's own printed instruction.",
+      "sourceRef": "Page 2, \"Родители\" table, \"майка\" row, \"Имена\" column"
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Дата на раждане",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's mother's date of birth. Only completed together with motherFullName.",
+      "sourceRef": "Page 2, \"Родители\" table, \"майка\" row, \"Дата на раждане\" column"
+    },
+    {
+      "name": "fatherFullName",
+      "label": "Имена",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's father's full name. Only completed on a first-time identity-document issuance, per the form's own printed instruction.",
+      "sourceRef": "Page 2, \"Родители\" table, \"баща\" row, \"Имена\" column"
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Дата на раждане",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's father's date of birth. Only completed together with fatherFullName.",
+      "sourceRef": "Page 2, \"Родители\" table, \"баща\" row, \"Дата на раждане\" column"
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Снимка 3,5/4,5 (Photograph, 3.5 × 4.5 cm)",
+      "category": "supporting-evidence",
+      "belongsTo": "applicant",
+      "required": true,
+      "constraints": {
+        "mediaTypes": ["image/jpeg", "image/png"]
+      },
+      "sourceRef": "Page 1, top-left photo box: \"Снимка 3,5/4,5\""
+    },
+    {
+      "id": "signatureSpecimen",
+      "label": "Подпис (Signature specimen, reproduced on the issued document — distinct from the applicantSignature/authorizationSignature fields' typed-name attestation)",
+      "category": "supporting-evidence",
+      "belongsTo": "applicant",
+      "required": true,
+      "constraints": {
+        "mediaTypes": ["image/jpeg", "image/png"]
+      },
+      "sourceRef": "Page 1, left margin, \"Подпис\" box aligned below the photo box"
+    },
+    {
+      "id": "truthfulnessDeclaration",
+      "label": "Applicant's truthfulness declaration",
+      "category": "attestation",
+      "belongsTo": "applicant",
+      "required": true,
+      "statement": "Заявявам, че за декларирани от мен неверни данни в това заявление нося наказателна отговорност по чл. 313 от Наказателния кодекс.",
+      "sourceRef": "Page 1, declaration paragraph printed above the submission section"
+    }
+  ]
+}
