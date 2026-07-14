@@ -1,0 +1,1460 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "za/dha/application-for-visa-temporary-sojourn",
+  "version": "1.0.0",
+  "title": "South Africa Application for Visa to Temporarily Sojourn in the Republic (DHA-1738/Form 8)",
+  "description": "Apply for a South African temporary-residence visa through the Department of Home Affairs' (DHA) standard \"Application for Visa to Temporarily Sojourn in the Republic\" (DHA-1738, published as Form 8 under Regulation 9(1) of the Immigration Regulations, Section 10(2)(c) to (k) of the Immigration Act), opening South Africa's Visa vertical (6 of 6, closing South Africa's final open vertical alongside Passport, DMV, Business Formation, Taxes, and National ID). This schema models the form's common 10-section applicant declaration (Sections 1-10, pages 1-7 of the specimen), which every one of the form's 11 visa categories (Visitor's, Exchange, Study, Business, Treaty, Work: Critical Skills, Relative's, Work: General, Medical Treatment, Work: Intra-company transfer, Retired Person's) shares, plus the common supporting-document checklist printed on page 8 (\"in respect of all temporary residence visa applications, except medical treatment visas\"). It deliberately does NOT model the twelve category-specific additional-document checklists printed on pages 9-20 (covering Study, Treaty, Business x2, Medical Treatment, Relative's, Work: General, Work: Critical Skills, Work: Intra-company transfer, Retired Person's, and Exchange x2 visas) -- each is disclosed as an out-of-scope companion-schema candidate for a future version, since each is a substantial, independently-structured checklist in its own right. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of South Africa or the Department of Home Affairs.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Home Affairs",
+    "abbreviation": "DHA",
+    "url": "https://www.dha.gov.za"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://dirco.gov.za/paris/wp-content/uploads/sites/6/2024/12/LONG-STAY-VISA-APPLICATION-FORM.pdf",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "DHA-1738 / Form 8 -- \"Application for Visa to Temporarily Sojourn in the Republic\", as published in the Government Gazette (Staatskoerant), Vol. 587, No. 37679, 22 May 2014, and re-distributed unauthenticated by South Africa's Department of International Relations and Cooperation (DIRCO) via its Paris mission's own website."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle GOV-2976, closing South Africa's Visa vertical (the jurisdiction's sole remaining gap) to reach 6 of 6. Independently fetched via curl (HTTP 200, application/pdf, 599,736 bytes, sha256 8d967ccbd2e6e3f3f1f565a342508f6224e5c5330814d3174a6f4c8dddddd960) and independently re-extracted with pdfjs-dist (legacy build v3): 20 pages, 0 Widget annotations across every page (a flat, print-and-hand-fill Government Gazette specimen, not an AcroForm), clean unbroken text layer read via getTextContent(). Pages 1-7 carry the form's own numbered Sections 1 through 10 (Personal Details, Citizenship Details, Passport Details, Addresses, Intentions/Proposed Duration of Stay, Maintenance/Deportation, Particulars of Family/Dependants Accompanying, Security/Health Questionnaire, Additional Information, Declaration by Applicant) -- this schema models those 10 sections' fields[] in full, using this registry's established bounded-repeating-group convention (numbered field-name suffixes, not an array type, since the meta-schema's field.type enum has no array/list member) for the three repeating tables printed: a 3-slot \"other addresses lived in the last ten years\" table, a 3-slot \"relatives and/or friends in the Republic\" table, and a 4-slot \"family/dependants accompanying you\" table -- each slot modelled as independently optional, since the specimen prints no minimum-count instruction and a shorter applicant simply leaves the remaining rows blank. Page 8 is the supporting-documents checklist applicable to every visa category except medical treatment (documents[] models all 13 of its items plus this schema's own inferred proofOfFundsBankStatement and fingerprintFormWithPhotograph entries, cross-referenced from Section 6 and the page-1 biometric checkbox respectively). Pages 9-20 (the twelve category-specific additional-document checklists) were read in full but are explicitly out of scope for this version -- see the schema's own description and this document's own scope-disclosure paragraph. The page-1 \"Biometric (Attach Fingerprint Form, with Photograph)\" checkbox is disclosed as an interpretive judgment call: modelled as an independent boolean gate (biometricEnrollmentRequired) rather than a 12th visaCategory enum value, since its own parenthetical names an attachment action, not a permit type -- a future cycle with a clearer source (e.g. an official DHA guidance note explaining this checkbox) should revisit this. Conformance run: 2 valid mock scenarios (visitor's-visa first-time applicant; divorced business-visa applicant with an affirmative security-questionnaire answer) each returning 0 errors, plus 5 mutation-control fixtures (missing a required field, an invalid enum value, a missing conditionally-required field, an invalid date format, and a missing conditionally-required document) each returning exactly 1 error, using a disposable validate_instance.mjs script (not committed) implementing this schema's own required/requiredWhen/documents grammar plus ajv for the static JSON Schema subset."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "visaCategory",
+      "label": "Category of permit being applied for",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1, \"CATEGORY OF PERMIT BEING APPLIED FOR\" checkbox list",
+      "validation": {
+        "enum": [
+          "visitors-visa",
+          "exchange-visa",
+          "study-visa-over-3-months",
+          "business-visa",
+          "treaty-visa",
+          "work-visa-critical-skills",
+          "relatives-visa",
+          "work-visa-general",
+          "medical-treatment-visa",
+          "work-visa-intra-company-transfer",
+          "retired-persons-visa"
+        ]
+      }
+    },
+    {
+      "name": "biometricEnrollmentRequired",
+      "label": "Biometric (attach fingerprint form, with photograph)",
+      "type": "boolean",
+      "required": false,
+      "description": "Printed as a twelfth checkbox alongside the 11 visa-category options, immediately followed by \"(Attach Fingerprint Form, with Photograph)\". Modelled as a separate gate rather than a 12th category value, since its own parenthetical describes an attachment action rather than a permit type; a future schema version should revisit this if a clearer source specimen surfaces.",
+      "sourceRef": "Page 1: \"Biometric (Attach Fingerprint Form, with Photograph)\""
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Section 1: \"Title: Mr / Ms / Other (specify)\"",
+      "validation": {
+        "enum": [
+          "mr",
+          "ms",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "otherTitle",
+      "label": "Title (if Other)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "title",
+        "equals": "other"
+      },
+      "sourceRef": "Section 1: \"Other (specify)\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname/Family name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Surname/Family name\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Given names\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "maidenName",
+      "label": "Maiden name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Maiden name\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "stageName",
+      "label": "Stage name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Stage name\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "previousOrAlternativeNames",
+      "label": "Previous/alternative name(s)/aliases, including details",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Previous/alternative name(s)/aliases, including details\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Date of birth: Year Month Day\""
+    },
+    {
+      "name": "placeOfBirthTown",
+      "label": "Place of birth (Town/City)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Place of birth: Town/City\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Place of birth (Country)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Place of birth: ... Country\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 1: \"Marital status: Never married / Separated / Legally recognised spousal relationship / Married / Widowed / Divorced / Customary union\"",
+      "validation": {
+        "enum": [
+          "never-married",
+          "separated",
+          "legally-recognised-spousal-relationship",
+          "married",
+          "widowed",
+          "divorced",
+          "customary-union"
+        ]
+      }
+    },
+    {
+      "name": "separationDetails",
+      "label": "If separated, state whether divorce proceedings have been instituted and when final decree is expected",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "separated"
+      },
+      "sourceRef": "Section 1: \"If separated state: Whether divorce proceedings have been instituted and when final decree is expected\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "dateOfDivorce",
+      "label": "Date of divorce",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "divorced"
+      },
+      "description": "The specimen also states a divorce order must be attached — modelled as the divorceDecree document entry.",
+      "sourceRef": "Section 1: \"If divorced, provide: Date of divorce\""
+    },
+    {
+      "name": "presentCountryOfCitizenship",
+      "label": "Present country of citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 2: \"Present country of citizenship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "citizenshipAcquisitionDetails",
+      "label": "If acquired other than by birth, date and conditions under which acquired",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2: \"If acquired other than by birth, date and conditions under which acquired\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "holdsOtherCitizenship",
+      "label": "Do you hold any other citizenship?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 2: \"Do you hold any other citizenship? Yes / No\""
+    },
+    {
+      "name": "otherCitizenshipDetails",
+      "label": "If so, of which country, plus details",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "holdsOtherCitizenship",
+        "equals": true
+      },
+      "sourceRef": "Section 2: \"If so, of which country, plus details\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 3: \"Passport number\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "passportCountryOfIssue",
+      "label": "Country of issue",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 3: \"Country of issue\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "passportDateOfIssue",
+      "label": "Date of issue",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 3: \"Date of issue\""
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Expiry date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 3: \"Expiry date\""
+    },
+    {
+      "name": "otherDocumentType",
+      "label": "Type of document (any other document required by your government)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3: \"If you have any other document required by your government, provide details: Type of document\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "otherDocumentNumber",
+      "label": "Number (other document)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3: \"Number\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "otherDocumentExpiryDate",
+      "label": "Expiry date (other document)",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 3: \"Expiry date\""
+    },
+    {
+      "name": "residentialAddress",
+      "label": "Residential address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 4: \"Residential address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "residentialPostalCode",
+      "label": "Postal code (residential address)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 4: \"Residential address: ... Postal code\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "postalAddress",
+      "label": "Postal address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 4: \"Postal address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "postalAddressPostalCode",
+      "label": "Postal code (postal address)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 4: \"Postal address: ... Postal code\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "countryOfUsualResidence",
+      "label": "Country of usual residence, if other than country of origin or above address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4: \"Country of usual residence if other than country of origin or above address\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "telephoneWork",
+      "label": "Telephone No.: Work (incl. area code)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4: \"Telephone No.: Work (incl. area code)\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "telephoneHome",
+      "label": "Telephone No.: Home (incl. area code)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4: \"Telephone No.: Home (incl. area code)\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "otherAddress1Address",
+      "label": "Other address 1 where you have lived during the last ten years",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Other addresses where you have lived during the last ten years ...: Address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherAddress1Period",
+      "label": "Other address 1: period",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Period\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherAddress1Country",
+      "label": "Other address 1: country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Country\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherAddress2Address",
+      "label": "Other address 2 where you have lived during the last ten years",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Other addresses where you have lived during the last ten years ...: Address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherAddress2Period",
+      "label": "Other address 2: period",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Period\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherAddress2Country",
+      "label": "Other address 2: country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Country\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherAddress3Address",
+      "label": "Other address 3 where you have lived during the last ten years",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Other addresses where you have lived during the last ten years ...: Address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherAddress3Period",
+      "label": "Other address 3: period",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Period\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "otherAddress3Country",
+      "label": "Other address 3: country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Country\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "rightOfReEntry",
+      "label": "Do you hold the right of re-entry into your country of origin and/or country of residence if this differs?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 4 continuation: \"Do you hold the right of re-entry into your country of origin and/or country of residence if this differs? Yes / No\""
+    },
+    {
+      "name": "rightOfReEntryDetails",
+      "label": "If no, specify period and present status",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "rightOfReEntry",
+        "equals": false
+      },
+      "sourceRef": "Section 4 continuation: \"If no, specify period and present status\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "everAppliedAsylumOrRefugeeStatus",
+      "label": "Have you ever applied for asylum or refugee status in SA or any other country?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 4 continuation: \"Have you ever applied for asylum or refugee status in SA or any other country? Yes / No\""
+    },
+    {
+      "name": "asylumCountryDetails",
+      "label": "If yes, specify the country",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "everAppliedAsylumOrRefugeeStatus",
+        "equals": true
+      },
+      "sourceRef": "Section 4 continuation: \"If yes, specify the country\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactPersonRelationship",
+      "label": "Contact person: relationship",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Contact person: Relationship: Friend / Business Associate / Relative / Other\"",
+      "validation": {
+        "enum": [
+          "friend",
+          "business-associate",
+          "relative",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "contactPersonOtherRelationship",
+      "label": "Contact person: relationship (if Other)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "contactPersonRelationship",
+        "equals": "other"
+      },
+      "sourceRef": "Section 4 continuation: \"Other\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "contactPersonName",
+      "label": "Contact person: name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 4 continuation: \"Name\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "contactPersonAddress",
+      "label": "Contact person: address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "contactPersonTelephoneWork",
+      "label": "Contact person: telephone (Work, incl. area code)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Telephone No.: Work (incl. area code)\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "contactPersonTelephoneHome",
+      "label": "Contact person: telephone (Home, incl. area code)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Home (incl. area code)\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "relativeOrFriend1Name",
+      "label": "Relative/friend 1 in the Republic: name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 4 continuation: \"Details regarding relatives and/or friends in the Republic, if any: Name\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "relativeOrFriend1Address",
+      "label": "Relative/friend 1 in the Republic: address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "relativeOrFriend1Relationship",
+      "label": "Relative/friend 1 in the Republic: relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Relationship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "relativeOrFriend1IdentityNo",
+      "label": "Relative/friend 1 in the Republic: identity no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Identity No\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "relativeOrFriend2Name",
+      "label": "Relative/friend 2 in the Republic: name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 4 continuation: \"Details regarding relatives and/or friends in the Republic, if any: Name\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "relativeOrFriend2Address",
+      "label": "Relative/friend 2 in the Republic: address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "relativeOrFriend2Relationship",
+      "label": "Relative/friend 2 in the Republic: relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Relationship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "relativeOrFriend2IdentityNo",
+      "label": "Relative/friend 2 in the Republic: identity no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Identity No\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "relativeOrFriend3Name",
+      "label": "Relative/friend 3 in the Republic: name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 4 continuation: \"Details regarding relatives and/or friends in the Republic, if any: Name\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "relativeOrFriend3Address",
+      "label": "Relative/friend 3 in the Republic: address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Address\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "relativeOrFriend3Relationship",
+      "label": "Relative/friend 3 in the Republic: relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Relationship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "relativeOrFriend3IdentityNo",
+      "label": "Relative/friend 3 in the Republic: identity no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 4 continuation: \"Identity No\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "proposedDepartureDate",
+      "label": "Proposed date of departure for the Republic",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 5: \"Proposed date and place of departure for the Republic\""
+    },
+    {
+      "name": "proposedDeparturePlace",
+      "label": "Proposed place of departure for the Republic",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 5: \"Proposed date and place of departure for the Republic\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "anticipatedArrivalDate",
+      "label": "Anticipated date of arrival in the Republic",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 5: \"Anticipated date and place of arrival in the Republic\""
+    },
+    {
+      "name": "anticipatedArrivalPlace",
+      "label": "Anticipated place of arrival in the Republic",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 5: \"Anticipated date and place of arrival in the Republic\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "travellingBy",
+      "label": "Travelling by",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Section 5: \"Travelling by: Air / Road / Rail / Sea\"",
+      "validation": {
+        "enum": [
+          "air",
+          "road",
+          "rail",
+          "sea"
+        ]
+      }
+    },
+    {
+      "name": "carrier",
+      "label": "Carrier",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 5: \"Carrier\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "intendedDurationValue",
+      "label": "Intended duration of stay in the Republic (numeric value)",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Section 5: \"What is your intended duration of stay in the Republic: Days/weeks/months/or Years\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "intendedDurationUnit",
+      "label": "Intended duration of stay in the Republic (unit)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Section 5: \"Days/weeks/months/or Years\"",
+      "validation": {
+        "enum": [
+          "days",
+          "weeks",
+          "months",
+          "years"
+        ]
+      }
+    },
+    {
+      "name": "intendedDepartureDate",
+      "label": "Intended date of departure",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 5: \"Intended date of departure\""
+    },
+    {
+      "name": "proposedActivities",
+      "label": "Outline your proposed activities whilst in the Republic",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 5: \"Outline your proposed activities whilst in the Republic\"",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "maintenanceArrangements",
+      "label": "State what funds you have available for maintenance during your stay in the Republic and whether you have a return ticket or other arrangements made for maintenance and return passage",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 6 heading text",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "availableFundsType",
+      "label": "Available funds (foreign currency): type",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 6: \"Available funds (foreign currency): Type\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "availableFundsAmount",
+      "label": "Available funds (foreign currency): amount",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section 6: \"Amount\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "southAfricanRandEquivalent",
+      "label": "South African Rand equivalent",
+      "type": "number",
+      "required": false,
+      "description": "The specimen instructs a bank statement to be attached as proof of funds held — modelled as the proofOfFundsBankStatement document entry.",
+      "sourceRef": "Section 6: \"South African Rand equivalent (attach bank statement as proof of funds held)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "returnTicketNumber",
+      "label": "Valid return or onward ticket no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 6: \"Valid return or onward ticket no\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "returnTicketExpiryDate",
+      "label": "Return/onward ticket expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 6: \"Expiry date\""
+    },
+    {
+      "name": "maintenanceOther",
+      "label": "Other (maintenance/deportation)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 6: \"Other\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "dependant1FullNames",
+      "label": "Dependant 1: full names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Particulars of any family/dependants accompanying you: Full names\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependant1DateOfBirth",
+      "label": "Dependant 1: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Date of birth\""
+    },
+    {
+      "name": "dependant1Relationship",
+      "label": "Dependant 1: relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Relationship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant1PassportNo",
+      "label": "Dependant 1: passport no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Passport No.\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "dependant1PassportExpiryDate",
+      "label": "Dependant 1: passport expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 7: \"Expiry date\""
+    },
+    {
+      "name": "dependant1Nationality",
+      "label": "Dependant 1: nationality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Nationality\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant1Occupation",
+      "label": "Dependant 1: occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Occupation\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependant2FullNames",
+      "label": "Dependant 2: full names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Particulars of any family/dependants accompanying you: Full names\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependant2DateOfBirth",
+      "label": "Dependant 2: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Date of birth\""
+    },
+    {
+      "name": "dependant2Relationship",
+      "label": "Dependant 2: relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Relationship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant2PassportNo",
+      "label": "Dependant 2: passport no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Passport No.\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "dependant2PassportExpiryDate",
+      "label": "Dependant 2: passport expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 7: \"Expiry date\""
+    },
+    {
+      "name": "dependant2Nationality",
+      "label": "Dependant 2: nationality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Nationality\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant2Occupation",
+      "label": "Dependant 2: occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Occupation\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependant3FullNames",
+      "label": "Dependant 3: full names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Particulars of any family/dependants accompanying you: Full names\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependant3DateOfBirth",
+      "label": "Dependant 3: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Date of birth\""
+    },
+    {
+      "name": "dependant3Relationship",
+      "label": "Dependant 3: relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Relationship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant3PassportNo",
+      "label": "Dependant 3: passport no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Passport No.\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "dependant3PassportExpiryDate",
+      "label": "Dependant 3: passport expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 7: \"Expiry date\""
+    },
+    {
+      "name": "dependant3Nationality",
+      "label": "Dependant 3: nationality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Nationality\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant3Occupation",
+      "label": "Dependant 3: occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Occupation\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependant4FullNames",
+      "label": "Dependant 4: full names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Particulars of any family/dependants accompanying you: Full names\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependant4DateOfBirth",
+      "label": "Dependant 4: date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7: \"Date of birth\""
+    },
+    {
+      "name": "dependant4Relationship",
+      "label": "Dependant 4: relationship",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Relationship\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant4PassportNo",
+      "label": "Dependant 4: passport no.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Passport No.\"",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "dependant4PassportExpiryDate",
+      "label": "Dependant 4: passport expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 7: \"Expiry date\""
+    },
+    {
+      "name": "dependant4Nationality",
+      "label": "Dependant 4: nationality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Nationality\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dependant4Occupation",
+      "label": "Dependant 4: occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 7: \"Occupation\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dependantsNotAccompanyingIntendLaterEntry",
+      "label": "If your spouse and/or other dependants are not accompanying you, do they intend to enter the country at a later stage?",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 6: \"If your spouse and/or other dependants are not accompanying you, do they intend to enter the country at a later stage? Yes / No\""
+    },
+    {
+      "name": "dependantsLaterEntryDate",
+      "label": "On (date)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "dependantsNotAccompanyingIntendLaterEntry",
+        "equals": true
+      },
+      "sourceRef": "Page 6: \"On (date)\""
+    },
+    {
+      "name": "dependantsLaterEntryDetails",
+      "label": "Details/reason(s)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 6: \"Details/reason(s)\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "everRefusedEntryOrDeported",
+      "label": "Have you ever been refused entry into or deported from the Republic?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 6: \"Have you ever been refused entry into or deported from the Republic: If so, please provide details\""
+    },
+    {
+      "name": "refusedEntryOrDeportedDetails",
+      "label": "If so, please provide details",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "everRefusedEntryOrDeported",
+        "equals": true
+      },
+      "sourceRef": "Page 6: \"If so, please provide details\"",
+      "validation": {
+        "maxLength": 500
+      }
+    },
+    {
+      "name": "everConvictedOfCrime",
+      "label": "Have you or any of your dependants accompanying you ever been convicted of any crime in any country?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 8, question 1"
+    },
+    {
+      "name": "criminalOrCivilCasePending",
+      "label": "Is a criminal/civil case pending against you or any of your dependants accompanying you in any country?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 8, question 2"
+    },
+    {
+      "name": "sufferingFromDiseaseOrDeficiency",
+      "label": "Are you or any of your dependants suffering from tuberculosis, any other infectious or contagious disease or any mental or physical deficiency?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 8, question 3"
+    },
+    {
+      "name": "unrehabilitatedInsolvent",
+      "label": "Are you an unrehabilitated insolvent?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 8, question 4"
+    },
+    {
+      "name": "judiciallyDeclaredIncompetent",
+      "label": "Have you ever been judicially declared incompetent?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 8, question 5"
+    },
+    {
+      "name": "memberOfViolenceOrHatredOrganisation",
+      "label": "Are you a member of or adherent to an association or organisation advocating the practice of social violence, or racial hatred?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Section 8, question 6"
+    },
+    {
+      "name": "securityHealthQuestionnaireDetails",
+      "label": "Furnish full particulars if the reply to any of these questions is in the affirmative",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "everConvictedOfCrime",
+            "equals": true
+          },
+          {
+            "field": "criminalOrCivilCasePending",
+            "equals": true
+          },
+          {
+            "field": "sufferingFromDiseaseOrDeficiency",
+            "equals": true
+          },
+          {
+            "field": "unrehabilitatedInsolvent",
+            "equals": true
+          },
+          {
+            "field": "judiciallyDeclaredIncompetent",
+            "equals": true
+          },
+          {
+            "field": "memberOfViolenceOrHatredOrganisation",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Section 8: \"Furnish full particulars if the reply to any of these questions is in the affirmative\"",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "additionalInformation",
+      "label": "Any additional information you wish to bring to the department's attention",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 9 heading",
+      "validation": {
+        "maxLength": 1000
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date (declaration by applicant)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 10: \"Signature of applicant ... Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "declarationCertification",
+      "label": "Declaration by applicant",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I acknowledge that I understand the contents and implications of this application and solemnly declare that the above particulars given by me as well as all particulars in the attached supporting documentation are true and correct.",
+      "sourceRef": "Section 10, above the signature line"
+    },
+    {
+      "id": "fingerprintFormWithPhotograph",
+      "label": "Fingerprint form, with photograph",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "biometricEnrollmentRequired",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1: \"Biometric (Attach Fingerprint Form, with Photograph)\""
+    },
+    {
+      "id": "validPassport",
+      "label": "Valid passport which expires in no less than 30 days after expiry of the intended date of departure from the Republic",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 1"
+    },
+    {
+      "id": "yellowFeverVaccinationCertificate",
+      "label": "Yellow fever vaccination certificate, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 2"
+    },
+    {
+      "id": "medicalReport",
+      "label": "Medical report",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 3"
+    },
+    {
+      "id": "radiologicalReport",
+      "label": "Radiological report",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 4"
+    },
+    {
+      "id": "marriageCertificateOrRecognition",
+      "label": "Marriage certificate or, in the case of a foreign spousal relationship, proof of official recognition thereof issued by the authorities of the foreign country of the applicant, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 5"
+    },
+    {
+      "id": "spousalRelationshipAffidavit",
+      "label": "Affidavit where a spousal relationship to a South African citizen or resident is applicable, plus documentation proving cohabitation, shared financial responsibilities, and particulars of children in the spousal relationship",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 6"
+    },
+    {
+      "id": "divorceDecree",
+      "label": "Divorce decree, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "divorced"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 7; also referenced at Section 1, \"If divorced, provide: Date of divorce. Divorce order must be attached\""
+    },
+    {
+      "id": "courtOrderParentalResponsibility",
+      "label": "Court order granting full or specific parental responsibilities and rights, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 8"
+    },
+    {
+      "id": "deathCertificateLateSpouse",
+      "label": "Death certificate, in respect of late spouse, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 9"
+    },
+    {
+      "id": "parentalConsentLetter",
+      "label": "Written consent from both parents and full-parental-responsibilities-and-rights parent, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 10"
+    },
+    {
+      "id": "proofOfAdoption",
+      "label": "Proof of adoption, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 11"
+    },
+    {
+      "id": "legalSeparationOrder",
+      "label": "Legal separation order, where applicable",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "maritalStatus",
+        "equals": "separated"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 12"
+    },
+    {
+      "id": "policeClearanceCertificates",
+      "label": "Police clearance certificates in respect of applicants 18 years and older, for all countries where the person resided one year or longer since attaining the age of 18",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 8 supporting-documents checklist, item 13"
+    },
+    {
+      "id": "proofOfFundsBankStatement",
+      "label": "Bank statement as proof of funds held",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Section 6: \"South African Rand equivalent (attach bank statement as proof of funds held)\""
+    }
+  ]
+}
