@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **443 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **444 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2955, "GovSchema Standard Research"): Ghana's
+> DMV vertical closes — Ghana now stands at 6 of 6 verticals**, via
+> `gh/dvla/a2-vehicle-registration` — the Driver and Vehicle Licensing
+> Authority's (DVLA) "A2 Vehicle Registration" service, scoped to the OWNER
+> requirement set plus its additive PERSONALISED NUMBER option, via the
+> MANUAL registration pathway. The source is DVLA's own public "Services"
+> page (`dvla.gov.gh/services`), a rendered, unauthenticated, field-by-field
+> Requirements/Procedures walkthrough — DVLA publishes no standalone
+> downloadable "Form A" specimen, so this registry's accepted alternate to a
+> fillable PDF (a genuine prose service-page walkthrough, cf.
+> `si/furs/doh-odm-income-tax-return-instructions`) is used instead.
+> Independently re-fetched this cycle via `curl` (HTTP 200, `text/html`,
+> 179,310 bytes, sha256
+> `d3352ee18a71b4f4956ae9968064b4cbbbe5f9dc147565fa00bee51475cd1e37`), a
+> Next.js page whose server-sent HTML already embeds the full page text (no
+> client-side-only rendering gate encountered). This also **refines a prior
+> finding of this registry's own** (GOV-2716, 2026-07-13): that cycle
+> confirmed DVLA's transactional `service.dvla.gov.gh` online-services SPA
+> is fully login-gated with no downloadable Form F/F1 specimen — a finding
+> not contradicted here — but did not check the main site's own public
+> `/services` page, which publishes the Requirements/Procedures walkthrough
+> openly with no login/CAPTCHA. Models 8 `fields[]` (owner and previous
+> -owner identity, the customs-entry reference, and a
+> `requestsPersonalisedNumber` gate plus its 3 conditionally-required data
+> points) and 6 `documents[]` entries (customs entry documents, PVTS
+> inspection report, both owners' passport photographs, the Ghana Card, and
+> the personalised-number application letter). Deliberately does NOT model
+> the AUTHORIZED AGENT requirement set or the ONLINE registration pathway,
+> both disclosed as out-of-scope companions for a future version. 2 valid
+> conformance fixtures (0 errors each) plus 5 mutation-control fixtures
+> (each raising exactly 1 error) are committed under
+> `conformance/gh/dvla/a2-vehicle-registration/1.0.0/`. See the document's
+> own VERIFICATION.md for the full sourcing record, the "old and new owners"
+> interpretive judgment call, and every other disclosed scope decision.
 
 > **Update (2026-07-14, GOV-2942, "GovSchema Standard Research"): North
 > Macedonia's National ID & Civic Documents vertical opens (4 of 6)**, via
@@ -9271,6 +9306,26 @@ dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (43/43 jurisdictions — 100%)
 
+**Ghana's DMV vertical closes — Ghana now 6 of 6 (GOV-2955)**, via
+`gh/dvla/a2-vehicle-registration` — DVLA's "A2 Vehicle Registration" service
+(OWNER requirement set plus its additive PERSONALISED NUMBER option, MANUAL
+registration pathway), sourced from DVLA's own public, unauthenticated
+`dvla.gov.gh/services` Requirements/Procedures walkthrough rather than a
+downloadable form (DVLA publishes no standalone Form A specimen). This
+refines, without contradicting, this registry's own prior GOV-2716 finding
+that DVLA's transactional `service.dvla.gov.gh` online-services SPA is
+login-gated with no downloadable Form F/F1 — that cycle did not check the
+main site's own public Services page, used here. See the Executive
+Summary's GOV-2955 update above and the document's own VERIFICATION.md for
+the full sourcing record, the field/document design rationale for a
+Requirements-walkthrough (rather than form-label) source, and every
+disclosed scope/judgment-call decision. This section's own `43/43` fraction
+predates this addition and, like the North Macedonia entry immediately
+below, was not recomputed as part of this cycle (Ghana was not previously
+counted among either the numerator or the denominator, since its DMV
+vertical was open); this cycle's scope was authoring the Ghana candidate,
+not a full-registry DMV-vertical recount.
+
 **North Macedonia's DMV vertical opens (1 of 6) (GOV-2940)**, via
 `mk/mvr/baranje-za-izdavanje-na-vozacka-dozvola` — МВР's universal
 driving-licence request form (Прилог бр. 2), covering eleven procedures
@@ -12224,7 +12279,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GH** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **GH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -14397,7 +14452,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   republished Form F/F1 specimen) surfaces; a dead end for the current
   official publishing pattern. This was Ghana's sole remaining open
   vertical — Ghana now stands at 5 of 6 with no open, unscreened backlog
-  candidate remaining.
+  candidate remaining. **RESOLVED (2026-07-14, GOV-2955):** this finding
+  about `service.dvla.gov.gh` (login-gated) and the absence of a
+  downloadable Form F/F1 both still hold, but a follow-on cycle found that
+  the main site's own public `www.dvla.gov.gh/services` page (a distinct
+  route this cycle did not check) publishes a field-by-field Requirements/
+  Procedures walkthrough of every DVLA service with no login/CAPTCHA —
+  `gh/dvla/a2-vehicle-registration` models its "A2 Vehicle Registration"
+  service from that source. Ghana now stands at 6 of 6.
 - **JO Business Formation** — GOV-2739, screened 2026-07-13. The Companies
   Control Department (CCD) publishes no fillable registration PDF —
   `www.ccd.gov.jo` itself returns HTTP 451 to a direct fetch, and a Wayback
