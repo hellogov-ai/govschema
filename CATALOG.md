@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **449 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **450 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2986, "GovSchema Standard Research"): Vietnam's
+> National ID vertical closes (6 of 6)**, via
+> `vn/bca/phieu-de-nghi-giai-quyet-thu-tuc-ve-can-cuoc-dc02` — the Ministry
+> of Public Security's (Bộ Công an) Mẫu DC02, "Phiếu đề nghị giải quyết thủ
+> tục về căn cước" (Identification Procedure Request Form), issued under
+> Thông tư số 17/2024/TT-BCA ngày 15/5/2024 implementing Luật Căn cước 2023
+> (effective 01/7/2024). **This corrects a pre-scouted candidate from
+> GOV-2976/GOV-2980**: that finding proposed Mẫu CC01 ("Tờ khai Căn cước
+> công dân"), a citizen self-declaration cited to Thông tư số 41/2019/TT-BCA
+> — a circular this cycle found had been expressly repealed on 01/7/2024 by
+> the same Thông tư 17/2024/TT-BCA, the moment "Căn cước công dân" was
+> replaced nationwide by "Căn cước." The new circular reuses the "CC01"
+> symbol for a structurally different, system-generated receipt (printed
+> directly from the case-management computer system per the circular's own
+> Điều 8/Điều 10), making the original candidate a genuine dead end; the
+> actual current citizen/representative-facing successor is Mẫu DC02
+> (Điều 9), independently located and re-verified this cycle. Models the
+> full nine-checkbox breadth of the form's own "NỘI DUNG ĐỀ NGHỊ" section
+> (issue/replace/reissue card, personal-ID-number confirmation/cancellation,
+> National-Population/Identification-database extraction and adjustment,
+> card-data integration, and biometric-database updates), following this
+> registry's `ro/dgpci` precedent of modelling a multi-purpose request
+> slip's full printed breadth rather than narrowing to a single named
+> transaction. **Vietnam now stands at 6 of 6 verticals**, joining Colombia,
+> Bulgaria, Romania, Ghana, and South Africa — verified directly against
+> the By-Jurisdiction table below, not assumed — as non-original
+> jurisdictions with full coverage. 2 valid conformance fixtures (0 errors
+> each) plus 3
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/vn/bca/phieu-de-nghi-giai-quyet-thu-tuc-ve-can-cuoc-dc02/1.0.0/`.
+> See the document's own VERIFICATION.md for the full corroborating chain
+> (Điều 8/9/10/16 verbatim quotes, independent re-fetch of both the dead
+> CC01 candidate and the working DC02 specimen) and every disclosed scoping
+> decision.
 
 > **Update (2026-07-14, GOV-2981, "GovSchema Standard Research"): Slovakia
 > opens as this registry's 56th jurisdiction**, via its Taxes vertical (1 of
@@ -76,7 +111,12 @@
 > specimen (0 AcroForm widgets) common to all 11 of the form's visa
 > categories. **South Africa now stands at 6 of 6 verticals**, joining
 > Colombia, Bulgaria, Romania, North Macedonia, and Ghana as jurisdictions
-> with full coverage. Models 123 `fields[]` across the form's shared
+> with full coverage
+> [**Correction (GOV-2986):** North Macedonia is not actually at full
+> coverage — the By-Jurisdiction table below has shown its Visa vertical
+> as ✗ since this same entry's own cycle; this prose overstated it and is
+> corrected here rather than silently edited]. Models 123 `fields[]` across
+> the form's shared
 > Sections 1-10 (personal/citizenship/passport/address details,
 > intentions/duration of stay, maintenance/deportation, accompanying
 > dependants, a security/health questionnaire, and the applicant
@@ -12157,11 +12197,13 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (38/56 jurisdictions — 68%)
+### National ID & Civic Documents (39/56 jurisdictions — 70%)
 
-> **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
-> following Slovakia's addition (Taxes only; National ID remains open for
-> Slovakia, unscouted).
+> **Correction (GOV-2981/GOV-2986):** denominator updated from 55 to 56
+> jurisdictions following Slovakia's addition (Taxes only; National ID
+> remains open for Slovakia, unscouted), and numerator updated from 38 to
+> 39 following Vietnam's National ID vertical closing (6 of 6) this same
+> cycle — see below.
 
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles),
@@ -12169,6 +12211,17 @@ candidate, the other two as confirmed dead ends).
 > Lithuania — issuance is explicitly in-person-only with mandatory
 > biometric enrollment, no downloadable application form found) as the
 > registry's 55th jurisdiction.
+
+**Vietnam's National ID & Civic Documents vertical closes (6 of 6)
+(GOV-2986)**, via `vn/bca/phieu-de-nghi-giai-quyet-thu-tuc-ve-can-cuoc-dc02`
+— the Ministry of Public Security's (Bộ Công an) Mẫu DC02, "Phiếu đề nghị
+giải quyết thủ tục về căn cước." See the Executive Summary's GOV-2986
+update above for the full sourcing record — including the correction of a
+pre-scouted GOV-2976/GOV-2980 candidate (Mẫu CC01) that this cycle found
+had gone legally stale, and the discovery of its genuine current successor
+(Mẫu DC02) — and the document's own VERIFICATION.md. **Vietnam now stands
+at 6 of 6 verticals.** Moves this vertical's global coverage from 38/55 to
+39/55 (71%).
 
 **North Macedonia's National ID & Civic Documents vertical opens (4 of 6)
 (GOV-2942)**, via `mk/mvr/baranje-za-izdavanje-na-lichna-karta` — МВР's
@@ -12594,7 +12647,7 @@ now closed.
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
@@ -14571,6 +14624,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   (forms CC01-CC05 are now all database-extracted or police-generated; the
   citizen only reviews and signs). There is no longer any fillable
   citizen-facing form to schematize even in principle.
+  **Overturned, GOV-2986, 2026-07-14**: this was correct about CC01 but
+  incomplete about the vertical as a whole — Thông tư 17/2024/TT-BCA's own
+  Điều 9/Điều 10 name a *second* form family (DC01-DC03) alongside CC01-CC05,
+  and explicitly exclude DC01/DC02 from the "printed directly from the
+  computer system" list that does cover CC01-CC04 and DC03. DC02 ("Phiếu đề
+  nghị giải quyết thủ tục về căn cước") is the genuine citizen/representative
+  -completed request form this vertical needed — located, independently
+  verified, and authored as `vn/bca/phieu-de-nghi-giai-quyet-thu-tuc-ve-can-cuoc-dc02`,
+  closing Vietnam's National ID vertical to 6 of 6. See the Executive
+  Summary's GOV-2986 update and the document's own VERIFICATION.md. **Not an
+  open gap any more.**
 - **PE Passport (Migraciones/RENIEC)** — GOV-2456, screened 2026-07-12
   (re-confirming prior cycles' GOV-2404/GOV-2419/GOV-2426/GOV-2434 notes).
   Passport issuance requires an in-person appointment with mandatory
@@ -14916,6 +14980,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   CMND/CCCD number, ethnicity, religion, nationality, marital status,
   occupation, permanent-residence registration). **Delegated as a child
   issue of GOV-2976** rather than authored this cycle.
+  **Resolved, GOV-2986/GOV-2980, 2026-07-14**: re-verifying this exact CC01
+  candidate before authoring it found its own cited legal basis (Thông tư
+  41/2019/TT-BCA) had been repealed 01/7/2024 by Thông tư 17/2024/TT-BCA —
+  the new circular reuses "CC01" for an unrelated, system-generated receipt.
+  Authored the actual current successor, Mẫu DC02 ("Phiếu đề nghị giải
+  quyết thủ tục về căn cước"), as
+  `vn/bca/phieu-de-nghi-giai-quyet-thu-tuc-ve-can-cuoc-dc02`, closing
+  Vietnam to 6 of 6. See the Executive Summary's GOV-2986 update and the
+  document's own VERIFICATION.md. Not an open candidate any more.
 
 - **Nigeria — DMV: scouted, not yet ready (GOV-2976).** Nigeria is
   otherwise 5 of 6 (only DMV open). `frsc.gov.ng`'s main site is a static
