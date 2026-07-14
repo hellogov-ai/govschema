@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **451 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **452 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-3000, "GovSchema Standard Research"): Lithuania's
+> Business Formation vertical opens (1 of 6)**, via
+> `lt/registrucentras/individualios-imones-registravimas` — Valstybės įmonė
+> Registrų centras' composite application for registering an individuali
+> įmonė (sole proprietorship) in the Register of Legal Entities, combining
+> five separate source PDFs into one schema document: JAR-1 (main
+> application, scoped to its own individuali įmonė legal-form checkbox),
+> JAR-S (owner data), JAR-VO-V (single-member management body), JAR-T
+> (representation rule), and KD-1 (contact information) — this registry's
+> established composite-filing pattern (e.g.
+> `sk/okresny-urad/ohlasenie-zivnosti-fyzicka-osoba`,
+> `si/ajpes/prijava-za-vpis-v-poslovni-register-sole-proprietor`). This is a
+> child issue of GOV-2995, which pre-scouted JAR-VO-V, JAR-S, and KD-1 via
+> Wayback Machine capture (the live `registrucentras.lt` site 403s on direct
+> fetch, Cloudflare bot-challenge) but explicitly flagged the fourth
+> mandatory companion, JAR-T, as not located. This cycle independently
+> re-fetched all four of GOV-2995's own candidates from scratch (not
+> trusted as-is) and located JAR-T itself via the identical Wayback CDX
+> search technique, so all five forms in the individuali įmonė filing set
+> are modelled — no un-located companion form remains. Independent
+> re-verification also caught a citation error in GOV-2995's own scouting
+> note: JAR-1 is approved by order 2020-04-28 No. VE-293(1.3E), as amended
+> 2024-12-20 by order No. VE-828(1.3E) — not the 2016-01-06 No. V-4 order
+> previously cited — per the freshly re-fetched form's own printed header.
+> Models all 65 `fields[]` the five-form composite exposes (29 from JAR-1,
+> 13 from JAR-S, 14 from JAR-VO-V, 1 from JAR-T, 8 from KD-1), plus 4
+> `documents[]` entries and 1 `crossFieldValidation` rule (a limited
+> activity period's end date not preceding the founding document's own
+> date). 2 valid conformance fixtures (0 errors each) plus 10
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under
+> `conformance/lt/registrucentras/individualios-imones-registravimas/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing chain and
+> every disclosed scoping decision.
 
 > **Update (2026-07-14, GOV-2995, "GovSchema Standard Research"): Slovakia's
 > Business Formation vertical opens (1 of 6, 2 of 6 combined with GOV-2981's
@@ -10033,7 +10068,11 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (50/56 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (51/56 jurisdictions — 91%)
+
+> **Update (GOV-3000):** Lithuania's Business Formation vertical opens via
+> `lt/registrucentras/individualios-imones-registravimas`; recounted
+> directly from the By-Jurisdiction table (50 + Lithuania = 51).
 
 > **Update (GOV-2995):** Slovakia's Business Formation vertical opens via
 > `sk/okresny-urad/ohlasenie-zivnosti-fyzicka-osoba`; recounted directly
@@ -10050,6 +10089,29 @@ within an already-covered vertical:
 > (Business Formation remains open for Lithuania — Registrų centras
 > returned HTTP 403 on every fetch attempt this cycle, WAF-gated with no
 > static fallback found) as the registry's 55th jurisdiction.
+
+**Lithuania's Business Formation vertical opens (1 of 6) (GOV-3000)**, via
+`lt/registrucentras/individualios-imones-registravimas` — Valstybės įmonė
+Registrų centras' composite filing for registering an individuali įmonė
+(sole proprietorship) in the Register of Legal Entities, combining JAR-1
+(main application, scoped to its own individuali įmonė checkbox), JAR-S
+(owner data), JAR-VO-V (single-member management body), JAR-T
+(representation rule), and KD-1 (contact information) as one schema
+document — this registry's established composite-filing pattern (e.g.
+`sk/okresny-urad/ohlasenie-zivnosti-fyzicka-osoba`). This closes out
+GOV-2995's own pre-scouted candidate: JAR-T, which that cycle flagged as
+not located despite JAR-1's own text listing it as mandatory for this
+legal form, was independently located this cycle via the same Wayback
+Machine CDX-search technique, so all five forms in the individuali įmonė
+filing set are modelled with no un-located companion form remaining. Models
+65 `fields[]` across the five forms (29 JAR-1, 13 JAR-S, 14 JAR-VO-V, 1
+JAR-T, 8 KD-1), 4 `documents[]`, and 1 `crossFieldValidation` rule. This
+cycle also corrects a citation error in GOV-2995's own scouting note: JAR-1
+is approved by order 2020-04-28 No. VE-293(1.3E), as amended 2024-12-20 by
+order No. VE-828(1.3E) — not the 2016 V-4 order previously cited — per the
+freshly re-fetched form's own printed header. See the document's own
+VERIFICATION.md for the full sourcing record and every disclosed scoping
+judgment call.
 
 **Bulgaria's Business Formation vertical closes (6 of 6) (GOV-2954)**, via
 `bg/registry-agency/zayavlenie-a1-vpisvane-obstoyatelstva-ednolichen-targovets`
@@ -12669,7 +12731,7 @@ now closed.
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
-| **LT** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **LT** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -14981,6 +15043,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 > contain an AcroForm. **Lithuania's Business Formation vertical is
 > delegated as a pre-scouted child issue of GOV-2995** rather than
 > authored inline this cycle.
+
+> **Update (GOV-3000): authored.** Lithuania's Business Formation vertical
+> opens (1 of 6) via
+> `lt/registrucentras/individualios-imones-registravimas`. This cycle
+> independently re-fetched all four of GOV-2995's own candidates from
+> scratch — not trusted as-is — and additionally located the fourth
+> mandatory companion form, **JAR-T** (the representation-rule choice),
+> which GOV-2995's own search did not turn up, via the identical Wayback
+> CDX-search technique; all five forms in the individuali įmonė filing set
+> are now modelled, with no un-located companion form remaining.
+> Independent re-verification also corrected GOV-2995's own JAR-1 citation:
+> the freshly re-fetched JAR-1's own printed header reads "2020 m.
+> balandžio 28 d. įsakymu Nr. VE-293(1.3E) (... 2024 m. gruodžio 20 d.
+> įsakymo VE-828(1.3E) redakcija)" — approved 2020-04-28 by order No.
+> VE-293(1.3E), as amended 2024-12-20 by order No. VE-828(1.3E) — not the
+> 2016-01-06 No. V-4 order cited above; JAR-1 is also 6 pages, not 5. See
+> the document's own VERIFICATION.md for the full sourcing record.
 
 - **Slovakia — Taxes: scouted, not yet authored (GOV-2969).** The strongest
   candidate found, DPFOAv25 (the individual income tax return,
