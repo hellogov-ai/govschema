@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**55 jurisdictions** | **446 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**55 jurisdictions** | **447 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2976, "GovSchema Standard Research"): South
+> Africa's Visa vertical closes (6 of 6)**, via
+> `za/dha/application-for-visa-temporary-sojourn` — the Department of Home
+> Affairs' (DHA) standard "Application for Visa to Temporarily Sojourn in
+> the Republic" (DHA-1738/Form 8), as published in the Government Gazette
+> (Vol. 587, No. 37679, 22 May 2014) and re-distributed unauthenticated by
+> DIRCO's Paris-mission site — a flat, 20-page, print-and-hand-fill
+> specimen (0 AcroForm widgets) common to all 11 of the form's visa
+> categories. **South Africa now stands at 6 of 6 verticals**, joining
+> Colombia, Bulgaria, Romania, North Macedonia, and Ghana as jurisdictions
+> with full coverage. Models 123 `fields[]` across the form's shared
+> Sections 1-10 (personal/citizenship/passport/address details,
+> intentions/duration of stay, maintenance/deportation, accompanying
+> dependants, a security/health questionnaire, and the applicant
+> declaration) plus 16 `documents[]` entries drawn from the page-8
+> supporting-documents checklist common to every category except medical
+> treatment; the twelve category-specific additional-document checklists
+> (pages 9-20) are explicitly out of scope, disclosed as future companion-
+> schema candidates. 2 valid conformance fixtures (0 errors each) plus 5
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/za/dha/application-for-visa-temporary-sojourn/1.0.0/`.
+> This cycle also scouted three further candidates in parallel and
+> delegated each as a child issue rather than authoring inline: Vietnam's
+> National ID vertical (a genuine CC01 citizen-ID-declaration `.doc`
+> specimen via `dichvucong.bocongan.gov.vn`), Slovakia's Taxes vertical
+> (DPFOAv25 via a May 2026 Wayback Machine capture, since
+> `financnasprava.sk`'s outage first observed in GOV-2969 is still live),
+> and Lithuania's GPM311C companion schedule (confirmed genuine — page 3 of
+> the same annex PDF GOV-2969's GPM311 schema already cites). Thailand's
+> National ID vertical was screened and confirmed a dead end this cycle
+> (no unauthenticated ID-card form on `bora.dopa.go.th`; the online
+> self-service channels are ThaID-login-gated) — see "Confirmed dead ends"
+> below. See the document's own VERIFICATION.md for the full sourcing
+> record and every disclosed scoping/judgment-call decision.
 
 > **Update (2026-07-14, GOV-2969, "GovSchema Standard Research"): Lithuania
 > opens as this registry's 55th jurisdiction**, via its Taxes vertical (1 of
@@ -11497,7 +11532,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (44/55 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (45/55 jurisdictions — 82%)
 
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles),
@@ -11505,6 +11540,16 @@ file-layout specification and authored a bounded 67-field core against it
 > all Schengen/national visa applications moved fully into the MIGRIS
 > online portal as of 2025-10-01, no static citizen-fillable form found)
 > as the registry's 55th jurisdiction.
+
+**South Africa's Visa vertical closes (6 of 6) (GOV-2976)**, via
+`za/dha/application-for-visa-temporary-sojourn` — DHA's DHA-1738/Form 8,
+"Application for Visa to Temporarily Sojourn in the Republic," a flat
+20-page Government Gazette specimen (0 AcroForm widgets) common to all 11
+of the form's visa categories. See the Executive Summary's GOV-2976 update
+above and the document's own VERIFICATION.md for the full sourcing record,
+the biometric-checkbox interpretive judgment call, and every other
+disclosed scope decision. This closes South Africa's last open vertical —
+South Africa now stands at 6 of 6.
 
 **Croatia's Visa vertical opens (3 of 6) (GOV-2902)**, via
 `hr/mvep/zahtjev-za-dugotrajnu-vizu` — MVEP's (Ministry of Foreign and
@@ -12456,7 +12501,7 @@ now closed.
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **ZA** | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is
@@ -14651,6 +14696,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   is explicitly "prepared electronically during proceedings" by the traffic
   authority, with no citizen-fillable form. Do not re-attempt any of
   Hungary's six verticals without a genuinely new source.
+- **TH National ID (DOPA)** — GOV-2976, 2026-07-14. Thailand is otherwise
+  5 of 6 (only National ID open). Checked `bora.dopa.go.th`'s own
+  "download" page (pages 1-3, 5) and all 7 `/service-downloads/items{1-7}`
+  category pages this cycle: dozens of real PDFs found (nationality
+  determination, name-change, student registration, senator eligibility,
+  ethics circulars) but none is the actual ID-card application form
+  (บัตรประจำตัวประชาชน / บ.ต.1). The genuine self-service channels
+  (`thportal.bora.dopa.go.th`, `eservices.bora.dopa.go.th`) are both SPA
+  apps gated behind ThaID app login. Card issuance itself is in-person/
+  biometric. Not a hard dead end if a genuinely new source surfaces (e.g. a
+  third-party-republished specimen, or a future ThaID-workaround
+  technique); a dead end for the current official publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
@@ -14699,6 +14756,52 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   and, if so, author DPFOAv25 as Slovakia's Taxes vertical; if the outage
   persists, author one of the two live consular eForms instead (National ID
   or DMV) as a narrower, disclosed-scope opening schema.
+- **Update (GOV-2976, 2026-07-14): re-checked, outage still live; a usable
+  Wayback capture was found and this candidate has been delegated as a
+  child issue.** `financnasprava.sk`'s outage persists (every path,
+  including the dedicated `pfseform.financnasprava.sk` forms subdomain,
+  still 302-redirects to `servis.financnasprava.sk/odstavka`). A **May 21,
+  2026** Wayback Machine snapshot of DPFOAv25 was independently retrieved
+  this cycle (note: `web.archive.org`/`archive.org` snapshot URLs must be
+  fetched via `curl`, not the `WebFetch` tool, which hard-fails on them —
+  get the snapshot timestamp via the `archive.org/wayback/available?url=`
+  JSON API with `WebFetch`, then `curl` the actual snapshot URL) and gives
+  a rich, ~89-numbered-line field list across 9 sections (personal data,
+  legal-representative block, pension/spouse/child-bonus data, a full tax
+  computation with embedded formulas, and the 2%/3% designated-recipient
+  donation section) — strong enough to author from directly rather than
+  wait indefinitely for the live site. **Delegated as a child issue of
+  GOV-2976** rather than authored this cycle (South Africa's Visa vertical
+  was authored instead) — a future cycle should author DPFOAv25 citing the
+  Wayback capture, with a live-site re-verification pass layered in once
+  the outage clears.
+
+- **Vietnam — National ID: scouted, delegated (GOV-2976).** Vietnam is
+  otherwise 5 of 6 (only National ID open). `dichvucong.gov.vn` (the
+  national public-service portal) is WAF-blocked ("NDC WAF", confirmed via
+  both plain curl and a browser User-Agent) — skip it directly in future
+  cycles. `vneid.gov.vn` is a login-gated citizen-app portal. A genuine,
+  directly-downloadable, unauthenticated specimen was found instead on the
+  Ministry of Public Security's own public-service portal:
+  `dichvucong.bocongan.gov.vn/public_dir/tttl/10/giayto/2020_11/1604372463_Mau_CC01.doc`
+  (HTTP 200) — the genuine CC01 "Tờ khai Căn cước công dân" (Citizen ID
+  Declaration), a legacy `.doc` with embedded UTF-16LE text confirming
+  ~11 numbered fields (full name, other names/aliases, DOB, gender, old
+  CMND/CCCD number, ethnicity, religion, nationality, marital status,
+  occupation, permanent-residence registration). **Delegated as a child
+  issue of GOV-2976** rather than authored this cycle.
+
+- **Nigeria — DMV: scouted, not yet ready (GOV-2976).** Nigeria is
+  otherwise 5 of 6 (only DMV open). `frsc.gov.ng`'s main site is a static
+  marketing page with no downloadable form; several plausible subdomains
+  (`dvis.frsc.gov.ng`, `nvis.gov.ng`, `portal.frsc.gov.ng`) are dead DNS. A
+  genuine live multi-step e-form was found at
+  `nigeriadriverslicence.frsc.gov.ng/license/new/{token}` (FRSC's own
+  official subdomain, no login wall) — real HTML field names captured for
+  step 1 only (`test_certificate_number`, height fields), with later steps
+  gated behind a captcha/flow token not walked this cycle. **Not a dead
+  end, but not yet ready to author** — left as disclosed backlog for a
+  future cycle to walk the flow further before authoring.
 
 - **Bulgaria — Taxes: authored (GOV-2821), opens the registry's 51st
   jurisdiction.** `bg/nra/deklaratsiya-za-registratsiya-na-samoosiguryavashto-se-litse`
