@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **453 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **454 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-3019/GOV-3014, "GovSchema Standard Research"):
+> Slovakia's National ID & Civic Documents vertical opens (1 of 6, now 4 of
+> 6 overall)**, via `sk/mzv/ziadost-o-obciansky-preukaz` — the live HTML
+> eForm "Žiadosť o občiansky preukaz" (Application for a Citizen ID Card),
+> dataset `MZV.RequestIdentityCard` v2.3, published on the national
+> eGovernment portal `slovensko.sk` and filed via a Slovak diplomatic or
+> consular office abroad, under the Ministerstvo zahraničných vecí a
+> európskych záležitostí SR (Ministry of Foreign and European Affairs) — a
+> sibling channel to the domestic, Ministry of Interior-issued identity
+> card. This is a child issue of GOV-3010, which pre-scouted the candidate
+> during a parallel-verticals screening pass; this cycle independently
+> re-fetched the live eForm from scratch (HTTP 200, `text/html`, 110,026
+> bytes, sha256
+> `dbae62ee009a542df4ff7ec8e86994a081313417624b40ff0f8824a2c1f883b2`, not
+> trusted from the scouting report as-is) and re-derived the full field
+> inventory directly from the raw HTML plus its embedded jQuery-validate
+> `rules` block, rather than the scouting report's estimated field count.
+> Models all 62 `fields[]` this eForm exposes: the submitting contact's own
+> details (auto-copied into the applicant's identity fields unless a legal
+> representative or authorized person is filing on the applicant's behalf —
+> a genuine client-side behavior, not an inferred one), the applicant's
+> personal/identity/birth data, legal capacity, request reason, previous ID
+> card and any other currently valid Slovak identity document, permanent
+> Slovak address, an optional legal-representative (zákonný zástupca)
+> section gated by a real client-side visibility toggle bound to its own
+> checkbox (`SwitchSections`, confirmed in the page's own script — not a
+> fabricated condition), and a final data-accuracy confirmation. Every
+> autocomplete-driven field (Sex, Nationality, Country, Municipality,
+> County, Request Reason, Document Type) is disclosed with the exact
+> server-side codelist key its widget binds to (e.g. `SEX`, `NATIONALITY`,
+> `REASON_OP`, `STATE`), since the codelists themselves are fetched
+> dynamically and are not enumerable from the form's static markup. Also
+> models 4 `documents[]` entries transcribed from the form's own "Potrebné
+> doklady" (required documents) notice, which additionally discloses this
+> eForm's scope: it accepts renewal/replacement requests only from
+> applicants who already hold an ID card issued after 2008-07-01 — a
+> first-time domestic application is out of scope and must be filed within
+> Slovakia in person. 2 valid conformance fixtures (0 errors each, one
+> without and one with the legal-representative section active) plus 8
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/sk/mzv/ziadost-o-obciansky-preukaz/1.0.0/`. See the
+> document's own VERIFICATION.md for the full sourcing chain and every
+> disclosed scoping decision.
 
 > **Update (2026-07-14, GOV-3010, "GovSchema Standard Research"): Slovakia's
 > DMV vertical opens (1 of 6, now 3 of 6 overall)**, via
@@ -12350,7 +12394,20 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (39/56 jurisdictions — 70%)
+### National ID & Civic Documents (40/56 jurisdictions — 71%)
+
+**Slovakia's National ID & Civic Documents vertical opens (GOV-3019/GOV-3014)**,
+via `sk/mzv/ziadost-o-obciansky-preukaz` — MZV's consular-channel citizen
+ID card application eForm, filed through a Slovak diplomatic/consular
+office abroad. See the Executive Summary's GOV-3019/GOV-3014 update above
+for the full sourcing record — including the server-side codelist
+disclosures for every autocomplete-driven field and the genuine
+client-side legal-representative visibility toggle — and the document's
+own VERIFICATION.md. **Slovakia now stands at 4 of 6 verticals** (Business
+Formation, Taxes, DMV, National ID & Civic Documents) — Visa is a
+confirmed duplicate of the common Schengen form and Passport is a
+confirmed dead end (both per GOV-3010's same-cycle screening). Moves this
+vertical's global coverage from 39/56 to 40/56 (71%).
 
 > **Correction (GOV-2981/GOV-2986):** denominator updated from 55 to 56
 > jurisdictions following Slovakia's addition (Taxes only; National ID
@@ -12796,7 +12853,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **SK** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -15188,6 +15245,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   VERIFICATION.md for the full sourcing record. Slovakia's remaining four
   verticals (Passport, National ID, DMV, Visa) remain
   undiscovered/unscouted.
+  **Update (GOV-3010, 2026-07-14): DMV authored, Visa confirmed a duplicate,
+  National ID re-confirmed as the live MZV consular eForm noted above and
+  delegated as a child issue (GOV-3014), Passport confirmed a dead end.**
+  See the Executive Summary's GOV-3010 update above.
+  **Resolved, GOV-3019/GOV-3014, 2026-07-14**: the National ID candidate
+  (the MZV consular citizen-ID-card eForm noted above) has been authored as
+  `sk/mzv/ziadost-o-obciansky-preukaz`, opening Slovakia's National ID &
+  Civic Documents vertical (Slovakia now 4 of 6: Business Formation, Taxes,
+  DMV, National ID). See the Executive Summary's GOV-3019/GOV-3014 update
+  above and the document's own VERIFICATION.md. Only Passport (confirmed
+  dead end) and Visa (confirmed duplicate) remain open for Slovakia, and
+  neither is a viable candidate per this cycle's and GOV-3010's screening.
 
 - **Vietnam — National ID: scouted, delegated (GOV-2976).** Vietnam is
   otherwise 5 of 6 (only National ID open). `dichvucong.gov.vn` (the
