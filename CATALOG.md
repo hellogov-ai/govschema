@@ -26,7 +26,7 @@
 > `pdfjs-dist` confirmed a flat, single-page, zero-annotation specimen; a
 > duplicate-detection comparison against Romania's own already-modelled
 > `ro/mae/formular-cerere-viza-de-lunga-sedere` (visa, same agency) found no
-> subject-matter overlap beyond trivial shared identity concepts. Models 25
+> subject-matter overlap beyond trivial shared identity concepts. Models 26
 > `fields[]` (CNP, sex, date of birth, name/parents, place/county of birth,
 > domicile, phone, a prior-passport-possession declaration gating four
 > sub-fields, a 4-option identity-document-used enum gating three national-
@@ -13838,7 +13838,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   patterns plus a third-party mirror, all three byte-identical. A
   duplicate-detection comparison against Romania's own visa schema (same
   agency) found no subject-matter overlap beyond trivial shared identity
-  concepts. Models 25 `fields[]`, 3 `documents[]` entries, and 2
+  concepts. Models 26 `fields[]`, 3 `documents[]` entries, and 2
   `crossFieldValidation` rules. **Romania now stands at 5 of 6 verticals**
   (Taxes, DMV, Business Formation, Visa, Passport); National ID & Civic
   Documents remains its sole open, unscreened-this-cycle backlog vertical.

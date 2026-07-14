@@ -107,17 +107,17 @@ extraction) rather than trusting the prior cycle's disclosed numbers as-is.
 
 ## Field inventory (Phase 3)
 
-All 25 `fields[]` entries carry their exact source line in their own
+All 26 `fields[]` entries carry their exact source line in their own
 `sourceRef`. Summary by step:
 
 | Step | Fields | Notes |
 |---|---|---|
 | `applicant_identity` | 12 | `cnp`, `sex`, `dateOfBirth`, `surname`, `firstName`, `previousName`, `fathersFirstName`, `mothersFirstName`, `placeOfBirth`, `countyOfBirth`, `domicileAddress`, `phoneNumber` |
-| `previous_passport` | 5 | `hasPreviousPassport` (yes/no declaration) plus 4 fields gated `requiredWhen hasPreviousPassport: "yes"` |
+| `previous_passport` | 5 | `hasPreviousPassport` (yes/no declaration) plus 4 fields gated `requiredWhen hasPreviousPassport: "yes"` (including `reasonForNewPassport`) |
 | `identity_document` | 4 | `idDocumentType` (a 4-option enum) plus 3 fields gated `requiredWhen idDocumentType: "national-id-card"` |
 | `request_details` | 5 | `urgentIssuanceRequested`, `heightCm`, `eyeColor`, `applicationSubmissionDate`, `dataProcessingConsent` |
 
-Total: **25 fields**, **3 `documents[]` entries**, **2
+Total: **26 fields**, **3 `documents[]` entries**, **2
 `crossFieldValidation`** rules, **4 `steps`**.
 
 This is below the ~25-35 fields estimated ahead of authoring, at the low end
@@ -203,7 +203,7 @@ entry, since its own text is not phrased as applicant-affirmed consent.
 Two fields not named in the estimate were also found and modelled: the two
 physical-description fields `heightCm` and `eyeColor` ("Semnalmente:
 Înălțime ... Culoarea ochilor"), a printed section the estimate did not
-anticipate. Net: 25 fields, at the low end of but consistent with the
+anticipate. Net: 26 fields, at the low end of but consistent with the
 25-35 estimate.
 
 ## Test run (Phase 4)
