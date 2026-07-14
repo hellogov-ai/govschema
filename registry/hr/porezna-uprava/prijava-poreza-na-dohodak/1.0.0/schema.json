@@ -1,0 +1,934 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "hr/porezna-uprava/prijava-poreza-na-dohodak",
+  "version": "1.0.0",
+  "title": "Croatia Annual Personal Income Tax Declaration (Obrazac DOH)",
+  "description": "The Porezna uprava's (Croatian Tax Administration) \"PRIJAVA POREZA NA DOHODAK\" (Income Tax Declaration), internally referenced as Obrazac DOH — the annual personal income tax return Croatian resident taxpayers file to declare income and reconcile advance tax paid during the year. Opens Croatia's Taxes vertical (the registry's 52nd jurisdiction). The source is a static, unauthenticated PDF distributed directly from Porezna uprava's own document host, with no AcroForm layer (confirmed via pdfjs-dist returning zero widget annotations across all 8 pages) — a hand-fill/print template, the same pattern as Poland's PIT-37 and Bulgaria's Обр. 2001, but fully self-documenting via its own printed section numbers and column headers. Mirroring the PIT-37 precedent, this v1.0.0 deliberately scopes to the most common salaried-employee/pensioner case rather than modelling the whole form. It models in full: the form's header (tax year, filing tax office/branch), Section 1 (general identification — name, address, contact details, OIB, the assisted-area/Vukovar residency flag, bank account, and authorized representative/tax advisor identification), Section 2 (dependent family members, a bounded repeating group capped at 3 of the paper form's own 7 numbered rows), Section 3 (personal deduction increase for domestic health-insurance contributions and donations), Section 4.1.1 (domestic employment wages earned outside assisted areas, a bounded repeating group of employer/payer rows capped at 3 of the paper form's own 6 numbered rows, plus its UKUPNO total), Section 4.1.5 (domestic pension income, structured identically to 4.1.1 and capped the same way), Section 6 (the flat 9-row table of tax reliefs/exemptions/incentives), Section 7 (free-text list of attached documents), and Section 8 (taxpayer's notes and the closing signature declaration). It deliberately does NOT model: Section 1.5 (the multi-period residence/habitual-abode table, relevant only to taxpayers who changed their municipality or country of residence during the year) and Section 1.6 (the HRVI war-disabled-veteran disability-status table), both narrow pathways outside the common salaried-employee/pensioner case; Sections 4.1.2/4.1.3/4.1.4 (wages earned in assisted areas/Vukovar, or abroad) and 4.1.6 (foreign pension income); Section 4.1.7 (the computed total employment+pension income/tax figure, chained off the unmodelled foreign-income rows) and 4.1.8 (HRVI-exempt employment/pension income); Section 4.2 (other income — board-member fees, copyright/royalties, artist/sportsperson income, sales-agent commissions, prizes/scholarships, student work, and journalist/athlete honoraria); Section 4.3 (income from self-employment/crafts/freelance/agriculture — by far the form's most complex section, with its own current-year/loss, foreign-income, carried-forward-loss, and social-contribution sub-calculations); and Section 5 (the grand-total income/tax figure, which sums across the unmodelled 4.2 and 4.3 sections and so cannot be correctly derived from this schema's field set alone). See VERIFICATION.md for the full scope rationale, every disclosed judgment call, and the candidate-comparison record for Croatia's other five verticals. GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of Croatia or the Porezna uprava.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "HR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Porezna uprava",
+    "abbreviation": "PU",
+    "url": "https://porezna-uprava.gov.hr",
+    "operatedBy": {
+      "name": "Ministarstvo financija",
+      "abbreviation": "MFIN",
+      "url": "https://mfin.gov.hr",
+      "basis": "Zakon o porezu na dohodak (Narodne novine 115/16, 106/18, 121/19, 32/20, 138/20, 151/22, 114/23), which establishes personal income tax and the obligation to file an annual return, and its implementing Pravilnik o porezu na dohodak (Narodne novine 10/17, as subsequently amended through 143/23), which prescribes return procedures and forms. The Obrazac DOH PDF itself prints no explicit 'pravna osnova' citation line (unlike some peer registry sources); this basis is drawn from independent research into the governing legislation rather than the form's own text — see VERIFICATION.md."
+    }
+  },
+  "process": {
+    "type": "filing",
+    "language": "hr-HR"
+  },
+  "source": {
+    "url": "https://porezna-uprava.gov.hr/UserDocsImages/Dokumenti%20obrasci/DOH.pdf",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "Obrazac DOH — Prijava poreza na dohodak (Income Tax Declaration)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle (GOV-2883). Opens Croatia as the registry's 52nd jurisdiction via the Taxes vertical. Obrazac DOH, Porezna uprava's annual personal income tax declaration, was independently re-fetched this cycle directly from porezna-uprava.gov.hr (HTTP 200, application/pdf, 271,486 bytes, sha256 506fdc3469a457a60bdd71f924c379d7daf10a4ab2f2d5f83068b08b548c152c) and independently re-extracted with pdfjs-dist (legacy/build/pdf.js): 8 pages, zero Widget annotations on every page (a static hand-fill/print template, not a fillable AcroForm), full printed section/column text captured via getTextContent(). This cycle also screened Croatia's other five verticals (DMV, Business Formation, Visa, Passport, National ID & Civic Documents) — see the 'Candidates screened' section of VERIFICATION.md for the full record and URLs. Summary: Business Formation (obrt/craft-business registration, portor.gov.hr) is a strong, genuine, unauthenticated .doc download, not authored this cycle and left as open backlog; Visa (MVEP's long-term Type D visa application) is a genuine unauthenticated PDF but field-for-field matches the already-modelled EU-harmonized long-stay-visa template (duplicate, not authored); DMV (both vozačka dozvola/driving-licence issuance and vehicle registration/tehnički pregled), Passport, and National ID (osobna iskaznica) are all dead ends for this cycle — Croatia's MUP civil-document processes are officer-mediated at the counter, printing the application from civil-registry data rather than distributing a blank public template."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxYear",
+      "label": "Prijava poreza na dohodak za ______ godinu",
+      "type": "integer",
+      "required": true,
+      "description": "The tax year this annual income tax declaration covers, printed in the form's own header blank.",
+      "sourceRef": "Obrazac DOH p.1, header",
+      "validation": {
+        "minimum": 2000,
+        "maximum": 2100
+      }
+    },
+    {
+      "name": "taxOfficeAndBranch",
+      "label": "Područni ured ___ Ispostava ___",
+      "type": "string",
+      "required": true,
+      "description": "The regional tax office (područni ured) and its branch office (ispostava) with jurisdiction over the taxpayer, where this declaration is filed.",
+      "sourceRef": "Obrazac DOH p.1, header"
+    },
+    {
+      "name": "fullNameAndParentName",
+      "label": "1.1. Ime i prezime / ime roditelja",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's full name and their parent's given name (a Croatian civil-registry convention used to disambiguate taxpayers who share a name).",
+      "sourceRef": "Obrazac DOH p.1, §1.1",
+      "classification": "pii"
+    },
+    {
+      "name": "residentialAddress",
+      "label": "1.2. Adresa (mjesto, ulica i kućni broj)",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's current address: place, street, and house number.",
+      "sourceRef": "Obrazac DOH p.1, §1.2",
+      "classification": "pii"
+    },
+    {
+      "name": "phone",
+      "label": "1.2.1. Telefon",
+      "type": "string",
+      "description": "Optional phone number to help the tax office reach the taxpayer about this return.",
+      "sourceRef": "Obrazac DOH p.1, §1.2.1",
+      "classification": "pii"
+    },
+    {
+      "name": "email",
+      "label": "1.2.2. Adresa elektroničke pošte",
+      "type": "string",
+      "description": "Optional email address to help the tax office reach the taxpayer about this return.",
+      "sourceRef": "Obrazac DOH p.1, §1.2.2",
+      "classification": "pii"
+    },
+    {
+      "name": "oib",
+      "label": "1.3. OIB",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's OIB (Osobni identifikacijski broj), Croatia's 11-digit personal identification number.",
+      "sourceRef": "Obrazac DOH p.1, §1.3",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "assistedAreaOrVukovarResident",
+      "label": "1.4. Potpomognuta područja i područje Grada Vukovara (zaokružiti): DA/NE",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer resided during the tax year in an area classified as 'assisted' (a group-I municipality under the special regional-development regulation) or in the City of Vukovar — a status that gates certain tax reliefs modelled in Section 6 below.",
+      "sourceRef": "Obrazac DOH p.1, §1.4"
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "1.7. Broj računa",
+      "type": "string",
+      "description": "The taxpayer's bank account number, used e.g. for routing a refund.",
+      "sourceRef": "Obrazac DOH p.1, §1.7",
+      "classification": "financial"
+    },
+    {
+      "name": "bankNameAndSeat",
+      "label": "1.7. Otvoren u (naziv i sjedište)",
+      "type": "string",
+      "description": "Name and registered seat of the bank where the account in bankAccountNumber is held.",
+      "sourceRef": "Obrazac DOH p.1, §1.7"
+    },
+    {
+      "name": "representativeName",
+      "label": "1.8.1. Naziv / ime i prezime (opunomoćenik/porezni savjetnik)",
+      "type": "string",
+      "description": "Name of the authorized representative or tax advisor filing on the taxpayer's behalf, if any.",
+      "sourceRef": "Obrazac DOH p.1, §1.8.1",
+      "classification": "pii"
+    },
+    {
+      "name": "representativeAddress",
+      "label": "1.8.2. Adresa sjedišta / prebivališta / boravišta",
+      "type": "string",
+      "description": "Address (registered seat, permanent, or temporary residence) of the representative/tax advisor named in representativeName.",
+      "sourceRef": "Obrazac DOH p.1, §1.8.2",
+      "classification": "pii"
+    },
+    {
+      "name": "representativeOib",
+      "label": "1.8.3. OIB",
+      "type": "string",
+      "description": "OIB of the representative/tax advisor named in representativeName.",
+      "sourceRef": "Obrazac DOH p.1, §1.8.3",
+      "classification": "pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "dependent1FullName",
+      "label": "2. Uzdržavani član uže obitelji 1 — ime i prezime",
+      "type": "string",
+      "description": "Full name of dependent family member 1 (row 1 of the paper form's uzdržavani članovi table, capped at 3 of the form's own 7 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1",
+      "classification": "pii"
+    },
+    {
+      "name": "dependent1Relationship",
+      "label": "2. Uzdržavani član uže obitelji 1 — srodstvo",
+      "type": "string",
+      "description": "Relationship of dependent 1 to the taxpayer (e.g. child, spouse, parent).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1"
+    },
+    {
+      "name": "dependent1Oib",
+      "label": "2. Uzdržavani član uže obitelji 1 — OIB",
+      "type": "string",
+      "description": "OIB of dependent 1.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "dependent1DisabilityMarking",
+      "label": "2. Uzdržavani član uže obitelji 1 — invalid (I ili I*)",
+      "type": "enum",
+      "description": "Disability marking for dependent 1, when applicable: 'I' (invalid) or 'I*' (100% invalidity, or entitlement to assistance/care due to disability, or to the inclusive supplement). Left absent when the dependent has no disability marking.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1",
+      "validation": {
+        "enum": [
+          "I",
+          "I_star"
+        ]
+      }
+    },
+    {
+      "name": "dependent1PeriodFrom",
+      "label": "2. Uzdržavani član uže obitelji 1 — razdoblje korištenja od",
+      "type": "date",
+      "description": "Start date of the period during the tax year this dependent was claimed for dependent 1.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1"
+    },
+    {
+      "name": "dependent1PeriodTo",
+      "label": "2. Uzdržavani član uže obitelji 1 — razdoblje korištenja do",
+      "type": "date",
+      "description": "End date of the period during the tax year this dependent was claimed for dependent 1.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1"
+    },
+    {
+      "name": "dependent1PersonalDeductionSharedWithOib",
+      "label": "2. Uzdržavani član uže obitelji 1 — osobni odbitak dijeli se s osobom OIB",
+      "type": "string",
+      "description": "OIB of the other person the personal deduction for dependent 1 is split with, when the deduction is shared between two taxpayers (e.g. divorced parents).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "dependent1PersonalDeductionSharePercentage",
+      "label": "2. Uzdržavani član uže obitelji 1 — postotak osobnog odbitka",
+      "type": "number",
+      "description": "Percentage of the personal deduction for dependent 1 claimed by this taxpayer, when split with another person.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 1",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "dependent2FullName",
+      "label": "2. Uzdržavani član uže obitelji 2 — ime i prezime",
+      "type": "string",
+      "description": "Full name of dependent family member 2 (row 2 of the paper form's uzdržavani članovi table, capped at 3 of the form's own 7 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2",
+      "classification": "pii"
+    },
+    {
+      "name": "dependent2Relationship",
+      "label": "2. Uzdržavani član uže obitelji 2 — srodstvo",
+      "type": "string",
+      "description": "Relationship of dependent 2 to the taxpayer (e.g. child, spouse, parent).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2"
+    },
+    {
+      "name": "dependent2Oib",
+      "label": "2. Uzdržavani član uže obitelji 2 — OIB",
+      "type": "string",
+      "description": "OIB of dependent 2.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "dependent2DisabilityMarking",
+      "label": "2. Uzdržavani član uže obitelji 2 — invalid (I ili I*)",
+      "type": "enum",
+      "description": "Disability marking for dependent 2, when applicable: 'I' (invalid) or 'I*' (100% invalidity, or entitlement to assistance/care due to disability, or to the inclusive supplement). Left absent when the dependent has no disability marking.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2",
+      "validation": {
+        "enum": [
+          "I",
+          "I_star"
+        ]
+      }
+    },
+    {
+      "name": "dependent2PeriodFrom",
+      "label": "2. Uzdržavani član uže obitelji 2 — razdoblje korištenja od",
+      "type": "date",
+      "description": "Start date of the period during the tax year this dependent was claimed for dependent 2.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2"
+    },
+    {
+      "name": "dependent2PeriodTo",
+      "label": "2. Uzdržavani član uže obitelji 2 — razdoblje korištenja do",
+      "type": "date",
+      "description": "End date of the period during the tax year this dependent was claimed for dependent 2.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2"
+    },
+    {
+      "name": "dependent2PersonalDeductionSharedWithOib",
+      "label": "2. Uzdržavani član uže obitelji 2 — osobni odbitak dijeli se s osobom OIB",
+      "type": "string",
+      "description": "OIB of the other person the personal deduction for dependent 2 is split with, when the deduction is shared between two taxpayers (e.g. divorced parents).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "dependent2PersonalDeductionSharePercentage",
+      "label": "2. Uzdržavani član uže obitelji 2 — postotak osobnog odbitka",
+      "type": "number",
+      "description": "Percentage of the personal deduction for dependent 2 claimed by this taxpayer, when split with another person.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 2",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "dependent3FullName",
+      "label": "2. Uzdržavani član uže obitelji 3 — ime i prezime",
+      "type": "string",
+      "description": "Full name of dependent family member 3 (row 3 of the paper form's uzdržavani članovi table, capped at 3 of the form's own 7 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3",
+      "classification": "pii"
+    },
+    {
+      "name": "dependent3Relationship",
+      "label": "2. Uzdržavani član uže obitelji 3 — srodstvo",
+      "type": "string",
+      "description": "Relationship of dependent 3 to the taxpayer (e.g. child, spouse, parent).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3"
+    },
+    {
+      "name": "dependent3Oib",
+      "label": "2. Uzdržavani član uže obitelji 3 — OIB",
+      "type": "string",
+      "description": "OIB of dependent 3.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "dependent3DisabilityMarking",
+      "label": "2. Uzdržavani član uže obitelji 3 — invalid (I ili I*)",
+      "type": "enum",
+      "description": "Disability marking for dependent 3, when applicable: 'I' (invalid) or 'I*' (100% invalidity, or entitlement to assistance/care due to disability, or to the inclusive supplement). Left absent when the dependent has no disability marking.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3",
+      "validation": {
+        "enum": [
+          "I",
+          "I_star"
+        ]
+      }
+    },
+    {
+      "name": "dependent3PeriodFrom",
+      "label": "2. Uzdržavani član uže obitelji 3 — razdoblje korištenja od",
+      "type": "date",
+      "description": "Start date of the period during the tax year this dependent was claimed for dependent 3.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3"
+    },
+    {
+      "name": "dependent3PeriodTo",
+      "label": "2. Uzdržavani član uže obitelji 3 — razdoblje korištenja do",
+      "type": "date",
+      "description": "End date of the period during the tax year this dependent was claimed for dependent 3.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3"
+    },
+    {
+      "name": "dependent3PersonalDeductionSharedWithOib",
+      "label": "2. Uzdržavani član uže obitelji 3 — osobni odbitak dijeli se s osobom OIB",
+      "type": "string",
+      "description": "OIB of the other person the personal deduction for dependent 3 is split with, when the deduction is shared between two taxpayers (e.g. divorced parents).",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "dependent3PersonalDeductionSharePercentage",
+      "label": "2. Uzdržavani član uže obitelji 3 — postotak osobnog odbitka",
+      "type": "number",
+      "description": "Percentage of the personal deduction for dependent 3 claimed by this taxpayer, when split with another person.",
+      "sourceRef": "Obrazac DOH p.1, §2, red 3",
+      "validation": {
+        "minimum": 0,
+        "maximum": 100
+      }
+    },
+    {
+      "name": "healthInsuranceContributionsPaidDomestically",
+      "label": "3.1. Plaćene doprinose za zdravstveno osiguranje u tuzemstvu",
+      "type": "number",
+      "description": "Domestic health-insurance contributions paid during the tax year, in EUR, that increase the taxpayer's personal deduction.",
+      "sourceRef": "Obrazac DOH p.1, §3.1",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "donationsGiven",
+      "label": "3.2. Dana darovanja",
+      "type": "number",
+      "description": "Donations given during the tax year, in EUR, that increase the taxpayer's personal deduction.",
+      "sourceRef": "Obrazac DOH p.1, §3.2",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "increasedPersonalDeductionTotal",
+      "label": "3.3. Ukupno (3.1.+3.2.)",
+      "type": "number",
+      "description": "Total increase to the personal deduction: healthInsuranceContributionsPaidDomestically plus donationsGiven. This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "Obrazac DOH p.1, §3.3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1Oib",
+      "label": "4.1.1. Poslodavac 1 — OIB poslodavca/isplatitelja",
+      "type": "string",
+      "description": "OIB of employer/payer 1 for domestic wage income earned outside assisted areas and the City of Vukovar (row 1 of §4.1.1, capped at 3 of the form's own 6 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 1",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "employer1GrossReceipts",
+      "label": "4.1.1. Poslodavac 1 — ukupni iznos primitka",
+      "type": "number",
+      "description": "Total gross receipts (wages) from employer 1, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 1, stupac 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1MandatoryContributions",
+      "label": "4.1.1. Poslodavac 1 — obvezni doprinosi iz plaće",
+      "type": "number",
+      "description": "Mandatory contributions withheld from wages paid by employer 1, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 1, stupac 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1Income",
+      "label": "4.1.1. Poslodavac 1 — dohodak",
+      "type": "number",
+      "description": "Taxable income from employer 1 (gross receipts minus mandatory contributions). This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 1, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer1TaxPaid",
+      "label": "4.1.1. Poslodavac 1 — uplaćeni porez",
+      "type": "number",
+      "description": "Advance income tax already paid on wages from employer 1, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 1, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2Oib",
+      "label": "4.1.1. Poslodavac 2 — OIB poslodavca/isplatitelja",
+      "type": "string",
+      "description": "OIB of employer/payer 2 for domestic wage income earned outside assisted areas and the City of Vukovar (row 2 of §4.1.1, capped at 3 of the form's own 6 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 2",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "employer2GrossReceipts",
+      "label": "4.1.1. Poslodavac 2 — ukupni iznos primitka",
+      "type": "number",
+      "description": "Total gross receipts (wages) from employer 2, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 2, stupac 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2MandatoryContributions",
+      "label": "4.1.1. Poslodavac 2 — obvezni doprinosi iz plaće",
+      "type": "number",
+      "description": "Mandatory contributions withheld from wages paid by employer 2, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 2, stupac 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2Income",
+      "label": "4.1.1. Poslodavac 2 — dohodak",
+      "type": "number",
+      "description": "Taxable income from employer 2 (gross receipts minus mandatory contributions). This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 2, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer2TaxPaid",
+      "label": "4.1.1. Poslodavac 2 — uplaćeni porez",
+      "type": "number",
+      "description": "Advance income tax already paid on wages from employer 2, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 2, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer3Oib",
+      "label": "4.1.1. Poslodavac 3 — OIB poslodavca/isplatitelja",
+      "type": "string",
+      "description": "OIB of employer/payer 3 for domestic wage income earned outside assisted areas and the City of Vukovar (row 3 of §4.1.1, capped at 3 of the form's own 6 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 3",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "employer3GrossReceipts",
+      "label": "4.1.1. Poslodavac 3 — ukupni iznos primitka",
+      "type": "number",
+      "description": "Total gross receipts (wages) from employer 3, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 3, stupac 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer3MandatoryContributions",
+      "label": "4.1.1. Poslodavac 3 — obvezni doprinosi iz plaće",
+      "type": "number",
+      "description": "Mandatory contributions withheld from wages paid by employer 3, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 3, stupac 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer3Income",
+      "label": "4.1.1. Poslodavac 3 — dohodak",
+      "type": "number",
+      "description": "Taxable income from employer 3 (gross receipts minus mandatory contributions). This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 3, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employer3TaxPaid",
+      "label": "4.1.1. Poslodavac 3 — uplaćeni porez",
+      "type": "number",
+      "description": "Advance income tax already paid on wages from employer 3, in EUR.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, red 3, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalDomesticEmploymentIncome",
+      "label": "4.1.1. Ukupno — dohodak",
+      "type": "number",
+      "description": "UKUPNO 4.1.1.: total taxable income across all domestic employer/payer rows in §4.1.1. This schema captures the value as declared.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, UKUPNO, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalDomesticEmploymentTaxPaid",
+      "label": "4.1.1. Ukupno — uplaćeni porez",
+      "type": "number",
+      "description": "UKUPNO 4.1.1.: total advance tax paid across all domestic employer/payer rows in §4.1.1.",
+      "sourceRef": "Obrazac DOH p.2, §4.1.1, UKUPNO, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer1Oib",
+      "label": "4.1.5. Isplatitelj mirovine 1 — OIB isplatitelja",
+      "type": "string",
+      "description": "OIB of pension payer 1 for domestic pension income (row 1 of §4.1.5, capped at 3 of the form's own 6 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 1",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "pensionPayer1GrossAmount",
+      "label": "4.1.5. Isplatitelj mirovine 1 — ukupni iznos mirovine",
+      "type": "number",
+      "description": "Total gross pension amount paid by pension payer 1, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 1, stupac 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer1MandatoryContributions",
+      "label": "4.1.5. Isplatitelj mirovine 1 — obvezni doprinosi iz mirovine",
+      "type": "number",
+      "description": "Mandatory contributions withheld from the pension paid by pension payer 1, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 1, stupac 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer1Income",
+      "label": "4.1.5. Isplatitelj mirovine 1 — dohodak",
+      "type": "number",
+      "description": "Taxable pension income from pension payer 1 (gross amount minus mandatory contributions). This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 1, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer1TaxPaid",
+      "label": "4.1.5. Isplatitelj mirovine 1 — uplaćeni porez",
+      "type": "number",
+      "description": "Advance income tax already paid on the pension from pension payer 1, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 1, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer2Oib",
+      "label": "4.1.5. Isplatitelj mirovine 2 — OIB isplatitelja",
+      "type": "string",
+      "description": "OIB of pension payer 2 for domestic pension income (row 2 of §4.1.5, capped at 3 of the form's own 6 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 2",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "pensionPayer2GrossAmount",
+      "label": "4.1.5. Isplatitelj mirovine 2 — ukupni iznos mirovine",
+      "type": "number",
+      "description": "Total gross pension amount paid by pension payer 2, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 2, stupac 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer2MandatoryContributions",
+      "label": "4.1.5. Isplatitelj mirovine 2 — obvezni doprinosi iz mirovine",
+      "type": "number",
+      "description": "Mandatory contributions withheld from the pension paid by pension payer 2, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 2, stupac 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer2Income",
+      "label": "4.1.5. Isplatitelj mirovine 2 — dohodak",
+      "type": "number",
+      "description": "Taxable pension income from pension payer 2 (gross amount minus mandatory contributions). This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 2, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer2TaxPaid",
+      "label": "4.1.5. Isplatitelj mirovine 2 — uplaćeni porez",
+      "type": "number",
+      "description": "Advance income tax already paid on the pension from pension payer 2, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 2, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer3Oib",
+      "label": "4.1.5. Isplatitelj mirovine 3 — OIB isplatitelja",
+      "type": "string",
+      "description": "OIB of pension payer 3 for domestic pension income (row 3 of §4.1.5, capped at 3 of the form's own 6 numbered rows — see VERIFICATION.md).",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 3",
+      "classification": "sensitive-pii",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "pensionPayer3GrossAmount",
+      "label": "4.1.5. Isplatitelj mirovine 3 — ukupni iznos mirovine",
+      "type": "number",
+      "description": "Total gross pension amount paid by pension payer 3, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 3, stupac 3",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer3MandatoryContributions",
+      "label": "4.1.5. Isplatitelj mirovine 3 — obvezni doprinosi iz mirovine",
+      "type": "number",
+      "description": "Mandatory contributions withheld from the pension paid by pension payer 3, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 3, stupac 4",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer3Income",
+      "label": "4.1.5. Isplatitelj mirovine 3 — dohodak",
+      "type": "number",
+      "description": "Taxable pension income from pension payer 3 (gross amount minus mandatory contributions). This schema captures the value as declared and does not itself enforce the arithmetic relationship.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 3, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionPayer3TaxPaid",
+      "label": "4.1.5. Isplatitelj mirovine 3 — uplaćeni porez",
+      "type": "number",
+      "description": "Advance income tax already paid on the pension from pension payer 3, in EUR.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, red 3, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalDomesticPensionIncome",
+      "label": "4.1.5. Ukupno — dohodak",
+      "type": "number",
+      "description": "UKUPNO 4.1.5.: total taxable pension income across all domestic pension-payer rows in §4.1.5. This schema captures the value as declared.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, UKUPNO, stupac 5",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalDomesticPensionTaxPaid",
+      "label": "4.1.5. Ukupno — uplaćeni porez",
+      "type": "number",
+      "description": "UKUPNO 4.1.5.: total advance tax paid across all domestic pension-payer rows in §4.1.5.",
+      "sourceRef": "Obrazac DOH p.3, §4.1.5, UKUPNO, stupac 6",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefTaxExemptArtistIncome",
+      "label": "6. 1. Neoporezivi primici umjetnika",
+      "type": "number",
+      "description": "Tax-exempt receipts of independent artists, per čl. 20. Zakona o pravima samostalnih umjetnika i poticanju kulturnog i umjetničkog stvaralaštva.",
+      "sourceRef": "Obrazac DOH p.7, §6, 1.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefTaxExemptArtisticHonorarium",
+      "label": "6. 2. Neoporezivi dio umjetničkog honorara",
+      "type": "number",
+      "description": "Tax-exempt portion of an artistic honorarium, per čl. 22. Zakona o pravima samostalnih umjetnika i poticanju kulturnog i umjetničkog stvaralaštva.",
+      "sourceRef": "Obrazac DOH p.7, §6, 2.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefRepresentationCosts",
+      "label": "6. 3. Porezno priznati izdaci reprezentacije",
+      "type": "number",
+      "description": "Tax-recognized representation costs, per čl. 33. st.1. t.1. Zakona o porezu na dohodak.",
+      "sourceRef": "Obrazac DOH p.7, §6, 3.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefPensionersAndAssistedAreaResidents",
+      "label": "6. 4. Umanjenje poreza za umirovljenike i osobe koje borave na potpomognutim područjima i području Grada Vukovara",
+      "type": "number",
+      "description": "Tax reduction for pensioners and for residents of assisted areas/the City of Vukovar, per čl. 46. st.1. Zakona o porezu na dohodak.",
+      "sourceRef": "Obrazac DOH p.7, §6, 4.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefHrvi",
+      "label": "6. 5. Umanjenje poreza za olakšicu HRVI",
+      "type": "number",
+      "description": "Tax reduction for Croatian war-disabled veterans (HRVI), per čl. 42. st.1. Zakona o porezu na dohodak.",
+      "sourceRef": "Obrazac DOH p.7, §6, 5.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefAssistedAreasAndVukovar",
+      "label": "6. 6. Umanjenje poreza za olakšice na potpomognutim područjima i području Grada Vukovara",
+      "type": "number",
+      "description": "Tax reduction for assisted areas and the City of Vukovar, per čl. 43. Zakona o porezu na dohodak.",
+      "sourceRef": "Obrazac DOH p.7, §6, 6.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefUnder25",
+      "label": "6. 7. Umanjenje poreza fizičkim osobama do 25 godina života",
+      "type": "number",
+      "description": "Tax reduction for individuals under 25 years of age, per čl. 46. st.2. Zakona o porezu na dohodak.",
+      "sourceRef": "Obrazac DOH p.7, §6, 7.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "relief26To30",
+      "label": "6. 8. Umanjenje poreza fizičkim osobama od 26 do 30 godina života",
+      "type": "number",
+      "description": "Tax reduction for individuals aged 26 to 30, per čl. 46. st.2. Zakona o porezu na dohodak.",
+      "sourceRef": "Obrazac DOH p.7, §6, 8.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reliefCroatianEmigrants",
+      "label": "6. 9. Umanjenje za hrvatske iseljenike u prekomorske i europske države",
+      "type": "number",
+      "description": "Tax reduction for Croatian emigrants to overseas and European countries, per čl. 46. st.3. i 4. Zakona o porezu na dohodak.",
+      "sourceRef": "Obrazac DOH p.7, §6, 9.",
+      "classification": "financial",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "listOfAttachedDocuments",
+      "label": "7. Popis priloženih isprava",
+      "type": "string",
+      "description": "Free-text list of the supporting documents the taxpayer attaches to this declaration. The paper form provides blank lines rather than a predefined checklist.",
+      "sourceRef": "Obrazac DOH p.7, §7"
+    },
+    {
+      "name": "taxpayerNotes",
+      "label": "8. Napomene poreznog obveznika / opunomoćenika / poreznog savjetnika",
+      "type": "string",
+      "description": "Optional free-text notes from the taxpayer, representative, or tax advisor.",
+      "sourceRef": "Obrazac DOH p.7, §8"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Nadnevak",
+      "type": "date",
+      "required": true,
+      "description": "Date the declaration is signed. The form itself splits this into day/month/year boxes; modelled here as one ISO 8601 date, consistent with this registry's convention elsewhere.",
+      "sourceRef": "Obrazac DOH p.7, closing block"
+    }
+  ],
+  "documents": [
+    {
+      "id": "signatureDeclaration",
+      "label": "Taxpayer's closing signature declaration",
+      "category": "attestation",
+      "required": true,
+      "statement": "ZA ISTINITOST I VJERODOSTOJNOST PODATAKA JAMČIM VLASTITIM POTPISOM",
+      "sourceRef": "Obrazac DOH p.7, closing block"
+    }
+  ]
+}

@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **431 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**52 jurisdictions** | **432 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2883, "GovSchema Standard Research"): Croatia
+> opens as the registry's 52nd jurisdiction**, via
+> `hr/porezna-uprava/prijava-poreza-na-dohodak` --- Porezna uprava's (Croatian
+> Tax Administration) annual personal income tax declaration, "PRIJAVA
+> POREZA NA DOHODAK" (Obrazac DOH), a static 8-page hand-fill/print PDF
+> (zero AcroForm widgets, confirmed via `pdfjs-dist`) fetched directly and
+> unauthenticated from `porezna-uprava.gov.hr` (271,486 bytes, sha256
+> `506fdc3469a457a60bdd71f924c379d7daf10a4ab2f2d5f83068b08b548c152c`,
+> independently re-derived this cycle). Mirroring the `pl/mf/zeznanie-
+> pit-37` precedent, this v1.0.0 scopes to the salaried-employee/pensioner
+> case: general identification (OIB, address, bank account, representative/
+> tax advisor), a bounded 3-row dependent-family-members table (of the
+> form's own 7 rows), the personal-deduction-increase section, domestic
+> employment-wage and domestic-pension income (each a bounded 3-row
+> employer/payer table, of the form's own 6 rows), the flat 9-row reliefs/
+> exemptions table, the attached-documents free-text section, and the
+> closing declaration --- 86 `fields[]` total. Excludes assisted-area/Vukovar
+> and foreign-income variants, "other income," self-employment (the form's
+> most complex section), and every computed grand-total, all disclosed in
+> the schema's own `description` and VERIFICATION.md. This cycle also
+> screened Croatia's other five verticals: Business Formation (obrt
+> registration, a genuine unauthenticated `.doc` download at `portor.gov.hr`)
+> is a strong, unauthored backlog candidate; Visa (MVEP's long-term Type D
+> visa) is a confirmed duplicate of the already-modelled EU-harmonized
+> long-stay-visa template; DMV (driving-licence issuance and vehicle
+> registration), Passport, and National ID are all confirmed dead ends ---
+> Croatia's MUP civil-document processes are uniformly officer/system-
+> mediated at the counter, with no public blank template distributed. See
+> `hr/porezna-uprava/prijava-poreza-na-dohodak`'s own VERIFICATION.md for
+> the full sourcing record and candidate-comparison detail.
 
 > **Update (2026-07-14, GOV-2875, "GovSchema Standard Research"): Romania's
 > National ID & Civic Documents vertical closes (6 of 6)**, via
@@ -11654,6 +11685,7 @@ now closed.
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| **HR** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -14130,6 +14162,30 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   `crossFieldValidation` rule. **Romania now stands at 6 of 6 verticals** —
   the third non-original jurisdiction (after Colombia and Bulgaria) to
   reach full coverage. No vertical remains open for Romania.
+- **Croatia — Taxes: authored (GOV-2883), opens the registry's 52nd
+  jurisdiction.** `hr/porezna-uprava/prijava-poreza-na-dohodak` (Porezna
+  uprava's Obrazac DOH, the annual personal income tax declaration) opened
+  Croatia's Taxes vertical (1 of 6) — see the Executive Summary's GOV-2883
+  update for the full field/scope summary. This cycle also screened
+  Croatia's other five verticals: **Business Formation** (obrt/craft-
+  business registration) is a strong, genuine, unauthenticated `.doc`
+  download at `portor.gov.hr/dokumenti/OR_prijava_za_upis_u_obrtni_registar.doc`
+  (HTTP 200, 141,824 bytes) — not authored this cycle (Taxes-only scope),
+  a ready-to-author backlog candidate. **Visa** (MVEP's long-term Type D
+  visa application, `mvep.gov.hr`) was independently field-compared against
+  the already-modelled EU-harmonized long-stay-visa template
+  (`de/auswaertiges-amt/national-visa-application`,
+  `bg/mvnr/zayavlenie-za-izdavane-na-natsionalna-viza-tip-d`,
+  `es/maec/solicitud-visado-nacional`) and confirmed a field-for-field
+  duplicate — not authored. **DMV** (both driving-licence issuance and
+  vehicle registration), **Passport**, and **National ID** (osobna
+  iskaznica) are all confirmed dead ends: Croatia's MUP civil-document
+  processes are uniformly officer/system-mediated at the counter (the
+  clerk prints the application from civil-registry data; the applicant only
+  signs), with no public blank template distributed in any of the three.
+  **Croatia's Business Formation vertical remains open, ready-to-author
+  backlog; DMV, Passport, and National ID should not be re-attempted
+  without a genuinely new source.**
 
 ---
 
