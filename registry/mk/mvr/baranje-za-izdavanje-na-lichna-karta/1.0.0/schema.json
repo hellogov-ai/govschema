@@ -1,0 +1,419 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mk/mvr/baranje-za-izdavanje-na-lichna-karta",
+  "version": "1.0.0",
+  "title": "North Macedonia — Application for Issuance of a Personal ID Card (Type A)",
+  "description": "The Министерство за внатрешни работи's (МВР, Ministry of Interior of the Republic of North Macedonia) \"Барање за издавање на лична карта, ТИП-А\" (Application for Issuance of a Personal ID Card, Type A), published unauthenticated on МВР's own \"Граѓански постапки\" (Civil Procedures) services page as Образец бр. 1 (Form No. 1). This is a print-and-fill specimen with no AcroForm/Widget structure at all — every field is read directly off the rendered page. Type A is the monolingual-Macedonian variant of this application, used outside municipalities where Albanian is co-official; it also offers a checkbox request to have the form (and the applicant's own name data) prepared in Turkish, Aromanian (влашки), Serbian, Romani, or Bosnian script/language instead. A distinct bilingual Macedonian/Albanian specimen (Образец бр. 2, \"ТИП-Б / LLOJI-B\"), used in municipalities with official Albanian-language use per the Law on the Use of Languages, was independently confirmed this cycle to be a genuine companion document rather than a duplicate or a different ID-document type — it is out of scope for this v1.0.0 (own field set differs: adds an ethnicity/national-affiliation field and a citizenship field, drops the alternate-script request checkboxes present on Type A) and is left as a follow-up candidate. Models the application-reason selection (first issuance, expired-validity replacement, lost/stolen/damaged-duplicate, or early replacement for damage/data-change/address-change), the applicant's given name and surname (with two independent alternate-script requests: one for the form itself, one for the name data specifically), the pre-marriage surname for married applicants, both parents' names, date and place of birth, the МВР-issued personal (matičen) number, sex, current residence address, a bounded two-row parent/guardian consent block for applicants aged 15-18, the applicant's previous ID card's residence, number, and issuing authority, the application date and place, the applicant's own signature, contact-method information, the receiving official's signature, and a free-text description line for any additional required documents, plus five checkbox-gated supporting-evidence attachments as documents[] entries. 30 fields, plus 5 documents[] entries. GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of the Republic of North Macedonia or the Министерство за внатрешни работи.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Министерство за внатрешни работи",
+    "abbreviation": "МВР",
+    "url": "https://mvr.gov.mk"
+  },
+  "process": {
+    "type": "application",
+    "language": "mk"
+  },
+  "source": {
+    "url": "https://portal.mdt.gov.mk/post-documents/gragjanski-postapki-document-18rr.pdf",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "МВР \"Барање за издавање на лична карта, ТИП-А\" (Образец бр. 1), linked from МВР's own \"Граѓански постапки\" (Civil Procedures) services page at https://mvr.gov.mk/mk-MK/uslugi/gragjanski-postapki"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle GOV-2942 (parent GOV-2937). Opens North Macedonia's National ID & Civic Documents vertical (4 of 6, alongside Taxes, DMV, and the concurrently-merged GOV-2939 passport schema). Independently re-fetched and re-rendered with pdfjs-dist this cycle; sha256 matched the issue brief's own claim exactly. See this schema's own VERIFICATION.md for the full sourcing record, including the visual-decode method used to recover this specimen's fields (the PDF's text layer is a non-standard-encoding substitution cipher, unreadable as raw extracted text despite rendering correctly)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationReason",
+      "label": "Причина за барање (да се заокружи еден од основите)",
+      "type": "enum",
+      "required": true,
+      "description": "The reason for this ID-card request, selected by circling one of four printed grounds: first issuance (1.1); replacement due to expired validity (1.2); duplicate ID card — lost, stolen, or missing (1.3); or early replacement, covering damage, personal-data change, change of address, or change of residence, among other reasons (1.4, a single option whose own parenthetical lists several triggering circumstances).",
+      "sourceRef": "Section 1, \"Причина за барање (да се заокружи еден од основите)\"",
+      "validation": {
+        "enum": [
+          "firstIssuance",
+          "expiredValidityReplacement",
+          "duplicateLostStolenOrMissing",
+          "earlyReplacement"
+        ]
+      }
+    },
+    {
+      "name": "givenName",
+      "label": "Име",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 2.1, \"ИМЕ\" box (printed sub-label \"1.македонски.јазик\")",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Презиме",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 2.1, \"ПРЕЗИМЕ\" box (printed sub-label \"1.македонски.јазик\")",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "requestedFormLanguage",
+      "label": "Барам образецот да биде изготвен на еден од наведените јазици и писмо",
+      "type": "enum",
+      "required": false,
+      "description": "An optional request that the form itself be prepared in one of five alternate minority languages/scripts instead of Macedonian. The form's own instruction states exactly one of the five is selected. Distinct from requestedNameLanguage, which gates only the applicant's own name data rather than the whole form.",
+      "sourceRef": "Section 2.2, first checkbox row (турски/влашки/српски/ромски/босански)",
+      "validation": {
+        "enum": ["turkish", "aromanian", "serbian", "romani", "bosnian"]
+      }
+    },
+    {
+      "name": "requestedNameLanguage",
+      "label": "Барам податоците за личното име во образецот да бидат испишани на еден од наведените јазици и писмо",
+      "type": "enum",
+      "required": false,
+      "description": "An optional request that only the applicant's own personal-name data be written in one of five alternate minority languages/scripts. The form's own instruction states exactly one of the five is selected. Distinct from requestedFormLanguage, which gates the entire form.",
+      "sourceRef": "Section 2.2, second checkbox row (турски/влашки/српски/ромски/босански)",
+      "validation": {
+        "enum": ["turkish", "aromanian", "serbian", "romani", "bosnian"]
+      }
+    },
+    {
+      "name": "maidenSurname",
+      "label": "ЗА ОМАЖЕНИ-ОЖЕНЕТИ (презиме пред склучување на бракот)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "For a married applicant: the surname held before marriage. The form prints no explicit boolean gate tying this field to marital status, so it is modelled as unconditionally optional rather than an invented requiredWhen condition, per this registry's established convention for this pattern (e.g. si/mzez's legal-representative block).",
+      "sourceRef": "\"ЗА ОМАЖЕНИ-ОЖЕНЕТИ (презиме пред склучување на бракот)\" field",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "fatherName",
+      "label": "Татко",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"ИМЕ НА РОДИТЕЛИТЕ\" table, \"Татко\" column",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "motherName",
+      "label": "Мајка",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"ИМЕ НА РОДИТЕЛИТЕ\" table, \"Мајка\" column",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Ден, месец и година на раѓање",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "\"ДЕН, МЕСЕЦ И ГОДИНА НА РАЃАЊЕ\" field"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Место на раѓање, (лице родено во странство ја запишува и државата)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's place of birth. Per the form's own parenthetical, a person born abroad also states the country here, rather than in a separate field.",
+      "sourceRef": "\"МЕСТО НА РАЃАЊЕ, (лице родено во странство ја запишува и државата)\" field",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "personalNumber",
+      "label": "Матичен број",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's unique master citizen number (матичен број).",
+      "sourceRef": "\"МАТИЧЕН БРОЈ\" field",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Пол",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"ПОЛ\" field, машки/женски checkboxes",
+      "validation": {
+        "enum": ["male", "female"]
+      }
+    },
+    {
+      "name": "residenceAddress",
+      "label": "Живеалиште и адреса",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"ЖИВЕАЛИШТЕ И АДРЕСА\" field",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "guardian1Name",
+      "label": "Име и презиме (родител/старател 1)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "For an applicant aged 15-18: the first parent/guardian's name and surname, consenting to the ID-card issuance. The form prints a two-row table (bounded at 2 rows on this specimen) with no explicit boolean gate tying it to applicant age, so it is modelled as unconditionally optional rather than an invented requiredWhen condition.",
+      "sourceRef": "Section 3 consent table, row 1, \"Име и презиме\" column",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "guardian1PersonalNumber",
+      "label": "Матичен број (родител/старател 1)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section 3 consent table, row 1, \"Матичен број\" column",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "guardian1Relationship",
+      "label": "Сродство (родител/старател 1)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3 consent table, row 1, \"Сродство\" column",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "guardian1Signature",
+      "label": "Потпис (родител/старател 1)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The first parent/guardian's name, standing in for a physical signature, per this registry's established convention for paper-form signature blocks.",
+      "sourceRef": "Section 3 consent table, row 1, \"Потпис\" column"
+    },
+    {
+      "name": "guardian2Name",
+      "label": "Име и презиме (родител/старател 2)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3 consent table, row 2, \"Име и презиме\" column",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "guardian2PersonalNumber",
+      "label": "Матичен број (родител/старател 2)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section 3 consent table, row 2, \"Матичен број\" column",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "guardian2Relationship",
+      "label": "Сродство (родител/старател 2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3 consent table, row 2, \"Сродство\" column",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "guardian2Signature",
+      "label": "Потпис (родител/старател 2)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The second parent/guardian's name, standing in for a physical signature.",
+      "sourceRef": "Section 3 consent table, row 2, \"Потпис\" column"
+    },
+    {
+      "name": "previousResidenceAddress",
+      "label": "Предходно живеалиште и адреса",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 4.1, \"ПРЕДХОДНО ЖИВЕАЛИШТЕ И АДРЕСА\" field",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "previousIdCardNumber",
+      "label": "Број на лична карта",
+      "type": "string",
+      "required": false,
+      "description": "The number of the applicant's previous personal ID card.",
+      "sourceRef": "Section 4.2, \"БРОЈ НА ЛИЧНА КАРТА\" field",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "previousIssuingAuthority",
+      "label": "Орган кој ја издал",
+      "type": "string",
+      "required": false,
+      "description": "The authority that issued the applicant's previous personal ID card.",
+      "sourceRef": "Section 4.3, \"ОРГАН КОЈ ЈА ИЗДАЛ\" field",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "applicationDate",
+      "label": "Датум на поднесување",
+      "type": "date",
+      "required": true,
+      "description": "The date this application is submitted, printed directly alongside applicationPlace and immediately above the applicant's own signature block — modelled as an applicant-declared field, distinct from the office-completed administrative-tracking dates seen on other MVR/MZEZ sibling schemas.",
+      "sourceRef": "\"Датум и место на поднесување\" line, date portion"
+    },
+    {
+      "name": "applicationPlace",
+      "label": "Место на поднесување",
+      "type": "string",
+      "required": true,
+      "description": "The place this application is submitted, printed on the same line as applicationDate, separated by a comma.",
+      "sourceRef": "\"Датум и место на поднесување\" line, place portion",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Потпис на подносителот",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's name, standing in for a physical signature, per this registry's established convention for paper-form signature blocks.",
+      "sourceRef": "\"Потпис на подносителот\" field"
+    },
+    {
+      "name": "contactInfo",
+      "label": "Податоци за контакт",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's own choice of contact method (e.g. phone or email) by which МВР may reach them during processing. The bilingual Type B specimen's own instructions confirm this is the applicant's free choice, not a mandatory field.",
+      "sourceRef": "\"Податоци за контакт\" field",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "receivingOfficialSignature",
+      "label": "Потпис на службеното лице кое го примило барањето",
+      "type": "string",
+      "required": false,
+      "description": "The name of the official who received the application, standing in for a physical signature. Office-only.",
+      "sourceRef": "\"Потпис на службеното лице кое го примило барањето\" field"
+    },
+    {
+      "name": "otherRequiredDocumentsDescription",
+      "label": "Други документи неопходни за постапката",
+      "type": "string",
+      "required": false,
+      "description": "A free-text description of any additional document the applicant is attaching beyond the five enumerated supporting-evidence items, per the checklist's own final open-ended row.",
+      "sourceRef": "Section 5 attachment checklist, final row, blank line",
+      "validation": {
+        "maxLength": 300
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "birthOrMarriageRegistryExtract",
+      "label": "Извод од матичната книга на родените/венчаните",
+      "category": "supporting-evidence",
+      "belongsTo": "applicant",
+      "required": false,
+      "handling": "starred-obtained-ex-officio-by-mvr",
+      "sourceRef": "Section 5 attachment checklist, row 1. Extract from the birth or marriage civil registry. Starred (*) on the source form: per the form's own footnote, starred items are treated as submitted together with the application and МВР obtains them ex officio rather than requiring the applicant to attach them."
+    },
+    {
+      "id": "proofOfNewResidence",
+      "label": "Доказ за ново место на живеење",
+      "category": "supporting-evidence",
+      "belongsTo": "applicant",
+      "required": false,
+      "handling": "applicant-provided-not-starred",
+      "sourceRef": "Section 5 attachment checklist, row 2 (explicitly cites \"постапка под реден број 1.4\"). Proof of a new place of residence, applicable when requesting ID-card replacement due to a residence change under application-reason 1.4 (earlyReplacement). Not starred on the source form, so applicant-provided rather than obtained ex officio."
+    },
+    {
+      "id": "officialGazetteInvalidityVerification",
+      "label": "Проверка во Сл.Весник дека личната карта е огласена за неважечка",
+      "category": "supporting-evidence",
+      "belongsTo": "applicant",
+      "required": false,
+      "handling": "starred-obtained-ex-officio-by-mvr",
+      "sourceRef": "Section 5 attachment checklist, row 3. Verification in the Службен весник (Official Gazette) that the applicant's previous ID card has been declared invalid. Starred (*) on the source form: obtained ex officio by МВР rather than attached by the applicant."
+    },
+    {
+      "id": "birthRegistryCopyForMinor",
+      "label": "Препис од матичната книга на родените за малолетно лице",
+      "category": "supporting-evidence",
+      "belongsTo": "dependent",
+      "required": false,
+      "handling": "starred-obtained-ex-officio-by-mvr",
+      "sourceRef": "Section 5 attachment checklist, row 4 (explicitly cites \"постапката под реден број 1.1\"). Certified copy of the birth civil registry, for a minor applicant in the first-issuance procedure (application-reason 1.1, firstIssuance). Starred (*) on the source form: obtained ex officio by МВР rather than attached by the applicant."
+    },
+    {
+      "id": "proofOfNameChange",
+      "label": "Доказ за промена на лично име",
+      "category": "supporting-evidence",
+      "belongsTo": "applicant",
+      "required": false,
+      "handling": "applicant-provided-not-starred",
+      "sourceRef": "Section 5 attachment checklist, row 5. Proof of a change of personal name (e.g. marriage-registry record, or a decision granting a personal-name change). Not starred on the source form, so applicant-provided rather than obtained ex officio."
+    }
+  ]
+}
