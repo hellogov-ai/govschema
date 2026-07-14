@@ -1,0 +1,703 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "lt/vmi/pavyzdine-pajamu-mokescio-deklaracija-gpm311",
+  "version": "1.0.0",
+  "title": "Lithuania — Annual Personal Income Tax Declaration (Form GPM311)",
+  "description": "The State Tax Inspectorate's (Valstybinė mokesčių inspekcija prie Lietuvos Respublikos finansų ministerijos, VMI) model annual personal income tax declaration, \"Pavyzdinė pajamų mokesčio deklaracija (GPM311)\" (GPM311), approved by the Head of VMI's Order No. VA-93 of 2019 under the Law on Personal Income Tax (Gyventojų pajamų mokesčio įstatymas, GPMĮ). GPM311 is the main declaration used by resident individuals to report their annual income and the tax calculated on it; it is accompanied by up to eight schedules (GPM311B through GPM311G) covering specific income categories, each attached only when the taxpayer received the corresponding kind of income. This v1.0.0 models the main GPM311 declaration in full (taxpayer identification, residency status, the return's five calculated-amounts blocks, refund routing, and the disability-based increased/maximum non-taxable-income-amount election) plus, in full line-item detail, its GPM311B schedule (employment income and social benefits — the single most common schedule, modeled as a bounded 3-entry repeating income table given the source's own dynamic, uncapped row structure). For the remaining seven schedules (GPM311C individual-activity income; GPM311D1 real/registrable-movable-property transfer income; GPM311D2 rental, financial-instrument, and other-asset transfer income; GPM311E interest; GPM311F1 other income; GPM311F2 controlled-foreign-entity positive income; GPM311G income-reducing expenses), this schema models only each schedule's own gating question (whether the taxpayer received that category of income, mirroring the source form's own \"Tokių pajamų negavau\" / \"I did not receive such income\" checkbox) and its declared page count, leaving each schedule's internal line items as a disclosed backlog candidate for a future, separately-versioned companion schema — the same combined-form scoping convention this registry has already established for Romania's Formulary 212 (GOV-2797) and Greece's multi-schedule Ε1/Ε2/Ε3 income tax return.\n\nGPM311 has no fillable AcroForm widgets; it is a text-layer specimen PDF documenting the paper/reference layout of the return actually filed electronically through VMI's Mano VMI portal (which pre-fills much of the return from third-party data, mirroring the pattern already documented for Norway's and Serbia's own portal-only annual returns). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of the Republic of Lithuania or the Valstybinė mokesčių inspekcija.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "LT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Valstybinė mokesčių inspekcija prie Lietuvos Respublikos finansų ministerijos (State Tax Inspectorate under the Ministry of Finance of the Republic of Lithuania)",
+    "abbreviation": "VMI",
+    "url": "https://www.vmi.lt"
+  },
+  "process": {
+    "type": "filing",
+    "language": "lt"
+  },
+  "source": {
+    "url": "https://e-seimas.lrs.lt/rs/lasupplement/TAP/470ad611ffa511e990d5d63c859a8aa7/dce00c10228f67133748211547043f37/format/ISO_PDF/",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "Valstybinės mokesčių inspekcijos prie Lietuvos Respublikos finansų ministerijos viršininko įsakymas Nr. VA-93 (2019), priedas — Pavyzdinė pajamų mokesčio deklaracija (GPM311), as republished by the Seimas' own legal-acts repository (e-seimas.lrs.lt)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle GOV-2969, opening Lithuania as a new jurisdiction via its Taxes vertical. Fetched via WebFetch (https://e-seimas.lrs.lt/rs/lasupplement/TAP/470ad611ffa511e990d5d63c859a8aa7/dce00c10228f67133748211547043f37/format/ISO_PDF/): HTTP 200, application/pdf;charset=UTF-8, 681,405 bytes, 9 pages. Independently re-extracted via pdfjs-dist (legacy build) directly from the raw PDF bytes rather than trusting a prior summary: getTextContent() returned a full, clean Lithuanian text layer across all 9 pages (main GPM311 form on page 1, schedules GPM311B/C/D1/D2/E/F1/F2/G on pages 2-9 respectively), zero Widget annotations confirmed (a text-layer specimen, not an AcroForm)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxYear",
+      "label": "Year (Metai)",
+      "type": "integer",
+      "required": true,
+      "description": "The calendar year for which the annual personal income tax is being declared.",
+      "sourceRef": "GPM311, page 1, header field \"Metai [_______]\"",
+      "validation": {
+        "minimum": 2019
+      }
+    },
+    {
+      "name": "taxpayerPersonalCode",
+      "label": "Identification number (personal code) (Identifikacinis numeris (asmens kodas))",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The taxpayer's Lithuanian personal identification code (asmens kodas), repeated at the top of every schedule page.",
+      "sourceRef": "GPM311, page 1, header field \"Identifikacinis numeris (asmens kodas) [_____________________]\""
+    },
+    {
+      "name": "taxpayerFullName",
+      "label": "First and last name (Vardas ir pavardė)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The taxpayer's full name, as a single combined field on the source form.",
+      "sourceRef": "GPM311, page 1, header field \"Vardas ir pavardė [___________________________________________]\""
+    },
+    {
+      "name": "isPermanentResident",
+      "label": "Permanent resident (Nuolatinis gyventojas)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer is a permanent resident of Lithuania for tax purposes. The instruction beside this checkbox directs a taxpayer filing the first of two consecutive-year returns (see firstYearResidencyBasis) to leave this unchecked, and to check it only when filing the second year's return.",
+      "sourceRef": "GPM311, page 1, checkbox \"Nuolatinis gyventojas\""
+    },
+    {
+      "name": "finalDepartureDate",
+      "label": "Date of final departure from Lithuania (Galutinio išvykimo iš Lietuvos data)",
+      "type": "date",
+      "required": false,
+      "description": "The date of the taxpayer's final departure from Lithuania, completed when applicable to the taxpayer's change of tax residency during the year. The source presents this beside the permanent-resident checkbox without a single clean field-equals-value gate, so it is modeled optional rather than an invented requiredWhen.",
+      "sourceRef": "GPM311, page 1, field \"Galutinio išvykimo iš Lietuvos data [_______]-[___]-[___]\""
+    },
+    {
+      "name": "firstYearResidencyBasis",
+      "label": "Became a permanent resident due to 280 days spent in Lithuania over two consecutive years (Tapęs nuolatiniu gyventoju dėl Lietuvoje per dvejus metus išbūtų 280 dienų)",
+      "type": "boolean",
+      "required": false,
+      "description": "Checked only when filing the first of two consecutive annual returns filed because the taxpayer's presence in Lithuania totalled 280+ days over two consecutive calendar years (the alternative statutory permanent-residency test to the ordinary domicile/183-day test). The instruction directs isPermanentResident to be left unchecked on this first-year filing and checked only on the second year's return.",
+      "sourceRef": "GPM311, page 1, note \"Tapęs nuolatiniu gyventoju dėl Lietuvoje per dvejus metus išbūtų 280 dienų ... Žymėkite tik teikdami pirmųjų metų ... deklaraciją\""
+    },
+    {
+      "name": "taxPaidBeforeFiling",
+      "label": "Income tax already paid before submitting the declaration (Iki deklaracijos pateikimo sumokėtas pajamų mokestis)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer had already paid any income tax before submitting this declaration (false corresponds to the source's \"nemokėjau\" / \"did not pay\" checkbox, true to its \"sumokėjau jau\" / \"already paid\" checkbox).",
+      "sourceRef": "GPM311, page 1, checkboxes \"nemokėjau\" / \"sumokėjau jau\""
+    },
+    {
+      "name": "taxPaidBeforeFilingAmount",
+      "label": "Amount of income tax already paid, EUR/ct",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "taxPaidBeforeFiling",
+        "equals": true
+      },
+      "description": "The amount of income tax already paid before submitting the declaration, in euros and cents.",
+      "sourceRef": "GPM311, page 1, field beside \"sumokėjau jau [______________] Eur, ct\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "calculatedTaxLiabilityIsZero",
+      "label": "Calculated income tax liability is zero (Apskaičiuota pajamų mokesčio prievolė: nulis)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer's calculated income tax liability for the year is zero.",
+      "sourceRef": "GPM311, page 1, checkbox \"nulis\" beside \"Apskaičiuota pajamų mokesčio prievolė\""
+    },
+    {
+      "name": "calculatedTaxLiabilityAmount",
+      "label": "Calculated income tax liability amount (+/-), EUR/ct",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "calculatedTaxLiabilityIsZero",
+        "equals": false
+      },
+      "description": "The calculated income tax liability, which the source form allows to be entered as a positive or negative amount (\"suma (+/-)\"), so no minimum is modeled.",
+      "sourceRef": "GPM311, page 1, field \"suma (+ / -) [__________________] Eur, ct\""
+    },
+    {
+      "name": "finalTaxOutcome",
+      "label": "Final income tax outcome (Galutinė pajamų mokesčio suma)",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the final income tax amount for the year is zero, an amount payable by the taxpayer, or an amount refundable to the taxpayer.",
+      "sourceRef": "GPM311, page 1, checkbox/field group \"nulis\" / \"mokėtina suma\" / \"gražintina pajamų mokesčio suma\"",
+      "validation": {
+        "enum": [
+          "zero",
+          "payable",
+          "refundable"
+        ]
+      }
+    },
+    {
+      "name": "finalTaxPayableAmount",
+      "label": "Final income tax payable amount, EUR/ct",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "finalTaxOutcome",
+        "equals": "payable"
+      },
+      "description": "The final income tax amount payable by the taxpayer.",
+      "sourceRef": "GPM311, page 1, field \"mokėtina suma [__________________] Eur, ct\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "finalTaxRefundableAmount",
+      "label": "Final income tax refundable amount, EUR/ct",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "finalTaxOutcome",
+        "equals": "refundable"
+      },
+      "description": "The final income tax amount refundable to the taxpayer.",
+      "sourceRef": "GPM311, page 1, field \"grąžintina pajamų mokesčio suma [__________________] Eur, ct\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "socialInsuranceContributionsIsZero",
+      "label": "Calculated state social insurance contributions on individual-activity income is zero",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the calculated state social insurance (SODRA) contributions payable on individual-activity income for the year are zero.",
+      "sourceRef": "GPM311, page 1, checkbox \"nulis\" beside \"Apskaičiuota mokėtina valstybinio socialinio draudimo įmokų suma nuo individualios veiklos pajamų\""
+    },
+    {
+      "name": "socialInsuranceContributionsAmount",
+      "label": "State social insurance contributions payable, EUR/ct",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "socialInsuranceContributionsIsZero",
+        "equals": false
+      },
+      "description": "The calculated state social insurance (SODRA) contributions payable on individual-activity income.",
+      "sourceRef": "GPM311, page 1, field \"mokėtina suma [__________________] Eur, ct\" (SODRA block)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "healthInsuranceContributionsIsZero",
+      "label": "Calculated compulsory health insurance contributions on individual-activity income is zero",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the calculated compulsory health insurance contributions payable on individual-activity income for the year are zero.",
+      "sourceRef": "GPM311, page 1, checkbox \"nulis\" beside \"Apskaičiuota mokėtina privalomojo sveikatos draudimo įmokų suma nuo individualios veiklos pajamų\""
+    },
+    {
+      "name": "healthInsuranceContributionsAmount",
+      "label": "Compulsory health insurance contributions payable, EUR/ct",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "healthInsuranceContributionsIsZero",
+        "equals": false
+      },
+      "description": "The calculated compulsory health insurance contributions payable on individual-activity income.",
+      "sourceRef": "GPM311, page 1, field \"mokėtina suma [__________________] Eur, ct\" (health-insurance block)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "refundRoutingMethod",
+      "label": "Refund routing method",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "finalTaxOutcome",
+        "equals": "refundable"
+      },
+      "description": "How the taxpayer wants a refundable amount paid out: into their own account at a Lithuanian credit institution, or into another person's account or a foreign account (the latter requires a separate Form FR0781 request, out of this schema's scope).",
+      "sourceRef": "GPM311, page 1, options \"Grąžintiną sumą pageidauju gauti į savo sąskaitą Lietuvos kredito įstaigoje\" / \"Pageidauju gauti į kito asmens sąskaitą arba į sąskaitą užsienio valstybėje. Šiuo tikslu užpildykite FR0781 formos prašymą\"",
+      "validation": {
+        "enum": [
+          "own-lithuanian-account",
+          "third-party-or-foreign-account-fr0781"
+        ]
+      }
+    },
+    {
+      "name": "refundBankAccountNumber",
+      "label": "Refund bank account number (Lietuvos kredito įstaigos sąskaita)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "refundRoutingMethod",
+        "equals": "own-lithuanian-account"
+      },
+      "classification": "financial",
+      "description": "The taxpayer's own account number at a Lithuanian credit institution, into which a refundable amount is to be paid. The source notes that if this account is later closed, VMI will instead pay into another account of the taxpayer's already known to VMI at a Lithuanian credit institution.",
+      "sourceRef": "GPM311, page 1, field \"[_____________________________________________ ______ ______]\" beside the own-account refund option"
+    },
+    {
+      "name": "disabilityNpdEligibility",
+      "label": "Disability-based increased/maximum non-taxable income amount (NPD) eligibility",
+      "type": "enum",
+      "required": false,
+      "description": "Election of an increased or maximum non-taxable income amount (neapmokestinamasis pajamų dydis, NPD) based on the taxpayer's own assessed disability/work-capacity level, reported on the GPM311B schedule alongside the employment-income table.",
+      "sourceRef": "GPM311B, page 2, checkboxes \"Man nustatytas 30—55 procentų darbingumas ... turiu teisę į padidintą* NPD\" / \"Man nustatytas 0—25 procentų darbingumas ... turiu teisę į maksimalų* NPD\"",
+      "validation": {
+        "enum": [
+          "increased-30-to-55-percent-work-capacity",
+          "maximum-0-to-25-percent-work-capacity"
+        ]
+      }
+    },
+    {
+      "name": "receivedEmploymentIncome",
+      "label": "Received employment income or related social benefits (GPM311B)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer received employment-relationship income or related social benefits during the tax year (false corresponds to the schedule's own \"Tokių pajamų negavau\" / \"I did not receive such income\" checkbox). Gates whether the GPM311B schedule fields below apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Tokių pajamų negavau\" beside \"Darbo pajamos ir gautos socialinės išmokos\""
+    },
+    {
+      "name": "gpm311bPageCount",
+      "label": "Number of GPM311B schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedEmploymentIncome",
+        "equals": true
+      },
+      "description": "The number of GPM311B schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311B lapų skaičius [___]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "employmentIncome1TypeCode",
+      "label": "Employment income line 1 — income type code (Pajamų rūšis (kodas))",
+      "type": "enum",
+      "required": false,
+      "description": "Income type code for employment-income table line 1. Code 01 (income related to an employment relationship) is the primary, most common code; the source form pre-labels three rows with code 01 and directs the filer to use codes 02-09 (or 01 again) in any additional row as needed. The registry's established bounded-repeating-group convention is applied here (3 rows) since the source describes a dynamic, uncapped table rather than a fixed printed grid.",
+      "sourceRef": "GPM311B, page 2, table column \"Pajamų rūšis (kodas)\" / \"PR_KODAS\", row 1",
+      "validation": {
+        "enum": [
+          "01-employment-relationship-income",
+          "02-sole-proprietor-partner-employment-related-income",
+          "03-sickness-maternity-paternity-childcare-long-term-work-benefits",
+          "04-employment-income-paid-2019-or-later-calculated-through-2018",
+          "05-per-diem",
+          "06-compensation-for-work-of-a-movable-nature",
+          "07-employee-prizes-gifts-up-to-200-eur-per-year",
+          "08-tax-exempt-employment-income-under-gpmi-article-17",
+          "09-seafarers-sickness-benefits-tax-exempt-under-gpmi-article-17-1-45"
+        ]
+      }
+    },
+    {
+      "name": "employmentIncome1Amount",
+      "label": "Employment income line 1 — income amount (Pajamų suma) (SUMA_PAGR)",
+      "type": "number",
+      "required": false,
+      "description": "Gross income amount for employment-income table line 1, in euros and cents.",
+      "sourceRef": "GPM311B, page 2, table column \"Pajamų suma\" / \"SUMA_PAGR\", row 1",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome1WithheldTax",
+      "label": "Employment income line 1 — tax withheld (Išskaičiuota mokesčio suma) (GPM_ISSK)",
+      "type": "number",
+      "required": false,
+      "description": "Income tax withheld at source for employment-income table line 1.",
+      "sourceRef": "GPM311B, page 2, table column \"Išskaičiuota mokesčio suma\" / \"GPM_ISSK\", row 1",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome1OtherPersonPaidTax",
+      "label": "Employment income line 1 — tax paid using another person's funds (Kito asmens lėšomis sumokėta mokesčio suma) (GPM_KITO)",
+      "type": "number",
+      "required": false,
+      "description": "Tax paid on employment-income table line 1 using another person's funds.",
+      "sourceRef": "GPM311B, page 2, table column \"Kito asmens lėšomis sumokėta mokesčio suma\" / \"GPM_KITO\", row 1",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome1SourceCountryCode",
+      "label": "Employment income line 1 — source state/territory code (Valstybė / teritorija (kodas)) (VALST_PAJ)",
+      "type": "string",
+      "required": false,
+      "description": "Code of the state or territory from which employment-income table line 1's income was received, from VMI's own target-territories list, or code \"XO\" for income from an international organization.",
+      "sourceRef": "GPM311B, page 2, table column \"Valstybė / teritorija (kodas)\" / \"VALST_PAJ\", row 1"
+    },
+    {
+      "name": "employmentIncome1ForeignTaxPaid",
+      "label": "Employment income line 1 — tax paid in a foreign state (Užsienio valstybėje sumokėta mokesčio suma) (GPM_UZS)",
+      "type": "number",
+      "required": false,
+      "description": "Income tax paid in a foreign state on employment-income table line 1.",
+      "sourceRef": "GPM311B, page 2, table column \"Užsienio valstybėje sumokėta mokesčio suma\" / \"GPM_UZS\", row 1",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome2TypeCode",
+      "label": "Employment income line 2 — income type code (Pajamų rūšis (kodas))",
+      "type": "enum",
+      "required": false,
+      "description": "Income type code for employment-income table line 2. See employmentIncome1TypeCode for the full documented code set.",
+      "sourceRef": "GPM311B, page 2, table column \"Pajamų rūšis (kodas)\" / \"PR_KODAS\", row 2",
+      "validation": {
+        "enum": [
+          "01-employment-relationship-income",
+          "02-sole-proprietor-partner-employment-related-income",
+          "03-sickness-maternity-paternity-childcare-long-term-work-benefits",
+          "04-employment-income-paid-2019-or-later-calculated-through-2018",
+          "05-per-diem",
+          "06-compensation-for-work-of-a-movable-nature",
+          "07-employee-prizes-gifts-up-to-200-eur-per-year",
+          "08-tax-exempt-employment-income-under-gpmi-article-17",
+          "09-seafarers-sickness-benefits-tax-exempt-under-gpmi-article-17-1-45"
+        ]
+      }
+    },
+    {
+      "name": "employmentIncome2Amount",
+      "label": "Employment income line 2 — income amount (Pajamų suma) (SUMA_PAGR)",
+      "type": "number",
+      "required": false,
+      "description": "Gross income amount for employment-income table line 2, in euros and cents.",
+      "sourceRef": "GPM311B, page 2, table column \"Pajamų suma\" / \"SUMA_PAGR\", row 2",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome2WithheldTax",
+      "label": "Employment income line 2 — tax withheld (Išskaičiuota mokesčio suma) (GPM_ISSK)",
+      "type": "number",
+      "required": false,
+      "description": "Income tax withheld at source for employment-income table line 2.",
+      "sourceRef": "GPM311B, page 2, table column \"Išskaičiuota mokesčio suma\" / \"GPM_ISSK\", row 2",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome2OtherPersonPaidTax",
+      "label": "Employment income line 2 — tax paid using another person's funds (Kito asmens lėšomis sumokėta mokesčio suma) (GPM_KITO)",
+      "type": "number",
+      "required": false,
+      "description": "Tax paid on employment-income table line 2 using another person's funds.",
+      "sourceRef": "GPM311B, page 2, table column \"Kito asmens lėšomis sumokėta mokesčio suma\" / \"GPM_KITO\", row 2",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome2SourceCountryCode",
+      "label": "Employment income line 2 — source state/territory code (Valstybė / teritorija (kodas)) (VALST_PAJ)",
+      "type": "string",
+      "required": false,
+      "description": "Code of the state or territory from which employment-income table line 2's income was received.",
+      "sourceRef": "GPM311B, page 2, table column \"Valstybė / teritorija (kodas)\" / \"VALST_PAJ\", row 2"
+    },
+    {
+      "name": "employmentIncome2ForeignTaxPaid",
+      "label": "Employment income line 2 — tax paid in a foreign state (Užsienio valstybėje sumokėta mokesčio suma) (GPM_UZS)",
+      "type": "number",
+      "required": false,
+      "description": "Income tax paid in a foreign state on employment-income table line 2.",
+      "sourceRef": "GPM311B, page 2, table column \"Užsienio valstybėje sumokėta mokesčio suma\" / \"GPM_UZS\", row 2",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome3TypeCode",
+      "label": "Employment income line 3 — income type code (Pajamų rūšis (kodas))",
+      "type": "enum",
+      "required": false,
+      "description": "Income type code for employment-income table line 3. See employmentIncome1TypeCode for the full documented code set.",
+      "sourceRef": "GPM311B, page 2, table column \"Pajamų rūšis (kodas)\" / \"PR_KODAS\", row 3",
+      "validation": {
+        "enum": [
+          "01-employment-relationship-income",
+          "02-sole-proprietor-partner-employment-related-income",
+          "03-sickness-maternity-paternity-childcare-long-term-work-benefits",
+          "04-employment-income-paid-2019-or-later-calculated-through-2018",
+          "05-per-diem",
+          "06-compensation-for-work-of-a-movable-nature",
+          "07-employee-prizes-gifts-up-to-200-eur-per-year",
+          "08-tax-exempt-employment-income-under-gpmi-article-17",
+          "09-seafarers-sickness-benefits-tax-exempt-under-gpmi-article-17-1-45"
+        ]
+      }
+    },
+    {
+      "name": "employmentIncome3Amount",
+      "label": "Employment income line 3 — income amount (Pajamų suma) (SUMA_PAGR)",
+      "type": "number",
+      "required": false,
+      "description": "Gross income amount for employment-income table line 3, in euros and cents.",
+      "sourceRef": "GPM311B, page 2, table column \"Pajamų suma\" / \"SUMA_PAGR\", row 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome3WithheldTax",
+      "label": "Employment income line 3 — tax withheld (Išskaičiuota mokesčio suma) (GPM_ISSK)",
+      "type": "number",
+      "required": false,
+      "description": "Income tax withheld at source for employment-income table line 3.",
+      "sourceRef": "GPM311B, page 2, table column \"Išskaičiuota mokesčio suma\" / \"GPM_ISSK\", row 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome3OtherPersonPaidTax",
+      "label": "Employment income line 3 — tax paid using another person's funds (Kito asmens lėšomis sumokėta mokesčio suma) (GPM_KITO)",
+      "type": "number",
+      "required": false,
+      "description": "Tax paid on employment-income table line 3 using another person's funds.",
+      "sourceRef": "GPM311B, page 2, table column \"Kito asmens lėšomis sumokėta mokesčio suma\" / \"GPM_KITO\", row 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome3SourceCountryCode",
+      "label": "Employment income line 3 — source state/territory code (Valstybė / teritorija (kodas)) (VALST_PAJ)",
+      "type": "string",
+      "required": false,
+      "description": "Code of the state or territory from which employment-income table line 3's income was received.",
+      "sourceRef": "GPM311B, page 2, table column \"Valstybė / teritorija (kodas)\" / \"VALST_PAJ\", row 3"
+    },
+    {
+      "name": "employmentIncome3ForeignTaxPaid",
+      "label": "Employment income line 3 — tax paid in a foreign state (Užsienio valstybėje sumokėta mokesčio suma) (GPM_UZS)",
+      "type": "number",
+      "required": false,
+      "description": "Income tax paid in a foreign state on employment-income table line 3.",
+      "sourceRef": "GPM311B, page 2, table column \"Užsienio valstybėje sumokėta mokesčio suma\" / \"GPM_UZS\", row 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "receivedIndividualActivityIncome",
+      "label": "Received individual-activity income (GPM311C)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer received income from individual (self-employed) activity during the tax year. Gates whether GPM311C's own line items (out of this schema's scope — see this document's own description) apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Tokių pajamų negavau\" beside \"Individualios veiklos pajamos\""
+    },
+    {
+      "name": "individualActivityVatPayerOrMustRegister",
+      "label": "Is a VAT payer or must register as one (Esu PVM mokėtojas arba privalau juo registruotis)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer, in connection with individual activity, is a VAT payer or is obliged to register as one.",
+      "sourceRef": "GPM311, page 1, checkbox \"Esu PVM mokėtojas arba privalau juo registruotis\""
+    },
+    {
+      "name": "gpm311cPageCount",
+      "label": "Number of GPM311C schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedIndividualActivityIncome",
+        "equals": true
+      },
+      "description": "The number of GPM311C schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311C lapų skaičius [___]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "receivedPropertyTransferIncome",
+      "label": "Received real/registrable-movable-property transfer income (GPM311D1)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer received income from transferring ownership of real property or registrable movable property during the tax year. Gates whether GPM311D1's own line items (out of this schema's scope) apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Tokių pajamų negavau\" beside \"Nekilnojamojo, registruotino kilnojamojo daikto perleidimo pajamos\""
+    },
+    {
+      "name": "gpm311d1PageCount",
+      "label": "Number of GPM311D1 schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedPropertyTransferIncome",
+        "equals": true
+      },
+      "description": "The number of GPM311D1 schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311D1 lapų skaičius [___]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "receivedRentalOrOtherAssetIncome",
+      "label": "Received rental, financial-instrument, or other-asset transfer income (GPM311D2)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer received rental income, income from financial instruments, or income from transferring other assets during the tax year. Gates whether GPM311D2's own line items (out of this schema's scope) apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Tokių pajamų negavau\" beside \"Nuomos, finansinių priemonių ir kito turto perleidimo pajamos\""
+    },
+    {
+      "name": "gpm311d2PageCount",
+      "label": "Number of GPM311D2 schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedRentalOrOtherAssetIncome",
+        "equals": true
+      },
+      "description": "The number of GPM311D2 schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311D2 lapų skaičius [___]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "receivedInterestIncome",
+      "label": "Received interest income (GPM311E)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer received interest income during the tax year. Gates whether GPM311E's own line items (out of this schema's scope) apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Tokių pajamų negavau\" beside \"Palūkanos\""
+    },
+    {
+      "name": "gpm311ePageCount",
+      "label": "Number of GPM311E schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedInterestIncome",
+        "equals": true
+      },
+      "description": "The number of GPM311E schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311E lapų skaičius [___]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "receivedOtherIncome",
+      "label": "Received other income (GPM311F1)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer received any other reportable income during the tax year not covered by the schedules above. Gates whether GPM311F1's own line items (out of this schema's scope) apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Tokių pajamų negavau\" beside \"Kitos pajamos\""
+    },
+    {
+      "name": "gpm311f1PageCount",
+      "label": "Number of GPM311F1 schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "receivedOtherIncome",
+        "equals": true
+      },
+      "description": "The number of GPM311F1 schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311F1 lapų skaičius [___]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "controlsForeignEntity",
+      "label": "Controls a foreign entity (Pozityviosios pajamos)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer, together with related persons, controls more than 50% of a foreign entity's shares, units, voting rights, or rights to a share of distributable profit (triggering positive-income/controlled-foreign-entity reporting). Gates whether GPM311F2's own line items (out of this schema's scope) apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Nekontroliuoju jokių užsienio vienetų\" beside \"Pozityviosios pajamos\""
+    },
+    {
+      "name": "gpm311f2PageCount",
+      "label": "Number of GPM311F2 schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "controlsForeignEntity",
+        "equals": true
+      },
+      "description": "The number of GPM311F2 schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311F2 lapų skaičius [___]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "hasDeductibleExpenses",
+      "label": "Has income-reducing expenses (Išlaidos, mažinančios pajamas)",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer incurred expenses that reduce taxable income, or wishes to use them to reduce taxable income, during the tax year. Gates whether GPM311G's own line items (out of this schema's scope) apply.",
+      "sourceRef": "GPM311, page 1, checkbox \"Tokių išlaidų nepatyriau arba nepageidauju jomis sumažinti apmokestinamųjų pajamų\" beside \"Išlaidos, mažinančios pajamas\""
+    },
+    {
+      "name": "gpm311gPageCount",
+      "label": "Number of GPM311G schedule pages attached",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasDeductibleExpenses",
+        "equals": true
+      },
+      "description": "The number of GPM311G schedule pages attached to the declaration.",
+      "sourceRef": "GPM311, page 1, field \"Deklaracijos priedo GPM311G lapų skaičius [_____]\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "attachedDocumentPageCount",
+      "label": "Number of pages of attached documents (Pridedamų dokumentų lapų skaičius)",
+      "type": "integer",
+      "required": false,
+      "description": "The total number of pages of supporting documents attached to the declaration. The source discloses only this single aggregate count field, not a named per-category document list, so no structured documents[] entries are modeled for this schema — a disclosed scope limitation.",
+      "sourceRef": "GPM311, page 1, field \"Pridedamų dokumentų lapų skaičius [______]\"",
+      "validation": {
+        "minimum": 0
+      }
+    }
+  ]
+}
