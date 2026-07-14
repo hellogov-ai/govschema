@@ -22,7 +22,8 @@ and now National ID (this schema, GOV-2869).
 
 GOV-2860's own VERIFICATION.md explicitly flagged this candidate: the
 passport schema models MVR's shared civil-identity-document application
-(`https://mvr.bg/upload/301781/...`, filed as "Приложение № 2") scoped only
+(upload id `301781` on `mvr.bg`, filed as "Приложение № 2" — see the full
+URL cited under "Source verification" below) scoped only
 to its passport-family checkbox pathway, and named the ID-card pathway
 (лична карта / national ID card, and временна карта за самоличност /
 temporary ID card) plus every field the source ties explicitly to it as a
