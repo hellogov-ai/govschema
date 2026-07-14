@@ -4,10 +4,44 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **438 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **439 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2928, "GovSchema Standard Research"): Slovenia's
+> National ID & Civic Documents vertical opens (4 of 6)**, via
+> `si/mzez/vloga-za-pridobitev-osebne-izkaznice` — the Ministrstvo za
+> zunanje in evropske zadeve's (MZEZ, Slovenia's Ministry of Foreign and
+> European Affairs) "Vloga za pridobitev osebne izkaznice" (Application for
+> obtaining a personal ID card), the consular-channel companion to the same
+> cycle's MZEZ passport-application schema (GOV-2927, below), filed through
+> a diplomatski konzularno predstavništvo (DKP, diplomatic-consular
+> mission) abroad. Independently re-fetched directly from `gov.si` (HTTP
+> 200, `application/pdf`, 116,487 bytes, sha256
+> `94d121358473a27684b87de61418ff8646590bdcfaf629e91dbff94687046a85`,
+> matching the task brief's own claim exactly), a genuine 1-page AcroForm
+> confirmed via `pdfjs-dist`: 31 widgets, every one with a generic field
+> name, requiring full coordinate-correlation against the page's own text
+> layer to recover every field's real identity — including a discovery not
+> apparent from the text layer alone (two printed captions, "TIP OI" and
+> "DRŽAVLJANSTVO," with no backing AcroForm widget of any kind, confirmed
+> absent from both the annotations and the text-content dump). Models the
+> applicant's EMŠO/birth-date-and-sex, sex, surname, given name, place of
+> birth, and permanent residence, the applicant's own signature, an optional
+> legal-representative name/signature/residence block, and a faithful model
+> of every remaining widget-backed administrative-tracking, office-signoff,
+> and receipt-stub field (marked `required: false`, per this registry's
+> established convention for this pattern), plus a photograph as a
+> `documents[]` entry. Opens Slovenia's National ID & Civic Documents
+> vertical; combined with the GOV-2927 (Passport) and GOV-2929 (Taxes)
+> updates below, **Slovenia now stands at 4 of 6 verticals** (Business
+> Formation, Passport, Taxes, National ID). See
+> `si/mzez/vloga-za-pridobitev-osebne-izkaznice`'s own VERIFICATION.md for
+> the full sourcing record, the coordinate-correlation method, the
+> cross-reference against the passport sibling specimen, and every other
+> disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2929, "GovSchema Standard Research"): Slovenia's
-> Taxes vertical advances, now standing at 3 of 6**, via
+> Taxes vertical advanced, standing at 3 of 6 as of this update (see the
+> GOV-2928 update above for the current 4 of 6 total)**, via
 > `si/furs/doh-odm-income-tax-return-instructions` — FURS's (Finančna uprava
 > Republike Slovenije, Financial Administration of the Republic of
 > Slovenia) own numbered instruction booklet for the annual personal income
@@ -29,16 +63,17 @@
 > `incomeEntryNCode` enum covers all 24 leaf income-source codes the
 > instructions define (1101-1111, 1210-1230, 2100, 3100, 4200, 6100-6700).
 > Combined with the GOV-2927 cycle immediately below (Passport, also
-> published this same day), Slovenia now stands at **3 of 6 verticals**
-> (Business Formation, Passport, Taxes). See
+> published this same day), Slovenia stood at **3 of 6 verticals**
+> (Business Formation, Passport, Taxes) after this update; National ID has
+> since opened too (GOV-2928, above), bringing Slovenia to 4 of 6. See
 > `si/furs/doh-odm-income-tax-return-instructions`'s own VERIFICATION.md for
 > the full sourcing record, the income-source-code enum derivation, the
 > repeating-group row-cap rationale, and every other disclosed judgment
 > call.
 
 > **Update (2026-07-14, GOV-2927, "GovSchema Standard Research"): Slovenia's
-> Passport vertical opens (2 of 6 as of this cycle; see the GOV-2929 update
-> above for the current 3 of 6 total)**, via
+> Passport vertical opens (2 of 6 as of this cycle; see the GOV-2928 update
+> above for the current 4 of 6 total)**, via
 > `si/mzez/vloga-za-pridobitev-potnega-lista` — MZEZ's (Ministrstvo za
 > zunanje in evropske zadeve, Ministry of Foreign and European Affairs)
 > "Vloga za pridobitev potnega lista" (Application for obtaining a
@@ -54,9 +89,11 @@
 > coordinate-correlating several generically-named fields. Models the
 > applicant's personal data, an optional legal-representative
 > name/signature/address block, and the form's own DKP processing/
-> registration fields and tear-off receipt stub in full. DMV and Visa are
-> confirmed dead ends, and National ID remains open backlog (also
-> identified by the GOV-2925 cycle). See
+> registration fields and tear-off receipt stub in full. Slovenia now
+> stood at 2 of 6 verticals (Business Formation, Passport) after this
+> update; DMV and Visa are confirmed dead ends. Taxes and National ID have
+> since both opened too (GOV-2929 and GOV-2928, above), bringing Slovenia
+> to 4 of 6. See
 > `si/mzez/vloga-za-pridobitev-potnega-lista`'s own VERIFICATION.md for the
 > full sourcing record, the coordinate-correlation reasoning, and every
 > other disclosed judgment call.
@@ -10187,7 +10224,9 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (44/48 jurisdictions — 92%)
 
-**Slovenia's Taxes vertical advances, now 3 of 6 total (GOV-2929)**, via
+**Slovenia's Taxes vertical advances, 3 of 6 as of this update (GOV-2929;
+see the National ID entry below, GOV-2928, for the current 4 of 6 total)**,
+via
 `si/furs/doh-odm-income-tax-return-instructions` — FURS's own numbered
 instruction booklet for the annual personal income tax assessment return
 (Doh-Odm), used because both the income tax return and the VAT return
@@ -10203,9 +10242,10 @@ income-source-code enum derivation, and every other disclosed judgment
 call. Slovenia was already counted among this section's jurisdictions
 (opened via Business Formation, GOV-2910); this entry does not change the
 global `44/48` fraction, only advances Slovenia's own per-country vertical
-count — now 3 of 6 (Business Formation, Passport via the concurrent
-GOV-2927 cycle, and Taxes) — a status confirmed by cross-checking the
-merged GOV-2927 PR rather than assumed.
+count — 3 of 6 as of this update (Business Formation, Passport via the
+concurrent GOV-2927 cycle, and Taxes) — a status confirmed by
+cross-checking the merged GOV-2927 PR rather than assumed; National ID has
+since opened too (GOV-2928), bringing Slovenia to 4 of 6.
 
 **North Macedonia opens as the registry's 54th jurisdiction via Taxes
 (1 of 6) (GOV-2919)**, via
@@ -11598,7 +11638,23 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (34/40 jurisdictions — 85%)
+### National ID & Civic Documents (35/41 jurisdictions — 85%)
+
+**Slovenia's National ID & Civic Documents vertical opens (GOV-2928)**, via
+`si/mzez/vloga-za-pridobitev-osebne-izkaznice` — MZEZ's consular-channel
+personal-ID-card application, filed through a DKP abroad; the same MZEZ
+application family as the sole-proprietor Business Formation schema
+(GOV-2910) that opened Slovenia and the same-cycle consular passport
+schema (GOV-2927, see the Passport-vertical section above) that opened
+Slovenia's Passport vertical. See the Executive Summary's GOV-2928 update
+above for the full sourcing record — including the coordinate correlation
+required to recover all 31 of this specimen's generic AcroForm field names
+and the cross-reference against the sibling passport specimen — and the
+document's own VERIFICATION.md. **Slovenia now stands at 4 of 6
+verticals** (Business Formation, Passport, Taxes, National ID) — Taxes
+having opened concurrently via GOV-2929 (see the Taxes vertical section
+above). Slovenia is a newly-added denominator entry here, moving this
+vertical's global coverage from 34/40 to 35/41 (85%).
 
 **Romania's National ID & Civic Documents vertical closes (6 of 6)
 (GOV-2875)**, via `ro/dgep/cerere-eliberare-act-identitate` — the Direcţia
@@ -11987,7 +12043,7 @@ now closed.
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **SI** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
