@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **426 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **427 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2844, "GovSchema Standard Research"): Romania's
+> Passport vertical opens (5th of 6)**, via
+> `ro/mae/cerere-pentru-eliberarea-unui-nou-pasaport` — the Ministerul
+> Afacerilor Externe's (MAE, Ministry of Foreign Affairs) "Anexa 10 — Cerere
+> pentru eliberarea unui nou pașaport" (application for issuance of a new
+> simple passport, for an adult citizen domiciled in Romania). This
+> candidate was pre-scouted and Wayback-verified during the prior GOV-2837
+> cycle and authored directly this cycle rather than re-screened from
+> scratch, though sourcing was independently re-derived (fresh fetch, fresh
+> sha256, fresh pdfjs-dist extraction). The live `mae.ro` domain again
+> returned HTTP 403 to a direct fetch this cycle; the document was sourced
+> from the Internet Archive's Wayback Machine (the sole genuine `200`/
+> `application/pdf` capture, timestamp `20220305162016`), independently
+> re-fetched via two different access patterns (`if_` and `id_`) plus a
+> third-party mirror, all three producing a byte-identical file (134,449
+> bytes, sha256
+> `28da38e6e87e5d033c0ca1877f665191f15817ccd8e376dc3126263918baf223`).
+> `pdfjs-dist` confirmed a flat, single-page, zero-annotation specimen; a
+> duplicate-detection comparison against Romania's own already-modelled
+> `ro/mae/formular-cerere-viza-de-lunga-sedere` (visa, same agency) found no
+> subject-matter overlap beyond trivial shared identity concepts. Models 26
+> `fields[]` (CNP, sex, date of birth, name/parents, place/county of birth,
+> domicile, phone, a prior-passport-possession declaration gating four
+> sub-fields, a 4-option identity-document-used enum gating three national-
+> ID-card sub-fields, urgent-issuance request, height/eye-colour, submission
+> date, and a data-processing consent), 3 `documents[]` entries, and 2
+> `crossFieldValidation` rules. See GOV-2844 and this schema's own
+> VERIFICATION.md for the full sourcing record. **Romania now stands at 5 of
+> 6 verticals** (Taxes, DMV, Business Formation, Visa, Passport); National
+> ID & Civic Documents remains its sole open, unscreened backlog vertical.
 
 > **Update (2026-07-14, GOV-2837, "GovSchema Standard Research"): Romania's
 > Visa vertical opens (4th of 6)**, via
@@ -8335,7 +8366,18 @@
 
 ## By Vertical
 
-### Passport (35/40 jurisdictions — 88%)
+### Passport (36/40 jurisdictions — 90%)
+
+**Romania's Passport vertical opens (5 of 6) (GOV-2844)**, via
+`ro/mae/cerere-pentru-eliberarea-unui-nou-pasaport` — the Ministerul
+Afacerilor Externe's (MAE) "Anexa 10 — Cerere pentru eliberarea unui nou
+pașaport" (application for issuance of a new simple passport). See the
+Executive Summary's GOV-2844 update above and the document's own
+VERIFICATION.md for the full sourcing record, the pre-scouting provenance
+(disclosed during the prior GOV-2837 cycle), and every disclosed scoping/
+judgment call. Romania now stands at 5 of 6 verticals (Taxes, DMV, Business
+Formation, Visa, Passport); National ID & Civic Documents remains its sole
+open, unscreened backlog vertical.
 
 **Jordan's Passport vertical opens (2 of 6) (GOV-2739)**, via
 `jo/cspd/passport-application` — the Civil Status and Passports Department's
@@ -11406,7 +11448,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RO** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **RO** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -13778,12 +13820,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   cycle (an anti-bot/WAF gate, not evidence of removal). A duplicate-
   detection comparison against Germany's and Spain's own already-modelled
   national-visa schemas confirmed this is a genuine, distinct form sharing
-  only the Schengen-harmonized opening identity block. **Romania now stands
-  at 4 of 6 verticals** (Taxes, DMV, Business Formation, Visa); Passport
-  and National ID & Civic Documents remain open, unscreened-this-cycle
-  backlog candidates for a future cycle — Romania's own MAE "Anexa 10"
-  passport-application specimen (~30 fields, also Wayback-verified this
-  cycle) is a pre-scouted, ready-to-author candidate for Passport.
+  only the Schengen-harmonized opening identity block. Romania's own MAE
+  "Anexa 10" passport-application specimen (~30 fields, also
+  Wayback-verified this cycle) was left as a pre-scouted, ready-to-author
+  candidate for Passport — see the GOV-2844 update immediately below for
+  where that candidate landed.
+- **Romania — Passport: opened (GOV-2844), advances to 5th of 6.**
+  `ro/mae/cerere-pentru-eliberarea-unui-nou-pasaport` opened Romania's
+  Passport vertical — see the Executive Summary's GOV-2844 update above.
+  This authors the candidate pre-scouted and Wayback-verified during the
+  GOV-2837 cycle immediately above, independently re-deriving sourcing
+  (fresh fetch, fresh sha256 `28da38e6e87e5d033c0ca1877f665191f15817ccd8e376dc3126263918baf223`,
+  fresh pdfjs-dist extraction) rather than trusting the prior cycle's
+  disclosed numbers as-is. The live `mae.ro` domain again returned HTTP 403
+  to a direct fetch this cycle; sourced from the sole genuine Wayback
+  capture (timestamp `20220305162016`), cross-checked via two access
+  patterns plus a third-party mirror, all three byte-identical. A
+  duplicate-detection comparison against Romania's own visa schema (same
+  agency) found no subject-matter overlap beyond trivial shared identity
+  concepts. Models 26 `fields[]`, 3 `documents[]` entries, and 2
+  `crossFieldValidation` rules. **Romania now stands at 5 of 6 verticals**
+  (Taxes, DMV, Business Formation, Visa, Passport); National ID & Civic
+  Documents remains its sole open, unscreened-this-cycle backlog vertical.
 
 ---
 
