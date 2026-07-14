@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **437 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **438 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-14, GOV-2929, "GovSchema Standard Research"): Slovenia's
 > Taxes vertical advances, now standing at 3 of 6**, via

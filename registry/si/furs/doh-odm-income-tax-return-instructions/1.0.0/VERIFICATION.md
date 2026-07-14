@@ -131,9 +131,9 @@ Summary by section:
 | Opombe/Priloge/closing | `notes`, `attachmentsList`, `placeOfCompletion`, `dateOfCompletion` | Full |
 | Vrste dohodka (income entries) | `incomeEntry1..5Code`/`Income`/`Contributions`/`AdvanceTaxRS`/`ForeignTax`/`StandardOrActualCosts`/`Country` | Bounded to 5 rows; `Code` enum covers all 24 leaf income-source codes the instructions define (see judgment call 2) |
 
-Total: **79 `fields[]`** entries (5 `required: true` — `taxYear`, `fullName`,
+Total: **79 `fields[]`** entries (6 `required: true` — `taxYear`, `fullName`,
 `taxNumber`, `residentialAddress`, `placeOfCompletion`, `dateOfCompletion`;
-74 `required: false`, one of which — `under29ReliefEmploymentPeriod` —
+73 `required: false`, one of which — `under29ReliefEmploymentPeriod` —
 carries `requiredWhen`). No `documents[]` entry: the instructions describe
 the closing signature only as "zavezanec vpiše kraj in datum izpolnitve
 napovedi in se podpiše" (the taxpayer enters place and date and signs),
