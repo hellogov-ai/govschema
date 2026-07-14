@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**54 jurisdictions** | **436 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**54 jurisdictions** | **437 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2927, "GovSchema Standard Research"): Slovenia's
+> Passport vertical opens (2 of 6)**, via
+> `si/mzez/vloga-za-pridobitev-potnega-lista` — MZEZ's (Ministrstvo za
+> zunanje in evropske zadeve, Ministry of Foreign and European Affairs)
+> "Vloga za pridobitev potnega lista" (Application for obtaining a
+> passport), the genuinely fillable **consular** passport-application form
+> used when a citizen abroad applies via a diplomatic-consular mission
+> (DKP) — domestic issuance is confirmed in-person/biometric-only with no
+> fillable source document. Independently re-fetched directly from
+> `gov.si` (HTTP 200, `application/pdf`, 48,297 bytes, sha256
+> `33ecd0f007dc718469dedbd4bf969808faf8ca8f9f56d2970347ebbfa96a1c7a`), a
+> genuine 1-page AcroForm confirmed via `pdfjs-dist`: exactly 27 text
+> (`Tx`) widgets, matching the GOV-2925 scouting cycle's own claim exactly
+> and independently re-derived from scratch, plus a page-image render for
+> coordinate-correlating several generically-named fields. Models the
+> applicant's personal data, an optional legal-representative
+> name/signature/address block, and the form's own DKP processing/
+> registration fields and tear-off receipt stub in full. Slovenia now
+> stands at 2 of 6 verticals (Business Formation, Passport); DMV and Visa
+> are confirmed dead ends, and National ID and Taxes remain open backlog
+> (also identified by the GOV-2925 cycle, being authored via parallel child
+> issues). See
+> `si/mzez/vloga-za-pridobitev-potnega-lista`'s own VERIFICATION.md for the
+> full sourcing record, the coordinate-correlation reasoning, and every
+> other disclosed judgment call.
 
 > **Update (2026-07-14, GOV-2919, "GovSchema Standard Research"): North
 > Macedonia opens as the registry's 54th jurisdiction**, via
@@ -8677,7 +8703,21 @@
 
 ## By Vertical
 
-### Passport (37/40 jurisdictions — 93%)
+### Passport (38/41 jurisdictions — 93%)
+
+**Slovenia's Passport vertical opens (2 of 6) (GOV-2927)**, via
+`si/mzez/vloga-za-pridobitev-potnega-lista` — MZEZ's consular passport
+application, used via a diplomatic-consular mission (DKP) since domestic
+issuance has no fillable source document. See the Executive Summary's
+GOV-2927 update above and the document's own VERIFICATION.md for the full
+sourcing record, the coordinate-correlation reasoning for several
+generically-named fields, and every other disclosed judgment call. Slovenia
+is a newly-added denominator entry here — it was not yet counted among the
+40 previously-applicable jurisdictions (its Passport candidate was only
+confirmed genuine, not dead-end, by the prior GOV-2925 cycle's screening),
+so this is the first cycle counting Slovenia at all for this vertical —
+opened the same cycle it is added, keeping global Passport coverage at 93%
+(38/41).
 
 **Bulgaria's Passport vertical opens (4 of 6) (GOV-2860)**, via
 `bg/mvr/zayavlenie-za-izdavane-na-pasport` — MVR's own shared
