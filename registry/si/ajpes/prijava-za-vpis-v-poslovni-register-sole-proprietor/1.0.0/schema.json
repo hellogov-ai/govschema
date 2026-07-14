@@ -1,0 +1,509 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "si/ajpes/prijava-za-vpis-v-poslovni-register-sole-proprietor",
+  "version": "1.0.0",
+  "title": "Slovenia Application for Entry in the Business Register for a Sole Proprietor (Prijava za vpis v Poslovni register Slovenije za samostojnega podjetnika)",
+  "description": "AJPES's (Agencija Republike Slovenije za javnopravne evidence in storitve, the Agency of the Republic of Slovenia for Public Legal Records and Related Services — an independent public agency, not a ministry) standard form PRS-1 sp, 'Prijava za vpis v Poslovni register Slovenije za samostojnega podjetnika' (Application for entry in the Business Register of Slovenia for a sole proprietor), a genuine 52-field AcroForm covering all three Poslovni register transaction types on one document: new registration (vpis), a data-change notice for an already-registered sole proprietor (sprememba), and deregistration (izbris). Opens Slovenia as the registry's 53rd jurisdiction, via Business Formation (1 of 6). The form's own instructions (footnotes 1-2, transcribed in full in VERIFICATION.md) disclose that a change or deregistration filing needs only a small base set of fields (registration number, company name, business address, and the proposed/filing dates) plus whatever data is actually changing, whereas a new registration needs the full identity, activity, and declaration set — modelled here via `requiredWhen` gated on the three (independent, non-radio) transaction-type checkboxes, following this registry's established convention for genuinely independent checkbox widgets representing a single-select choice (see `ng/cac/cac-1-1-application-for-registration-of-company`, `se/polisen`, `fi/poliisi` precedent). It models the sole proprietor's company identity (registration number, proposed entry/change/deletion date, full and abbreviated company name, business address and address-ownership declaration), the owner's personal identity (name, residential address, tax number), optional public contact details, an optional business representative (prokurist or death-contingency representative, mutually exclusive), the registered activities (one main activity plus up to four others — the form's own full five-row capacity, not a bounded subset), an optional single branch office (registration/change/deletion, identity, address, representative, and main activity), the preferred channel for receiving AJPES's registration decision, a checklist of attached supporting documents, and the closing signature/seal-usage declaration. This document is authored at `structural-reference` maturity: the form's own printed structure is fully transcribed and several genuine conditional-requiredness rules disclosed in its footnotes are encoded as machine-checkable `requiredWhen`/`crossFieldValidation`, but no live AJPES/eVEM submission was attempted (see VERIFICATION.md). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of the Republic of Slovenia or AJPES.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "AJPES (Agencija Republike Slovenije za javnopravne evidence in storitve — Agency of the Republic of Slovenia for Public Legal Records and Related Services)",
+    "abbreviation": "AJPES",
+    "url": "https://www.ajpes.si"
+  },
+  "process": {
+    "type": "registration",
+    "language": "sl-SI"
+  },
+  "source": {
+    "url": "https://www.ajpes.si/doc/spot/29_Prijava_za_vpis_v_PRS_za_sp.pdf",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "Obrazec PRS-1 sp — Prijava za vpis v Poslovni register Slovenije za samostojnega podjetnika"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle (GOV-2910, following GOV-2908's screening which identified this exact form as a strong, genuine, unauthenticated Business Formation candidate). Independently re-fetched this cycle directly from ajpes.si (HTTP 200, application/pdf, 1,450,034 bytes, sha256 ded369176dfb9c344039ad73738b14dd157b971e9f85e95424d109fd910f0f58, matching the size the scouting cycle recorded), and independently re-extracted all 52 AcroForm fields from scratch via pdfjs-dist (not trusted from the scouting subagent's numbers as-is) — every one of the 52 fields is accounted for in this schema's 52 `fields[]` entries with an exact 1:1 correspondence. Opens Slovenia's Business Formation vertical (1 of 6), the registry's 53rd jurisdiction. See VERIFICATION.md for the requiredness-by-transaction-type derivation from the form's own footnotes, the independent-checkbox-vs-radio-group modelling distinction, and every other disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "isNewRegistration",
+      "label": "Vpis",
+      "type": "boolean",
+      "required": false,
+      "description": "Registration of a new sole proprietor. One of three mutually exclusive printed checkbox options for the purpose of this filing; see exclusivityGroups. Modelled as an independent boolean, not an enum, since the source AcroForm implements Vpis/Sprememba/Izbris as three genuinely independent checkbox widgets rather than one radio-button group.",
+      "sourceRef": "Obrazac PRS-1 sp, header checkbox row, 'Vpis'"
+    },
+    {
+      "name": "isDataChange",
+      "label": "Sprememba",
+      "type": "boolean",
+      "required": false,
+      "description": "A data-change notice for an already-registered sole proprietor. Per the form's own footnote 1, this also covers registering a branch, changing branch data, or deleting a branch.",
+      "sourceRef": "Obrazac PRS-1 sp, header checkbox row, 'Sprememba'"
+    },
+    {
+      "name": "isDeregistration",
+      "label": "Izbris",
+      "type": "boolean",
+      "required": false,
+      "description": "Deregistration (deletion) of the sole proprietor from the Business Register.",
+      "sourceRef": "Obrazac PRS-1 sp, header checkbox row, 'Izbris'"
+    },
+    {
+      "name": "businessRegistrationNumber",
+      "label": "Matična številka",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "isDataChange", "equals": true }, { "field": "isDeregistration", "equals": true } ] },
+      "description": "The sole proprietor's unique 7-digit registration number, assigned by AJPES at initial registration. Per the form's own footnote 3, entered only when this filing's purpose is Sprememba or Izbris — a new registration does not yet have one (see crossFieldValidation).",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETJU PODJETNIKA', 'Matična številka:' (superscript 3)",
+      "validation": { "pattern": "^[0-9]{7}$" }
+    },
+    {
+      "name": "proposedEntryDate",
+      "label": "Predlagani datum vpisa",
+      "type": "date",
+      "required": true,
+      "description": "The proposed effective date of this filing's registration, data change, or deregistration. Per the form's own footnote 4, must be later than the filing date and no more than one month after it (a proposed deregistration date may be as little as three days after the filing date).",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETJU PODJETNIKA', 'Predlagani datum vpisa:' (superscript 4)"
+    },
+    {
+      "name": "companyName",
+      "label": "Firma",
+      "type": "string",
+      "required": true,
+      "description": "The sole proprietor's full company name (firma), composed of the owner's given name and surname, the designation 's.p.', and an indication of the business activity, per the form's own footnote 5.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETJU PODJETNIKA', 'Firma:' (superscript 5)"
+    },
+    {
+      "name": "abbreviatedCompanyName",
+      "label": "Skrajšana firma",
+      "type": "string",
+      "required": false,
+      "description": "The sole proprietor's abbreviated company name. Per the form's own footnote 6, not a mandatory item — entered only if the filer wants it recorded in the Business Register, and composed of at least the owner's given name, surname, and 's.p.' when used.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETJU PODJETNIKA', 'Skrajšana firma:' (superscript 6)"
+    },
+    {
+      "name": "businessAddress",
+      "label": "Poslovni naslov (ulica, hišna številka, kraj)",
+      "type": "string",
+      "required": true,
+      "description": "The sole proprietor's registered business address (street, house number, place). Per the form's own footnote 7, must match the Real Estate Register (Register prostorskih enot) maintained by the Surveying and Mapping Authority.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETJU PODJETNIKA', 'Poslovni naslov: (ulica, hišna številka, kraj)' (superscript 7)"
+    },
+    {
+      "name": "businessAddressOwnedByApplicant",
+      "label": "Sem lastnik objekta na poslovnem naslovu",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the sole proprietor is the (co-)owner of the property at the business address. yes = da; no = ne. When 'no', an owner-consent attachment is required — see attachmentOwnerConsentStatement.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETJU PODJETNIKA', 'Sem lastnik objekta na poslovnem naslovu DA NE'",
+      "validation": { "enum": ["yes", "no"] }
+    },
+    {
+      "name": "ownerFullName",
+      "label": "Ime in priimek",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistration", "equals": true },
+      "classification": "pii",
+      "description": "The owner's given name and surname. Per the form's own footnotes 1-2, only unconditionally required for a new registration; a change or deregistration filing states only the base fields (registration number, company name, business address, dates) plus whatever data is actually changing.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETNIKU', 'Ime in priimek:'"
+    },
+    {
+      "name": "ownerResidentialAddress",
+      "label": "Stalno / začasno prebivališče (ulica, hišna številka, kraj)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistration", "equals": true },
+      "classification": "pii",
+      "description": "The owner's permanent or temporary residential address (street, house number, place). See ownerFullName for the requiredness rationale.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETNIKU', 'Stalno / začasno prebivališče: (ulica, hišna številka, kraj)'"
+    },
+    {
+      "name": "ownerTaxNumber",
+      "label": "Davčna številka",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistration", "equals": true },
+      "classification": "sensitive-pii",
+      "description": "The owner's 8-digit Slovenian tax number (davčna številka), the last digit a check digit. See ownerFullName for the requiredness rationale.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODJETNIKU', 'Davčna številka:'",
+      "validation": { "pattern": "^[0-9]{8}$" }
+    },
+    {
+      "name": "contactPhone",
+      "label": "Telefon",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per the form's own footnote 8, contact details are not mandatory.",
+      "sourceRef": "Obrazac PRS-1 sp, 'KONTAKTNI PODATKI', 'Telefon:' (superscript 8)"
+    },
+    {
+      "name": "contactEmail",
+      "label": "Elektronska pošta",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Obrazac PRS-1 sp, 'KONTAKTNI PODATKI', 'Elektronska pošta:'"
+    },
+    {
+      "name": "contactWebsite",
+      "label": "Spletni naslov",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'KONTAKTNI PODATKI', 'Spletni naslov:'"
+    },
+    {
+      "name": "contactInfoPubliclyPublished",
+      "label": "Želim, da so kontaktni podatki javno objavljeni",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the filer wants the above contact details published on AJPES's public web portal and released on request under Slovenia's public-information-access law. yes = da; no = ne. Per the form's own footnote 8, if not published AJPES uses the contact details only for its own communication with the filer.",
+      "sourceRef": "Obrazac PRS-1 sp, 'KONTAKTNI PODATKI', 'Želim, da so kontaktni podatki javno objavljeni DA NE'",
+      "validation": { "enum": ["yes", "no"] }
+    },
+    {
+      "name": "representativeIsProkurist",
+      "label": "Vrsta zastopnika — Prokurist",
+      "type": "boolean",
+      "required": false,
+      "description": "The business representative is a prokurist (holder of procuration). Per the form's own footnote 9, the representative section is filled in only when the representative is not the sole proprietor personally. One of two mutually exclusive printed checkbox options for representative type; see exclusivityGroups. Modelled as an independent boolean, not an enum, since the source AcroForm implements Prokurist/Zastopnik za primer smrti as two genuinely independent checkbox widgets.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU', 'Vrsta zastopnika Prokurist' (superscript 9)"
+    },
+    {
+      "name": "representativeIsDeathContingencyRepresentative",
+      "label": "Vrsta zastopnika — Zastopnik za primer smrti",
+      "type": "boolean",
+      "required": false,
+      "description": "The business representative is a zastopnik za primer smrti (representative designated to act in the event of the sole proprietor's death).",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU', 'Zastopnik za primer smrti'"
+    },
+    {
+      "name": "representativeFullName",
+      "label": "Ime in priimek (zastopnik)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU', 'Ime in priimek:'"
+    },
+    {
+      "name": "representativeAddress",
+      "label": "Stalno / začasno prebivališče (zastopnik)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU', 'Stalno / začasno prebivališče: (ulica, hišna številka, kraj)'"
+    },
+    {
+      "name": "representativeEmsoOrTaxNumber",
+      "label": "EMŠO ali davčna številka (zastopnik)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The representative's 13-digit EMŠO (unique master citizen number), or their 8-digit tax number if they do not have an EMŠO.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU', 'EMŠO ali davčna številka: (če oseba nima EMŠO)'",
+      "validation": { "pattern": "^([0-9]{8}|[0-9]{13})$" }
+    },
+    {
+      "name": "mainActivityCode",
+      "label": "Šifra podrazreda SKD (glavna dejavnost)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistration", "equals": true },
+      "description": "The Standard Classification of Activities (SKD) subclass code for the sole proprietor's main activity. See ownerFullName for the requiredness rationale.",
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Glavna dejavnost', 'Šifra podrazreda SKD: 1.' (superscript 10)"
+    },
+    {
+      "name": "mainActivityName",
+      "label": "Naziv podrazreda SKD (glavna dejavnost)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNewRegistration", "equals": true },
+      "description": "The SKD subclass name for the sole proprietor's main activity. See ownerFullName for the requiredness rationale.",
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Glavna dejavnost', 'Naziv podrazreda SKD:'"
+    },
+    {
+      "name": "otherActivity1Code",
+      "label": "Šifra podrazreda SKD (druga dejavnost 2.)",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of the form's own 5-row (1 main + 4 other) 'Druge dejavnosti' table — its full printed capacity, not a bounded subset. Per the form's own footnote 10, if the sole proprietor conducts more than 5 activities in total, a separate list is attached instead.",
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 2, 'Šifra'"
+    },
+    {
+      "name": "otherActivity1Name",
+      "label": "Naziv podrazreda SKD (druga dejavnost 2.)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 2, 'Naziv'"
+    },
+    {
+      "name": "otherActivity2Code",
+      "label": "Šifra podrazreda SKD (druga dejavnost 3.)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 3, 'Šifra'"
+    },
+    {
+      "name": "otherActivity2Name",
+      "label": "Naziv podrazreda SKD (druga dejavnost 3.)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 3, 'Naziv'"
+    },
+    {
+      "name": "otherActivity3Code",
+      "label": "Šifra podrazreda SKD (druga dejavnost 4.)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 4, 'Šifra'"
+    },
+    {
+      "name": "otherActivity3Name",
+      "label": "Naziv podrazreda SKD (druga dejavnost 4.)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 4, 'Naziv'"
+    },
+    {
+      "name": "otherActivity4Code",
+      "label": "Šifra podrazreda SKD (druga dejavnost 5.)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 5, 'Šifra'"
+    },
+    {
+      "name": "otherActivity4Name",
+      "label": "Naziv podrazreda SKD (druga dejavnost 5.)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI SAMOSTOJNEGA PODJETNIKA', 'Druge dejavnosti', row 5, 'Naziv'"
+    },
+    {
+      "name": "branchIsNewRegistration",
+      "label": "Vpis podružnice",
+      "type": "boolean",
+      "required": false,
+      "description": "Registration of a new branch office. Per the form's own footnote 11, if the sole proprietor has more than one branch, a separate list is attached instead — this schema models exactly one branch, the form's own capacity. One of three mutually exclusive printed checkbox options; see exclusivityGroups.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODRUŽNICAH SAMOSTOJNEGA PODJETNIKA', 'Vpis podružnice' (superscript 11)"
+    },
+    {
+      "name": "branchIsDataChange",
+      "label": "Sprememba pri podružnici",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODRUŽNICAH SAMOSTOJNEGA PODJETNIKA', 'Sprememba pri podružnici'"
+    },
+    {
+      "name": "branchIsDeregistration",
+      "label": "Izbris podružnice",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODRUŽNICAH SAMOSTOJNEGA PODJETNIKA', 'Izbris podružnice'"
+    },
+    {
+      "name": "branchName",
+      "label": "Ime podružnice",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "branchIsNewRegistration", "equals": true }, { "field": "branchIsDataChange", "equals": true }, { "field": "branchIsDeregistration", "equals": true } ] },
+      "description": "Per the form's own footnote 12, composed of the sole proprietor's given name and surname, the 's.p.' designation, and a branch indicator (e.g. poslovna enota, podružnica, PE, obrat); may also include other components of the sole proprietor's own firma.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODRUŽNICAH SAMOSTOJNEGA PODJETNIKA', 'Ime podružnice:' (superscript 12)"
+    },
+    {
+      "name": "branchRegistrationNumber",
+      "label": "Matična številka podružnice",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "branchIsDataChange", "equals": true }, { "field": "branchIsDeregistration", "equals": true } ] },
+      "description": "The branch's registration number. By analogy with the main section's own footnote 3 (a newly registered entity does not yet have a number), modelled as required only for a branch data-change or deregistration filing — the form itself prints no separate footnote disambiguating this for the branch subsection, so this is an inferred, disclosed judgment call (see VERIFICATION.md), not a transcribed rule.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODRUŽNICAH SAMOSTOJNEGA PODJETNIKA', 'Matična številka podružnice:'"
+    },
+    {
+      "name": "branchAddress",
+      "label": "Naslov podružnice (ulica, hišna številka, kraj)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "branchIsNewRegistration", "equals": true }, { "field": "branchIsDataChange", "equals": true }, { "field": "branchIsDeregistration", "equals": true } ] },
+      "description": "Per the form's own footnote 13, must match the Real Estate Register; if the branch operates from a mobile or other structure without an assigned house number, all other components are entered and the reason for the missing house number is additionally stated.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODRUŽNICAH SAMOSTOJNEGA PODJETNIKA', 'Naslov podružnice: (ulica, hišna številka, kraj)' (superscript 13)"
+    },
+    {
+      "name": "branchAddressOwnedByApplicant",
+      "label": "Sem lastnik objekta na naslovu podružnice",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "branchIsNewRegistration", "equals": true }, { "field": "branchIsDataChange", "equals": true }, { "field": "branchIsDeregistration", "equals": true } ] },
+      "description": "Whether the sole proprietor is the (co-)owner of the property at the branch address. yes = da; no = ne.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O PODRUŽNICAH SAMOSTOJNEGA PODJETNIKA', 'Sem lastnik objekta na naslovu podružnice DA NE'",
+      "validation": { "enum": ["yes", "no"] }
+    },
+    {
+      "name": "branchRepresentativeFullName",
+      "label": "Ime in priimek (zastopnik podružnice)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU PODRUŽNICE', 'Ime in priimek:'"
+    },
+    {
+      "name": "branchRepresentativeAddress",
+      "label": "Stalno / začasno prebivališče (zastopnik podružnice)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU PODRUŽNICE', 'Stalno / začasno prebivališče: (ulica, hišna številka, kraj)'"
+    },
+    {
+      "name": "branchRepresentativeEmsoOrTaxNumber",
+      "label": "EMŠO ali davčna številka (zastopnik podružnice)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The branch representative's 13-digit EMŠO, or their 8-digit tax number if they do not have an EMŠO.",
+      "sourceRef": "Obrazac PRS-1 sp, 'PODATKI O ZASTOPNIKU PODRUŽNICE', 'EMŠO ali davčna številka: (če oseba nima EMŠO)'",
+      "validation": { "pattern": "^([0-9]{8}|[0-9]{13})$" }
+    },
+    {
+      "name": "branchMainActivityCode",
+      "label": "Šifra podrazreda SKD (glavna dejavnost podružnice)",
+      "type": "string",
+      "required": false,
+      "description": "The SKD subclass code for the branch's main activity. Unlike the sole proprietor's own activity table, the branch section has only a single 'Glavna dejavnost' row — no 'other activities' rows are printed for the branch.",
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI PODRUŽNICE', 'Glavna dejavnost', 'Šifra podrazreda SKD:'"
+    },
+    {
+      "name": "branchMainActivityName",
+      "label": "Naziv podrazreda SKD (glavna dejavnost podružnice)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'REGISTRIRANE DEJAVNOSTI PODRUŽNICE', 'Glavna dejavnost', 'Naziv podrazreda SKD:'"
+    },
+    {
+      "name": "decisionDeliveryMethod",
+      "label": "Sklep o vpisu v Poslovni register Slovenije želim prejeti",
+      "type": "enum",
+      "required": true,
+      "description": "How the filer wants to receive AJPES's decision on this filing. by_mail = Po pošti; in_person_at_ajpes_office = Osebno na izpostavi AJPES; by_email = Po elektronski pošti (requires decisionDeliveryEmailAddress).",
+      "sourceRef": "Obrazac PRS-1 sp, 'Sklep o vpisu v Poslovni register Slovenije želim prejeti', 'Po pošti / Osebno na izpostavi AJPES / Po elektronski pošti'",
+      "validation": { "enum": ["by_mail", "in_person_at_ajpes_office", "by_email"] }
+    },
+    {
+      "name": "decisionDeliveryEmailAddress",
+      "label": "E-naslov za vročanje",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "decisionDeliveryMethod", "equals": "by_email" },
+      "visibleWhen": { "field": "decisionDeliveryMethod", "equals": "by_email" },
+      "classification": "pii",
+      "sourceRef": "Obrazac PRS-1 sp, 'Sklep o vpisu v Poslovni register Slovenije želim prejeti', 'Po elektronski pošti' (blank beneath the option)"
+    },
+    {
+      "name": "attachmentOwnerConsentStatement",
+      "label": "Izjava lastnika objekta, da dovoljuje poslovanje na njegovem naslovu",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "any": [ { "field": "businessAddressOwnedByApplicant", "equals": "no" }, { "field": "branchAddressOwnedByApplicant", "equals": "no" } ] },
+      "description": "A notarized statement from the property owner permitting the business to operate at their address. Per the form's own footnote 15, attached only when the sole proprietor is not the (co-)owner of the business or branch address stated in this filing — encoded here as a genuine requiredWhen rather than left as inert prose.",
+      "sourceRef": "Obrazac PRS-1 sp, 'Prijavi so priložene naslednje priloge', 'Izjava lastnika objekta, da dovoljuje poslovanje na njegovem naslovu' (superscript 15)"
+    },
+    {
+      "name": "attachmentRepresentativeConsent",
+      "label": "Soglasje prokurista oziroma zastopnika za primer smrti",
+      "type": "boolean",
+      "required": false,
+      "description": "Consent of the prokurist or death-contingency representative to their appointment. The form prints no footnote gating this attachment's requiredness (unlike attachmentOwnerConsentStatement/attachmentPowerOfAttorney), so it is modelled as a plain optional checklist item rather than an inferred conditional rule.",
+      "sourceRef": "Obrazac PRS-1 sp, 'Prijavi so priložene naslednje priloge', 'Soglasje prokurista oziroma zastopnika za primer smrti'"
+    },
+    {
+      "name": "attachmentPowerOfAttorney",
+      "label": "Pooblastilo za vložitev prijave",
+      "type": "boolean",
+      "required": false,
+      "description": "A notarized power of attorney. Per the form's own footnote 16, required when this filing is signed by the sole proprietor's authorized representative (pooblaščenec) rather than the sole proprietor personally — not modelled as a requiredWhen since the form has no separate field capturing who is signing (the closing signature line covers both possibilities on one blank).",
+      "sourceRef": "Obrazac PRS-1 sp, 'Prijavi so priložene naslednje priloge', 'Pooblastilo za vložitev prijave' (superscript 16)"
+    },
+    {
+      "name": "attachmentOther",
+      "label": "Drugo",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Obrazac PRS-1 sp, 'Prijavi so priložene naslednje priloge', 'Drugo'"
+    },
+    {
+      "name": "otherAttachmentDescription",
+      "label": "Drugo — navedba",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "attachmentOther", "equals": true },
+      "visibleWhen": { "field": "attachmentOther", "equals": true },
+      "sourceRef": "Obrazac PRS-1 sp, 'Prijavi so priložene naslednje priloge', 'Drugo' (blank beneath the checkbox)"
+    },
+    {
+      "name": "signatureDate",
+      "label": "Datum",
+      "type": "date",
+      "required": true,
+      "description": "The filing date (datum vložitve prijave). Per the form's own footnote 14, if mailed, the sole proprietor's or their authorized representative's signature must be notarized at an administrative unit or by a notary.",
+      "sourceRef": "Obrazac PRS-1 sp, closing block, 'Datum Podpis podjetnika ali njegovega pooblaščenca' (superscript 14)"
+    },
+    {
+      "name": "sealUsage",
+      "label": "Žig",
+      "type": "enum",
+      "required": true,
+      "description": "without_seal = 'Poslujemo brez žiga' (we operate without a company seal, the default and now-typical declaration since Slovenia abolished the mandatory company seal); with_seal = 'Žig' (a seal is used and imprinted here).",
+      "sourceRef": "Obrazac PRS-1 sp, closing block, combo box beside the signature line ('Poslujemo brez žiga' / 'Žig')",
+      "validation": { "enum": ["without_seal", "with_seal"] }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantSignature",
+      "label": "Sole proprietor's (or authorized representative's) signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Obrazac PRS-1 sp, closing block, 'Podpis podjetnika ali njegovega pooblaščenca' — the form prints a physical signature line with no accompanying typed attestation sentence; per footnote 14, notarization is required only when the application is mailed rather than filed in person."
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "newRegistrationExcludesBusinessRegistrationNumber",
+      "when": { "field": "isNewRegistration", "equals": true },
+      "requireAbsent": ["businessRegistrationNumber"]
+    },
+    {
+      "id": "newBranchRegistrationExcludesBranchRegistrationNumber",
+      "when": { "field": "branchIsNewRegistration", "equals": true },
+      "requireAbsent": ["branchRegistrationNumber"]
+    }
+  ],
+  "exclusivityGroups": [
+    { "id": "transactionType", "fields": ["isNewRegistration", "isDataChange", "isDeregistration"] },
+    { "id": "representativeType", "fields": ["representativeIsProkurist", "representativeIsDeathContingencyRepresentative"] },
+    { "id": "branchTransactionType", "fields": ["branchIsNewRegistration", "branchIsDataChange", "branchIsDeregistration"] }
+  ]
+}
