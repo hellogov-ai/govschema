@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **430 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **431 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2875, "GovSchema Standard Research"): Romania's
+> National ID & Civic Documents vertical closes (6 of 6)**, via
+> `ro/dgep/cerere-eliberare-act-identitate` — the Direcţia Generală pentru
+> Evidenţa Persoanelor's (DGEP, successor name of DEPABD) nationally
+> standardized "ANEXA nr. 11 — Cerere pentru eliberarea actului de
+> identitate," the general-purpose request form for a Romanian national
+> identity card (first-time, renewal, or replacement of a lost/stolen/
+> damaged one). Romania's other five verticals were opened across the four
+> prior cycles GOV-2797/2804/2813/2837/2844; this vertical was left as
+> unscreened backlog by GOV-2844. Sourced from the live central-government
+> domain (`depabd.mai.gov.ro`) via a confirmed Wayback capture after the
+> live link 404'd this cycle (a genuine Apache 404, not a WAF gate — Wayback
+> confirms the file was live at this exact URL as recently as 2025-06-12).
+> This cycle's own screening also found a second, undated mirror of the
+> same form hosted by Sector 2's SPCEP (`dpepsc.ps2.ro`) headed "ANEXA nr.
+> 1" rather than "ANEXA nr. 11" — a distinct edition sharing an identical
+> core field grid, used only as a fillable-AcroForm cross-check (100
+> widgets vs. the central copy's 0) to confirm the printed grid's
+> field-per-cell structure before transcribing labels from the more
+> recent, central-domain edition, which governs this schema's `source` and
+> field set. Models 54 `fields[]` (CNP, identity, current-domicile grid,
+> a composite previous-domicile field, marital/military status with a
+> reservist service-category sub-code, a bounded 6-row minor-children
+> table, the free-text request reason, an existing-ID-card reference, a
+> first-person data-accuracy declaration, a first-person found-document
+> surrender commitment printed only on this edition, and — because page
+> 2's otherwise staff-only "NU SE COMPLETEAZĂ DE SOLICITANT" block
+> nonetheless prints one genuinely third-party-completed section — a
+> property-owner domicile-consent block), 0 `documents[]` (DGEP's own
+> named scenario-specific document lists all 404 on both the live domain
+> and this cycle's available Wayback lookups, disclosed as a backlog gap
+> rather than sourced from an unverified aggregator), and 1
+> `crossFieldValidation` rule. Mock-instance conformance (a married
+> Cluj-Napoca resident renewing an expired card, with a property-owner
+> consent block completed) passed with zero errors; five negative and two
+> positive mutation controls all behaved as expected. See GOV-2875 and this
+> schema's own VERIFICATION.md for the full sourcing record, including the
+> Anexa 1 vs. Anexa 11 edition-discrepancy resolution. **Romania now stands
+> at 6 of 6 verticals** — the third non-original jurisdiction (after
+> Colombia and Bulgaria) to reach full coverage.
 
 > **Update (2026-07-14, GOV-2869, "GovSchema Standard Research"): Bulgaria's
 > National ID & Civic Documents vertical closes (6 of 6)**, via
@@ -11250,7 +11291,19 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (33/40 jurisdictions — 83%)
+### National ID & Civic Documents (34/40 jurisdictions — 85%)
+
+**Romania's National ID & Civic Documents vertical closes (6 of 6)
+(GOV-2875)**, via `ro/dgep/cerere-eliberare-act-identitate` — the Direcţia
+Generală pentru Evidenţa Persoanelor's (DGEP) nationally standardized
+"ANEXA nr. 11 — Cerere pentru eliberarea actului de identitate," the
+general-purpose national identity-card request form. See the Executive
+Summary's GOV-2875 update above for the full sourcing record — including
+the live-link 404/Wayback-recovery, and the Anexa 1 (Sector-2 mirror) vs.
+Anexa 11 (central-domain, current) edition-discrepancy resolution — and the
+document's own VERIFICATION.md. **Romania now stands at 6 of 6 verticals**
+— the third non-original jurisdiction (after Colombia and Bulgaria) to
+reach full coverage.
 
 **Bulgaria's National ID & Civic Documents vertical closes (6 of 6)
 (GOV-2869)**, via `bg/mvr/zayavlenie-za-izdavane-na-lichna-karta` — the
@@ -11621,7 +11674,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RO** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **RO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -14059,6 +14112,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   `crossFieldValidation` rules. **Romania now stands at 5 of 6 verticals**
   (Taxes, DMV, Business Formation, Visa, Passport); National ID & Civic
   Documents remains its sole open, unscreened-this-cycle backlog vertical.
+- **Romania — National ID & Civic Documents: closed (GOV-2875), Romania
+  reaches 6 of 6.** `ro/dgep/cerere-eliberare-act-identitate` closed
+  Romania's sole remaining vertical — see the Executive Summary's GOV-2875
+  update above. Sourced from DGEP's (formerly DEPABD's) own central
+  `depabd.mai.gov.ro` domain via a Wayback capture confirmed live as
+  recently as 2025-06-12, after the live link 404'd this cycle (a genuine
+  Apache 404, not a WAF/bot-mitigation gate). This cycle's own screening
+  found a second, undated mirror of the same form (Sector 2's SPCEP,
+  `dpepsc.ps2.ro`) headed "ANEXA nr. 1" rather than the central domain's
+  "ANEXA nr. 11" — a distinct edition sharing an identical core field grid,
+  used only as a fillable-AcroForm cross-check, not as the schema's
+  `source` of record (which cites the more recent central-domain edition).
+  Models 54 `fields[]`, 0 `documents[]` (the agency's own named
+  scenario-specific document lists all 404 this cycle, disclosed as a
+  backlog gap rather than sourced from an unverified aggregator), and 1
+  `crossFieldValidation` rule. **Romania now stands at 6 of 6 verticals** —
+  the third non-original jurisdiction (after Colombia and Bulgaria) to
+  reach full coverage. No vertical remains open for Romania.
 
 ---
 
