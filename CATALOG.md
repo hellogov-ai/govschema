@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **427 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **428 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2853, "GovSchema Standard Research"): Bulgaria's
+> DMV vertical opens (3 of 6)**, via
+> `bg/mvr/zayavlenie-za-izdavane-na-svidetelstvo-za-upravlenie-na-mps` — the
+> Ministerstvo na vatreshnite raboti's (MVR, Bulgaria's Ministry of Interior)
+> "Заявление за издаване на свидетелство за управление на моторно превозно
+> средство" (Приложение № 2а — Application for Issuance of a Driving
+> Licence). This candidate was pre-scouted and confirmed genuine during the
+> prior GOV-2837 cycle (see `CATALOG.md`'s "Correction (GOV-2837)" note) and
+> authored directly this cycle rather than re-screened from scratch, though
+> sourcing was independently re-derived (fresh fetch, fresh sha256, fresh
+> `pdfjs-dist` extraction) rather than trusted from the prior cycle's byte
+> count alone. `mvr.bg`'s own "Бланки и образци" (Forms and specimens)
+> static-forms page returned the specimen directly and unauthenticated
+> (HTTP 200, `application/pdf`, 382,212 bytes, sha256
+> `e633ee22c10e650186b69b5c2278a51c02eb8fb7c413fee875c724066cec9576`) — a
+> flat, single-page, zero-widget text-layer specimen, genuinely fillable
+> unlike this registry's already-confirmed dead end for MVR's separate
+> vehicle-registration form (system-generated at the counter, see GOV-2830).
+> Models 29 `fields[]` (service tier, national identifier, date/place of
+> birth, dual-script name plus a structured family/other-name breakdown,
+> address, sex, other-nationality/naturalization-decree fields, contact
+> details, place of receiving, an unconditionally-optional authorized-person/
+> proxy block, an optional prior-category-renunciation field, the identity
+> document presented at submission, submission date, and signature) and 3
+> `documents[]` entries (photograph, signature specimen, and the form's own
+> criminal-liability truthfulness declaration). Excludes five office-only
+> "Вярно/Невярно" civil-registry-verification checkbox pairs and other
+> office-intake-only content. See GOV-2853 and this schema's own
+> VERIFICATION.md for the full sourcing record. **Bulgaria now stands at 3
+> of 6 verticals** (Taxes, Visa, DMV); Passport, Business Formation, and
+> National ID & Civic Documents remain open backlog.
 
 > **Update (2026-07-14, GOV-2844, "GovSchema Standard Research"): Romania's
 > Passport vertical opens (5th of 6)**, via
@@ -8677,7 +8709,29 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (42/43 jurisdictions — 98%)
+### DMV — Vehicle Registration, Licensing, Permits (43/43 jurisdictions — 100%)
+
+**Bulgaria's DMV vertical opens (3 of 6) (GOV-2853)**, via
+`bg/mvr/zayavlenie-za-izdavane-na-svidetelstvo-za-upravlenie-na-mps` — the
+Ministerstvo na vatreshnite raboti's (MVR, Ministry of Interior) "Заявление
+за издаване на свидетелство за управление на моторно превозно средство"
+(Приложение № 2а — Application for Issuance of a Driving Licence), fetched
+directly from `mvr.bg`'s own "Бланки и образци" static-forms page (HTTP 200,
+`application/pdf`, 382,212 bytes, `sha256:
+e633ee22c10e650186b69b5c2278a51c02eb8fb7c413fee875c724066cec9576`). A flat,
+single-page, zero-widget text-layer specimen (confirmed via `pdfjs-dist@6`),
+distinct from — and genuinely fillable unlike — this registry's already-
+confirmed dead end for MVR's separate vehicle-registration form
+(system-generated at the counter, see GOV-2830). This candidate was
+pre-scouted and confirmed during the prior GOV-2837 cycle; sourcing was
+independently re-derived this cycle rather than trusted from that prior
+cycle's byte count alone. Models 29 `fields[]` and 3 `documents[]` entries;
+excludes five office-only "Вярно/Невярно" civil-registry-verification
+checkbox pairs. See the Executive Summary's GOV-2853 update above and the
+document's own VERIFICATION.md for the full sourcing record. Bulgaria now
+stands at 3 of 6 verticals (Taxes, Visa, DMV); Passport, Business Formation,
+and National ID & Civic Documents remain open backlog. **This closes DMV's
+last remaining jurisdiction gap, bringing the vertical to 43 of 43 (100%).**
 
 **Romania's DMV vertical opens (2 of 6) (GOV-2804)**, via
 `ro/dgpci/cerere-operatiune-inmatriculari-transcrieri-radieri-provizorii` —
@@ -11412,7 +11466,7 @@ now closed.
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BG** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **BG** | 4 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -13677,6 +13731,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   registration. Left un-authored this cycle in favor of Romania's Visa
   candidate; a strong, ready-to-author DMV candidate for a future Bulgaria
   cycle.
+- **Resolved (GOV-2853): Bulgaria's DMV vertical opens (3 of 6).**
+  `bg/mvr/zayavlenie-za-izdavane-na-svidetelstvo-za-upravlenie-na-mps`
+  authored the driving-licence-issuance candidate flagged directly above —
+  see the Executive Summary's GOV-2853 update and the document's own
+  VERIFICATION.md for the full sourcing record (independently re-fetched
+  and re-hashed this cycle, byte-for-byte matching the prior cycle's
+  382,212-byte citation). Bulgaria now stands at 3 of 6 verticals (Taxes,
+  Visa, DMV); this also closes DMV's last remaining open, unscreened
+  jurisdiction gap registry-wide (43 of 43 applicable jurisdictions, 100%).
+  Passport, Business Formation, and National ID & Civic Documents remain
+  open, unscreened Bulgaria backlog for a future cycle.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
