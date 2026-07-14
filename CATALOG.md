@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **429 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **430 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2869, "GovSchema Standard Research"): Bulgaria's
+> National ID & Civic Documents vertical closes (6 of 6)**, via
+> `bg/mvr/zayavlenie-za-izdavane-na-lichna-karta` — the same shared
+> civil-identity-document form already modeled for the Passport vertical
+> immediately below (GOV-2860, `bg/mvr/zayavlenie-za-izdavane-na-pasport`),
+> this time scoped to its two ID-card checkbox options (лична карта,
+> временна карта за самоличност) rather than its six passport-family
+> options. Re-fetched fresh this cycle: HTTP 200, 304,847 bytes, sha256
+> `9e18af8b38995e069ee981fdb17262aed327d38a6d91fdc690e8c920e4e2ef97` — an
+> exact match against the passport schema's own independently-recorded
+> digest, confirming both schemas model the identical source PDF. Reuses
+> 45 of the passport schema's 46 fields verbatim (dropping its
+> passport-specific `passportValidityPeriod`) and adds back the four
+> fields the passport schema's own exclusion note flagged as ID-card-only:
+> an expedited-service ID-card collection-office selector
+> (`expeditedCollectionOffice`, a two-value enum between two named Sofia
+> administrative service centres), a 70+ ID-card validity-period election
+> (`idCardValidityPeriod70Plus`, 10 or 30 years), a declaration declining
+> the УЕИ electronic-identity certificate (`eidCertificateOptOut`,
+> modeled as `boolean` per this registry's established opt-out-election
+> convention), and an "applicant living predominantly abroad" address
+> field (`addressAbroad`) — this last one needed fresh coordinate
+> extraction this cycle, since the passport schema's own exclusion note had
+> flagged its field list as undetailed; direct inspection confirmed it is a
+> single blank-line field, not a multi-field address grid, with a printed
+> marginal note that completing it does not constitute declaring a current
+> address. 49 `fields[]` total plus 3 `documents[]` entries (photograph,
+> signature specimen, truthfulness declaration — all reused verbatim from
+> the passport schema). Mock-instance conformance checks (adult single
+> applicant, an elderly applicant requesting expedited service, and a minor
+> first-time issuance) all passed, plus a mutation control confirming the
+> ID-card/passport `requestedDocumentType` scoping boundary between the two
+> schemas is actually enforced by the grammar, not merely asserted in
+> prose. See GOV-2869 and this schema's own VERIFICATION.md for the full
+> sourcing record. Business Formation was already confirmed a dead end
+> (GOV-2830/GOV-2837, JS-gated commercial-register portal), so **Bulgaria
+> now stands at 6 of 6 verticals** — the second non-original jurisdiction
+> (after Colombia) to reach full coverage.
 
 > **Update (2026-07-14, GOV-2860, "GovSchema Standard Research"): Bulgaria's
 > Passport vertical opens (4 of 6)**, via
@@ -11211,7 +11250,21 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (32/40 jurisdictions — 80%)
+### National ID & Civic Documents (33/40 jurisdictions — 83%)
+
+**Bulgaria's National ID & Civic Documents vertical closes (6 of 6)
+(GOV-2869)**, via `bg/mvr/zayavlenie-za-izdavane-na-lichna-karta` — the
+Ministerstvo na vatreshnite raboti's (MVR, Bulgaria's Ministry of Interior)
+same shared civil-identity-document application (Приложение № 2) already
+modeled for the Passport vertical (GOV-2860), re-fetched and independently
+re-verified this cycle and scoped instead to its two ID-card checkbox
+options (лична карта, временна карта за самоличност). See the Executive
+Summary's GOV-2869 update above for the full sourcing record — including
+the from-scratch coordinate re-extraction of the single-field
+address-abroad block and the four ID-card-only fields modeled — and the
+document's own VERIFICATION.md. **Bulgaria now stands at 6 of 6
+verticals** — the second non-original jurisdiction (after Colombia) to
+reach full coverage.
 
 **Sri Lanka's National ID & Civic Documents vertical closes (2 of 6)
 (GOV-2753)**, via `lk/drp/application-for-a-national-identity-card` — the
@@ -11532,7 +11585,7 @@ now closed.
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BG** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **BG** | 6 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
@@ -13821,6 +13874,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Bulgaria National ID schema. **Bulgaria now stands at 4 of 6 verticals**
   (Taxes ×2, Visa, DMV, Passport); National ID & Civic Documents remains its
   sole open vertical.
+- **Authored (GOV-2869): Bulgaria's National ID & Civic Documents vertical
+  closes (6 of 6), superseding the open-backlog note immediately above.**
+  The same shared civil-identity-document application (Приложение № 2)
+  already modeled for the Passport vertical (GOV-2860) was re-fetched and
+  independently re-verified this cycle (sha256 cross-checked against
+  GOV-2860's own record) and authored as
+  `bg/mvr/zayavlenie-za-izdavane-na-lichna-karta`, scoped to its two
+  ID-card checkbox options (лична карта, временна карта за самоличност)
+  instead — see the Executive Summary's GOV-2869 update and the document's
+  own VERIFICATION.md for the full sourcing record, including the
+  from-scratch coordinate re-extraction of the "applicant living
+  predominantly abroad" address block (a single field, not a multi-field
+  address grid — resolving the open question GOV-2860's own exclusion note
+  flagged as unresolved) and the four ID-card-only fields modeled
+  (expedited-service collection-office selector, 70+ validity-period
+  election, УЕИ e-ID-certificate opt-out, and the address-abroad field).
+  Business Formation was already confirmed a dead end (GOV-2830/GOV-2837).
+  **Bulgaria now stands at 6 of 6 verticals** — the second non-original
+  jurisdiction (after Colombia) to reach full coverage; no vertical remains
+  open for Bulgaria.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
