@@ -1,0 +1,1452 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sk/financna-sprava/dpfoav25-individual-income-tax-return",
+  "version": "1.0.0",
+  "title": "Slovakia — Individual Income Tax Return, Type A (DPFOAv25)",
+  "description": "The Financial Administration of the Slovak Republic's (Finančná správa Slovenskej republiky, FS SR) DPFOAv25 form — \"Daňové priznanie k dani z príjmov fyzickej osoby (typ A)\" (Type A individual income tax return) for the 2025 tax year, valid from 1 January 2026, filed under § 5 of Act No. 595/2003 Z.z. on income tax (as amended). Type A is used by a taxpayer whose only income during the tax year was employment income (income from a dependent activity, § 5 of the Act); a taxpayer with other income types (self-employment, capital, rental, other) uses the separate Type B return instead, out of this schema's scope. This v1.0.0 models the return's full eleven-section structure in detail: header (return type, taxpayer identification, tax year), Section I (taxpayer data, including a non-resident/limited-tax-liability branch), Section II (legal representative/heir data), Section III (tax-base reduction for a qualifying pension and a spouse, and the tax bonus for one dependent child plus a second-eligible-person sharing arrangement), Section IV (mortgage-interest tax bonus), Section V (tax base from employment income), Section VI (the full tax computation, including the foreign-income exemption and foreign-tax-credit methods, the child tax bonus, and the mortgage-interest tax bonus), Section VII (differences reported on an additional/corrective return), Section VIII (the 2%/3% tax-share donation to a recipient organization or a parent), Section IX (free-text special records, plus a single foreign-employment-income detail row), Section X (further taxpayer data for cross-border cases), and Section XI (the payout/refund request for the tax bonus, employee bonus, mortgage-interest bonus, or a tax overpayment).\n\nThe source is a genuine client-side, JavaScript-driven fillable HTML e-form (not a PDF/AcroForm), served from the Financial Administration's own eFormVzor form-template subdomain; each field's real name attribute, maxlength, and (where present) its own client-side validation-hint text (the source's own title attribute) were extracted directly from the form's HTML. Several line items are themselves computed/derived amounts the source's own client-side script calculates from other lines (e.g. r.45's tax-bracket formula, or r.71/r.72's final payable/overpayment formula); these are modeled as ordinary editable data fields exactly as the source itself presents them (each such formula is disclosed in the field's own description), following this registry's established practice for other richly cross-referenced tax-computation forms (e.g. kr/nts's year-end tax settlement).\n\nScope decisions disclosed here and in VERIFICATION.md: (1) the roughly 250-entry country/territory dropdown (Section IX's foreign-income country code) is modeled as a free-text numeric-code string rather than enumerated in full; (2) the two 12-checkbox month-selection grids (Section III, r.31 and r.32) are each modeled as one boolean \"full year\" flag plus one comma-separated multi-select-as-string field for individual months, pending GSP-0009 (repeating/multi-select gap); (3) Section III's dependent-child table prints only a single child row on the source form itself (additional children are declared in Section IX free text, per the source's own r.31a instruction), so no bounded repeating group was invented for it. GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of the Slovak Republic or the Financná správa Slovenskej republiky.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Finančná správa Slovenskej republiky (Financial Administration of the Slovak Republic)",
+    "abbreviation": "FS SR",
+    "url": "https://www.financnasprava.sk"
+  },
+  "process": {
+    "type": "filing",
+    "language": "sk"
+  },
+  "source": {
+    "url": "https://pfseform.financnasprava.sk/Formulare/eFormVzor/DP/form.620.html",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "DPFOAv25"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle GOV-2981, opening Slovakia as a new jurisdiction via its Taxes vertical. financnasprava.sk's site-wide outage (first observed GOV-2969, still live as of GOV-2976 on 2026-07-14) was re-checked at the start of this cycle and remains live with no ETA; the source was retrieved instead from a Wayback Machine capture (timestamp 20260521100832, 21 May 2026) of pfseform.financnasprava.sk's own live e-form HTML, per this registry's established practice of citing a Wayback snapshot when a first-party government source is genuinely, verifiably unreachable at authoring time. See VERIFICATION.md for the full sourcing and field-extraction record."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "returnType",
+      "label": "Druh daňového priznania (Type of tax return)",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this is an ordinary, corrective (replacing an ordinary return before the filing deadline), or additional (dodatočné, filed after the deadline to correct a previously filed return) tax return. Section VII (differences from an additional return) applies only when this is 'additional'.",
+      "sourceRef": "Header, radio group \"Druh daňového priznania\": daňové priznanie / opravné daňové priznanie / dodatočné daňové priznanie",
+      "validation": {
+        "enum": [
+          "ordinary",
+          "corrective",
+          "additional"
+        ]
+      }
+    },
+    {
+      "name": "taxpayerTin",
+      "label": "01 - DIČ (ak nie je pridelené, uvádza sa rodné číslo)",
+      "type": "string",
+      "description": "Taxpayer's tax identification number (DIČ), or birth number (rodné číslo) if no DIČ has been assigned. The source requires either this field or taxpayerBirthDateIfNoTin (r.02) to be filled; both are modeled optional since the meta-schema's requiredWhen only supports a clean field-equals-value gate, not an either/or across two optional fields.",
+      "sourceRef": "Header, r.01 field \"01 - DIČ (ak nie je pridelené, uvádza sa rodné číslo)\"",
+      "validation": {
+        "maxLength": 10
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "taxpayerBirthDateIfNoTin",
+      "label": "02 - Dátum narodenia",
+      "type": "date",
+      "description": "Taxpayer's date of birth, completed only if the taxpayer has been assigned neither a DIČ nor a rodné číslo (birth number). See taxpayerTin.",
+      "sourceRef": "Header, r.02 field \"02 - Dátum narodenia\"",
+      "classification": "pii"
+    },
+    {
+      "name": "taxYear",
+      "label": "Za rok (Tax year)",
+      "type": "integer",
+      "required": true,
+      "description": "The tax year for which the return is filed. The source form is the 2025 edition; the source's own instruction allows entering 2026 only when filing a return on behalf of a deceased taxpayer.",
+      "sourceRef": "Header, field \"Za rok\"",
+      "validation": {
+        "enum": [
+          2025,
+          2026
+        ]
+      }
+    },
+    {
+      "name": "additionalReturnDiscoveryDate",
+      "label": "Dátum zistenia skutočnosti na podanie dodatočného daňového priznania",
+      "type": "date",
+      "description": "Date the fact requiring an additional (corrective, post-deadline) tax return was discovered. Required only when returnType is 'additional'; an additional return may only be filed after the ordinary filing deadline has passed, except when filing on behalf of a deceased taxpayer.",
+      "sourceRef": "Header, field \"Dátum zistenia skutočnosti na podanie dodatočného daňového priznania\"",
+      "requiredWhen": {
+        "field": "returnType",
+        "equals": "additional"
+      }
+    },
+    {
+      "name": "taxpayerSurname",
+      "label": "03 - Priezvisko",
+      "type": "string",
+      "required": true,
+      "sourceRef": "I. ODDIEL, r.03 \"Priezvisko\"",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "taxpayerGivenName",
+      "label": "04 - Meno",
+      "type": "string",
+      "required": true,
+      "sourceRef": "I. ODDIEL, r.04 \"Meno\"",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "taxpayerTitleBeforeName",
+      "label": "05 - Titul pred menom",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, r.05 \"Titul pred menom/za priezviskom\" (first of two title boxes)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "taxpayerTitleAfterName",
+      "label": "05 - Titul za priezviskom",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, r.05 \"Titul pred menom/za priezviskom\" (second of two title boxes)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "permanentAddressStreet",
+      "label": "06 - Ulica (trvalý pobyt)",
+      "type": "string",
+      "description": "Street of the taxpayer's permanent residence address as of the filing date, in the Slovak Republic or abroad.",
+      "sourceRef": "I. ODDIEL, permanent-residence address block, r.06 street",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "permanentAddressHouseNumber",
+      "label": "07 - Číslo domu (trvalý pobyt)",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, permanent-residence address block, r.07 house number",
+      "validation": {
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "permanentAddressPostalCode",
+      "label": "08 - PSČ (trvalý pobyt)",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, permanent-residence address block, r.08 postal code",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "permanentAddressMunicipality",
+      "label": "09 - Obec (trvalý pobyt)",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, permanent-residence address block, r.09 municipality",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "permanentAddressCountry",
+      "label": "10 - Štát (trvalý pobyt)",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, permanent-residence address block, r.10 country",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "isNonResident",
+      "label": "11 - Daňový nerezident",
+      "type": "boolean",
+      "description": "Whether the taxpayer is a non-resident for tax purposes (a taxpayer with limited tax liability in Slovakia). Checking this gates Section X (further taxpayer data) and the residency-period fields below.",
+      "sourceRef": "I. ODDIEL, r.11 checkbox \"Daňový nerezident\""
+    },
+    {
+      "name": "nonResidentPeriodFrom",
+      "label": "Obdobie od (nerezident)",
+      "type": "date",
+      "description": "Start of the period during the tax year for which the taxpayer was a non-resident with limited tax liability in Slovakia.",
+      "sourceRef": "I. ODDIEL, r.11 non-resident period \"od\"",
+      "requiredWhen": {
+        "field": "isNonResident",
+        "equals": true
+      }
+    },
+    {
+      "name": "nonResidentPeriodTo",
+      "label": "Obdobie do (nerezident)",
+      "type": "date",
+      "description": "End of the period during the tax year for which the taxpayer was a non-resident with limited tax liability in Slovakia.",
+      "sourceRef": "I. ODDIEL, r.11 non-resident period \"do\"",
+      "requiredWhen": {
+        "field": "isNonResident",
+        "equals": true
+      }
+    },
+    {
+      "name": "foreignTin",
+      "label": "Identifikačné číslo na daňové účely (TIN)",
+      "type": "string",
+      "description": "Taxpayer identification number (TIN) assigned in the taxpayer's state of tax residence, completed when the taxpayer is a non-resident of Slovakia.",
+      "sourceRef": "I. ODDIEL, r.11 field \"Identifikačné číslo na daňové účely (TIN), pridelené v štáte daňovej rezidencie\"",
+      "validation": {
+        "maxLength": 16
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "srResidenceStreet",
+      "label": "12 - Ulica (pobyt v SR)",
+      "type": "string",
+      "description": "Street of the address of the dwelling/stay in the Slovak Republic where the taxpayer resided during the tax period. Completed only when the taxpayer has no permanent residence in Slovakia.",
+      "sourceRef": "I. ODDIEL, r.12",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "srResidenceHouseNumber",
+      "label": "13 - Číslo domu (pobyt v SR)",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, r.13",
+      "validation": {
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "srResidencePostalCode",
+      "label": "14 - PSČ (pobyt v SR)",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, r.14",
+      "validation": {
+        "maxLength": 5
+      }
+    },
+    {
+      "name": "srResidenceMunicipality",
+      "label": "15 - Obec (pobyt v SR)",
+      "type": "string",
+      "sourceRef": "I. ODDIEL, r.15",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "representativeSurname",
+      "label": "16 - Priezvisko (zástupca)",
+      "type": "string",
+      "description": "Surname of the legal representative, heir, or other representative filing this return on the taxpayer's behalf, if any.",
+      "sourceRef": "II. ODDIEL, r.16",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "representativeGivenName",
+      "label": "17 - Meno (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.17",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "representativeTitleBeforeName",
+      "label": "18 - Titul pred menom (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.18 (first of two title boxes)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "representativeTitleAfterName",
+      "label": "18 - Titul za priezviskom (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.18 (second of two title boxes)",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "representativeBirthNumberPart1",
+      "label": "19 - Rodné číslo (zástupca), 1. časť",
+      "type": "string",
+      "description": "First part of the representative's Slovak birth number (rodné číslo); if the representative has no birth number, their date of birth in DDMM form.",
+      "sourceRef": "II. ODDIEL, r.19",
+      "validation": {
+        "maxLength": 6
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "representativeBirthNumberPart2",
+      "label": "19 - Rodné číslo (zástupca), 2. časť",
+      "type": "string",
+      "description": "Second part of the representative's Slovak birth number; if no birth number, their birth year in RRRR form.",
+      "sourceRef": "II. ODDIEL, r.19",
+      "validation": {
+        "maxLength": 4
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "representativeStreet",
+      "label": "20 - Ulica (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.20",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "representativeHouseNumber",
+      "label": "21 - Číslo (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.21",
+      "validation": {
+        "maxLength": 11
+      }
+    },
+    {
+      "name": "representativePostalCode",
+      "label": "22 - PSČ (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.22",
+      "validation": {
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "representativeMunicipality",
+      "label": "23 - Obec (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.23",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "representativeCountry",
+      "label": "24 - Štát (zástupca)",
+      "type": "string",
+      "sourceRef": "II. ODDIEL, r.24",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "25 - Telefónne číslo",
+      "type": "string",
+      "description": "Contact phone number: the taxpayer's own number if filing personally, otherwise the representative's number, unless otherwise agreed with the taxpayer. Not a mandatory field under § 32 ods. 7 of the Income Tax Act.",
+      "sourceRef": "II. ODDIEL, r.25",
+      "validation": {
+        "maxLength": 13,
+        "pattern": "^(\\+421\\d{9}|0\\d{2,3}/?\\d{6,7})$"
+      }
+    },
+    {
+      "name": "contactEmail",
+      "label": "26 - Emailová adresa",
+      "type": "string",
+      "description": "Contact email address (see contactPhoneNumber). The source form limits the total length to 254 characters, with 1-64 characters required before the '@'.",
+      "sourceRef": "II. ODDIEL, r.26",
+      "validation": {
+        "maxLength": 254,
+        "pattern": "^.{1,64}@.+$"
+      }
+    },
+    {
+      "name": "receivedPensionAtStartOfYear",
+      "label": "27 - Poberal(a) som dôchodok k začiatku zdaňovacieho obdobia",
+      "type": "boolean",
+      "description": "Whether the taxpayer was receiving, at the start of the tax year (or was awarded retroactively to the start of the tax year), one of the pensions listed in § 11 ods. 6 of the Income Tax Act.",
+      "sourceRef": "III. ODDIEL, r.27"
+    },
+    {
+      "name": "totalPensionAmount",
+      "label": "28 - Úhrnná suma dôchodku(ov) za zdaňovacie obdobie, EUR",
+      "type": "number",
+      "description": "Total amount of the pension(s) referred to in r.27 received during the tax year, completed only if claiming the reduction of the tax base.",
+      "sourceRef": "III. ODDIEL, r.28",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "receivedPensionAtStartOfYear",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseFullName",
+      "label": "29 - Priezvisko a meno (manželka/manžel)",
+      "type": "string",
+      "description": "Surname and given name of the spouse living with the taxpayer in the same household, for the purpose of claiming the non-taxable amount on a spouse under § 11 ods. 3.",
+      "sourceRef": "III. ODDIEL, r.29",
+      "validation": {
+        "maxLength": 400
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "spouseBirthNumberPart1",
+      "label": "29 - Rodné číslo (manželka/manžel), 1. časť",
+      "type": "string",
+      "sourceRef": "III. ODDIEL, r.29",
+      "validation": {
+        "maxLength": 6
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "spouseBirthNumberPart2",
+      "label": "29 - Rodné číslo (manželka/manžel), 2. časť",
+      "type": "string",
+      "sourceRef": "III. ODDIEL, r.29",
+      "validation": {
+        "maxLength": 4
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "claimSpouseNonTaxableAmount",
+      "label": "30 - Uplatňujem nezdaniteľnú časť základu dane na manželku (manžela)",
+      "type": "boolean",
+      "sourceRef": "III. ODDIEL, r.30 checkbox"
+    },
+    {
+      "name": "spouseOwnIncomeAmount",
+      "label": "Vlastné príjmy manželky (manžela), EUR",
+      "type": "number",
+      "description": "Spouse's own income for the tax year (gross income less compulsory insurance premiums/contributions the spouse was required to pay on it).",
+      "sourceRef": "III. ODDIEL, r.29 income column",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "claimSpouseNonTaxableAmount",
+        "equals": true
+      }
+    },
+    {
+      "name": "spouseQualifyingMonthsCount",
+      "label": "Počet mesiacov (manželka/manžel)",
+      "type": "integer",
+      "description": "Number of calendar months in the tax year at the start of which the statutory conditions for claiming the spouse's non-taxable amount were met.",
+      "sourceRef": "III. ODDIEL, r.29 months column",
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      },
+      "requiredWhen": {
+        "field": "claimSpouseNonTaxableAmount",
+        "equals": true
+      }
+    },
+    {
+      "name": "childFullName",
+      "label": "31 - Priezvisko a meno (dieťa)",
+      "type": "string",
+      "description": "Surname and given name of a dependent child living with the taxpayer in the same household, for the purpose of the tax bonus (daňový bonus) under § 33. Only one child's data row is printed on the source form; a taxpayer with more than one qualifying child records the additional children in Section IX (additionalChildrenNoted).",
+      "sourceRef": "III. ODDIEL, r.31",
+      "validation": {
+        "maxLength": 400
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "childBirthNumberPart1",
+      "label": "31 - Rodné číslo (dieťa), 1. časť",
+      "type": "string",
+      "sourceRef": "III. ODDIEL, r.31",
+      "validation": {
+        "maxLength": 6
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "childBirthNumberPart2",
+      "label": "31 - Rodné číslo (dieťa), 2. časť",
+      "type": "string",
+      "sourceRef": "III. ODDIEL, r.31",
+      "validation": {
+        "maxLength": 4
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "childBonusFullYear",
+      "label": "31 - Daňový bonus uplatňujem v mesiacoch 1-12",
+      "type": "boolean",
+      "description": "Whether the tax bonus is claimed for all 12 months of the tax year (the source form's dedicated \"1-12\" checkbox, mutually exclusive with checking individual months in childBonusMonths).",
+      "sourceRef": "III. ODDIEL, r.31, checkbox \"1-12\""
+    },
+    {
+      "name": "childBonusMonths",
+      "label": "31 - Daňový bonus uplatňujem v mesiacoch (jednotlivo)",
+      "type": "string",
+      "description": "Comma-separated list of individual calendar months (1-12) for which the tax bonus is claimed, used only when not claiming the full year (see childBonusFullYear). The source presents this as 12 separate month checkboxes; modeled as a comma-separated list — multi-select-as-string treatment, pending GSP-0009 (repeating/multi-select gap) — following the precedent already established for several other schemas in this registry (e.g. fr/france-visas/schengen-visa-application's means-of-support fields).",
+      "sourceRef": "III. ODDIEL, r.31, 12 individual month checkboxes",
+      "validation": {
+        "pattern": "^(1[0-2]|[1-9])(,(1[0-2]|[1-9]))*$"
+      }
+    },
+    {
+      "name": "additionalChildrenNoted",
+      "label": "31a - Údaje o ďalších vyživovaných deťoch uvádzam v IX. oddiele",
+      "type": "boolean",
+      "description": "Checked when the taxpayer has more than one qualifying dependent child and records the additional children's data in Section IX (free-text special-records section) rather than on the single printed child row.",
+      "sourceRef": "III. ODDIEL, r.31a"
+    },
+    {
+      "name": "applySecondEligiblePersonProcedure",
+      "label": "Uplatňujem postup podľa § 33 ods. 8 zákona",
+      "type": "boolean",
+      "description": "Whether the taxpayer applies the procedure under § 33 ods. 8 (increasing their own tax base by a second eligible person's tax base, for the purpose of computing entitlement to the tax bonus) rather than each eligible person claiming it separately.",
+      "sourceRef": "III. ODDIEL, second-eligible-person block, checkbox \"Uplatňujem postup podľa § 33 ods. 8 zákona\""
+    },
+    {
+      "name": "secondEligiblePersonFullName",
+      "label": "32 - Priezvisko a meno (druhá oprávnená osoba)",
+      "type": "string",
+      "description": "Surname and given name of the second person eligible to claim the tax bonus on the same child(ren) named in r.31, sharing custody/care of the household.",
+      "sourceRef": "III. ODDIEL, r.32",
+      "validation": {
+        "maxLength": 400
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "secondEligiblePersonBirthNumberPart1",
+      "label": "32 - Rodné číslo (druhá oprávnená osoba), 1. časť",
+      "type": "string",
+      "sourceRef": "III. ODDIEL, r.32",
+      "validation": {
+        "maxLength": 6
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "secondEligiblePersonBirthNumberPart2",
+      "label": "32 - Rodné číslo (druhá oprávnená osoba), 2. časť",
+      "type": "string",
+      "sourceRef": "III. ODDIEL, r.32",
+      "validation": {
+        "maxLength": 4
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "secondEligiblePersonBonusFullYear",
+      "label": "32 - Mesiace 1-12 (druhá oprávnená osoba)",
+      "type": "boolean",
+      "sourceRef": "III. ODDIEL, r.32, checkbox \"1-12\""
+    },
+    {
+      "name": "secondEligiblePersonBonusMonths",
+      "label": "32 - Mesiace jednotlivo (druhá oprávnená osoba)",
+      "type": "string",
+      "description": "Comma-separated list of individual calendar months (1-12) at the start of which the second eligible person met the conditions for the tax bonus. Multi-select-as-string treatment, pending GSP-0009 (see childBonusMonths).",
+      "sourceRef": "III. ODDIEL, r.32, 12 individual month checkboxes",
+      "validation": {
+        "pattern": "^(1[0-2]|[1-9])(,(1[0-2]|[1-9]))*$"
+      }
+    },
+    {
+      "name": "secondPersonFiledReturnInSlovakia",
+      "label": "Druhá oprávnená osoba podala daňové priznanie na území SR",
+      "type": "boolean",
+      "description": "Whether the second eligible person named in r.32 themselves filed a tax return in Slovakia reporting a tax base for computing the tax bonus.",
+      "sourceRef": "III. ODDIEL, checkbox \"Oznamujem, že druhá oprávnená osoba uvedená na r. 32 podala daňové priznanie na území Slovenskej republiky\""
+    },
+    {
+      "name": "secondPersonAnnualSettlementCopyAttached",
+      "label": "Prikladám kópiu dokladu o ročnom zúčtovaní (druhá oprávnená osoba)",
+      "type": "boolean",
+      "description": "Checked when a copy of the second eligible person's annual payroll-tax-advance settlement (ročné zúčtovanie) is attached, as evidence of their tax base, because they did not file their own tax return.",
+      "sourceRef": "III. ODDIEL, checkbox \"kópiu dokladu o vykonanom ročnom zúčtovaní ... druhej oprávnenej osoby\""
+    },
+    {
+      "name": "secondPersonTaxBaseDocumentCopyAttached",
+      "label": "Prikladám kópiu dokladu preukazujúceho základ dane (druhá oprávnená osoba)",
+      "type": "boolean",
+      "description": "Checked when a copy of a document proving the second eligible person's tax base from employment income is attached, for a person who had neither an annual settlement performed nor a duty to file a return.",
+      "sourceRef": "III. ODDIEL, checkbox \"kópiu dokladu preukazujúceho výšku základu dane ... druhej oprávnenej osoby\""
+    },
+    {
+      "name": "secondEligiblePersonTaxBaseAmount",
+      "label": "32a - Základ dane druhej oprávnenej osoby, EUR",
+      "type": "number",
+      "description": "Tax base (or aggregate tax base) of the second eligible person named in r.32, from employment income and/or self-employment/other independent gainful activity, for the purpose of claiming the tax bonus under § 33 ods. 8.",
+      "sourceRef": "III. ODDIEL, r.32a",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "claimMortgageInterestBonus",
+      "label": "33 - Uplatňujem daňový bonus na zaplatené úroky",
+      "type": "boolean",
+      "description": "Whether the taxpayer claims the tax bonus on interest paid on a home-loan (§ 33a of the Income Tax Act).",
+      "sourceRef": "IV. ODDIEL, r.33 checkbox"
+    },
+    {
+      "name": "mortgageInterestPaidAmount",
+      "label": "33 - Suma zaplatených úrokov za zdaňovacie obdobie, EUR",
+      "type": "number",
+      "description": "Amount of home-loan interest paid during the tax year, per the bank's own confirmation issued under § 26a of Act No. 90/2016 Coll. on housing loans, a copy of which is an annexe to the return. Required alongside claimMortgageInterestBonus. The source's input widget for this line shares a generic 400-character textbox component also used for combined name fields elsewhere on the form; it is modeled here as a numeric amount per the footnote's own description of what r.33 records.",
+      "sourceRef": "IV. ODDIEL, r.33 amount column",
+      "requiredWhen": {
+        "field": "claimMortgageInterestBonus",
+        "equals": true
+      }
+    },
+    {
+      "name": "mortgageInterestQualifyingMonthsCount",
+      "label": "33 - Počet mesiacov (úroky)",
+      "type": "integer",
+      "description": "Number of calendar months in the tax year for which the taxpayer is entitled to the mortgage-interest tax bonus.",
+      "sourceRef": "IV. ODDIEL, r.33 months column",
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      },
+      "requiredWhen": {
+        "field": "claimMortgageInterestBonus",
+        "equals": true
+      }
+    },
+    {
+      "name": "mortgageInterestAccrualStartDate",
+      "label": "Dátum začatia úročenia úveru",
+      "type": "date",
+      "description": "Date interest began accruing on the home loan. Must fall within 1 February 2020 - 31 December 2025 per the source's own validation note.",
+      "sourceRef": "IV. ODDIEL, field \"Dátum začatia úročenia úveru\"",
+      "requiredWhen": {
+        "field": "claimMortgageInterestBonus",
+        "equals": true
+      }
+    },
+    {
+      "name": "mortgageLoanAgreementDate",
+      "label": "Dátum uzavretia zmluvy o úvere na bývanie",
+      "type": "date",
+      "description": "Date the home-loan agreement was concluded. Must fall within 1 January 2018 - 31 December 2025 per the source's own validation note.",
+      "sourceRef": "IV. ODDIEL, field \"Dátum uzavretia zmluvy o úvere na bývanie\"",
+      "requiredWhen": {
+        "field": "claimMortgageInterestBonus",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalEmploymentIncome",
+      "label": "34 - Úhrn príjmov od všetkých zamestnávateľov, EUR",
+      "type": "number",
+      "required": true,
+      "description": "Total employment income from all employers during the tax year. A non-resident reports only Slovak-source income; a resident reports worldwide income.",
+      "sourceRef": "V. ODDIEL, r.34",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeFromNonEmploymentWorkAgreements",
+      "label": "35 - Úhrn príjmov z dohôd o prácach vykonávaných mimo pracovného pomeru, EUR",
+      "type": "number",
+      "description": "Of the total on r.34, the portion arising from agreements for work performed outside an employment relationship (dohody). Must not exceed totalEmploymentIncome.",
+      "sourceRef": "V. ODDIEL, r.35 (\"Z toho\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalMandatoryInsuranceContributions",
+      "label": "36 - Úhrn povinného poistného, EUR",
+      "type": "number",
+      "description": "Total compulsory social/health insurance premiums and contributions paid on the employment income in r.34.",
+      "sourceRef": "V. ODDIEL, r.36",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "socialInsuranceContributions",
+      "label": "37 - Úhrn poistného na sociálne poistenie, EUR",
+      "type": "number",
+      "description": "Of the total on r.36, the portion for social insurance (security) contributions. Must not exceed totalMandatoryInsuranceContributions.",
+      "sourceRef": "V. ODDIEL, r.37 (\"Z toho\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "healthInsuranceContributions",
+      "label": "38 - Úhrn poistného na zdravotné poistenie, EUR",
+      "type": "number",
+      "description": "Of the total on r.36, the portion for health insurance contributions. Must not exceed totalMandatoryInsuranceContributions.",
+      "sourceRef": "V. ODDIEL, r.38 (\"Z toho\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxBaseFromEmploymentIncome",
+      "label": "39 - Základ dane podľa § 5 ods. 8 zákona, EUR",
+      "type": "number",
+      "description": "Tax base from employment income: r.39 = Max(0; r.34 - r.36). The tax base cannot be negative.",
+      "sourceRef": "V. ODDIEL, r.39",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonTaxableAmountSelf",
+      "label": "40 - Nezdaniteľná časť základu dane na daňovníka, EUR",
+      "type": "number",
+      "description": "Non-taxable part of the tax base on the taxpayer, computed per § 11 ods. 2, using the source's own worked reference table at the end of the guidance notes.",
+      "sourceRef": "VI. ODDIEL, r.40",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonTaxableAmountSpouse",
+      "label": "41 - Nezdaniteľná časť základu dane na manželku (manžela), EUR",
+      "type": "number",
+      "description": "Non-taxable part of the tax base claimed on a spouse under § 11 ods. 3, requiring spouseFullName/claimSpouseNonTaxableAmount to be completed.",
+      "sourceRef": "VI. ODDIEL, r.41",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "supplementaryPensionContributionsDeduction",
+      "label": "42 - Príspevky na doplnkové dôchodkové sporenie, EUR",
+      "type": "number",
+      "description": "Non-taxable part of the tax base for verifiably paid contributions to a pan-European personal pension product and supplementary pension savings, up to an aggregate EUR 180 (§ 11 ods. 8).",
+      "sourceRef": "VI. ODDIEL, r.42",
+      "validation": {
+        "minimum": 0,
+        "maximum": 180
+      }
+    },
+    {
+      "name": "totalTaxBaseReduction",
+      "label": "43 - Spolu (r. 40 + r. 41 + r. 42), EUR",
+      "type": "number",
+      "description": "Sum of r.40 + r.41 + r.42, capped at the tax base in r.39.",
+      "sourceRef": "VI. ODDIEL, r.43",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "reducedTaxBase",
+      "label": "44 - Základ dane znížený o r. 43, EUR",
+      "type": "number",
+      "description": "Tax base from r.39 reduced by r.43 and increased by any contribution add-back under § 11 ods. 11 and § 52zza ods. 2.",
+      "sourceRef": "VI. ODDIEL, r.44"
+    },
+    {
+      "name": "taxAmountUnderSection15",
+      "label": "45 - Daň podľa § 15 zákona zo základu dane z r. 44, EUR",
+      "type": "number",
+      "description": "Income tax computed on the tax base in r.44: 19% up to EUR 48,441.43, and 19% on the first EUR 48,441.43 plus 25% on the excess above that threshold (r.45 = 48441.43*0.19 + (r.44-48441.43)*0.25 when r.44 exceeds the threshold). Zero if the taxpayer claims the employee bonus (r.46).",
+      "sourceRef": "VI. ODDIEL, r.45",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employeeBonus",
+      "label": "46 - Zamestnanecká prémia, EUR",
+      "type": "number",
+      "description": "Employee bonus (zamestnanecká prémia) under § 32a, available to certain low-income employees in place of the ordinary tax computation.",
+      "sourceRef": "VI. ODDIEL, r.46",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incorrectlyPaidEmployeeBonusAmount",
+      "label": "47 - Suma zamestnaneckej prémie nesprávne vyplatenej, EUR",
+      "type": "number",
+      "description": "Amount of employee bonus incorrectly paid out by the employer or the tax administrator.",
+      "sourceRef": "VI. ODDIEL, r.47",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalExemptForeignIncome",
+      "label": "48 - Úhrn vyňatých príjmov (základov dane), EUR",
+      "type": "number",
+      "description": "Total income (tax bases) exempted from Slovak taxation under a double-taxation treaty's exemption method, capped at r.39.",
+      "sourceRef": "VI. ODDIEL, r.48",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxBaseAfterExemption",
+      "label": "49 - Základ dane znížený o r. 48, EUR",
+      "type": "number",
+      "description": "Tax base from r.44 reduced by the exempted income in r.48; zero if the result would be negative.",
+      "sourceRef": "VI. ODDIEL, r.49",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxAfterExemption",
+      "label": "50 - Daň po vyňatí príjmov zo zdrojov v zahraničí, EUR",
+      "type": "number",
+      "description": "Tax under § 15 computed on the tax base in r.49 after the foreign-income exemption. The 25% bracket threshold is EUR 48,441.43.",
+      "sourceRef": "VI. ODDIEL, r.50"
+    },
+    {
+      "name": "totalForeignSourceIncome",
+      "label": "51 - Úhrn príjmov (základov dane) zo zdrojov v zahraničí, EUR",
+      "type": "number",
+      "description": "Total foreign-source income (tax bases) for which a foreign tax credit is claimed (credit method), capped at r.39.",
+      "sourceRef": "VI. ODDIEL, r.51",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignTaxPaid",
+      "label": "52 - Daň zaplatená v zahraničí z príjmov z r. 51, EUR",
+      "type": "number",
+      "description": "Foreign tax actually paid on the income in r.51.",
+      "sourceRef": "VI. ODDIEL, r.52",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "creditPercentageCalculation",
+      "label": "53 - Výpočet percenta dane na účely zápočtu, %",
+      "type": "number",
+      "description": "Credit percentage: [(r.39 - r.48) or r.39] x 100, used to compute the creditable foreign tax.",
+      "sourceRef": "VI. ODDIEL, r.53"
+    },
+    {
+      "name": "creditableForeignTaxAmountBeforeCap",
+      "label": "54 - Z dane zaplatenej v zahraničí možno započítať, EUR",
+      "type": "number",
+      "description": "Amount of foreign tax that may be credited before the r.52 cap is applied: [(r.50 or r.45) x r.53] / 100.",
+      "sourceRef": "VI. ODDIEL, r.54"
+    },
+    {
+      "name": "recognizedForeignTaxCredit",
+      "label": "55 - Daň uznaná na zápočet, EUR",
+      "type": "number",
+      "description": "Foreign tax credit recognized: r.54 capped at r.52 (r.55 = Max(0, Min(r.54, r.52))).",
+      "sourceRef": "VI. ODDIEL, r.55",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxLiability",
+      "label": "56 - Daň (daňová povinnosť), EUR",
+      "type": "number",
+      "description": "Final tax liability: r.45 or r.50, further reduced by the recognized foreign tax credit r.55 where applicable. Reported as zero in several statutorily defined low-liability/low-income cases per the source's own footnote 10.",
+      "sourceRef": "VI. ODDIEL, r.56"
+    },
+    {
+      "name": "increasedTaxBaseForChildBonus",
+      "label": "56a - Navýšený základ dane na účely výpočtu daňového bonusu, EUR",
+      "type": "number",
+      "description": "Tax base increased for the purpose of computing the tax bonus under § 33 ods. 8: r.32a / 12 x number of checked months in r.32, plus r.39. Completed only when the taxpayer applies the § 33 ods. 8 procedure.",
+      "sourceRef": "VI. ODDIEL, r.56a",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "applySecondEligiblePersonProcedure",
+        "equals": true
+      }
+    },
+    {
+      "name": "childBonusEntitlement",
+      "label": "57 - Nárok na daňový bonus podľa zákona, EUR",
+      "type": "number",
+      "description": "Entitlement to the statutory tax bonus for the dependent child(ren) named in r.31/Section IX: EUR 100/month for a child under 15, EUR 50/month for a child 15 up to and including 18.",
+      "sourceRef": "VI. ODDIEL, r.57",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxAfterChildBonus",
+      "label": "58 - Daň znížená o daňový bonus podľa zákona, EUR",
+      "type": "number",
+      "description": "Tax liability (r.56) reduced by the tax bonus (r.57); zero if r.57 exceeds r.56.",
+      "sourceRef": "VI. ODDIEL, r.58"
+    },
+    {
+      "name": "childBonusPaidByEmployer",
+      "label": "59 - Suma daňového bonusu priznaného a vyplateného zamestnávateľom, EUR",
+      "type": "number",
+      "sourceRef": "VI. ODDIEL, r.59",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "childBonusDifferencePositive",
+      "label": "60 - Rozdiel r. 57 - r. 59 > 0, EUR",
+      "type": "number",
+      "description": "max(0, r.57 - r.59).",
+      "sourceRef": "VI. ODDIEL, r.60",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "childBonusPayableByTaxAuthority",
+      "label": "61 - Suma daňového bonusu na poukázanie správcom dane, EUR",
+      "type": "number",
+      "description": "max(0, r.60 - r.56). A positive amount here requires completing the payout request in Section XI.",
+      "sourceRef": "VI. ODDIEL, r.61",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "childBonusOverpaidByEmployer",
+      "label": "62 - Suma daňového bonusu vyplatená zamestnávateľom nesprávne alebo vo vyššej sume, EUR",
+      "type": "number",
+      "description": "max(0, r.59 - r.57).",
+      "sourceRef": "VI. ODDIEL, r.62",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "mortgageInterestBonusEntitlement",
+      "label": "63 - Nárok na daňový bonus na zaplatené úroky, EUR",
+      "type": "number",
+      "description": "Entitlement to the mortgage-interest tax bonus under § 33a: 50% of interest paid, capped at EUR 400/year for loan agreements concluded by 31 December 2023 or EUR 1,200/year for agreements concluded after that date.",
+      "sourceRef": "VI. ODDIEL, r.63",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxAfterMortgageInterestBonus",
+      "label": "64 - Daň znížená o daňový bonus podľa zákona a o daňový bonus na zaplatené úroky, EUR",
+      "type": "number",
+      "description": "r.58 - r.63.",
+      "sourceRef": "VI. ODDIEL, r.64"
+    },
+    {
+      "name": "mortgageInterestBonusPaidByEmployer",
+      "label": "65 - Suma daňového bonusu na zaplatené úroky priznaného a vyplateného zamestnávateľom, EUR",
+      "type": "number",
+      "description": "Completed only in a return filed after an annual settlement (ročné zúčtovanie).",
+      "sourceRef": "VI. ODDIEL, r.65",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "mortgageInterestBonusDifferencePositive",
+      "label": "66 - Rozdiel r. 63 - r. 65 > 0, EUR",
+      "type": "number",
+      "description": "max(0, r.63 - r.65).",
+      "sourceRef": "VI. ODDIEL, r.66",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "mortgageInterestBonusPayableByTaxAuthority",
+      "label": "67 - Suma daňového bonusu na zaplatené úroky na poukázanie správcom dane, EUR",
+      "type": "number",
+      "description": "max(0, r.66 - r.58). A positive amount here requires completing the payout request in Section XI.",
+      "sourceRef": "VI. ODDIEL, r.67",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "advancesPaidUnderSection34",
+      "label": "68 - Úhrn preddavkov zaplatených podľa § 34 zákona, EUR",
+      "type": "number",
+      "sourceRef": "VI. ODDIEL, r.68",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "advancesWithheldUnderSection35",
+      "label": "69 - Úhrn preddavkov zrazených podľa § 35 zákona, EUR",
+      "type": "number",
+      "description": "Advances withheld under § 35, excluding advances under § 35 ods. 10 and 11.",
+      "sourceRef": "VI. ODDIEL, r.69",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "advancesPaidUnderSection35Para10And11",
+      "label": "70 - Úhrn preddavkov zaplatených podľa § 35 ods. 10 a 11 zákona, EUR",
+      "type": "number",
+      "sourceRef": "VI. ODDIEL, r.70",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxPayable",
+      "label": "71 - Daň na úhradu (+), EUR",
+      "type": "number",
+      "description": "Tax payable: r.56 - r.57 + r.59 + r.61 - r.63 + r.65 + r.67 - r.68 - r.69 - r.70 + r.47, when positive. Not payable if EUR 5 or less.",
+      "sourceRef": "VI. ODDIEL, r.71",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxOverpayment",
+      "label": "72 - Daňový preplatok (-), EUR",
+      "type": "number",
+      "description": "Tax overpayment: the negative of the same formula as taxPayable, expressed as a positive overpayment amount.",
+      "sourceRef": "VI. ODDIEL, r.72",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "priorReturnTaxAmount",
+      "label": "73 - Daň z r. 56 predchádzajúceho daňového priznania, EUR",
+      "type": "number",
+      "description": "Tax liability (r.56) from the return being corrected, or the corresponding line of a prior Type B return or annual settlement.",
+      "sourceRef": "VII. ODDIEL, r.73",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "returnType",
+        "equals": "additional"
+      }
+    },
+    {
+      "name": "taxIncreaseOrDecrease",
+      "label": "74 - Zvýšenie (+) alebo zníženie (-) dane, EUR",
+      "type": "number",
+      "description": "r.56 - r.73, positive or negative.",
+      "sourceRef": "VII. ODDIEL, r.74"
+    },
+    {
+      "name": "priorReturnTaxPayableOrOverpayment",
+      "label": "75 - Daň na úhradu alebo daňový preplatok z predchádzajúceho daňového priznania, EUR",
+      "type": "number",
+      "description": "r.71 or r.72 from the return being corrected (or the corresponding line of a prior Type B return or annual settlement).",
+      "sourceRef": "VII. ODDIEL, r.75"
+    },
+    {
+      "name": "adjustedTaxPayableOrOverpayment",
+      "label": "76 - Daň na úhradu (+) alebo daňový preplatok (-), EUR",
+      "type": "number",
+      "description": "(r.71 or r.72) - r.75, adjusted for any tax-share donation (2%/3%) difference exceeding zero.",
+      "sourceRef": "VII. ODDIEL, r.76"
+    },
+    {
+      "name": "priorReturnChildBonusPayable",
+      "label": "77 - Suma daňového bonusu na poukázanie správcom dane z predchádzajúceho daňového priznania, EUR",
+      "type": "number",
+      "sourceRef": "VII. ODDIEL, r.77",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "childBonusPayableDifference",
+      "label": "78 - Rozdiel súm daňového bonusu na poukázanie (+) alebo vrátenie (-), EUR",
+      "type": "number",
+      "description": "r.61 - r.77, positive (payable by the tax administrator) or negative (repayable to the tax administrator).",
+      "sourceRef": "VII. ODDIEL, r.78"
+    },
+    {
+      "name": "priorReturnMortgageInterestBonusPayable",
+      "label": "79 - Suma daňového bonusu na zaplatené úroky na poukázanie z predchádzajúceho daňového priznania, EUR",
+      "type": "number",
+      "sourceRef": "VII. ODDIEL, r.79",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "mortgageInterestBonusPayableDifference",
+      "label": "80 - Rozdiel súm daňového bonusu na zaplatené úroky na poukázanie (+) alebo vrátenie (-), EUR",
+      "type": "number",
+      "description": "r.67 - r.79, positive or negative.",
+      "sourceRef": "VII. ODDIEL, r.80"
+    },
+    {
+      "name": "doesNotApplyTaxShareProcedure",
+      "label": "Neuplatňujem postup podľa § 50 zákona",
+      "type": "boolean",
+      "description": "Checked when the taxpayer does not designate any portion of paid tax to a recipient organization under § 50; when checked, r.81/r.82 are not completed.",
+      "sourceRef": "VIII. ODDIEL, checkbox \"neuplatňujem postup podľa § 50 zákona\""
+    },
+    {
+      "name": "recipientOrganizationId",
+      "label": "81 - IČO (prijímateľ)",
+      "type": "string",
+      "description": "Company/organization identification number (IČO, 8 or 12 digits) of the designated recipient of the tax-share donation. The recipient must appear on the Notarial Chamber's own list of eligible recipients for the relevant year.",
+      "sourceRef": "VIII. ODDIEL, r.81",
+      "validation": {
+        "maxLength": 12
+      },
+      "requiredWhen": {
+        "field": "doesNotApplyTaxShareProcedure",
+        "equals": false
+      }
+    },
+    {
+      "name": "recipientOrganizationName",
+      "label": "Obchodné meno (názov) (prijímateľ)",
+      "type": "string",
+      "description": "Business name of the designated recipient organization named in r.81.",
+      "sourceRef": "VIII. ODDIEL, r.81 field \"Obchodné meno (názov)\"",
+      "validation": {
+        "maxLength": 74
+      }
+    },
+    {
+      "name": "meetsVolunteering3PercentCondition",
+      "label": "Spĺňam podmienky na poukázanie 3% z dane",
+      "type": "boolean",
+      "description": "Checked when the taxpayer performed at least 40 hours of volunteer activity during the tax year (Act No. 406/2011 Coll.), raising the eligible donation share from 2% to 3% of tax paid; a written confirmation of the volunteer activity must be attached.",
+      "sourceRef": "VIII. ODDIEL, checkbox \"spĺňam podmienky na poukázanie 3 % z dane\""
+    },
+    {
+      "name": "taxShareDonationAmount",
+      "label": "82 - 2% alebo 3% zo zaplatenej dane, EUR",
+      "type": "number",
+      "description": "Amount of tax share (2%, or 3% if meetsVolunteering3PercentCondition) designated to the recipient in r.81, minimum EUR 3.",
+      "sourceRef": "VIII. ODDIEL, r.82",
+      "validation": {
+        "minimum": 3
+      }
+    },
+    {
+      "name": "consentToShareDataWithRecipient",
+      "label": "Súhlasím so zaslaním údajov prijímateľovi",
+      "type": "boolean",
+      "description": "Consent to send the taxpayer's name, surname, and permanent residence to the recipient designated in r.81, per § 50 ods. 8.",
+      "sourceRef": "VIII. ODDIEL, checkbox \"súhlasím so zaslaním údajov ... prijímateľovi\""
+    },
+    {
+      "name": "doesNotApplyParentProcedure",
+      "label": "Neuplatňujem postup podľa § 50aa zákona",
+      "type": "boolean",
+      "description": "Checked when the taxpayer does not designate a share of paid tax to a parent (or parents) under § 50aa.",
+      "sourceRef": "VIII. ODDIEL, checkbox \"neuplatňujem postup podľa § 50aa zákona\""
+    },
+    {
+      "name": "parentABirthNumberPart1",
+      "label": "83 - Rodné číslo (rodič A), 1. časť",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent A",
+      "validation": {
+        "maxLength": 6
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "parentABirthNumberPart2",
+      "label": "83 - Rodné číslo (rodič A), 2. časť",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent A",
+      "validation": {
+        "maxLength": 4
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "parentASurname",
+      "label": "83 - Priezvisko (rodič A)",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent A",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "parentAGivenName",
+      "label": "83 - Meno (rodič A)",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent A",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "parentBBirthNumberPart1",
+      "label": "83 - Rodné číslo (rodič B), 1. časť",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent B",
+      "validation": {
+        "maxLength": 6
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "parentBBirthNumberPart2",
+      "label": "83 - Rodné číslo (rodič B), 2. časť",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent B",
+      "validation": {
+        "maxLength": 4
+      },
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "parentBSurname",
+      "label": "83 - Priezvisko (rodič B)",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent B",
+      "validation": {
+        "maxLength": 30
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "parentBGivenName",
+      "label": "83 - Meno (rodič B)",
+      "type": "string",
+      "sourceRef": "VIII. ODDIEL, r.83, parent B",
+      "validation": {
+        "maxLength": 20
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "inSubstituteParentalCare",
+      "label": "Bol som zverený do starostlivosti nahrádzajúcej starostlivosť rodičov",
+      "type": "boolean",
+      "description": "Checked when the taxpayer designates their tax share to a person into whose substitute parental care they were placed by a competent authority's decision, a copy of which is attached.",
+      "sourceRef": "VIII. ODDIEL, checkbox \"bol som zverený do starostlivosti nahrádzajúcej starostlivosť rodičov\""
+    },
+    {
+      "name": "hasSpecialNotes",
+      "label": "Uvádzam osobitné záznamy",
+      "type": "boolean",
+      "description": "Checked when the taxpayer records any special notes in Section IX (e.g. additional dependent children beyond the single printed row, or foreign-source employment income detail).",
+      "sourceRef": "IX. ODDIEL, checkbox \"Uvádzam osobitné záznamy\""
+    },
+    {
+      "name": "foreignEmploymentIncomeCountryCode",
+      "label": "Kód štátu (príjmy zo zdrojov v zahraničí)",
+      "type": "string",
+      "description": "Numeric country/territory code (per Decree of the Statistical Office of the Slovak Republic No. 112/2012 Z.z., as amended by No. 108/2014 Z.z.) of the state where employment income within r.34 was earned, for a resident with unlimited tax liability. The source presents this as a dropdown of about 250 countries/territories; not enumerated here as a validation.enum given its length — modeled as a free-text numeric code, a disclosed scope decision.",
+      "sourceRef": "IX. ODDIEL, foreign-income table, column \"Kód štátu\"",
+      "validation": {
+        "pattern": "^[0-9]{3}$"
+      }
+    },
+    {
+      "name": "foreignEmploymentIncomeAmount",
+      "label": "Príjmy (zo zdrojov v zahraničí), EUR",
+      "type": "number",
+      "sourceRef": "IX. ODDIEL, foreign-income table, column \"Príjmy\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignEmploymentExpenses",
+      "label": "Výdavky (zo zdrojov v zahraničí), EUR",
+      "type": "number",
+      "description": "Compulsory insurance premiums/contributions payable by the employee, verifiably paid in Slovakia and abroad.",
+      "sourceRef": "IX. ODDIEL, foreign-income table, column \"Výdavky\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignEmploymentExpensesAbroad",
+      "label": "Z toho výdavky v zahraničí, EUR",
+      "type": "number",
+      "description": "Of the expenses above, the portion of compulsory insurance premiums/contributions verifiably paid abroad.",
+      "sourceRef": "IX. ODDIEL, foreign-income table, column \"z toho výdavky\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "specialNotesText",
+      "label": "Miesto na osobitné záznamy (voľný text)",
+      "type": "string",
+      "description": "Free-text area for any special records the taxpayer needs to disclose (e.g. additional dependent children per r.31a, or a foreign bank account's own routing details when not in IBAN format, per Section XI's own instruction).",
+      "sourceRef": "IX. ODDIEL, free-text area"
+    },
+    {
+      "name": "taxResidenceCountry",
+      "label": "84 - Štát daňovej rezidencie",
+      "type": "string",
+      "description": "State of tax residence, completed when the taxpayer has limited tax liability in Slovakia (isNonResident) — and left blank for a resident.",
+      "sourceRef": "X. ODDIEL, r.84",
+      "validation": {
+        "maxLength": 37
+      },
+      "requiredWhen": {
+        "field": "isNonResident",
+        "equals": true
+      }
+    },
+    {
+      "name": "totalTaxableIncomeWorldwide",
+      "label": "85 - Úhrn všetkých zdaniteľných príjmov (SR a zahraničie), EUR",
+      "type": "number",
+      "description": "Aggregate of all taxable income from Slovak and foreign sources, completed by a resident applying § 33 ods. 9, a non-resident applying § 11 ods. 7/§ 33 ods. 9/§ 33a ods. 10/§ 46a, or a taxpayer who is a second eligible person for § 33 ods. 8 purposes. Includes income taxed by withholding.",
+      "sourceRef": "X. ODDIEL, r.85",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalTaxableIncomeSlovakSource",
+      "label": "85a - Z toho úhrn zdaniteľných príjmov zo zdrojov na území SR, EUR",
+      "type": "number",
+      "description": "Of the total in r.85, the portion from Slovak sources. Must not exceed totalTaxableIncomeWorldwide.",
+      "sourceRef": "X. ODDIEL, r.85a (\"Z toho\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "attachmentCount",
+      "label": "86 - Počet príloh",
+      "type": "integer",
+      "description": "Total number of all annexes/attachments accompanying this tax return.",
+      "sourceRef": "X. ODDIEL, r.86",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Dátum (vyhlásenie)",
+      "type": "date",
+      "required": true,
+      "description": "Date of the taxpayer's declaration that all information in the return is correct and complete.",
+      "sourceRef": "X. ODDIEL, declaration date field"
+    },
+    {
+      "name": "requestChildBonusPayout",
+      "label": "Žiadam o vyplatenie daňového bonusu podľa zákona",
+      "type": "boolean",
+      "description": "Request payout of the tax bonus (r.61) or its positive difference (r.78) by the tax authority.",
+      "sourceRef": "XI. ODDIEL, checkbox \"Žiadam o vyplatenie daňového bonusu ... (r. 61 alebo rozdiel z r. 78)\""
+    },
+    {
+      "name": "requestEmployeeBonusPayout",
+      "label": "Žiadam o vyplatenie zamestnaneckej prémie",
+      "type": "boolean",
+      "description": "Request payout of the employee bonus under § 32a (r.46) by the tax authority.",
+      "sourceRef": "XI. ODDIEL, checkbox \"Žiadam o vyplatenie zamestnaneckej prémie ... (z r. 46)\""
+    },
+    {
+      "name": "requestMortgageInterestBonusPayout",
+      "label": "Žiadam o vyplatenie daňového bonusu na zaplatené úroky",
+      "type": "boolean",
+      "description": "Request payout of the mortgage-interest tax bonus (r.67) or its positive difference (r.80) by the tax authority.",
+      "sourceRef": "XI. ODDIEL, checkbox \"Žiadam o vyplatenie daňového bonusu na zaplatené úroky ... (r. 67 alebo rozdiel z r. 80)\""
+    },
+    {
+      "name": "requestOverpaymentRefund",
+      "label": "Žiadam o vrátenie daňového preplatku",
+      "type": "boolean",
+      "description": "Request refund of the tax overpayment (r.72, or the negative difference in r.76) under § 79 of the Tax Administration Act.",
+      "sourceRef": "XI. ODDIEL, checkbox \"Žiadam o vrátenie daňového preplatku ... (z r. 72 alebo rozdiel z r. 76)\""
+    },
+    {
+      "name": "payoutMethod",
+      "label": "Spôsob výplaty",
+      "type": "enum",
+      "description": "How a requested payout is to be made: by postal money order (up to and including EUR 15,000), to the taxpayer's own account, or to a foreign account the taxpayer is not the holder of. Exactly one of these three source radio options may be selected.",
+      "sourceRef": "XI. ODDIEL, radio group \"poštovou poukážkou\" / \"na účet\" / \"na účet v zahraničí, ktorého nie som majiteľom\"",
+      "validation": {
+        "enum": [
+          "postal-money-order",
+          "own-account",
+          "foreign-account-not-own"
+        ]
+      }
+    },
+    {
+      "name": "payoutIban",
+      "label": "IBAN",
+      "type": "string",
+      "description": "IBAN for the payout, required when payoutMethod is own-account or foreign-account-not-own. Format: 2-letter country code, 2-digit check digits, up to 30 alphanumeric characters.",
+      "sourceRef": "XI. ODDIEL, field \"IBAN\"",
+      "validation": {
+        "maxLength": 34,
+        "pattern": "^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{1,30}$"
+      },
+      "classification": "financial",
+      "requiredWhen": {
+        "field": "payoutMethod",
+        "in": [
+          "own-account",
+          "foreign-account-not-own"
+        ]
+      }
+    },
+    {
+      "name": "payoutRequestDate",
+      "label": "Dátum (žiadosť o vyplatenie)",
+      "type": "date",
+      "description": "Date of this payout/refund request.",
+      "sourceRef": "XI. ODDIEL, declaration date field"
+    }
+  ]
+}

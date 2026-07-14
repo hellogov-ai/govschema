@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**55 jurisdictions** | **449 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **450 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-14, GOV-2986, "GovSchema Standard Research"): Vietnam's
 > National ID vertical closes (6 of 6)**, via
@@ -40,6 +40,37 @@
 > (Điều 8/9/10/16 verbatim quotes, independent re-fetch of both the dead
 > CC01 candidate and the working DC02 specimen) and every disclosed scoping
 > decision.
+
+> **Update (2026-07-14, GOV-2981, "GovSchema Standard Research"): Slovakia
+> opens as this registry's 56th jurisdiction**, via its Taxes vertical (1 of
+> 6), `sk/financna-sprava/dpfoav25-individual-income-tax-return` — the
+> Financial Administration of the Slovak Republic's (Finančná správa
+> Slovenskej republiky, FS SR) DPFOAv25 "Daňové priznanie k dani z príjmov
+> fyzickej osoby (typ A)" (Type A individual income tax return) for the
+> 2025 tax year. `financnasprava.sk`'s site-wide outage (first observed
+> GOV-2969, still live as of GOV-2976 and re-confirmed still live at the
+> start of this cycle) meant the schema was sourced from a 21 May 2026
+> Wayback Machine capture of `pfseform.financnasprava.sk`'s own live HTML
+> e-form, per this registry's established practice of citing a Wayback
+> snapshot when a first-party government source is genuinely,
+> verifiably unreachable. Models 146 `fields[]` across the form's full
+> eleven-section structure (I through XI): taxpayer/legal-representative
+> identification (including a non-resident/limited-tax-liability branch),
+> tax-base reduction for a pension and a spouse, the tax bonus for one
+> dependent child plus a second-eligible-person shared-claim mechanism,
+> the mortgage-interest tax bonus, the full tax computation (employment
+> income, tax brackets, foreign-income exemption/credit methods),
+> additional-return differences, the 2%/3% tax-share donation, free-text
+> special records, and the payout/refund request. 2 valid conformance
+> fixtures (0 errors each) plus 10 mutation-control fixtures (each raising
+> exactly 1 error) are committed under
+> `conformance/sk/financna-sprava/dpfoav25-individual-income-tax-return/1.0.0/`.
+> Corrects two estimates from the original GOV-2969/GOV-2976 scouting notes:
+> the source form has 11 lettered sections, not 9, and its own line
+> numbering runs 01-86, not "~89." Slovakia's other five verticals
+> (Passport, National ID, DMV, Business Formation, Visa) remain
+> undiscovered/unscouted. See the document's own VERIFICATION.md for the
+> full sourcing record and every disclosed scoping/judgment-call decision.
 
 > **Update (2026-07-14, GOV-2982, "GovSchema Standard Research"): Lithuania's
 > Taxes vertical deepens** with a companion schedule to the GPM311 return
@@ -9134,7 +9165,11 @@
 
 ## By Vertical
 
-### Passport (40/55 jurisdictions — 73%)
+### Passport (40/56 jurisdictions — 71%)
+
+> **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
+> following Slovakia's addition (Taxes only; Passport remains open for
+> Slovakia, unscouted).
 
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles),
@@ -9498,7 +9533,11 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (46/55 jurisdictions — 84%)
+### DMV — Vehicle Registration, Licensing, Permits (46/56 jurisdictions — 82%)
+
+> **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
+> following Slovakia's addition (Taxes only; DMV remains open for Slovakia,
+> unscouted).
 
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles —
@@ -9954,7 +9993,11 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (49/55 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (49/56 jurisdictions — 88%)
+
+> **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
+> following Slovakia's addition (Taxes only; Business Formation remains
+> open for Slovakia, unscouted).
 
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles —
@@ -10696,7 +10739,13 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (49/55 jurisdictions — 89%)
+### Taxes — Income Tax Return, Tax Filing (50/56 jurisdictions — 89%)
+
+> **Update (GOV-2981): Slovakia opens Taxes**, via
+> `sk/financna-sprava/dpfoav25-individual-income-tax-return` (FS SR's
+> DPFOAv25 Type A individual income tax return) — see the Executive
+> Summary's GOV-2981 update and the document's own VERIFICATION.md for the
+> full sourcing record. Denominator updated from 55 to 56 jurisdictions.
 
 > **Update (GOV-2982): Lithuania's Taxes vertical deepens** with a companion
 > schedule to GPM311, via `lt/vmi/gpm311c-individualios-veiklos-pajamos`
@@ -11608,7 +11657,11 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (45/55 jurisdictions — 82%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (45/56 jurisdictions — 80%)
+
+> **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
+> following Slovakia's addition (Taxes only; Visa remains open for
+> Slovakia, unscouted).
 
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles),
@@ -12144,7 +12197,13 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (39/55 jurisdictions — 71%)
+### National ID & Civic Documents (39/56 jurisdictions — 70%)
+
+> **Correction (GOV-2981/GOV-2986):** denominator updated from 55 to 56
+> jurisdictions following Slovakia's addition (Taxes only; National ID
+> remains open for Slovakia, unscouted), and numerator updated from 38 to
+> 39 following Vietnam's National ID vertical closing (6 of 6) this same
+> cycle — see below.
 
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles),
@@ -12584,6 +12643,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **SK** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -14880,6 +14940,31 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   was authored instead) — a future cycle should author DPFOAv25 citing the
   Wayback capture, with a live-site re-verification pass layered in once
   the outage clears.
+- **Update (GOV-2981, 2026-07-14): authored, opens the registry's 56th
+  jurisdiction.** `sk/financna-sprava/dpfoav25-individual-income-tax-return`
+  (146 `fields[]`) opened Slovakia's Taxes vertical (1 of 6), sourced from
+  the same 21 May 2026 Wayback Machine capture of
+  `pfseform.financnasprava.sk/Formulare/eFormVzor/DP/form.620.html` noted
+  above (`financnasprava.sk`'s live outage was re-confirmed still live at
+  the start of this cycle). This is a genuine client-side HTML e-form, not
+  a PDF/AcroForm; every field's real `name`/`maxlength`/validation-hint
+  `title` attribute was extracted directly from the saved HTML via a proper
+  `HTMLParser`-based parse (a naive regex pass initially mis-parsed about a
+  dozen inputs whose own `title` text contained an unescaped `>`
+  character). **Corrects two estimates from the original GOV-2969/GOV-2976
+  scouting notes above**: the form actually has **11** lettered sections
+  (I through XI), not 9, and its line numbering runs **01 through 86** (with
+  lettered sub-lines 32a/56a/85a), not "~89." Two 12-checkbox month-selection
+  grids (the child and second-eligible-person tax-bonus rows) are modeled
+  as a boolean "full year" flag plus a comma-separated multi-select-as-string
+  field, pending GSP-0009. See the schema's own VERIFICATION.md for the
+  full sourcing record, field-derivation table, and every disclosed scoping
+  decision. Slovakia's other five verticals (Passport, National ID, DMV,
+  Business Formation, Visa) remain undiscovered/unscouted for this
+  jurisdiction — a future cycle should screen them in parallel. The two
+  live `slovensko.sk` MZV consular eForms noted above (National ID card
+  request, driving-licence request) remain unauthored disclosed backlog for
+  that future cycle.
 
 - **Vietnam — National ID: scouted, delegated (GOV-2976).** Vietnam is
   otherwise 5 of 6 (only National ID open). `dichvucong.gov.vn` (the
