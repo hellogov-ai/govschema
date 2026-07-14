@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **452 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **453 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-3010, "GovSchema Standard Research"): Slovakia's
+> DMV vertical opens (1 of 6, now 3 of 6 overall)**, via
+> `sk/policajny-zbor/ziadost-o-udelenie-vodicskeho-opravnenia` — the "Žiadosť
+> o udelenie vodičského oprávnenia" (Application for Granting a Driving
+> Authorization), Annex 2a to Vyhláška MV SR č. 9/2009 Z.z. (the Ministry of
+> Interior's implementing decree to the Road Traffic Act), filed with a
+> Police Force traffic inspectorate — a genuine, unauthenticated,
+> print-and-hand-fill legislative annex hosted on `static.slov-lex.sk`, the
+> Ministry of Justice's binding-legislation portal (HTTP 200, sha256
+> `a82d13d4a0cada2216d88f63b072e25ce9142c6e960e06005cea4284b3dfbdd0`,
+> independently re-verified this cycle, `getFieldObjects()` returns exactly 2
+> entries — two blank signature/timestamp placeholders, no interactive
+> AcroForm). Models all 33 `fields[]` the form's two-page structure exposes —
+> the applicant's own driving-authorization request (identity, existing
+> authorization/licence held, requested category, and the legal basis for
+> the request: driving course + exam, special exam, or special training),
+> a legal-guardian consent block completed only when the applicant is a
+> minor (the form itself prints no separate minor/adult flag to gate this
+> on — disclosed, not fabricated as a `requiredWhen`), a three-point sworn
+> eligibility declaration, and the assessing physician's medical-fitness
+> certification with a three-way result — plus 1 `documents[]` entry (the
+> administrative-fee payment-proof space). A parallel scouting agent this
+> cycle screened all four of Slovakia's remaining verticals in one pass:
+> Passport is a confirmed **dead end** (mandatory in-person biometric
+> capture; the only electronic channel is eID/qualified-signature-gated),
+> Visa is a confirmed **duplicate** (Slovakia's "national visa" form is,
+> field-for-field, the same EU-harmonized Schengen Annex I template already
+> modelled elsewhere in this registry), and National ID is a **strong
+> candidate** (`slovensko.sk`'s `MZV.RequestIdentityCard` eForm) delegated as
+> a separate child issue rather than bundled into this document. This same
+> cycle also screened Lithuania's three remaining unscouted verticals
+> (Passport, Visa, National ID's ID-card path all confirmed **dead ends** —
+> in-person/biometric-only or MIGRIS-login-gated, no static form), while
+> Lithuania's National ID vertical yielded its own strong candidate (the
+> Central Electoral Commission's Form F5 voter-registration application),
+> also delegated as a separate child issue. 2 valid conformance fixtures (0
+> errors each) plus 8 mutation-control fixtures (each raising exactly 1
+> error) are committed under
+> `conformance/sk/policajny-zbor/ziadost-o-udelenie-vodicskeho-opravnenia/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing chain and
+> every disclosed scoping decision.
 
 > **Update (2026-07-14, GOV-3000, "GovSchema Standard Research"): Lithuania's
 > Business Formation vertical opens (1 of 6)**, via
@@ -9608,7 +9650,12 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (46/56 jurisdictions — 82%)
+### DMV — Vehicle Registration, Licensing, Permits (47/56 jurisdictions — 84%)
+
+> **Update (GOV-3010): Slovakia's DMV vertical opens**, via
+> `sk/policajny-zbor/ziadost-o-udelenie-vodicskeho-opravnenia` — see the
+> Executive Summary's GOV-3010 update above and the document's own
+> VERIFICATION.md. Numerator updated from 46 to 47.
 
 > **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
 > following Slovakia's addition (Taxes only; DMV remains open for Slovakia,
@@ -12749,7 +12796,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **SK** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **SK** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
