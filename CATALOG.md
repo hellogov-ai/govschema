@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**51 jurisdictions** | **425 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**51 jurisdictions** | **426 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-14, GOV-2837, "GovSchema Standard Research"): Romania's
+> Visa vertical opens (4th of 6)**, via
+> `ro/mae/formular-cerere-viza-de-lunga-sedere` — the Ministerul Afacerilor
+> Externe's (MAE, Ministry of Foreign Affairs) national long-stay (Type D)
+> visa application, filed at a Romanian embassy or consulate. This cycle
+> scouted three candidates in parallel (Romania's passport application via
+> DGP/MAE, Romania's Type-D visa via MAE, and Bulgaria's DMV driving-licence
+> issuance via MVR) and all three came back genuine, well-sourced
+> candidates; this one was picked for the cleanest extraction (a real text
+> layer across all 4 pages, no scanned-image or non-standard-encoding risk)
+> and for advancing Romania, already at 3 of 6 verticals, further. The live
+> `mae.ro` domain returned HTTP 403/503 to every direct fetch this cycle (an
+> anti-bot/WAF gate, not evidence of removal — the document is still
+> indexed under its own title); sourced instead from two independent
+> Wayback Machine snapshots of the same URL, fetched via two different
+> access methods, both producing a byte-identical file (549,937 bytes,
+> sha256 `863662c12000c79e47c1358020377167b8fb8c46012893d4ebe36b9576c1f398`).
+> A field-by-field duplicate-detection comparison against both
+> `de/auswaertiges-amt/national-visa-application` (81 fields) and
+> `es/maec/solicitud-visado-nacional` (60 fields) found the three forms
+> share only the Schengen-harmonized opening identity block, diverging
+> sharply past it in all directions — Romania's own 10-category
+> D-visa-subtype purpose taxonomy (D/AE, D/VF, D/AP, D/SD, D/AC, D/AS,
+> D/AR, D/AM, D/CS, D/DT) and its "personal data of the Romanian national
+> you depend on" block have no counterpart in either other form. Models 65
+> `fields[]`, 8 `documents[]` entries, and 2 `crossFieldValidation` rules
+> across identity, travel document, residence/occupation, visa/journey
+> details, purpose/travel plan, financial support, spouse/family (including
+> a bounded 3-row children table), and consent/contact sections. Romania's
+> passport application (MAE's "Anexa 10 – Cerere pentru eliberarea unui nou
+> pașaport," ~30 fields, also Wayback-verified) and Bulgaria's DMV
+> driving-licence form (MVR's "Приложение № 2а" specimen, ~15-20 fields)
+> are both left as strong, ready-to-author backlog candidates for a future
+> cycle. See GOV-2837 and this schema's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-14, GOV-2830, "GovSchema Standard Research"): Bulgaria's
 > Visa vertical opens (2 of 6)**, via
@@ -10526,7 +10562,33 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (39/43 jurisdictions — 91%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (40/43 jurisdictions — 93%)
+
+**Romania's Visa vertical opens (4th of 6) (GOV-2837)**, via
+`ro/mae/formular-cerere-viza-de-lunga-sedere` — the Ministry of Foreign
+Affairs' (MAE) national long-stay (Type D) visa application. Sourced from
+two independent Wayback Machine snapshots (the live `mae.ro` domain
+returned HTTP 403/503 to every direct fetch this cycle, an anti-bot/WAF
+gate, not evidence of removal); two different access methods against two
+different snapshot timestamps both produced a byte-identical file (549,937
+bytes, `sha256:
+863662c12000c79e47c1358020377167b8fb8c46012893d4ebe36b9576c1f398`). A flat,
+non-AcroForm 4-page specimen (zero fillable Widget annotations, only `Link`
+annotations, confirmed via `pdfjs-dist`) with a genuine, fully extractable
+bilingual Romanian/English text layer reproducing all 46 numbered items. A
+field-by-field duplicate-detection comparison against
+`de/auswaertiges-amt/national-visa-application` (81 fields) and
+`es/maec/solicitud-visado-nacional` (60 fields) found only the
+Schengen-harmonized opening identity block shared; Romania's own
+10-category D-visa-subtype purpose taxonomy and its "personal data of the
+Romanian national you depend on" block are unique to this form. Models 65
+`fields[]`, 8 `documents[]` entries, and 2 `crossFieldValidation` rules,
+including a bounded 3-row children table and a conditionally-required
+spouse block gated on marital status. See the Executive Summary's GOV-2837
+update above and the document's own VERIFICATION.md for the full sourcing
+record. Romania now stands at 4 of 6 verticals (Taxes, DMV, Business
+Formation, Visa); Passport and National ID & Civic Documents remain open,
+unscreened-this-cycle backlog candidates.
 
 **Bulgaria's Visa vertical opens (2 of 6) (GOV-2830)**, via
 `bg/mvnr/zayavlenie-za-izdavane-na-natsionalna-viza-tip-d` — the Ministry of
@@ -11344,7 +11406,7 @@ now closed.
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **RO** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **RO** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -13560,6 +13622,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   National ID already spot-checked weak (GOV-2821); Business Formation and
   DMV should not be re-attempted without either a JavaScript-executing
   browser (Business Formation) or a genuinely new source (DMV).
+  **Correction (GOV-2837): Bulgaria's DMV dead end was scoped only to
+  vehicle registration, not the whole vertical.** This cycle's scouting
+  found a genuine, distinct, ready-to-author candidate for **driving-licence
+  issuance**: MVR's own "Бланки и образци" static-forms page
+  (`mvr.bg/dbds/дейности/административно-обслужване/blanki`) links a
+  specimen, "Заявление за издаване на свидетелство за управление на
+  моторно превозно средство" (Приложение № 2а), directly and
+  unauthenticated — HTTP 200, `application/pdf`, 382,212 bytes, a genuine
+  text-layer (non-scanned) static specimen, not gated behind the
+  system-generated-at-the-counter pattern that correctly rules out vehicle
+  registration. Left un-authored this cycle in favor of Romania's Visa
+  candidate; a strong, ready-to-author DMV candidate for a future Bulgaria
+  cycle.
 - **Jordan — Taxes: authored (GOV-2731).** The employee/natural-person PIT
   return above (`jo/istd/pit-return-employee`) opened Jordan as the 49th
   jurisdiction — see the Executive Summary's GOV-2731 update. Two companion
@@ -13694,6 +13769,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   verticals** (Taxes, DMV, Business Formation); Passport, Visa, and
   National ID & Civic Documents remain open, unscreened backlog
   candidates for a future cycle.
+- **Romania — Visa: opened (GOV-2837), advances to 4th of 6.**
+  `ro/mae/formular-cerere-viza-de-lunga-sedere` opened Romania's Visa
+  vertical — see the Executive Summary's GOV-2837 update. This supersedes
+  the GOV-2813 cycle's "remaining four verticals" note: Visa is now
+  covered, sourced via two independent Wayback Machine snapshots after the
+  live `mae.ro` domain returned HTTP 403/503 to every direct fetch this
+  cycle (an anti-bot/WAF gate, not evidence of removal). A duplicate-
+  detection comparison against Germany's and Spain's own already-modelled
+  national-visa schemas confirmed this is a genuine, distinct form sharing
+  only the Schengen-harmonized opening identity block. **Romania now stands
+  at 4 of 6 verticals** (Taxes, DMV, Business Formation, Visa); Passport
+  and National ID & Civic Documents remain open, unscreened-this-cycle
+  backlog candidates for a future cycle — Romania's own MAE "Anexa 10"
+  passport-application specimen (~30 fields, also Wayback-verified this
+  cycle) is a pre-scouted, ready-to-author candidate for Passport.
 
 ---
 
