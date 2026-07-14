@@ -1,0 +1,526 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "hr/portor/prijava-za-upis-u-obrtni-registar",
+  "version": "1.0.0",
+  "title": "Croatia Application for Entry in the Craft/Trade Register (Prijava za upis u obrtni registar)",
+  "description": "PORTOR's (Portal Obrtnog registra Republike Hrvatske, the Ministry of Economy's Craft Register portal) generic \"PRIJAVA za upis u obrtni registar\" (Application for entry in the craft/trade register), a single omnibus form filed with the nadležno upravno tijelo (competent county-level administrative body, i.e. the Ured državne uprave of the relevant županija/county or the City of Zagreb) that covers all three obrtni registar transaction types on one document: new craft-business registration (upis obrta), a change-of-data notice for an already-registered craft business (promjena podataka), and termination of a craft business (prestanak obrta). Opens Croatia's Business Formation vertical (2 of 6, following Taxes, GOV-2883), which the GOV-2883 cycle screened and left as ready-to-author backlog. The source is a legacy, unauthenticated `.doc` (OLE/CFB, not an XML/AcroForm document) hand-fill/print template distributed directly from `portor.gov.hr`, structurally similar to Bulgaria's OKD-5. This v1.0.0 models all three transaction types via a single `applicationType` enum with `requiredWhen`/`visibleWhen`-gated sub-fields (new-registration's optional start date, the data-change free-text description, and termination's date/reason), rather than scoping to new registration alone, since the source form itself presents all three as equally weighted, first-class options with no separate per-transaction-type edition — following this registry's established `transactionType`-enum convention (e.g. `ca/on/mto/vehicle-registration`, `us/ca/dmv/vehicle-title-transfer`). It models the owner's full identification block (name, parentage, maiden names, sex, date/place of birth, the legacy MBG citizen number, OIB, occupation, and residential address), the craft business's identification and registered-seat address (including the optional fax/e-mail/website fields the owner's own address block lacks), the craft's regulatory category (non-privileged vs. privileged, with the specific privileged category when applicable), whether the craft operates year-round or seasonally (with season start/end dates), the optional qualified/professional-person designation relevant only to regulated (\"vezani\") crafts, a bounded repeating group of 3 activities/qualified-persons (of the paper form's own 18 numbered rows — see VERIFICATION.md for the disclosed bound), a free-text attached-documents list, and the closing applicant name/signature/place/date block. Consistent with this registry's treatment of other non-AcroForm Croatian sources (`hr/porezna-uprava/prijava-poreza-na-dohodak`), this document is authored at `structural-reference` maturity: the form's own printed structure is fully transcribed, but no live PORTOR/e-Obrt submission was attempted (see VERIFICATION.md). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of Croatia, the Ministry of Economy, or PORTOR.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "HR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ured državne uprave (the competent county, or City of Zagreb, state administration office with delegated jurisdiction over craft-business matters), reached via PORTOR — Portal Obrtnog registra Republike Hrvatske",
+    "abbreviation": "PORTOR",
+    "url": "https://portor.gov.hr",
+    "operatedBy": {
+      "name": "Ministarstvo gospodarstva (Ministry of Economy)",
+      "abbreviation": "MINGO",
+      "url": "https://mingo.gov.hr",
+      "basis": "Zakon o obrtu (Crafts Act; Narodne novine 143/13, 127/19, 41/20), whose Article 2(4) assigns craft-registry (obrtni registar) administration, including registration, data-change, and termination entries, to the competent county-level (or City of Zagreb) state administration office in whose delegated scope of work craft matters fall. Independently researched this cycle (zakon.hr's consolidated text and the search-engine-cached vlada.gov.hr enactment record); not printed on the form itself, which carries no explicit legal-basis citation line — see VERIFICATION.md."
+    }
+  },
+  "process": {
+    "type": "registration",
+    "language": "hr-HR"
+  },
+  "source": {
+    "url": "https://portor.gov.hr/dokumenti/OR_prijava_za_upis_u_obrtni_registar.doc",
+    "retrievedAt": "2026-07-14",
+    "documentRef": "PRIJAVA za upis u obrtni registar (Application for entry in the craft/trade register)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-14",
+    "verifiedBy": "GovSchema Engineering",
+    "nextReviewBy": "2027-01-14",
+    "notes": "GovSchema Standard Research cycle (GOV-2892), following on from GOV-2883's screening which identified this exact form as a strong, unauthored Business Formation candidate. Independently re-fetched this cycle directly from portor.gov.hr (HTTP 200, application/msword, 141,824 bytes, sha256 cb809f58ad127ef7297d0e8921fda811f50d2524d1005d65cfabbdd7a767303e, matching the figures GOV-2883 recorded exactly). This is a legacy OLE/CFB Microsoft Word 97-2003 binary document (magic bytes d0cf11e0), not a PDF and not an AcroForm/XFA fillable document; independently re-extracted this cycle with the npm `word-extractor` package's `getBody()` method (no pdftotext/antiword/catdoc/olefile available in this environment). Opens Croatia's Business Formation vertical (2 of 6). See VERIFICATION.md for the three-transaction-type modeling decision, the bounded 3-of-18 activities table, and every other disclosed judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering",
+    "assertedAt": "2026-07-14"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "filingCountyOfficeOrZagreb",
+      "label": "Ured državne uprave u (naziv županije ili grad Zagreb)",
+      "type": "string",
+      "required": true,
+      "description": "Name of the county (županija), or the City of Zagreb, whose Ured državne uprave (state administration office) has jurisdiction over this filing.",
+      "sourceRef": "Obrazac, header, 'URED DRŽAVNE UPRAVE U (naziv županije ili grad Zagreb)'"
+    },
+    {
+      "name": "filingServiceBranch",
+      "label": "Služba za gospodarstvo (ispostava)",
+      "type": "string",
+      "required": true,
+      "description": "The branch office (ispostava) of the county/City of Zagreb's Služba za gospodarstvo (economy service) where this application is filed.",
+      "sourceRef": "Obrazac, header, 'SLUŽBA ZA GOSPODARSTVO (ispostava)'"
+    },
+    {
+      "name": "ownerFullNameWithFathersName",
+      "label": "Ime (ime oca) i prezime vlasnika",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's given name, father's given name (a Croatian civil-registry disambiguation convention, mirroring the same pattern used by `hr/porezna-uprava/prijava-poreza-na-dohodak`'s `fullNameAndParentName`), and surname, transcribed as printed on a single blank.",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Ime (ime oca) i prezime vlasnika'"
+    },
+    {
+      "name": "ownerMaidenName",
+      "label": "Djevojačko prezime",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The owner's maiden name, when different from their current surname (e.g. after marriage). Left absent when not applicable.",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Djevojačko prezime'"
+    },
+    {
+      "name": "motherGivenName",
+      "label": "Ime majke",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's mother's given name.",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Ime majke'"
+    },
+    {
+      "name": "motherMaidenName",
+      "label": "Djevojačko prezime majke",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The owner's mother's maiden name, when known/applicable.",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Djevojačko prezime majke'"
+    },
+    {
+      "name": "ownerDateOfBirth",
+      "label": "Datum rođenja",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Datum i mjesto rođenja'"
+    },
+    {
+      "name": "ownerPlaceOfBirth",
+      "label": "Mjesto rođenja",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Datum i mjesto rođenja'"
+    },
+    {
+      "name": "ownerSex",
+      "label": "Spol",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The source form offers only a binary male/female (muški/ženski) checkbox; this schema reflects that as published, not as a design choice.",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Spol: a) muški b) ženski'",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "ownerMbg",
+      "label": "MBG",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The legacy JMBG-style unique master citizen number (matični broj građana), predating the OIB system introduced in 2009. Optional here since applicants who came of age after the OIB's introduction may never have been issued one; the form itself still prints the field.",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'MBG'"
+    },
+    {
+      "name": "ownerOib",
+      "label": "OIB",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The owner's OIB (Osobni identifikacijski broj), Croatia's 11-digit personal identification number. Uses the same fixed-length pattern as `hr/porezna-uprava/prijava-poreza-na-dohodak`'s `oib` field, for jurisdictional consistency.",
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'OIB'",
+      "validation": { "pattern": "^[0-9]{11}$" }
+    },
+    {
+      "name": "ownerOccupation",
+      "label": "Zanimanje",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Obrazac, 'Podaci o vlasniku', 'Zanimanje'"
+    },
+    {
+      "name": "ownerPostalCodeAndOffice",
+      "label": "Poštanski broj i ured",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The owner's residential postal code and delivery post office, transcribed together as printed on a single blank.",
+      "sourceRef": "Obrazac, 'Adresa prebivališta ili boravišta', 'Poštanski broj i ured'"
+    },
+    {
+      "name": "ownerSettlement",
+      "label": "Naselje",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Obrazac, 'Adresa prebivališta ili boravišta', 'Naselje'"
+    },
+    {
+      "name": "ownerStreetAndNumber",
+      "label": "Ulica i broj",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Obrazac, 'Adresa prebivališta ili boravišta', 'Ulica i broj'"
+    },
+    {
+      "name": "ownerMunicipalityOrCity",
+      "label": "Općina / Grad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Obrazac, 'Adresa prebivališta ili boravišta', 'Općina / Grad'"
+    },
+    {
+      "name": "ownerPhone",
+      "label": "Broj telefona",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Obrazac, 'Adresa prebivališta ili boravišta', 'Broj telefona'"
+    },
+    {
+      "name": "ownerMobilePhone",
+      "label": "Broj mobilnog telefona",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Marked optional on the source form with an asterisk.",
+      "sourceRef": "Obrazac, 'Adresa prebivališta ili boravišta', '*Broj mobilnog telefona'"
+    },
+    {
+      "name": "applicationType",
+      "label": "Predmet prijave",
+      "type": "enum",
+      "required": true,
+      "description": "new_registration = Upis obrta (registration of a new craft business); data_change = Promjena podataka (a change-of-data notice for an already-registered craft business); termination = Prestanak obrta (termination of the craft business). All three are equally weighted, first-class options the source form itself presents on one document, gating which of the sub-fields below apply.",
+      "sourceRef": "Obrazac, 'Predmet prijave', 'Upis obrta / Promjena podataka / Prestanak obrta'",
+      "validation": { "enum": ["new_registration", "data_change", "termination"] }
+    },
+    {
+      "name": "registrationStartType",
+      "label": "Upis obrta — s početkom ili bez početka",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "new_registration" },
+      "visibleWhen": { "field": "applicationType", "equals": "new_registration" },
+      "description": "with_start_date = the new craft business begins on a specific date; without_start_date = registration without a start date.",
+      "sourceRef": "Obrazac, 'Predmet prijave', 'Upis obrta — a) s početkom, dana ___ b) bez početka'",
+      "validation": { "enum": ["with_start_date", "without_start_date"] }
+    },
+    {
+      "name": "registrationStartDate",
+      "label": "Datum početka obavljanja obrta",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "registrationStartType", "equals": "with_start_date" },
+      "visibleWhen": { "field": "registrationStartType", "equals": "with_start_date" },
+      "sourceRef": "Obrazac, 'Predmet prijave', 'Upis obrta — a) s početkom, dana ___'"
+    },
+    {
+      "name": "dataChangeDescription",
+      "label": "Promjena podataka (navesti promjenu)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "data_change" },
+      "visibleWhen": { "field": "applicationType", "equals": "data_change" },
+      "description": "Free-text description of the data change being reported for an already-registered craft business.",
+      "sourceRef": "Obrazac, 'Predmet prijave', 'Promjena podataka (navesti promjenu)'"
+    },
+    {
+      "name": "terminationDate",
+      "label": "Prestanak obrta s danom",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "termination" },
+      "visibleWhen": { "field": "applicationType", "equals": "termination" },
+      "sourceRef": "Obrazac, 'Predmet prijave', 'Prestanak obrta s danom'"
+    },
+    {
+      "name": "terminationReason",
+      "label": "Razlog prestanka",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "applicationType", "equals": "termination" },
+      "visibleWhen": { "field": "applicationType", "equals": "termination" },
+      "description": "deregistration = odjava obrta (voluntary deregistration); termination_by_operation_of_law = prestanak po sili Zakona (termination by operation of law).",
+      "sourceRef": "Obrazac, 'Predmet prijave', 'Prestanak obrta — a) odjava obrta b) prestanak po sili Zakona'",
+      "validation": { "enum": ["deregistration", "termination_by_operation_of_law"] }
+    },
+    {
+      "name": "businessName",
+      "label": "Naziv obrta (tvrtka)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Obrazac, 'Podaci o obrtu', 'Naziv obrta (tvrtka)'"
+    },
+    {
+      "name": "businessAbbreviatedName",
+      "label": "Skraćeni naziv obrta (tvrtka)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Obrazac, 'Podaci o obrtu', 'Skraćeni naziv obrta (tvrtka)'"
+    },
+    {
+      "name": "businessPostalCodeAndOffice",
+      "label": "Poštanski broj i ured (sjedište obrta)",
+      "type": "string",
+      "required": true,
+      "description": "The craft business's registered-seat postal code and delivery post office, transcribed together as printed on a single blank.",
+      "sourceRef": "Obrazac, 'Sjedište obrta', 'Poštanski broj i ured'"
+    },
+    {
+      "name": "businessSettlement",
+      "label": "Naselje (sjedište obrta)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Obrazac, 'Sjedište obrta', 'Naselje'"
+    },
+    {
+      "name": "businessStreetAndNumber",
+      "label": "Ulica i broj (sjedište obrta)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Obrazac, 'Sjedište obrta', 'Ulica i broj'"
+    },
+    {
+      "name": "businessMunicipalityOrCity",
+      "label": "Općina / Grad (sjedište obrta)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Obrazac, 'Sjedište obrta', 'Općina / Grad'"
+    },
+    {
+      "name": "businessPhone",
+      "label": "Broj telefona (sjedište obrta)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Obrazac, 'Sjedište obrta', 'Broj telefona'"
+    },
+    {
+      "name": "businessMobilePhone",
+      "label": "Broj mobilnog telefona (sjedište obrta)",
+      "type": "string",
+      "required": false,
+      "description": "Marked optional on the source form with an asterisk.",
+      "sourceRef": "Obrazac, 'Sjedište obrta', '*Broj mobilnog telefona'"
+    },
+    {
+      "name": "businessFax",
+      "label": "Broj faxa",
+      "type": "string",
+      "required": false,
+      "description": "Marked optional on the source form with an asterisk. The owner's own residential address block has no equivalent fax field.",
+      "sourceRef": "Obrazac, 'Sjedište obrta', '*Broj faxa'"
+    },
+    {
+      "name": "businessEmail",
+      "label": "E-mail adresa",
+      "type": "string",
+      "required": false,
+      "description": "Marked optional on the source form with an asterisk.",
+      "sourceRef": "Obrazac, 'Sjedište obrta', '*e-mail adresa'"
+    },
+    {
+      "name": "businessWebsite",
+      "label": "Web adresa",
+      "type": "string",
+      "required": false,
+      "description": "Marked optional on the source form with an asterisk.",
+      "sourceRef": "Obrazac, 'Sjedište obrta', '*Web adresa'"
+    },
+    {
+      "name": "businessTypeCategory",
+      "label": "Vrsta obrta",
+      "type": "enum",
+      "required": true,
+      "description": "non_privileged = nepovlašteni (an unregulated craft, the general case); privileged = povlašteni (a regulated craft requiring a specific licence/concession), in which case the specific privileged category must be named in privilegedTypeDetail.",
+      "sourceRef": "Obrazac, 'Vrsta obrta', 'nepovlašteni / povlašteni ___'",
+      "validation": { "enum": ["non_privileged", "privileged"] }
+    },
+    {
+      "name": "privilegedTypeDetail",
+      "label": "Vrsta obrta — povlašteni (naznaka)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "businessTypeCategory", "equals": "privileged" },
+      "visibleWhen": { "field": "businessTypeCategory", "equals": "privileged" },
+      "sourceRef": "Obrazac, 'Vrsta obrta', 'povlašteni ___'"
+    },
+    {
+      "name": "businessConductType",
+      "label": "Obavljanje obrta",
+      "type": "enum",
+      "required": true,
+      "description": "year_round = tokom cijele godine (conducted year-round); seasonal = sezonski (conducted only during a specific season, with start/end dates given below).",
+      "sourceRef": "Obrazac, 'Obavljanje obrta', 'tokom cijele godine / sezonski'",
+      "validation": { "enum": ["year_round", "seasonal"] }
+    },
+    {
+      "name": "seasonStartDate",
+      "label": "Početni datum perioda",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "businessConductType", "equals": "seasonal" },
+      "visibleWhen": { "field": "businessConductType", "equals": "seasonal" },
+      "sourceRef": "Obrazac, 'Obavljanje obrta', 'sezonski — Početni datum perioda'"
+    },
+    {
+      "name": "seasonEndDate",
+      "label": "Završni datum perioda",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "businessConductType", "equals": "seasonal" },
+      "visibleWhen": { "field": "businessConductType", "equals": "seasonal" },
+      "sourceRef": "Obrazac, 'Obavljanje obrta', 'sezonski — Završni datum perioda'"
+    },
+    {
+      "name": "qualifiedPersonIsOwnerOrPartner",
+      "label": "Stručna osoba — vlasnik/ortak",
+      "type": "boolean",
+      "required": false,
+      "description": "Only relevant if this is a regulated (\"vezani\") craft trade requiring a qualified/professional person; checked if that person is the owner or a business partner. At most one of qualifiedPersonIsOwnerOrPartner / qualifiedPersonIsEmployee may be set — see the exclusivityGroups entry.",
+      "sourceRef": "Obrazac, 'Stručna osoba (ako je obrt vezani)', 'vlasnik/ortak'"
+    },
+    {
+      "name": "qualifiedPersonIsEmployee",
+      "label": "Stručna osoba — djelatnik",
+      "type": "boolean",
+      "required": false,
+      "description": "Only relevant if this is a regulated (\"vezani\") craft trade requiring a qualified/professional person; checked if that person is an employee. At most one of qualifiedPersonIsOwnerOrPartner / qualifiedPersonIsEmployee may be set — see the exclusivityGroups entry.",
+      "sourceRef": "Obrazac, 'Stručna osoba (ako je obrt vezani)', 'djelatnik'"
+    },
+    {
+      "name": "activity1Name",
+      "label": "Naziv djelatnosti 1",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of the paper form's numbered 1-18 'Djelatnosti i stručne osobe obrta' table, bounded to 3 rows in this schema — see VERIFICATION.md.",
+      "sourceRef": "Obrazac, 'Djelatnosti i stručne osobe obrta', red 1, 'Naziv djelatnosti'"
+    },
+    {
+      "name": "activity1QualifiedPerson",
+      "label": "Stručna osoba (djelatnost 1)",
+      "type": "string",
+      "required": false,
+      "description": "The qualified person named for activity 1, when that activity is a regulated craft requiring one.",
+      "sourceRef": "Obrazac, 'Djelatnosti i stručne osobe obrta', red 1, 'Stručna osoba'"
+    },
+    {
+      "name": "activity2Name",
+      "label": "Naziv djelatnosti 2",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of the paper form's numbered 1-18 'Djelatnosti i stručne osobe obrta' table, bounded to 3 rows in this schema — see VERIFICATION.md.",
+      "sourceRef": "Obrazac, 'Djelatnosti i stručne osobe obrta', red 2, 'Naziv djelatnosti'"
+    },
+    {
+      "name": "activity2QualifiedPerson",
+      "label": "Stručna osoba (djelatnost 2)",
+      "type": "string",
+      "required": false,
+      "description": "The qualified person named for activity 2, when that activity is a regulated craft requiring one.",
+      "sourceRef": "Obrazac, 'Djelatnosti i stručne osobe obrta', red 2, 'Stručna osoba'"
+    },
+    {
+      "name": "activity3Name",
+      "label": "Naziv djelatnosti 3",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of the paper form's numbered 1-18 'Djelatnosti i stručne osobe obrta' table, bounded to 3 rows in this schema — see VERIFICATION.md.",
+      "sourceRef": "Obrazac, 'Djelatnosti i stručne osobe obrta', red 3, 'Naziv djelatnosti'"
+    },
+    {
+      "name": "activity3QualifiedPerson",
+      "label": "Stručna osoba (djelatnost 3)",
+      "type": "string",
+      "required": false,
+      "description": "The qualified person named for activity 3, when that activity is a regulated craft requiring one.",
+      "sourceRef": "Obrazac, 'Djelatnosti i stručne osobe obrta', red 3, 'Stručna osoba'"
+    },
+    {
+      "name": "attachedDocumentsDescription",
+      "label": "Uz prijavu prilažem ove isprave i dokaze",
+      "type": "string",
+      "required": false,
+      "description": "Free-text list of the supporting documents and evidence attached to this application. The paper form provides 9 blank lines rather than a predefined checklist; modeled here as a single free-text field.",
+      "sourceRef": "Obrazac, 'Uz prijavu prilažem ove isprave i dokaze'"
+    },
+    {
+      "name": "applicantName",
+      "label": "Ime predlagatelja (ovlaštene osobe)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Name of the applicant (or, where the applicant is not the owner personally, the authorized person) signing this application.",
+      "sourceRef": "Obrazac, closing block, 'Ime i potpis predlagatelja (ovlaštene osobe)'"
+    },
+    {
+      "name": "signaturePlace",
+      "label": "U (mjesto potpisivanja)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Obrazac, closing block, 'U ___, dana ___'"
+    },
+    {
+      "name": "signatureDate",
+      "label": "Dana (datum potpisivanja)",
+      "type": "date",
+      "required": true,
+      "description": "The form itself prints separate blanks for place and date; modeled here as one ISO 8601 date, consistent with this registry's convention elsewhere.",
+      "sourceRef": "Obrazac, closing block, 'U ___, dana ___'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantSignature",
+      "label": "Applicant's (authorized person's) signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Obrazac, closing block, 'Ime i potpis predlagatelja (ovlaštene osobe)' — the form prints a physical signature line with no accompanying typed attestation sentence."
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "newRegistrationExcludesOtherTransactionFields",
+      "when": { "field": "applicationType", "equals": "new_registration" },
+      "requireAbsent": ["dataChangeDescription", "terminationDate", "terminationReason"]
+    },
+    {
+      "id": "dataChangeExcludesOtherTransactionFields",
+      "when": { "field": "applicationType", "equals": "data_change" },
+      "requireAbsent": ["registrationStartType", "registrationStartDate", "terminationDate", "terminationReason"]
+    },
+    {
+      "id": "terminationExcludesOtherTransactionFields",
+      "when": { "field": "applicationType", "equals": "termination" },
+      "requireAbsent": ["dataChangeDescription", "registrationStartType", "registrationStartDate"]
+    },
+    {
+      "id": "yearRoundExcludesSeasonDates",
+      "when": { "field": "businessConductType", "equals": "year_round" },
+      "requireAbsent": ["seasonStartDate", "seasonEndDate"]
+    }
+  ],
+  "exclusivityGroups": [
+    { "id": "qualifiedPersonRole", "fields": ["qualifiedPersonIsOwnerOrPartner", "qualifiedPersonIsEmployee"] }
+  ]
+}
