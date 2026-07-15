@@ -4,7 +4,60 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **492 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **493 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3237, scouted from GOV-3235, "GovSchema
+> Standard Research"): Nepal's Visa vertical opens, bringing Nepal to 4 of
+> 6 verticals**, via `np/doi/residential-visa-application` — the Department
+> of Immigration's "आवासीय भिसाका लागि निवेदन फाराम" (Application Form for
+> Residential Visa), Schedule-4 of the Immigration Rules, 2051 (1994), as
+> amended. Per CATALOG.md's own most recent Nepal entry (GOV-3217), Visa was
+> Nepal's last genuinely open, unscreened vertical (DMV and Taxes already
+> confirmed dead ends by GOV-3078). The Department's own online visa
+> application system (`nepaliport.immigration.gov.np`) is a login-gated
+> wizard with no static fallback, and two general-purpose PDFs linked from
+> the site's own Visa/Download pages turned out, on inspection, not to be
+> visa applications at all (an arrival/departure record-request letter, and
+> an outbound-citizen self-declaration form for Nepalis travelling abroad).
+> The genuine source instead sits inside the Department's own consolidated
+> Immigration Rules PDF (linked from `immigration.gov.np`'s `/rule` page),
+> independently re-fetched fresh this cycle: HTTP 200, `application/pdf`,
+> 1,054,626 bytes, sha256
+> `56481cf965bfd9b9f26d4a9471ec7d65bb736debd69c5a0d7cd643801d1e1875`
+> (re-derived twice, byte-identical both times). A genuine 68-page text-layer
+> PDF with zero AcroForm widgets anywhere (`pdfjs-dist` confirms an empty
+> `getAnnotations()` on every page); pages 36–37 hold Schedule-4, an explicit
+> application form (निवेदन फाराम) addressed to either a Nepali diplomatic
+> mission abroad or the Department's own Director General — distinct from
+> the same PDF's Schedule-6 "Arrival Form for Foreigners" (pages 41–42), a
+> richer but genuinely different genre (a port-of-entry arrival/control
+> record assuming a visa number already exists, not an application for one),
+> left as disclosed backlog. As with `np/donidcr/national-identity-card-application`,
+> the embedded Devanagari text does not extract cleanly through direct text
+> extraction, so the field list and the absence of any required-field marker
+> were confirmed visually via a node-canvas 4x-scale page render plus a
+> 6x-scale targeted crop of Section 10's four alternative visa-basis items
+> (ruling out any checkbox convention). Models 20 `fields[]`, including a
+> `boolean` field for the form's own single-investment-threshold declaration
+> ("invested more than USD 1 million at once") and a merged free-text field
+> for the source's three unlabelled "Other" continuation lines. Requiredness
+> is a disclosed judgment call limited to the applicant's own core identity
+> and passport particulars; `process.language` is set to `ne`, diverging
+> from this registry's other three Nepal schemas (all `en`) since this
+> specific form's two pages carry zero English-language tokens, a more
+> spec-accurate reading of "language tag of the source form" for this
+> document. Review-gate correction: an `applicantSignatureDate` field was
+> added for the plain "मिति :" line beside the applicant's signature,
+> mirroring this registry's established retain-the-date/exclude-the-signature
+> convention (`np/dop/mrp-offline-application-form`,
+> `np/donidcr/national-identity-card-application`) — the original draft
+> had claimed no such field existed on this source, which a targeted
+> render crop showed to be incorrect. 6 conformance fixtures (2 valid, 4 mutation-control) committed
+> under `conformance/np/doi/residential-visa-application/1.0.0/`. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed judgment call. Numerator updated from 492 to 493; Nepal's Visa
+> column flips ✗→✓ in the By Jurisdiction table below, leaving DMV and Taxes
+> (both already confirmed dead ends) as Nepal's only remaining gaps.
 
 > **Update (2026-07-15, GOV-3227): Nigeria's DMV vertical opens, closing
 > Nigeria to full 6/6 coverage** — via `ng/frsc/vehicle-registration`, the
@@ -13531,7 +13584,17 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (50/62 jurisdictions — 81%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (51/62 jurisdictions — 82%)
+
+**Nepal's Visa vertical opens, bringing Nepal to 4 of 6 verticals
+(GOV-3237)**, via `np/doi/residential-visa-application` — the Department of
+Immigration's Schedule-4 "Application Form for Residential Visa" under the
+Immigration Rules, 2051. See the Executive Summary's GOV-3237 update above
+and the document's own VERIFICATION.md for the full sourcing record,
+including the disclosed Schedule-4-vs-Schedule-6 (application-vs-arrival-card)
+genre distinction and every other judgment call. Header recounted directly
+from the By-Jurisdiction table (50 ✓ of 62 rows before this addition, now
+51 ✓ of 62).
 
 **Tanzania's Visa vertical opens, bringing Tanzania to 5 of 6 verticals
 (GOV-3216)** (corrected from this document's original "4 of 6" framing —
@@ -14848,7 +14911,7 @@ now closed.
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **NP** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **NP** | 4 | ✓ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18103,8 +18166,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   disclosed judgment call anchored to the form's own required-documents
   checklist; see the Executive Summary's GOV-3217 update and the document's
   own VERIFICATION.md for the full sourcing record and every disclosed
-  judgment call. Nepal's Visa vertical remains unscreened, open backlog for
-  a future cycle.
+  judgment call. **Visa: authored (GOV-3237, scouted from GOV-3235),
+  bringing Nepal to 4 of 6.** The Department of Immigration's own
+  Schedule-4 "Application Form for Residential Visa" under the Immigration
+  Rules, 2051 — a genuine, unauthenticated, text-layer PDF appendix inside
+  the Department's own consolidated Rules document, distinct from the
+  online visa portal's login-gated wizard and from two other general
+  "Download" PDFs on the same site that turned out not to be visa
+  applications at all — was modelled into 20 `fields[]`, with requiredness a
+  disclosed judgment call limited to the applicant's core identity and
+  passport particulars; see the Executive Summary's GOV-3237 update and the
+  document's own VERIFICATION.md for the full sourcing record, including the
+  disclosed Schedule-4-vs-Schedule-6 application-vs-arrival-card genre
+  distinction. Nepal's DMV and Taxes verticals remain the two confirmed dead
+  ends recorded by GOV-3078.
 
 ---
 
