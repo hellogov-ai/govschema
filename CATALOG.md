@@ -1,10 +1,51 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-14** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-15** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**56 jurisdictions** | **455 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **456 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3026, "GovSchema Standard Research"): Greece's
+> DMV vertical opens (1 of 6, now 3 of 6 overall)**, via
+> `gr/yme/ekdosi-adeias-odigisis-katigorias-a` — Form Α1, the Hellenic
+> Republic's standard "ΑΙΤΗΣΗ - ΥΠΕΥΘΥΝΗ ΔΗΛΩΣΗ" (Application - Sworn
+> Statement) cover form scoped to "ΕΚΔΟΣΗ ΑΔΕΙΑΣ ΟΔΗΓΗΣΗΣ ΚΑΤΗΓΟΡΙΑΣ Α΄
+> (ΑΡΧΙΚΗ Ή ΕΠΕΚΤΑΣΗ)" (initial issuance or extension of a Category A
+> motorcycle driving licence), published by the Υπουργείο Υποδομών και
+> Μεταφορών (Ministry of Infrastructure and Transport) on `yme.gr` and filed
+> with the Διεύθυνση Μεταφορών και Επικοινωνιών of the applicant's regional
+> unit. Greece and Italy were both the least-built-out jurisdictions in the
+> registry (2 of 6 each) with no recent dead-end screening on record; a
+> parallel scouting pass this cycle screened all four of Greece's open
+> verticals. Independently re-fetched this cycle directly from `yme.gr`
+> (HTTP 200, `application/pdf`, 100,699 bytes, sha256
+> `b26c0475ba5bc6a8b35bbb75e89a8f72e84af5d33e29aa989ebfcd05f845c500`,
+> matching the scouting subagent's own reported hash exactly) and
+> independently re-extracted the full 4-page text from scratch via
+> `pdfjs-dist`, reconstructing reading order from each text item's
+> coordinates since `getTextContent()`'s raw item order does not match this
+> form's visual layout. A genuine print-and-hand-fill form (`getAnnotations()`
+> returns zero entries on every page, no AcroForm). Models all 38
+> `fields[]`: a protocol header, the natural-person applicant's identity/
+> parentage/contact data (excluding the form's sibling legal-entity block,
+> structurally inapplicable to a driving-licence procedure), an optional
+> representative-designation block, the two Ν.1599/1986 sworn declarations,
+> and the applicant's chosen response-delivery method — plus 9
+> `documents[]` entries, two of which (`medicalFitnessCertificates`,
+> `existingDrivingLicencePhotocopy`) are gated via `requiredWhen` on the
+> same declaration field in inverse directions, since the form's own text
+> ties both conditions to whether the applicant already holds another
+> driving licence. Greece's Passport (scanned, office-printed-only sample
+> form) and National ID (Akamai-WAF-gated, mandatory in-person biometric
+> enrollment) verticals were confirmed **dead ends** this cycle; Business
+> Formation (AADE's 268-field Δ211 AcroForm, mirrored by the Athens Chamber
+> of Commerce after the AADE domain itself WAF-blocked direct fetch) is a
+> **strong candidate** left as disclosed backlog for a future cycle. 8
+> conformance fixtures (2 valid, 6 mutation-control) committed under
+> `conformance/gr/yme/ekdosi-adeias-odigisis-katigorias-a/1.0.0/`. See the
+> document's own VERIFICATION.md for the full sourcing chain and every
+> disclosed scoping decision.
 
 > **Update (2026-07-14, GOV-3015, "GovSchema Standard Research"): Lithuania's
 > National ID & Civic Documents vertical opens (now 3 of 6 overall)**, via
@@ -9726,7 +9767,12 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (47/56 jurisdictions — 84%)
+### DMV — Vehicle Registration, Licensing, Permits (48/56 jurisdictions — 86%)
+
+> **Update (GOV-3026): Greece's DMV vertical opens**, via
+> `gr/yme/ekdosi-adeias-odigisis-katigorias-a` — see the Executive Summary's
+> GOV-3026 update above and the document's own VERIFICATION.md. Numerator
+> updated from 47 to 48.
 
 > **Update (GOV-3010): Slovakia's DMV vertical opens**, via
 > `sk/policajny-zbor/ziadost-o-udelenie-vodicskeho-opravnenia` — see the
@@ -12873,7 +12919,7 @@ now closed.
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GR** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| **GR** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -15717,6 +15763,59 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   at 3 of 6 verticals** (Taxes, Business Formation, Visa); DMV, Passport,
   and National ID remain confirmed dead ends per GOV-2883's screening —
   none should be re-attempted without a genuinely new source.
+
+- **Greece — Business Formation: scouted, not yet authored (GOV-3026).**
+  AADE's unified registry form **Δ211** ("Δήλωση έναρξης, μεταβολής,
+  διακοπής εργασιών επιχείρησης" — Declaration of Commencement/Modification/
+  Cessation of Business Activity) is a genuine 268-field, 18-page AcroForm
+  PDF. The direct `aade.gr` URL 403s to non-browser fetches, but the
+  identical current version (v0.3, 06/22) is mirrored cleanly by the Athens
+  Chamber of Commerce at `https://acci.gr/wp-content/uploads/2022/11/D211-5.pdf`
+  (HTTP 200, `application/pdf`, 478,029 bytes). Field IDs are numbered by
+  section (1–14 main blocks, with sub-items like `4.2`, `4.3.4`, `7.2`–
+  `7.12`, `9.x`, `10.x`, plus checkboxes). Covers natural persons, legal
+  entities, and entities-under-formation registering with/modifying/ceasing
+  at the Tax Registry — Greece's functional equivalent of a business-
+  formation filing, since the newer ΓΕΜΗ e-one-stop-shop
+  (`eyms.businessportal.gr`) is fully myAADE/taxisnet-SSO-gated for the
+  incorporation step itself. Delegated as a child issue of GOV-3026 rather
+  than authored inline, to keep the parent research cycle's own deliverable
+  scoped to one document.
+- **Italy — Passport: scouted, not yet authored (GOV-3026).** Live fetch of
+  `questure.poliziadistato.it` is WAF-blocked, but the identical official
+  form is retrievable via a 2025-08-07 Wayback Machine snapshot of
+  `https://questure.poliziadistato.it/statics/33/modulo-passaporti-maggiorenni.pdf`
+  (HTTP 200, `application/pdf`, 1,749,585 bytes, sha256
+  `67ef4f41dd8ee5681aab1c1389a11f8608a52c208ddd93f0f3011ef1a7eee384`) — this
+  is **Modello 308** ("Modulo per la richiesta di passaporto per
+  maggiorenni"), Polizia di Stato/Ministero dell'Interno, legal basis Legge
+  21/11/1967 n. 1185 art. 3/3-bis. A static, non-AcroForm PDF with a clean
+  extractable text layer: cognome/nome, spouse's surname, birthplace/
+  birthdate, eye colour, height, residence, marital status, requesting
+  Questura, prior/other passport held, minor children with each parent's
+  data, request type, pickup delegate, and an office-only attestation
+  block — roughly 30-35 fields across 2-3 pages. This overturns this
+  registry's own prior GOV-2382/GOV-2404/GOV-2716 "confirmed dead end"
+  finding for Italy's Passport vertical, which relied solely on a single
+  live-fetch WAF block against the same domain without checking a Wayback
+  fallback. Delegated as a child issue of GOV-3026.
+- **Italy — Visa: scouted, not yet authored (GOV-3026).** Fetched directly,
+  unauthenticated, from the official domain
+  `https://www.esteri.it/mae/Servizi/Stranieri/Formulario_Visto_Nazionale_ING-ITA.pdf`
+  (HTTP 200, `application/pdf`, 283,335 bytes, sha256
+  `eba970bc7eebfde7ed96f61a428172017e31b8586e6dd5effafe35ec41aa4dee`) — the
+  **National Visa Application (D) / Domanda di visto nazionale (D)**,
+  Ministero degli Affari Esteri e della Cooperazione Internazionale,
+  free-of-charge, 3 pages, a genuine text layer (no AcroForm). Follows the
+  EU-harmonized long-stay-visa layout this registry already models for
+  DE/BG/ES/HR/RO, but per this registry's own established precedent
+  (multiple prior "duplicate" findings for that template were reversed —
+  ES/GOV-1861, HR/GOV-2902 — once diffed field-by-field), it should be
+  diffed rather than assumed duplicate before authoring: it visibly carries
+  Italy-specific content (an Art. 331 c.p.p. criminal-referral clause, a
+  Garante per la Protezione dei Dati Personali citation, an EU/EEA/CH-
+  family-member relationship block at item 30, a Schengen-first-entry-state
+  field) across 32 numbered items. Delegated as a child issue of GOV-3026.
 
 ---
 
