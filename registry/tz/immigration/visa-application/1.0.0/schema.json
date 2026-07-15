@@ -1,0 +1,690 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tz/immigration/visa-application",
+  "version": "1.0.0",
+  "title": "Tanzania — Visa Application Form (Embassy of the United Republic of Tanzania)",
+  "description": "The United Republic of Tanzania's standard \"Visa Application Form\", a genuine fillable AcroForm PDF served directly by the Embassy of the United Republic of Tanzania in Washington, D.C. and used at Tanzanian diplomatic missions abroad to apply for a Travel (ordinary) or Transit visa. Opens Tanzania's Visa vertical (the country's fourth schema in this registry, following Business Formation via BRELA Form 14a, National ID & Civic Documents via NIDA Form 2A, and Taxes via TRA ITX201.01-E; Tanzania now stands at 4 of 6 verticals). This is a whole-of-form schema: a fixed-layout, non-repeating, 2-page form covering the applicant's identity/passport particulars, the visa type/purpose/duration/number-of-entries requested, current residential and contact details, employment, travel-agent/tour-operator details, planned arrival/departure and in-country address, funding source, a bounded 3-row repeating group for minors travelling on the applicant's own passport, a transit-specific entry-permit question, and the applicant's dated declaration. It excludes the page 1 \"FOR OFFICIAL USE ONLY\" box (ERV No., Draft No., Date, Bank Name — none of which are fillable AcroForm fields, and the fillable \"VISA NO.\" field inside the same box, which is consulate-assigned rather than applicant-supplied) and the page 2 \"For official use only\" table (Station, Type of visa issued, Visa sticker No, Processing Officer, Authorizing officer, Date), all staff-assigned intake/adjudication data the applicant never supplies; it also excludes two uncaptioned stray AcroForm text widgets disclosed in VERIFICATION.md (one carrying pdfjs-dist's literal placeholder alternative text \"undefined\") that correspond to no printed label anywhere on the form. The declaration's wet-ink `Signature` widget (a genuine PDF `/FT /Sig` field, not a text field) is modelled as a `documents[]` attestation entry rather than a scalar field, consistent with this registry's treatment of signature lines. This document describes the form only; it does not submit anything to the Government of Tanzania on an applicant's behalf, and does not imply endorsement by the United Republic of Tanzania, its Ministry of Home Affairs, its Immigration Department, or its Embassy in Washington, D.C. GovSchema is an independent, non-profit standards body.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration Department",
+    "abbreviation": "Immigration",
+    "url": "https://www.immigration.go.tz"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.us.tzembassy.go.tz/uploads/forms/Visa_Application_Form_fillable.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "\"Visa Application Form\" (Embassy of the United Republic of Tanzania, Washington, D.C.), 2-page fillable AcroForm PDF."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3216 (\"GovSchema Standard Research\" cycle). Opens Tanzania's Visa vertical (Tanzania's fourth schema, following GOV-3113 (BRELA Form 14a, Business Formation), GOV-3152 (NIDA Form 2A, National ID), and GOV-3159 (TRA ITX201.01-E, Taxes); Tanzania now stands at 4 of 6 verticals). Independently re-fetched the primary source directly with a plain `curl` (no browser User-Agent, session, or referrer needed): HTTP 200, `Content-Type: application/pdf`, `Content-Length` 1,521,186 bytes, sha256 `daff7c35a97eb9a9e5fd14a21952bbc914b958cb6934c0d87271cbcc7ef57218`, genuine `%PDF-1.6` magic bytes. No login/CAPTCHA/WAF gate encountered. Cross-checked (label/structure verification only, not a canonical source) against a non-fillable, scanned mirror hosted by the Immigration Department itself (`https://www.immigration.go.tz/index.php/application-and-declaration-forms?download=16%3Avisa-application-form`): HTTP 200, `application/pdf`, 572,504 bytes, sha256 `5e44563cce176d4a764426ed0ddb5959619c9f7388a4fe622e623805300be8e8` — a genuinely different, smaller, scanned/flattened edition of the same form (confirmed by visual inspection of a node-canvas render), used only to corroborate that every section modelled below is the Immigration Department's own current form design, not an embassy-specific variant.\n\n`pdfjs-dist` 3.11.174 (installed standalone in a scratch directory for this task, **not** added as a repository dependency) confirmed a genuine AcroForm: `getAnnotations()` returned 44 Widget annotations on page 1 and 38 on page 2 (82 total), plus `getFieldObjects()` confirming 80 distinct fully-qualified field names (two names — `Diplomatic` and `Transit` — are each shared, at the underlying PDF level, by two visually and semantically distinct checkboxes; see Scope decision 1 below). Every widget's `fieldName`/`alternativeText`/`rect` was cross-correlated against a full `getTextContent()` extraction of both pages (position-sorted by transform x/y) and against 3x-scale node-canvas renders of every section, so every field below is grounded in both the underlying AcroForm dictionary and the printed page a human applicant actually sees.\n\n**Duplicate-field-name defect (disclosed, not reproduced).** `getFieldObjects()` shows the literal PDF field `Diplomatic` backs two checkboxes at different page 1 locations — the \"Purpose of Visa\" grid's \"Diplomatic\" option and the \"Type of Passport\" row's \"Diplomatic\" option — and the literal field `Transit` likewise backs both the header \"Type of Visa Requested: Transit Visa\" checkbox and the \"Purpose of Visa\" grid's \"Transit\" option. In an actual PDF viewer, ticking either box sharing a name ticks both (they are the same AcroForm field), which is almost certainly an authoring defect rather than intentional linkage — a diplomatic-passport holder is not necessarily requesting a diplomatic-purpose visa, and a transit-visa applicant is not necessarily also selecting \"Transit\" as their purpose (the grid already offers \"Transit\" as one of twelve otherwise-independent purpose categories). This schema models the four checkboxes as four independent boolean fields (`visaTypeTransit` / `purposeOfVisaTransit`, `purposeOfVisaDiplomatic` / `typeOfPassportDiplomatic`) rather than collapsing pairs to match the source's accidental field-sharing, since a form-filling agent must be able to answer these as the distinct questions they visually are.\n\n**Purpose-of-Visa grid, visually re-confirmed.** The \"Purpose of Visa\" section prints a 4-row x 3-column checkbox grid. Read row-by-row from the 3x-scale render: row 1 = Leisure, Holiday / Business / Various; row 2 = Visiting friends, relatives / Study / Diplomatic; row 3 = Mission / Transit / Official; row 4 = Meeting, Conference / Health Treatment / Same day visitor. \"Mission\", \"Diplomatic\", and \"Official\" are genuinely three separate, independently-checkable single-word category checkboxes (confirmed visually, not a mis-split of a single \"Diplomatic Mission\" label — each sits in its own grid cell with its own checkbox to its left) — reproduced as printed rather than merged or renamed. The underlying widget named `Others` backs the visually-printed \"Business\" checkbox (another field-name/visible-label mismatch, disclosed rather than silently propagated as a misleading schema field name `others`).\n\n**Two uncaptioned stray text widgets excluded.** (a) A full-width text widget (internal name `days Max 90`, tooltip \"days (Max. 90)\") sits on its own blank line directly beneath the labelled \"Requested duration of stay: ___ days (Max. 90)\" line; the 3x-scale render confirms this second line carries no printed caption of its own — a stray underline turned into a fillable widget, most likely copy-paste residue from the same authoring pass that produced the `Others`/`Diplomatic`/`Transit` mismatches above. (b) A small text widget named `undefined_2` (pdfjs-dist's literal reported `alternativeText`: \"undefined\", the Adobe Acrobat default for an unnamed tooltip) sits at the tail end of the \"Date Issued: ___ Valid Until: ___\" line, again with no printed caption of its own. Both are excluded from `fields[]` as artifacts rather than invented as guessed data points.\n\n**Two-line continuation fields collapsed to one schema field each, not modelled as two.** Three pairs of widgets carry bracketed `[1]`/`[2]` (or unbracketed ` 1`/` 2`) tooltip suffixes and are vertically stacked directly beneath one another with no intervening printed caption: `First Names in Full [1]`/`[2]` (page 1) and `Current Address [1]`/`[2]` (page 2) are each modelled as one field (`firstNamesInFull`, `currentAddress`) since they are plainly one answer's overflow onto a second printed line, not two distinct questions. A third pair is a genuine field-naming artifact rather than a clean continuation: the widget named `ProfessionOccupation 2` sits, per the render, directly beneath the `Employer Address` widget (not beneath `ProfessionOccupation 1`, which has no second line of its own) — i.e. it is visually and positionally the *Employer Address* field's overflow line, mislabelled internally with a copy-pasted `ProfessionOccupation` prefix. It is modelled as part of `employerAddress`, not `professionOccupation`, per the render rather than the internal name.\n\n**Funding-source line has only one dedicated blank.** \"Budge [sic] available for your stay: Cash $/___ Credit card Travelers cheques\" prints three funding methods but the render confirms only \"Cash $/___\" has its own blank; \"Credit card\" and \"Travelers cheques\" print as plain words with no checkbox or blank beside either. A separate full-width blank line immediately below (internal widget name `Credit card`) is the only remaining fillable space on this row; modelled as `fundingAvailableOther`, described as covering the credit-card/travellers-cheques methods for which the form provides no dedicated field of their own.\n\n**Minors table is \"Minors Travelling in Applicant's Passport\", not general accompanying persons.** The page 2 heading directly above the 3-row Name(s)/Sex/Year of birth grid reads \"Minors Travelling in Applicants' Passport:\" — narrower in scope than a general accompanying-persons list. The grid's own row count (3, confirmed by the render, matching the 3 sets of `Names`/`Sex`/`Year of birth` widgets, `_2`/`_3` suffixed) is modelled as a bounded 3-slot repeating group (`minor1`.`minor3`), per this registry's established bounded-repeating-group convention, not an invented unbounded array. This section's `Sex` column carries no `(M/F)` instruction of its own (unlike the main applicant `Sex (M/F)` field higher up page 1), so `minorNSex` is modelled as free text rather than an invented `M`/`F` enum.\n\n**No printed required-field marker exists anywhere on this form.** A programmatic scan of every text item on both pages for a `*` glyph found exactly one instance — the \"(* not for transit visa)\" footnote beside the \"Multiple\" entries checkbox, which qualifies that option's applicability, not requiredness. Every other blank/checkbox on the form is presented identically with no legend distinguishing required from optional. Requiredness below is therefore asserted from context, following this registry's established practice for forms with no such marker (see `uy/mrree/formulario-unificado-de-visas` judgment call 4; `do/mirex/visa-application` scope decision 1): core identity/passport/current-location/contact/purpose fields are modelled `required: true`; fields the form itself frames as conditional, supplementary, or contingent on an unfilled gate elsewhere (postal code, fax, employer address, travel-agent name, funding-source detail, the minors table, the transit entry-permit block) are modelled optional.\n\n**Transit entry-permit Yes/No pair collapsed to one boolean, corrected during independent re-verification.** The \"In case of Transit: Do you have an entry permit for the final country of destination?\" question is printed as two independent checkboxes (\"No\"/\"Yes\"), and an initial pass modelled both as separate boolean fields plus an `exclusivityGroups` entry. On review this was corrected to a single boolean field (`hasEntryPermitForFinalDestination`, `requiredWhen` gated on `visaTypeTransit`), matching this registry's own established convention for a printed Yes/No checkbox pair mapping to one underlying question — see `us/uscis/petition-alien-relative-i130` VERIFICATION.md's identical 'structural interpretation of the source's explicit business rule, not a literal 1:1 field transcription' precedent, and this registry's many collapsed Yes/No-checkbox-to-single-boolean fields elsewhere (e.g. `au/ato/tax-file-number-application`'s `authoriseSendTfnToDva`). This is a different situation from the Diplomatic/Transit *duplicate PDF field name* defect above, which spans two visually and semantically distinct printed questions and is deliberately not collapsed.\n\nConformance run: 2 valid mock scenarios (a single-entry Travel-visa leisure applicant; a single-entry Transit-visa applicant answering the transit-specific entry-permit question with an accompanying minor) plus 7 mutation-control fixtures (a missing statically-required field; an invalid date format; an invalid `sex` enum value; an invalid `emailAddress` pattern; a missing conditional `otherTravelDocumentSpecify` field when `typeOfPassportOtherTravelDocument` is true; a missing conditional `hasEntryPermitForFinalDestination` field when `visaTypeTransit` is true; a missing `declarationCertification` attestation) committed under `conformance/tz/immigration/visa-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`/`documents[]`/`exclusivityGroups`, discarded after use, not committed) ran all 9: both valid scenarios at 0 errors, all 7 mutation-control fixtures at exactly 1 error each. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (ajv 2020-12 against spec/v0.3), individually and as part of the full registry run. `node tools/verify-sources.mjs` clean on this document's changed files. `npm run build-index` re-run in `tools/govschema-client/` to regenerate `registry-index.json`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "visaTypeTravel",
+      "label": "Type of Visa Requested: Travel Visa",
+      "type": "boolean",
+      "required": false,
+      "description": "One of two mutually-exclusive visa-type options (see exclusivityGroups). The underlying AcroForm widget's own tooltip (\"Ordinary\") is a copy-paste artifact from elsewhere in the form; the printed label is \"Travel Visa\".",
+      "sourceRef": "Page 1 header: \"Type of Visa Requested: [ ] Travel Visa   [ ] Transit Visa\""
+    },
+    {
+      "name": "visaTypeTransit",
+      "label": "Type of Visa Requested: Transit Visa",
+      "type": "boolean",
+      "required": false,
+      "description": "See visaTypeTravel for the mutual-exclusivity note. At the underlying PDF level this checkbox shares its AcroForm field name (\"Transit\") with the unrelated \"Purpose of Visa: Transit\" checkbox further down the page — a source field-naming defect disclosed in this document's verification notes and deliberately not reproduced; the two are modelled as independent fields (visaTypeTransit vs purposeOfVisaTransit).",
+      "sourceRef": "Page 1 header: \"Type of Visa Requested: [ ] Travel Visa   [ ] Transit Visa\""
+    },
+    {
+      "name": "surnameOrFamilyName",
+      "label": "Surname or Family Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Surname or Family Name (Mr./Mrs./Miss/Ms/Dr./Prof.)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "firstNamesInFull",
+      "label": "First Names in Full",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The printed blank spans two lines (the AcroForm carries two widgets, tooltips \"First Names in Full [1]\"/\"[2]\", stacked with no intervening caption), modelled here as one field for the applicant's full given name(s).",
+      "sourceRef": "Page 1: \"First Names in Full\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1: \"Date of Birth (DD/MM/YYYY)\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "A text blank with an explicit \"(M/F)\" instruction, not a checkbox pair; modelled as an enum of the two values the form itself instructs.",
+      "sourceRef": "Page 1: \"Sex (M/F)\"",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Place of Birth:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Country of Birth\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "presentNationality",
+      "label": "Present Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Present Nationality:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nationalityAtBirth",
+      "label": "Nationality at Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1: \"Nationality at Birth:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "purposeOfVisaLeisureHoliday",
+      "label": "Purpose of Visa: Leisure, Holiday",
+      "type": "boolean",
+      "required": false,
+      "description": "One of twelve mutually-exclusive purpose-of-visa options printed as a 4-row x 3-column checkbox grid (see exclusivityGroups).",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 1 col 1: \"Leisure, Holiday\""
+    },
+    {
+      "name": "purposeOfVisaBusiness",
+      "label": "Purpose of Visa: Business",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note. The underlying AcroForm widget's own field name is \"Others\", a mismatch with the printed \"Business\" label disclosed in this document's verification notes; not reproduced as a misleading schema field name.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 1 col 2: \"Business\""
+    },
+    {
+      "name": "purposeOfVisaVarious",
+      "label": "Purpose of Visa: Various",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 1 col 3: \"Various\""
+    },
+    {
+      "name": "purposeOfVisaVisitingFriendsRelatives",
+      "label": "Purpose of Visa: Visiting friends, relatives",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 2 col 1: \"Visiting friends, relatives\""
+    },
+    {
+      "name": "purposeOfVisaStudy",
+      "label": "Purpose of Visa: Study",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 2 col 2: \"Study\""
+    },
+    {
+      "name": "purposeOfVisaDiplomatic",
+      "label": "Purpose of Visa: Diplomatic",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note. At the underlying PDF level this checkbox shares its AcroForm field name (\"Diplomatic\") with the unrelated \"Type of Passport: Diplomatic\" checkbox further down the page — a source field-naming defect disclosed in this document's verification notes and deliberately not reproduced; the two are modelled as independent fields (purposeOfVisaDiplomatic vs typeOfPassportDiplomatic). Confirmed by 3x-scale render to be a genuine, independent, single-word category checkbox, not a mis-split half of a \"Diplomatic Mission\" label.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 2 col 3: \"Diplomatic\""
+    },
+    {
+      "name": "purposeOfVisaMission",
+      "label": "Purpose of Visa: Mission",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note. Confirmed by 3x-scale render to be a genuine, independent, single-word category checkbox in its own grid cell (row 3, column 1), not a continuation of \"Diplomatic\" (row 2, column 3).",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 3 col 1: \"Mission\""
+    },
+    {
+      "name": "purposeOfVisaTransit",
+      "label": "Purpose of Visa: Transit",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note. At the underlying PDF level this checkbox shares its AcroForm field name (\"Transit\") with the unrelated \"Type of Visa Requested: Transit Visa\" checkbox higher up the page — see visaTypeTransit.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 3 col 2: \"Transit\""
+    },
+    {
+      "name": "purposeOfVisaOfficial",
+      "label": "Purpose of Visa: Official",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 3 col 3: \"Official\""
+    },
+    {
+      "name": "purposeOfVisaMeetingConference",
+      "label": "Purpose of Visa: Meeting, Conference",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 4 col 1: \"Meeting, Conference\""
+    },
+    {
+      "name": "purposeOfVisaHealthTreatment",
+      "label": "Purpose of Visa: Health Treatment",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 4 col 2: \"Health Treatment\""
+    },
+    {
+      "name": "purposeOfVisaSameDayVisitor",
+      "label": "Purpose of Visa: Same day visitor",
+      "type": "boolean",
+      "required": false,
+      "description": "See purposeOfVisaLeisureHoliday for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Purpose of Visa\" grid, row 4 col 3: \"Same day visitor\""
+    },
+    {
+      "name": "requestedNumberOfEntriesSingle",
+      "label": "Requested Number of Entries: Single",
+      "type": "boolean",
+      "required": false,
+      "description": "One of two mutually-exclusive entry-count options (see exclusivityGroups).",
+      "sourceRef": "Page 1: \"Requested Number of Entries: [ ] Single   [ ] Multiple*\""
+    },
+    {
+      "name": "requestedNumberOfEntriesMultiple",
+      "label": "Requested Number of Entries: Multiple",
+      "type": "boolean",
+      "required": false,
+      "description": "See requestedNumberOfEntriesSingle for the mutual-exclusivity note. The form's own footnote reads \"(* not for transit visa)\" — this option is not applicable when visaTypeTransit is selected.",
+      "sourceRef": "Page 1: \"Requested Number of Entries: [ ] Single   [ ] Multiple*\" / \"(* not for transit visa)\""
+    },
+    {
+      "name": "requestedDurationOfStayDays",
+      "label": "Requested duration of stay (days)",
+      "type": "integer",
+      "required": true,
+      "description": "The form itself caps this at 90 days: \"Requested duration of stay: ___ days (Max. 90)\".",
+      "sourceRef": "Page 1: \"Requested duration of stay: ___ days (Max. 90)\"",
+      "validation": { "minimum": 1, "maximum": 90 }
+    },
+    {
+      "name": "typeOfPassportOrdinary",
+      "label": "Type of Passport: Ordinary",
+      "type": "boolean",
+      "required": false,
+      "description": "One of four mutually-exclusive passport-type options (see exclusivityGroups).",
+      "sourceRef": "Page 1: \"Type of Passport: [ ] Ordinary [ ] Diplomatic [ ] Service [ ] Other Travel Document (Please specify)\""
+    },
+    {
+      "name": "typeOfPassportDiplomatic",
+      "label": "Type of Passport: Diplomatic",
+      "type": "boolean",
+      "required": false,
+      "description": "See typeOfPassportOrdinary for the mutual-exclusivity note. At the underlying PDF level this checkbox shares its AcroForm field name (\"Diplomatic\") with the unrelated \"Purpose of Visa: Diplomatic\" checkbox higher up the page — see purposeOfVisaDiplomatic.",
+      "sourceRef": "Page 1: \"Type of Passport: [ ] Ordinary [ ] Diplomatic [ ] Service [ ] Other Travel Document (Please specify)\""
+    },
+    {
+      "name": "typeOfPassportService",
+      "label": "Type of Passport: Service",
+      "type": "boolean",
+      "required": false,
+      "description": "See typeOfPassportOrdinary for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Type of Passport: [ ] Ordinary [ ] Diplomatic [ ] Service [ ] Other Travel Document (Please specify)\""
+    },
+    {
+      "name": "typeOfPassportOtherTravelDocument",
+      "label": "Type of Passport: Other Travel Document",
+      "type": "boolean",
+      "required": false,
+      "description": "See typeOfPassportOrdinary for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Type of Passport: ... [ ] Other Travel Document (Please specify)\""
+    },
+    {
+      "name": "otherTravelDocumentSpecify",
+      "label": "Other Travel Document (please specify)",
+      "type": "string",
+      "required": false,
+      "description": "The blank line printed immediately beneath the Type of Passport checkbox row, positioned after \"(Please specify)\"; required only when typeOfPassportOtherTravelDocument is selected.",
+      "sourceRef": "Page 1: \"Other Travel Document (Please specify) __\" blank line",
+      "requiredWhen": { "field": "typeOfPassportOtherTravelDocument", "equals": true },
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1: \"Passport Number:\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "passportDateIssued",
+      "label": "Date Issued",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1: \"Date Issued:\""
+    },
+    {
+      "name": "passportValidUntil",
+      "label": "Valid Until",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1: \"Valid Until:\""
+    },
+    {
+      "name": "passportIssuedAt",
+      "label": "Issued At",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1: \"Issued At\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "passportIssuingAuthority",
+      "label": "Issuing Authority",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1: \"Issuing Authority\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "maritalStatusSingle",
+      "label": "Marital Status: Single",
+      "type": "boolean",
+      "required": false,
+      "description": "One of five mutually-exclusive marital-status options (see exclusivityGroups).",
+      "sourceRef": "Page 1: \"Marital Status (Mark): [ ] Single [ ] Married [ ] Divorced [ ] Widow (er) [ ] Legally Separated\""
+    },
+    {
+      "name": "maritalStatusMarried",
+      "label": "Marital Status: Married",
+      "type": "boolean",
+      "required": false,
+      "description": "See maritalStatusSingle for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Marital Status (Mark): [ ] Single [ ] Married [ ] Divorced [ ] Widow (er) [ ] Legally Separated\""
+    },
+    {
+      "name": "maritalStatusDivorced",
+      "label": "Marital Status: Divorced",
+      "type": "boolean",
+      "required": false,
+      "description": "See maritalStatusSingle for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Marital Status (Mark): [ ] Single [ ] Married [ ] Divorced [ ] Widow (er) [ ] Legally Separated\""
+    },
+    {
+      "name": "maritalStatusWidowed",
+      "label": "Marital Status: Widow(er)",
+      "type": "boolean",
+      "required": false,
+      "description": "See maritalStatusSingle for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Marital Status (Mark): ... [ ] Widow (er) ...\""
+    },
+    {
+      "name": "maritalStatusLegallySeparated",
+      "label": "Marital Status: Legally Separated",
+      "type": "boolean",
+      "required": false,
+      "description": "See maritalStatusSingle for the mutual-exclusivity note.",
+      "sourceRef": "Page 1: \"Marital Status (Mark): ... [ ] Legally Separated\""
+    },
+    {
+      "name": "currentAddress",
+      "label": "Current Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The printed blank spans two lines (the AcroForm carries two widgets, tooltips \"Current Address [1]\"/\"[2]\", stacked with no intervening caption), modelled here as one field.",
+      "sourceRef": "Page 2: \"Current Address:\"",
+      "validation": { "maxLength": 400 }
+    },
+    {
+      "name": "postalCode",
+      "label": "Postal code",
+      "type": "string",
+      "required": false,
+      "description": "Not required: not every country's postal system applies to every applicant's current address.",
+      "sourceRef": "Page 2: \"Postal code:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2: \"City:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "telephoneNo",
+      "label": "Telephone No",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2: \"Telephone No:\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "faxNo",
+      "label": "Fax No",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: a fax number is a legacy contact channel most applicants no longer have.",
+      "sourceRef": "Page 2: \"Fax No:\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "emailAddress",
+      "label": "E-mail Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2: \"E-mail Address:\"",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 150 }
+    },
+    {
+      "name": "professionOccupation",
+      "label": "Profession/Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2: \"Profession/Occupation:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "employerAddress",
+      "label": "Employer Address",
+      "type": "string",
+      "required": false,
+      "description": "Not required: an unemployed, retired, or self-funded applicant has no employer to declare and the form provides no separate \"none\" option. The printed blank spans two lines; the AcroForm's second widget is internally named \"ProfessionOccupation 2\" (a copy-paste naming artifact from the field above it) but is positioned, per the rendered page, directly beneath Employer Address rather than beneath Profession/Occupation — modelled here as this field's continuation, not professionOccupation's.",
+      "sourceRef": "Page 2: \"Employer Address:\"",
+      "validation": { "maxLength": 400 }
+    },
+    {
+      "name": "nameOfTravelAgentTourOperator",
+      "label": "Name of Travel Agent/Tour Operator",
+      "type": "string",
+      "required": false,
+      "description": "Not required: only applicable to an applicant travelling through a travel agent or tour operator.",
+      "sourceRef": "Page 2: \"Name of Travel Agent/Tour Operator\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "arrivalDatesInTanzania",
+      "label": "Arrival Date(s) in Tanzania",
+      "type": "string",
+      "required": true,
+      "description": "Modelled as free text, not a single calendar date, since the form's own label is plural (\"Date(s)\") and the printed blank is short enough only for a single trip's arrival date in practice, but the label itself does not foreclose a date range.",
+      "sourceRef": "Page 2: \"Arrival Date(s) in Tanzania:\"",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "departureDatesFromTanzania",
+      "label": "Departure Date(s) from Tanzania",
+      "type": "string",
+      "required": true,
+      "description": "See arrivalDatesInTanzania for the free-text-vs-date reasoning.",
+      "sourceRef": "Page 2: \"Departure Date(s) from Tanzania:\"",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "physicalAddressWhileInTanzania",
+      "label": "Your physical address while in Tanzania",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form itself glosses this as \"(Name of hotel(s), tour operator(s), person(s) or organization(s) visited)\".",
+      "sourceRef": "Page 2: \"Your physical address while in Tanzania: ... (Name of hotel(s), tour operator(s), person(s) or organization(s) visited)\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "fundingAvailableCash",
+      "label": "Budget available for your stay: Cash",
+      "type": "string",
+      "required": false,
+      "description": "Not required: only one of the three printed funding methods (cash, credit card, travelers cheques) need apply to any given applicant.",
+      "sourceRef": "Page 2: \"Budge [sic] available for your stay: Cash $/___\"",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "fundingAvailableOther",
+      "label": "Budget available for your stay: Credit card / Travelers cheques",
+      "type": "string",
+      "required": false,
+      "description": "The form prints \"Credit card\" and \"Travelers cheques\" as plain words on the same line as \"Cash $/___\" with no dedicated blank or checkbox of their own (confirmed by 3x-scale render); the only remaining fillable space is a full-width blank line immediately below (the AcroForm's own internal name for this widget is \"Credit card\"), modelled here as covering both methods since the source provides no way to distinguish which of the two an amount belongs to.",
+      "sourceRef": "Page 2: blank line beneath \"Budge available for your stay: Cash $/___ Credit card Travelers cheques\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "minor1Name",
+      "label": "Minor travelling in applicant's passport 1: Name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "\"Minors Travelling in Applicant's Passport\" prints a bounded 3-row table (3 sets of Name(s)/Sex/Year of birth widgets, confirmed by render), not an open-ended list; flattened here to minor1..minor3. Not required: an applicant with no minors on their own passport leaves the whole table blank.",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 1, \"Name(s):\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "minor1Sex",
+      "label": "Minor travelling in applicant's passport 1: Sex",
+      "type": "string",
+      "required": false,
+      "description": "Unlike the main applicant's \"Sex (M/F)\" field, this column carries no (M/F) instruction of its own; modelled as free text rather than an invented enum. Expected to be filled in whenever minor1Name is filled in, but not machine-gated with requiredWhen, since minor1Name is itself optional and absent (not empty-string) when unused.",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 1, \"Sex\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "minor1YearOfBirth",
+      "label": "Minor travelling in applicant's passport 1: Year of birth",
+      "type": "integer",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Expected to be filled in whenever minor1Name is filled in; not machine-gated, for the same reason as minor1Sex.",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 1, \"Year of birth\""
+    },
+    {
+      "name": "minor2Name",
+      "label": "Minor travelling in applicant's passport 2: Name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 2, \"Name(s):\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "minor2Sex",
+      "label": "Minor travelling in applicant's passport 2: Sex",
+      "type": "string",
+      "required": false,
+      "description": "Expected to be filled in whenever minor2Name is filled in; not machine-gated, for the same reason as minor1Sex.",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 2, \"Sex\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "minor2YearOfBirth",
+      "label": "Minor travelling in applicant's passport 2: Year of birth",
+      "type": "integer",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Expected to be filled in whenever minor2Name is filled in; not machine-gated, for the same reason as minor1Sex.",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 2, \"Year of birth\""
+    },
+    {
+      "name": "minor3Name",
+      "label": "Minor travelling in applicant's passport 3: Name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 3, \"Name(s):\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "minor3Sex",
+      "label": "Minor travelling in applicant's passport 3: Sex",
+      "type": "string",
+      "required": false,
+      "description": "Expected to be filled in whenever minor3Name is filled in; not machine-gated, for the same reason as minor1Sex.",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 3, \"Sex\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "minor3YearOfBirth",
+      "label": "Minor travelling in applicant's passport 3: Year of birth",
+      "type": "integer",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Expected to be filled in whenever minor3Name is filled in; not machine-gated, for the same reason as minor1Sex.",
+      "sourceRef": "Page 2: \"Minors Travelling in Applicants' Passport:\" row 3, \"Year of birth\""
+    },
+    {
+      "name": "hasEntryPermitForFinalDestination",
+      "label": "In case of Transit: Do you have an entry permit for the final country of destination?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "visaTypeTransit", "equals": true },
+      "description": "The source prints this as two independent checkboxes ('No' and 'Yes') rather than a single field; collapsed into one boolean per this registry's established convention for a printed Yes/No checkbox pair mapping to one underlying question (see us/uscis/petition-alien-relative-i130 VERIFICATION.md for the same 'structural interpretation, not literal 1:1 transcription' precedent). The question's own text scopes it to transit applicants ('In case of Transit'), directly supporting the requiredWhen gate on visaTypeTransit.",
+      "sourceRef": "Page 2: \"In case of Transit: Do you have an entry permit for the final country of destination? No [ ] Yes [ ]\""
+    },
+    {
+      "name": "finalDestinationEntryPermitValidUntil",
+      "label": "Entry permit for final country of destination: Valid Until",
+      "type": "date",
+      "required": false,
+      "description": "Required only when hasEntryPermitForFinalDestination is true.",
+      "sourceRef": "Page 2: \"Valid Until ___\" (immediately beneath the entry-permit Yes/No question)",
+      "requiredWhen": { "field": "hasEntryPermitForFinalDestination", "equals": true }
+    },
+    {
+      "name": "signingDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2: \"I hereby declare that the information stated above is true and correct: Date: ___ Place: ___ Signature ___\""
+    },
+    {
+      "name": "signingPlace",
+      "label": "Place",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2: \"I hereby declare that the information stated above is true and correct: Date: ___ Place: ___ Signature ___\"",
+      "validation": { "maxLength": 100 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportPhotographs",
+      "label": "2 passport-size photographs (3.5cm x 4.5cm)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": ["image/jpeg", "image/png"]
+      },
+      "sourceRef": "Page 1, right margin box: \"2 Passport Size Photograph, Size:3.5cmx4.5cm, Paste one Photograph\""
+    },
+    {
+      "id": "declarationCertification",
+      "label": "Declaration that the information stated is true and correct",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I hereby declare that the information stated above is true and correct",
+      "sourceRef": "Page 2, beside the printed declaration line: \"I hereby declare that the information stated above is true and correct: Date: ___ Place: ___ Signature ___\". The underlying AcroForm's \"Signature\" widget is a genuine PDF /FT /Sig field, not a text field; modelled here as an attestation document rather than a scalar field."
+    }
+  ],
+  "exclusivityGroups": [
+    { "id": "visa_type_requested", "fields": ["visaTypeTravel", "visaTypeTransit"] },
+    {
+      "id": "purpose_of_visa",
+      "fields": [
+        "purposeOfVisaLeisureHoliday",
+        "purposeOfVisaBusiness",
+        "purposeOfVisaVarious",
+        "purposeOfVisaVisitingFriendsRelatives",
+        "purposeOfVisaStudy",
+        "purposeOfVisaDiplomatic",
+        "purposeOfVisaMission",
+        "purposeOfVisaTransit",
+        "purposeOfVisaOfficial",
+        "purposeOfVisaMeetingConference",
+        "purposeOfVisaHealthTreatment",
+        "purposeOfVisaSameDayVisitor"
+      ]
+    },
+    {
+      "id": "requested_number_of_entries",
+      "fields": ["requestedNumberOfEntriesSingle", "requestedNumberOfEntriesMultiple"]
+    },
+    {
+      "id": "type_of_passport",
+      "fields": [
+        "typeOfPassportOrdinary",
+        "typeOfPassportDiplomatic",
+        "typeOfPassportService",
+        "typeOfPassportOtherTravelDocument"
+      ]
+    },
+    {
+      "id": "marital_status",
+      "fields": [
+        "maritalStatusSingle",
+        "maritalStatusMarried",
+        "maritalStatusDivorced",
+        "maritalStatusWidowed",
+        "maritalStatusLegallySeparated"
+      ]
+    }
+  ]
+}
