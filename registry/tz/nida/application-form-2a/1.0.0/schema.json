@@ -1,0 +1,411 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tz/nida/application-form-2a",
+  "version": "1.0.0",
+  "title": "Tanzania — NIDA Registration Form No. 2A, Identification Form (Legal Residents / Refugees)",
+  "description": "The National Identification Authority's (NIDA), Ministry of Home Affairs, Registration Form No. 2A, an \"Identification Form\" that must be filled in by legal residents or refugees applying for a Tanzanian National Identification Number/card (as distinct from Form No. 1, the citizens' variant, which this schema does not model). Opens Tanzania's National ID & Civic Documents vertical (Tanzania's second schema in this registry, following Business Formation via BRELA Form 14a; Tanzania now stands at 2 of 6 verticals). This is a whole-of-form schema: a fixed-layout, non-repeating, 2-page, 54-item numbered template with sections A (Personal Details), B (Parents/Guardian Details), C (Residential Address in Tanzania), D (Applicant's Permanent Address), E (Personal References — identity/status documents, each paired with its own \"tick if attached\" box), F (Applicant's Declaration), and G (For Official Use Only). Models every applicant-facing item across sections A-E plus the Section F declaration statement (as a documents[] attestation entry); excludes the top-of-page enrollment/batch box (batch number, batch date, enrollment station, and a duplicate postcode/village box used for the enrolling office's own batch tracking) and the entirety of Section G (center number, region/district/ward, application date, and the registration/immigration/RITA-RGO/WEO/NIDA officers' own name-and-signature fields), all of which are staff/system-assigned intake data the applicant never supplies, plus the Section F applicant-signature and LGA-officer-signature/date lines, which are a physical wet-signature mechanism rather than data fields. This document describes the form only; it does not submit anything to NIDA on an applicant's behalf, and does not imply endorsement by the United Republic of Tanzania, its Ministry of Home Affairs, or NIDA. GovSchema is an independent, non-profit standards body.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Identification Authority",
+    "abbreviation": "NIDA",
+    "url": "https://nida.go.tz"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://nida.go.tz/docs/APPLICATION-FORM-2A-NIDA.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Registration Form No. 2A, \"Identification Form\" (must be filled in by Legal Residents/Refugees), Version No. 1.1"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3152 (\"GovSchema Standard Research\" cycle). Opens Tanzania's National ID & Civic Documents vertical (Tanzania's second schema, following Business Formation via BRELA Form 14a, GOV-3113; Tanzania now stands at 2 of 6 verticals). Independently fetched directly from nida.go.tz (no login/CAPTCHA/WAF gate on this direct docs/ asset path): HTTP 200, content-type application/pdf, content-length 948,509 bytes, sha256 ea8f89946c77027c86701cdcb8b45cb4f617c5324854b52ccbe8b2c49a9b2f8e. A genuine 2-page native text-layer PDF (%PDF-1.5, 5 embedded fonts, no images), confirmed via pdfjs-dist (legacy CJS build, pinned to 3.11.174 for node-canvas rendering compatibility): getAnnotations() returned 0 widgets on both pages (no /AcroForm — a fill-in-the-box, non-interactive print-and-fill PDF). Every line of both pages was extracted via getTextContent() (grouped by y-coordinate, cross-checked against a raw per-glyph x/y dump), and both pages were additionally rendered to 2.5x-scale PNGs via node-canvas and visually inspected to confirm box/checkbox layout and to resolve items whose raw text-extraction order merged adjacent boxed regions (notably the top enrollment/batch box, which sits to the left of the letterhead and interleaves with it in raw extraction order, and the Section E number/tick-checkbox pairs, whose tick marks are a separate text run positioned to the right of each numbered item).\n\nThe rendered image confirmed a bordered box in the page 1 top-left corner — \"BATCH NUMBER:\", \"POSTCODE:\", \"VILLAGE / MTAA / SHEHIA:\", \"ENROLLMENT STATION:\", \"BATCH DATE:\" — visually and structurally distinct from the applicant-facing letterhead/title block beside it and from the applicant's own Section C address fields below; read together with Section G's identical \"batch\"/\"center\" administrative vocabulary, this is the enrolling office's own intake/filing reference box, not an applicant-facing field, and is out of scope (see Scope decisions). The rendered image also confirmed the top checkbox pair \"LEGAL RESIDENT\" / \"REFUGEE\" (\"Put a Tick Mark (✓) in the relevant box\") is a single mutually-exclusive applicant-type selector, modeled as an `applicantType` enum, and confirmed that Section E's five document-number/expiry-date item pairs (32/33 Passport, 34/35 Resident Permit/Exemption Certificate/Dependant Pass, 36/37 Work/Authority Permit, 38/39 Refugee ID Card/Ration Card, 40/41 Convention Travel Document/Certificate of Identity) each carry exactly one \"Tick (✓) if Attached\" checkbox per pair (beside the odd-numbered/number item only, not the expiry-date item), confirming the tick gates the pair as a whole rather than being a separate per-line control.\n\n`employmentStatus` (item 11, printed header \"OCCUPATION:\") is modeled from its own three checkbox options — \"EMPLOYEED\", \"SELF EMPLOYEED\", \"UNEMPLOYEED\" (the source's own spelling of \"EMPLOYED\"/\"UNEMPLOYED\" is reproduced verbatim in `sourceRef`, normalized to standard spelling in the enum values) — not a free-text job title, since the form itself prints only these three checkboxes under that heading, no blank line. `maritalStatus`'s \"WIDOW / WIDOWER\" checkbox is normalized to a single `WIDOWED` enum value (gender-neutral), consistent with this registry's practice of not encoding a source form's own gendered checkbox pairs as two separate enum values when they denote one civil status.\n\nEvery numbered item was checked against the rendered image for any asterisk, \"if applicable\", or other differentiating mark distinguishing required from optional fields — none exists anywhere on this form; every blank box in sections A-E is presented identically. Scoping/requiredness judgment calls made in the absence of any such marking are disclosed in full below.\n\n2 valid mock scenarios (a legal resident applicant with a resident permit and work permit attached, single, employed; a refugee applicant with a refugee ID card and convention travel document attached, married, unemployed, with a 2-line permanent address) plus 6 mutation-control fixtures (a missing statically-required field; an invalid date format; an invalid `gender` enum value; an invalid `applicantType` enum value; a missing `declarationOfAccuracy` attestation; a passport number supplied with no corresponding `passportCopyAttached` document — deliberately NOT an error, confirming this schema does not infer an implicit requiredWhen link between a Section E data field and its own tick-checkbox, per the disclosed scope decision below) are committed under `conformance/tz/nida/application-form-2a/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 8: both valid scenarios at 0 errors, 5 of the 6 mutation-control fixtures each raising exactly 1 error, and the 6th (the deliberately-not-an-error passport/attachment fixture) confirmed at 0 errors as intended. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (ajv 2020-12 against spec/v0.3), individually and as part of the full registry run (476/476). `node tools/verify-sources.mjs` clean on this document's changed files. `npm run build-index` re-run in `tools/govschema-client/` to regenerate `registry-index.json`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantType",
+      "label": "Put a Tick Mark (✓) in the relevant box",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant is applying as a legal resident (a non-citizen lawfully resident in Tanzania) or as a refugee. This form is explicitly captioned \"THIS FORM MUST BE FILLED IN BY LEGAL RESIDENTS/ REFUGEES\", distinguishing it from Form No. 1 (citizens).",
+      "sourceRef": "Page 1, header checkbox row — \"LEGAL RESIDENT\" / \"REFUGEE\"",
+      "validation": { "enum": ["LEGAL_RESIDENT", "REFUGEE"] }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"1. FIRST NAME\""
+    },
+    {
+      "name": "middleName",
+      "label": "Middle name",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional: not every applicant has a middle name, and the form gives no marking distinguishing it from the other name fields.",
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"2. MIDDLE NAME\""
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"3. SURNAME\""
+    },
+    {
+      "name": "otherNames",
+      "label": "Other names",
+      "type": "string",
+      "required": false,
+      "description": "A catch-all supplementary-names field distinct from first/middle/surname; modeled optional since not every applicant has additional names to record here.",
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"4. OTHER NAMES\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"5. DATE OF BIRTH\" (DD MM YYYY boxes)"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"6. PLACE OF BIRTH\""
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "Modeled as free text: the form prints only a blank box row, no accompanying option list of nationalities.",
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"7. NATIONALITY\""
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"8. PHONE NUMBER\""
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"9. GENDER\": \"MALE\" / \"FEMALE\"",
+      "validation": { "enum": ["MALE", "FEMALE"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "The form's \"WIDOW / WIDOWER\" checkbox is normalized here to a single gender-neutral WIDOWED value.",
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"10. MARITAL STATUS\": \"SINGLE\" / \"MARRIED\" / \"WIDOW / WIDOWER\" / \"DIVORCED\"",
+      "validation": { "enum": ["SINGLE", "MARRIED", "WIDOWED", "DIVORCED"] }
+    },
+    {
+      "name": "employmentStatus",
+      "label": "Occupation",
+      "type": "enum",
+      "required": true,
+      "description": "Printed under the header \"11. OCCUPATION:\", but the form itself provides only three employment-category checkboxes (no free-text job-title line), so this is modeled as an employment-status enum rather than a job title. The source form's own checkbox labels are spelled \"EMPLOYEED\"/\"UNEMPLOYEED\"; normalized to standard spelling here.",
+      "sourceRef": "Page 1, A: PERSONAL DETAILS — \"11. OCCUPATION:\" \"EMPLOYEED\" / \"SELF EMPLOYEED\" / \"UNEMPLOYEED\"",
+      "validation": { "enum": ["EMPLOYED", "SELF_EMPLOYED", "UNEMPLOYED"] }
+    },
+    {
+      "name": "fatherFirstName",
+      "label": "Father's first name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, B: PARENTS / GUARDIAN DETAILS — \"12. FATHER'S FIRST NAME\""
+    },
+    {
+      "name": "fatherMiddleName",
+      "label": "Father's middle name",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, consistent with the applicant's own middle name field above.",
+      "sourceRef": "Page 1, B: PARENTS / GUARDIAN DETAILS — \"13. FATHER'S MIDDLE NAME\""
+    },
+    {
+      "name": "fatherLastName",
+      "label": "Father's last name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, B: PARENTS / GUARDIAN DETAILS — \"14. FATHER'S LAST NAME\""
+    },
+    {
+      "name": "motherFirstName",
+      "label": "Mother's first name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, B: PARENTS / GUARDIAN DETAILS — \"15. MOTHER'S FIRST NAME\""
+    },
+    {
+      "name": "motherMiddleName",
+      "label": "Mother's middle name",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, consistent with the applicant's own middle name field above.",
+      "sourceRef": "Page 1, B: PARENTS / GUARDIAN DETAILS — \"16. MOTHER'S MIDDLE NAME\""
+    },
+    {
+      "name": "motherLastName",
+      "label": "Mother's last name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, B: PARENTS / GUARDIAN DETAILS — \"17. MOTHER'S LAST NAME\""
+    },
+    {
+      "name": "houseNumber",
+      "label": "House number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"18. HOUSE NUMBER\""
+    },
+    {
+      "name": "residentialRegion",
+      "label": "Region",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"19. REGION\""
+    },
+    {
+      "name": "residentialDistrict",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"20. DISTRICT\""
+    },
+    {
+      "name": "residentialWard",
+      "label": "Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"21. WARD\""
+    },
+    {
+      "name": "residentialVillageMtaaShehia",
+      "label": "Village / Mtaa / Shehia",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"22. VILLAGE / MTAA / SHEHIA\""
+    },
+    {
+      "name": "residentialStreetKitongoji",
+      "label": "Street / Kitongoji",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"23. STREET/ KITONGOJI\""
+    },
+    {
+      "name": "residentialPostalAddress",
+      "label": "Postal address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"24. POSTAL ADDRESS\""
+    },
+    {
+      "name": "residentialPostcode",
+      "label": "Postcode",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, C: RESIDENTIAL ADDRESS IN TANZANIA — \"25. POSTCODE\""
+    },
+    {
+      "name": "permanentAddressCountry",
+      "label": "Country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, D: APPLICANT'S PERMANENT ADDRESS — \"26. COUNTRY\""
+    },
+    {
+      "name": "permanentAddressLine1",
+      "label": "Address line 1",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, D: APPLICANT'S PERMANENT ADDRESS — \"27. ADDRESS LINE 1\""
+    },
+    {
+      "name": "permanentAddressLine2",
+      "label": "Address line 2",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional: items 27-31 are five separately numbered continuation lines for one permanent address, and a short address will not need all five.",
+      "sourceRef": "Page 2, D: APPLICANT'S PERMANENT ADDRESS — \"28. ADDRESS LINE 2\""
+    },
+    {
+      "name": "permanentAddressLine3",
+      "label": "Address line 3",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, per the same continuation-line reasoning as Address line 2.",
+      "sourceRef": "Page 2, D: APPLICANT'S PERMANENT ADDRESS — \"29. ADDRESS LINE 3\""
+    },
+    {
+      "name": "permanentAddressLine4",
+      "label": "Address line 4",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, per the same continuation-line reasoning as Address line 2.",
+      "sourceRef": "Page 2, D: APPLICANT'S PERMANENT ADDRESS — \"30. ADDRESS LINE 4\""
+    },
+    {
+      "name": "permanentAddressLine5",
+      "label": "Address line 5",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, per the same continuation-line reasoning as Address line 2.",
+      "sourceRef": "Page 2, D: APPLICANT'S PERMANENT ADDRESS — \"31. ADDRESS LINE 5\""
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional: Section E is a set of personal-reference identity/status documents, and which of the five apply depends on the applicant's own legal status, which this form does not explicitly bind via a printed conditional (see Scope decisions).",
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"32. PASSPORT NUMBER\""
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Passport expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"33. PASSPORT EXPIRY DATE\""
+    },
+    {
+      "name": "residentPermitNumber",
+      "label": "Resident Permit / Exemption Certificate / Dependant Pass number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"34. RESIDENT PERMIT / EXEMPTION CERTIFICATE / DEPENDANT PASS NUMBER\""
+    },
+    {
+      "name": "residentPermitExpiryDate",
+      "label": "Resident Permit / Exemption Certificate / Dependant Pass expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"35. RESIDENT PERMIT / EXEMPTION CERTIFICATE / DEPENDANT PASS EXPIRY DATE\""
+    },
+    {
+      "name": "workPermitNumber",
+      "label": "Work / Authority Permit number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"36. WORK / AUTHORITY PERMIT NUMBER\""
+    },
+    {
+      "name": "workPermitExpiryDate",
+      "label": "Work / Authority Permit expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"37. WORK / AUTHORITY PERMIT EXPIRY DATE\""
+    },
+    {
+      "name": "refugeeIdCardNumber",
+      "label": "Refugee ID Card No / Ration Card No",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"38. REFUGEE ID CARD NO / RATION CARD NO.\""
+    },
+    {
+      "name": "refugeeIdCardExpiryDate",
+      "label": "Refugee ID Card No / Ration Card expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"39. REFUGEE ID CARD NO / RATION CARD EXPIRY DATE\""
+    },
+    {
+      "name": "conventionTravelDocNumber",
+      "label": "Convention Travel Doc No / Certificate of Identity No",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"40. CONVETION TRAVEL DOC NO / CERTIFICATE OF IDENTITY NO.\""
+    },
+    {
+      "name": "conventionTravelDocExpiryDate",
+      "label": "Convention Travel Doc No / Certificate of Identity expiry date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES — \"41. CONVETION TRAVEL DOC NO / CERTIFICATE OF IDENTITY EXPIRY DATE\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportCopyAttached",
+      "label": "Passport (tick if attached)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES, item 32 — \"( Tick (✓) if Attached )\""
+    },
+    {
+      "id": "residentPermitCopyAttached",
+      "label": "Resident Permit / Exemption Certificate / Dependant Pass (tick if attached)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES, item 34 — \"( Tick (✓) if Attached )\""
+    },
+    {
+      "id": "workPermitCopyAttached",
+      "label": "Work / Authority Permit (tick if attached)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES, item 36 — \"( Tick (✓) if Attached )\""
+    },
+    {
+      "id": "refugeeIdCardCopyAttached",
+      "label": "Refugee ID Card / Ration Card (tick if attached)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES, item 38 — \"( Tick (✓) if Attached )\""
+    },
+    {
+      "id": "conventionTravelDocCopyAttached",
+      "label": "Convention Travel Document / Certificate of Identity (tick if attached)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, E: PERSONAL REFERENCES, item 40 — \"( Tick (✓) if Attached )\""
+    },
+    {
+      "id": "declarationOfAccuracy",
+      "label": "Applicant's declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I verify that all the information I have given above is correct and true to the best of my knowledge and belief.",
+      "sourceRef": "Page 2, F: APPLICANT'S DECLARATION"
+    }
+  ]
+}

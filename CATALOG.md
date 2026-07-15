@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **475 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **476 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3152, "GovSchema Standard Research"): Tanzania's
+> National ID & Civic Documents vertical opens, bringing Tanzania to 2 of 6
+> verticals**, via `tz/nida/application-form-2a` — the National
+> Identification Authority's (NIDA), Ministry of Home Affairs, Registration
+> Form No. 2A, an "Identification Form" that must be filled in by legal
+> residents or refugees applying for a Tanzanian National Identification
+> Number/card (distinct from NIDA's separate Form No. 1 for citizens, which
+> this schema does not model). Independently fetched directly from
+> `nida.go.tz` (no login/CAPTCHA/WAF gate on this direct `docs/` asset
+> path): HTTP 200, content-type `application/pdf`, 948,509 bytes, sha256
+> `ea8f89946c77027c86701cdcb8b45cb4f617c5324854b52ccbe8b2c49a9b2f8e`. A
+> genuine 2-page native text-layer PDF (no `/AcroForm`, no images),
+> extracted with `pdfjs-dist@3.11.174` and cross-checked against a
+> `node-canvas` render, which resolved a page-1 top-left administrative
+> "batch"/"enrollment station" box (out of scope, staff-assigned) and
+> confirmed Section E's five personal-reference document pairs
+> (passport; resident permit/exemption certificate/dependant pass;
+> work/authority permit; refugee ID card/ration card; convention travel
+> document/certificate of identity) each carry a single "tick if attached"
+> checkbox gating the pair as a whole. Models 41 `fields[]` and 6
+> `documents[]` (five identity-document attachment ticks plus the
+> applicant's own declaration-of-accuracy attestation); notably, the form
+> itself never states which of the five personal-reference document types
+> applies to a legal resident versus a refugee, so none of the ten
+> associated data fields carry a `requiredWhen` gate on `applicantType` —
+> disclosed as a scoping decision rather than an inferred conditional the
+> source does not itself print. 8 conformance fixtures (2 valid, 5
+> error-raising mutation-controls, and 1 deliberately non-error control
+> demonstrating that same scoping decision) committed under
+> `conformance/tz/nida/application-form-2a/1.0.0/`. See the document's own
+> VERIFICATION.md for the full sourcing record and scope decisions.
 
 > **Update (2026-07-15, GOV-3134, delegated from GOV-3128, "GovSchema
 > Standard Research"): Pakistan's DMV vertical opens, bringing Pakistan to 3
@@ -13373,7 +13405,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (43/62 jurisdictions — 69%)
+### National ID & Civic Documents (44/62 jurisdictions — 71%)
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; National ID remains open,
@@ -13390,6 +13422,40 @@ candidate, the other two as confirmed dead ends).
 > current registry total, following Moldova/Tanzania/Dominican Republic's
 > additions, none of which touched this vertical); numerator updated to 43
 > following Israel's addition immediately below.
+
+**Tanzania's National ID & Civic Documents vertical opens (bringing
+Tanzania to 2 of 6 verticals, combined with Business Formation)
+(GOV-3152, "GovSchema Standard Research")**, via
+`tz/nida/application-form-2a` — the National Identification Authority's
+(NIDA), Ministry of Home Affairs, Registration Form No. 2A, an
+"Identification Form" that must be filled in by legal residents or
+refugees (as distinct from NIDA's separate Form No. 1 for citizens, which
+this schema does not model). Independently fetched directly from
+`nida.go.tz`'s public `docs/` folder (no login/CAPTCHA/WAF gate): HTTP 200,
+content-type `application/pdf`, 948,509 bytes, sha256
+`ea8f89946c77027c86701cdcb8b45cb4f617c5324854b52ccbe8b2c49a9b2f8e`. A
+genuine 2-page native text-layer PDF (no `/AcroForm`, no images), extracted
+with `pdfjs-dist@3.11.174` and cross-checked against a `node-canvas`
+render, which resolved a page-1 top-left administrative "batch"/"enrollment
+station" box (out of scope, staff-assigned, distinct from the applicant's
+own Section C address fields below it) and confirmed Section E's five
+personal-reference document pairs (passport; resident permit/exemption
+certificate/dependant pass; work/authority permit; refugee ID card/ration
+card; convention travel document/certificate of identity) each carry a
+single "tick if attached" checkbox gating the pair as a whole, not each
+line independently. Models 41 `fields[]` and 6 `documents[]` (five
+identity-document attachment ticks plus the applicant's own
+declaration-of-accuracy attestation). The form never states which of the
+five personal-reference document types applies to a legal resident versus
+a refugee, so none of the ten associated data fields carry a
+`requiredWhen` gate on `applicantType` — a disclosed scoping decision
+rather than an inferred conditional the source itself does not print;
+confirmed by a dedicated conformance fixture showing a passport
+number/expiry with no corresponding attachment tick raises zero errors.
+8 conformance fixtures (2 valid, 5 mutation-control, 1 deliberate
+non-error control) committed under
+`conformance/tz/nida/application-form-2a/1.0.0/`. See the document's own
+VERIFICATION.md for the full sourcing record.
 
 **Israel's National ID & Civic Documents vertical opens (1 of 6; Israel now
 5 of 6 combined with Passport, Business Formation, Taxes, and Visa)
@@ -13933,7 +13999,7 @@ now closed.
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **TZ** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **TZ** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
