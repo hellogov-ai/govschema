@@ -4,10 +4,53 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **457 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **458 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3031, "GovSchema Standard Research"): Italy's
+> Passport vertical opens (1 of 6, now 4 of 6 overall — combined with the
+> concurrently-merged GOV-3032 Visa opening below)**, via
+> `it/poliziadistato/richiesta-passaporto-maggiorenni` — Modello 308,
+> "Modulo per la richiesta di passaporto per maggiorenni", published by the
+> Polizia di Stato (Ministero dell'Interno) and filed with the Questura of
+> the applicant's residence/domicile, or a Diplomatic/Consular
+> Representation abroad; online booking is via
+> `passaportonline.poliziadistato.it`. A pre-scouted GOV-3026 child issue.
+> **This overturns this registry's own GOV-2382/GOV-2404/GOV-2716
+> "confirmed dead end" finding** for Italy's Passport vertical, which rested
+> solely on a live-fetch "Accesso negato" WAF block against
+> `questure.poliziadistato.it` and never actually inspected the document. A
+> Wayback Machine snapshot (timestamp `20250807022716`, found via the CDX
+> API) works even though the live fetch remains blocked; independently
+> re-fetched this cycle via direct `curl` (HTTP 200, `application/pdf`,
+> 1,749,585 bytes, sha256
+> `67ef4f41dd8ee5681aab1c1389a11f8608a52c208ddd93f0f3011ef1a7eee384`,
+> matching the issue's own citation exactly). **Major correction to the
+> issue's own pre-scouting note:** `pdfjs-dist`'s `getAnnotations()` found
+> this is a genuine 57-widget fillable AcroForm (44 text fields, 13
+> independent checkboxes) on page 1 of 3, not the zero-widget static PDF the
+> note assumed — pages 1-2 are full-page image XObjects with the widgets
+> overlaid on top, and the PDF is AES-encrypted at the stream level
+> (transparent to `pdfjs-dist`, but it broke this sandbox's usual
+> direct-object-stream JPEG extraction technique and its `node-canvas`
+> rendering alike); the npm `mupdf` package's independent WASM rendering
+> pipeline was used instead to read and visually cross-check every field.
+> Also corrects the note's "up to 3 children" description of the "Altro
+> genitore" block: it records up to three OTHER PARENTS holding parental
+> responsibility, not the children's own identities, which the form never
+> asks for. Models all 59 `fields[]` (57 AcroForm widgets plus 2 disclosed
+> non-widget fields for the applicant-facing "Alla Questura di" header box
+> and the page-2 GDPR consent declaration) and 5 `documents[]` entries
+> (identity-document copy, 2 ICAO photographs, and the two payment/
+> contribution requirements). 8 conformance fixtures (2 valid, 6
+> mutation-control) committed under
+> `conformance/it/poliziadistato/richiesta-passaporto-maggiorenni/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing chain and
+> every disclosed scoping decision.
 
 > **Update (2026-07-15, GOV-3032, "GovSchema Standard Research"): Italy's
-> Visa vertical opens (now 3 of 6 overall)**, via
+> Visa vertical opens (now 3 of 6 overall at the time of this PR; see the
+> GOV-3031 update above for the combined 4/6 count after both same-day PRs
+> landed)**, via
 > `it/maeci/domanda-di-visto-nazionale-d` — MAECI's (Ministero degli Affari
 > Esteri e della Cooperazione Internazionale) bilingual Italian/English
 > "National Visa Application (D)" / "Domanda di visto nazionale (D)", the
@@ -42,7 +85,9 @@
 > fixtures (2 valid, 6 mutation-control) committed under
 > `conformance/it/maeci/domanda-di-visto-nazionale-d/1.0.0/`. See the
 > document's own VERIFICATION.md for the full reconciliation table and
-> sourcing record. Italy now stands at 3 of 6 verticals (DMV, Taxes, Visa).
+> sourcing record. Italy stood at 3 of 6 verticals (DMV, Taxes, Visa) after
+> this PR alone; combined with the concurrently-merged GOV-3031 Passport
+> opening, Italy reaches 4 of 6 verticals (DMV, Taxes, Visa, Passport).
 >
 > **Update (2026-07-15, GOV-3026, "GovSchema Standard Research"): Greece's
 > DMV vertical opens (1 of 6, now 3 of 6 overall)**, via
@@ -9437,7 +9482,13 @@
 
 ## By Vertical
 
-### Passport (40/56 jurisdictions — 71%)
+### Passport (41/56 jurisdictions — 73%)
+
+> **Correction (GOV-3031):** numerator updated from 40 to 41 following
+> Italy's Passport vertical opening — Italy's Passport was previously
+> counted on the ✗ side as a confirmed dead end (GOV-2382/GOV-2404/
+> GOV-2716); that finding is now overturned (see below and this schema's own
+> VERIFICATION.md).
 
 > **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
 > following Slovakia's addition (Taxes only; Passport remains open for
@@ -9446,6 +9497,26 @@
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles),
 > and updated for Lithuania's addition as the registry's 55th jurisdiction.
+
+**Italy's Passport vertical opens (1 of 6, now 3 of 6 overall) (GOV-3031)**,
+via `it/poliziadistato/richiesta-passaporto-maggiorenni` — Modello 308,
+"Modulo per la richiesta di passaporto per maggiorenni", published by the
+Polizia di Stato (Ministero dell'Interno) and filed with the Questura of the
+applicant's residence/domicile, or a Diplomatic/Consular Representation
+abroad. **This overturns this registry's own GOV-2382/GOV-2404/GOV-2716
+"confirmed dead end" finding for Italy Passport**, which rested solely on a
+live-fetch WAF block against `questure.poliziadistato.it` and never actually
+inspected the document; a Wayback Machine snapshot (2025-08-07,
+`67ef4f41dd8ee5681aab1c1389a11f8608a52c208ddd93f0f3011ef1a7eee384`,
+independently re-verified byte-for-byte) made inspection possible. A further
+correction to this issue's own pre-scouting note: the form is a genuine
+57-widget fillable AcroForm (44 text fields, 13 independent checkboxes), not
+the zero-widget static PDF the note assumed, and its "Altro genitore" block
+records up to three OTHER PARENTS holding parental responsibility, not up to
+three children as the note stated. See the document's own VERIFICATION.md
+for the full sourcing chain, the `mupdf`-based rendering technique used to
+work around an AES-encrypted image-XObject `node-canvas` rendering failure,
+and every disclosed judgment call.
 
 **North Macedonia's Passport vertical advances (2 of 6) (GOV-2939)**, via
 `mk/mvr/baranje-za-izdavanje-pasosh` — МВР's "Барање за издавање пасош,
@@ -12996,7 +13067,7 @@ now closed.
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IT** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **IT** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
@@ -14961,13 +15032,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   exists for either tax. Do not re-attempt without a genuinely new source
   (e.g. a leaked/third-party-republished blank form with real line
   numbers).
-- **IT Passport (Polizia di Stato Modello 308)** — GOV-2382, 2026-07-11.
-  The form's own fillable pages are a scanned image with zero extractable
-  text (confirmed via `pdfjs-dist` returning no text-content items for
-  those pages); only the separate instructions page carries real text. Not
-  a self-documenting numbered-position source like Modello 730 or TT2119.
-  Do not re-attempt without a genuinely new source (e.g. a re-published
-  version with a real text layer on the fillable pages).
+- ~~**IT Passport (Polizia di Stato Modello 308)** — GOV-2382, 2026-07-11.~~
+  **Overturned (GOV-3031, 2026-07-15):** the GOV-2382 finding rested on a
+  live-fetch WAF block against `questure.poliziadistato.it` that was never
+  actually inspected as a document — the same "confirmed dead end" then got
+  re-asserted without a fresh look by GOV-2404 and GOV-2716. A Wayback
+  Machine snapshot works even though the live fetch remains blocked; the
+  form is a genuine 57-widget fillable AcroForm (not the zero-widget static
+  PDF this entry described). Now published as
+  `it/poliziadistato/richiesta-passaporto-maggiorenni` v1.0.0 — see that
+  schema's own VERIFICATION.md for the full sourcing chain.
 - **IT Business Formation (Registro Imprese ComUnica)** — GOV-2382,
   2026-07-11. ComUnica is digital-signature/telematic-only, filed via
   commercialisti (accountant) intermediaries through the Camere di
@@ -15852,29 +15926,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   incorporation step itself. Delegated as a child issue of GOV-3026 rather
   than authored inline, to keep the parent research cycle's own deliverable
   scoped to one document.
-- **Italy — Passport: scouted, not yet authored (GOV-3026).** Live fetch of
-  `questure.poliziadistato.it` is WAF-blocked, but the identical official
-  form is retrievable via a 2025-08-07 Wayback Machine snapshot of
-  `https://questure.poliziadistato.it/statics/33/modulo-passaporti-maggiorenni.pdf`
-  (HTTP 200, `application/pdf`, 1,749,585 bytes, sha256
-  `67ef4f41dd8ee5681aab1c1389a11f8608a52c208ddd93f0f3011ef1a7eee384`) — this
-  is **Modello 308** ("Modulo per la richiesta di passaporto per
-  maggiorenni"), Polizia di Stato/Ministero dell'Interno, legal basis Legge
-  21/11/1967 n. 1185 art. 3/3-bis. A static, non-AcroForm PDF with a clean
-  extractable text layer: cognome/nome, spouse's surname, birthplace/
-  birthdate, eye colour, height, residence, marital status, requesting
-  Questura, prior/other passport held, minor children with each parent's
-  data, request type, pickup delegate, and an office-only attestation
-  block — roughly 30-35 fields across 2-3 pages. This overturns this
-  registry's own prior GOV-2382/GOV-2404/GOV-2716 "confirmed dead end"
-  finding for Italy's Passport vertical, which relied solely on a single
-  live-fetch WAF block against the same domain without checking a Wayback
-  fallback. Delegated as a child issue of GOV-3026.
+- ~~**Italy — Passport: scouted, not yet authored (GOV-3026).**~~ **Authored
+  (GOV-3031, 2026-07-15):** now published as
+  `it/poliziadistato/richiesta-passaporto-maggiorenni` v1.0.0, opening
+  Italy's Passport vertical. Independent re-verification found the form is
+  a genuine 57-widget fillable AcroForm, not the static PDF this backlog
+  note described, and its "Altro genitore" block records up to three other
+  parents (not children) — see the Passport vertical section above and the
+  schema's own VERIFICATION.md.
 - ~~**Italy — Visa: scouted, not yet authored (GOV-3026).**~~ **Resolved
   (GOV-3032):** authored as `it/maeci/domanda-di-visto-nazionale-d`, opening
-  Italy's Visa vertical (3 of 6) — the field-by-field reconciliation this
-  entry called for confirmed the form is not a duplicate. See the Executive
-  Summary's GOV-3032 update and the Visa section above.
+  Italy's Visa vertical — the field-by-field reconciliation this entry
+  called for confirmed the form is not a duplicate. See the Executive
+  Summary's GOV-3032 update and the Visa section above. Combined with the
+  concurrently-merged GOV-3031 Passport opening above, Italy reaches 4 of 6
+  verticals (DMV, Taxes, Visa, Passport).
 
 ---
 
