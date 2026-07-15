@@ -1,0 +1,469 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "il/tax-authority/1301-personal-details",
+  "version": "1.0.0",
+  "title": "Israel Form 1301 — Annual Individual Income Tax Return, Part A/B (Filing Basis & Personal Details)",
+  "description": "The Israel Tax Authority's (Rashut HaMisim, רשות המסים) Form 1301 (\"טופס 1301 — דוח ליחיד\"), the annual individual income tax return covering the tax year 2025 (1 Jan – 31 Dec 2025), filed under section 131 of the Income Tax Ordinance. Form 1301 is a dense, comprehensive return (4 pages, roughly 89 numbered line items) spanning both filing-status/personal-details sections (Parts A and B) and many special-tax-rate income, deduction, and credit categories (Parts C through O) requiring detailed tax computation. This document opens Israel's Taxes vertical (Israel's first schema in this registry) scoped deliberately to Part A's basic filing-basis declaration and Part B's personal-details section in full — filer and spouse identity, marital status, address, contact details, business/employer registration numbers, the tax-refund bank account, the paid-preparer disclosure, and the filer's own declaration — since these are the identity/registration fields an agent needs to correctly address, route, and attest a return, independent of the underlying tax computation. Out of scope: the roughly 30 special-situation checkboxes elsewhere in Part A (virtual-currency realizations, trust settlor/beneficiary disclosures, kibbutz-member income routing, new-immigrant/returning-resident elections, reportable positions, and similar edge-case disclosures) and all of Parts C through O's ~89 numbered income, deduction, and credit line items (ordinary and special-rate income by category, capital-gains/land-betterment income, exempt income, personal tax-credit points, personal deductions and credits, and the final advances/withholding/land-betterment-tax reconciliation), each of which would require its own dedicated schema given the scale disclosed in this document's own VERIFICATION.md. This document describes the form only; it does not submit anything on the filer's behalf, and does not imply endorsement by the State of Israel or the Israel Tax Authority. GovSchema is independent and is not affiliated with, endorsed by, or operated by the State of Israel.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Israel Tax Authority (Rashut HaMisim)",
+    "abbreviation": "ITA",
+    "url": "https://www.gov.il"
+  },
+  "process": {
+    "type": "filing",
+    "language": "he"
+  },
+  "source": {
+    "url": "https://www.gov.il/BlobFolder/service/reporting-and-payment-2025-annual-tax-report-for-individuals/he/Service_Pages_Income_tax_annual-report-2026_itc1301-2025.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Form 1301, \"דוח ליחיד — דין וחשבון על ההכנסות בארץ ובחו\"ל\" (Individual Report — Statement of Income in Israel and Abroad), tax year 2025 edition, filed under section 131 of the Income Tax Ordinance"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3066 (delegated from the GOV-3062 \"GovSchema Standard Research\" cycle, which pre-scouted Israel alongside Georgia/Egypt/Pakistan and found this form the strongest Taxes-vertical candidate but too large to author in that same cycle). Independently re-fetched this cycle via plain `curl` (no login/CAPTCHA gate on this direct BlobFolder PDF URL, though the `gov.il` service landing page itself is Cloudflare-gated): HTTP 200, content-type `application/pdf`, content-length 1,745,508 bytes, sha256 `4a08b47df48805e1577e72c34d0d0b9bc9630499093666e0bfa1585983c87c2a` — both exactly matching the figures pre-recorded in GOV-3066's own sourcing notes. Extracted via `pdfjs-dist` (legacy CJS build): 4 pages, 522/456/610/619 text items respectively (~2,200 total), zero `/AcroForm`/`/Widget` markers and `getFieldObjects()` returning 0 (a flat, non-fillable print-and-fill PDF, consistent with this registry's convention for several other jurisdictions' Taxes schemas) and a native (non-scanned) Hebrew text layer. Because Hebrew (RTL) PDF text extraction returns items in a visually-jumbled reading order even after y/x-sorting, page 1 (containing Parts A and B, this schema's entire scope) was additionally rendered to a 2.5x-scale PNG via `node-canvas` and read visually, cross-checked line-by-line against the sorted-text extraction — this caught and corrected the initial misreading of the bank-refund block's field order (a text-only pass would have paired field numbers 277/278 with the wrong columns; the rendered image confirmed 277 = סמל סניף/branch code and 278 = מספר חשבון/account number, reading right-to-left: bank code, branch code [277], account number [278]). Pages 2–4 (Parts C–O, the ~89 numbered income/deduction/credit items, entirely out of scope for this document) were extracted as text only, sufficient to confirm and document the exclusion's scale, not individually rendered.\n\nThe form's own Part B labels its two person-blocks '\"בן הזוג הרשום\"' (\"the registered spouse\") and '\"בן/בת הזוג\"' (\"the spouse\"); the form defines the former in its own box caption as '\"בן הזוג הרשום\" — בן/בת הזוג הרשום במרשמי רשות המסים כ\"בן הזוג הרשום\" והאחראי על הגשת הדוח' (\"the spouse registered in the Tax Authority's records as the 'registered spouse', responsible for filing the report\") — i.e. this is the primary filer of record, not necessarily the historically-male spouse the literal translation might suggest. This document names that person's fields with a `registeredFiler` prefix and the (optional, joint-filing-only) second person's fields with a `spouse` prefix, rather than a literal \"registered spouse\"/\"spouse\" label pair, to avoid the source term's own latent ambiguity — each field's `sourceRef` still quotes the form's own Hebrew caption verbatim so the mapping back to the source is unambiguous. `filingScope` models the form's own mutually-exclusive 'הדוח הוא על' (\"this report covers\") checkbox pair (joint income vs. filer's income only); the form's own third, independently-selectable checkbox in the same row ('אני מגיש דוח לשנת מס זו למרות שאיני חייב - בקשה להחזר מס', \"I am filing this year's return although not obligated to — refund request\") is modelled as a separate boolean (`voluntaryFilingRefundRequest`) rather than folded into the same enum, since the source form itself allows it to be checked independently of either filing-scope option. `maritalStatus`'s five enum values are quoted directly from the form's own checkbox row (רווק/נשוי וחי ביחד עם בן הזוג/גרוש/אלמן/פרוד), including the form's own parenthetical for the last value ('בהתאם למרשם רשות המסים' — \"per the Tax Authority's own records\"), disclosed in that field's description rather than fabricating a sixth option. `residentialAddress` is marked optional (not requiredWhen-gated) because the form's own printed instruction ('ימולא ע\"י תושב חוץ בלבד', \"to be filled by non-residents only\") is a prose qualifier attached to that specific address row, not a separate residency-status checkbox field this document could gate on without inventing one. The registered filer's and spouse's own work-phone columns, deductions-file-number, and VAT-dealer-number columns are modelled as separate `registeredFiler`-/`spouse`-prefixed field pairs, matching the form's own explicit two-column layout for each. `fileNumber` (מספר תיק) is modelled as required since it is the Tax Authority's own case/file identifier printed at the top of Part B for every existing filer; a first-time filer would need to obtain one from the Tax Authority before this form applies, a caveat noted here rather than modelled as a conditional. The paid-preparer disclosure block (מסייע) and both declaration statements (filer's, under the form's own quoted text; preparer's, under sections 143/224 of the Income Tax Ordinance, quoted verbatim) are modelled as `documents[]` attestation entries, following this registry's established convention for signed/quoted declaration text rather than encoding the statement itself as a field.\n\n2 valid mock scenarios (a single filer with no spouse, no preparer, minimal Part B fields only; a jointly-filing married couple with a paid preparer and a bank-refund account) plus 5 mutation-control fixtures (a missing statically-required field, a missing spouse field while filingScope is JOINT_WITH_SPOUSE, a missing preparer field while paidPreparerUsed is true, an invalid maritalStatus enum value, and an invalid date format) are committed under `conformance/il/tax-authority/1301-personal-details/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 7: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error. The same script confirmed every requiredWhen field reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "filingDate",
+      "label": "תאריך הגשת הדוח",
+      "type": "date",
+      "required": true,
+      "description": "The date this return is filed.",
+      "sourceRef": "Page 1, header — \"תאריך הגשת הדוח\" (\"Date of filing the report\")"
+    },
+    {
+      "name": "filingScope",
+      "label": "הדוח הוא על",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this return covers the filer's income only, or the filer's and spouse's combined income.",
+      "sourceRef": "Page 1, Part A — \"הדוח הוא על: הכנסותי והכנסות בן/בת זוגי / הכנסותי בלבד\" (\"This report covers: my income and my spouse's income / my income only\")",
+      "validation": {
+        "enum": ["JOINT_WITH_SPOUSE", "SELF_ONLY"]
+      }
+    },
+    {
+      "name": "voluntaryFilingRefundRequest",
+      "label": "אני מגיש דוח לשנת מס זו למרות שאיני חייב - בקשה להחזר מס",
+      "type": "boolean",
+      "required": false,
+      "description": "Checked when the filer is submitting this return despite not being legally obligated to, in order to request a refund.",
+      "sourceRef": "Page 1, Part A — \"אני מגיש דוח לשנת מס זו למרות שאיני חייב - בקשה להחזר מס\""
+    },
+    {
+      "name": "fileNumber",
+      "label": "מספר תיק",
+      "type": "string",
+      "required": true,
+      "description": "The filer's existing case/file number assigned by the Israel Tax Authority. First-time filers must obtain a file number from the Tax Authority before this return applies.",
+      "sourceRef": "Page 1, Part B, header — \"מספר תיק\""
+    },
+    {
+      "name": "registeredFilerIdNumber",
+      "label": "מספר זהות",
+      "type": "string",
+      "required": true,
+      "description": "National identity number (Teudat Zehut) of the \"registered filer\" — the person registered in the Tax Authority's own records as responsible for filing this return.",
+      "sourceRef": "Page 1, Part B — \"בן הזוג הרשום\" box, \"מספר זהות\""
+    },
+    {
+      "name": "registeredFilerLastName",
+      "label": "שם משפחה",
+      "type": "string",
+      "required": true,
+      "description": "Registered filer's family name.",
+      "sourceRef": "Page 1, Part B — \"בן הזוג הרשום\" box, \"שם משפחה\""
+    },
+    {
+      "name": "registeredFilerFirstName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": true,
+      "description": "Registered filer's given name.",
+      "sourceRef": "Page 1, Part B — \"בן הזוג הרשום\" box, \"שם פרטי\""
+    },
+    {
+      "name": "registeredFilerFatherName",
+      "label": "שם האב",
+      "type": "string",
+      "required": true,
+      "description": "Registered filer's father's given name, used by the Tax Authority for identity matching.",
+      "sourceRef": "Page 1, Part B — \"בן הזוג הרשום\" box, \"שם האב\""
+    },
+    {
+      "name": "registeredFilerDateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": true,
+      "description": "Registered filer's date of birth.",
+      "sourceRef": "Page 1, Part B — \"בן הזוג הרשום\" box, \"תאריך לידה\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "מצב משפחתי בשנת המס",
+      "type": "enum",
+      "required": true,
+      "description": "The registered filer's marital status during the tax year. SEPARATED corresponds to the form's own \"פרוד\" option, qualified on the form as \"בהתאם למרשם רשות המסים\" (per the Tax Authority's own records).",
+      "sourceRef": "Page 1, Part B — \"מצב משפחתי בשנת המס: רווק / נשוי וחי ביחד עם בן הזוג / גרוש / אלמן / פרוד (בהתאם למרשם רשות המסים)\"",
+      "validation": {
+        "enum": ["SINGLE", "MARRIED_LIVING_WITH_SPOUSE", "DIVORCED", "WIDOWED", "SEPARATED"]
+      }
+    },
+    {
+      "name": "spouseIdNumber",
+      "label": "מספר זהות",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "filingScope",
+        "equals": "JOINT_WITH_SPOUSE"
+      },
+      "description": "National identity number (Teudat Zehut) of the spouse, when this return covers joint income.",
+      "sourceRef": "Page 1, Part B — \"בן/בת הזוג\" box, \"מספר זהות\""
+    },
+    {
+      "name": "spouseLastName",
+      "label": "שם משפחה",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "filingScope",
+        "equals": "JOINT_WITH_SPOUSE"
+      },
+      "description": "Spouse's family name, when this return covers joint income.",
+      "sourceRef": "Page 1, Part B — \"בן/בת הזוג\" box, \"שם משפחה\""
+    },
+    {
+      "name": "spouseFirstName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "filingScope",
+        "equals": "JOINT_WITH_SPOUSE"
+      },
+      "description": "Spouse's given name, when this return covers joint income.",
+      "sourceRef": "Page 1, Part B — \"בן/בת הזוג\" box, \"שם פרטי\""
+    },
+    {
+      "name": "spouseFatherName",
+      "label": "שם האב",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's father's given name, used by the Tax Authority for identity matching.",
+      "sourceRef": "Page 1, Part B — \"בן/בת הזוג\" box, \"שם האב\""
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "filingScope",
+        "equals": "JOINT_WITH_SPOUSE"
+      },
+      "description": "Spouse's date of birth, when this return covers joint income.",
+      "sourceRef": "Page 1, Part B — \"בן/בת הזוג\" box, \"תאריך לידה\""
+    },
+    {
+      "name": "mailingAddress",
+      "label": "כתובת למשלוח דואר",
+      "type": "string",
+      "required": true,
+      "description": "Postal mailing address, including postal code.",
+      "sourceRef": "Page 1, Part B — \"כתובת (כולל מיקוד)\", \"כתובת למשלוח דואר\""
+    },
+    {
+      "name": "residentialAddress",
+      "label": "כתובת המגורים",
+      "type": "string",
+      "required": false,
+      "description": "Residential address. The form's own instruction marks this row \"to be filled by non-residents only\" (ימולא ע\"י תושב חוץ בלבד); not modelled as a conditional since the form provides no separate residency-status checkbox to gate on.",
+      "sourceRef": "Page 1, Part B — \"כתובת (כולל מיקוד)\", \"כתובת המגורים ... ימולא ע\"י תושב חוץ בלבד\""
+    },
+    {
+      "name": "addressChangedSinceLastReport",
+      "label": "יש לרשום פרטים עדכניים לתאריך מילוי הדוח",
+      "type": "boolean",
+      "required": false,
+      "description": "Checked to flag that address or other Part B details have changed since the previous report and must be marked with an X on the row where the change occurred.",
+      "sourceRef": "Page 1, Part B — \"יש לרשום פרטים עדכניים לתאריך מילוי הדוח. אם שונו הנתונים הרשומים בסעיפים שלהלן מאז הוגש דוח קודם, סמן X במשבצת בשורה בה חל שינוי\""
+    },
+    {
+      "name": "contactEmailAddress",
+      "label": "כתובת דואר אלקטרוני",
+      "type": "string",
+      "required": false,
+      "description": "Filer's email address.",
+      "sourceRef": "Page 1, Part B — \"כתובת דואר אלקטרוני\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "notificationByEmailConsent",
+      "label": "אני מעוניין לאפשר לרשות המסים להעביר לי הודעות באמצעות כתובת הדואר האלקטרוני",
+      "type": "boolean",
+      "required": false,
+      "description": "Consent to receive Tax Authority notices by email.",
+      "sourceRef": "Page 1, Part B — \"אני מעוניין לאפשר לרשות המסים להעביר לי הודעות באמצעות: כתובת הדואר האלקטרוני\""
+    },
+    {
+      "name": "notificationBySmsConsent",
+      "label": "אני מעוניין לאפשר לרשות המסים להעביר לי הודעות באמצעות מסרון (S.M.S) לטלפון הנייד",
+      "type": "boolean",
+      "required": false,
+      "description": "Consent to receive Tax Authority notices by SMS to the filer's mobile phone.",
+      "sourceRef": "Page 1, Part B — \"אני מעוניין לאפשר לרשות המסים להעביר לי הודעות באמצעות: ... מסרון (S.M.S) לטלפון הנייד\""
+    },
+    {
+      "name": "homeOrFaxPhone",
+      "label": "בבית/פקס",
+      "type": "string",
+      "required": false,
+      "description": "Registered filer's home or fax phone number.",
+      "sourceRef": "Page 1, Part B — \"טלפונים\", \"בבית/פקס\""
+    },
+    {
+      "name": "registeredFilerWorkPhone",
+      "label": "בעבודה \"בן הזוג הרשום\"",
+      "type": "string",
+      "required": false,
+      "description": "Registered filer's work phone number.",
+      "sourceRef": "Page 1, Part B — \"טלפונים\", \"בעבודה 'בן הזוג הרשום'\""
+    },
+    {
+      "name": "spouseWorkPhone",
+      "label": "בעבודה בן/בת הזוג",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's work phone number, when this return covers joint income.",
+      "sourceRef": "Page 1, Part B — \"טלפונים\", \"בעבודה בן/בת הזוג\""
+    },
+    {
+      "name": "mobilePhone",
+      "label": "טלפון נייד",
+      "type": "string",
+      "required": false,
+      "description": "Filer's mobile phone number.",
+      "sourceRef": "Page 1, Part B — \"טלפונים\", \"טלפון נייד\""
+    },
+    {
+      "name": "mainOccupation",
+      "label": "העיסוק העיקרי (פרט)",
+      "type": "string",
+      "required": true,
+      "description": "The filer's main occupation, as specified by the filer.",
+      "sourceRef": "Page 1, Part B — \"העיסוק העיקרי (פרט)\""
+    },
+    {
+      "name": "businessName",
+      "label": "שם העסק",
+      "type": "string",
+      "required": false,
+      "description": "Name of the filer's business, if self-employed.",
+      "sourceRef": "Page 1, Part B — \"שם העסק\""
+    },
+    {
+      "name": "businessAddress",
+      "label": "כתובת העסק",
+      "type": "string",
+      "required": false,
+      "description": "Address of the filer's business (street, house number, town, postal code), if self-employed.",
+      "sourceRef": "Page 1, Part B — \"כתובת העסק (הרחוב, מספר הבית, הישוב, המיקוד)\""
+    },
+    {
+      "name": "mainBusinessFileNumber",
+      "label": "מספר תיק בעסק העיקרי",
+      "type": "string",
+      "required": false,
+      "description": "Tax Authority file number of the filer's main business, if self-employed.",
+      "sourceRef": "Page 1, Part B — \"מספר תיק בעסק העיקרי\""
+    },
+    {
+      "name": "registeredFilerDeductionsFileNumber",
+      "label": "מספר תיק ניכויים",
+      "type": "string",
+      "required": false,
+      "description": "Registered filer's employer-withholding (\"deductions\") file number, if applicable.",
+      "sourceRef": "Page 1, Part B — \"מספר תיק ניכויים\" (registered-filer column)"
+    },
+    {
+      "name": "registeredFilerVatDealerNumber",
+      "label": "מספר עוסק במע\"מ",
+      "type": "string",
+      "required": false,
+      "description": "Registered filer's VAT dealer number, if applicable.",
+      "sourceRef": "Page 1, Part B — \"מספר עוסק במע\\\"מ\" (registered-filer column)"
+    },
+    {
+      "name": "spouseDeductionsFileNumber",
+      "label": "מספר תיק ניכויים",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's employer-withholding (\"deductions\") file number, if applicable and this return covers joint income.",
+      "sourceRef": "Page 1, Part B — \"מספר תיק ניכויים\" (spouse column)"
+    },
+    {
+      "name": "spouseVatDealerNumber",
+      "label": "מספר עוסק במע\"מ",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's VAT dealer number, if applicable and this return covers joint income.",
+      "sourceRef": "Page 1, Part B — \"מספר עוסק במע\\\"מ\" (spouse column)"
+    },
+    {
+      "name": "employerNames",
+      "label": "שמות המעבידים",
+      "type": "string",
+      "required": false,
+      "description": "Names of the filer's (and, if joint, spouse's) employers during the tax year.",
+      "sourceRef": "Page 1, Part B — \"שמות המעבידים\""
+    },
+    {
+      "name": "refundBankCode",
+      "label": "סמל בנק",
+      "type": "string",
+      "required": false,
+      "description": "Bank code of the account to which any tax refund will be transferred, held in the registered filer's name.",
+      "sourceRef": "Page 1, Part B — \"החזר המס, אם מגיע, יועבר לחשבוני בבנק המתנהל על שם 'בן הזוג הרשום'\", \"סמל בנק\""
+    },
+    {
+      "name": "refundBankBranchCode",
+      "label": "סמל סניף",
+      "type": "string",
+      "required": false,
+      "description": "Branch code of the refund bank account (field 277 on the source form).",
+      "sourceRef": "Page 1, Part B — refund block, \"סמל סניף\" (field 277)"
+    },
+    {
+      "name": "refundBankAccountNumber",
+      "label": "מספר חשבון",
+      "type": "string",
+      "required": false,
+      "description": "Account number of the refund bank account (field 278 on the source form).",
+      "sourceRef": "Page 1, Part B — refund block, \"מספר חשבון\" (field 278)"
+    },
+    {
+      "name": "refundBankAccountHolderName",
+      "label": "שם בעל החשבון כפי שמופיע במרשמי הבנק",
+      "type": "string",
+      "required": false,
+      "description": "Name of the bank account holder, exactly as it appears in the bank's own records.",
+      "sourceRef": "Page 1, Part B — \"שם בעל החשבון כפי שמופיע במרשמי הבנק\""
+    },
+    {
+      "name": "paidPreparerUsed",
+      "label": "במילוי דין וחשבון זה נעזרתי, תמורת תשלום, על ידי מסייע שפרטיו מצויינים להלן",
+      "type": "boolean",
+      "required": false,
+      "description": "Checked when the filer was assisted, for payment, by a return preparer in completing this report.",
+      "sourceRef": "Page 1, Part B — \"במילוי דין וחשבון זה נעזרתי, תמורת תשלום, על ידי מסייע שפרטיו מצויינים להלן\""
+    },
+    {
+      "name": "paidPreparerOfficeName",
+      "label": "שם המשרד",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "paidPreparerUsed",
+        "equals": true
+      },
+      "description": "Name of the paid preparer's office.",
+      "sourceRef": "Page 1, Part B, \"פרטי המסייע\" — \"שם המשרד\""
+    },
+    {
+      "name": "paidPreparerDealerNumber",
+      "label": "מספר עוסק מורשה",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "paidPreparerUsed",
+        "equals": true
+      },
+      "description": "Paid preparer's authorized-dealer (VAT) number.",
+      "sourceRef": "Page 1, Part B, \"פרטי המסייע\" — \"מספר עוסק מורשה\""
+    },
+    {
+      "name": "paidPreparerPhone",
+      "label": "מספר טלפון",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "paidPreparerUsed",
+        "equals": true
+      },
+      "description": "Paid preparer's phone number.",
+      "sourceRef": "Page 1, Part B, \"פרטי המסייע\" — \"מספר טלפון\""
+    },
+    {
+      "name": "paidPreparerEmail",
+      "label": "כתובת דואר אלקטרוני",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "paidPreparerUsed",
+        "equals": true
+      },
+      "description": "Paid preparer's email address.",
+      "sourceRef": "Page 1, Part B, \"פרטי המסייע\" — \"כתובת דואר אלקטרוני\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date the filer (and spouse, if signing jointly) signs the declaration.",
+      "sourceRef": "Page 1, Part B — \"הצהרת מגיש הדוח\", \"תאריך\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "filerDeclaration",
+      "label": "הצהרת מגיש הדוח",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "הריני מצהיר בזה כי בשנת המס לא היו לי ולבן/בת זוגי הכנסות נוספות על אלו הכלולות בדוח זה, וכן כי הפרטים שבדין וחשבון זה ונספחיו הם נכונים ומלאים. ידוע לי, שאם המסמכים הוגשו באופן מקוון, עלי לשמור את המסמכים שצורפו ואת הקבלות המקוריות של התרומות. עפ\"י סעיף 143 לפקודת מס הכנסה. (\"I hereby declare that during the tax year I and my spouse had no income beyond that included in this report, and that the particulars in this report and its appendices are true and complete. I am aware that if the documents were submitted online, I must retain the attached documents and the original donation receipts. Per section 143 of the Income Tax Ordinance.\")",
+      "sourceRef": "Page 1, Part B — \"הצהרת מגיש הדוח\""
+    },
+    {
+      "id": "preparerDeclaration",
+      "label": "הצהרת פרטי המסייע",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "paidPreparerUsed",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "statement": "עפ\"י סעיף 143 לפקודת מס הכנסה, אני, שפרטי מצויינים למעלה, מצהיר בזה כי סייעתי תמורת תשלום, למגיש הדוח בעריכת הדין וחשבון. הנני מודע לאחריות המוטלת עלי בהקשר זה עפ\"י סעיף 224 לפקודת מס הכנסה. (\"Per section 143 of the Income Tax Ordinance, I, whose particulars are stated above, hereby declare that I assisted the filer, for payment, in preparing this report. I am aware of the responsibility placed on me in this regard under section 224 of the Income Tax Ordinance.\")",
+      "sourceRef": "Page 1, Part B, \"פרטי המסייע\" — declaration text"
+    }
+  ]
+}
