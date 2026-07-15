@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **487 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **488 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3214, delegated from GOV-3212, "GovSchema
+> Standard Research"): Tanzania's DMV vertical opens, bringing Tanzania to
+> 4 of 6 verticals**, via `tz/tra/vehicle-registration` — the Tanzania
+> Revenue Authority's (TRA) Form MV10, "Application for Registration of
+> Motorvehicle". TRA already anchors Tanzania's Taxes and Business
+> Formation entries and also administers motor vehicle registration under
+> the Road Traffic Act. Independently re-fetched fresh this cycle: HTTP
+> 200, `application/pdf`, 1,111,676 bytes, sha256
+> `45c9fe1cee298c16d91c0aa0c38294373e375f2017d9d923b3a8d5bb62fe3ee4`, from
+> the official `tra.go.tz` domain. 2 pages, a genuine scanned/rasterized
+> form (zero text items, zero AcroForm widgets per `pdfjs-dist`), read from
+> a node-canvas render at 3x scale plus targeted high-resolution crops —
+> the same profile as `md/asp/vehicle-registration` (GOV-3157). Notably,
+> the Particulars of Owner block has **no dedicated name field** at all
+> (only Owner Category + a TIN/Other Number table), confirmed via a
+> targeted crop of the surrounding whitespace rather than assumed missing;
+> TRA resolves owner identity against its own TIN/ID reference tables per
+> the source's own explanatory note, a genuine finding disclosed rather
+> than backfilled with a fabricated `ownerName` field. Models 58 `fields[]`
+> and 6 `documents[]` entries (two verbatim "I declare..." attestations
+> plus four conditionally-required supporting-evidence attachments keyed
+> to Application Reason), including closed enumerations for the source's
+> own Vehicle Category (11 values) and Colour (10 values) legends. Two
+> source notes ("at least one of Engine Cubic/KW/HP Capacity" and "axle
+> fields for Heavy Duty Vehicles and Semi-trailers only") express
+> conditionals v0.3's flat field/Condition model cannot faithfully encode
+> as hard constraints — both disclosed in-field rather than guessed at. 10
+> conformance fixtures (2 valid, 8 mutation-control, including a
+> `documents[].requiredWhen` case) committed under
+> `conformance/tz/tra/vehicle-registration/1.0.0/`. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> judgment call. A related weaker candidate (TRA's Driver's License Guide,
+> a marketing walkthrough for the login-gated IDRAS online portal) was
+> screened and confirmed a soft dead end for a standalone driving-license
+> schema this cycle. Numerator updated from 487 to 488; Tanzania's DMV
+> column flips ✗→✓ in the By Jurisdiction table below, leaving Visa as
+> Tanzania's sole remaining open vertical.
 
 > **Update (2026-07-15, GOV-3206, delegated from GOV-3204, picking up
 > GOV-3078's disclosed backlog): Nepal's Passport vertical opens, bringing
@@ -10771,7 +10809,15 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (52/62 jurisdictions — 84%)
+### DMV — Vehicle Registration, Licensing, Permits (53/62 jurisdictions — 85%)
+
+> **Update (2026-07-15, GOV-3214, delegated from GOV-3212, "GovSchema
+> Standard Research"): Tanzania's DMV vertical opens**, via
+> `tz/tra/vehicle-registration` — the Tanzania Revenue Authority's (TRA)
+> Form MV10, "Application for Registration of Motorvehicle". See the
+> Executive Summary's GOV-3214 update above for the full sourcing record,
+> field/document counts, and disclosed judgment calls. Numerator updated
+> from 52 to 53.
 
 > **Update (2026-07-15, GOV-3166, "GovSchema Standard Research"): the
 > Dominican Republic's DMV vertical opens**, via
@@ -14563,7 +14609,7 @@ now closed.
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **TZ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **TZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

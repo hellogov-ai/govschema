@@ -1,0 +1,637 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tz/tra/vehicle-registration",
+  "version": "1.0.0",
+  "title": "Tanzania Application for Registration of Motor Vehicle (Form MV10)",
+  "description": "The Tanzania Revenue Authority's (TRA) standard application form, printed reference \"MV10\", for registering a motor vehicle in Tanzania's Central Motor Vehicle Registration System (CMVRS). TRA administers motor vehicle registration under the Road Traffic Act alongside its taxation mandate. The form captures the reason for the application (importation, taken-on, locally-manufactured, re-imported, re-constructed, recovered-stolen, or other), the particulars of the vehicle's owner and, when different, its titleholder, the vehicle's own identifying and technical particulars, and supporting-documentation reference numbers (customs clearance, SARPCCO clearance, insurance, prior/foreign registration). The form's own reference legends for Vehicle Category, Colour, and Number Plates are modeled as closed enumerations keyed to the numeric/coded values the source itself prints. Two categories of the source form are deliberately out of scope, each an administrative/back-office element rather than applicant-supplied data: the \"For official use only\" block (Personal Plate Number, Registration No, Vehicle Control No, Date, Office Code, Officer Code, and Official stamp & signature — a post-processing registration record TRA staff complete once the application is approved, not something the applicant supplies when filing), and the wet-ink \"Owner's Signature\"/\"Titleholder's Signature\" fields themselves, excluded per this registry's standing convention on physical signatures (their adjoining declaration dates are modeled as ownerDeclarationDate/titleholderDeclarationDate). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of the United Republic of Tanzania or the Tanzania Revenue Authority.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Tanzania Revenue Authority",
+    "abbreviation": "TRA",
+    "url": "https://www.tra.go.tz"
+  },
+  "process": {
+    "type": "request",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.tra.go.tz/images/uploads/forms/APPLICATION_FOR_REGISTRATION_MOTOR_VEHICLE.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "MV10, \"Application for Registration of Motorvehicle\", Tanzania Revenue Authority"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3214, delegated from the GOV-3212 'GovSchema Standard Research' cycle. Opens Tanzania's DMV vertical (4th of 6, after Business Formation/GOV-3113, Taxes/GOV-3101, and National ID & Civic Documents/GOV-3152). Source re-fetched fresh this cycle rather than trusted from the prior scouting note as-is: HTTP 200, media type application/pdf, 1,111,676 bytes, sha256 45c9fe1cee298c16d91c0aa0c38294373e375f2017d9d923b3a8d5bb62fe3ee4, from the official tra.go.tz domain, no login/CAPTCHA/WAF gate encountered. 2 pages (a landscape-oriented A4 MediaBox with a 90-degree page /Rotate entry, rendering as portrait A4). pdfjs-dist@3.11.174's getTextContent() returned zero text items and getAnnotations() returned zero widgets on both pages (no AcroForm) — a genuine scanned/rasterized form, same profile as md/asp/vehicle-registration (GOV-3157). The full field list below was read from a node-canvas render at 3x scale (1785x2525px per page) plus higher-resolution crops of specific regions, not any text-extraction pass. The form carries no printed asterisks, bold markers, or other explicit required/optional convention anywhere; requiredness below is a disclosed judgment call based on which data this registration transaction structurally cannot proceed without (applicationReason, ownerCategory — the source's own page-2 note states the application 'will be rejected' if Owner Category and identity number are not stated — ownerDeclarationDate, and the vehicle's core make/model/year/category/configuration), with vehicle technical specifications (weights, axle counts, engine capacities, transmission, class/purpose, road-worthiness/insurance/customs reference numbers) modeled optional. classNumber ('Class No', the first blank in the Motorvehicle Particulars table) carries no accompanying legend or further label anywhere on either page — modeled as free text rather than asserting an unverified meaning. There is no dedicated 'Owner's Name' field anywhere in the Particulars of Owner block (contrast the Particulars of Titleholder block, which does have an explicit 'Titleholder's Name' / 'Age' line) — the 'USE BLOCK LETTERS' instruction beneath the Owner Identification Number table sits over genuinely blank whitespace with no printed line before the declaration box, confirmed at high-resolution crop; TRA evidently resolves the owner's identity from the tabulated TIN/Other Number against its own TIN/ID reference tables rather than a free-text name field, consistent with page 2's own explanatory note ('In most cases the ID number will be identified against the TIN system or other similarly reference data tables'). This is a genuine source finding, not an omission. Two Note-flagged groupings on page 2 ('State all, if available, at least one must be indicated' over Engine Cubic/KW/HP Capacity; 'For Heavy Duty Vehicles and Semi-trailers only' over Number of Axles/Axle Distance) each express an 'at least one of' or category-scoped conditional this registry's flat field/Condition model cannot faithfully encode as a hard constraint (no unambiguous single field the Heavy-Duty/Semi-trailer scoping maps onto, and no 'at least one of N optional fields' cross-field primitive) — both are disclosed in each field's own description rather than encoded as an unverified requiredWhen/visibleWhen. 'Axle Distance (Centimeter) (2)' is modeled as free text (not a number) since Note 2 itself calls for 'all axle distances, starting from the front axle' into what is structurally a single blank, and v0.3 has no repeating-value field type (composite/repeating values remain tracked in GSP-0009). Page 2's own 'Locally Manufactured ☐Yes ☐No' checkbox trio carries an unexplained leading checkbox before the Yes/No pair with no separate label or blank of its own; locallyManufactured models only the Yes/No answer and the leading checkbox is not separately modeled, disclosed as an interpretive judgment call. This is a distinct data point from Application Reason's own 'Locally manufactured' enum option on page 1 (both are printed on the source and both are modeled, even though they overlap in substance) — disclosed as an observed redundancy in the source form itself, not a modeling error. numberPlateQuality ('and quality: 1☐ 2☐', repeated once per plate-size row) carries no legend anywhere distinguishing what grades '1' and '2' mean; modeled as a single enum field since only one plate size (and therefore one quality tick) applies per application, disclosed as unresolved. vehicleColorOther ('Other Colour:') is modeled as a supplementary free-text field alongside the closed 10-value vehicleColorCode enum, for a shade the numbered legend does not capture precisely. requiredWhen/visibleWhen conditions below are attached only where the source's own printed label explicitly and unambiguously scopes a field to a specific applicationReason/numberPlateType value (e.g. '(For Take-on vehicle only)', '(For imported vehicles only)', the italic 'Insurance Information for Take-on vehicles only' header, and 'Not mandatory for Take-on registration'); the Supporting Documentation column's customs/SARPCCO reference-number fields carry no such explicit per-field scoping label on page 2 itself (only the separate page-1 attachment-requirement bullets reference Application Reason, modeled via documents[].requiredWhen instead) and are therefore left as plain optional fields rather than an inferred visibleWhen this registry cannot attribute to explicit source text."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationReason",
+      "label": "Application Reason",
+      "type": "enum",
+      "required": true,
+      "description": "The reason for this registration application. Judgment call: the source form carries no printed asterisk on this checkbox group, but the application cannot be meaningfully processed without it.",
+      "sourceRef": "Application Reason. ☐ Importation ☐ Taken on ☐ Locally manufactured ☐ Re-imported ☐ Re-constructed ☐ Recovered stolen ☐Other",
+      "validation": {
+        "enum": ["importation", "taken_on", "locally_manufactured", "re_imported", "re_constructed", "recovered_stolen", "other"]
+      }
+    },
+    {
+      "name": "ownerCategory",
+      "label": "Owner Category",
+      "type": "enum",
+      "required": true,
+      "description": "Category of the vehicle's owner. The source form states: 'Owner's identity number and Owner Category must be stated, if not the application will be rejected.'",
+      "sourceRef": "PARTICULARS OF OWNER — Owner Category: ☐ Citizen of Tanzania ☐ Parastatal ☐ Company ☐ Expatriate ☐ Other Agencies/ Associations/Clubs ☐ Partnership ☐ Sole Proprietor ☐ Financial Institution ☐ Government ☐ Local Government ☐ Diplomat ☐ Organisation under UNDP ☐ Cooperative Society ☐ Religious Organisation",
+      "validation": {
+        "enum": ["citizen_of_tanzania", "parastatal", "company", "expatriate", "other_agencies_associations_clubs", "partnership", "sole_proprietor", "financial_institution", "government", "local_government", "diplomat", "organisation_under_undp", "cooperative_society", "religious_organisation"]
+      }
+    },
+    {
+      "name": "ownerTinNumber",
+      "label": "TIN Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The owner's Taxpayer Identification Number, when used as the Owner Identification Number. Per the source's own required-if-not-rejected note (see ownerCategory), at least one of ownerTinNumber/ownerOtherIdNumber is expected to be present; this 'at least one of two optional fields' rule is disclosed here rather than encoded, since v0.3's field model has no such cross-field primitive.",
+      "sourceRef": "Owner Identification Number — TIN Number: ___",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "ownerOtherIdNumber",
+      "label": "Other Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "An alternative Owner Identification Number, when the owner is not identified by TIN Number.",
+      "sourceRef": "Owner Identification Number — Other Number: ___",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "ownerDeclarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the owner signs the declaration that all particulars furnished are true and correct. The adjoining 'Owner's Signature' is excluded per this registry's standing convention on physical signatures.",
+      "sourceRef": "I declare that all the particulars furnished by me in this form are true and correct. Date: ___ Owner's Signature: ___"
+    },
+    {
+      "name": "titleholderCategory",
+      "label": "Titleholder Category",
+      "type": "enum",
+      "required": false,
+      "description": "Category of the vehicle's titleholder, only applicable when the titleholder is different from the owner. A Titleholder is someone who has sold/donated a vehicle under a contractual arrangement with the owner (e.g. a bank, employer, or car dealer financing the vehicle).",
+      "sourceRef": "PARTICULARS OF TITLEHOLDER (IF DIFFERENT FROM OWNER) — Titleholder Category: ☐ Citizen of Tanzania ☐ Parastatal ☐ Company ☐ Expatriate ☐ Other Agencies/ Associations/Clubs ☐ Partnership ☐ Sole Proprietor ☐ Financial Institution ☐ Government ☐ Local Government ☐ Diplomat ☐ Organisation under UNDP ☐ Cooperative Society ☐ Religious Organisation",
+      "validation": {
+        "enum": ["citizen_of_tanzania", "parastatal", "company", "expatriate", "other_agencies_associations_clubs", "partnership", "sole_proprietor", "financial_institution", "government", "local_government", "diplomat", "organisation_under_undp", "cooperative_society", "religious_organisation"]
+      }
+    },
+    {
+      "name": "titleholderTinNumber",
+      "label": "TIN Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Titleholder Identification Number — TIN Number: ___",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "titleholderOtherIdNumber",
+      "label": "Other Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Titleholder Identification Number — Other Number: ___",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "titleholderName",
+      "label": "Titleholder's Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "USE BLOCK LETTERS. Titleholder's Name:___",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "titleholderAge",
+      "label": "Age",
+      "type": "integer",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Titleholder's Name:___ Age:___",
+      "validation": { "minimum": 0, "maximum": 130 }
+    },
+    {
+      "name": "titleholderDeclarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": false,
+      "description": "Date the titleholder signs the declaration that all particulars furnished are true and correct, only applicable when a titleholder distinct from the owner is being declared. The adjoining 'Titleholder's Signature' is excluded per this registry's standing convention on physical signatures.",
+      "sourceRef": "I declare that all the particulars furnished by me in this form are true and correct. Date: ___ Titleholders's Signature: ___"
+    },
+    {
+      "name": "classNumber",
+      "label": "Class No",
+      "type": "string",
+      "required": false,
+      "description": "Carries no accompanying legend or further label anywhere on the source; modeled as free text.",
+      "sourceRef": "MOTORVEHICLE PARTICULARS — Class No ___",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "yearOfMake",
+      "label": "Year of Make",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Year of Make ___",
+      "validation": { "minimum": 1900, "maximum": 2100 }
+    },
+    {
+      "name": "vehicleMake",
+      "label": "Make",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Make ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "vehicleModel",
+      "label": "Model",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Model ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "modelNumber",
+      "label": "Model No",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Model No ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "vehicleCategory",
+      "label": "Vehicle Category (See below)",
+      "type": "enum",
+      "required": true,
+      "description": "Vehicle Category legend: 1 Motorcycle (less than 3 wheels); 2 Motor Tricycle; 3 Light Passenger Vehicle (GVM 3,500 kg or less); 4 Heavy Passenger Vehicle (GVM >3,500 kg); 5 Light Load Vehicle (GVM 3,500 kg or less); 6 Heavy load Vehicle (GVM >3,500 kg not to draw); 7 Trailer; 8 Agriculture Tractor; 9 Agriculture Trailer; 10 Mining / Road Construction Equipment; 11 Other.",
+      "sourceRef": "Vehicle Category (See below) ___ — legend table: Vehicle Category (1)–(11)",
+      "validation": {
+        "enum": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
+      }
+    },
+    {
+      "name": "bodyType",
+      "label": "Body Type",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Body Type ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "locallyManufactured",
+      "label": "Locally Manufactured",
+      "type": "boolean",
+      "required": false,
+      "description": "The printed checkbox trio carries an unexplained leading checkbox before the Yes/No pair, with no separate label or blank of its own; this field models only the Yes/No answer, disclosed as an interpretive judgment call. Distinct from, but overlapping in substance with, Application Reason's own 'Locally manufactured' enum option — both are printed on the source and both are modeled here as an observed redundancy in the source form itself.",
+      "sourceRef": "☐ Locally Manufactured ☐Yes ☐No"
+    },
+    {
+      "name": "vehicleConfiguration",
+      "label": "Self propelled / Trailer / Semitrailer / Other",
+      "type": "enum",
+      "required": true,
+      "description": "Judgment call: no printed asterisk, but every vehicle being registered structurally falls into exactly one of these four configurations.",
+      "sourceRef": "Self propelled ☐ Trailer ☐ Semitrailer ☐ Other☐",
+      "validation": {
+        "enum": ["self_propelled", "trailer", "semitrailer", "other"]
+      }
+    },
+    {
+      "name": "engineNumber",
+      "label": "Engine No",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Engine No ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "engineCubicCapacity",
+      "label": "Engine Cubic Capacity (1)",
+      "type": "number",
+      "required": false,
+      "description": "Note 1 on the source reads: 'State all, if available, at least one must be indicated' over this field, Engine KW Capacity, and Engine HP Capacity. This 'at least one of three optional fields' rule is disclosed here rather than encoded, since v0.3's field model has no such cross-field primitive.",
+      "sourceRef": "Engine Cubic Capacity (1) ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "engineKwCapacity",
+      "label": "Engine KW Capacity (1)",
+      "type": "number",
+      "required": false,
+      "description": "See Note 1, quoted on engineCubicCapacity.",
+      "sourceRef": "Engine KW Capacity (1) ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "engineHpCapacity",
+      "label": "Engine HP Capacity (1)",
+      "type": "number",
+      "required": false,
+      "description": "See Note 1, quoted on engineCubicCapacity.",
+      "sourceRef": "Engine HP Capacity (1) ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "transmissionType",
+      "label": "Transmission",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Transmission — Manual ☐ Automatic ☐ Other ☐",
+      "validation": {
+        "enum": ["manual", "automatic", "other"]
+      }
+    },
+    {
+      "name": "fuelType",
+      "label": "Fuel Type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Fuel Type — Petrol ☐ Diesel ☐ Electricity ☐ Other ☐",
+      "validation": {
+        "enum": ["petrol", "diesel", "electricity", "other"]
+      }
+    },
+    {
+      "name": "tareWeight",
+      "label": "Tare Weight",
+      "type": "number",
+      "required": false,
+      "description": "The vehicle's unladen/tare weight. Unit not printed on the source; kilograms is TRA's and the region's standard convention (matching engine capacity conventions on this same form) rather than an asserted printed unit.",
+      "sourceRef": "Tare Weight ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "grossWeight",
+      "label": "Gross Weight",
+      "type": "number",
+      "required": false,
+      "description": "The vehicle's gross weight (GVM, referenced by the Vehicle Category legend). Unit not printed on the source; modeled as kilograms per the legend's own 'GVM ... kg' phrasing.",
+      "sourceRef": "Gross Weight ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "numberOfAxles",
+      "label": "Number of Axles (2)",
+      "type": "integer",
+      "required": false,
+      "description": "Note 2 on the source reads: 'For Heavy Duty Vehicles and Semi-trailers only. State all axle distances, starting from the front axle.' over this field and axleDistance. Not encoded as visibleWhen since 'Heavy Duty Vehicles' does not map onto a single unambiguous vehicleCategory/vehicleConfiguration value the source itself names; disclosed here instead.",
+      "sourceRef": "Number of Axles (2) ___",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "axleDistance",
+      "label": "Axle Distance (Centimeter) (2)",
+      "type": "string",
+      "required": false,
+      "description": "See Note 2, quoted on numberOfAxles. Note 2 calls for 'all axle distances, starting from the front axle' into what is structurally a single blank on the source; modeled as free text (not a number) since v0.3 has no repeating-value field type for multiple per-axle distances.",
+      "sourceRef": "Axle Distance (Centimeter) (2) ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "vehicleColorCode",
+      "label": "Colour (see below)",
+      "type": "enum",
+      "required": true,
+      "description": "Colour legend: 1 White; 2 Blue; 3 Yellow; 4 Red; 5 Green; 6 Black; 7 Brown; 8 Grey; 9 Pink; 10 Multicolour.",
+      "sourceRef": "Colour (see below) ___ — legend table: Colour: (1) White (2) Blue (3) Yellow (4) Red (5) Green (6) Black (7) Brown (8) Grey (9) Pink (10) Multicolour",
+      "validation": {
+        "enum": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+      }
+    },
+    {
+      "name": "vehicleColorOther",
+      "label": "Other Colour",
+      "type": "string",
+      "required": false,
+      "description": "Supplementary free-text colour description, alongside the closed vehicleColorCode legend, for a shade the numbered legend does not capture precisely.",
+      "sourceRef": "Other Colour: ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "seatingCapacity",
+      "label": "Seating Capacity",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Seating Capacity ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "vehicleClassPurpose",
+      "label": "Class/purpose",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Class/purpose: Private ☐ Tax ☐ Other ☐ Commercial ☐ Emergency ☐ ☐ Donor Funded Project vehicles",
+      "validation": {
+        "enum": ["private", "tax", "other", "commercial", "emergency", "donor_funded_project"]
+      }
+    },
+    {
+      "name": "roadWorthinessCertificateNumber",
+      "label": "Road worthiness Certificate No.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Road worthiness Certificate No. ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "roadWorthinessDate",
+      "label": "Road worthiness Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Road worthiness Date ___"
+    },
+    {
+      "name": "firstRegistrationOrPurchaseDate",
+      "label": "First Registration / Purchase Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "First Registration / Purchase Date ___"
+    },
+    {
+      "name": "registrationBookNumber",
+      "label": "Registration Book No",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "sourceRef": "Registration Book No (For Take-on vehicle only) ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "customsClearanceCertificateNumber",
+      "label": "Customs Clearance Certificate No.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Customs Clearance Certificate No. ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "customsClearanceCertificateDate",
+      "label": "Customs Clearance Certificate Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Customs Clearance Certificate Date ___"
+    },
+    {
+      "name": "importedFrom",
+      "label": "Imported from",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Imported from ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "customsDutyExempted",
+      "label": "Customs Duty Exempted",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Customs Duty Exempted Yes ☐ No☐"
+    },
+    {
+      "name": "customsClearanceReceiptNumber",
+      "label": "Customs Clearance Receipt No",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Customs Clearance Receipt No ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "sarpccoClearanceCertificateDate",
+      "label": "SARPCCO Clearance Certificate Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "SARPCCO Clearance Certificate Date ___"
+    },
+    {
+      "name": "sarpccoClearanceCertificateNumber",
+      "label": "SARPCCO Clearance Certificate No",
+      "type": "string",
+      "required": false,
+      "sourceRef": "SARPCCO Clearance Certificate No ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "foreignRegistrationNumber",
+      "label": "Foreign Registration No.",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "in": ["importation", "re_imported"] },
+      "sourceRef": "Foreign Registration No. (For imported vehicles only) ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "currentRegistrationNumber",
+      "label": "Current Registration No.",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "sourceRef": "Current Registration No. (For Take-on vehicles only) ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "insuranceCompanyName",
+      "label": "Insurance Company Name",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "sourceRef": "Insurance Information for Take-on vehicles only — Insurance Company Name ___",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "insuranceNumber",
+      "label": "Insurance Number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "sourceRef": "Insurance Information for Take-on vehicles only — Insurance Number ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "insuranceType",
+      "label": "Insurance Type",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "sourceRef": "Insurance Information for Take-on vehicles only — Insurance Type ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "insuranceStartDate",
+      "label": "Insurance Start Date",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "sourceRef": "Insurance Information for Take-on vehicles only — Insurance Start Date ___"
+    },
+    {
+      "name": "insuranceExpiryDate",
+      "label": "Insurance Expiry Date",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "sourceRef": "Insurance Information for Take-on vehicles only — Insurance Expiry Date ___"
+    },
+    {
+      "name": "numberPlateType",
+      "label": "Number plates (see below)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Number plates (see below) ☐ Ordinary ☐Personal ☐Special",
+      "validation": {
+        "enum": ["ordinary", "personal", "special"]
+      }
+    },
+    {
+      "name": "specialRegistrationPlatePrefix",
+      "label": "If a Special Registration Plate",
+      "type": "enum",
+      "required": false,
+      "visibleWhen": { "field": "numberPlateType", "equals": "special" },
+      "sourceRef": "If a Special Registration Plate: ☐ SU.. ☐ SM.. ☐ RAC.. ☐ TCD.. ☐ OTHER",
+      "validation": {
+        "enum": ["su", "sm", "rac", "tcd", "other"]
+      }
+    },
+    {
+      "name": "personalPlateNumberOrName",
+      "label": "If a Personal Registration Plate: Number/Name",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "numberPlateType", "equals": "personal" },
+      "description": "The source notes: 'A Personal Registration Plate must not be obscene, vulgar or offensive and the use of it must, if company or product name, be acknowledged in writing by the owner of the company or product.'",
+      "sourceRef": "If a Personal Registration Plate: Number /Name:___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "numberPlateSize",
+      "label": "Number plate size",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Number plate size: ☐ 52*11 cm ☐ 28*20 cm ☐ 24*13 cm (MC) ☐ 34*18 cm",
+      "validation": {
+        "enum": ["52x11", "28x20", "24x13_mc", "34x18"]
+      }
+    },
+    {
+      "name": "numberPlateQuality",
+      "label": "and quality",
+      "type": "enum",
+      "required": false,
+      "description": "Printed once per number-plate-size row ('and quality: 1☐ 2☐'), with no legend anywhere distinguishing what grades '1' and '2' mean. Modeled as a single field since only one plate size (and therefore one quality tick) applies per application; the unresolved meaning of the two grades is disclosed rather than guessed.",
+      "sourceRef": "and quality: 1☐ 2 ☐ (repeated per number plate size row)",
+      "validation": {
+        "enum": ["1", "2"]
+      }
+    },
+    {
+      "name": "numberPlateDeliveryAddress",
+      "label": "Number plates delivered to",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "not": { "field": "applicationReason", "equals": "taken_on" } },
+      "description": "State the TRA Regional Office or other delivery address for the number plates.",
+      "sourceRef": "Number plates delivered to (state TRA Regional Office or other delivery address): ___ [right cell:] Not mandatory for Take-on registration",
+      "validation": { "maxLength": 200 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "ownerDeclaration",
+      "label": "Owner's declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I declare that all the particulars furnished by me in this form are true and correct.",
+      "sourceRef": "PARTICULARS OF OWNER declaration box"
+    },
+    {
+      "id": "titleholderDeclaration",
+      "label": "Titleholder's declaration",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "other",
+      "handling": "only-applicable-when-a-titleholder-distinct-from-the-owner-is-being-declared",
+      "statement": "I declare that all the particulars furnished by me in this form are true and correct.",
+      "sourceRef": "PARTICULARS OF TITLEHOLDER (IF DIFFERENT FROM OWNER) declaration box"
+    },
+    {
+      "id": "registrationCardAndInsuranceCertificate",
+      "label": "Registration Card & Vehicle Insurance Certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "applicationReason", "equals": "taken_on" },
+      "belongsTo": "applicant",
+      "sourceRef": "Please attach to this application: ❖ Registration Card & Vehicle Insurance Certificate - if Take on"
+    },
+    {
+      "id": "policeInspectionReport",
+      "label": "Police Inspection Report",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "applicationReason", "equals": "taken_on" },
+        { "field": "applicationReason", "equals": "locally_manufactured" }
+      ] },
+      "belongsTo": "applicant",
+      "handling": "also-required-if-vehicle-older-than-three-years-not-encoded-in-requiredwhen-no-age-from-year-of-make-computation-in-the-condition-grammar",
+      "sourceRef": "Please attach to this application: ❖ Police Inspection Report - if Take on or if Locally Manufactured or if vehicle older than three years"
+    },
+    {
+      "id": "customsClearanceCertificate",
+      "label": "Customs Clearance Certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "applicationReason", "equals": "importation" },
+        { "field": "applicationReason", "equals": "other" }
+      ] },
+      "belongsTo": "applicant",
+      "sourceRef": "Please attach to this application: ❖ Customs Clearance Certificate - if Importation or Application Reason is Other"
+    },
+    {
+      "id": "sarpccoCertificate",
+      "label": "SARPCCO Certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "applicationReason", "equals": "importation" },
+        { "field": "applicationReason", "equals": "re_imported" }
+      ] },
+      "belongsTo": "applicant",
+      "handling": "also-scoped-to-if-vehicle-imported-from-a-sadc-member-country-not-encoded-in-requiredwhen-this-form-has-no-sadc-membership-of-imported-from-field",
+      "sourceRef": "Please attach to this application: ❖ SARPCCO Certificate - if Importation or Re imported and if vehicle imported from a SADC member country"
+    }
+  ]
+}
