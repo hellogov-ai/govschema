@@ -1,0 +1,368 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "md/asp/vehicle-registration",
+  "version": "1.0.0",
+  "title": "Moldova Vehicle Registration/Technological-Operation Request — Private Owners (Cerere privind operațiunile tehnologice cu mijlocul de transport, pentru proprietari particulari)",
+  "description": "The Agenția Servicii Publice's (ASP, Public Services Agency, the legal successor of the former Î.S. \"Registru\" state enterprise named in this form's own print-shop footer) standard \"CERERE\" (Request) form for private vehicle owners, filed to request a technological operation on a motor vehicle's registration record — e.g. first-time registration, re-registration on a change of owner, replacement of registration plates, or deregistration. ASP publishes this as form 3-4/7 alongside a sibling form (3-4/8) for legal-entity (persoane juridice) owners, which is out of scope of this document. The form itself provides no fixed picklist of operation types; the specific operation being requested is captured as the applicant's own free-text statement under \"Rog\" (\"I request\"), rather than a fabricated enum this source does not offer. This document models the private owner's own identity/contact data, a reference to any existing registration plate/document the vehicle already carries, the vehicle's own identifying and technical particulars, and the free-text list of documents the applicant attaches in support of the request. Three categories of the source form are deliberately out of scope, each an administrative/back-office element rather than applicant-supplied data: the pre-title \"ELIBERAT p/t\" / \"n/î\" header stub (a post-processing issuance reference an office fills in once the request is completed, not something the applicant supplies when filing); the \"operația tehnologică ... cod\" 2-digit classification box (an internal ASP transaction-type code assigned from the agency's own back-office code table, not a value the applicant would know or self-assign); and the \"Centrul Militar\", \"EXPERT\", \"VERIFICAREA DI (9-31, 9-73)\", \"Verificarea vehiculului\", and \"Verificarea actelor\" blocks (respectively a military-registration-authority stamp box and four staff/inspector verification lines completed by ASP personnel during processing, not by the applicant). The closing wet-ink \"Semnătura personală\" signature itself is excluded per this registry's standing convention on physical signatures, but the adjoining date is modeled as applicationDate. GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of the Republic of Moldova or Agenția Servicii Publice.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MD",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Agenția Servicii Publice",
+    "abbreviation": "ASP",
+    "url": "https://www.asp.gov.md"
+  },
+  "process": {
+    "type": "request",
+    "language": "ro-MD"
+  },
+  "source": {
+    "url": "https://www.asp.gov.md/sites/default/files/servicii/e-servicii/formulare-tip/3-4/7_pentru_proprietari_particulari.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Cerere (pentru proprietari particulari) — formular 3-4/7, Agenția Servicii Publice"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3157, delegated from the GOV-3152 'GovSchema Standard Research' cycle. Opens Moldova's DMV vertical (2nd of 6, after Business Formation via md/asp/cerere-inregistrare-intreprinzator-individual, GOV-3115). Source re-fetched fresh this cycle rather than trusted from the prior scouting note as-is: HTTP 200, media type application/pdf, 216,735 bytes, sha256 8ea235ff626f3089efeceecf2f5b3a804e4b8c18d86ae68c1212655119558e50, genuine %PDF-1.4 header, no login/CAPTCHA/WAF gate anywhere on asp.gov.md or the e-services.md index that links it. Unlike this registry's other recent Moldovan find (md/asp/cerere-inregistrare-intreprinzator-individual, a native text-layer PDF), this single-page PDF is a genuine scanned/rasterized image: pdfjs-dist@3.11.174's getTextContent() returned zero text items and getAnnotations() returned zero widgets (no AcroForm), so the entire field list below was read from a node-canvas render at 4x scale (2380x3368px) rather than any text-extraction pass — a genuine non-text-layer source, disclosed here per this registry's established practice for scanned/print-and-fill forms (see e.g. do/mirex/passport-application's vector-grid disclosure for the general pattern, though this case is a true raster scan rather than a vector-drawn grid pdfjs-dist's text layer missed). The form carries no printed asterisks, bold markers, or any other explicit required/optional convention anywhere (unlike do/mirex/passport-application's '*' convention) — requiredness below is a judgment call based on which data a private-owner vehicle transaction structurally cannot proceed without (owner identity, vehicle identifying particulars), with block/apartment-style sub-fields and secondary contact/notes fields modeled optional, disclosed explicitly rather than asserted as sourced from a printed convention. The form's own comb-style box grids for COD VIN / Motor nr. / Caroseria nr. / Șasiul nr. are each subdivided by forward slashes into individual character cells; the exact cell count could not be reliably determined from the rendered image (uniform tick marks with no printed numbered guide, unlike a dated triple like dd/mm/yyyy), so each is modeled as a free-text string with a generous maxLength rather than asserting an unverified exact character count or a modern 17-character VIN pattern this legacy Soviet-derived form template does not itself print. Two occurrences of the ambiguous abbreviation 'n/î' (once in the pre-title header alongside 'ELIBERAT p/t', once immediately after 'Marca, model' in the vehicle-description block) could not be confidently resolved to a specific applicant-facing meaning from the rendered image alone (no distinguishing sub-label, and both sit adjacent to what read elsewhere as office/tracking content) — neither occurrence is modeled as a field, disclosed here as an interpretive judgment call rather than a fabricated guess. 'buletin de identitate seria ___ Nr. ___ eliberat ___' — the single 'eliberat' ('issued') blank carries no sub-label distinguishing an issuing authority from an issuance date, unlike the form's own explicit 'Data nașterii' label elsewhere; modeled as a single free-text field (identityCardIssuedBy) capturing whatever the applicant writes, disclosed as a judgment call. personalIdNumber carries a 13-digit numeric pattern based on Moldova's published IDNP (numărul de identificare de stat al persoanei fizice) numbering standard, an external public standard not printed digit-by-digit on the form itself, mirroring the precedent set in md/asp/cerere-inregistrare-intreprinzator-individual. documents[] (1 entry, optional) reflects the form's own generic 'La cerere se anexează: 1. 2. 3.' three-line numbered placeholder with no itemized document types printed anywhere, modeled as a single optional supporting-evidence entry rather than fabricating specific document names the source does not print — the same modeling choice used for the sibling Business Formation schema's documents[] entry. The form's pre-printed 'Semnătura personală ... 200_' signature-date line carries an obsolete two-digit-year suffix baked into this legacy print template (also visible in the two inspector-verification lines below it); despite this, the source file itself was independently confirmed live and unchanged this cycle (fresh HTTP 200 fetch, matching sha256, current asp.gov.md domain) — applicationDate is modeled as a standard ISO date field rather than reproducing the obsolete '200_' print quirk, since an applicant filing in 2026 would simply write the actual current date regardless of the stale pre-print."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "existingPlateSeries",
+      "label": "Numere de înmatriculare seria",
+      "type": "string",
+      "required": false,
+      "description": "Series of the vehicle's existing Moldovan registration plate, when this request concerns a vehicle already carrying Moldovan plates (e.g. a change-of-owner re-registration). Left blank for a vehicle never before registered in Moldova.",
+      "sourceRef": "Numere de înmatriculare seria ___",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "existingPlateNumber",
+      "label": "Numere de înmatriculare Nr.",
+      "type": "string",
+      "required": false,
+      "description": "Number of the vehicle's existing Moldovan registration plate, alongside existingPlateSeries.",
+      "sourceRef": "Numere de înmatriculare ... Nr. ___",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "registrationDocumentName",
+      "label": "Document de înregistrare",
+      "type": "string",
+      "required": true,
+      "description": "Name/type of the vehicle's existing registration or title document (e.g. a prior Moldovan registration certificate, or an imported vehicle's foreign title/customs document) being referenced for this request.",
+      "sourceRef": "Document de înregistrare ___",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "registrationDocumentSeries",
+      "label": "Document de înregistrare — seria",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Document de înregistrare ... seria ___",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "registrationDocumentNumber",
+      "label": "Document de înregistrare — Nr.",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Document de înregistrare ... Nr. ___",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "applicantFullName",
+      "label": "De la cetățeanul (N.P.P.)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the requesting citizen (Nume, Prenume, Patronimic — last name, first name, patronymic).",
+      "sourceRef": "De la cetățeanul (N.P.P.) ___",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Data nașterii",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Data nașterii ___"
+    },
+    {
+      "name": "domicileAddress",
+      "label": "domiciliat în",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street/locality portion of the applicant's registered domicile address; see houseNumber/blockNumber/apartmentNumber for the remaining address components printed on the following line.",
+      "sourceRef": "domiciliat în ___",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "houseNumber",
+      "label": "casa",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "casa ___",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "blockNumber",
+      "label": "bloc",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Building/block number, when the applicant's address is a multi-block complex.",
+      "sourceRef": "bloc ___",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "apartmentNumber",
+      "label": "ap. Nr.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "ap. Nr. ___",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Nr. de telefon",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Nr. de telefon ___",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "identityCardSeries",
+      "label": "buletin de identitate seria",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "buletin de identitate seria ___",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "identityCardNumber",
+      "label": "buletin de identitate Nr.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "buletin de identitate ... Nr. ___",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "identityCardIssuedBy",
+      "label": "eliberat",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Issuing detail (authority and/or date) for the applicant's buletin de identitate, as printed on the single 'eliberat' blank with no further sub-label. Modeled as free text since the source does not distinguish an issuing-authority sub-field from an issuance-date sub-field.",
+      "sourceRef": "buletin de identitate ... eliberat ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "personalIdNumber",
+      "label": "Codul personal (I.D.N.P.)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's IDNP (numărul de identificare de stat al persoanei fizice), Moldova's 13-digit national personal identification number.",
+      "sourceRef": "Codul personal (I.D.N.P.) ___",
+      "validation": { "pattern": "^[0-9]{13}$" }
+    },
+    {
+      "name": "placeOfWork",
+      "label": "Locul de muncă",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Locul de muncă ___",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "jobTitle",
+      "label": "funcția",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "funcția ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "requestDescription",
+      "label": "Rog",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's own free-text statement of the specific technological operation being requested (e.g. first-time registration, re-registration on change of owner, plate replacement, deregistration). The source form prints no fixed picklist of operation types for this blank.",
+      "sourceRef": "Rog ___",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "vehicleMakeModel",
+      "label": "Marca, model",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Vehiculul: Marca, model ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "vehicleVin",
+      "label": "COD VIN",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's identification code, printed on the source as a comb-style box grid subdivided by forward slashes. Exact cell count could not be reliably determined from the rendered image; modeled as free text rather than asserting an unverified fixed length or a modern 17-character VIN pattern.",
+      "sourceRef": "COD VIN ___/___/.../___",
+      "validation": { "maxLength": 25 }
+    },
+    {
+      "name": "engineNumber",
+      "label": "Motor nr.",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Motor nr. ___/___/.../___",
+      "validation": { "maxLength": 25 }
+    },
+    {
+      "name": "bodyNumber",
+      "label": "Caroseria nr.",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's body (caroserie) number, when distinct from its VIN and engine number — a distinction this legacy form preserves from the Soviet-era practice of tracking body/chassis/engine numbers as separate identifiers.",
+      "sourceRef": "Caroseria nr. ___/___/.../___",
+      "validation": { "maxLength": 25 }
+    },
+    {
+      "name": "chassisNumber",
+      "label": "Șasiul nr.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Șasiul nr. ___/___/.../___",
+      "validation": { "maxLength": 25 }
+    },
+    {
+      "name": "yearOfManufacture",
+      "label": "Anul de fabricație",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Anul de fabricație ___/___/___/___",
+      "validation": { "minimum": 1900, "maximum": 2100 }
+    },
+    {
+      "name": "vehicleColor",
+      "label": "culoarea",
+      "type": "string",
+      "required": true,
+      "sourceRef": "... culoarea ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "vehicleType",
+      "label": "Tipul vehiculului",
+      "type": "string",
+      "required": true,
+      "description": "The kind of vehicle (e.g. autoturism/passenger car, camion/truck, motocicletă/motorcycle).",
+      "sourceRef": "Tipul vehiculului ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "bodyType",
+      "label": "Tipul caroseriei",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Tipul caroseriei ___",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "grossVehicleWeight",
+      "label": "Masa autorizată",
+      "type": "number",
+      "required": true,
+      "description": "The vehicle's authorized/gross weight, in kilograms.",
+      "sourceRef": "Masa autorizată ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "curbWeight",
+      "label": "Masa proprie",
+      "type": "number",
+      "required": true,
+      "description": "The vehicle's own/curb weight (unladen), in kilograms.",
+      "sourceRef": "Masa proprie ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "engineDisplacement",
+      "label": "Cap. cilindr.",
+      "type": "number",
+      "required": true,
+      "description": "The engine's cylinder capacity/displacement, in cubic centimeters.",
+      "sourceRef": "Cap. cilindr. ___",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "fuelType",
+      "label": "Sursa de energie a motorului",
+      "type": "string",
+      "required": true,
+      "description": "The engine's power source (e.g. benzină/petrol, motorină/diesel, gaz, electric). The source form prints no fixed picklist for this blank; modeled as free text.",
+      "sourceRef": "Sursa de energie a motorului ___",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "seatingCapacity",
+      "label": "Nr. de locuri pe scaune",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Nr. de locuri pe scaune ___",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "specialRemarks",
+      "label": "Mențiuni speciale",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Mențiuni speciale ___",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "applicationDate",
+      "label": "Semnătura personală ... 200_",
+      "type": "date",
+      "required": true,
+      "description": "Date the applicant signs the request, adjoining the wet-ink personal signature (excluded per this registry's standing convention on physical signatures). The source's own pre-printed line carries an obsolete two-digit-year '200_' suffix baked into this legacy template; modeled as a standard ISO date rather than reproducing that print quirk.",
+      "sourceRef": "Semnătura personală ___ ___ ___ 200_"
+    }
+  ],
+  "documents": [
+    {
+      "id": "attachedDocumentation",
+      "label": "La cerere se anexează",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "form-prints-a-generic-3-line-numbered-placeholder-with-no-itemized-document-types",
+      "sourceRef": "La cerere se anexează : 1. ___ 2. ___ 3. ___"
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **478 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **479 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3166, delegated from GOV-3152, "GovSchema
 > Standard Research"): the Dominican Republic's DMV vertical opens (1 of
@@ -31,6 +31,37 @@
 > (Three further pre-scouted candidates for the Dominican Republic's
 > still-open verticals — Business Formation, Visa, National ID — remain
 > disclosed backlog in GOV-3167/GOV-3168/GOV-3169.)
+
+> **Update (2026-07-15, GOV-3157, delegated from GOV-3152, "GovSchema
+> Standard Research"): Moldova's DMV vertical opens (1 of 6), bringing
+> Moldova to 2 of 6 verticals**, via `md/asp/vehicle-registration` — the
+> Agenția Servicii Publice's (ASP) standard "CERERE" request form for
+> private vehicle owners (form 3-4/7), covering technological operations
+> on a motor vehicle's registration record (first-time registration,
+> re-registration on a change of owner, plate replacement, deregistration).
+> Picked up as an unclaimed, pre-scouted child issue (GOV-3157) delegated
+> from the GOV-3152 cycle, independently re-fetched and re-verified from
+> scratch (fresh `curl` + sha256, `pdfjs-dist` structural check). Unlike
+> Moldova's first schema (a native text-layer PDF), this single-page source
+> is a genuine scanned/raster image — `pdfjs-dist`'s `getTextContent()`
+> returned zero text items and `getAnnotations()` returned zero widgets, so
+> the entire field list was read from a `node-canvas` render at 4x scale,
+> a genuine text-extraction gap disclosed in the document's own
+> VERIFICATION.md. Models 35 `fields[]` (owner identity/contact,
+> existing-plate/document reference, and vehicle identifying/technical
+> particulars) and 1 `documents[]` entry (a generic, non-itemized
+> supporting-evidence placeholder); excludes a pre-title office-issuance
+> header, an internal back-office transaction-code box, a military-
+> registration-authority stamp box, and four staff/inspector verification
+> lines, consistent with this registry's established administrative/
+> staff-only exclusion convention. 8 conformance fixtures (2 valid, 6
+> mutation-control) committed under
+> `conformance/md/asp/vehicle-registration/1.0.0/`. See the DMV vertical
+> section below and the document's own VERIFICATION.md for the full
+> sourcing record and scope decisions. (Four further pre-scouted candidates
+> for Moldova's still-open verticals — Taxes, Visa, and two confirmed dead
+> ends (Passport, National ID) — remain disclosed in GOV-3157's own issue
+> description for a future cycle.)
 
 > **Update (2026-07-15, GOV-3158, delegated from GOV-3152, "GovSchema
 > Standard Research"): the Dominican Republic's Passport vertical opens (1
@@ -10470,7 +10501,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (51/62 jurisdictions — 82%)
+### DMV — Vehicle Registration, Licensing, Permits (52/62 jurisdictions — 84%)
 
 > **Update (2026-07-15, GOV-3166, "GovSchema Standard Research"): the
 > Dominican Republic's DMV vertical opens**, via
@@ -10494,6 +10525,11 @@ dense five-column physical-description ("Filiación") checkbox grid.
 > pre-scouted candidates for the Dominican Republic's still-open verticals
 > — Business Formation, Visa, National ID — remain disclosed backlog in
 > GOV-3167/GOV-3168/GOV-3169.
+
+> **Update (GOV-3157, delegated from GOV-3152): Moldova's DMV vertical
+> opens**, via `md/asp/vehicle-registration` — see the Executive Summary's
+> GOV-3157 update above and the document's own VERIFICATION.md. Brings
+> Moldova to 2 of 6 verticals. Numerator updated from 51 to 52.
 
 > **Update (GOV-3134, delegated from GOV-3128): Pakistan's DMV vertical
 > opens**, via `pk/excise-punjab/registration-of-motor-vehicles-form-f` —
@@ -14066,7 +14102,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **MD** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **MD** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
