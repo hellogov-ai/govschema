@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **489 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **490 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3214, delegated from GOV-3212, "GovSchema
 > Standard Research"): Tanzania's DMV vertical opens, bringing Tanzania to
@@ -87,6 +87,53 @@
 > National ID column flips ✗→✓ in the By Jurisdiction table below, leaving
 > DMV, Taxes, and Visa as Nepal's remaining open verticals (DMV and Taxes
 > already confirmed dead ends per GOV-3212; Visa remains open, unscouted).
+
+> **Update (2026-07-15, GOV-3216, "GovSchema Standard Research"): Tanzania's
+> Visa vertical opens, bringing Tanzania to 5 of 6 verticals** (corrected
+> from this document's original "4 of 6" framing at review-gate time: this
+> PR's branch was drafted before the sibling GOV-3214 update above — which
+> opened Tanzania's DMV vertical — landed on `main`; rebased and this
+> section, `schema.json`'s own `description`/`verification.notes`, and
+> `VERIFICATION.md` all corrected to reflect Tanzania's true pre-PR state of
+> 4 of 6, not 3 of 6), via `tz/immigration/visa-application` — the Embassy
+> of the United Republic of Tanzania's (Washington, D.C.) "Visa Application
+> Form", a genuine fillable AcroForm PDF used at Tanzanian diplomatic
+> missions abroad to apply for a Travel (ordinary) or Transit visa.
+> Independently re-fetched with a plain `curl`: HTTP 200, `application/pdf`,
+> 1,521,186 bytes, sha256
+> `daff7c35a97eb9a9e5fd14a21952bbc914b958cb6934c0d87271cbcc7ef57218`.
+> `pdfjs-dist` confirms a genuine 2-page AcroForm — 44 Widget annotations on
+> page 1, 38 on page 2 (82 total), 80 distinct fully-qualified field names.
+> Two field names (`Diplomatic`, `Transit`) are each shared, at the
+> underlying PDF level, by two visually/semantically distinct checkboxes — a
+> source authoring defect disclosed in VERIFICATION.md and deliberately not
+> reproduced (the four checkboxes are modelled as four independent boolean
+> fields). Also disclosed: an internal field named `Others` that visually
+> backs the "Business" purpose-of-visa checkbox; two uncaptioned stray text
+> widgets excluded from `fields[]` (one carrying pdfjs-dist's literal
+> placeholder tooltip `"undefined"`); a `ProfessionOccupation 2` widget that
+> is positionally the `Employer Address` field's overflow line, not
+> `Profession/Occupation`'s; and a printed "In case of Transit" entry-permit
+> question whose "No"/"Yes" checkbox pair is collapsed to a single
+> `requiredWhen`-gated boolean field, per this registry's established
+> Yes/No-pair convention. Models 67 `fields[]` (including a bounded 3-row
+> repeating group for minors travelling on the applicant's own passport)
+> plus 2 `documents[]` entries (2 passport photographs; the printed
+> declaration statement, modelled as an attestation since the underlying
+> `Signature` widget is a genuine PDF `/FT /Sig` field, not a text field).
+> This form carries no printed required-field marker of any kind (the only
+> asterisk on the form is a footnote qualifying the "Multiple" entries
+> option, not a requiredness legend), so requiredness follows this
+> registry's established default-required convention for no-marker forms
+> (see `uy/mrree/formulario-unificado-de-visas`). 9 conformance fixtures (2
+> valid, 7 mutation-control) committed under
+> `conformance/tz/immigration/visa-application/1.0.0/`, all at expected
+> error counts (0 for both valid scenarios, exactly 1 for each
+> mutation-control fixture). Both validators pass at 490/490 after rebase;
+> `verify-sources.mjs` clean. Numerator updated from 489 to 490; Tanzania's
+> Visa column flips ✗→✓ in the By Jurisdiction table below, leaving only
+> Passport open for Tanzania. See the document's own VERIFICATION.md for
+> the full sourcing record and scope decisions.
 
 > **Update (2026-07-15, GOV-3206, delegated from GOV-3204, picking up
 > GOV-3078's disclosed backlog): Nepal's Passport vertical opens, bringing
@@ -13393,7 +13440,26 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (49/62 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (50/62 jurisdictions — 81%)
+
+**Tanzania's Visa vertical opens, bringing Tanzania to 5 of 6 verticals
+(GOV-3216)** (corrected from this document's original "4 of 6" framing —
+this schema's branch was drafted before the sibling GOV-3214 update opened
+Tanzania's DMV vertical on `main`; see the Executive Summary's GOV-3216
+update above), via `tz/immigration/visa-application` — the Embassy of the
+United Republic of Tanzania's (Washington, D.C.) "Visa Application Form", a
+genuine fillable AcroForm PDF used at Tanzanian diplomatic missions abroad
+for a Travel (ordinary) or Transit visa. See the Executive Summary's
+GOV-3216 update above and the document's own VERIFICATION.md for the full
+sourcing record, the two disclosed source field-name-sharing defects
+(`Diplomatic`, `Transit`), and the other scope decisions (the `Others`
+internal-name/"Business"-label mismatch, two excluded uncaptioned stray
+widgets, the `Employer Address` continuation-line naming artifact, and the
+transit entry-permit Yes/No-pair collapse). Models 67 `fields[]` plus 2
+`documents[]` entries. 9 conformance fixtures (2 valid, 7 mutation-control)
+committed under `conformance/tz/immigration/visa-application/1.0.0/`. Header
+recounted directly from the By-Jurisdiction table (49 ✓ of 62 rows before
+this addition, now 50 ✓ of 62).
 
 **Dominican Republic's Visa vertical opens, closing the Dominican Republic
 to full 6/6 coverage (GOV-3168)**, via
@@ -14658,7 +14724,7 @@ now closed.
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **TZ** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **TZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

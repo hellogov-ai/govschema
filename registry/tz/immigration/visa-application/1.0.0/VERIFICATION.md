@@ -12,9 +12,18 @@ current verification claim honestly.
 - **`verification.lastVerifiedAt`:** `2026-07-15`
 
 This is a `GovSchema Standard Research` cycle (**GOV-3216**), opening
-Tanzania's Visa vertical. Tanzania stood at 3 of 6 verticals entering this
-cycle (Business Formation via `tz/brela`, National ID & Civic Documents via
-`tz/nida`, Taxes via `tz/tra`); it now stands at 4 of 6.
+Tanzania's Visa vertical. Tanzania stood at 4 of 6 verticals entering this
+cycle (Business Formation via `tz/brela`, DMV via `tz/tra` Form MV10
+(GOV-3214), National ID & Civic Documents via `tz/nida`, Taxes via
+`tz/tra` ITX201.01-E); it now stands at 5 of 6.
+
+*(Review-gate correction, GOV-3223: this branch was drafted before
+GOV-3214's DMV opening landed on `main`, so the paragraph above originally
+read "3 of 6 entering this cycle... it now stands at 4 of 6" and
+`schema.json`'s `description`/`verification.notes` said the same;
+corrected here and there, plus in `CATALOG.md`, during rebase-before-merge
+rather than round-tripped back to the author, per this registry's
+established practice for this exact stale-branch pattern.)*
 
 ## Sources examined
 
