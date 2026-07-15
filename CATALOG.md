@@ -4,7 +4,34 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **473 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **474 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3133/GOV-3138, "GovSchema Standard Research"):
+> Israel's DMV vertical opens (6 of 6), bringing Israel to full coverage
+> across all six GovSchema verticals**, via
+> `il/mot/medical-examination-driving-license-renewal` — the Ministry of
+> Transport and Road Safety's Licensing Bureau (Agaf HaRishui) medical
+> examination form required for driving-license renewal (private/two-wheeled
+> categories A1/A2/B and tractor), mandatory under regulation 196 of the
+> Traffic Regulations, 1961, notably for drivers aged 70+. Picked up as an
+> unclaimed, pre-scouted child issue (GOV-3133) from the prior GOV-3128
+> cycle rather than re-scouted from nothing. Models the vision-test table
+> completed by an ophthalmologist/optometrist (visual acuity with/without
+> glasses, visual field, and a four-row binocular-vision/diplopia
+> identification test, per eye and combined) and the parallel two-column
+> Section B medical questionnaire — 14 clinical topics independently
+> completed by the applicant (self-declaration) and by the physician
+> (clinical assessment) — resolved via a coordinate-partitioned,
+> `node-canvas`-rendered re-read of the dense RTL two-column grid (the same
+> row-offset bilingual-grid technique established in the GOV-3101 cycle).
+> 68 `fields[]`, 2 `documents[]` (a conditional consultation-summary
+> attachment and a medical-confidentiality-waiver attestation, both gated on
+> an `any`-composed `requiredWhen` across the applicant column's 18
+> top-level questions). 8 conformance fixtures (2 valid, 6 mutation-control)
+> committed under
+> `conformance/il/mot/medical-examination-driving-license-renewal/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing record and
+> scope decisions.
 
 > **Update (2026-07-15, GOV-3128, "GovSchema Standard Research"): Israel's
 > National ID & Civic Documents vertical opens (1 of 6), bringing Israel to
@@ -10322,7 +10349,13 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (48/62 jurisdictions — 77%)
+### DMV — Vehicle Registration, Licensing, Permits (49/62 jurisdictions — 79%)
+
+> **Update (GOV-3133/GOV-3138): Israel's DMV vertical opens**, via
+> `il/mot/medical-examination-driving-license-renewal` — see the Executive
+> Summary's GOV-3133/GOV-3138 update above and the document's own
+> VERIFICATION.md. This closes Israel's last open vertical, bringing it to
+> 6 of 6. Numerator updated from 48 to 49.
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; DMV confirmed a dead end this
@@ -13839,7 +13872,7 @@ now closed.
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IL** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **IL** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16176,24 +16209,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
-- **Israel — DMV: scouted, ready to author, delegated as a child issue
-  (GOV-3128).** Israel is now 5 of 6 (only DMV open, following this
-  cycle's own National ID addition above). `gov.il` service landing pages
-  are Cloudflare/WAF-gated (HTTP 403), but the direct `BlobFolder` asset
-  path — the same workaround already established for every other IL
-  schema in this registry — bypasses it. Strongest candidate: the Ministry
-  of Transport and Road Safety's Licensing Bureau (אגף הרישוי) **Medical
-  Examination Form for Driving-License Renewal** (private/two-wheeled
-  categories, `.../MedicinalExaminationPrati.pdf`, verified live, flat
-  2-page PDF, ~35-45 fields, citing תקנה 196 of Traffic Regulations 1961),
-  with a truck/bus sibling variant (`MedicinalExaminationMassa.pdf`) also
-  confirmed live. A smaller secondary candidate, the **Vehicle License
-  Deposit Request** (`HafkadatRisayon.pdf`, ~10 fields), was also
-  confirmed live. The core vehicle-ownership-transfer flow itself
-  (`gov.il/he/service/ownership-vehicles-transfer`) is a login-gated
-  `ecom.gov.il` online service, not independently fillable — only its
-  power-of-attorney companion PDFs are static and unauthenticated, and
-  those are weaker/ancillary candidates.
+- **Israel — DMV: closed (GOV-3133/GOV-3138).** Israel is now 6 of 6, the
+  Ministry of Transport and Road Safety's Licensing Bureau (אגף הרישוי)
+  **Medical Examination Form for Driving-License Renewal** now modeled as
+  `il/mot/medical-examination-driving-license-renewal` — see the Executive
+  Summary update above. The truck/bus sibling variant
+  (`MedicinalExaminationMassa.pdf`) and the smaller **Vehicle License
+  Deposit Request** (`HafkadatRisayon.pdf`, ~10 fields) remain confirmed
+  live but unmodeled — disclosed as backlog for a future companion-schema
+  cycle, not required to keep Israel at 6/6.
 - **Pakistan — DMV: scouted, ready to author, delegated as a child issue
   (GOV-3128).** Pakistan is 2 of 6 (Business Formation, Taxes); this
   cycle's scouting also re-confirmed Passport, Visa, and National ID as

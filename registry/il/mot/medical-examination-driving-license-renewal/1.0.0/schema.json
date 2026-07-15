@@ -1,0 +1,811 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "il/mot/medical-examination-driving-license-renewal",
+  "version": "1.0.0",
+  "title": "Israel Ministry of Transport — Medical Examination Form for Driving-License Renewal (Private/Two-Wheeled/Tractor)",
+  "description": "The Ministry of Transport and Road Safety's (Misrad HaTachbura VeHaBetichut BaDrachim) Licensing Bureau (Agaf HaRishui) medical-examination form required for driving-license renewal for private and two-wheeled categories (A1, A2, B) and tractor licenses, mandatory under regulation 196 of the Traffic Regulations, 1961 (Takanot HaTa'avura, TASHCHA-1961), for drivers required to undergo a medical fitness review (notably drivers aged 70+, per the form's own cover letter). Opens Israel's DMV vertical (6 of 6), completing full coverage of all six GovSchema verticals for this jurisdiction. This document models the applicant/license identification header; Section A, the vision-test results table completed by an ophthalmologist or licensed optometrist (visual acuity with/without glasses, visual field, and a four-row binocular-vision/diplopia identification test, per eye and combined); Section B, the parallel two-column medical questionnaire covering 14 clinical topics, independently completed by the applicant (self-declaration) and by the treating/examining physician (clinical assessment based on physical examination, medical-record review, and personal knowledge of the examinee); the physician's declared basis of knowledge of the applicant's history; and the closing signature blocks for the vision examiner, the applicant, and the certifying physician. It excludes the form's own second page, which is a purely instructional cover letter (submission deadline, mailing address, phone/website contact details, and office-visit guidance) with no fillable fields. This document describes the form only; it does not submit anything on the applicant's behalf, and does not imply endorsement by the State of Israel or the Ministry of Transport and Road Safety. GovSchema is independent and is not affiliated with, endorsed by, or operated by the State of Israel.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Transport and Road Safety, Licensing Bureau (Agaf HaRishui)",
+    "abbreviation": "MOT",
+    "url": "https://www.gov.il"
+  },
+  "process": {
+    "type": "application",
+    "language": "he"
+  },
+  "source": {
+    "url": "https://www.gov.il/BlobFolder/service/driving_license_renewal/ar/MedicinalExaminationPrati.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Medical Examination Form for Driving-License Renewal (private/two-wheeled categories A1, A2, B / tractor), \"טופס בדיקות רפואיות לבעל רישיון נהיגה\", form 230359"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3133, delegated from a prior \"GovSchema Standard Research\" cycle's own scouting note (GOV-3128) and picked up unclaimed in this cycle (GOV-3138) rather than re-scouting, since it was already a genuine, unauthenticated, directly-downloadable PDF with a clear content summary on file.\n\nIndependently re-fetched from scratch rather than trusting the prior scouting note's field-count estimate as-is: plain curl (with a realistic desktop User-Agent), HTTP 200, content-type application/pdf, content-length 10,428,537 bytes, sha256 a8c97a153617458b4e85c828bbb71f823424dd39c9bacdb4cffdc62961cca7f7. The `gov.il` service landing page (`/he/service/driving_license_renewal`) returns HTTP 403 (Cloudflare/WAF bot-mitigation), but the direct `gov.il/BlobFolder/...` asset path bypasses it entirely, consistent with this registry's established convention for every other `gov.il`-hosted form already in this registry (Form DR/1, Form 1301, Form MR/41, the entry-visa application).\n\nExtracted via pdfjs-dist (legacy build, pinned to 3.11.174 after the 4.x line failed to render this specific PDF through node-canvas with a `TypeError: Image or Canvas expected` in `paintImageMaskXObject`): 2 pages, `getFieldObjects()` returning null and only 1 non-data annotation on page 2 (a hyperlink, not a form field) — confirming a flat, non-fillable print-and-fill PDF with no AcroForm. Because this is a dense, right-to-left, two-column tabular form (a parallel applicant-declaration column and physician-questionnaire column covering the same 14 clinical topics, plus a per-eye vision-test grid), raw text-extraction order alone was not sufficient to resolve column and row membership unambiguously — both pages were additionally rendered to 2.5x-scale PNGs via node-canvas and read visually, cross-referenced against the coordinate-sorted raw text extraction (partitioning items by x-coordinate into the physician column, x<300pt, and the applicant column, x>=300pt) to confirm exact column/row alignment for every field below, including cases where the two columns' item numbers are visually offset from each other due to differing line-wrap heights (e.g. the applicant column's item 5 sits at the same visual row band as the physician column's item 3) despite covering the same clinical topic — the same row-offset bilingual/parallel-column grid-reading technique established in the GOV-3101 (Israel entry-visa) cycle.\n\n**Section A (vision-test table) scope decisions:** the table's leftmost declaration box (\"זיהיתי את המבקש על פי תעודה מזהה... הבדיקה כולה בוצעה באמצעות מכשיר בדיקה המאושר ע\\\"י משרד הבריאות\") is printed boilerplate certifying text ending in a signature line, not a separate checkbox — confirmed via the rendered image, which shows no checkbox glyphs in that cell — so it is modeled only via `visionExaminerStampAndSignature`/`visionExamDate`, not as additional boolean fields. The \"מס' עצמים מזוהה\" (number of objects identified) column's printed reference counts (2, 2, 3, 4) are static pre-printed labels for a four-row binocular-vision/diplopia identification test, not applicant-facing input; only the adjacent כן/לא checkbox per row is a real field (`binocularVisionDiplopiaTestRow1`-`Row4`). The fourth of these four rows carries no per-eye label (unlike rows 1-3, labeled ימין/שמאל/יחד) and applies only to this one column, not to the visual-acuity/visual-field columns — confirmed via the rendered image, which shows no checkboxes in the acuity/field columns for that row.\n\n**Section B (medical questionnaire) scope decisions:** the form prints two parallel, independently-completed columns covering the same 14 numbered clinical topics — the applicant's own self-declaration (\"הצהרת מבקש הבדיקה\", ימולא ע\\\"י המבקש) and the physician's clinical questionnaire (\"שאלון רפואי\", ימולא ע\\\"י הרופא בהסתמך על בדיקה פיזיקלית, עיון במידע הרפואי והכרת הנבדק) — both are modeled as distinct fields (`applicantQ{N}...` / `physicianQ{N}...`) since they are genuinely filled by two different people and the form's own instructions do not treat one as a subset of the other. Where a topic's sub-item breakdown differs between the two columns (topic 6, diabetes: the applicant column has 4 lettered sub-items — diagnosed/on insulin/recent hypoglycemia/retinopathy surgery — while the physician column has only 2 — recent hypoglycemia/retinopathy surgery; topic 11, sleep disorders: both columns have the same 3 lettered sub-items — excessive daytime sleepiness/sleep apnea/narcolepsy), each column's own printed sub-items are modeled as separate fields rather than forcing a uniform shape across both columns. Topic 4's \"circle one\" degenerative-disease options (Parkinson's/MS/ALS/other) are modeled as an `enum` plus a conditional `OTHER`-specify string on the applicant column only (`applicantQ4DegenerativeDiseaseType`/`OtherSpecify`); the physician column's parallel item is modeled as a single boolean (`physicianQ4NeurodegenerativeDiseaseDiagnosed`) since its own printed text does not repeat the \"circle one\" list as a separate fillable element. Item 14 (\"מצורפים סיכומי ביקור עדכניים מרופאים יועצים רלוונטיים\") appears only on the applicant column, as a general confirmation checkbox, and is modeled as such (`applicantQ14SupportingDocumentsAttached`); the physician column has no corresponding 14th numbered item.\n\nBoth `documents[]` entries the Section B header instructs to attach \"for a positive answer to any item\" (a specialist consultation-summary document and a signed medical-confidentiality-waiver attestation) are modeled with a `requiredWhen.any` condition listing all 18 of the applicant column's own top-level boolean questions (spec v0.3's `any` condition composition, GSP-0013) — the physician-column fields are deliberately excluded from this trigger since the form's own instruction is printed directly under the applicant-declaration header, addressed to the applicant completing that column, not the physician's own separate follow-up note (\"עבור תשובה חיובית לאחד מהסעיפים יש להפנות את הנבדק... להערכת רפואה יועצת קלינית עדכנית\", a referral action rather than an attachment requirement).\n\nThe physician's basis-of-knowledge declaration (\"אישור הרופא\") — three mutually-exclusive checkboxes for being the applicant's regular treating physician of 3+ years, treating a recent immigrant of under 3 years, or having reviewed the applicant's records at every HMO from the past 3 years — is modeled as `physicianKnowledgeBasis`, with a conditional `hmoName` field required under the first two options (which each print a \"בקופ\\\"ח ___\" blank; the third option does not).\n\nScope was cut at the form's own printed content: page 2 (the cover letter — submission deadline, mailing address, phone/website contact details, and branch-visit guidance) carries no fillable fields and is excluded, following this registry's established convention of excluding purely instructional pages/sections. The sibling truck/bus medical-examination form (`MedicinalExaminationMassa.pdf`, independently re-confirmed live this cycle: HTTP 200, application/pdf) and the smaller Vehicle License Deposit Request (`HafkadatRisayon.pdf`, ~10 fields) flagged in the prior scouting note are both disclosed as backlog for a future companion-schema cycle, not modeled in this version.\n\n2 valid mock scenarios (an applicant with a clean medical history and no positive Section B answers; an applicant with a positive diabetes/hypoglycemia and sleep-apnea history, triggering the conditional hypoglycemia-date field and both requiredWhen documents) plus 6 mutation-control fixtures (a missing statically-required field, a missing `applicantQ4DegenerativeDiseaseType` while `applicantQ4DegenerativeDiseaseDiagnosed` is true, a missing `applicantQ6HypoglycemiaLastEventDate` while `applicantQ6RecentHypoglycemia` is true, a missing `hmoName` while `physicianKnowledgeBasis` is `REGULAR_TREATING_PHYSICIAN_3_YEARS`, an invalid `licenseGrade` enum value, and an invalid date format) are committed under `conformance/il/mot/medical-examination-driving-license-renewal/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 8: both valid scenarios at 0 errors, all 6 mutation controls each raising exactly 1 error, and confirmed every requiredWhen/documents field reference resolves (0 dangling references). Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "idNumber",
+      "label": "מס' זהות",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's national identity number.",
+      "sourceRef": "Header identification box — \"מס' זהות\""
+    },
+    {
+      "name": "licenseGrade",
+      "label": "דרגת רישיון",
+      "type": "enum",
+      "required": true,
+      "description": "The driving-license category this medical-examination form covers, matching the form's own subtitle (private/two-wheeled categories or tractor).",
+      "sourceRef": "Header identification box — \"דרגת רישיון\"; form subtitle — \"מסוג פרטי/דו-גלגלי (דרגות A1, A2, B)/טרקטור\"",
+      "validation": {
+        "enum": [
+          "A1",
+          "A2",
+          "B",
+          "TRACTOR"
+        ]
+      }
+    },
+    {
+      "name": "licenseNumber",
+      "label": "מספר רישיון נהיגה",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's driving-license number.",
+      "sourceRef": "Header identification box — \"מספר רישיון נהיגה\""
+    },
+    {
+      "name": "birthYear",
+      "label": "שנת לידה",
+      "type": "integer",
+      "required": true,
+      "description": "Applicant's year of birth.",
+      "sourceRef": "Header identification box — \"שנת לידה\""
+    },
+    {
+      "name": "renewalDate",
+      "label": "תאריך חידוש",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant's driving license is due for renewal, triggering this mandatory medical examination.",
+      "sourceRef": "Header identification box — \"תאריך חידוש\""
+    },
+    {
+      "name": "existingRestrictions",
+      "label": "הגבלות",
+      "type": "string",
+      "required": false,
+      "description": "Existing restriction codes already printed on the applicant's driving license, if any.",
+      "sourceRef": "Header identification box — \"הגבלות\""
+    },
+    {
+      "name": "rightEyeAcuityWithoutGlasses",
+      "label": "חדות ראיה בלי משקפיים — 6/12 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the right eye, tested without glasses, meets the required minimum visual acuity of 6/12.",
+      "sourceRef": "Section A vision-test table, row \"ימין\" — \"חדות ראיה 6/12 לפחות\" / \"בלי משקפיים\""
+    },
+    {
+      "name": "rightEyeAcuityWithGlasses",
+      "label": "חדות ראיה עם משקפיים — 6/12 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the right eye, tested with glasses, meets the required minimum visual acuity of 6/12.",
+      "sourceRef": "Section A vision-test table, row \"ימין\" — \"חדות ראיה 6/12 לפחות\" / \"עם משקפיים\""
+    },
+    {
+      "name": "rightEyeVisualField",
+      "label": "שדה ראיה 120 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the right eye meets the required minimum visual field of 120 degrees.",
+      "sourceRef": "Section A vision-test table, row \"ימין\" — \"שדה ראיה 120 לפחות\""
+    },
+    {
+      "name": "leftEyeAcuityWithoutGlasses",
+      "label": "חדות ראיה בלי משקפיים — 6/12 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the left eye, tested without glasses, meets the required minimum visual acuity of 6/12.",
+      "sourceRef": "Section A vision-test table, row \"שמאל\" — \"חדות ראיה 6/12 לפחות\" / \"בלי משקפיים\""
+    },
+    {
+      "name": "leftEyeAcuityWithGlasses",
+      "label": "חדות ראיה עם משקפיים — 6/12 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the left eye, tested with glasses, meets the required minimum visual acuity of 6/12.",
+      "sourceRef": "Section A vision-test table, row \"שמאל\" — \"חדות ראיה 6/12 לפחות\" / \"עם משקפיים\""
+    },
+    {
+      "name": "leftEyeVisualField",
+      "label": "שדה ראיה 120 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the left eye meets the required minimum visual field of 120 degrees.",
+      "sourceRef": "Section A vision-test table, row \"שמאל\" — \"שדה ראיה 120 לפחות\""
+    },
+    {
+      "name": "bothEyesAcuityWithoutGlasses",
+      "label": "חדות ראיה בלי משקפיים — 6/12 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the both eyes together, tested without glasses, meets the required minimum visual acuity of 6/12.",
+      "sourceRef": "Section A vision-test table, row \"יחד\" — \"חדות ראיה 6/12 לפחות\" / \"בלי משקפיים\""
+    },
+    {
+      "name": "bothEyesAcuityWithGlasses",
+      "label": "חדות ראיה עם משקפיים — 6/12 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the both eyes together, tested with glasses, meets the required minimum visual acuity of 6/12.",
+      "sourceRef": "Section A vision-test table, row \"יחד\" — \"חדות ראיה 6/12 לפחות\" / \"עם משקפיים\""
+    },
+    {
+      "name": "bothEyesVisualField",
+      "label": "שדה ראיה 120 לפחות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the both eyes together meets the required minimum visual field of 120 degrees.",
+      "sourceRef": "Section A vision-test table, row \"יחד\" — \"שדה ראיה 120 לפחות\""
+    },
+    {
+      "name": "binocularVisionDiplopiaTestRow1",
+      "label": "ראיה דו-עינית וכפל ראיה / מס' עצמים מזוהה",
+      "type": "boolean",
+      "required": true,
+      "description": "Result of binocular-vision/diplopia identification test row 1 of 4, in which the examiner checks whether the applicant correctly identifies the reference number of objects printed on the form for this row (2).",
+      "sourceRef": "Section A vision-test table, \"ראיה דו-עינית וכפל ראיה\" / \"מס' עצמים מזוהה\" column, row 1 (printed reference count: 2)"
+    },
+    {
+      "name": "binocularVisionDiplopiaTestRow2",
+      "label": "ראיה דו-עינית וכפל ראיה / מס' עצמים מזוהה",
+      "type": "boolean",
+      "required": true,
+      "description": "Result of binocular-vision/diplopia identification test row 2 of 4, in which the examiner checks whether the applicant correctly identifies the reference number of objects printed on the form for this row (2).",
+      "sourceRef": "Section A vision-test table, \"ראיה דו-עינית וכפל ראיה\" / \"מס' עצמים מזוהה\" column, row 2 (printed reference count: 2)"
+    },
+    {
+      "name": "binocularVisionDiplopiaTestRow3",
+      "label": "ראיה דו-עינית וכפל ראיה / מס' עצמים מזוהה",
+      "type": "boolean",
+      "required": true,
+      "description": "Result of binocular-vision/diplopia identification test row 3 of 4, in which the examiner checks whether the applicant correctly identifies the reference number of objects printed on the form for this row (3).",
+      "sourceRef": "Section A vision-test table, \"ראיה דו-עינית וכפל ראיה\" / \"מס' עצמים מזוהה\" column, row 3 (printed reference count: 3)"
+    },
+    {
+      "name": "binocularVisionDiplopiaTestRow4",
+      "label": "ראיה דו-עינית וכפל ראיה / מס' עצמים מזוהה",
+      "type": "boolean",
+      "required": true,
+      "description": "Result of binocular-vision/diplopia identification test row 4 of 4, in which the examiner checks whether the applicant correctly identifies the reference number of objects printed on the form for this row (4).",
+      "sourceRef": "Section A vision-test table, \"ראיה דו-עינית וכפל ראיה\" / \"מס' עצמים מזוהה\" column, row 4 (printed reference count: 4)"
+    },
+    {
+      "name": "visionExaminerStampAndSignature",
+      "label": "חותמת וחתימת הבודק",
+      "type": "string",
+      "required": true,
+      "description": "Stamp and signature of the ophthalmologist or licensed optometrist who conducted the vision examination.",
+      "sourceRef": "Section A closing line — \"חותמת וחתימת הבודק\""
+    },
+    {
+      "name": "visionExamDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date the vision examination in Section A was conducted.",
+      "sourceRef": "Section A closing line — \"תאריך\""
+    },
+    {
+      "name": "applicantQ1RecurringDizzinessBalanceOrConsciousness",
+      "label": "האם היו אירועים חוזרים של סחרחורות, חוסר שיווי משקל או אבדן הכרה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have there been recurring episodes of dizziness, loss of balance, or loss of consciousness?",
+      "sourceRef": "Section B, applicant's declaration column, item 1"
+    },
+    {
+      "name": "physicianQ1Dizziness",
+      "label": "האם ידוע לך אירועים חוזרים של סחרחורת?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have recurring episodes of dizziness?",
+      "sourceRef": "Section B, physician's questionnaire column, item 1, sub-item \"סחרחורת\""
+    },
+    {
+      "name": "physicianQ1LossOfBalance",
+      "label": "האם ידוע לך אירועים חוזרים של חוסר שיווי משקל?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have recurring episodes of loss of balance?",
+      "sourceRef": "Section B, physician's questionnaire column, item 1, sub-item \"חוסר שיווי משקל\""
+    },
+    {
+      "name": "physicianQ1LossOfConsciousness",
+      "label": "האם ידוע לך אובדן הכרה (למעט אירועים ווזואגליים ב-3 השנים האחרונות)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have had loss of consciousness (excluding vasovagal episodes in the last 3 years)?",
+      "sourceRef": "Section B, physician's questionnaire column, item 1, sub-item \"אובדן הכרה (למעט אירועים ווזואגליים ב-3 השנים האחרונות)\""
+    },
+    {
+      "name": "applicantQ2EpilepsyDiagnosed",
+      "label": "האם אובחנת באפילפסיה (מחלת הכיפיון)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you been diagnosed with epilepsy?",
+      "sourceRef": "Section B, applicant's declaration column, item 2"
+    },
+    {
+      "name": "physicianQ2EpilepsyDiagnosed",
+      "label": "האם הנבדק אובחן באפילפסיה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: has the examinee been diagnosed with epilepsy?",
+      "sourceRef": "Section B, physician's questionnaire column, item 2"
+    },
+    {
+      "name": "applicantQ3StrokeSinceLicenseIssuedOrRenewed",
+      "label": "האם עברת אירוע (שבץ) מאז הונפק או חודש רישיון הנהיגה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you had a stroke event since the driving license was issued or last renewed?",
+      "sourceRef": "Section B, applicant's declaration column, item 3"
+    },
+    {
+      "name": "physicianQ3StrokeOrHeadInjuryWithResidualDeficit",
+      "label": "האם ידוע לך אירוע מוחי או חבלת ראש חמורה עם שארית תפקודית משמעותית?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have had a stroke or severe head injury resulting in significant residual sensory or motor functional impairment (e.g. limb weakness, coordination disorder/ataxia, visual-field defect, aphasia, cognitive deficits)?",
+      "sourceRef": "Section B, physician's questionnaire column, item 3"
+    },
+    {
+      "name": "applicantQ4DegenerativeDiseaseDiagnosed",
+      "label": "האם אובחנת במחלה ניוונית?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you been diagnosed with a degenerative disease (Parkinson's, multiple sclerosis, ALS, or other)?",
+      "sourceRef": "Section B, applicant's declaration column, item 4"
+    },
+    {
+      "name": "applicantQ4DegenerativeDiseaseType",
+      "label": "פרקינסון / טרשת נפוצה / ALS / אחר",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantQ4DegenerativeDiseaseDiagnosed",
+        "equals": true
+      },
+      "description": "Which degenerative disease the applicant circled on the form, when applicantQ4DegenerativeDiseaseDiagnosed is true.",
+      "sourceRef": "Section B, applicant's declaration column, item 4 — \"פרקינסון/טרשת נפוצה/ALS / אחר, פרט\"",
+      "validation": {
+        "enum": [
+          "PARKINSONS",
+          "MULTIPLE_SCLEROSIS",
+          "ALS",
+          "OTHER"
+        ]
+      }
+    },
+    {
+      "name": "applicantQ4DegenerativeDiseaseOtherSpecify",
+      "label": "אחר, פרט",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantQ4DegenerativeDiseaseType",
+        "equals": "OTHER"
+      },
+      "description": "Free-text description of the degenerative disease, when applicantQ4DegenerativeDiseaseType is OTHER.",
+      "sourceRef": "Section B, applicant's declaration column, item 4 — \"אחר, פרט\""
+    },
+    {
+      "name": "physicianQ4NeurodegenerativeDiseaseDiagnosed",
+      "label": "האם ידוע לך על מחלת נוירודגנרטיבית פרוגרסיבית?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have a progressive neurodegenerative disease (Parkinson's, MS, ALS, or other)?",
+      "sourceRef": "Section B, physician's questionnaire column, item 4"
+    },
+    {
+      "name": "applicantQ5NewMovementLimitation",
+      "label": "האם יש לך הגבלת תנועה חדשה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: do you have a new movement limitation (right/left hand, right/left leg) since the license was issued or last renewed, due to decreased sensation, weakness, paralysis, or amputation?",
+      "sourceRef": "Section B, applicant's declaration column, item 5"
+    },
+    {
+      "name": "physicianQ5SensoryOrMotorDisturbance",
+      "label": "האם ידוע לך על הפרעות תחושתיות ו/או מוטוריות?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have sensory and/or motor disturbances (e.g. joint stiffness, loss of range of motion, limb weakness, or uncompensated limb amputation)?",
+      "sourceRef": "Section B, physician's questionnaire column, item 5"
+    },
+    {
+      "name": "applicantQ6DiagnosedDiabetes",
+      "label": "האם אובחנת במחלת הסוכרת?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you been diagnosed with diabetes?",
+      "sourceRef": "Section B, applicant's declaration column, item 6a"
+    },
+    {
+      "name": "applicantQ6TreatedWithInsulin",
+      "label": "האם מטופל באינסולין?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: are you treated with insulin?",
+      "sourceRef": "Section B, applicant's declaration column, item 6b"
+    },
+    {
+      "name": "applicantQ6RecentHypoglycemia",
+      "label": "האם אובחנת בשנה האחרונה באירועים של ירידה חדה ברמת הסוכר (היפוגליקמיה)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you been diagnosed in the past year with episodes of acute drop in blood-sugar level (hypoglycemia) related to diabetes?",
+      "sourceRef": "Section B, applicant's declaration column, item 6c"
+    },
+    {
+      "name": "applicantQ6HypoglycemiaLastEventDate",
+      "label": "ציין את תאריך האירוע האחרון",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantQ6RecentHypoglycemia",
+        "equals": true
+      },
+      "description": "Date of the most recent hypoglycemic event, when applicantQ6RecentHypoglycemia is true.",
+      "sourceRef": "Section B, applicant's declaration column, item 6c — \"ציין את תאריך האירוע האחרון\""
+    },
+    {
+      "name": "applicantQ6RetinopathySurgery",
+      "label": "האם עברת ניתוחים בגין רטינופתיה סוכרתית?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you had surgery for diabetic retinopathy?",
+      "sourceRef": "Section B, applicant's declaration column, item 6d"
+    },
+    {
+      "name": "physicianQ6RecentHypoglycemia",
+      "label": "האם ידוע לך על אירועים של היפוגליקמיה בשנה האחרונה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have had hypoglycemic events in the past year?",
+      "sourceRef": "Section B, physician's questionnaire column, item 6a"
+    },
+    {
+      "name": "physicianQ6RetinopathySurgery",
+      "label": "האם ידוע לך על ניתוחים בגין רטינופתיה סוכרתית?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have had surgery for diabetic retinopathy?",
+      "sourceRef": "Section B, physician's questionnaire column, item 6b"
+    },
+    {
+      "name": "applicantQ7HeartDiseaseOrArrhythmia",
+      "label": "האם אובחנת במחלת לב או הפרעה בקצב הלב?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you been diagnosed with heart disease or a heart-rhythm disorder?",
+      "sourceRef": "Section B, applicant's declaration column, item 7"
+    },
+    {
+      "name": "physicianQ7UnstableHeartDiseaseOrArrhythmia",
+      "label": "האם קיימת מחלת לב או הפרעת קצב שאינן יציבות?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: does the examinee have unstable heart disease or an unstable heart-rhythm disorder?",
+      "sourceRef": "Section B, physician's questionnaire column, item 7"
+    },
+    {
+      "name": "applicantQ8PsychiatricHospitalization",
+      "label": "האם היית באשפוז פסיכיאטרי מאז הונפק או חודש רישיון הנהיגה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: have you been psychiatrically hospitalized since the license was issued or last renewed?",
+      "sourceRef": "Section B, applicant's declaration column, item 8"
+    },
+    {
+      "name": "physicianQ8PsychoticEventsOrImpairedInsight",
+      "label": "האם ידוע לך על אירועים פסיכוטיים / בוחן מציאות לא תקין / הפרעה בתובנה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have had psychotic events, abnormal reality testing, or impaired insight?",
+      "sourceRef": "Section B, physician's questionnaire column, item 8"
+    },
+    {
+      "name": "applicantQ9ReactionMemoryOrientationImpairment",
+      "label": "האם קיימות הפרעות במהירות תגובה, זיכרון, התמצאות בזמן ובמקום?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: do you have impairments in reaction speed, memory, or orientation to time and place?",
+      "sourceRef": "Section B, applicant's declaration column, item 9"
+    },
+    {
+      "name": "physicianQ9ReactionMemoryOrientationOrDementia",
+      "label": "האם ידוע לך או קיים חשד להפרעות במהירות התגובה, זיכרון, התמצאות בזמן ובמקום או דמנציה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known or suspected to have impairments in reaction speed, memory, orientation to time and place, or dementia?",
+      "sourceRef": "Section B, physician's questionnaire column, item 9"
+    },
+    {
+      "name": "applicantQ10ChronicAlcoholOrDrugUse",
+      "label": "האם אתה נוהג לצרוך באופן קבוע אלכוהול או סמים (שלא לצורך רפואי)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: do you regularly consume alcohol or drugs (not for medical purposes)?",
+      "sourceRef": "Section B, applicant's declaration column, item 10"
+    },
+    {
+      "name": "physicianQ10ChronicAlcoholOrDrugUse",
+      "label": "האם ידוע לך שימוש כרוני באלכוהול או בסמים (שלא לצורך רפואי)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to chronically use alcohol or drugs (not for medical purposes)?",
+      "sourceRef": "Section B, physician's questionnaire column, item 10"
+    },
+    {
+      "name": "applicantQ11ExcessiveDaytimeSleepiness",
+      "label": "ישנונית או עייפות יתר משמעותית או הירדמויות במהלך היום?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: do you feel significant excessive sleepiness or fatigue, or experience dozing off during the day?",
+      "sourceRef": "Section B, applicant's declaration column, item 11a"
+    },
+    {
+      "name": "applicantQ11SleepApnea",
+      "label": "דום נשימה בשינה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: do you have sleep apnea?",
+      "sourceRef": "Section B, applicant's declaration column, item 11b"
+    },
+    {
+      "name": "applicantQ11Narcolepsy",
+      "label": "נרקולפסיה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: do you have narcolepsy?",
+      "sourceRef": "Section B, applicant's declaration column, item 11c"
+    },
+    {
+      "name": "physicianQ11ExcessiveDaytimeSleepiness",
+      "label": "ישנוניות או עייפות יתר משמעותית או הירדמויות במהלך היום?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to have significant excessive daytime sleepiness or dozing off during the day?",
+      "sourceRef": "Section B, physician's questionnaire column, item 11a"
+    },
+    {
+      "name": "physicianQ11SleepApnea",
+      "label": "אבחנת דום נשימה בשינה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: has the examinee been diagnosed with sleep apnea?",
+      "sourceRef": "Section B, physician's questionnaire column, item 11b"
+    },
+    {
+      "name": "physicianQ11Narcolepsy",
+      "label": "נרקולפסיה?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: does the examinee have narcolepsy?",
+      "sourceRef": "Section B, physician's questionnaire column, item 11c"
+    },
+    {
+      "name": "applicantQ12OxygenUseRequired",
+      "label": "האם נדרש שימוש בחמצן בזמן נהיגה, בשל מחלת ריאות?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: is oxygen use required while driving, due to lung disease?",
+      "sourceRef": "Section B, applicant's declaration column, item 12"
+    },
+    {
+      "name": "physicianQ12ChronicOxygenUse",
+      "label": "האם ידוע לך על שימוש קבוע בחמצן?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: is the examinee known to regularly use supplemental oxygen?",
+      "sourceRef": "Section B, physician's questionnaire column, item 12"
+    },
+    {
+      "name": "applicantQ13NeedsFurtherMirdEvaluation",
+      "label": "האם לדעתך יש צורך בהערכה נוספת במכון הרפואי לבטיחות בדרכים (מרב\"ד)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's self-declared answer: in your opinion, is further evaluation needed at the Medical Institute for Road Safety (MIRD)?",
+      "sourceRef": "Section B, applicant's declaration column, item 13"
+    },
+    {
+      "name": "physicianQ13PreviouslyTestedAtMird",
+      "label": "האם נבדקת אי פעם במכון הרפואי לבטיחות בדרכים (מרב\"ד)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Physician's assessment: has the examinee ever been tested at the Medical Institute for Road Safety (MIRD)?",
+      "sourceRef": "Section B, physician's questionnaire column, item 13"
+    },
+    {
+      "name": "applicantQ14SupportingDocumentsAttached",
+      "label": "מצורפים סיכומי ביקור עדכניים מרופאים יועצים רלוונטיים",
+      "type": "boolean",
+      "required": true,
+      "description": "Applicant's confirmation that updated visit summaries from the relevant consulting physicians are attached, required whenever any Section B item above was answered positively.",
+      "sourceRef": "Section B, applicant's declaration column, item 14"
+    },
+    {
+      "name": "physicianKnowledgeBasis",
+      "label": "בסיס היכרות הרופא עם המבקש",
+      "type": "enum",
+      "required": true,
+      "description": "The physician's declared basis for their knowledge of the applicant's medical history, matching the form's own three mutually-exclusive checkbox options.",
+      "sourceRef": "Physician's certification block (\"אישור הרופא\") — \"אני מטפל דרך קבע במבקש, זה שלוש שנים לפחות, בקופ\"ח ___\" / \"אני מטפל במבקש שהוא עולה חדש שטרם חלפו שלוש שנים מיום עלייתו, בקופ\"ח ___\" / \"עיינתי בתיקו הרפואי בכל קופ\"ח שבה היה בשלוש השנים שקדמו לבדיקה\"",
+      "validation": {
+        "enum": [
+          "REGULAR_TREATING_PHYSICIAN_3_YEARS",
+          "NEW_IMMIGRANT_UNDER_3_YEARS",
+          "REVIEWED_ALL_HMO_RECORDS_3_YEARS"
+        ]
+      }
+    },
+    {
+      "name": "hmoName",
+      "label": "קופת חולים",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "physicianKnowledgeBasis",
+            "equals": "REGULAR_TREATING_PHYSICIAN_3_YEARS"
+          },
+          {
+            "field": "physicianKnowledgeBasis",
+            "equals": "NEW_IMMIGRANT_UNDER_3_YEARS"
+          }
+        ]
+      },
+      "description": "Name of the applicant's HMO (Kupat Holim), when the physician's basis of knowledge is being the applicant's regular treating physician or treating physician of a recent immigrant.",
+      "sourceRef": "Physician's certification block — \"בקופ\"ח ___\""
+    },
+    {
+      "name": "applicantDeclarationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date the applicant signed their declaration in Section B.",
+      "sourceRef": "Applicant's declaration signature line — \"תאריך\""
+    },
+    {
+      "name": "applicantPhone",
+      "label": "טלפון",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's telephone number, printed alongside their declaration signature.",
+      "sourceRef": "Applicant's declaration signature line — \"טלפון\""
+    },
+    {
+      "name": "physicianName",
+      "label": "שם הרופא",
+      "type": "string",
+      "required": true,
+      "description": "Name of the physician completing Section B and the physician's certification.",
+      "sourceRef": "Physician's certification signature line — \"שם הרופא\""
+    },
+    {
+      "name": "physicianLicenseNumberSignatureAndStamp",
+      "label": "מס' רישיון, חתימה וחותמת",
+      "type": "string",
+      "required": true,
+      "description": "The physician's medical-license number, signature, and stamp.",
+      "sourceRef": "Physician's certification signature line — \"מס' רישיון, חתימה וחותמת\""
+    },
+    {
+      "name": "physicianCertificationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date the physician signed the certification in Section B.",
+      "sourceRef": "Physician's certification signature line — \"תאריך\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "positiveFindingConsultationSummaries",
+      "label": "סיכום ביקור מהרופא הרלוונטי (קרדיולוג/נוירולוג וכו') מחצי השנה האחרונה",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "applicantQ1RecurringDizzinessBalanceOrConsciousness",
+            "equals": true
+          },
+          {
+            "field": "applicantQ2EpilepsyDiagnosed",
+            "equals": true
+          },
+          {
+            "field": "applicantQ3StrokeSinceLicenseIssuedOrRenewed",
+            "equals": true
+          },
+          {
+            "field": "applicantQ4DegenerativeDiseaseDiagnosed",
+            "equals": true
+          },
+          {
+            "field": "applicantQ5NewMovementLimitation",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6DiagnosedDiabetes",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6TreatedWithInsulin",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6RecentHypoglycemia",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6RetinopathySurgery",
+            "equals": true
+          },
+          {
+            "field": "applicantQ7HeartDiseaseOrArrhythmia",
+            "equals": true
+          },
+          {
+            "field": "applicantQ8PsychiatricHospitalization",
+            "equals": true
+          },
+          {
+            "field": "applicantQ9ReactionMemoryOrientationImpairment",
+            "equals": true
+          },
+          {
+            "field": "applicantQ10ChronicAlcoholOrDrugUse",
+            "equals": true
+          },
+          {
+            "field": "applicantQ11ExcessiveDaytimeSleepiness",
+            "equals": true
+          },
+          {
+            "field": "applicantQ11SleepApnea",
+            "equals": true
+          },
+          {
+            "field": "applicantQ11Narcolepsy",
+            "equals": true
+          },
+          {
+            "field": "applicantQ12OxygenUseRequired",
+            "equals": true
+          },
+          {
+            "field": "applicantQ13NeedsFurtherMirdEvaluation",
+            "equals": true
+          }
+        ]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Section B header note — \"עבור תשובה חיובית לאחד מהסעיפים יש לצרף סיכום ביקור מהרופא הרלוונטי (קרדיולוג/נוירולוג וכו') מחצי השנה האחרונה\""
+    },
+    {
+      "id": "medicalConfidentialityWaiverSigned",
+      "label": "טופס ויתור סודיות רפואית",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "applicantQ1RecurringDizzinessBalanceOrConsciousness",
+            "equals": true
+          },
+          {
+            "field": "applicantQ2EpilepsyDiagnosed",
+            "equals": true
+          },
+          {
+            "field": "applicantQ3StrokeSinceLicenseIssuedOrRenewed",
+            "equals": true
+          },
+          {
+            "field": "applicantQ4DegenerativeDiseaseDiagnosed",
+            "equals": true
+          },
+          {
+            "field": "applicantQ5NewMovementLimitation",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6DiagnosedDiabetes",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6TreatedWithInsulin",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6RecentHypoglycemia",
+            "equals": true
+          },
+          {
+            "field": "applicantQ6RetinopathySurgery",
+            "equals": true
+          },
+          {
+            "field": "applicantQ7HeartDiseaseOrArrhythmia",
+            "equals": true
+          },
+          {
+            "field": "applicantQ8PsychiatricHospitalization",
+            "equals": true
+          },
+          {
+            "field": "applicantQ9ReactionMemoryOrientationImpairment",
+            "equals": true
+          },
+          {
+            "field": "applicantQ10ChronicAlcoholOrDrugUse",
+            "equals": true
+          },
+          {
+            "field": "applicantQ11ExcessiveDaytimeSleepiness",
+            "equals": true
+          },
+          {
+            "field": "applicantQ11SleepApnea",
+            "equals": true
+          },
+          {
+            "field": "applicantQ11Narcolepsy",
+            "equals": true
+          },
+          {
+            "field": "applicantQ12OxygenUseRequired",
+            "equals": true
+          },
+          {
+            "field": "applicantQ13NeedsFurtherMirdEvaluation",
+            "equals": true
+          }
+        ]
+      },
+      "belongsTo": "applicant",
+      "statement": "אני מוותר על הסודיות הרפואית בנוגע למצבי הבריאותי ו/או למחלותיי, לגבי המוסדות הרפואיים הבודקים אותי והנני מבקש בזאת מכל מוסד רפואי למסור כל מידע בקשר למחלותיי, מצבי הרפואי וכל מידע אחר שידרש לרופא המוסמך ו/או לאגף הרישוי ו/או מי מטעמם.",
+      "sourceRef": "Section B header note — \"...ולחתום על טופס ויתור סודיות רפואית המצורף למכתב זה\"; applicant's declaration closing paragraph"
+    }
+  ]
+}
