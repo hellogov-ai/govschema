@@ -1,0 +1,575 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "il/moin/mr41-biometric-id-application",
+  "version": "1.0.0",
+  "title": "Israel Form MR/41 — Application for a Biometric Identity Card",
+  "description": "The Population and Immigration Authority's (Rashut HaOchlusin VeHaHagira) Form MR/41 (\"מר/41\", \"בקשה לתעודת זהות ביומטרית\"), the unified application for an Israeli biometric identity card (Teudat Zehut), covering first-time issuance, renewal of an expired card, replacement of a worn card, an update following a change of personal details, replacement of a lost/stolen/damaged card, and replacement following cancellation of the current card. Opens Israel's National ID & Civic Documents vertical (1 of 6). This document models the applicant's own identity, birth, personal-status, and address details; the two independent 7-year name-retention checkboxes; the mailing-address registration checkboxes; and the conditional loss/theft/damage declaration sub-section (date, type, circumstances, location, police report, and declarant details) that applies only when the request reason is a lost/stolen/damaged replacement. It excludes the section printed below the form's own \"לשימוש המשרד\" (\"for office use\") divider: the receiving branch code, intake date, and the names of the receiving/examining clerks, none of which the applicant fills in themselves. This document describes the form only; it does not submit anything on the applicant's behalf, and does not imply endorsement by the State of Israel or the Population and Immigration Authority. GovSchema is independent and is not affiliated with, endorsed by, or operated by the State of Israel.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Population and Immigration Authority (Rashut HaOchlusin VeHaHagira)",
+    "abbreviation": "PIBA",
+    "url": "https://www.gov.il"
+  },
+  "process": {
+    "type": "application",
+    "language": "he"
+  },
+  "source": {
+    "url": "https://www.gov.il/BlobFolder/generalpage/services_forms/he/MR41.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Form MR/41 (מר/41), \"בקשה לתעודת זהות ביומטרית\" (Application for a Biometric Identity Card), office edition 07/2022"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3128 (\"GovSchema Standard Research\" cycle). Israel's National ID & Civic Documents vertical was completely unscouted going into this cycle (Passport, Business Formation, Taxes, and Visa were already published); a scouting pass located Form MR/41 as a genuine, unauthenticated, directly downloadable PDF and this cycle independently re-fetched and re-verified it from scratch rather than trusting that scouting note as-is.\n\nRe-fetched directly via plain curl: HTTP 200, content-type application/pdf, content-length 206,497 bytes, sha256 0b466f1d772b4261463b6a757098e855606d14bd0fe6a7dbcb7b44deaa686258. The `gov.il` service landing page itself (e.g. `/he/service/biometric_smart_id_request`) returns HTTP 403 (Cloudflare bot-mitigation), but the direct `gov.il/BlobFolder/...` asset path bypasses that challenge entirely, consistent with this registry's established convention for other `gov.il`-hosted forms (Form DR/1, Form 1301). Extracted via pdfjs-dist (legacy CJS build, pinned to 3.11.174): 1 page, 405 text items, getFieldObjects() returning null and 0 page annotations (a flat, non-fillable print-and-fill PDF). Because Hebrew is a right-to-left script and raw text-extraction order does not reliably reflect visual reading order for a form this densely tabular, the page was additionally rendered to a 2.5x-scale PNG via node-canvas and read visually — this confirmed the exact wording and box/table structure disclosed in Scope decisions below, including the two 7-year name-retention checkboxes' opposite polarity, which would have been easy to misread from the raw extracted text order alone.\n\nA sibling form, MR/41א (age-16 first-time biometric ID, filed jointly by a minor and one parent, independently re-fetched: HTTP 200, content-type application/pdf, content-length 105,608 bytes, sha256 61ca67cdafdf5bd20546539c36d797cfe50f09b6a5aa9351d5b6d3062d081225), was identified during scouting as a companion candidate but is not modeled in this version — disclosed as backlog for a future companion-schema cycle, per this registry's established guardian-consent companion-form pattern.\n\nScope was cut at the form's own printed \"לשימוש המשרד\" (\"for office use\") divider near the bottom of the page: everything above it (the six request-reason checkboxes, applicant identity/birth/personal-status/address blocks, the two name-retention checkboxes, the two mailing-address-registration checkboxes, the applicant's own signature block, and the conditional loss/theft/damage declaration) is modeled; the receiving-office branch code, intake date, and receiving/examining clerk names below the divider are not, following this registry's established convention for other jurisdictions' clerk-only intake sections.\n\n`requestReason`'s six enum values are quoted directly from the form's own checkbox column, each paired on the source form with its own attachment requirement (modeled as a `documents[]` entry `requiredWhen` that specific reason, per §Scope decisions below) rather than a uniform requirement across all six. The two 7-year name-retention checkboxes have **opposite default polarity**, confirmed via the rendered-image cross-check: `registerPreviousNameDespite7Years` is an opt-**in** to keep a changed (non-maiden) previous name printed once more than 7 years have passed since the change (the form's own default is to drop it after 7 years, mirroring Form DR/1's identical checkbox); `suppressMaidenNameAfter7Years` is an opt-**out** from printing a maiden name once 7 years have passed since the marriage/name change (the form's own default is to keep printing it once that threshold is reached) — these are genuinely different rules for two visually similar checkboxes, not a transcription inconsistency. `paternalGrandfatherName` (שם הסב, אבי האב) is modeled `required: true` since the form prints it as a plain column in the same identity table as family/first/father/mother name with no \"if known\"/optional marker. `birthDateHebrew` is modeled as a free-text `string`, not `date`, since the Hebrew calendar has no ISO-8601 representation and GSP-0013 defines no Hebrew-calendar date type. `applicantIsMinor`/general parental-consent gating (as used in Form DR/1) is deliberately **not** modeled here: this form's own footer states minors under 16 need one parent's consent, but — unlike DR/1 — MR/41 prints no dedicated general-purpose parent-signature/ID line for that requirement outside the loss/theft/damage declaration's own narrower `parentName`/`parentIdNumber` fields (`requiredWhen` `declaringOnBehalfOf` is `MINOR_CHILD`, itself only reachable when `requestReason` is `LOST_STOLEN_DAMAGED_REPLACEMENT`); inventing a general-purpose consent field with no corresponding printed form element would misrepresent the form's actual structure, so the footer's general minor-consent requirement is disclosed here rather than encoded as a field.\n\n2 valid mock scenarios (a first-time adult applicant with no previous/maiden name and no delivery-address override; an adult applicant replacing a card lost by their minor child, with a police report filed and a delivery address distinct from the primary address) plus 6 mutation-control fixtures (a missing statically-required field, a missing `parentIdNumber` while `declaringOnBehalfOf` is `MINOR_CHILD`, a missing `policeReportLocation` while `policeReportFiled` is `true`, a missing `lossDeclarationStatement` document while `requestReason` is `LOST_STOLEN_DAMAGED_REPLACEMENT`, an invalid `requestReason` enum value, and an invalid date format) are committed under `conformance/il/moin/mr41-biometric-id-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 8: both valid scenarios at 0 errors, all 6 mutation controls each raising exactly 1 error, and confirmed every requiredWhen field reference resolves (0 dangling references). Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestReason",
+      "label": "בקשה לתעודת זהות",
+      "type": "enum",
+      "required": true,
+      "description": "The reason for this application, matching the form's own six mutually-exclusive checkboxes. Each reason carries its own attachment requirement, modeled as a requiredWhen documents[] entry.",
+      "sourceRef": "Header checkbox column — \"ראשונה\", \"בעקבות תעודת זהות שפג תוקפה\", \"במקום תעודה בלויה\", \"בעקבות שינוי בפרטים האישיים\", \"במקום אבודה / גנובה / מושחתת\", \"בעקבות ביטול תעודת זהות נוכחית\"",
+      "validation": {
+        "enum": ["FIRST_TIME", "RENEWAL_EXPIRED", "WORN_REPLACEMENT", "PERSONAL_DETAILS_CHANGE", "LOST_STOLEN_DAMAGED_REPLACEMENT", "CANCELLATION_REPLACEMENT"]
+      }
+    },
+    {
+      "name": "idNumber",
+      "label": "מספר הזהות",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's national identity number (Teudat Zehut).",
+      "sourceRef": "Applicant-details section — \"מספר הזהות\""
+    },
+    {
+      "name": "familyName",
+      "label": "שם המשפחה",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's family name.",
+      "sourceRef": "Identity table — \"שם המשפחה\""
+    },
+    {
+      "name": "firstName",
+      "label": "השם הפרטי",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's first name.",
+      "sourceRef": "Identity table — \"השם הפרטי\""
+    },
+    {
+      "name": "fatherName",
+      "label": "שם האב",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's father's given name.",
+      "sourceRef": "Identity table — \"שם האב\""
+    },
+    {
+      "name": "paternalGrandfatherName",
+      "label": "שם הסב (אבי האב)",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's paternal grandfather's given name.",
+      "sourceRef": "Identity table — \"שם הסב (אבי האב)\""
+    },
+    {
+      "name": "motherName",
+      "label": "שם האם",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's mother's given name.",
+      "sourceRef": "Identity table — \"שם האם\""
+    },
+    {
+      "name": "birthDateHebrew",
+      "label": "תאריך הלידה העברי",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's date of birth in the Hebrew calendar, as printed in the Population Registry. Modeled as free text since the Hebrew calendar has no ISO-8601 representation.",
+      "sourceRef": "Personal-status table — \"תאריך הלידה העברי\""
+    },
+    {
+      "name": "birthDateGregorian",
+      "label": "תאריך הלידה הלועזי",
+      "type": "date",
+      "required": true,
+      "description": "Applicant's date of birth in the Gregorian calendar.",
+      "sourceRef": "Personal-status table — \"תאריך הלידה הלועזי\""
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "ארץ הלידה",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's country of birth.",
+      "sourceRef": "Personal-status table — \"ארץ הלידה\""
+    },
+    {
+      "name": "gender",
+      "label": "המין",
+      "type": "enum",
+      "required": true,
+      "description": "Applicant's gender, as printed on the form's own personal-status table.",
+      "sourceRef": "Personal-status table — \"המין\": \"זכר\" / \"נקבה\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "המצב האישי",
+      "type": "enum",
+      "required": true,
+      "description": "Applicant's marital status, as printed on the form's own personal-status table.",
+      "sourceRef": "Personal-status table — \"המצב האישי\": \"רווק/ה\", \"נשוי/אה\", \"גרוש/ה\", \"אלמן/ה\"",
+      "validation": {
+        "enum": ["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"]
+      }
+    },
+    {
+      "name": "nationality",
+      "label": "הלאום",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's nationality, as recorded in the Population Registry.",
+      "sourceRef": "Personal-status table — \"הלאום\""
+    },
+    {
+      "name": "suppressHebrewBirthDateOnCard",
+      "label": "אין רצוני שתאריך הלידה העברי יירשם בתעודת הזהות",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant opts out of having their Hebrew-calendar birth date printed on the identity card. By law the Hebrew birth date is printed by default; marking this box suppresses it.",
+      "sourceRef": "Personal-status note — \"עפ\"י חוק המרשם ירשם תאריך הלידה העברי בתעודת זהות שלך, אם אין ברצונך שתאריך הלידה העברי יירשם בתעודת הזהות, יש לסמן x במשבצת זו\""
+    },
+    {
+      "name": "familyNameEnglish",
+      "label": "שם משפחה באנגלית",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's family name transliterated into English.",
+      "sourceRef": "Name table — \"שם משפחה באנגלית\""
+    },
+    {
+      "name": "firstNameEnglish",
+      "label": "שם פרטי באנגלית",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's first name transliterated into English.",
+      "sourceRef": "Name table — \"שם פרטי באנגלית\""
+    },
+    {
+      "name": "previousFamilyName",
+      "label": "שם משפחה קודם",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's previous family name, if changed (not a maiden name).",
+      "sourceRef": "Name table — \"שם משפחה קודם\""
+    },
+    {
+      "name": "previousFirstName",
+      "label": "שם פרטי קודם",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's previous first name, if changed (not a maiden name).",
+      "sourceRef": "Name table — \"שם פרטי קודם\""
+    },
+    {
+      "name": "maidenName",
+      "label": "שם נעורים לנשוי/אה",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's maiden name, for a married applicant, if applicable.",
+      "sourceRef": "Name table — \"שם נעורים לנשוי/אה\""
+    },
+    {
+      "name": "registerPreviousNameDespite7Years",
+      "label": "אם ברצונך שהשם הקודם ירשם למרות שחלפו 7 שנים",
+      "type": "boolean",
+      "required": false,
+      "description": "Opt-in checkbox: whether the applicant's previous (non-maiden) name should still be printed on the ID supplement even though more than 7 years have passed since the change. The form's own default, absent this checkbox, is to omit the previous name once 7 years have passed since the change.",
+      "sourceRef": "Previous-name note — \"השם הקודם ירשם בספח תעודת הזהות אם טרם עברו 7 שנים מיום השינוי. אם ברצונך שהשם הקודם ירשם למרות שחלפו 7 שנים, נא לסמן x במשבצת זו\""
+    },
+    {
+      "name": "suppressMaidenNameAfter7Years",
+      "label": "אין ברצונך ששם הנעורים ירשם בספח תעודת הזהות",
+      "type": "boolean",
+      "required": false,
+      "description": "Opt-out checkbox: whether the applicant does NOT want their maiden name printed on the ID supplement once 7 years have passed since the maiden name was replaced. This is the opposite polarity from registerPreviousNameDespite7Years above — the form's own default once that 7-year threshold is reached is to print the maiden name, and this checkbox suppresses it.",
+      "sourceRef": "Maiden-name note — \"שם הנעורים ירשם בספח תעודת הזהות אם חלפו 7 שנים מיום שהוחלף שם הנעורים ואין ברצונך שירשם בספח תעודת הזהות, נא לסמן x במשבצת זו\""
+    },
+    {
+      "name": "primaryAddressLocality",
+      "label": "הישוב",
+      "type": "string",
+      "required": true,
+      "description": "Locality (city/town) of the applicant's primary address, as will be printed on the ID supplement.",
+      "sourceRef": "Primary-address table (\"המען הראשי (כפי שיירשם בספח תעודת הזהות)\") — \"הישוב\""
+    },
+    {
+      "name": "primaryAddressStreet",
+      "label": "הרחוב",
+      "type": "string",
+      "required": true,
+      "description": "Street of the applicant's primary address.",
+      "sourceRef": "Primary-address table — \"הרחוב\""
+    },
+    {
+      "name": "primaryAddressHouseNumber",
+      "label": "מספר הבית",
+      "type": "string",
+      "required": true,
+      "description": "House number of the applicant's primary address.",
+      "sourceRef": "Primary-address table — \"מספר הבית\""
+    },
+    {
+      "name": "primaryAddressApartment",
+      "label": "מספר הדירה",
+      "type": "string",
+      "required": false,
+      "description": "Apartment number of the applicant's primary address.",
+      "sourceRef": "Primary-address table — \"מספר הדירה\""
+    },
+    {
+      "name": "primaryAddressZipCode",
+      "label": "המיקוד",
+      "type": "string",
+      "required": false,
+      "description": "Postal code of the applicant's primary address.",
+      "sourceRef": "Primary-address table — \"המיקוד\""
+    },
+    {
+      "name": "mobilePhone",
+      "label": "מספר הטלפון נייד",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's mobile phone number.",
+      "sourceRef": "Primary-address section — \"מספר הטלפון נייד\""
+    },
+    {
+      "name": "registerAsMailingAddressForCorrespondence",
+      "label": "כתובת למשלוח דואר",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant wants the address the completed ID is delivered to also registered in the Population Registry as their general \"mailing address\" for correspondence from other institutions and authorities.",
+      "sourceRef": "\"שים לב\" note — \"אם ברצונך שהכתובת למשלוח תעודת הזהות תירשם בקובץ מרשם התושבים כ\"כתובת למשלוח דואר\" שלך יש לסמן X במשבצת\""
+    },
+    {
+      "name": "alsoRegisterForMinorChildren",
+      "label": "עבור ילדיך הקטינים",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the same mailing-address registration should also apply to the applicant's minor children.",
+      "sourceRef": "\"שים לב\" note — \"אם ברצונך שהכתובת הנ\"ל תירשם גם עבור ילדיך הקטינים, יש לסמן X במשבצת\""
+    },
+    {
+      "name": "deliveryCareOfFamily",
+      "label": "אצל משפחת",
+      "type": "string",
+      "required": false,
+      "description": "Care-of family name for delivery of the completed identity card, if delivered other than directly to the applicant.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח תעודת הזהות\") — \"אצל משפחת\""
+    },
+    {
+      "name": "deliveryAddressLocality",
+      "label": "הישוב",
+      "type": "string",
+      "required": false,
+      "description": "Locality of the address the completed identity card should be delivered to, if different from the applicant's primary address.",
+      "sourceRef": "Delivery-address table — \"הישוב\""
+    },
+    {
+      "name": "deliveryAddressStreet",
+      "label": "הרחוב",
+      "type": "string",
+      "required": false,
+      "description": "Street of the address the completed identity card should be delivered to.",
+      "sourceRef": "Delivery-address table — \"הרחוב\""
+    },
+    {
+      "name": "deliveryAddressHouseNumber",
+      "label": "מספר הבית",
+      "type": "string",
+      "required": false,
+      "description": "House number of the address the completed identity card should be delivered to.",
+      "sourceRef": "Delivery-address table — \"מספר הבית\""
+    },
+    {
+      "name": "deliveryAddressApartment",
+      "label": "מספר הדירה",
+      "type": "string",
+      "required": false,
+      "description": "Apartment number of the address the completed identity card should be delivered to.",
+      "sourceRef": "Delivery-address table — \"מספר הדירה\""
+    },
+    {
+      "name": "deliveryAddressPoBox",
+      "label": "תא דואר",
+      "type": "string",
+      "required": false,
+      "description": "PO box of the address the completed identity card should be delivered to.",
+      "sourceRef": "Delivery-address table — \"תא דואר\""
+    },
+    {
+      "name": "deliveryAddressZipCode",
+      "label": "המיקוד",
+      "type": "string",
+      "required": false,
+      "description": "Postal code of the address the completed identity card should be delivered to.",
+      "sourceRef": "Delivery-address table — \"המיקוד\""
+    },
+    {
+      "name": "applicationPlace",
+      "label": "המקום",
+      "type": "string",
+      "required": true,
+      "description": "Place where the application is signed.",
+      "sourceRef": "Signature block — \"המקום\""
+    },
+    {
+      "name": "applicationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date the application is signed.",
+      "sourceRef": "Signature block — \"תאריך\""
+    },
+    {
+      "name": "lossEventDate",
+      "label": "בתאריך ה-",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "Date the identity card was lost, stolen, or damaged. Only applicable when requestReason is LOST_STOLEN_DAMAGED_REPLACEMENT.",
+      "sourceRef": "Loss/theft/damage declaration — \"אני מצהיר/ה שבתאריך ה-\""
+    },
+    {
+      "name": "lossType",
+      "label": "אבדה / נגנבה / הושחתה",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "The specific circumstance of the card's loss.",
+      "sourceRef": "Loss/theft/damage declaration checkboxes — \"אבדה\", \"נגנבה\", \"הושחתה\"",
+      "validation": {
+        "enum": ["LOST", "STOLEN", "DAMAGED"]
+      }
+    },
+    {
+      "name": "declaringOnBehalfOf",
+      "label": "על שמי / על שם ילדי הקטין",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "Whether this loss/theft/damage declaration is made for the applicant's own card or for their minor child's card. When made for a minor child, one parent must sign the declaration in the presence of an authority official.",
+      "sourceRef": "Loss/theft/damage declaration — \"על שמי\" / \"על שם ילדי הקטין, (הצהרה לגבי קטין, על אחד ההורים לחתום על ההצהרה בנוכחות עובד הרשות)\"",
+      "validation": {
+        "enum": ["SELF", "MINOR_CHILD"]
+      }
+    },
+    {
+      "name": "parentName",
+      "label": "פרטי ההורה: שם ומשפחה",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaringOnBehalfOf",
+        "equals": "MINOR_CHILD"
+      },
+      "description": "Name of the consenting parent signing the loss/theft/damage declaration on behalf of their minor child.",
+      "sourceRef": "Loss/theft/damage declaration — \"פרטי ההורה: שם ומשפחה\""
+    },
+    {
+      "name": "parentIdNumber",
+      "label": "מספר הזהות",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "declaringOnBehalfOf",
+        "equals": "MINOR_CHILD"
+      },
+      "description": "Identity number of the consenting parent signing the loss/theft/damage declaration on behalf of their minor child.",
+      "sourceRef": "Loss/theft/damage declaration — \"פרטי ההורה: ... מספר הזהות\""
+    },
+    {
+      "name": "lossCircumstances",
+      "label": "נסיבות האובדן / גניבה",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "Circumstances of the loss, theft, or damage.",
+      "sourceRef": "Loss/theft/damage declaration — \"נסיבות האובדן / גניבה\""
+    },
+    {
+      "name": "lossLocation",
+      "label": "המקום בו אירע הדבר",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "Place where the loss, theft, or damage occurred, described as specifically as possible.",
+      "sourceRef": "Loss/theft/damage declaration — \"המקום בו אירע הדבר (פרט ככל האפשר)\""
+    },
+    {
+      "name": "policeReportFiled",
+      "label": "האם הוגשה תלונה במשטרה",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "Whether a police report was filed for the loss or theft.",
+      "sourceRef": "Loss/theft/damage declaration — \"האם הוגשה תלונה במשטרה: כן / לא\""
+    },
+    {
+      "name": "policeReportLocation",
+      "label": "מקום הגשת התלונה",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "policeReportFiled",
+        "equals": true
+      },
+      "description": "Police station where the report was filed.",
+      "sourceRef": "Loss/theft/damage declaration — \"מקום הגשת התלונה\""
+    },
+    {
+      "name": "declarantName",
+      "label": "שם המצהיר/ה",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "Name of the person signing the loss/theft/damage declaration (the applicant, or the consenting parent when declaring on behalf of a minor child).",
+      "sourceRef": "Loss/theft/damage declaration, closing signature line — \"שם המצהיר/ה\""
+    },
+    {
+      "name": "declarantIdNumber",
+      "label": "מספר זהות",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "description": "Identity number of the person signing the loss/theft/damage declaration.",
+      "sourceRef": "Loss/theft/damage declaration, closing signature line — \"מספר זהות\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "parentOriginalIdForFirstIssuance",
+      "label": "תעודת זהות מקורית של ההורה בה הינך רשום",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "FIRST_TIME"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "\"ראשונה, יש לצרף תעודת זהות מקורית של ההורה בה הינך רשום.\""
+    },
+    {
+      "id": "currentIdInFullForRenewalOrWorn",
+      "label": "התעודה הנוכחית בשלמותה",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "in": ["RENEWAL_EXPIRED", "WORN_REPLACEMENT"]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "\"בעקבות תעודת זהות שפג תוקפה, יש לצרף את התעודה הנוכחית בשלמותה.\" / \"במקום תעודה בלויה, יש לצרף את התעודה הנוכחית בשלמותה.\""
+    },
+    {
+      "id": "personalDetailsChangeSupportingDocuments",
+      "label": "מסמכים מקוריים לאימות השינוי",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "PERSONAL_DETAILS_CHANGE"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "\"בעקבות שינוי בפרטים האישיים, יש לצרף מסמכים מקוריים לאימות השינוי.\""
+    },
+    {
+      "id": "identifyingDocumentForLossReplacement",
+      "label": "מסמך מזהה (דרכון ישראלי חובה אם ישנו)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "\"במקום אבודה / גנובה / מושחתת, יש לצרף מסמך מזהה, (דרכון ישראלי חובה אם ישנו.)\""
+    },
+    {
+      "id": "idAndTravelDocumentForCancellation",
+      "label": "תעודת זהות ומסמך הנסיעה שברשותך",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "CANCELLATION_REPLACEMENT"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "\"בעקבות ביטול תעודת זהות נוכחית, חובה לצרף תעודת זהות ומסמך הנסיעה שברשותך.\""
+    },
+    {
+      "id": "lossDeclarationStatement",
+      "label": "הצהרה על אובדן / גניבה / השחתה של תעודת זהות",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "requestReason",
+        "equals": "LOST_STOLEN_DAMAGED_REPLACEMENT"
+      },
+      "belongsTo": "applicant",
+      "statement": "אני מצהיר/ה בזה שאין ברשותי תעודת זהות שלי, אבדה / נגנבה / הושחתה, ואני מתחייב להחזירה אלי, אם אמצא אותה או תוחזר לכם מיד. הובא לידיעתי כי תעודת הזהות שתינתן לי מבטלת את תעודת הזהות הקודמת. הנני מאשר/ת בזה שהובא לידיעתי כי לפי סעיף 35(ב) לחוק מרשם האוכלוסין תשכ\"ה-1965: מסירת מידע כוזב ביודעין לשם קבלת תעודת זהות מהווה עבירה על החוק ודינה מאסר וקנס.",
+      "sourceRef": "Loss/theft/damage declaration, closing paragraph"
+    }
+  ]
+}
