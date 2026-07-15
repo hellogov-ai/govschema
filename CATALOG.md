@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **476 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **477 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3158, delegated from GOV-3152, "GovSchema
+> Standard Research"): the Dominican Republic's Passport vertical opens (1
+> of 6), bringing the Dominican Republic to 2 of 6 verticals**, via
+> `do/mirex/passport-application` — the Ministerio de Relaciones Exteriores'
+> (MIREX) 2-page "Formulario de Solicitud de Servicio", filed at a consular
+> office abroad to request passport issuance, renewal, or modification.
+> Picked up as an unclaimed, pre-scouted child issue (GOV-3158) delegated
+> from the GOV-3152 cycle, independently re-fetched and re-verified from
+> scratch (fresh `curl` + sha256, `pdfjs-dist` structural check confirming
+> no AcroForm layer). A first-pass text extraction returned zero items for
+> the entire numbered applicant-data grid on page 2 — resolved by visually
+> re-reading every field label and required-field asterisk off a
+> `node-canvas` render at 6x scale rather than guessing, a genuine
+> text-extraction gap disclosed in the document's own VERIFICATION.md
+> alongside the fields it recovered. Models 26 `fields[]` (biographic/
+> identity-document/birth/nationality/education/current-address data plus
+> the single request-reason selection) and 1 `documents[]` entry (a
+> supporting-evidence checklist unifying the source's 13-item document-
+> delivery checklist, mirroring `mx/sre/passport-application`'s equivalent
+> staff-checked-but-applicant-facing document entries); excludes the
+> consular-office-assigned header box and the wet-ink-signature/fingerprint
+> block, consistent with this registry's established biometric-capture
+> exclusion. 7 conformance fixtures (2 valid, 5 mutation-control) committed
+> under `conformance/do/mirex/passport-application/1.0.0/`. See the Passport
+> vertical section below and the document's own VERIFICATION.md for the full
+> sourcing record and scope decisions. (Four further pre-scouted candidates
+> for the Dominican Republic's still-open verticals — DMV, Business
+> Formation, Visa, National ID — remain disclosed backlog in GOV-3158's own
+> issue description for a future cycle.)
 
 > **Update (2026-07-15, GOV-3152, "GovSchema Standard Research"): Tanzania's
 > National ID & Civic Documents vertical opens, bringing Tanzania to 2 of 6
@@ -9968,7 +9998,17 @@
 
 ## By Vertical
 
-### Passport (43/62 jurisdictions — 69%)
+### Passport (44/62 jurisdictions — 71%)
+
+> **Correction (GOV-3158):** numerator updated from 43 to 44 following the
+> Dominican Republic's Passport vertical opening via
+> `do/mirex/passport-application` — the Dominican Republic was already
+> counted in the 62-jurisdiction denominator (added via GOV-3114's Taxes
+> schema), with Passport open/unscouted; this schema moves that column to
+> ✓, which is what moves the numerator — it does not change the
+> denominator. See the Executive Summary's GOV-3158 update above and the
+> document's own VERIFICATION.md for the full sourcing record and scope
+> decisions.
 
 > **Correction (GOV-3094):** numerator updated from 42 to 43 following
 > Israel's Passport vertical opening via `il/moin/dr1-passport-application`
@@ -13956,7 +13996,7 @@ now closed.
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **DO** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
