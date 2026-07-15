@@ -10430,7 +10430,7 @@ within an already-covered vertical:
 > Widget annotations across all 5 pages of the form (a static print/hand-fill
 > template), but every field unambiguously labelled in the form's own printed
 > Quadro structure and explained Quadro-by-Quadro in the istruzioni. This
-> v1.0.0 models 35 `fields[]` scoped to the **inizio attività**
+> v1.0.0 models 37 `fields[]` scoped to the **inizio attività**
 > (business-start) declaration pathway only — Quadro A's declaration-type
 > selector, Quadro B's soggetto d'imposta identifying/activity/e-commerce/
 > preferential-regime data, Quadro C's titolare personal/residence data, the

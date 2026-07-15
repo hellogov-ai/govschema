@@ -106,7 +106,7 @@ attività** (business-start) declaration for an individual entrepreneur/
 self-employed worker — rather than attempting every declaration type and
 every Quadro in one version.
 
-**Modelled in v1.0.0 (35 `fields[]`, 1 `documents[]` entry):**
+**Modelled in v1.0.0 (37 `fields[]`, 1 `documents[]` entry):**
 
 | Section | Representative fields | Modelled scope |
 |---|---|---|
