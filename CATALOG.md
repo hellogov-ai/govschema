@@ -29,7 +29,7 @@
 > "Place and date"/"Signature" row closing the main data-entry section, and
 > a second, unnumbered one after a multi-paragraph closing declaration —
 > confirmed via coordinate mapping and a `node-canvas` box-grid render to
-> be a genuine two-step sign-off, not a rendering artifact. Models 60
+> be a genuine two-step sign-off, not a rendering artifact. Models 73
 > `fields[]` and 3 `documents[]` entries (an applicant photo and two
 > signature attestations) with 9 conformance fixtures (2 valid, 7
 > mutation-control) committed under
