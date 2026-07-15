@@ -1,0 +1,322 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "np/dop/mrp-offline-application-form",
+  "version": "1.0.0",
+  "title": "Nepal — Department of Passports Machine Readable Passport (MRP) Offline Application Form",
+  "description": "The Department of Passports' (DoP, under the Ministry of Foreign Affairs) single-page offline application form for a Machine Readable Passport, published on the department's own Downloads page (`nepalpassport.gov.np/downloads`). Opens Nepal's Passport vertical (Nepal's 2nd schema in this registry, after `np/ocr/company-registration-private-ekal` opened Business Formation). Every one of the form's 337 AcroForm widgets is a flat, single-character `Tx` text box (internal names `sur1`..`sur337`, no semantic naming), used to lay out fixed-width comb-style boxes ('Please fill in each box with one character... Use only CAPITAL letters') for each logical field; this schema reconstructs the 337 widgets into 29 logical `fields[]` via widget-geometry (x/y rect) clustering into rows/columns, plus a `photo` file attachment for the printed passport photo the form provides a gluing box for. The form's own 'FOR OFFICE USE ONLY' section (Application Source & Name, Application Type, Document Type, Validity, Revenue Receipt No., processing Date) has no backing AcroForm widgets at all — it is drawn as static, non-fillable artwork completed by department staff after submission — and is out of scope, consistent with this registry's treatment of office-only processing blocks elsewhere. Consistent with this registry's established treatment of biometric/wet-ink capture (e.g. `do/mirex/passport-application`, `mx/sre/passport-application`), the applicant's handwritten signature and the two required right/left thumb impressions are excluded as physical marks captured on the paper form itself, not digitally modelable data; the required Date accompanying the applicant's signature is retained, since it is itself a distinct data value backed by its own widget. Third-party sources report Nepal discontinued MRP (machine-readable, non-chip) passport issuance in 2021 in favor of e-passports; however, this exact form remains published on the Department of Passports' own live, current Downloads page as of this schema's retrieval date, alongside e-passport materials, and is modelled here as a currently-live offline/paper application pathway (e.g. for missions or locations without e-passport enrollment capacity) rather than a defunct process.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NP",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Passports",
+    "abbreviation": "DoP",
+    "url": "https://nepalpassport.gov.np"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://verification1.nepalpassport.gov.np/uploads/g_Q6z_W_Hj_Ic_DQM_Oqn_Guq_G_Tz_Npa_ZXJYNC_meta_Zm9yb_T_It_NG_12_Mi0x_Ln_Bk_Zg_0cffb4c683.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "MRP Offline Application Form (अनुसूची - २ क, नियम १ को उपनियम १ सँग संबन्धित), Ministry of Foreign Affairs / Department of Passports"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3206, delegated from GOV-3204 ('GovSchema Standard Research'), picking up the disclosed backlog GOV-3078 left when it authored Nepal's Business Formation schema (`np/ocr/company-registration-private-ekal`) and screened this Passport form but did not author it. Independently re-fetched fresh this cycle (not trusted from GOV-3078's scouting note as-is): HTTP 200, 2,827,163 bytes, sha256 `603d84d1e91be379ab9c438426392b71143073ece7f87cc0a750f76c5d4d411b` — an exact match for the sha256 recorded in this issue's own brief. pdfjs-dist 3.11.174 confirms a genuine single-page PDF with 337 AcroForm Widget annotations, all `fieldType: Tx`, matching GOV-3078's disclosed count exactly. `getTextContent()` returns zero text items on the page — every visible label, instruction, and the Ministry crest are rendered as a background raster image, not a text layer — so the entire field list and required-field asterisks were read from a node-canvas 3x-scale render (`page.render()`) of the full page plus a series of targeted crops, not from extracted text. Every widget's own field name (`sur1`..`sur337`) already carries an implicit reading-order signal beyond raw numbering: each text-box's `Keystroke` action chains `AutoTab(this, event, \"surN+1\")` to the next box in fill sequence, and a few boxes carry a same-numbered `a`-suffixed name (e.g. `sur226a` between `sur226` and `sur227`) rather than a renumbered integer — confirming the sequence is a literal, insertion-ordered widget list rather than a semantically meaningful numbering scheme (naive `parseInt()` on field names collapses `sur226`/`sur226a` into a false duplicate; natural-sort on the full `sur\\d+[a-z]?` pattern was required to recover the correct 337-item order). Widgets were grouped into logical fields by clustering same-row (`y` within ~3pt) and horizontally-adjacent (`x` gap under ~8pt) rects, yielding 30 widget-groups (`rect`-adjacency confirmed programmatically, not just visually) that were then matched one-to-one against the rendered image's numbered field labels (1. Surname through 17. Email, plus the Applicant's Signature Date box) — 30 groups collapse to 29 modelled comb/text fields because the '5. Date of Birth' row's two side-by-side 8-box groups (5A. A.D. and 5B. B.S.) are merged into one canonical `dateOfBirth` field, per this registry's established parallel-calendar technique (`th/mfa/passport-application-royal-thai-embassy-london`'s Buddhist-Era/Gregorian merge) — both boxes print the same date of birth in two calendars and are both marked required. The `photo` field (a labelled '35mm X 45mm Borderless Colour Photo' gluing box) has no backing widget and no printed asterisk of any kind, unlike every other required item on this form (which all use an explicit printed `*`); modelled per this registry's `au/apo/passport-application-first-adult` precedent (`type: file`) but with `required: false`, since fabricating a requiredness the source's own consistent asterisk convention conspicuously omits here would misrepresent the source. `sur336` (the only other non-comb, wide-maxLen box, `maxLen: 8`, no comb flag) sits beside 'Date/मिति *' next to the Applicant's Signature line and carries the form's own explicit asterisk; modelled as `applicantSignatureDate`, `type: string` (not `type: date`) because, unlike the Date of Birth section, this box prints no A.D./B.S. calendar label at all, so the calendar its 8 digits are meant to encode cannot be determined from the source without fabricating an assumption. Field 8 ('Date of Issue B.S. (YEAR/MONTH/DAY)', an 8-box comb tied to the Citizenship/Permit number in field 7) prints only the Bikram Sambat calendar with no parallel A.D. box — unlike Date of Birth's genuine A.D./B.S. pair, there is no Gregorian counterpart on this form to anchor a canonical ISO conversion, so it is modelled as `citizenshipOrPermitIssueDateBs`, `type: string`, disclosing the BS calendar and digit-box format rather than the `dateOfBirth` field's `type: date`. Field 10A ('Date of Issue A.D.', tied to the optional Old Passport/Travel Document number, field 10) prints only the Gregorian calendar with no B.S. counterpart, and is modelled `type: date` accordingly. Consistent with this registry's established treatment of biometric/wet-ink capture on print-and-fill government forms (`do/mirex/passport-application`'s exclusion of its 'FIRMA Y HUELLA' signature-and-fingerprint block; `mx/sre/passport-application`; `il/mot/medical-examination-driving-license-renewal`), the applicant's handwritten signature mark and the two boxes captioned 'Thumb Impression/औंठाको छाप' (Right Thumb/दायाँ, Left Thumb/बायाँ — both under a single printed asterisk, no backing widgets) are excluded outright as physical capture, not digitally modelable form data; the signature's own accompanying Date (`sur336`) is retained since it is itself a distinct, separately-boxed data value. The 'FOR OFFICE USE ONLY' section (Application Source & Name, Application Type, Document Type, Validity, Revenue Receipt No., a processing Date grid) was checked against the full 337-widget list and confirmed to have zero backing AcroForm widgets of its own — every one of the 337 widgets maps to the numbered applicant-facing fields 1–17 plus the Applicant's Signature Date, none to this section — confirming it is non-fillable static artwork completed by department staff after submission, out of scope per this registry's convention for office-only processing blocks. Third-party sources (outside this review) report Nepal discontinued MRP passport issuance in 2021 in favor of e-passports; this form nonetheless remains published on the Department of Passports' own current, unauthenticated Downloads page today (independently re-checked this cycle), alongside e-passport materials, so it is modelled as a currently-live offline/paper application pathway rather than assumed defunct — a future cycle with a corroborating primary DoP source (e.g. an official notice restricting this form's use) should revisit this if one surfaces. `sur226a`'s row belongs to '14A. Fullname' (Next of Kin), a 29-character comb field — the widget-count discrepancy this caused during naive-numeric sorting is disclosed above and does not affect the modelled field boundaries, which were cross-checked against the rendered image's visible box count for that row.\n\nConformance: an ephemeral, from-scratch conformance checker (deriving required/requiredWhen/enum rules directly from this schema's own `fields[]`, discarded after use, not committed) ran the following fixtures in `conformance/np/dop/mrp-offline-application-form/1.0.0/`: `valid-full-application.json` (all required and several optional fields populated) — 0 errors; `valid-minimal-required-only.json` (only required fields populated) — 0 errors; `mutation-control-missing-required-field.json` (drops `surname`) — exactly 1 error; `mutation-control-invalid-enum-sex.json` (sets `sex` to `X`, not in the enum) — exactly 1 error; `mutation-control-maxlength-exceeded-surname.json` (`surname` exceeds the form's 22-character comb-box allowance) — exactly 1 error; `mutation-control-invalid-date-format.json` (`dateOfBirth` set to a non-ISO string) — exactly 1 error; `mutation-control-missing-required-field-nextofkin.json` (drops `nextOfKinFullName`) — exactly 1 error. Structural validation: `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (ajv 2020-12 against spec/v0.3) both pass on the full registry after adding this document (487/487); `npm run build-index` re-run in `tools/govschema-client/` to regenerate `registry-index.json`. Review-gate correction (GOV-3208): independent re-derivation via a tightly-cropped high-res zoom on the 11D and 14F label rows found both carry a printed asterisk (`टोल/गाउँ *`) that the original field-by-field pass missed, unlike their neighbouring 11E/14G House No. boxes which print none; `addressTownOrVillage` and `nextOfKinTownOrVillage` are corrected to `required: true`, and `valid-minimal-required-only.json` plus all four mutation-control fixtures were updated to populate both fields so each still triggers exactly one error. All other `required: false` fields on this form were independently re-checked against the render this cycle and confirmed to genuinely carry no asterisk. The `maxLen` distribution reported above for the 5 non-comb widgets was also corrected from an initial \"8, 8, 15, 15, 30\" miscount to the actual \"8, 15, 15, 30, 30\" (`sur336`=8, `sur223`/`sur334`=15, `sur222`/`sur335`=30), independently re-derived via pdfjs-dist — a prose-only correction with no effect on the modelled fields, which already carried the correct `maxLength` values."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Entered one capital letter per box (leave an empty box for a space) in a 22-box comb field.",
+      "sourceRef": "1. Surname/थर *",
+      "validation": { "maxLength": 22 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Entered one capital letter per box (leave an empty box for a space) in a 22-box comb field.",
+      "sourceRef": "2. Given Names/नाम *",
+      "validation": { "maxLength": 22 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "3. Place of Birth/जन्मस्थान *",
+      "validation": { "maxLength": 14 }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "4. Nationality/राष्ट्रियता *",
+      "validation": { "maxLength": 14 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Modelled as a single canonical ISO date. The source form prints this date twice, in two parallel calendars, each as its own required 8-box Year/Month/Day comb grid: 5A. A.D. (Gregorian) and 5B. B.S. (Bikram Sambat, the calendar in official use in Nepal) — a consuming agent completing the literal paper form is expected to derive both calendar representations from this one canonical value.",
+      "sourceRef": "5. Date of Birth/जन्म मिति — 5A. A.D. इं.सं. * and 5B. B.S. वि.सं. *"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "A single letter entered in one box, per the form's own instruction key.",
+      "sourceRef": "6. Sex/लिङ्ग * — \"M for Male/पुरुष, F for Female/महिला\"",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "citizenshipOrPermitNumber",
+      "label": "Citizenship or Permit No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "7. Citizenship or Permit No./नागरिकता वा अनुमति नं *",
+      "validation": { "maxLength": 14 }
+    },
+    {
+      "name": "citizenshipOrPermitIssueDateBs",
+      "label": "Date of Issue B.S. (Year/Month/Day)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The citizenship or permit document's own date of issue, in the Bikram Sambat (B.S.) calendar only — 8 digits (4-digit year, 2-digit month, 2-digit day) entered one per comb box. Unlike Date of Birth, this form prints no parallel Gregorian (A.D.) box for this date, so it is not modelled as a canonical ISO `type: date` value.",
+      "sourceRef": "8. Date of Issue B.S. (YEAR/MONTH/DAY)/जारी मिति वि.सं.(वर्ष/महिना/दिन) *",
+      "validation": { "maxLength": 8 }
+    },
+    {
+      "name": "citizenshipOrPermitPlaceOfIssue",
+      "label": "Place of Issue",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "9. Place of Issue/जारी भएको स्थान *",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "oldPassportOrTravelDocumentNumber",
+      "label": "Old Passport or Travel Document No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "10. Old Passport or Travel Document No./पुरानो राहदानी वा यात्रा अनुमतिपत्र नं",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "oldPassportIssueDateAd",
+      "label": "Date of Issue A.D.",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "description": "The old passport or travel document's own date of issue, in the Gregorian (A.D.) calendar only — the form prints no B.S. counterpart for this box, so it is modelled directly as a canonical ISO date.",
+      "sourceRef": "10A. Date of Issue A.D./जारी भएको मिति इं.सं."
+    },
+    {
+      "name": "oldPassportPlaceOfIssue",
+      "label": "Place of Issue",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "10B. Place of Issue/जारी भएको स्थान",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "addressDistrict",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "11A. District/जिल्ला *",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "addressMunicipalityOrVdc",
+      "label": "Municipality/VDC",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "11B. Municipality/VDC/न.पा./गा.वि.स. *",
+      "validation": { "maxLength": 18 }
+    },
+    {
+      "name": "addressWardNumber",
+      "label": "Ward No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "11C. Ward No./वडा नं *",
+      "validation": { "maxLength": 2 }
+    },
+    {
+      "name": "addressTownOrVillage",
+      "label": "Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "11D. Town/Village/टोल/गाउँ *",
+      "validation": { "maxLength": 16 }
+    },
+    {
+      "name": "addressHouseNumber",
+      "label": "House No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "11E. House No./घर नं",
+      "validation": { "maxLength": 6 }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "12. Email/इमेल",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "13. Phone No./फोन नं",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "nextOfKinFullName",
+      "label": "Next of Kin — Fullname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "14A. Fullname/नाम,थर *",
+      "validation": { "maxLength": 29 }
+    },
+    {
+      "name": "nextOfKinDistrict",
+      "label": "Next of Kin — District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "14C. District/जिल्ला *",
+      "validation": { "maxLength": 25 }
+    },
+    {
+      "name": "nextOfKinMunicipalityOrVdc",
+      "label": "Next of Kin — Municipality/VDC",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "14D. Municipality/VDC/न.पा./गा.वि.स. *",
+      "validation": { "maxLength": 18 }
+    },
+    {
+      "name": "nextOfKinWardNumber",
+      "label": "Next of Kin — Ward No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "14E. Ward No./वडा नं *",
+      "validation": { "maxLength": 2 }
+    },
+    {
+      "name": "nextOfKinTownOrVillage",
+      "label": "Next of Kin — Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "14F. Town/Village/टोल/गाउँ *",
+      "validation": { "maxLength": 16 }
+    },
+    {
+      "name": "nextOfKinHouseNumber",
+      "label": "Next of Kin — House No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "14G. House No./घर नं",
+      "validation": { "maxLength": 6 }
+    },
+    {
+      "name": "nextOfKinRelationship",
+      "label": "Relationship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "15. Relationship/नाता *",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "nextOfKinPhoneNumber",
+      "label": "Next of Kin — Phone No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "16. Phone No./फोन नं",
+      "validation": { "maxLength": 15 }
+    },
+    {
+      "name": "nextOfKinEmail",
+      "label": "Next of Kin — Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "17. Email/इमेल",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "applicantSignatureDate",
+      "label": "Date (of Applicant's Signature)",
+      "type": "string",
+      "required": true,
+      "description": "The 8-digit date entered beside the applicant's signature. The form prints no A.D./B.S. calendar label for this box (unlike the Date of Birth section), so the calendar cannot be determined from the source and this is modelled as a plain digit string rather than a canonical ISO date.",
+      "sourceRef": "Applicant's Signature/निवेदकको सही * — Date/मिति *",
+      "validation": { "maxLength": 8 }
+    },
+    {
+      "name": "photo",
+      "label": "Passport-size photo",
+      "type": "file",
+      "required": false,
+      "description": "A 35mm x 45mm borderless colour photo, affixed with a dab of glue in the form's own dedicated box. Not backed by an AcroForm widget and prints no asterisk, unlike every other required item on this form; requiredness is not asserted here to avoid fabricating a marker the source itself omits, though a passport photo is in practice needed to complete this application.",
+      "sourceRef": "\"35mm X 45mm Borderless Colour Photo... Affix the photo with a dab of glue in the box\""
+    }
+  ]
+}
