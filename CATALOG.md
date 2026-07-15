@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **480 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **481 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3179, delegated from GOV-3157, "GovSchema
+> Standard Research"): Moldova's DMV vertical gains a second schema**, via
+> `md/asp/cerere-admitere-examen-preschimbare-restabilire-permis-conducere`
+> — the Agenția Servicii Publice's (ASP) standard "CERERE" request form
+> (Anexa nr. 5 to Order no. 104/2022-12-09), covering four mutually-
+> exclusive driving-license sub-processes selected via a single checkbox
+> group: exam admission, license exchange, license restoration, and
+> provisional-license issuance. Picked up as a disclosed backlog candidate
+> from GOV-3157 (the schema that opened Moldova's DMV vertical),
+> independently re-fetched and re-verified from scratch (fresh `curl` +
+> sha256, `pdfjs-dist` structural check). Like the sibling
+> `md/asp/vehicle-registration`, this single-page source is a genuine
+> scanned/raster image — `pdfjs-dist`'s `getTextContent()` returned zero
+> text items and `getAnnotations()` returned zero widgets, so the entire
+> field list was read from a `node-canvas` render at 4x scale. Models the
+> four request types as a single `requestType` enum field with
+> `requiredWhen`-gated conditional field sets per option (the printed
+> blanks differ per checkbox), a pattern already established elsewhere in
+> this registry (e.g. `mx/semovi/alta-vehiculo-foraneo`). Models 29
+> `fields[]` total (shared applicant/identity data plus the four
+> conditional sub-process field sets) with 12 conformance fixtures (4
+> valid — one per request type — and 8 mutation-control) committed under
+> `conformance/md/asp/cerere-admitere-examen-preschimbare-restabilire-permis-conducere/1.0.0/`.
+> No `documents[]` entry — this form prints no attached-documents list of
+> any kind. See the DMV vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record and scope decisions,
+> including the disclosed judgment calls on the `DNP` abbreviation (mapped
+> to the same 13-digit IDNP concept as the sibling schema's `Codul
+> personal (I.D.N.P.)`) and the exam-admission-only civil-liability
+> acknowledgment date.
 
 > **Update (2026-07-15, GOV-3166, delegated from GOV-3152, "GovSchema
 > Standard Research"): the Dominican Republic's DMV vertical opens (1 of
@@ -10568,6 +10599,16 @@ dense five-column physical-description ("Filiación") checkbox grid.
 > GOV-3157 update above and the document's own VERIFICATION.md. Brings
 > Moldova to 2 of 6 verticals. Numerator updated from 51 to 52.
 
+> **Update (GOV-3179, delegated from GOV-3157): Moldova's DMV vertical
+> gains a second schema**, via
+> `md/asp/cerere-admitere-examen-preschimbare-restabilire-permis-conducere`
+> — see the Executive Summary's GOV-3179 update above and the document's
+> own VERIFICATION.md. Covers driving-license exam admission, exchange,
+> restoration, and provisional issuance (four `requestType`-gated
+> sub-processes on one form), distinct from the sibling schema's vehicle
+> registration/technological-operation scope. Numerator unchanged (already
+> counted at 52 for Moldova's DMV vertical opening).
+
 > **Update (GOV-3134, delegated from GOV-3128): Pakistan's DMV vertical
 > opens**, via `pk/excise-punjab/registration-of-motor-vehicles-form-f` —
 > see the Executive Summary's GOV-3134 update above and the document's own
@@ -14195,7 +14236,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **MD** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| **MD** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
