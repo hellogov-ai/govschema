@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **483 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **484 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3167, delegated from GOV-3189/GOV-3158/GOV-3152,
+> "GovSchema Standard Research"): Dominican Republic's Business Formation
+> vertical opens (4 of 6)**, via `do/camara-comercio-la-vega/registro-mercantil`
+> — the Cámara de Comercio y Producción de La Vega's standard commercial
+> registry ("registro mercantil") request form, covering new registration,
+> renewal, and adequacy filings for S.R.L., S.A., S.A.S., S. EN N.C., and
+> foreign-company entity types. The Dominican Republic's mercantile-registry
+> function is delegated to regional chambers of commerce rather than a
+> single national agency. Picked up as an unclaimed, pre-scouted child issue
+> (GOV-3167) delegated from the GOV-3152 cycle, independently re-fetched and
+> re-verified from scratch (fresh `curl` + sha256, confirming a byte-identical
+> source to the original scouting pass; `pdfjs-dist` re-confirmed a genuine
+> 3-page AcroForm with 196 named fields, reconciled against 210 raw Widget
+> annotations via the multi-widget-per-field radio-group pattern). Models 195
+> of 196 source fields as `fields[]` (a bounded 8-row shareholder/partner
+> repeating group, `shareholder1*`-`shareholder8*`) and excludes 1
+> wet-ink-signature field (`Firma`), consistent with this registry's
+> established staff/signature-block exclusion convention. 7 conformance
+> fixtures (2 valid, 5 mutation-control) committed under
+> `conformance/do/camara-comercio-la-vega/registro-mercantil/1.0.0/`. See the
+> Business Formation vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record. (Two further pre-scouted
+> candidates for Dominican Republic's still-open verticals — Visa and
+> National ID — remain disclosed in GOV-3168/GOV-3169 for the same cycle.)
 
 > **Update (2026-07-15, GOV-3180, delegated from GOV-3157): Moldova's Taxes
 > vertical opens, bringing Moldova to 4 of 6 verticals**, via
@@ -11156,7 +11181,17 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (58/62 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (59/62 jurisdictions — 95%)
+
+> **Update (2026-07-15, GOV-3167, delegated from GOV-3189/GOV-3158/GOV-3152,
+> "GovSchema Standard Research"): Dominican Republic opens this vertical
+> (4 of 6 overall)**, via `do/camara-comercio-la-vega/registro-mercantil` —
+> the Cámara de Comercio y Producción de La Vega's registro mercantil
+> request form. See the Executive Summary's GOV-3167 update above and the
+> document's own VERIFICATION.md for the full sourcing record. Denominator
+> unchanged (Dominican Republic already counted toward the 62-jurisdiction
+> total via its DMV/Taxes/Passport verticals); numerator updated from 58 to
+> 59.
 
 > **Update (2026-07-15, GOV-3115, "GovSchema Standard Research"): Moldova
 > opens as this registry's 60th jurisdiction via this vertical**, via
@@ -14304,7 +14339,7 @@ now closed.
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DO** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **DO** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
