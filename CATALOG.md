@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **490 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **491 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3228, scouted from GOV-3225, "GovSchema
+> Standard Research"): Thailand's National ID vertical opens, closing
+> Thailand to full 6 of 6 verticals**, via
+> `th/mfa/thai-national-id-card-application` — the Royal Thai Embassy,
+> Washington, D.C.'s consular "Thai National ID Card Application Form", a
+> disclosed judgment call in favor of the consular/overseas variant over
+> Thailand's primary in-country process (DOPA/BORA's counter-only, officer-
+> printed biometric enrollment workflow, confirmed a dead end this cycle;
+> the ThaID digital-ID app/login was already confirmed a dead end by an
+> earlier cycle). Independently re-fetched fresh this cycle: HTTP 200,
+> `application/pdf`, 118,599 bytes, sha256
+> `caf0eb02d4cd97e5cff7f3cd0d9a987084bc785f599917d5da84d371329f7674`, from
+> MFA's own `image.mfa.go.th` CDN. A genuine single-page, non-AcroForm print
+> form (`pdfjs-dist` confirms 0 Widget annotations) with a clean, fully
+> extractable bilingual Thai/English text layer, read directly (no
+> font-encoding or scanned-image gap encountered). The form prints no
+> required-field marker of any kind; requiredness is a disclosed judgment
+> call limited to the applicant's own core identity fields and the
+> current-U.S.-address/contact particulars the Embassy needs to process a
+> mail-in request. Models 28 `fields[]`, including a mutually-exclusive
+> `applicationPurpose` enum (new card vs. replacement) gating a
+> conditionally-required `newCardReason` enum, and eight independent boolean
+> fields for the Replacement section's own non-exclusive change reasons
+> (title/address/name/damage/other), since the source's own checkbox layout
+> allows more than one to apply simultaneously. Excludes the applicant's
+> handwritten signature and its accompanying block-letter name confirmation
+> as physical wet-ink capture. 8 conformance fixtures (2 valid, 6
+> mutation-control) committed under
+> `conformance/th/mfa/thai-national-id-card-application/1.0.0/`.
+> `authority.url` points to MFA's main domain rather than the Washington,
+> D.C. embassy's own site, which returned an identical TLS handshake
+> failure from this sandbox's network egress on every attempt this cycle —
+> a disclosed sandbox-networking limitation. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed judgment
+> call. Numerator updated from 490 to 491; Thailand's National ID column
+> flips ✗→✓ in the By Jurisdiction table below, **closing Thailand to full
+> 6 of 6 verticals** (the 29th jurisdiction in this registry to reach full
+> coverage, per the By Jurisdiction table below).
 
 > **Update (2026-07-15, GOV-3214, delegated from GOV-3212, "GovSchema
 > Standard Research"): Tanzania's DMV vertical opens, bringing Tanzania to
@@ -14086,7 +14125,12 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (46/62 jurisdictions — 74%)
+### National ID & Civic Documents (47/62 jurisdictions — 76%)
+
+> **Correction (2026-07-15, GOV-3228):** numerator updated from 46 to 47
+> following Thailand's National ID vertical opening (closing Thailand to
+> full 6/6 coverage) via `th/mfa/thai-national-id-card-application`, see
+> the Executive Summary above for the full sourcing record.
 
 > **Correction (2026-07-15, GOV-3217):** numerator updated from 45 to 46
 > following Nepal's National ID vertical opening via
@@ -14112,6 +14156,49 @@ candidate, the other two as confirmed dead ends).
 > current registry total, following Moldova/Tanzania/Dominican Republic's
 > additions, none of which touched this vertical); numerator updated to 43
 > following Israel's addition immediately below.
+
+**Thailand's National ID & Civic Documents vertical opens (closing Thailand
+to full 6/6 coverage) (GOV-3228, scouted from GOV-3225, "GovSchema Standard
+Research")**, via `th/mfa/thai-national-id-card-application` — the Royal
+Thai Embassy, Washington, D.C.'s consular "Thai National ID Card
+Application Form", for Thai nationals resident in the U.S. requesting a new
+or replacement Thai National ID Card through the Embassy. A disclosed
+judgment call in favor of the consular/overseas variant over Thailand's
+primary in-country process: the domestic DOPA/BORA counter process was
+independently confirmed a dead end this cycle (the underlying document is
+generated and printed by a government officer from the civil registry as
+part of an in-person biometric enrollment, not a citizen-fillable form;
+DOPA's own public pages list only prose service guides, no blank
+application), and the ThaID digital-ID app/login was already confirmed a
+dead end (login-gated SPA) by an earlier cycle. Independently re-fetched
+fresh: HTTP 200, `application/pdf`, 118,599 bytes, sha256
+`caf0eb02d4cd97e5cff7f3cd0d9a987084bc785f599917d5da84d371329f7674`, from
+MFA's own `image.mfa.go.th` CDN. A genuine single-page, non-AcroForm print
+form (`pdfjs-dist` confirms 0 Widget annotations) with a clean, fully
+extractable bilingual Thai/English text layer — every field modeled from
+the text layer directly rather than a render, since (unlike some of this
+registry's other flat-print-form entries) no font-encoding or scanned-image
+gap was encountered. The form prints no required-field marker of any kind;
+requiredness is a disclosed judgment call limited to the applicant's own
+core identity fields and the current-U.S.-address/contact particulars the
+Embassy needs to process a mail-in request, following this registry's
+established convention for no-marker forms. Models 28 `fields[]`, including
+a mutually-exclusive `applicationPurpose` enum (new card vs. replacement)
+gating a conditionally-required `newCardReason` enum, and eight independent
+boolean fields for the Replacement section's own non-exclusive change
+reasons (title/address/name/damage/other), since the source's own checkbox
+layout allows more than one to apply simultaneously. Excludes the
+applicant's handwritten signature and its accompanying block-letter name
+confirmation as physical wet-ink capture. 8 conformance fixtures (2 valid, 6
+mutation-control) committed under
+`conformance/th/mfa/thai-national-id-card-application/1.0.0/`. `authority.url`
+points to MFA's main domain rather than the Washington, D.C. embassy's own
+site, which returned an identical TLS handshake failure from this sandbox's
+network egress on every attempt this cycle — a disclosed sandbox-networking
+limitation, not a claim the embassy's site is unreachable in general. See
+the document's own VERIFICATION.md for the full sourcing record and every
+disclosed judgment call. **This closes Thailand to full 6 of 6 verticals**
+(Passport, Taxes, Business Formation, Visa, and DMV were already modelled).
 
 **The Dominican Republic's National ID & Civic Documents vertical opens
 (bringing the Dominican Republic to 5 of 6 verticals) (GOV-3169, picked up
@@ -14723,7 +14810,7 @@ now closed.
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -16901,10 +16988,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   counter-only: an officer enters data directly into the BORA system and
   captures a live photograph/fingerprint biometrically, printing the
   internal บ.ป.1 request form from the system itself — the applicant never
-  fills out a paper form in advance. Do not re-attempt without a genuinely
-  new source. This closes out Thailand's screening backlog: Thailand now
-  stands at 5 of 6 verticals, with National ID as its sole remaining, and
-  now confirmed-dead-end, vertical.
+  fills out a paper form in advance. Do not re-attempt this domestic
+  DOPA/BORA source without a genuinely new lead — re-confirmed dead end
+  again by GOV-3228 (2026-07-15). **Superseded (GOV-3228, 2026-07-15):**
+  the National ID *vertical* is no longer a Thailand gap — a genuinely
+  citizen-fillable *consular* source (the Royal Thai Embassy, Washington,
+  D.C.'s "Thai National ID Card Application Form", distinct from this
+  domestic DOPA process) was found and modelled via
+  `th/mfa/thai-national-id-card-application`, closing Thailand to full 6/6.
+  See the Executive Summary's GOV-3228 update above.
 - **GH DMV** — GOV-2716, screened 2026-07-13. `dvla.gov.gh` has been rebuilt
   on a modern stack (Next.js marketing site, Nuxt.js "online services" SPA
   at `service.dvla.gov.gh`), but the online system is fully login-gated
@@ -16990,6 +17082,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   biometric. Not a hard dead end if a genuinely new source surfaces (e.g. a
   third-party-republished specimen, or a future ThaID-workaround
   technique); a dead end for the current official publishing pattern.
+  **Superseded (GOV-3228, 2026-07-15):** a genuinely new source did
+  surface — see the GOV-3228 note above; Thailand is now 6 of 6.
 - **LT DMV (Regitra)** — GOV-2995, 2026-07-14, reinforcing GOV-2969's
   same-vertical dead-end finding with independent detail. Both vehicle
   registration and driving-licence application/exchange are staff-mediated
