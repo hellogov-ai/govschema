@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **461 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **462 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3050, "GovSchema Standard Research"): Italy's
 > National ID vertical opens (6 of 6 — Italy reaches full coverage)**, via
@@ -30,6 +30,33 @@
 > chain, including corroboration from `cartaidentita.interno.gov.it`'s own
 > "release and renew" page for the €16.79-plus-fixed-fees cost, the
 > organ-donation declaration, and the delivery/pickup-method choice.
+
+> **Update (2026-07-15, GOV-3049, "GovSchema Standard Research"): Greece's
+> Passport vertical opens (5 of 6 for Greece)**, via
+> `gr/astynomia/aitisi-ekdosis-diavatiriou` — the Hellenic Police's standard
+> "ΑΙΤΗΣΗ ΕΚΔΟΣΗΣ ΔΙΑΒΑΤΗΡΙΟΥ – ΥΠΕΥΘΥΝΗ ΔΗΛΩΣΗ" (Application for Passport
+> Issuance – Sworn Statement), published by the National Passport and
+> Secure Document Center. A pre-scouted GOV-3045 child issue, picked up
+> this cycle (GOV-3054). This overturns the GOV-3026 cycle's own screening
+> of this same vertical, which found only `passport.gov.gr`'s zero-text
+> scanned specimen PDF and concluded the vertical was not modelable; this
+> cycle located the site's own fully-legible rendered preview image of the
+> identical specimen (`AppFSpl.png`), following the same
+> no-fillable-PDF/prose-plus-specimen-image sourcing recipe already used
+> for `gr/yme`. Models 34 `fields[]` — the application-type selection
+> (initial issuance/renewal/replacement/theft-loss), the natural-person
+> identity/birth/parentage/residence/contact block, and the form's own
+> 9-item sworn declaration (ΥΠΕΥΘΥΝΗ ΔΗΛΩΣΗ) — plus 5 `documents[]`
+> entries (identity document, ICAO photograph, administrative fee receipt,
+> and two application-type-gated documents). 7 conformance fixtures (2
+> valid, 5 mutation-control) committed under
+> `conformance/gr/astynomia/aitisi-ekdosis-diavatiriou/1.0.0/`. See the
+> document's own VERIFICATION.md for the full sourcing chain, the
+> watermark-cropping technique used to resolve the specimen's sworn
+> declaration text, and every disclosed scoping decision. Greece stood at
+> 4 of 6 verticals (DMV, Business Formation, Taxes, Visa) before this
+> update; this closes Passport, reaching 5 of 6 — only National ID
+> remains (a confirmed dead end, per GOV-3026's own screening).
 
 > **Update (2026-07-15, GOV-3045, "GovSchema Standard Research"): Italy's
 > Business Formation vertical opens (now 5 of 6 for Italy)**, via
@@ -9563,7 +9590,12 @@
 
 ## By Vertical
 
-### Passport (41/56 jurisdictions — 73%)
+### Passport (42/56 jurisdictions — 75%)
+
+> **Correction (GOV-3049):** numerator updated from 41 to 42 following
+> Greece's Passport vertical opening — Greece's Passport was previously
+> counted on the ✗ side as a confirmed dead end (GOV-3026); that finding is
+> now overturned (see below and this schema's own VERIFICATION.md).
 
 > **Correction (GOV-3031):** numerator updated from 40 to 41 following
 > Italy's Passport vertical opening — Italy's Passport was previously
@@ -9578,6 +9610,26 @@
 > **Correction (GOV-2969):** recounted directly from the By-Jurisdiction
 > table (this header had drifted out of sync over several prior cycles),
 > and updated for Lithuania's addition as the registry's 55th jurisdiction.
+
+**Greece's Passport vertical opens (5 of 6) (GOV-3049)**, via
+`gr/astynomia/aitisi-ekdosis-diavatiriou` — the Hellenic Police's standard
+"ΑΙΤΗΣΗ ΕΚΔΟΣΗΣ ΔΙΑΒΑΤΗΡΙΟΥ – ΥΠΕΥΘΥΝΗ ΔΗΛΩΣΗ" (Application for Passport
+Issuance – Sworn Statement), published by the National Passport and Secure
+Document Center. **This overturns this registry's own GOV-3026 "confirmed
+dead end" finding for Greece's Passport vertical**, which screened only
+`passport.gov.gr`'s zero-text scanned specimen PDF and concluded the
+vertical was not modelable; this cycle located the site's own
+fully-legible rendered preview image of the identical specimen
+(`AppFSpl.png`), following the same no-fillable-PDF/prose-plus-specimen-
+image sourcing recipe already used for `gr/yme`. See the Executive
+Summary's GOV-3049 update above and the document's own VERIFICATION.md for
+the full sourcing chain, the watermark-cropping technique used to resolve
+the specimen's sworn declaration text, and every disclosed scoping
+decision. Greece was already one of the registry's 56 jurisdictions prior
+to this schema's authoring, counted on the Passport vertical's ✗ side as a
+confirmed dead end; opening it moves Greece's own Passport column to ✓,
+which is what moves the numerator from 41 to 42 — it does not change the
+56-jurisdiction denominator.
 
 **Italy's Passport vertical opens (1 of 6, now 4 of 6 overall combined with
 the concurrently-merged GOV-3032 Visa opening) (GOV-3031)**,
@@ -13243,7 +13295,7 @@ now closed.
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GR** | 3 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **GR** | 4 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
