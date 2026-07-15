@@ -1,0 +1,264 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "do/dgii/vehicle-transfer-sworn-declaration-fi-vhm-308",
+  "version": "1.0.0",
+  "title": "Dominican Republic DGII Sworn Declaration of Motor Vehicle Transfer (Declaración Jurada de Transferencia de Vehículos de Motor, Formulario FI-VHM-308)",
+  "description": "The Dirección General de Impuestos Internos' (DGII) Formulario FI-VHM-308, a single-page sworn declaration ('declaración jurada') a vehicle seller files with DGII's Departamento de Vehículos de Motor to record the sale/transfer of a motor vehicle for tax-roll ('descargo') purposes. It identifies the seller, optionally the buyer (Section II), the vehicle, and the sale's own terms, and — when the seller does not know the buyer's identity — carries its own fallback sworn statement (Section V) substituting for Section II. This document opens the Dominican Republic's DMV vertical (3 of 6 verticals for the jurisdiction, following `do/dgii/annual-corporate-income-tax-return-ir-2` (Taxes) and `do/mirex/passport-application` (Passport)). The form ships as a `.zip` containing a single-worksheet `.xlsx` (a print-and-fill layout, not a live AcroForm/e-filing widget), is freely downloadable from DGII's own vehiculosMotor forms page with no login/CAPTCHA/WAF gate, and is one of four sibling forms on that same page (FI-VHM-308 itself, GRCIV-011 'Solicitud de Eliminación de Vehículos de Motor', FI-VHM-312 'Solicitud Reembolso del Impuesto de Circulación Vehicular', and FI-ADML-007 'Solicitud de Certificaciones') — FI-VHM-308 was chosen as this vertical's opening document because a sale/transfer declaration is the closest functional analogue to a DMV title-transfer transaction already established in this registry (e.g. `cl/sii/aviso-venta-vehiculo`, `br/mg/detran/comunicacao-de-venda-de-veiculo`). Deliberately out of scope: the 'Departamento de Vehículos de Motor' office header (not applicant data); 'Firma del Declarante' (a wet-ink signature captured in person, excluded per this registry's treatment of physical signature/biometric capture elsewhere, e.g. `do/mirex/passport-application`); and the '(*) Datos Obligatorios' legend and Section V's own footnote, both instructional text rather than fields. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of the Dominican Republic or the Dirección General de Impuestos Internos.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Dirección General de Impuestos Internos",
+    "abbreviation": "DGII",
+    "url": "https://dgii.gov.do"
+  },
+  "process": {
+    "type": "filing",
+    "language": "es-DO"
+  },
+  "source": {
+    "url": "https://dgii.gov.do/vehiculosMotor/formularioVehiculosMotor/Documents/FI-VHM-308.zip",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Formulario FI-VHM-308 — Declaración Jurada de Transferencia de Vehículos de Motor (Departamento de Vehículos de Motor, DGII)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3166, picked up directly from the GOV-3152 cycle's pre-scouted, disclosed-backlog candidate (GOV-3166 itself), re-verified from scratch rather than trusted as-is: fetched fresh via a plain `curl` (no browser User-Agent needed), HTTP 200, `Content-Type: application/zip`, 45,504 bytes, sha256 `21e4f72d6f2fb2454ab4b60f6c379f7e24d6a12e0e10aaf66ed5c651a0881932`. The zip contains one file, `FI-VHM-308 Formulario Declaración Jurada de Transferencia de Vehículos de Motor.xlsx` (56,408 bytes, sha256 `945addf62d6d5e0b326a73afce9bafd33d39fa7339169bdacff3f0b45b14b74f`), a single-worksheet OOXML `.xlsx` with no embedded VBA macro. Parsed directly via Python's stdlib `zipfile`/`xml.etree` (no `openpyxl`/`pip` available or needed) against the workbook's own `xl/sharedStrings.xml` and `xl/worksheets/sheet1.xml` parts, cross-referenced by cell reference (e.g. `C16`, `K16`) and `mergeCell` ranges to reconstruct the print layout's field grid section by section. Unlike the xlsx forms handled in GOV-3104/GOV-3114 (Pakistan IT-1B, Dominican Republic IR-2), this workbook carries no `dataValidations` element at all — it is a plain print-and-fill layout with no cell-level validation rules to decode, confirmed by a direct string search of the raw sheet XML for the literal substring `dataValidation` (absent). Requiredness instead follows the form's own printed `*` convention, cross-checked cell-by-cell: every field-label string ending in `*` (Cédula/RNC*, Nombre/Razón Social*, Celular*, Sector*, Municipio*, Provincia*, Placa*, Marca*, Modelo*, Año*, Monto de la Venta (RD$)*) was marked required, plus one label — 'Teléfono' in Section I only — whose asterisk is rendered as a separate single-character shared-string cell (`F21`, string index 26, literal `*`) immediately adjacent to the label cell (`C21`) rather than concatenated into the same string; this stray-asterisk cell was independently confirmed unique to Section I's Teléfono (a full-sheet scan for any other standalone `*`-only cell found none), and Section II's own 'Teléfono'/'Celular' labels (rows 39) carry no such adjacent marker, consistent with Section II being fully optional per the form's own footnote (string index 34): 'Si no conoce los datos del comprador continuar en la casilla III' ('If you don't know the buyer's data, continue at box III') — i.e. Section II (buyer identification) may be skipped entirely, with Section V's own fallback sworn statement ('Yo, ___, Declaro bajo Fe de juramento que el vehículo indicado... fue vendido por mi... y que desconozco los datos del comprador...') used in its place. No boolean/enum field on the form itself marks 'buyer data unknown', so Section V's `declarantFullName` is modeled `required: false` (completed in lieu of Section II, not gated by a fabricated `requiredWhen` condition) rather than inventing a cross-field rule the source does not itself express — the same disclosed-rather-than-fabricated approach used for `cl/sii/aviso-venta-vehiculo`'s conditionally-mandatory Sección D/E fields. Three fields carry no asterisk despite apparent practical necessity and are modeled `required: false` strictly per the source's own convention, not overridden by domain judgment: the top-of-form declaration date ('Fecha', día/mes/año boxes — the document's own execution date), 'Chasis' (chassis/VIN, Section III), and 'Fecha de la Venta' (sale date, Section IV) — each disclosed here rather than silently upgraded to required. `Cédula / RNC` (seller and buyer) is modeled as a single unconstrained string field per the source's own combined label, since the same box accepts either an 11-digit individual cédula or a shorter company RNC and no per-format split or pattern is printed on the form itself, consistent with this registry's treatment of the same ambiguity in `do/mirex/passport-application`'s `identityDocumentNumber`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "declarationDate",
+      "label": "Fecha",
+      "type": "date",
+      "required": false,
+      "description": "Date the sworn declaration itself is executed. Printed as three boxes labeled '(día)'/'(mes)'/'(año)'; modeled as a single date-typed field per this registry's convention (e.g. `do/mirex/passport-application`'s `dateOfBirth`). Carries no printed asterisk despite being the document's own execution date — modeled optional strictly per the source's own convention, disclosed rather than upgraded to required.",
+      "sourceRef": "Header block, above Section I — Fecha (día)/(mes)/(año)"
+    },
+    {
+      "name": "sellerCedulaRnc",
+      "label": "Cédula / RNC",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The seller's Dominican national identity number (Cédula, for a natural person) or taxpayer registry number (RNC, for a legal entity), entered in the same box. No per-format split or pattern is printed on the form itself, so this is modeled as an unconstrained string rather than fabricating a regex covering both formats — the same treatment given the equivalent ambiguity in `do/mirex/passport-application`'s `identityDocumentNumber`.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR — Cédula / RNC*",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "sellerName",
+      "label": "Nombre / Razón Social",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The seller's full name (natural person) or company name (razón social, legal entity).",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR — Nombre / Razón Social*",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "sellerPhone",
+      "label": "Teléfono",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The seller's landline telephone number. Marked required via a standalone '*' cell printed immediately after the 'Teléfono' label (see VERIFICATION.md) — unlike Section II's buyer 'Teléfono', which carries no such marker.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR — Teléfono*",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "sellerMobile",
+      "label": "Celular",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The seller's mobile telephone number.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR — Celular*",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "sellerAddressStreet",
+      "label": "Calle",
+      "type": "string",
+      "required": false,
+      "description": "Street name of the seller's address. Carries no asterisk; modeled optional even though the 'Dirección' subsection header itself carries one, consistent with this registry's treatment of a header-level asterisk not implying every sub-field beneath it is individually required (e.g. `do/mirex/passport-application`'s Section 2).",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR, Dirección* — Calle",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "sellerAddressNumber",
+      "label": "Número / Edif.",
+      "type": "string",
+      "required": false,
+      "description": "House/building number of the seller's address.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR, Dirección* — Número / Edif.",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "sellerAddressNeighborhood",
+      "label": "Urb./ Barrio/ Res.",
+      "type": "string",
+      "required": false,
+      "description": "Named urbanización/barrio/residencial of the seller's address, if applicable.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR, Dirección* — Urb./ Barrio/ Res.",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "sellerAddressSector",
+      "label": "Sector",
+      "type": "string",
+      "required": true,
+      "description": "Sector of the seller's address.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR, Dirección* — Sector*",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sellerAddressMunicipality",
+      "label": "Municipio",
+      "type": "string",
+      "required": true,
+      "description": "Municipality of the seller's address.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR, Dirección* — Municipio*",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sellerAddressProvince",
+      "label": "Provincia",
+      "type": "string",
+      "required": true,
+      "description": "Province of the seller's address.",
+      "sourceRef": "Section I. DATOS DEL VENDEDOR, Dirección* — Provincia*",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "buyerCedulaRnc",
+      "label": "Cédula / RNC",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The buyer's Cédula or RNC, if known to the seller. Section II is entirely optional per the form's own footnote directing the filer to Section III when the buyer's data is not known, in which case Section V's fallback sworn statement is completed instead.",
+      "sourceRef": "Section II. DATOS DEL COMPRADOR — Cédula / RNC",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "buyerName",
+      "label": "Nombre / Razón Social",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The buyer's full name or company name, if known to the seller.",
+      "sourceRef": "Section II. DATOS DEL COMPRADOR — Nombre / Razón Social",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "buyerPhone",
+      "label": "Teléfono",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The buyer's landline telephone number, if known to the seller.",
+      "sourceRef": "Section II. DATOS DEL COMPRADOR — Teléfono",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "buyerMobile",
+      "label": "Celular",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The buyer's mobile telephone number, if known to the seller.",
+      "sourceRef": "Section II. DATOS DEL COMPRADOR — Celular",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "vehiclePlate",
+      "label": "Placa",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's license plate number.",
+      "sourceRef": "Section III. DATOS DEL VEHICULO — Placa*",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "vehicleBrand",
+      "label": "Marca",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's make/brand.",
+      "sourceRef": "Section III. DATOS DEL VEHICULO — Marca*",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "vehicleModel",
+      "label": "Modelo",
+      "type": "string",
+      "required": true,
+      "description": "The vehicle's model.",
+      "sourceRef": "Section III. DATOS DEL VEHICULO — Modelo*",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "vehicleChassis",
+      "label": "Chasis",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle's chassis/VIN number. Carries no printed asterisk despite its practical importance to identifying the vehicle; modeled optional strictly per the source's own convention, disclosed rather than upgraded to required.",
+      "sourceRef": "Section III. DATOS DEL VEHICULO — Chasis",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "vehicleYear",
+      "label": "Año",
+      "type": "integer",
+      "required": true,
+      "description": "The vehicle's model/manufacture year.",
+      "sourceRef": "Section III. DATOS DEL VEHICULO — Año*",
+      "validation": { "minimum": 1900, "maximum": 2100 }
+    },
+    {
+      "name": "saleAmount",
+      "label": "Monto de la Venta (RD$)",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "The vehicle's sale amount, in Dominican pesos (RD$).",
+      "sourceRef": "Section IV. DATOS DE LA VENTA — Monto de la Venta (RD$)*",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saleDate",
+      "label": "Fecha de la Venta",
+      "type": "date",
+      "required": false,
+      "description": "The date the vehicle was sold. Carries no printed asterisk despite being central to the declaration; modeled optional strictly per the source's own convention, disclosed rather than upgraded to required.",
+      "sourceRef": "Section IV. DATOS DE LA VENTA — Fecha de la Venta"
+    },
+    {
+      "name": "declarantFullName",
+      "label": "Yo, ___",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The seller's full legal name, filled into the blank of Section V's fallback sworn statement ('Yo, ___, Declaro bajo Fe de juramento que el vehículo indicado en el presente formulario fue vendido por mi... y que desconozco los datos del comprador...'). Completed only when Section II (buyer data) is left blank because the seller does not know the buyer's identity, per the form's own footnote. No boolean/enum field on the form marks this condition, so this is modeled `required: false` (completed in lieu of Section II) rather than a fabricated `requiredWhen` gate — disclosed here, not enforced computationally.",
+      "sourceRef": "Section V. DECLARACION DE VENTA SIN DATOS DEL COMPRADOR — 'Yo, ___'",
+      "validation": { "maxLength": 200 }
+    }
+  ]
+}
