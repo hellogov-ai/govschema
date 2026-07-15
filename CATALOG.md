@@ -28,7 +28,7 @@
 > exactly one optional branch, and exactly one witness — the manual's own
 > Company Share Holder Details and Witness Details steps are genuinely
 > open-ended repeating dialogues, and GovSchema's repeating-groups proposal
-> (GSP-0009) is not yet part of the accepted v0.3 specification. Models 32
+> (GSP-0009) is not yet part of the accepted v0.3 specification. Models 37
 > `fields[]` plus 1 optional `documents[]` entry. Independently re-fetched
 > the source PDF via `curl` (no login/CAPTCHA/WAF gate; HTTP 200, 3,272,267
 > bytes, sha256
@@ -16577,7 +16577,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   estate broadly, not a missing-source problem specific to either vertical.
 
 - **Nepal — Business Formation: authored (GOV-3078), opens the registry's
-  59th jurisdiction.** `np/ocr/company-registration-private-ekal` (32
+  59th jurisdiction.** `np/ocr/company-registration-private-ekal` (37
   `fields[]`), sourced from the Office of Company Registrar's own
   unauthenticated "New Company Registration" e-Services user manual —
   see the Executive Summary's GOV-3078 update and the document's own
