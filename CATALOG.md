@@ -4,7 +4,21 @@
 
 ## Executive Summary
 
-**59 jurisdictions** | **468 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**59 jurisdictions** | **469 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3104, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical opens (2 of 6)**, via
+> `pk/fbr/annual-individual-income-tax-return-it-1b` — the Federal Board of
+> Revenue's official "Manual Return" workbook for individuals (Tax Year
+> 2024, worksheet "IND (PROP-CG-OS)", Form IT-1B). Picked up as an
+> unclaimed, pre-scouted child issue (GOV-3104) delegated from the
+> GOV-3101 cycle rather than re-scouted. See the Taxes vertical section
+> below and the document's own VERIFICATION.md for the full sourcing
+> record, including the workbook's own `dataValidations` rules used to
+> independently confirm Pakistan's 13-digit CNIC format and to expose a
+> genuine per-row inconsistency in the workbook's three-column
+> (Total/Exempt/Normal-Tax) layout — the basis for scoping each in-scope
+> line to a single reported total rather than a fabricated column split.
 
 > **Update (2026-07-15, GOV-3101, "GovSchema Standard Research"): Israel's
 > Visa vertical opens (4 of 6)**, via
@@ -11583,7 +11597,43 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (51/59 jurisdictions — 86%)
+### Taxes — Income Tax Return, Tax Filing (52/59 jurisdictions — 88%)
+
+> **Update (2026-07-15, GOV-3104, "GovSchema Standard Research"): Pakistan
+> opens Taxes (2 of 6, combined with the already-modelled Business
+> Formation)**, via `pk/fbr/annual-individual-income-tax-return-it-1b` —
+> the Federal Board of Revenue's (FBR) official "Manual Return" workbook
+> for individuals, Tax Year 2024 edition, worksheet "IND (PROP-CG-OS)"
+> (Form IT-1B, for individuals deriving income under any head other than
+> Salary/Business). This was the pre-scouted, fully-sourced candidate
+> delegated as GOV-3104 from the GOV-3101 cycle; this cycle picked up the
+> unclaimed delegation rather than re-scouting. Scoped to the return's
+> identification block, six unambiguous headline income/allowance totals
+> (Capital Gains, Other Sources, Foreign Income, both AOP income-share
+> lines, Total Income, Deductible Allowances Total, Zakat, Education
+> Expenses, Taxable Income), and the verification/declaration block. The
+> workbook's own `dataValidations` rules were decoded cell-by-cell to
+> confirm Pakistan's standard 13-digit CNIC format independently (both the
+> taxpayer's and declarant's CNIC fields carry an identical
+> `type="whole"`, `[1e12, 9.999e12]` constraint) and to confirm the
+> per-line three-column (Total/Exempt/Normal-Tax) breakdown is genuinely
+> inconsistent row-to-row (e.g. Sr. 11/12 validate only two of the three
+> columns, Sr. 20 validates only one) — the basis for this document's
+> decision to report each in-scope line as a single headline figure rather
+> than fabricate a uniform column split. A source-document artifact was
+> also caught and disclosed rather than silently "corrected": Sr. 17's own
+> printed formula label reads "[18+19+20]", but Sr. 20 is "Taxable Income"
+> (computed *after* allowances, not a third deductible-allowance
+> component) — only Sr. 18 (Zakat) and Sr. 19 (Education Expenses) exist
+> as its actual sub-items. Out of scope for this version: the Property
+> income sub-item breakdown (Sr. 2–10, confirmed a computed subtotal with
+> no direct-entry validation of its own); the Computations/tax-liability
+> section (Sr. 21–33); the Final/Fixed/Minimum Tax withholding schedule
+> (Sr. 34–65); Annexes A–F; the mandatory Wealth Statement (section 116,
+> a strong companion-schema candidate for a future cycle); and the
+> sibling "IND (BUS PLUS)" worksheet (Form IT-2, the business-income
+> variant). See the document's own VERIFICATION.md for the full sourcing
+> chain. Denominator updated from 51 to 52 jurisdictions.
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; Taxes confirmed a dead end
@@ -13639,7 +13689,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **PK** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **RO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -15973,8 +16023,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     one — UA-sniffing, not a hard WAF). Binary-string scan surfaced real
     worksheet/annex names (Estado de Resultado, Balance General, Ajustes
     Fiscales, Datos Informativos/Complementarios). Comparable in scope to
-    the already-disclosed Pakistan FBR workbook backlog below — strong but
-    a nontrivial multi-annex candidate.
+    Pakistan's own multi-annex FBR "Manual Return" workbook (see the Taxes
+    vertical section above, GOV-3104) — strong but a nontrivial multi-annex
+    candidate.
   - **Moldova — Business Formation.** Agenția Servicii Publice's "Cerere
     privind înregistrarea de stat a întreprinzătorului individual"
     (sole-trader/individual-entrepreneur state registration request) at
@@ -16749,6 +16800,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   a future cycle should author this workbook directly to open Pakistan's
   Taxes vertical (2 of 6, combined with the already-modelled Business
   Formation).
+
+  **Update (GOV-3104, 2026-07-15): authored.** Pakistan's Taxes vertical
+  opens (2 of 6) via `pk/fbr/annual-individual-income-tax-return-it-1b`,
+  scoped to the "IND (PROP-CG-OS)" worksheet (Form IT-1B) — the
+  identification block, six unambiguous headline income/allowance totals,
+  and the verification/declaration block. The sibling "IND (BUS PLUS)"
+  worksheet (Form IT-2), Annexes A–F, and the mandatory Wealth Statement
+  (section 116) remain open, pre-scouted backlog candidates for a future
+  companion schema or version bump — see the Executive Summary's GOV-3104
+  update above and the document's own VERIFICATION.md for the full
+  sourcing record, including the `dataValidations`-derived per-row
+  three-column-inconsistency finding and the disclosed Sr. 17 formula-label
+  artifact.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
