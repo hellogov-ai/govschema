@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**59 jurisdictions** | **466 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**59 jurisdictions** | **467 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3094, "GovSchema Standard Research"): Israel's
+> Passport vertical opens (3 of 6)**, via
+> `il/moin/dr1-passport-application` — the Population and Immigration
+> Authority's (Rashut HaOchlusin VeHaHagira) Form DR/1, "Application for
+> Passport / Travel Document". This is the strongest of the candidates the
+> prior GOV-3078 cycle pre-scouted and left as disclosed backlog for
+> Israel (alongside Visa); independently re-fetched and re-verified from
+> scratch (fresh `curl`, sha256, `pdfjs-dist` structural check) rather than
+> trusted as pre-recorded. A flat, single-page, non-AcroForm PDF with a
+> native Hebrew text layer; because Hebrew RTL extraction jumbles reading
+> order, the page was additionally rendered to a PNG via `node-canvas` and
+> read visually to confirm the form's own internal print-position markers
+> are column-header codes, not a one-per-field numbering scheme. Scoped to
+> everything above the form's own printed "לשימוש המשרד" (office-use)
+> perforation line — request type/reason, applicant identity, previous/
+> maiden names, birth and personal-status details, residential and
+> delivery addresses, and the minor-applicant consent block — excluding
+> the office-only intake/tracking/sign-off section below it. Models 45
+> `fields[]` and 3 `documents[]` entries. Minor-applicant parental consent
+> is modeled as a single `consentingParentIdNumber` field
+> (`requiredWhen` `applicantIsMinor`) rather than separate father/mother ID
+> fields, since the form requires only one parent's consent and GSP-0013's
+> `requiredWhen` grammar has no "at least one of N fields" primitive. See
+> the document's own VERIFICATION.md for the full sourcing record. Israel
+> now stands at 3 of 6 verticals; Visa (the Ministry of Foreign Affairs'
+> tourist-visa PDF at `embassies.gov.il`) remains the pre-scouted,
+> ready-to-author candidate for a future cycle, alongside Pakistan's Taxes
+> vertical (FBR's Manual Return workbook, also pre-scouted and disclosed as
+> backlog).
 
 > **Update (2026-07-15, GOV-3087, "GovSchema Standard Research"): Israel's
 > Business Formation vertical opens**, via
@@ -9728,7 +9758,12 @@
 
 ## By Vertical
 
-### Passport (42/59 jurisdictions — 71%)
+### Passport (43/59 jurisdictions — 73%)
+
+> **Correction (GOV-3094):** numerator updated from 42 to 43 following
+> Israel's Passport vertical opening via `il/moin/dr1-passport-application`
+> (Form DR/1) — see the Executive Summary's GOV-3094 update above and the
+> document's own VERIFICATION.md.
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; Passport remains open,
@@ -13544,7 +13579,7 @@ now closed.
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IL** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **IL** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16580,6 +16615,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   update above and the document's own VERIFICATION.md for the full
   sourcing record. Passport (DR/1) and Visa remain the pre-scouted,
   ready-to-author candidates described above for a future cycle.
+
+  **Update (GOV-3094, 2026-07-15): Passport (DR/1) authored, Israel now
+  stands at 3 of 6 verticals.** `il/moin/dr1-passport-application` opens
+  the vertical, scoped to everything above the form's own printed
+  "לשימוש המשרד" (office-use) perforation line; the office-only intake/
+  tracking/sign-off section below it is out of scope, matching this
+  registry's established convention for clerk-only sections. Minor-
+  applicant parental consent is modeled as a single
+  `consentingParentIdNumber` field rather than separate father/mother ID
+  fields, since the form requires only one parent's consent and GSP-0013's
+  `requiredWhen` grammar has no "at least one of N fields" primitive. See
+  the Executive Summary's GOV-3094 update above and the document's own
+  VERIFICATION.md for the full sourcing record. Visa (the MFA's tourist
+  visa form at `embassies.gov.il`, described above) remains the
+  pre-scouted, ready-to-author candidate for a future cycle.
 
 - **Pakistan — Passport and Visa: screened and confirmed dead ends this
   cycle (GOV-3078). Taxes: strong candidate found, delegated.** Pakistan's
