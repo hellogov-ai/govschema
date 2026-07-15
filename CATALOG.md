@@ -4,7 +4,17 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **472 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **473 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3128, "GovSchema Standard Research"): Israel's
+> National ID & Civic Documents vertical opens (1 of 6), bringing Israel to
+> 5 of 6 verticals overall**, via `il/moin/mr41-biometric-id-application` —
+> the Population and Immigration Authority's Form MR/41, the unified
+> biometric identity card application. This was the only one of Israel's
+> six verticals left completely unscouted after the GOV-3062/3066/3087/
+> 3094/3101/3104 cycles closed Passport, Business Formation, Taxes, and
+> Visa. See the National ID & Civic Documents vertical section below and
+> the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-15, GOV-3113, "GovSchema Standard Research"): Tanzania
 > opens as this registry's 61st jurisdiction** (following Moldova's 60th,
@@ -13301,7 +13311,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (42/62 jurisdictions — 68%)
+### National ID & Civic Documents (43/62 jurisdictions — 69%)
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; National ID remains open,
@@ -13313,6 +13323,39 @@ candidate, the other two as confirmed dead ends).
 > verification" request PDF for the actual CNIC application, not the
 > application itself, which is filed in person via NADRA's biometric
 > system, screened and confirmed weak this cycle).
+
+> **Correction (2026-07-15, GOV-3128):** denominator updated to 62 (the
+> current registry total, following Moldova/Tanzania/Dominican Republic's
+> additions, none of which touched this vertical); numerator updated to 43
+> following Israel's addition immediately below.
+
+**Israel's National ID & Civic Documents vertical opens (1 of 6; Israel now
+5 of 6 combined with Passport, Business Formation, Taxes, and Visa)
+(GOV-3128, "GovSchema Standard Research")**, via
+`il/moin/mr41-biometric-id-application` — the Population and Immigration
+Authority's Form MR/41, "בקשה לתעודת זהות ביומטרית" (Application for a
+Biometric Identity Card), the unified application covering first-time
+issuance, renewal, worn/lost/stolen/damaged replacement, a personal-details
+update, and cancellation-replacement of the Israeli biometric ID (Teudat
+Zehut). This vertical had gone completely unscouted across every prior
+Israel cycle (GOV-3062/3066/3087/3094/3101/3104); this cycle's scouting
+pass located it as a genuine, unauthenticated, directly downloadable
+`gov.il` `BlobFolder` PDF (the service landing page itself is Cloudflare/WAF-
+gated, but the direct asset URL is not), independently re-verified from
+scratch (fresh `curl`, sha256, `pdfjs-dist` structural check, and a
+`node-canvas` rendered-image cross-check that proved decisive for
+correctly reading two visually similar but oppositely-poled 7-year
+name-retention checkboxes). A flat, non-AcroForm, single-page Hebrew-
+language PDF; models 49 `fields[]` (11 of them `requiredWhen`-gated to the
+loss/theft/damage declaration sub-section, itself only reachable when
+`requestReason` is the lost/stolen/damaged-replacement value) and 6
+`documents[]` (five request-reason-specific attachment requirements plus
+the loss-declaration's own quoted attestation). A sibling companion form,
+MR/41א (the age-16 first-time joint minor/parent variant), was identified
+but left as disclosed backlog rather than modeled this cycle. 8 conformance
+fixtures (2 valid, 6 mutation-control) committed under
+`conformance/il/moin/mr41-biometric-id-application/1.0.0/`. See the
+document's own VERIFICATION.md for the full sourcing record.
 
 **Italy's National ID & Civic Documents vertical opens (6 of 6 — Italy
 reaches full coverage) (GOV-3050)**, via
@@ -13796,7 +13839,7 @@ now closed.
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IL** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **IL** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16133,6 +16176,48 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
+- **Israel — DMV: scouted, ready to author, delegated as a child issue
+  (GOV-3128).** Israel is now 5 of 6 (only DMV open, following this
+  cycle's own National ID addition above). `gov.il` service landing pages
+  are Cloudflare/WAF-gated (HTTP 403), but the direct `BlobFolder` asset
+  path — the same workaround already established for every other IL
+  schema in this registry — bypasses it. Strongest candidate: the Ministry
+  of Transport and Road Safety's Licensing Bureau (אגף הרישוי) **Medical
+  Examination Form for Driving-License Renewal** (private/two-wheeled
+  categories, `.../MedicinalExaminationPrati.pdf`, verified live, flat
+  2-page PDF, ~35-45 fields, citing תקנה 196 of Traffic Regulations 1961),
+  with a truck/bus sibling variant (`MedicinalExaminationMassa.pdf`) also
+  confirmed live. A smaller secondary candidate, the **Vehicle License
+  Deposit Request** (`HafkadatRisayon.pdf`, ~10 fields), was also
+  confirmed live. The core vehicle-ownership-transfer flow itself
+  (`gov.il/he/service/ownership-vehicles-transfer`) is a login-gated
+  `ecom.gov.il` online service, not independently fillable — only its
+  power-of-attorney companion PDFs are static and unauthenticated, and
+  those are weaker/ancillary candidates.
+- **Pakistan — DMV: scouted, ready to author, delegated as a child issue
+  (GOV-3128).** Pakistan is 2 of 6 (Business Formation, Taxes); this
+  cycle's scouting also re-confirmed Passport, Visa, and National ID as
+  dead ends (see below) and found DMV the only live candidate. Vehicle
+  registration in Pakistan is provincial, not federal — the Punjab Excise,
+  Taxation & Narcotics Control Department's **Form F**, "Application for
+  Registration of Motor Vehicles" (`excise.punjab.gov.pk/system/files/Form_F_New.pdf`,
+  verified live, flat single-page text PDF, ~24 numbered core fields plus
+  conditional transport-vehicle fields 20-31, citing s.25(1) of the Motor
+  Vehicles Ordinance 1965) is the strongest candidate. Companion PDFs on
+  the same downloads page (driving-licence renewal, vehicle-tax token,
+  tractor-trolly registration) are confirmed live but are scanned
+  CCITT-G4 image PDFs with no text layer, harder to author from directly.
+  **Passport confirmed a dead end**: DGIP's own form library
+  (`dgip.gov.pk`) covers only citizenship/naturalization paperwork; the
+  actual MRP application channel, `onlinemrp.dgip.gov.pk`, is WAF-blocked
+  (HTTP 403) with no static fallback. **Visa confirmed a dead end**: the
+  correct destination-facing system, NADRA's Pakistan Online Visa System
+  (`visa.nadra.gov.pk`), is a fully authenticated login-gated wizard per
+  its own 44-page application guide — no static/unauthenticated form
+  exists. **National ID confirmed a dead end**: NADRA's own CNIC pages are
+  a JS-rendered biometric-kiosk-only enrollment flow with no downloadable
+  application PDF, consistent with this registry's prior (GOV-3062)
+  finding for Pakistan's National ID vertical.
 - **Tanzania, Moldova, and Dominican Republic — all three scouted in the
   GOV-3101 cycle, all three now authored.** Independently verified live
   (direct `curl`/`pdfjs-dist` fetch, not just search snippets) and
