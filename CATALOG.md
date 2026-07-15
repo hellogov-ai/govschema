@@ -4,7 +4,28 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **482 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **483 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3180, delegated from GOV-3157): Moldova's Taxes
+> vertical opens, bringing Moldova to 4 of 6 verticals**, via
+> `md/sfs/cet18-individual-income-tax-declaration` — the State Tax
+> Service's (SFS) Form CET18, the annual individual income tax
+> declaration. A whole-of-form schema covering both the resident (items
+> C/D/E/F, plus Table 1's bounded 3-row expense-substantiation schedule)
+> and non-resident (items H/J) tax computation paths, the shared bounded
+> 5-row capital gain/loss schedule (item K, with the form's own closed
+> asset/disposition code legends modeled as `enum` validation), and the
+> optional percentage tax designation (item M). Discloses two genuine
+> source-printed formula artifacts rather than silently correcting them
+> (item D7's total-exemptions formula excludes D3; item H8 is printed
+> after the H7 subtotal rather than folded into H1-H6). Models 143
+> `fields[]` with 8 conformance fixtures (2 valid, 6 mutation-control)
+> committed under
+> `conformance/md/sfs/cet18-individual-income-tax-declaration/1.0.0/`. See
+> the Taxes vertical section below and the document's own VERIFICATION.md
+> for the full sourcing record and scope decisions. Moldova now stands at
+> 4 of 6 verticals (DMV, Business Formation, Visa, Taxes); Passport and
+> National ID remain confirmed dead ends from the GOV-3152 cycle.
 
 > **Update (2026-07-15, GOV-3181, delegated from GOV-3157/GOV-3152,
 > "GovSchema Standard Research"): Moldova's Visa vertical opens (2 of 6)**,
@@ -12027,7 +12048,32 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (54/62 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (56/62 jurisdictions — 90%)
+
+> **Update (2026-07-15, GOV-3180, delegated from GOV-3157): Moldova opens
+> Taxes (1 of 6), bringing Moldova to 3 of 6 verticals (following DMV via
+> `md/asp/vehicle-registration`, GOV-3157, and Business Formation via
+> `md/asp/cerere-inregistrare-intreprinzator-individual`, GOV-3115)**, via
+> `md/sfs/cet18-individual-income-tax-declaration` — the State Tax
+> Service's (SFS) Form CET18, "Declarația persoanei fizice cu privire la
+> impozitul pe venit", published as Annex 1 to Order of the Minister of
+> Finance No.150 of 2018-09-05. A whole-of-form schema: Section 1 (General
+> Information — taxpayer category, citizenship, identity, domicile,
+> own/spouse/dependents' fiscal codes, contact); Section 2 (resident
+> individual's computation — items C/D/E/F, plus Table 1's bounded 3-row
+> expense-substantiation schedule for deduction codes E3-E7); Section 3
+> (non-resident individual's parallel computation — items H/J); Section 4
+> (item K's bounded 5-row capital gain/loss schedule, shared by both
+> Section 2's C2 and Section 3's H3 via item K8, using the form's own
+> closed asset-type/disposition-type code legends as `enum` validation);
+> and Section 5 (the optional percentage tax designation, item M). Two
+> genuine source-printed formula artifacts are disclosed rather than
+> silently corrected: item D7's own total-exemptions formula excludes D3
+> (the base, non-increased spousal exemption); item H8 (dividend income)
+> is printed as its own line directly after the H7 subtotal rather than
+> folded into H1-H6. Models 143 `fields[]` with 8 conformance fixtures (2
+> valid, 6 mutation-control) committed under
+> `conformance/md/sfs/cet18-individual-income-tax-declaration/1.0.0/`.
 
 > **Update (2026-07-15, GOV-3159, delegated from GOV-3152, "GovSchema
 > Standard Research"): Tanzania opens Taxes (3 of 6, combined with the
@@ -14279,7 +14325,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **MD** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
