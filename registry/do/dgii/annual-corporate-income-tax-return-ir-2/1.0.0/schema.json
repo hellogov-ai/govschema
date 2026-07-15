@@ -1,0 +1,538 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "do/dgii/annual-corporate-income-tax-return-ir-2",
+  "version": "1.0.0",
+  "title": "Dominican Republic DGII Formulario IR-2 — Declaración Jurada Anual del Impuesto Sobre la Renta de Sociedades (Annual Corporate Income Tax Return)",
+  "description": "The Dirección General de Impuestos Internos' (DGII) official Formulario IR-2, the annual sworn corporate income tax return filed by legal entities (Sociedades de Responsabilidad Limitada, Sociedades Anónimas, Empresas Individuales de Responsabilidad Limitada, and similar) under the Dominican Republic's Código Tributario (Ley 11-92). The official distribution is a single multi-sheet Excel workbook (Tax Year/Versión 2018 edition, `.xls`, legacy OLE2/BIFF8 format with an embedded VBA macro project that hides/shows sector-specific annex sheets) containing 17 worksheets in total. This document opens the Dominican Republic as a new jurisdiction (Taxes, 1 of 6 verticals) and is scoped to the core `IR-2` worksheet alone — the return itself — covering: the identification block (Datos Generales de la Sociedad: type of return, economic-sector selection, whether the filer holds investments in other companies, RNC, corporate/trade name, contact details, activity start date, and the fiscal-year/period being declared); every one of the return's own 35 numbered income-determination and settlement lines (Casillas A, B, and 1 through 33, spanning section II 'Determinación de la Renta Neta Imponible o Pérdida Fiscal' and the 'Liquidación' section); and the verification/declaration block (Section IV, the sworn declarant statement) plus the optional third-party filing-authorization block (Section V). Out of scope for this version, disclosed rather than silently omitted: the return's own 16 supporting Anexos, each a distinct worksheet with its own large, structurally-different layout — Anexo D, D-1, and D-2 ('Datos Informativos' / inflation-adjustment basis computations), Anexo A-1/A-2/A-3 ('Balance General' — Manufactura/Comercio/Agropecuaria/Hoteles y Afines, Bancos y Financieras, and Compañías de Seguros variants respectively), Anexo B-1/B-2/B-3/B-4 ('Estado de Resultados', the same four sector variants), Anexo E ('Datos Complementarios' — prior-year losses and advance-payment income), Anexo G ('Ajustes Fiscales'), Anexo H-1/H-2 ('Identificación del Beneficiario Final y Actualización de Datos' — ultimate-beneficial-owner and company-data-update disclosure, mandatory per DGII's instructivo on every filing but a structurally distinct and substantial annex), Anexo J ('Datos Informativos' — invoice/comprobante-fiscal summary from Formatos 606/607), and the standalone 'Formulario para la Liquidación del Impuesto a los Activos' (asset-tax settlement, sheet 'Activo') — a related but separate tax computation, not the income-tax return itself. Many of the IR-2 worksheet's own headline lines are themselves live Excel formulas that pull their value from one of these out-of-scope annexes (or from a sector-conditional lookup driven by the workbook's own 'SECTOR_ECONOMICO' named cell); this document models each such line as a single reported headline figure (matching what the return itself displays), with its field-level `description` disclosing whether the source workbook computes it automatically from an out-of-scope annex or accepts it as direct taxpayer entry, a distinction independently confirmed line-by-line both from the workbook's own formula/blank-cell structure and from the DGII's own companion instructivo document's per-line prose ('Esta casilla se completa automáticamente' for computed lines, 'Colocar en esta casilla...' for direct-entry lines). This document describes the form only; it does not submit anything on the filer's behalf, and does not imply endorsement by the Dominican Republic or the Dirección General de Impuestos Internos. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of the Dominican Republic.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Dirección General de Impuestos Internos",
+    "abbreviation": "DGII",
+    "url": "https://dgii.gov.do"
+  },
+  "process": {
+    "type": "filing",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://dgii.gov.do/herramientas/formularios/formularioDeclaraciones/ISR/Personas%20Jur%C3%ADdicas/IR-2-2018.zip",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "DGII Formulario IR-2 (Versión 2018), worksheet 'IR-2' — \"Declaración Jurada Anual del Impuesto Sobre la Renta de Sociedades\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3114 (pre-scouted during the GOV-3101 cycle, independently re-verified during GOV-3109, re-verified again from scratch this cycle). Re-fetched the source zip directly via `curl` with a browser User-Agent (the bare domain 403s without one — UA-sniffing, not a hard WAF): HTTP 200, size 2,345,919 bytes, sha256 `cec819bb8606c26a7ed601af2d95b3c83d8371cd0d8202ff06e1295270c2bea3`. The archive contains two files: `IR-2-2018.xls` (the workbook itself, sha256 `ca20e12669358be12065746cee069533872ac0211b784676dcd8715de4ed06a2`, 1,316,864 bytes) and `Instructivo-IR-2-y-ANEXOS.pdf` (DGII's own 68-page line-by-line instructions booklet, sha256 `4c175b2b0b986c6344355d9b875c5ecd5f596d15d13640141744d3ced2c0eb9d`, used as a second independent source cross-check, not just the spreadsheet). The workbook is legacy OLE2/BIFF8 (`.xls`), not OOXML — no `unzip`/`pip`/`openpyxl` was available in this environment, but the npm package `xlsx` (SheetJS, installed standalone for this task, not committed as a repo dependency) parses BIFF8 directly, exposing sheet names, cell values, cell formulas, merged-cell ranges, embedded shape/TextBox objects, and the embedded VBA project's raw bytes. Confirmed 17 worksheets via `wb.SheetNames`: `IR-2` (this document's scope), `D`, `D-1`, `D-2`, `A-1`, `A-2`, `A-3`, `B-1`, `B-2`, `B-3`, `B-4`, `E`, `G`, `H-1`, `H-2`, `J`, and `Activo` — cross-checked against each worksheet's own printed title row and against literal annex-name strings recovered from the embedded VBA project's raw bytes (e.g. \"Balance General (anexo A1)\", \"Estado de Resultado (anexo B1)\", \"Ajustes Fiscales (anexo G)\", \"Datos Complementarios (anexo E)\"), which also revealed the macro's actual purpose: a 'Sector Económico' selector form that hides/shows the sector-specific Balance General/Estado de Resultados annex pair matching the filer's chosen sector.\n\nUnlike the Pakistan `.xlsx` (OOXML) case, this legacy `.xls` workbook's own cell-level data-validation (`DV`) records are not exposed by the available BIFF8 tooling in this environment, so — unlike the Pakistan schema, which derived its CNIC pattern directly from the source's own `dataValidations` XML — no field-level `pattern`/`enum` constraint in this document is claimed to originate from the workbook's own validation rules; RNC, Tipo de Declaración, and the Sector Económico/Inversiones checkboxes are modeled from the plain cell layout, the workbook's own named ranges (`TIPODECLARACION`→H8, `INVERSIONES`→S8, `SECTOR_ECONOMICO`→S3, `Sector1`..`Sector5`→AM1:AM5/AN1:AN5), and DGII's own instructivo text, disclosed as such rather than overclaimed. Whether each of the return's 35 numbered lines (Casillas A, B, 1-33) is auto-computed from an out-of-scope annex or directly taxpayer-entered was confirmed two independent ways: (1) the workbook's own cell formulas (present = computed; blank with no formula = direct entry) and (2) DGII's own instructivo booklet's identical per-line prose ('Esta casilla se completa automáticamente' vs 'Colocar en esta casilla...'), which matched in all but one line (Casilla 4, Dividendos Ganados en Otras Compañías — the instructivo's prose reads as a direct-entry instruction, but the workbook's own cell U23 carries a live sector-conditional formula pulling from the corresponding Anexo B; disclosed as a source-internal inconsistency in this document's own field-level description for `dividendosGanadosOtrasCompanias`, not silently resolved either way). `minimum: 0` was applied only to lines whose own label and formula behavior confirm they cannot be negative (revenue totals, credits, withholdings, penalties, interest, and the settlement lines whose own formulas already clamp to zero or a positive magnitude); lines whose section header or formula explicitly allow a loss/negative net result (Casilla 1, 6, 7, 9, 11 — 'Beneficio o Pérdida Neta', 'Renta Neta Imponible ... o Pérdida Fiscal') carry no `minimum`, a deliberate, disclosed departure from applying the constraint uniformly.\n\n2 valid mock scenarios (a manufacturing-sector filer reporting a net profit, positive adjustments, and a tax liability with anticipos credited against it; a services-sector filer reporting a net loss carried forward with no tax due, filed via an authorized third-party representative) plus 4 mutation-control fixtures (a missing statically-required field, an invalid `sectorEconomico` enum value, a negative value on a `minimum: 0` field, an invalid email pattern) are committed under `conformance/do/dgii/annual-corporate-income-tax-return-ir-2/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/pattern/minimum/enum rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 6: both valid scenarios at 0 errors, all 4 mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "tipoDeclaracion",
+      "label": "Tipo de Declaración",
+      "type": "string",
+      "required": true,
+      "description": "The kind of return being filed. The workbook's own named cell (`TIPODECLARACION`, cell H8) is a plain, unvalidated entry cell — no enum could be independently confirmed from this legacy `.xls` workbook's own structure (its BIFF8 data-validation records are not exposed by the tooling available in this environment), so no `enum` is imposed here; DGII's standard filing convention (also used across its other Formularios) is typically \"ORIGINAL\" for a first-time filing or \"RECTIFICATIVA\" for an amended one.",
+      "sourceRef": "Worksheet 'IR-2', row 8 — \"TIPO DE DECLARACIÓN\" (named cell TIPODECLARACION, H8)"
+    },
+    {
+      "name": "sectorEconomico",
+      "label": "Sector Económico",
+      "type": "enum",
+      "required": true,
+      "description": "The filer's economic sector, selected via the workbook's own macro-driven picker (a VBA UserForm bound to a button captioned \"Seleccionar Sector Económico\"), which writes an internal token (`Sector1`..`Sector5`) into the named cell `SECTOR_ECONOMICO` (S3) and drives which sector-specific Balance General/Estado de Resultados annex pair the return's own formulas pull from. The five values quoted here are the human-readable labels printed on the form itself (cells AM1:AM5), each mapped 1:1 to an internal `SectorN` token (AN1:AN5) that this document does not itself surface.",
+      "sourceRef": "Worksheet 'IR-2', top-right sector checklist (cells AM1:AM5/AN1:AN5) and named cell SECTOR_ECONOMICO (S3)",
+      "validation": {
+        "enum": [
+          "Manufactura, Comercio, Agropecuaria",
+          "Hoteles y Afines",
+          "Bancos y Financieras",
+          "Compañías de Seguros",
+          "Instituciones Electricas"
+        ]
+      }
+    },
+    {
+      "name": "inversionesEnOtrasCompanias",
+      "label": "Inversiones en Otras Compañías",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the filer holds equity investments in other companies (relevant to the return's own Casilla 4, dividends earned from such investments). The workbook's own named cell (`INVERSIONES`, S8) is a plain, unvalidated entry cell; \"SI\"/\"NO\" is DGII's standard convention for this style of yes/no checkbox elsewhere on its forms, not a constraint confirmed from this workbook's own (inaccessible) BIFF8 validation records.",
+      "sourceRef": "Worksheet 'IR-2', row 8 — \"INVERSIONES EN OTRAS COMPAÑIAS\" (named cell INVERSIONES, S8)",
+      "validation": {
+        "enum": ["SI", "NO"]
+      }
+    },
+    {
+      "name": "rnc",
+      "label": "RNC",
+      "type": "string",
+      "required": true,
+      "description": "The filer's Registro Nacional del Contribuyente (RNC), DGII's taxpayer-identification number for legal entities. No length/pattern constraint is imposed: this workbook's own cell-level validation rules (if any) are not accessible via the BIFF8 tooling available in this environment.",
+      "sourceRef": "Worksheet 'IR-2', row 10 — \"RNC\" (cell E10)"
+    },
+    {
+      "name": "razonSocial",
+      "label": "Razón Social",
+      "type": "string",
+      "required": true,
+      "description": "The filer's registered legal (corporate) name.",
+      "sourceRef": "Worksheet 'IR-2', row 10 — \"RAZÓN SOCIAL\" (cell M10)"
+    },
+    {
+      "name": "nombreComercial",
+      "label": "Nombre Comercial",
+      "type": "string",
+      "required": false,
+      "description": "The filer's trade name, if it operates publicly under a name other than its registered Razón Social.",
+      "sourceRef": "Worksheet 'IR-2', row 12 — \"NOMBRE COMERCIAL\" (cell H12)"
+    },
+    {
+      "name": "telefonoDeContacto",
+      "label": "Teléfono de Contacto",
+      "type": "string",
+      "required": false,
+      "description": "The filer's contact telephone number.",
+      "sourceRef": "Worksheet 'IR-2', row 14 — \"TELÉFONO DE CONTACTO\" (cell I14)"
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": false,
+      "description": "The filer's contact email address.",
+      "sourceRef": "Worksheet 'IR-2', row 14 — \"CORREO ELECTRÓNICO\" (cell Q14)",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "inicioDeActividad",
+      "label": "Inicio de la Actividad",
+      "type": "date",
+      "required": false,
+      "description": "The date the filer's economic activity began.",
+      "sourceRef": "Worksheet 'IR-2', row 16 — \"INICIO DE LA ACTIVIDAD\" (cell I16)"
+    },
+    {
+      "name": "fiscalYear",
+      "label": "Año Fiscal",
+      "type": "string",
+      "required": true,
+      "description": "The fiscal year this return covers.",
+      "sourceRef": "Worksheet 'IR-2', row 4 — \"AÑO FISCAL\" (cell S4)"
+    },
+    {
+      "name": "ejercicioComercialDel",
+      "label": "Ejercicio Comercial Del",
+      "type": "date",
+      "required": true,
+      "description": "Start date of the fiscal (commercial) period this return covers. DGII's four published fiscal-closing dates are 31 December, 31 March, 30 June, or 30 September.",
+      "sourceRef": "Worksheet 'IR-2', row 16 — \"EJERCICIO COMERCIAL DEL\" (cell S16)"
+    },
+    {
+      "name": "ejercicioComercialAl",
+      "label": "Al",
+      "type": "date",
+      "required": true,
+      "description": "End (closing) date of the fiscal period this return covers.",
+      "sourceRef": "Worksheet 'IR-2', row 16 — \"AL\" (cell W16)"
+    },
+    {
+      "name": "ingresos",
+      "label": "A. Ingresos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla A — total income accrued during the fiscal year. The workbook's own cell (AB18) is a live formula pulling the 'Total de Ingresos' figure from the filer's sector-specific Estado de Resultados annex (out of scope for this version), not a directly-entered value.",
+      "sourceRef": "Worksheet 'IR-2', row 18 — \"A. INGRESOS (Viene de la casilla Total de Ingresos. Anexos Estado de Resultados)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "ingresosBrutosSujetosAnticipos",
+      "label": "B. Ingresos Brutos Sujetos al Pago de Anticipos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla B — gross income subject to advance-payment (anticipo) obligations for the following fiscal year. The workbook's own cell (AB19) is a live formula pulling Casilla 22 of the out-of-scope Anexo E.",
+      "sourceRef": "Worksheet 'IR-2', row 19 — \"B. INGRESOS BRUTOS SUJETOS AL PAGO DE ANTICIPOS (Viene del Anexo E)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "beneficioPerdidaNetaAntesImpuesto",
+      "label": "1. Beneficio o Pérdida Neta Antes del Impuesto",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 1 — net profit or loss before tax for the fiscal year (may be negative — a loss). The workbook's own cell (AB20) is a live formula pulling Casilla 14 of the out-of-scope Anexo B (Estado de Resultados).",
+      "sourceRef": "Worksheet 'IR-2', row 20 — \"1.- BENEFICIO O PERDIDA NETA ANTES DEL IMPUESTO (Viene del Anexo B)\""
+    },
+    {
+      "name": "ajustesPositivos",
+      "label": "2. Ajustes Positivos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 2 — total positive fiscal adjustments for the fiscal year. The workbook's own cell (U21) is a live formula (a named range `AJUSTESPOSITIVOS_ANEXOG`) pulling Casilla 1 of the out-of-scope Anexo G (Ajustes Fiscales).",
+      "sourceRef": "Worksheet 'IR-2', row 21 — \"2.- AJUSTES POSITIVOS (Viene del Anexo G)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "exencionLeyIncentivos",
+      "label": "3. Exención Ley de Incentivos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 3 — the amount exempted under an incentive law the filer is registered under and authorized for by DGII. The workbook's own cell (U22) carries no formula and is left blank in the template — a directly taxpayer-entered figure.",
+      "sourceRef": "Worksheet 'IR-2', row 22 — \"3.- EXENCION LEY DE INCENTIVOS\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "dividendosGanadosOtrasCompanias",
+      "label": "4. Dividendos Ganados en Otras Compañías",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 4 — dividends received from the distribution of profits by other companies in which the filer holds equity investments. DGII's own instructivo describes this line with direct-entry phrasing (\"Colocar en esta casilla...\"), but the workbook's own cell (U23) carries a live sector-conditional formula pulling from the filer's sector-specific out-of-scope Anexo B — a disclosed inconsistency between the instructivo's prose and the workbook's own structure, not resolved either way by this document.",
+      "sourceRef": "Worksheet 'IR-2', row 23 — \"4.- DIVIDENDOS GANADOS EN OTRAS COMPAÑIAS\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "ajustesNegativos",
+      "label": "5. Ajustes Negativos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 5 — total negative fiscal adjustments for the fiscal year, reported as a positive magnitude (subtracted by Casilla 6's own formula). The workbook's own cell (U24) is a live formula (a named range `AJUSTESNEGATIVOS_ANEXOG`) pulling Casilla 2 of the out-of-scope Anexo G.",
+      "sourceRef": "Worksheet 'IR-2', row 24 — \"5.- AJUSTES NEGATIVOS (Viene del Anexo G)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalAjustesFiscales",
+      "label": "6. Total Ajustes Fiscales",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 6 — net total fiscal adjustments (Casillas 2-3-4-5; may be negative). The workbook's own cell (AB25) is a live formula: `+U21-U22-U23-U24`.",
+      "sourceRef": "Worksheet 'IR-2', row 25 — \"6.- TOTAL AJUSTES FISCALES (Casillas 2-3-4-5)\""
+    },
+    {
+      "name": "rentaNetaImponibleAntesPerdida",
+      "label": "7. Renta Neta Imponible Antes de la Pérdida y de la Ley No. 392-07",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 7 — taxable net income (or fiscal loss — the section's own header reads \"Determinación de la Renta Neta Imponible O Pérdida Fiscal\") before applying prior-year losses or Ley 392-07 relief. The workbook's own cell (AB26) is a live formula: `+AB20+AB25` (Casilla 1 plus Casilla 6).",
+      "sourceRef": "Worksheet 'IR-2', row 26 — \"7.- RENTA NETA IMPONIBLE ANTES DE LA PERDIDA Y DE LA LEY No. 392-07 (Casillas 1 ± 6)\""
+    },
+    {
+      "name": "perdidasAnosAnterioresCompensadas",
+      "label": "8. Pérdidas Años Anteriores que se Compensan",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 8 — prior-year fiscal losses carried forward and offset in the current period. The workbook's own cell (AB27) is a live formula (a named range `TotalColumnaK_E`) pulling the total of column (k) of the out-of-scope Anexo E.",
+      "sourceRef": "Worksheet 'IR-2', row 27 — \"8.- PERDIDAS AÑOS ANTERIORES QUE SE COMPENSAN (Viene del total columna (k) Anexo E)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "rentaNetaImponibleDespuesPerdida",
+      "label": "9. Renta Neta Imponible Después de la Pérdida y Antes de la Ley No. 392-07",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 9 — taxable net income after offsetting prior-year losses, before Ley 392-07 relief (may be negative). The workbook's own cell (AB28) is a live formula: `AB26-AB27` (Casilla 7 minus Casilla 8).",
+      "sourceRef": "Worksheet 'IR-2', row 28 — \"9.- RENTA NETA IMPONIBLE DESPUES DE LA PERDIDA Y ANTES DE LA LEY No. 392-07 (Casillas 7 - 8)\""
+    },
+    {
+      "name": "deduccionPorInversion",
+      "label": "10. Deducción por Inversión (Ley No. 392-07)",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 10 — the amount deducted when the filer is registered under Ley No. 392-07 (Competitividad e Innovación Industrial). The workbook's own cell (AB29) carries no formula and is left blank in the template — a directly taxpayer-entered figure.",
+      "sourceRef": "Worksheet 'IR-2', row 29 — \"10.- DEDUCCION POR INVERSIÓN (Ley No. 392-07)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "rentaNetaImponibleFinal",
+      "label": "11. Renta Neta Imponible Después de la Pérdida y de la Ley No. 392-07",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 11 — final taxable net income the 27% tax rate is applied to (Casilla 12 only applies the rate when this figure is positive; the workbook's own formula for Casilla 12 explicitly guards against a negative or zero value here). The workbook's own cell (AB30) is a live formula: `AB28-AB29` (Casilla 9 minus Casilla 10).",
+      "sourceRef": "Worksheet 'IR-2', row 30 — \"11.- RENTA NETA IMPONIBLE DESPUES DE LA PERDIDA Y DE LA LEY No. 392-07\""
+    },
+    {
+      "name": "impuestoLiquidado",
+      "label": "12. Impuesto Liquidado",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 12 — the settled tax liability, 27% of Casilla 11 (or zero, if Casilla 11 is not positive). The workbook's own cell (AB31) is a live formula: `IF(AB30>0,(AB30)*0.27,0)`.",
+      "sourceRef": "Worksheet 'IR-2', row 31 — \"12.- IMPUESTO LIQUIDADO (Aplicar 27% a la casilla 11)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "anticiposPagados",
+      "label": "13. Anticipos Pagados",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 13 — total advance (anticipo) tax payments made during the fiscal year. Directly taxpayer-entered (the workbook's own cell, T32, carries no formula and is left blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 32 — \"13.- ANTICIPOS PAGADOS\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "retencionesEntidadesEstado",
+      "label": "14. Retenciones Entidades del Estado",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 14 — withholdings from sales of goods or services rendered to State entities (per Formato de Envío 623). Directly taxpayer-entered (cell T33 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 33 — \"14.- RETENCIONES ENTIDADES DEL ESTADO (Viene del Formato de Envío 623)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditoPorInversion",
+      "label": "15. Crédito por Inversión",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 15 — investment tax credit under Article 34 of Ley No. 108-10 (the Cinema/Film law). Directly taxpayer-entered (cell T34 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 34 — \"15.- CRÉDITO POR INVERSION (Art. 34 de la Ley 108-10)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditoEnergiaRenovable",
+      "label": "16. Crédito por Energía Renovable",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 16 — renewable-energy investment tax credit approved by DGII under Ley 57-07. Directly taxpayer-entered (cell T35 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 35 — \"16.- CRÉDITO POR ENERGIA RENOVABLE\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditoRetencionesInteresBancario",
+      "label": "17. Crédito Retenciones por Interés Bancarios",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 17 — tax credit for withholdings on bank interest. Directly taxpayer-entered (cell T36 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 36 — \"17.- CRÉDITO RETENCIONES POR INTERES BANCARIOS\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditoRetencionesGananciaCapital",
+      "label": "18. Crédito por Retenciones de Ganancia de Capital",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 18 — tax credit equal to 1% of capital gains, per Article I of Norma 07-1. Directly taxpayer-entered (cell T37 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 37 — \"18.- CRÉDITO POR RETENCIONES DE GANANCIA DE CAPITAL\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditoImpuestosExterior",
+      "label": "19. Crédito por Impuestos Pagados en el Exterior",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 19 — tax credit for taxes paid abroad. Directly taxpayer-entered (cell T38 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 38 — \"19.- CRÉDITO POR IMPUESTOS PAGADOS EN EL EXTERIOR\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditoFiscal",
+      "label": "20. Crédito Fiscal",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 20 — tax credit under Article 39 of Ley 108-10 and Ley No. 253-12. Directly taxpayer-entered (cell T39 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 39 — \"20.- CRÉDITO FISCAL (Art. 39 de la Ley 108-10) (Ley No. 253-12)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "compensacionesAutorizadasOtrosPagos",
+      "label": "21. Compensaciones Autorizadas y Otros Pagos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 21 — credits from compensations authorized by DGII and other prior payments. Directly taxpayer-entered (cell T40 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 40 — \"21.- COMPENSACIONES AUTORIZADAS Y OTROS PAGOS\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saldoFavorEjercicioAnteriorNoCompensado",
+      "label": "22. Saldo a Favor del Ejercicio Anterior No Compensado",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 22 — uncompensated credit balance carried forward from the prior fiscal year. Directly taxpayer-entered (cell T41 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 41 — \"22.- SALDO A FAVOR DEL EJERCICIO ANTERIOR NO COMPENSADO\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "diferenciaAPagar",
+      "label": "23. Diferencia a Pagar",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 23 — the net amount owed (Casillas 12-13-14-15-16-17-18-19-20-21-22, only when the result is positive). The workbook's own cell (AB42) is a live formula clamping to zero when the result would be negative.",
+      "sourceRef": "Worksheet 'IR-2', row 42 — \"23.- DIFERENCIA A PAGAR (12-13-14-15-16-17-18-19-20-21-22 si el resultado es positivo)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saldoAFavor",
+      "label": "24. Saldo a Favor",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 24 — the credit balance in the filer's favor (the same 12-through-22 subtraction chain as Casilla 23, only when the result is negative; reported here as a positive magnitude). The workbook's own cell (AB43) is a live formula clamping to zero otherwise.",
+      "sourceRef": "Worksheet 'IR-2', row 43 — \"24.- SALDO A FAVOR (12-13-14-15-16-17-18-19-20-21-22 si el resultado es negativo)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "moraPorDeclaracionTardia",
+      "label": "25. Mora por Declaración Tardía",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 25 — the surcharge for a late return: 10% of Casilla 23 for the first month or fraction thereof, plus 4% per additional month or fraction thereof (Art. 252, Código Tributario). The workbook's own cell (AB48/T44 area) is a live formula multiplying Casilla 23 by a separately, manually-applied percentage rate cell (not itself a distinctly labeled casilla).",
+      "sourceRef": "Worksheet 'IR-2', row 44 — \"25.- MORA POR DECLARACIÓN TARDIA (Aplicar el 10% sobre casilla 23 por el 1er. Mes y 4% progresivo por cada mes o fracción de mes)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "moraEnPagosAnticipos",
+      "label": "26. Mora en Pagos de Anticipos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 26 — the surcharge on unpaid monthly anticipo installments, computed on the same 10%/4% basis as Casilla 25. Directly taxpayer-entered (cell T45 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 45 — \"26.- MORA EN PAGOS DE ANTICIPOS (Sobre el monto mensual de anticipos no pagados)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalRecargos",
+      "label": "27. Total Recargos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 27 — total surcharges (Casillas 25+26). The workbook's own cell (AB46) is a live formula: `T44+T45`.",
+      "sourceRef": "Worksheet 'IR-2', row 46 — \"27.- TOTAL RECARGOS (Casillas 25+26)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "sanciones",
+      "label": "28. Sanciones",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 28 — penalties for a tax infraction sanctioned by DGII. Directly taxpayer-entered (cell AB47 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 47 — \"28.- SANCIONES\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "interesIndemnizatorioDeclaracionTardia",
+      "label": "29. Interés Indemnizatorio por Declaración Tardía",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 29 — compensatory interest for a late return, an accumulating 1.10% per month or fraction thereof applied to Casilla 23 (Art. 27, Código Tributario). The workbook's own cell (AB48) is a live formula multiplying Casilla 23 by a separately, manually-applied percentage rate cell (not itself a distinctly labeled casilla).",
+      "sourceRef": "Worksheet 'IR-2', row 48 — \"29.- INTERES INDEMNIZATORIO POR DECLARACIÓN TARDIA (Aplicar % sobre casilla 23)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "interesIndemnizatorioAnticipos",
+      "label": "30. Interés Indemnizatorio sobre Anticipos",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 30 — compensatory interest on unpaid monthly anticipo installments, computed on the same 1.10%-per-month basis as Casilla 29. Directly taxpayer-entered (cell AB49 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 49 — \"30.- INTERES INDEMNIZATORIO SOBRE ANTICIPOS (Sobre el monto mensual de anticipos no pagados)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalAPagar",
+      "label": "31. Total a Pagar",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 31 — total amount due (Casillas 23+27+28+29+30). The workbook's own cell (AB50) is a live formula clamping to zero if the sum would be negative.",
+      "sourceRef": "Worksheet 'IR-2', row 50 — \"31.- TOTAL A PAGAR (23+27+28+29+30)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "saldoACompensarActivoAnticipo",
+      "label": "32. Saldo a Compensar en Activo/Anticipo",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 32 — credit balance to be applied against the Impuesto a los Activos (asset tax) or future anticipos. Directly taxpayer-entered (cell AB51 is blank in the template).",
+      "sourceRef": "Worksheet 'IR-2', row 51 — \"32.- SALDO A COMPENSAR EN ACTIVO/ANTICIPO\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "nuevoSaldoAFavor",
+      "label": "33. Nuevo Saldo a Favor",
+      "type": "number",
+      "required": false,
+      "description": "Casilla 33 — new credit balance in the filer's favor (Casillas 24-27-29-30, only when the result is negative; reported here as a positive magnitude — if positive, it instead represents an additional amount to pay). The workbook's own cell (AB52) is a live formula.",
+      "sourceRef": "Worksheet 'IR-2', row 52 — \"33.- NUEVO SALDO A FAVOR (Casillas 24-27-29-30 si es negativa) (Si es positivo valor a pagar)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "declarantName",
+      "label": "Yo",
+      "type": "string",
+      "required": true,
+      "description": "Name of the person making the sworn verification declaration on the filer's behalf.",
+      "sourceRef": "Worksheet 'IR-2', Section IV \"Juramento del Declarante\" (rows 54-60, floating text object) — \"Yo ___\""
+    },
+    {
+      "name": "declarantCapacity",
+      "label": "en calidad de",
+      "type": "string",
+      "required": true,
+      "description": "The declarant's title/capacity at the filer (e.g. Presidente, Gerente General, Apoderado). Open text — no fixed enum is printed on or confirmed from the source for this blank.",
+      "sourceRef": "Worksheet 'IR-2', Section IV \"Juramento del Declarante\", row 56 — \"en calidad de ___\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Fecha",
+      "type": "date",
+      "required": true,
+      "description": "Date the declarant signs the sworn declaration.",
+      "sourceRef": "Worksheet 'IR-2', row 67 — \"Fecha\""
+    },
+    {
+      "name": "representativeLastName",
+      "label": "Apellidos",
+      "type": "string",
+      "required": false,
+      "description": "Last name(s) of the third party the filer authorizes to represent it before DGII in presenting and processing this return, if any. Only applicable when the optional Section V authorization is used.",
+      "sourceRef": "Worksheet 'IR-2', Section V \"Autorización de Representación\", row 58 — \"Apellidos\""
+    },
+    {
+      "name": "representativeFirstName",
+      "label": "Nombres",
+      "type": "string",
+      "required": false,
+      "description": "First name(s) of the authorized representative, if any.",
+      "sourceRef": "Worksheet 'IR-2', Section V \"Autorización de Representación\", row 60 — \"Nombres\""
+    },
+    {
+      "name": "representativeCedula",
+      "label": "Cédula",
+      "type": "string",
+      "required": false,
+      "description": "National identity document (cédula) number of the authorized representative, if any.",
+      "sourceRef": "Worksheet 'IR-2', Section V \"Autorización de Representación\", row 62 — \"Cédula\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "returnDeclaration",
+      "label": "Juramento del Declarante",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Yo [declarant name], en calidad de [declarant capacity], por la presente afirmo bajo juramento que los datos consignados en la presente declaración de Renta son correctos y completos y que no he omitido ni falseado dato alguno que la misma deba contener, siendo en consecuencia todo su contenido la fiel expresión de la verdad.",
+      "sourceRef": "Worksheet 'IR-2', Section IV \"Juramento del Declarante\" (rows 54-67, floating text object)"
+    },
+    {
+      "id": "representativeAuthorization",
+      "label": "Autorización de Representación",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "statement": "Autorizo a la presente persona a representarme ante esta Dirección General, en la presentación y trámite de esta Declaración Jurada.",
+      "sourceRef": "Worksheet 'IR-2', Section V \"Autorización de Representación\" (rows 55-64, floating text object)"
+    }
+  ]
+}
