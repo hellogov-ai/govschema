@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**61 jurisdictions** | **471 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **472 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3113, "GovSchema Standard Research"): Tanzania
 > opens as this registry's 61st jurisdiction** (following Moldova's 60th,
@@ -30,6 +30,31 @@
 > `conformance/tz/brela/company-registration-form-14a/1.0.0/`. See the
 > document's own VERIFICATION.md for the full sourcing record. Business
 > Formation is Tanzania's first vertical (1 of 6).
+
+> **Update (2026-07-15, GOV-3114): the Dominican Republic opens as the
+> registry's 62nd jurisdiction, via Taxes (1 of 6)**, via
+> `do/dgii/annual-corporate-income-tax-return-ir-2` — the Dirección General
+> de Impuestos Internos' (DGII) official Formulario IR-2, the annual sworn
+> corporate income tax return (Versión 2018), distributed as a 17-worksheet
+> macro-enabled `.xls` (legacy OLE2/BIFF8) workbook. Pre-scouted during the
+> GOV-3101 cycle, re-verified live during GOV-3109, and independently
+> re-verified from scratch this cycle (GOV-3114) rather than trusting prior
+> notes as-is. Scoped to the `IR-2` worksheet alone — the return's
+> identification block, all 35 of its own numbered income-determination and
+> settlement lines, and its verification/authorization declarations — with
+> all 16 supporting Anexos (Balance General, Estado de Resultados, Ajustes
+> Fiscales, beneficial-owner disclosure, and more) disclosed as out-of-scope
+> backlog. Each of the 35 in-scope lines' own field description discloses,
+> confirmed two independent ways (the workbook's own formulas and DGII's own
+> instructivo booklet), whether it is auto-computed from an out-of-scope
+> Anexo or direct taxpayer entry — including one genuine disagreement
+> between those two sources on a single line (Casilla 4, dividends), which
+> is disclosed rather than silently resolved. See the Taxes vertical section
+> below and the document's own VERIFICATION.md for the full sourcing
+> record. (Moldova and Tanzania, dispatched the same GOV-3101 cycle as
+> sibling candidates, landed moments earlier as GOV-3115 and GOV-3113 and
+> claimed the registry's 60th- and 61st-jurisdiction slots respectively —
+> see their own Update notes immediately above.)
 
 > **Update (2026-07-15, GOV-3115, "GovSchema Standard Research"): Moldova
 > opens as the registry's 60th jurisdiction**, via
@@ -9851,7 +9876,7 @@
 
 ## By Vertical
 
-### Passport (43/61 jurisdictions — 70%)
+### Passport (43/62 jurisdictions — 69%)
 
 > **Correction (GOV-3094):** numerator updated from 42 to 43 following
 > Israel's Passport vertical opening via `il/moin/dr1-passport-application`
@@ -10287,7 +10312,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (48/61 jurisdictions — 79%)
+### DMV — Vehicle Registration, Licensing, Permits (48/62 jurisdictions — 77%)
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; DMV confirmed a dead end this
@@ -10769,7 +10794,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (58/61 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (58/62 jurisdictions — 94%)
 
 > **Update (2026-07-15, GOV-3115, "GovSchema Standard Research"): Moldova
 > opens as this registry's 60th jurisdiction via this vertical**, via
@@ -11661,7 +11686,35 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (52/61 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (53/62 jurisdictions — 85%)
+
+> **Update (2026-07-15, GOV-3114): the Dominican Republic opens Taxes (1 of
+> 6), its first vertical, opening the jurisdiction (62nd)**, via
+> `do/dgii/annual-corporate-income-tax-return-ir-2` — DGII's Formulario
+> IR-2, the annual sworn corporate income tax return (Versión 2018), a
+> 17-worksheet macro-enabled `.xls` (legacy OLE2/BIFF8) workbook. Scoped to
+> the `IR-2` worksheet alone: the identification block, all 35 of the
+> return's own numbered lines (Casillas A, B, 1-33), and the verification/
+> authorization declarations. All 16 supporting Anexos are disclosed as
+> out-of-scope backlog — Balance General (A-1/A-2/A-3, three sector
+> variants), Estado de Resultados (B-1..B-4, four sector variants), Ajustes
+> Fiscales (Anexo G), prior-year-loss/advance-payment data (Anexo E),
+> beneficial-owner disclosure (Anexo H-1/H-2, confirmed mandatory on every
+> filing per DGII's own instructivo, a materially significant omission
+> disclosed rather than glossed over), invoice-summary data (Anexo J), and
+> inflation-adjustment computations (D/D-1/D-2). Each in-scope line's own
+> field description discloses whether it is auto-computed from an
+> out-of-scope Anexo or direct taxpayer entry, confirmed two independent
+> ways: the workbook's own formulas, and DGII's own 68-page instructivo
+> booklet's identical per-line prose — which disagreed on exactly one line
+> (Casilla 4, dividends from other companies), a disclosed source-internal
+> inconsistency, not silently resolved. Unlike the Pakistan `.xlsx` (OOXML)
+> precedent, this legacy `.xls` (BIFF8) workbook's own cell-level
+> data-validation records are not exposed by the tooling available in this
+> environment, so no field-level pattern/enum here is claimed to originate
+> from the workbook's own validation rules (disclosed explicitly in
+> VERIFICATION.md) — a genuine tooling-capability gap between the two
+> binary Excel formats.
 
 > **Update (2026-07-15, GOV-3104, "GovSchema Standard Research"): Pakistan
 > opens Taxes (2 of 6, combined with the already-modelled Business
@@ -12650,14 +12703,16 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (47/61 jurisdictions — 77%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (47/62 jurisdictions — 76%)
 
 > **Correction (GOV-3123 review gate):** re-recounted directly from the
-> By-Jurisdiction table (47 ✓ of 61 rows, including this cycle's Moldova
-> and Tanzania additions, both Visa ✗). This section's header had drifted
-> to "51/60" — the GOV-3101 correction below's own "51 ✓ of 59" recount
-> does not reconcile against a fresh count of the table as it stands today;
-> treat this figure, not the GOV-3101 one, as current.
+> By-Jurisdiction table (47 ✓ of 61 rows, including that cycle's Moldova
+> and Tanzania additions, both Visa ✗; this Dominican Republic PR adds a
+> 62nd row, also Visa ✗, so the numerator is unchanged). This section's
+> header had drifted to "51/60" — the GOV-3101 correction below's own
+> "51 ✓ of 59" recount does not reconcile against a fresh count of the
+> table as it stands today; treat this figure, not the GOV-3101 one, as
+> current.
 
 > **Correction (GOV-3101):** recounted directly from the By-Jurisdiction
 > table (51 ✓ of 59 rows), which had drifted out of sync with this
@@ -13246,7 +13301,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (42/61 jurisdictions — 69%)
+### National ID & Civic Documents (42/62 jurisdictions — 68%)
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; National ID remains open,
@@ -13730,6 +13785,7 @@ now closed.
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **DO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16077,26 +16133,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
-- **Tanzania and Dominican Republic — scouted in the GOV-3101 cycle,
-  dispatched for authoring this cycle (GOV-3109/GOV-3115).** Tanzania
-  landed this same cycle (GOV-3113 — see the Executive Summary and
-  Business Formation vertical section above); Dominican Republic (GOV-3114)
-  remains open as of this write-up. Both were independently verified live
-  this cycle (direct `curl`/`pdfjs-dist` fetch, not just search snippets):
-  - **Dominican Republic — Taxes.** DGII's IR-2 corporate income tax
-    return, a multi-sheet `.xls` workbook (OLE2/BIFF, VBA-macro-driven) at
-    `https://dgii.gov.do/herramientas/formularios/formularioDeclaraciones/ISR/Personas%20Jur%C3%ADdicas/IR-2-2018.zip`
-    (HTTP 200 with a browser User-Agent; the bare domain 403s without
-    one — UA-sniffing, not a hard WAF). Binary-string scan surfaced real
-    worksheet/annex names (Estado de Resultado, Balance General, Ajustes
-    Fiscales, Datos Informativos/Complementarios). Comparable in scope to
-    Pakistan's own multi-annex FBR "Manual Return" workbook (see the Taxes
-    vertical section above, GOV-3104) — strong but a nontrivial multi-annex
-    candidate.
-  - **Moldova — Business Formation: authored this cycle (GOV-3115), opens
-    the registry's 60th jurisdiction.** See the Executive Summary's
-    GOV-3115 update and the Business Formation vertical section above for
-    the full sourcing record.
+- **Tanzania, Moldova, and Dominican Republic — all three scouted in the
+  GOV-3101 cycle, all three now authored.** Independently verified live
+  (direct `curl`/`pdfjs-dist` fetch, not just search snippets) and
+  dispatched in parallel for authoring; none remain open from this
+  scouting batch.
+  - **Moldova — Business Formation: authored (GOV-3115), opens the
+    registry's 60th jurisdiction.** See the Executive Summary's GOV-3115
+    update and the Business Formation vertical section above for the full
+    sourcing record.
+  - **Tanzania — Business Formation: authored (GOV-3113), opens the
+    registry's 61st jurisdiction.** See the Executive Summary and Business
+    Formation vertical section above for the full sourcing record.
+  - **Dominican Republic — Taxes: authored (GOV-3114), opens the
+    registry's 62nd jurisdiction.** See the Executive Summary's GOV-3114
+    update and the Taxes vertical section above for the full sourcing
+    record.
   - **Dead ends ruled out this cycle** (don't re-scout without new
     tooling): Ivory Coast (CEPICI — the indexed `formulaire-unique.pdf`
     link is now stale/404, `cepici.gouv.ci`/`cepici.ci` redirect-loop
