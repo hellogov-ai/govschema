@@ -1,0 +1,447 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "il/moin/dr1-passport-application",
+  "version": "1.0.0",
+  "title": "Israel Form DR/1 — Application for Passport / Travel Document",
+  "description": "The Population and Immigration Authority's (Rashut HaOchlusin VeHaHagira) Form DR/1 (\"דר/1\", \"בקשה לדרכון / תעודת מעבר\"), the standard application for an Israeli passport or laissez-passer travel document, covering first-time issuance, renewal, and replacement of a lost, damaged, or stolen document. Opens Israel's Passport vertical (3 of 6). This document models the entire applicant-facing side of the form — the request-type/reason checkboxes, applicant identity (current and, where applicable, previous/maiden names), birth and personal-status details, residential address, the address the completed document should be delivered to, and the minor-applicant parental-consent block — but excludes the section printed below the form's own perforated \"לשימוש המשרד\" (\"for office use\") cut line: office intake fields (receiving branch, date, clerk name), the prior-travel-document and newly-issued-document tracking tables, and the issuance/handover sign-off fields, none of which the applicant fills in themselves. This document describes the form only; it does not submit anything on the applicant's behalf, and does not imply endorsement by the State of Israel or the Population and Immigration Authority. GovSchema is independent and is not affiliated with, endorsed by, or operated by the State of Israel.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Population and Immigration Authority (Rashut HaOchlusin VeHaHagira)",
+    "abbreviation": "PIBA",
+    "url": "https://www.gov.il"
+  },
+  "process": {
+    "type": "application",
+    "language": "he"
+  },
+  "source": {
+    "url": "https://www.gov.il/BlobFolder/service/apply_for_passport/he/dr1_20.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Form DR/1 (דר/1), \"בקשה לדרכון / תעודת מעבר\" (Application for Passport / Travel Document), office edition 07/2015"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3094 (\"GovSchema Standard Research\" cycle). Israel's Passport vertical was pre-scouted and left as disclosed backlog during the GOV-3078 cycle, which located this exact source URL and confirmed it a genuine, unauthenticated, native-text (non-scanned) PDF; this cycle independently re-fetched it from scratch via plain curl (no login/CAPTCHA gate on this direct BlobFolder PDF URL) rather than trusting that prior note: HTTP 200, content-type application/pdf, content-length 209,935 bytes, sha256 cc9cfd6011e1131b4d871b8bf14cb3cd4a16e884fd3a7d50d6b95477bd3ac315. Extracted via pdfjs-dist (legacy CJS build, pinned to 3.11.174 for canvas-rendering compatibility): a single page, 515 text items, getFieldObjects() returning null and 0 page annotations (a flat, non-fillable print-and-fill PDF, consistent with this registry's convention for several other jurisdictions' civil-registry forms), with a native Hebrew text layer (not OCR/scanned). Because Hebrew (RTL) PDF text extraction returns items in a visually-jumbled reading order even after y/x-sorting, the entire single page was additionally rendered to a 2.5x-scale PNG via node-canvas and read visually, cross-checked line-by-line against a position-sorted (right-to-left within each y-band) text dump — this is the same technique GOV-3066 established for Form 1301's page 1. The rendered image confirmed the form prints an internal two-part print-position code (a bare digit run followed by the letter 'B', e.g. '0 B', '1 B' ... '49 B') beside most header/label text fragments; visual inspection established these are print-layout position markers for table-column headers, not a one-per-applicant-field numbering — several headers pair a label code with a second, separate code for the adjacent blank input box (e.g. '42 B' labels \"הלשכה ב-\" and '43 B' is that field's own blank box), and the row for a multi-column table (e.g. '48 B', the prior-travel-document detail row) carries a single shared code covering all of that row's columns. Fields in this schema were therefore derived from the visually-confirmed table/column structure itself, using the numbered markers only to cross-check label placement and grouping, not as a literal field count.\n\nScope was cut at the form's own printed perforation line (a row of dashes reading \"✂ ... לשימוש המשרד\", \"for office use\"): everything above it (request type, request reason, applicant identity/previous-name/birth/address/delivery-address blocks, minor-consent block, and the applicant's own declaration/signature) is modelled; everything below it (receiving-office branch code, intake date, clerk name, the prior-document and newly-issued-document tracking tables with their checked-by/approved-by/signed-by and postal-handover fields) is office/clerk-only processing data the applicant never sees or supplies, and is out of scope — the same convention this registry applies to other jurisdictions' clerk-only intake/approval sections. `requestReason`'s five enum values are quoted directly from the form's own checkbox row and each is paired on the source form with the same printed qualifier ('נוכחות אישית חובה', \"personal presence mandatory\"), disclosed once in that field's description rather than repeated per enum value. `documentType` models the form's own mutually-exclusive 'בקשה ל: דרכון / תעודת מעבר' (\"application for: passport / travel document\") checkbox pair. `registerPreviousNameDespite7Years` and `registerMaidenNameDespite7Years` model the form's own two independent opt-in checkboxes governing whether a changed previous/maiden name is carried onto the new document once more than 7 years have passed since the change (the form's own default, absent either checkbox, is to omit a previous name after 7 years). `registerAsMailingAddress` and `alsoRegisterForMinorChildren` model the form's own two address-registration opt-in checkboxes under the 'שים לב' (\"note\") paragraph governing the Population Registry's own separate 'mailing address' field, independent of the applicant's registered residential address. `immigrantRegistrationDate` (תאריך רישום כעולה) is modelled as optional since the source form provides it as one column among several personal-status columns with no explicit conditional marker restricting it to new immigrants (olim) only — it is simply left blank by applicants to whom it does not apply. `consentingParentIdNumber` is modelled as a single field requiredWhen the applicant is a minor (`applicantIsMinor`), rather than as separate father/mother ID fields, because the form's own instruction requires only one parent's consent (\"על אחד ההורים לחתום על בקשה זו\") even though it prints one signature/ID-number line for each parent — modelling both as independently requiredWhen would incorrectly demand both parents' IDs on every minor application; GSP-0013's requiredWhen grammar has no \"at least one of N fields\" primitive to express the true either/or constraint directly. `applicantIsMinor` itself is not printed on the form as a checkbox — it is inferred implicitly by the office from the applicant's own date of birth, and is modelled here as a boolean field the applicant/agent supplies directly, since GSP-0013's requiredWhen grammar has no built-in age-from-date computation. The citizenship/accuracy declaration, the police-criminal-record-check consent declaration, and the minor-applicant parental-consent statement are each modelled as `documents[]` attestation entries carrying the form's own quoted declaration text, per this registry's established convention for signed/quoted declaration blocks rather than encoding the statement itself as a field; the parental-consent attestation is requiredWhen `applicantIsMinor`.\n\n2 valid mock scenarios (a first-time adult applicant with no previous name and no delivery-address override; a minor applicant with a previous name carried past the 7-year mark and a delivery address distinct from the residential address) plus 5 mutation-control fixtures (a missing statically-required field, a missing consentingParentIdNumber field while applicantIsMinor is true, a missing parental-consent attestation while applicantIsMinor is true, an invalid requestReason enum value, and an invalid date format) are committed under `conformance/il/moin/dr1-passport-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 7: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error. The same script confirmed every requiredWhen field reference resolves (0 dangling references). Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "documentType",
+      "label": "בקשה ל",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this application is for a passport or a laissez-passer travel document.",
+      "sourceRef": "Header — \"בקשה ל: דרכון / תעודת מעבר\"",
+      "validation": {
+        "enum": ["PASSPORT", "TRAVEL_DOCUMENT"]
+      }
+    },
+    {
+      "name": "requestReason",
+      "label": "סיבת הבקשה",
+      "type": "enum",
+      "required": true,
+      "description": "The reason for this application. Every option other than renewal is printed on the form with the qualifier \"נוכחות אישית חובה\" (\"personal presence mandatory\") — the applicant must appear in person at the issuing office.",
+      "sourceRef": "Header checkbox column — \"ראשון/נה\", \"במקום אבוד/ה\", \"חידוש דרכון / תעודת מעבר\", \"במקום מושחת/ת\", \"במקום גנוב/ה\"",
+      "validation": {
+        "enum": ["FIRST_TIME", "REPLACE_LOST", "RENEWAL", "REPLACE_DAMAGED", "REPLACE_STOLEN"]
+      }
+    },
+    {
+      "name": "idNumber",
+      "label": "מספר הזהות",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's national identity number (Teudat Zehut).",
+      "sourceRef": "Applicant details section — \"מספר הזהות\""
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "קטין שטרם מלאו לו 18 שנה",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant is a minor under 18 years of age. Not a printed checkbox on the form itself — the office determines this from the applicant's date of birth — but modelled explicitly here since it gates the parental-consent fields and attestation below.",
+      "sourceRef": "Minor-applicant paragraph — \"אם הבקשה לדרכון / תעודת מעבר עבור קטין שטרם מלאו לו 18 שנה נדרשת הסכמת ההורים\""
+    },
+    {
+      "name": "familyNameHebrew",
+      "label": "שם המשפחה (בעברית)",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's family name in Hebrew.",
+      "sourceRef": "Name table — \"שם המשפחה\" column, \"בעברית\" row"
+    },
+    {
+      "name": "familyNameLatin",
+      "label": "שם המשפחה (בלועזית)",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's family name in Latin script.",
+      "sourceRef": "Name table — \"שם המשפחה\" column, \"בלועזית\" row"
+    },
+    {
+      "name": "firstNameHebrew",
+      "label": "השם הפרטי (בעברית)",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's first name in Hebrew.",
+      "sourceRef": "Name table — \"השם הפרטי\" column, \"בעברית\" row"
+    },
+    {
+      "name": "firstNameLatin",
+      "label": "השם הפרטי (בלועזית)",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's first name in Latin script.",
+      "sourceRef": "Name table — \"השם הפרטי\" column, \"בלועזית\" row"
+    },
+    {
+      "name": "fatherName",
+      "label": "שם האב",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's father's given name.",
+      "sourceRef": "Name table — \"שם האב\" column"
+    },
+    {
+      "name": "motherName",
+      "label": "שם האם",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's mother's given name.",
+      "sourceRef": "Name table — \"שם האם\" column"
+    },
+    {
+      "name": "previousFamilyNameHebrew",
+      "label": "שם המשפחה הקודם (בעברית)",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's previous family name (not a maiden name) in Hebrew, if changed.",
+      "sourceRef": "Previous-name table — \"שם המשפחה הקודם (לא שם נעורים)\" column, \"בעברית\" row"
+    },
+    {
+      "name": "previousFamilyNameLatin",
+      "label": "שם המשפחה הקודם (בלועזית)",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's previous family name (not a maiden name) in Latin script, if changed.",
+      "sourceRef": "Previous-name table — \"שם המשפחה הקודם (לא שם נעורים)\" column, \"בלועזית\" row"
+    },
+    {
+      "name": "previousFirstNameHebrew",
+      "label": "השם/ות הפרטי/ים הקודם/ים (בעברית)",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's previous first name(s) in Hebrew, if changed.",
+      "sourceRef": "Previous-name table — \"השם/ות הפרטי/ים הקודם/ים\" column, \"בעברית\" row"
+    },
+    {
+      "name": "previousFirstNameLatin",
+      "label": "השם/ות הפרטי/ים הקודם/ים (בלועזית)",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's previous first name(s) in Latin script, if changed.",
+      "sourceRef": "Previous-name table — \"השם/ות הפרטי/ים הקודם/ים\" column, \"בלועזית\" row"
+    },
+    {
+      "name": "maidenNameHebrew",
+      "label": "שם הנעורים לנשוי/אה (בעברית)",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's maiden name (for a married applicant) in Hebrew, if applicable.",
+      "sourceRef": "Previous-name table — \"שם הנעורים לנשוי/אה\" column, \"בעברית\" row"
+    },
+    {
+      "name": "maidenNameLatin",
+      "label": "שם הנעורים לנשוי/אה (בלועזית)",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's maiden name (for a married applicant) in Latin script, if applicable.",
+      "sourceRef": "Previous-name table — \"שם הנעורים לנשוי/אה\" column, \"בלועזית\" row"
+    },
+    {
+      "name": "registerPreviousNameDespite7Years",
+      "label": "אם ברצונך שהשם/ות הקודם/ים ירשם/ו למרות שחלפו 7 שנים",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's previous name should still be printed on the new document even though more than 7 years have passed since the name change (the form's own default is to omit it after 7 years).",
+      "sourceRef": "Previous-name section note — \"אם ברצונך שהשם/ות הקודם/ים ירשם/ו למרות שחלפו 7 שנים, נא לסמן x במשבצת זו\""
+    },
+    {
+      "name": "registerMaidenNameDespite7Years",
+      "label": "אם ברצונך ששם הנעורים ירשם למרות שחלפו 7 שנים",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's maiden name should still be printed on the new document even though more than 7 years have passed since the name change (the form's own default is to omit it after 7 years).",
+      "sourceRef": "Previous-name section note — \"אם ברצונך ששם הנעורים ירשם למרות שחלפו 7 שנים, נא לסמן x במשבצת זו\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "מקום הלידה (ישוב)",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's place of birth (locality).",
+      "sourceRef": "Personal-status table — \"מקום הלידה (ישוב)\""
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "ארץ הלידה",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's country of birth.",
+      "sourceRef": "Personal-status table — \"ארץ הלידה\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "תאריך הלידה",
+      "type": "date",
+      "required": true,
+      "description": "Applicant's date of birth.",
+      "sourceRef": "Personal-status table — \"תאריך הלידה\""
+    },
+    {
+      "name": "gender",
+      "label": "המין",
+      "type": "enum",
+      "required": true,
+      "description": "Applicant's gender, as printed on the form's own personal-status table.",
+      "sourceRef": "Personal-status table — \"המין\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "המצב האישי",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's marital status.",
+      "sourceRef": "Personal-status table — \"המצב האישי\""
+    },
+    {
+      "name": "immigrantRegistrationDate",
+      "label": "תאריך רישום כעולה",
+      "type": "date",
+      "required": false,
+      "description": "Date the applicant was registered as a new immigrant (oleh), if applicable.",
+      "sourceRef": "Personal-status table — \"תאריך רישום כעולה\""
+    },
+    {
+      "name": "residentialAddressLocality",
+      "label": "הישוב",
+      "type": "string",
+      "required": true,
+      "description": "Locality of the applicant's registered residential address.",
+      "sourceRef": "Address table (\"המען\") — \"הישוב\""
+    },
+    {
+      "name": "residentialAddressStreet",
+      "label": "הרחוב",
+      "type": "string",
+      "required": true,
+      "description": "Street of the applicant's registered residential address.",
+      "sourceRef": "Address table (\"המען\") — \"הרחוב\""
+    },
+    {
+      "name": "residentialAddressHouseNumber",
+      "label": "בית",
+      "type": "string",
+      "required": true,
+      "description": "House number of the applicant's registered residential address.",
+      "sourceRef": "Address table (\"המען\") — \"בית\""
+    },
+    {
+      "name": "residentialAddressApartment",
+      "label": "דירה",
+      "type": "string",
+      "required": false,
+      "description": "Apartment number of the applicant's registered residential address.",
+      "sourceRef": "Address table (\"המען\") — \"דירה\""
+    },
+    {
+      "name": "residentialAddressEntrance",
+      "label": "כניסה",
+      "type": "string",
+      "required": false,
+      "description": "Building entrance of the applicant's registered residential address.",
+      "sourceRef": "Address table (\"המען\") — \"כניסה\""
+    },
+    {
+      "name": "residentialAddressZipCode",
+      "label": "מיקוד",
+      "type": "string",
+      "required": false,
+      "description": "Postal code of the applicant's registered residential address.",
+      "sourceRef": "Address table (\"המען\") — \"מיקוד\""
+    },
+    {
+      "name": "phone1",
+      "label": "טלפון 1",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's primary phone number.",
+      "sourceRef": "Address section — \"טלפון 1\""
+    },
+    {
+      "name": "phone2",
+      "label": "טלפון 2",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's secondary phone number.",
+      "sourceRef": "Address section — \"טלפון 2\""
+    },
+    {
+      "name": "registerAsMailingAddress",
+      "label": "כתובת למשלוח דואר",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant wants the delivery address for the passport/travel document also registered in the Population Registry as their \"mailing address\" for other institutions and authorities.",
+      "sourceRef": "\"שים לב\" note — \"אם ברצונך שהכתובת למשלוח הדרכון/תעודת המעבר יירשם בקובץ מרשם התושבים כ\"כתובת למשלוח דואר\" שלך יש לסמן X במשבצת\""
+    },
+    {
+      "name": "alsoRegisterForMinorChildren",
+      "label": "עבור ילדיך הקטינים",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the same mailing-address registration should also apply to the applicant's minor children.",
+      "sourceRef": "\"שים לב\" note — \"אם ברצונך שהכתובת הנ\"ל תירשם גם עבור ילדיך הקטינים, יש לסמן X במשבצת\""
+    },
+    {
+      "name": "deliveryCareOfFamily",
+      "label": "אצל משפחת",
+      "type": "string",
+      "required": false,
+      "description": "Care-of family name for delivery of the completed passport/travel document, if delivered to an address other than the applicant's own name.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח הדרכון / תעודת מעבר\") — \"אצל משפחת\""
+    },
+    {
+      "name": "deliveryAddressLocality",
+      "label": "הישוב",
+      "type": "string",
+      "required": false,
+      "description": "Locality of the address the completed passport/travel document should be delivered to, if different from the applicant's registered residential address.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח הדרכון / תעודת מעבר\") — \"הישוב\""
+    },
+    {
+      "name": "deliveryAddressStreet",
+      "label": "הרחוב",
+      "type": "string",
+      "required": false,
+      "description": "Street of the address the completed passport/travel document should be delivered to.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח הדרכון / תעודת מעבר\") — \"הרחוב\""
+    },
+    {
+      "name": "deliveryAddressHouseNumber",
+      "label": "בית",
+      "type": "string",
+      "required": false,
+      "description": "House number of the address the completed passport/travel document should be delivered to.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח הדרכון / תעודת מעבר\") — \"בית\""
+    },
+    {
+      "name": "deliveryAddressApartment",
+      "label": "דירה",
+      "type": "string",
+      "required": false,
+      "description": "Apartment number of the address the completed passport/travel document should be delivered to.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח הדרכון / תעודת מעבר\") — \"דירה\""
+    },
+    {
+      "name": "deliveryAddressEntrance",
+      "label": "כניסה",
+      "type": "string",
+      "required": false,
+      "description": "Building entrance of the address the completed passport/travel document should be delivered to.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח הדרכון / תעודת מעבר\") — \"כניסה\""
+    },
+    {
+      "name": "deliveryAddressZipCode",
+      "label": "מיקוד",
+      "type": "string",
+      "required": false,
+      "description": "Postal code of the address the completed passport/travel document should be delivered to.",
+      "sourceRef": "Delivery-address table (\"כתובת למשלוח הדרכון / תעודת מעבר\") — \"מיקוד\""
+    },
+    {
+      "name": "consentingParentIdNumber",
+      "label": "מספר הזהות (חתימת האב / חתימת האם)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "description": "Identity number of whichever parent signs the consent — the form's own consent block prints one signature/ID-number line for the father and one for the mother, but only one parent's consent is required per the form's own instruction (\"על אחד ההורים לחתום על בקשה זו\", \"one of the parents must sign this application\").",
+      "sourceRef": "Minor-consent block — \"חתימת האב מספר הזהות\" / \"חתימת האם מספר הזהות\""
+    },
+    {
+      "name": "applicationPlace",
+      "label": "המקום",
+      "type": "string",
+      "required": true,
+      "description": "Place where the application is signed.",
+      "sourceRef": "Declaration block — \"המקום\""
+    },
+    {
+      "name": "applicationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date the application is signed.",
+      "sourceRef": "Declaration block — \"תאריך\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "citizenshipAndAccuracyDeclaration",
+      "label": "הצהרת אזרחות ונכונות הפרטים",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "אני אזרח ישראלי, לא הצהרתי לפי סעיף 2(ג)2 לחוק האזרחות התשי\"ב-1952 על אי רצון להיות אזרח ישראלי, ולא נכללתי בתור קטין בהצהרה כזו שניתנה ע\"י הורי. אני מצהיר/ה בזה שהפרטים בטופס זה נכונים.",
+      "sourceRef": "Declaration block, first paragraph"
+    },
+    {
+      "id": "policeRecordCheckConsent",
+      "label": "הסכמה לקבלת מידע ממרשם הפלילי",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "הצהרה: אני מאשר/ת שבמסגרת הטיפול בבקשתי זו יתקבל ממשטרת ישראל מידע לגבי מקובץ המרשם הפלילי.",
+      "sourceRef": "Declaration block, second paragraph"
+    },
+    {
+      "id": "parentalConsentDeclaration",
+      "label": "הסכמת הורה לבקשת קטין",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "statement": "אם הבקשה לדרכון / תעודת מעבר עבור קטין שטרם מלאו לו 18 שנה נדרשת הסכמת ההורים, על אחד ההורים לחתום על בקשה זו, נוכחות ההורה והקטין חובה. אם ההורים אינם נשואים זה לזו על ההורה השני לחתום על הסכמה להנפקת הדרכון / תעודת מעבר בנוכחות הפקיד בלשכה, או בפני עורך-דין המאשר את הסכמת ההורה השני.",
+      "sourceRef": "Minor-applicant paragraph, above the minor-consent signature block"
+    }
+  ]
+}
