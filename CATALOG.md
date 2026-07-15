@@ -6,6 +6,27 @@
 
 **62 jurisdictions** | **483 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-15, GOV-3180, delegated from GOV-3157): Moldova's Taxes
+> vertical opens, bringing Moldova to 4 of 6 verticals**, via
+> `md/sfs/cet18-individual-income-tax-declaration` — the State Tax
+> Service's (SFS) Form CET18, the annual individual income tax
+> declaration. A whole-of-form schema covering both the resident (items
+> C/D/E/F, plus Table 1's bounded 3-row expense-substantiation schedule)
+> and non-resident (items H/J) tax computation paths, the shared bounded
+> 5-row capital gain/loss schedule (item K, with the form's own closed
+> asset/disposition code legends modeled as `enum` validation), and the
+> optional percentage tax designation (item M). Discloses two genuine
+> source-printed formula artifacts rather than silently correcting them
+> (item D7's total-exemptions formula excludes D3; item H8 is printed
+> after the H7 subtotal rather than folded into H1-H6). Models 143
+> `fields[]` with 8 conformance fixtures (2 valid, 6 mutation-control)
+> committed under
+> `conformance/md/sfs/cet18-individual-income-tax-declaration/1.0.0/`. See
+> the Taxes vertical section below and the document's own VERIFICATION.md
+> for the full sourcing record and scope decisions. Moldova now stands at
+> 4 of 6 verticals (DMV, Business Formation, Visa, Taxes); Passport and
+> National ID remain confirmed dead ends from the GOV-3152 cycle.
+
 > **Update (2026-07-15, GOV-3181, delegated from GOV-3157/GOV-3152,
 > "GovSchema Standard Research"): Moldova's Visa vertical opens (2 of 6)**,
 > via `md/mfa/entry-visa-application` — the Ministry of Foreign Affairs and
@@ -39,25 +60,6 @@
 > verticals (DMV, Visa); Taxes remains the last open, previously-scouted
 > vertical, and Passport/National ID remain confirmed dead ends from the
 > GOV-3152 cycle.
-
-> **Update (2026-07-15, GOV-3180, delegated from GOV-3157): Moldova's Taxes
-> vertical opens (1 of 6), bringing Moldova to 3 of 6 verticals**, via
-> `md/sfs/cet18-individual-income-tax-declaration` — the State Tax
-> Service's (SFS) Form CET18, the annual individual income tax
-> declaration. A whole-of-form schema covering both the resident (items
-> C/D/E/F, plus Table 1's bounded 3-row expense-substantiation schedule)
-> and non-resident (items H/J) tax computation paths, the shared bounded
-> 5-row capital gain/loss schedule (item K, with the form's own closed
-> asset/disposition code legends modeled as `enum` validation), and the
-> optional percentage tax designation (item M). Discloses two genuine
-> source-printed formula artifacts rather than silently correcting them
-> (item D7's total-exemptions formula excludes D3; item H8 is printed
-> after the H7 subtotal rather than folded into H1-H6). Models 143
-> `fields[]` with 8 conformance fixtures (2 valid, 6 mutation-control)
-> committed under
-> `conformance/md/sfs/cet18-individual-income-tax-declaration/1.0.0/`. See
-> the Taxes vertical section below and the document's own VERIFICATION.md
-> for the full sourcing record and scope decisions.
 
 > **Update (2026-07-15, GOV-3179, delegated from GOV-3157, "GovSchema
 > Standard Research"): Moldova's DMV vertical gains a second schema**, via
