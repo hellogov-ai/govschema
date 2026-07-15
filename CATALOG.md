@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **477 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **478 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3166, delegated from GOV-3152, "GovSchema
+> Standard Research"): the Dominican Republic's DMV vertical opens (1 of
+> 6), bringing the Dominican Republic to 3 of 6 verticals**, via
+> `do/dgii/vehicle-transfer-sworn-declaration-fi-vhm-308` — DGII's
+> Formulario FI-VHM-308, a sworn declaration of motor vehicle transfer/sale
+> filed with the Departamento de Vehículos de Motor. Picked up as an
+> unclaimed, pre-scouted child issue (GOV-3166) delegated from the
+> GOV-3152 cycle, independently re-fetched and re-verified from scratch
+> (fresh `curl` + sha256 of both the zip and the extracted xlsx). Unlike
+> the two other DO/PK xlsx forms authored this quarter, this workbook
+> carries no `dataValidations` element at all — a genuine layout quirk
+> was found and resolved instead: Section I's "Teléfono" required-field
+> asterisk renders as a separate single-character cell adjacent to the
+> label rather than concatenated into the label string, confirmed unique
+> to that field via a full-sheet scan for standalone `*` cells, disclosed
+> in the document's own VERIFICATION.md. Models 21 `fields[]` (seller,
+> optional buyer, vehicle, and sale data, plus a Section V fallback sworn
+> statement used when the buyer's identity is unknown) with 7 conformance
+> fixtures (2 valid, 5 mutation-control) committed under
+> `conformance/do/dgii/vehicle-transfer-sworn-declaration-fi-vhm-308/1.0.0/`.
+> See the DMV vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record and scope decisions.
+> (Three further pre-scouted candidates for the Dominican Republic's
+> still-open verticals — Business Formation, Visa, National ID — remain
+> disclosed backlog in GOV-3167/GOV-3168/GOV-3169.)
 
 > **Update (2026-07-15, GOV-3158, delegated from GOV-3152, "GovSchema
 > Standard Research"): the Dominican Republic's Passport vertical opens (1
@@ -10444,7 +10470,30 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (50/62 jurisdictions — 81%)
+### DMV — Vehicle Registration, Licensing, Permits (51/62 jurisdictions — 82%)
+
+> **Update (2026-07-15, GOV-3166, "GovSchema Standard Research"): the
+> Dominican Republic's DMV vertical opens**, via
+> `do/dgii/vehicle-transfer-sworn-declaration-fi-vhm-308` — the Dirección
+> General de Impuestos Internos' (DGII) Formulario FI-VHM-308, a sworn
+> declaration a vehicle seller files to record a sale/transfer for tax-roll
+> purposes. Picked up as an unclaimed, pre-scouted child issue (GOV-3166)
+> delegated from the GOV-3152 cycle. The source `.xlsx` carries no
+> `dataValidations` element at all (unlike the GOV-3104/GOV-3114 xlsx
+> forms); requiredness instead follows the form's own printed `*`
+> convention, including one genuine layout quirk — Section I's "Teléfono"
+> asterisk renders as a separate single-character cell adjacent to the
+> label rather than concatenated into the label string, independently
+> confirmed unique to that field via a full-sheet scan. Models 21
+> `fields[]` across seller/buyer/vehicle/sale sections plus a Section V
+> fallback sworn statement used when the buyer's identity is unknown. 7
+> conformance fixtures (2 valid, 5 mutation-control) committed under
+> `conformance/do/dgii/vehicle-transfer-sworn-declaration-fi-vhm-308/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing record and
+> scope decisions. Numerator updated from 50 to 51. Three further
+> pre-scouted candidates for the Dominican Republic's still-open verticals
+> — Business Formation, Visa, National ID — remain disclosed backlog in
+> GOV-3167/GOV-3168/GOV-3169.
 
 > **Update (GOV-3134, delegated from GOV-3128): Pakistan's DMV vertical
 > opens**, via `pk/excise-punjab/registration-of-motor-vehicles-form-f` —
@@ -13996,7 +14045,7 @@ now closed.
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DO** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **DO** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
