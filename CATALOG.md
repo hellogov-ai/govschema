@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**59 jurisdictions** | **467 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**59 jurisdictions** | **468 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3101, "GovSchema Standard Research"): Israel's
+> Visa vertical opens (4 of 6)**, via
+> `il/mfa/entry-visa-application` — the Ministry of Foreign Affairs' Global
+> Consular Service's "Entry Visa to Israel - Application Form" (טופס בקשה
+> למתן אשרת כניסה לישראל). This is the pre-scouted, ready-to-author
+> candidate the GOV-3094 cycle located and left as disclosed backlog;
+> independently re-fetched and re-verified from scratch (fresh `curl`,
+> sha256, `pdfjs-dist` structural check, `node-canvas` page renders) rather
+> than trusted as pre-recorded. A flat, non-AcroForm, bilingual
+> Hebrew/English 3-page text-layer PDF; several choices (document type,
+> gender, family status) are printed as two structurally independent,
+> mirrored checkbox pairs — one Hebrew-labelled, one English-labelled — for
+> the same option, collapsed to one enum field each, following the
+> convention already established for `il/moin/dr1-passport-application`.
+> A two-column, three-row residence-permit-category checkbox grid whose
+> Hebrew and English columns are offset by one display row required a
+> coordinate-level (`pdfjs-dist` item x/y) pass rather than line-joined
+> text to resolve into 5 categories (Visitor, Resident, Temporary
+> Resident, Immigrant, Work). The form carries no asterisk or other
+> explicit required-field marker anywhere (confirmed by a full-text scan),
+> unlike this jurisdiction's other two schemas — required/optional was a
+> disclosed judgment call. Two identically-labelled "Mobile No." columns
+> and two identically-labelled "E-mail" boxes are each modelled as two
+> generically-ordered fields rather than guessed apart. The form's own
+> fixed 6-row "children under 18" and 4-row "family/acquaintances in
+> Israel" tables are modelled as bounded per-row field sets
+> (`child1`..`child6`, `contact1`..`contact4`), since GSP-0009's
+> repeating-groups proposal is not yet part of the accepted v0.3
+> specification. Models 72 `fields[]` and 3 `documents[]` entries (the
+> page-3 declaration's three paragraphs, quoted verbatim as required
+> attestations). See the document's own VERIFICATION.md for the full
+> sourcing record. Israel now stands at 4 of 6 verticals; National ID and
+> DMV remain confirmed weak/screened dead ends from the GOV-3078 cycle.
 
 > **Update (2026-07-15, GOV-3094, "GovSchema Standard Research"): Israel's
 > Passport vertical opens (3 of 6)**, via
@@ -12502,7 +12536,13 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (46/59 jurisdictions — 78%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (51/59 jurisdictions — 86%)
+
+> **Correction (GOV-3101):** recounted directly from the By-Jurisdiction
+> table (51 ✓ of 59 rows), which had drifted out of sync with this
+> section's own stated "46/59" — Israel's Visa vertical opening this cycle
+> accounts for only one of the difference; the header itself had not been
+> recounted for several intervening cycles.
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; Visa remains open, unscouted
@@ -13579,7 +13619,7 @@ now closed.
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IL** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **IL** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -15914,6 +15954,50 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
+- **Tanzania, Dominican Republic, and Moldova — scouted this cycle
+  (GOV-3101), not yet authored.** None are currently in the registry
+  (60th–62nd jurisdiction candidates). All three were independently
+  verified live this cycle (direct `curl`/`pdfjs-dist` fetch, not just
+  search snippets):
+  - **Tanzania — Business Formation.** BRELA's Form 14a, "Application for
+    Registration of a Company" (s.14(2), Companies Act Cap. 212), at
+    `https://www.brela.go.tz/uploads/documents/sw-1621406129-Form%2014a.pdf`
+    (HTTP 200, genuine 3-page native text-layer PDF, no AcroForm). Roughly
+    60-70 dotted-blank fields across applicant, company-info, registered-
+    office, business-activities, director/secretary, and share-capital/
+    shareholder blocks. Ready to author.
+  - **Dominican Republic — Taxes.** DGII's IR-2 corporate income tax
+    return, a multi-sheet `.xls` workbook (OLE2/BIFF, VBA-macro-driven) at
+    `https://dgii.gov.do/herramientas/formularios/formularioDeclaraciones/ISR/Personas%20Jur%C3%ADdicas/IR-2-2018.zip`
+    (HTTP 200 with a browser User-Agent; the bare domain 403s without
+    one — UA-sniffing, not a hard WAF). Binary-string scan surfaced real
+    worksheet/annex names (Estado de Resultado, Balance General, Ajustes
+    Fiscales, Datos Informativos/Complementarios). Comparable in scope to
+    the already-disclosed Pakistan FBR workbook backlog below — strong but
+    a nontrivial multi-annex candidate.
+  - **Moldova — Business Formation.** Agenția Servicii Publice's "Cerere
+    privind înregistrarea de stat a întreprinzătorului individual"
+    (sole-trader/individual-entrepreneur state registration request) at
+    `https://asp.gov.md/sites/default/files/servicii/e-servicii/formulare-tip/2/inregistrarea-de-stat/2%20Cerere%20privind%20inregistrarea%20de%20stat%20a%20intreprinzatorului%20individual.pdf`
+    (HTTP 200, direct, no gate). A clean 2-page, 9-numbered-item text-layer
+    PDF (no AcroForm): name, personal ID, domicile (8 sub-fields), contact
+    details, legal form, activity/CAEM code, beneficial-owner block (~10
+    sub-fields), professional headquarters address, activity term —
+    roughly 30 discrete fields. Simplest and cleanest of the three; ready
+    to author immediately.
+  - **Dead ends ruled out this cycle** (don't re-scout without new
+    tooling): Ivory Coast (CEPICI — the indexed `formulaire-unique.pdf`
+    link is now stale/404, `cepici.gouv.ci`/`cepici.ci` redirect-loop
+    between domains; not confirmed dead, just needs a fresh crawl);
+    Zambia (PACRA — site moved to a Next.js client-rendered app, old
+    `wp-content` form links now 404, forms page is an empty SSR shell);
+    Namibia (BIPA — downloads/private-company pages have no direct
+    PDF/doc hrefs in raw HTML); Uganda (URSB — the search-indexed
+    "application-for-registration" link is a mislabeled Trademark Form
+    TM No.2; core company incorporation is via the eBRS online portal);
+    Botswana (CIPA — forms-downloads page returned HTTP 403, WAF/bot
+    block).
+
 - **Lithuania — Taxes: authored (GOV-2969), opens the registry's 55th
   jurisdiction.** `lt/vmi/pavyzdine-pajamu-mokescio-deklaracija-gpm311`
   (VMI's model annual personal income tax declaration, Form GPM311, VMI
@@ -16630,6 +16714,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   VERIFICATION.md for the full sourcing record. Visa (the MFA's tourist
   visa form at `embassies.gov.il`, described above) remains the
   pre-scouted, ready-to-author candidate for a future cycle.
+
+> **Update (GOV-3101): authored.** Israel's Visa vertical opens (4 of 6)
+> via `il/mfa/entry-visa-application` — see the Executive Summary's
+> GOV-3101 update above and the document's own VERIFICATION.md for the
+> full sourcing record, including the coordinate-level derivation of the
+> 5-category residence-permit checkbox grid and the required/optional
+> judgment call disclosed there (this form, unlike Israel's other two
+> schemas, carries no explicit required-field marker). Israel's National
+> ID and DMV verticals remain the confirmed weak/screened dead ends
+> recorded by the GOV-3078 cycle.
 
 - **Pakistan — Passport and Visa: screened and confirmed dead ends this
   cycle (GOV-3078). Taxes: strong candidate found, delegated.** Pakistan's

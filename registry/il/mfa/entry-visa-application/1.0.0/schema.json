@@ -1,0 +1,693 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "il/mfa/entry-visa-application",
+  "version": "1.0.0",
+  "title": "Israel Ministry of Foreign Affairs — Entry Visa to Israel Application Form",
+  "description": "The Ministry of Foreign Affairs' (Global Consular Service) \"Entry Visa to Israel - Application Form\" (טופס בקשה למתן אשרת כניסה לישראל), the standard application submitted at an Israeli consular mission abroad by a foreign national seeking a visa to enter Israel. Opens Israel's Visa vertical (4 of 6). This document models the entire applicant-facing side of the form across its 3 pages — applicant identity, current travel document details, permanent address abroad, contact details, purpose and details of the intended visit, residence permit category, spouse and minor-children particulars, family/acquaintances in Israel, and the applicant's own signature block — but excludes the dotted-border \"לשימוש משרדי\" (\"for office use\") block at the foot of page 3 (visa grant number, visa type, validity period, single/multiple-entry designation, and consular remarks), which the applicant never fills in themselves. This document describes the form only; it does not submit anything on the applicant's behalf, and does not imply endorsement by the State of Israel or the Ministry of Foreign Affairs. GovSchema is independent and is not affiliated with, endorsed by, or operated by the State of Israel.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs (Global Consular Service)",
+    "abbreviation": "MFA",
+    "url": "https://embassies.gov.il"
+  },
+  "process": {
+    "type": "application",
+    "language": "he"
+  },
+  "source": {
+    "url": "https://embassies.gov.il/sites/default/files/media_upload/application_form_for_granting_an_entry_visa_to_israel-tourist.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "\"Entry Visa to Israel - Application Form\" (טופס בקשה למתן אשרת כניסה לישראל)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3101 (\"GovSchema Standard Research\" cycle). Israel's Visa vertical was pre-scouted and left as disclosed backlog during the GOV-3094 cycle, which located this exact source URL and confirmed it a genuine, unauthenticated, native-text (non-scanned) PDF; this cycle independently re-fetched it from scratch via plain curl (no login/CAPTCHA gate on this direct embassies.gov.il media_upload URL) rather than trusting that prior note: HTTP 200, content-type application/pdf, content-length 375,167 bytes, sha256 3936353b36b102d6190496edc3b77a0c08a6cedcec1a7883c90cfe9cd2baf6bc. Extracted via pdfjs-dist (legacy CJS build, pinned to 2.16.105 for canvas-rendering compatibility): 3 pages, getFieldObjects() returning null and 0 page annotations on every page (a flat, non-fillable print-and-fill PDF, the same convention already established for this jurisdiction's other schemas). The text layer is native (not OCR/scanned), bilingual Hebrew (RTL) and English (LTR); as with il/moin/dr1-passport-application, the entire 3 pages were additionally rendered to 2.5x-scale PNGs via node-canvas and cross-checked against coordinate-sorted text dumps, since RTL extraction returns Hebrew text items in a visually jumbled order even after y/x-sorting.\n\nThe form prints several choices as two structurally-independent, mirrored checkbox pairs — one under a Hebrew label (read right-to-left) and one under the equivalent English label (read left-to-right) — for the same underlying option, rather than one checkbox per option. `documentType` (Passport / Laissez-Passer), `gender` (Male / Female), and `familyStatus` (Married / Single / Widowed / Divorced) each follow this pattern and are modelled as a single enum field per choice, following the identical convention this registry already established for il/moin/dr1-passport-application's own bilingual mirrored checkboxes.\n\n`residencePermitCategory` required a coordinate-level pass (pdfjs-dist getTextContent() item x/y positions, not just line-joined text, since the two-column-by-three-row Hebrew grid and its English gloss column are offset by roughly one row) to resolve unambiguously: the Hebrew grid's right column reads (top-to-bottom) \"ביקור\", \"ארעי\", \"עבודה\" at x≈262-290pt, and its left column reads \"תושב\", \"עולה\" at x≈207-231pt (rows confirmed by shared y-coordinates, e.g. row 1 Hebrew at y=394.7); the English gloss column prints \"Visitor\"/\"Resident\" on row 1 (y=394.4, matching the Hebrew row above), a single combined phrase \"Temporary Resident\" on row 2 (y=379.7, glossing the row's own \"ארעי\"), and \"Immigrant\"/\"Work\" on row 3 (y=365.2 — \"Immigrant\" glosses row 2's own \"עולה\", offset down by one display row from its Hebrew counterpart, while \"Work\" aligns with row 3's own \"עבודה\"). This yields 5 distinct categories — Visitor, Resident, Temporary Resident, Immigrant, Work — consistent with Israel's own real-world entry/residence-status taxonomy for a consular entry-visa form; modelled as a single required enum field (VISITOR, RESIDENT, TEMPORARY_RESIDENT, IMMIGRANT, WORK) rather than guessed from line-joined text alone.\n\nThe source form carries no asterisks, bolding, or any other explicit required/optional marker anywhere on any of its 3 pages (confirmed by a full-text scan for '*', 'חובה', and 'חייב', all absent) — unlike il/tax-authority/1301-personal-details or il/moin/dr1-passport-application, which had other structural cues. In the absence of any such marker, core applicant identity, current travel-document, permanent-address-abroad, contact-purpose, and visit-detail fields are modelled as required, while fields describing family members, additional contacts, or a second phone/email box are modelled as optional; this judgment call is disclosed here rather than left implicit. The source form prints two identically-labelled \"מס' טלפון נייד\" / \"Mobile No.\" columns and two identically-labelled \"E-mail\" / \"כתובת אלקטרונית\" boxes, each pair with no distinguishing sub-label anywhere on the page (confirmed via coordinate dump, not assumed); both are modelled as two generically-ordered optional fields (mobilePhoneNumber1/2, emailAddress1/2) in the form's own left-to-right column order, rather than invented a distinguishing purpose the form itself does not state.\n\n`returnVisaDetails` is modelled as requiredWhen `documentType` equals `LAISSEZ_PASSER`, following the form's own instruction directing this question specifically at applicants travelling on a laissez-passer issued by their state of permanent residence.\n\nThe \"ילדים עד גיל 18\" (Children under the Age of 18) table prints a fixed 6-row grid (given name, place of birth, date of birth), and the \"קרובים / מכרים בישראל\" (Family/Acquaintances in Israel) table prints a fixed 4-row grid (name, relation, address); both are closed, bounded tables rather than open-ended repeating structures, and GovSchema's repeating-groups proposal (GSP-0009) is not yet part of the accepted v0.3 specification, so each is modelled as its own bounded per-row field set (child1..child6, contact1..contact4), following the bounded-repeating-group convention already established elsewhere in this registry (e.g. entrantN/childN patterns in other jurisdictions' multi-dependent forms). All spouse, child, and contact fields are optional since they apply only when the applicant has a dependent or contact to declare.\n\nScope was cut at the form's own dotted-border box at the foot of page 3, headed \"לשימוש משרדי\" (\"for office use\"): everything above it (all applicant-facing sections through the applicant's own signature block) is modelled; the visa-grant number, visa type, validity period and duration, single/multiple-entry designation, and consular remarks inside that box are consular-office-only processing data the applicant never supplies, and are out of scope — the same convention this registry applies to other jurisdictions' clerk-only intake/approval sections (including this jurisdiction's own DR/1 and Form 1301 schemas). The 3 paragraphs of the page-3 \"הצהרה\" (Declaration) section — accuracy of the submitted details and absence of any criminal offence/threat/illness (paragraph 1), absence of any expulsion order or prior entry refusal (paragraph 2), and acknowledgement that a granted visa does not override the Ministry of Interior's own authority to deny entry if the visa was obtained on false information (paragraph 3) — are each modelled as a required `documents[]` attestation entry carrying the form's own quoted declaration text, per this registry's established convention for signed/quoted declaration blocks, rather than encoding the statements as fields. The signature block's own re-printed \"שם המבקש\" (Applicant's Name) blank, distinct from the familyName/givenName fields captured on page 1, is modelled as `applicantNameAtSignature`; the signature itself is not modelled as a field (the 3 declaration attestations above already carry the substance of what is being attested to).\n\n2 valid mock scenarios (a passport-holding tourist applicant travelling alone with no dependents or additional contacts declared; a laissez-passer-holding applicant who states their return-visa details, with a spouse, 2 children, and 2 Israel-based contacts declared) plus 5 mutation-control fixtures (a missing statically-required field, a missing returnVisaDetails field while documentType is LAISSEZ_PASSER, a missing required declaration attestation, an invalid documentType enum value, and an invalid date format) are committed under `conformance/il/mfa/entry-visa-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 7: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error. The same script confirmed the one requiredWhen field reference (documentType) resolves. Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run. Israel now stands at 4 of 6 verticals; National ID and DMV remain confirmed weak/screened dead ends from the GOV-3078 cycle (MR41a's own /AcroForm/Fields array is empty; the DMV service-index page 403'd)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "familyName",
+      "label": "שם משפחה",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's family name.",
+      "sourceRef": "Page 1, name table — \"שם משפחה\" / \"Family Name\""
+    },
+    {
+      "name": "givenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's given name.",
+      "sourceRef": "Page 1, name table — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "fathersName",
+      "label": "שם האב",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's father's name.",
+      "sourceRef": "Page 1, name table — \"שם האב\" / \"Father's Name\""
+    },
+    {
+      "name": "mothersName",
+      "label": "שם האם",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's mother's name.",
+      "sourceRef": "Page 1, name table — \"שם האם\" / \"Mother's Name\""
+    },
+    {
+      "name": "previousFamilyName",
+      "label": "שמות קודמים",
+      "type": "string",
+      "required": false,
+      "description": "Any previous family name(s) the applicant has used.",
+      "sourceRef": "Page 1, name table — \"שמות קודמים\" / \"Previous Family Name\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's place of birth.",
+      "sourceRef": "Page 1, second table — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": true,
+      "description": "Applicant's date of birth.",
+      "sourceRef": "Page 1, second table — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "occupation",
+      "label": "משלח יד",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's occupation.",
+      "sourceRef": "Page 1, second table — \"משלח יד\" / \"Occupation\""
+    },
+    {
+      "name": "presentNationality",
+      "label": "אזרחות נוכחית",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's present nationality.",
+      "sourceRef": "Page 1, second table — \"אזרחות נוכחית\" / \"Present Nationality\""
+    },
+    {
+      "name": "previousNationality",
+      "label": "אזרחות קודמת",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's previous nationality, if any.",
+      "sourceRef": "Page 1, second table — \"אזרחות קודמת\" / \"Previous Nationality\""
+    },
+    {
+      "name": "documentType",
+      "label": "דרכון / תעודת מעבר",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the travel document the applicant holds and will travel on is a national passport or a laissez-passer. The form prints this choice as two mirrored checkbox pairs (one Hebrew-labelled, one English-labelled) for the same two options; both mirrors are modelled as a single field, following this registry's established convention for this jurisdiction's bilingual mirrored checkboxes (see il/moin/dr1-passport-application).",
+      "sourceRef": "Page 1, third table, left block — \"דרכון\" / \"Passport\" and \"תעודת מעבר\" / \"Laissez Passer\"",
+      "validation": {
+        "enum": [
+          "PASSPORT",
+          "LAISSEZ_PASSER"
+        ]
+      }
+    },
+    {
+      "name": "gender",
+      "label": "מגדר",
+      "type": "enum",
+      "required": true,
+      "description": "Applicant's gender.",
+      "sourceRef": "Page 1, third table, right block — \"זכר\" / \"Male\" and \"נקבה\" / \"Female\"",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "familyStatus",
+      "label": "מצב משפחתי",
+      "type": "enum",
+      "required": true,
+      "description": "Applicant's family status.",
+      "sourceRef": "Page 1, third table, middle block — \"נשוי/אה\", \"רווק/ה\", \"אלמנ/ה\", \"גרוש/ה\"",
+      "validation": {
+        "enum": [
+          "MARRIED",
+          "SINGLE",
+          "WIDOWED",
+          "DIVORCED"
+        ]
+      }
+    },
+    {
+      "name": "documentNumber",
+      "label": "מספר",
+      "type": "string",
+      "required": true,
+      "description": "The document number of the passport or laissez-passer named in documentType.",
+      "sourceRef": "Page 1, fourth table row — \"מספר\" / \"Number\""
+    },
+    {
+      "name": "documentIssuedBy",
+      "label": "ניתן ע\"י",
+      "type": "string",
+      "required": true,
+      "description": "The authority that issued the document.",
+      "sourceRef": "Page 1, fourth table row — \"ניתן ע\\\"י\" / \"Issued by\""
+    },
+    {
+      "name": "documentIssuedOn",
+      "label": "ניתן בתאריך",
+      "type": "date",
+      "required": true,
+      "description": "The date the document was issued.",
+      "sourceRef": "Page 1, fourth table row — \"ניתן בתאריך\" / \"Issued on\""
+    },
+    {
+      "name": "documentValidUntil",
+      "label": "בתוקף עד",
+      "type": "date",
+      "required": true,
+      "description": "The date the document expires.",
+      "sourceRef": "Page 1, fourth table row — \"בתוקף עד\" / \"Valid Until\""
+    },
+    {
+      "name": "returnVisaDetails",
+      "label": "אשרת חזרה",
+      "type": "string",
+      "required": false,
+      "description": "Whether the applicant holds a return visa to their country of permanent residence, and its validity. The form directs this at applicants travelling on a laissez-passer issued by their state of permanent residence.",
+      "sourceRef": "Page 1, note below the document table — \"אם ברשותך תעודת מעבר שהוצאה על ידי מדינת ישיבתך הקבועה... אנא ציין אם הוענקה לך אשרת חזרה ומה תוקפה\"",
+      "requiredWhen": {
+        "field": "documentType",
+        "equals": "LAISSEZ_PASSER"
+      }
+    },
+    {
+      "name": "permanentAddressCountry",
+      "label": "הארץ",
+      "type": "string",
+      "required": true,
+      "description": "Country of the applicant's permanent address abroad.",
+      "sourceRef": "Page 1, \"המען הקבוע בחו\\\"ל\" table — \"הארץ\" / \"Country\""
+    },
+    {
+      "name": "permanentAddressCity",
+      "label": "העיר",
+      "type": "string",
+      "required": true,
+      "description": "City of the applicant's permanent address abroad.",
+      "sourceRef": "Page 1, \"המען הקבוע בחו\\\"ל\" table — \"העיר\" / \"City\""
+    },
+    {
+      "name": "permanentAddressStreetAndHouseNumber",
+      "label": "הרחוב ומספר הבית",
+      "type": "string",
+      "required": true,
+      "description": "Street and house number of the applicant's permanent address abroad.",
+      "sourceRef": "Page 1, \"המען הקבוע בחו\\\"ל\" table — \"הרחוב ומספר הבית\" / \"Street & House No\""
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "מס' טלפון",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's telephone (landline) number.",
+      "sourceRef": "Page 2, contact table — \"מס' טלפון\" / \"Telephone No.\""
+    },
+    {
+      "name": "mobilePhoneNumber1",
+      "label": "מס' טלפון נייד",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's mobile phone number. The source form prints two identically-labelled \"מס' טלפון נייד\" / \"Mobile No.\" columns with no distinguishing sub-label; modelled as two generically-ordered fields (mobilePhoneNumber1, mobilePhoneNumber2) in the form's own left-to-right column order.",
+      "sourceRef": "Page 2, contact table — first \"מס' טלפון נייד\" / \"Mobile No.\" column"
+    },
+    {
+      "name": "mobilePhoneNumber2",
+      "label": "מס' טלפון נייד",
+      "type": "string",
+      "required": false,
+      "description": "A second mobile phone number, printed by the form as an identically-labelled second \"Mobile No.\" column (see mobilePhoneNumber1).",
+      "sourceRef": "Page 2, contact table — second \"מס' טלפון נייד\" / \"Mobile No.\" column"
+    },
+    {
+      "name": "emailAddress1",
+      "label": "כתובת אלקטרונית",
+      "type": "string",
+      "required": false,
+      "description": "Applicant's email address. The source form prints two identically-labelled \"E-mail\" / \"כתובת אלקטרונית\" boxes with no distinguishing sub-label; modelled as two generically-ordered fields (emailAddress1, emailAddress2) in the form's own left-to-right column order.",
+      "sourceRef": "Page 2, contact table — first \"E-mail\" / \"כתובת אלקטרונית\" box",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "emailAddress2",
+      "label": "כתובת אלקטרונית",
+      "type": "string",
+      "required": false,
+      "description": "A second email address, printed by the form as an identically-labelled second \"E-mail\" box (see emailAddress1).",
+      "sourceRef": "Page 2, contact table — second \"E-mail\" / \"כתובת אלקטרונית\" box",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "purposeOfVisit",
+      "label": "מטרת ההגעה לישראל",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's stated purpose for travelling to Israel.",
+      "sourceRef": "Page 2 — \"מטרת ההגעה לישראל\" / \"Purpose of Visit\" free-text box"
+    },
+    {
+      "name": "addressInIsrael",
+      "label": "הכתובת בישראל",
+      "type": "string",
+      "required": true,
+      "description": "The address in Israel where the applicant will be staying.",
+      "sourceRef": "Page 2, entry-details table — \"הכתובת בישראל\" / \"Address in Israel\""
+    },
+    {
+      "name": "expectedEntryDateAndPlaceInIsrael",
+      "label": "תאריך ומקום הכניסה המשוער לישראל",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's expected date and place (border crossing/airport) of entry into Israel. The form prints date and place as a single combined column with no internal sub-division, modelled here as one free-text field.",
+      "sourceRef": "Page 2, entry-details table — \"תאריך ומקום הכניסה המשוער לישראל\" / \"Expected Date & Place of Entry in to Israel\""
+    },
+    {
+      "name": "expectedDurationOfStay",
+      "label": "זמן השהות המשוער",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's expected duration of stay in Israel.",
+      "sourceRef": "Page 2, entry-details table — \"זמן השהות המשוער\" / \"Approximate Duration of Stay\""
+    },
+    {
+      "name": "transitCountries",
+      "label": "ארצות מעבר",
+      "type": "string",
+      "required": false,
+      "description": "Countries the applicant will transit through en route to Israel, if any.",
+      "sourceRef": "Page 2, entry-details table — \"ארצות מעבר\" / \"Countries of Transit\""
+    },
+    {
+      "name": "previousStaysInIsrael",
+      "label": "תאריכי שהיות קודמות בישראל",
+      "type": "string",
+      "required": false,
+      "description": "Dates of the applicant's previous stays in Israel, if any. The form prints this as a three-blank-column area with no internal sub-headers; modelled as a single free-text field.",
+      "sourceRef": "Page 2 — \"תאריכי שהיות קודמות בישראל\" / \"Dates of Previous Visits to Israel\""
+    },
+    {
+      "name": "residencePermitCategory",
+      "label": "סוג רישיון ישיבה",
+      "type": "enum",
+      "required": true,
+      "description": "The category of residence permit or entry status requested. The form prints five categories across a two-column, three-row checkbox grid, each mirrored in a Hebrew-labelled and an English-labelled checkbox (see documentType for the same mirrored-checkbox convention); the two rightmost checkboxes in the top row correspond to \"ביקור\"/\"Visitor\", the two leftmost in the top row to \"תושב\"/\"Resident\", the second row's right checkbox to \"ארעי\" (glossed \"Temporary Resident\") and left checkbox to \"עולה\"/\"Immigrant\", and the third row's single checkbox to \"עבודה\"/\"Work\".",
+      "sourceRef": "Page 2 — \"סוג רישיון ישיבה\" / \"Residence Permit Category\" checkbox grid",
+      "validation": {
+        "enum": [
+          "VISITOR",
+          "RESIDENT",
+          "TEMPORARY_RESIDENT",
+          "IMMIGRANT",
+          "WORK"
+        ]
+      }
+    },
+    {
+      "name": "spouseFamilyName",
+      "label": "שם משפחה",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's family name, if the applicant's spouse is included in this application.",
+      "sourceRef": "Page 2, \"בן / בת זוג\" / \"Spouse\" table — \"שם משפחה\" / \"Family Name\""
+    },
+    {
+      "name": "spouseGivenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's given name.",
+      "sourceRef": "Page 2, \"בן / בת זוג\" / \"Spouse\" table — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "spouseMaidenName",
+      "label": "שם נעורים",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's maiden name.",
+      "sourceRef": "Page 2, \"בן / בת זוג\" / \"Spouse\" table — \"שם נעורים\" / \"Maiden Name\""
+    },
+    {
+      "name": "spouseFathersName",
+      "label": "שם האב",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's father's name.",
+      "sourceRef": "Page 2, \"בן / בת זוג\" / \"Spouse\" table — \"שם האב\" / \"Father's Name\""
+    },
+    {
+      "name": "spousePlaceOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's place of birth.",
+      "sourceRef": "Page 2, \"בן / בת זוג\" / \"Spouse\" table — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "description": "Spouse's date of birth.",
+      "sourceRef": "Page 2, \"בן / בת זוג\" / \"Spouse\" table — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "child1GivenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "description": "Given name of child under 18 #1 included in this application, if applicable. The form prints a fixed table of 6 numbered rows (not an open-ended repeating group); GovSchema's repeating-groups proposal (GSP-0009) is not yet part of the accepted v0.3 specification, so each of the form's own 6 rows is modelled as its own bounded field set, following this registry's established bounded-repeating-group convention.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" / \"Children under the Age of 18\" table, row 1 — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "child1PlaceOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": false,
+      "description": "Place of birth of child under 18 #1.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 1 — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "child1DateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of child under 18 #1.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 1 — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "child2GivenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "description": "Given name of child under 18 #2 included in this application, if applicable. The form prints a fixed table of 6 numbered rows (not an open-ended repeating group); GovSchema's repeating-groups proposal (GSP-0009) is not yet part of the accepted v0.3 specification, so each of the form's own 6 rows is modelled as its own bounded field set, following this registry's established bounded-repeating-group convention.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" / \"Children under the Age of 18\" table, row 2 — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "child2PlaceOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": false,
+      "description": "Place of birth of child under 18 #2.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 2 — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "child2DateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of child under 18 #2.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 2 — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "child3GivenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "description": "Given name of child under 18 #3 included in this application, if applicable. The form prints a fixed table of 6 numbered rows (not an open-ended repeating group); GovSchema's repeating-groups proposal (GSP-0009) is not yet part of the accepted v0.3 specification, so each of the form's own 6 rows is modelled as its own bounded field set, following this registry's established bounded-repeating-group convention.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" / \"Children under the Age of 18\" table, row 3 — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "child3PlaceOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": false,
+      "description": "Place of birth of child under 18 #3.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 3 — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "child3DateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of child under 18 #3.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 3 — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "child4GivenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "description": "Given name of child under 18 #4 included in this application, if applicable. The form prints a fixed table of 6 numbered rows (not an open-ended repeating group); GovSchema's repeating-groups proposal (GSP-0009) is not yet part of the accepted v0.3 specification, so each of the form's own 6 rows is modelled as its own bounded field set, following this registry's established bounded-repeating-group convention.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" / \"Children under the Age of 18\" table, row 4 — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "child4PlaceOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": false,
+      "description": "Place of birth of child under 18 #4.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 4 — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "child4DateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of child under 18 #4.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 4 — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "child5GivenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "description": "Given name of child under 18 #5 included in this application, if applicable. The form prints a fixed table of 6 numbered rows (not an open-ended repeating group); GovSchema's repeating-groups proposal (GSP-0009) is not yet part of the accepted v0.3 specification, so each of the form's own 6 rows is modelled as its own bounded field set, following this registry's established bounded-repeating-group convention.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" / \"Children under the Age of 18\" table, row 5 — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "child5PlaceOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": false,
+      "description": "Place of birth of child under 18 #5.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 5 — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "child5DateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of child under 18 #5.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 5 — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "child6GivenName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": false,
+      "description": "Given name of child under 18 #6 included in this application, if applicable. The form prints a fixed table of 6 numbered rows (not an open-ended repeating group); GovSchema's repeating-groups proposal (GSP-0009) is not yet part of the accepted v0.3 specification, so each of the form's own 6 rows is modelled as its own bounded field set, following this registry's established bounded-repeating-group convention.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" / \"Children under the Age of 18\" table, row 6 — \"שם פרטי\" / \"Given Name\""
+    },
+    {
+      "name": "child6PlaceOfBirth",
+      "label": "מקום לידה",
+      "type": "string",
+      "required": false,
+      "description": "Place of birth of child under 18 #6.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 6 — \"מקום לידה\" / \"Place of Birth\""
+    },
+    {
+      "name": "child6DateOfBirth",
+      "label": "תאריך לידה",
+      "type": "date",
+      "required": false,
+      "description": "Date of birth of child under 18 #6.",
+      "sourceRef": "Page 2, \"ילדים עד גיל 18\" table, row 6 — \"תאריך לידה\" / \"Date of Birth\""
+    },
+    {
+      "name": "contact1Name",
+      "label": "שם",
+      "type": "string",
+      "required": false,
+      "description": "Name of family member/acquaintance in Israel #1, if applicable. The form prints a fixed table of 4 numbered rows (not an open-ended repeating group); modelled as a bounded field set per row, following the same convention as the children table above.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" / \"Family / Acquaintances in Israel\" table, row 1 — \"שם\" / \"Name\""
+    },
+    {
+      "name": "contact1Relation",
+      "label": "יחס הקירבה",
+      "type": "string",
+      "required": false,
+      "description": "Relation of family member/acquaintance in Israel #1 to the applicant.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 1 — \"יחס הקירבה\" / \"Relation\""
+    },
+    {
+      "name": "contact1Address",
+      "label": "כתובת",
+      "type": "string",
+      "required": false,
+      "description": "Address of family member/acquaintance in Israel #1.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 1 — \"כתובת\" / \"Address\""
+    },
+    {
+      "name": "contact2Name",
+      "label": "שם",
+      "type": "string",
+      "required": false,
+      "description": "Name of family member/acquaintance in Israel #2, if applicable. The form prints a fixed table of 4 numbered rows (not an open-ended repeating group); modelled as a bounded field set per row, following the same convention as the children table above.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" / \"Family / Acquaintances in Israel\" table, row 2 — \"שם\" / \"Name\""
+    },
+    {
+      "name": "contact2Relation",
+      "label": "יחס הקירבה",
+      "type": "string",
+      "required": false,
+      "description": "Relation of family member/acquaintance in Israel #2 to the applicant.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 2 — \"יחס הקירבה\" / \"Relation\""
+    },
+    {
+      "name": "contact2Address",
+      "label": "כתובת",
+      "type": "string",
+      "required": false,
+      "description": "Address of family member/acquaintance in Israel #2.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 2 — \"כתובת\" / \"Address\""
+    },
+    {
+      "name": "contact3Name",
+      "label": "שם",
+      "type": "string",
+      "required": false,
+      "description": "Name of family member/acquaintance in Israel #3, if applicable. The form prints a fixed table of 4 numbered rows (not an open-ended repeating group); modelled as a bounded field set per row, following the same convention as the children table above.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" / \"Family / Acquaintances in Israel\" table, row 3 — \"שם\" / \"Name\""
+    },
+    {
+      "name": "contact3Relation",
+      "label": "יחס הקירבה",
+      "type": "string",
+      "required": false,
+      "description": "Relation of family member/acquaintance in Israel #3 to the applicant.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 3 — \"יחס הקירבה\" / \"Relation\""
+    },
+    {
+      "name": "contact3Address",
+      "label": "כתובת",
+      "type": "string",
+      "required": false,
+      "description": "Address of family member/acquaintance in Israel #3.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 3 — \"כתובת\" / \"Address\""
+    },
+    {
+      "name": "contact4Name",
+      "label": "שם",
+      "type": "string",
+      "required": false,
+      "description": "Name of family member/acquaintance in Israel #4, if applicable. The form prints a fixed table of 4 numbered rows (not an open-ended repeating group); modelled as a bounded field set per row, following the same convention as the children table above.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" / \"Family / Acquaintances in Israel\" table, row 4 — \"שם\" / \"Name\""
+    },
+    {
+      "name": "contact4Relation",
+      "label": "יחס הקירבה",
+      "type": "string",
+      "required": false,
+      "description": "Relation of family member/acquaintance in Israel #4 to the applicant.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 4 — \"יחס הקירבה\" / \"Relation\""
+    },
+    {
+      "name": "contact4Address",
+      "label": "כתובת",
+      "type": "string",
+      "required": false,
+      "description": "Address of family member/acquaintance in Israel #4.",
+      "sourceRef": "Page 3, \"קרובים / מכרים בישראל\" table, row 4 — \"כתובת\" / \"Address\""
+    },
+    {
+      "name": "applicantNameAtSignature",
+      "label": "שם המבקש",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's name as re-printed in the form's own signature block, distinct from the familyName/givenName fields captured on page 1.",
+      "sourceRef": "Page 3, signature block — \"שם המבקש\" / \"Applicant's Name\""
+    },
+    {
+      "name": "applicationPlace",
+      "label": "מקום",
+      "type": "string",
+      "required": true,
+      "description": "The place where the application was signed.",
+      "sourceRef": "Page 3, signature block — \"מקום\" / \"Place\""
+    },
+    {
+      "name": "applicationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "The date the application was signed.",
+      "sourceRef": "Page 3, signature block — \"תאריך\" / \"Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "accuracyAndGoodConductDeclaration",
+      "label": "הצהרת נכונות הפרטים והיעדר עבירה",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "אני מצהיר/ה שהפרטים שנמסרו לעיל נכונים ונמסרו בהכרה שהם מהווים יסוד לדיון בבקשתי. כמו כן, אני מצהיר בזה שלא עברתי עבירה פלילית. לא פעלתי נגד העם היהודי וביטחון מדינת ישראל. לא חליתי במחלה העלולה לסכן את בריאות הציבור. לא קיים נגדי צו מעצר שיפוטי ואינני מבוקש על ידי המשטרה של מדינה כלשהי.",
+      "sourceRef": "Page 3, Declaration (הצהרה) block, first paragraph"
+    },
+    {
+      "id": "noExpulsionOrEntryRefusalDeclaration",
+      "label": "הצהרה על היעדר צו הרחקה או סירוב כניסה",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "אני מצהיר/ה בזאת שלא קיים נגדי צו הרחקה ולא סירוב כניסה לארץ, ידוע לי שאם יש נגדי מניעה כאמור, תימנע ממני אפשרות להיכנס לישראל ואוחזר למדינה שממנה הגעתי.",
+      "sourceRef": "Page 3, Declaration (הצהרה) block, second paragraph"
+    },
+    {
+      "id": "visaDoesNotOverrideMoiAuthorityAcknowledgement",
+      "label": "הכרה בכך שהאשרה אינה שוללת את סמכות משרד הפנים",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "ידוע לי שאין בקבלת האשרה משום ביטול סמכות משרד הפנים בישראל, לסרב כניסתי לתחומי מדינת ישראל, אם יסתבר שהאשרה התקבלה על סמך פרטים כוזבים.",
+      "sourceRef": "Page 3, Declaration (הצהרה) block, third paragraph"
+    }
+  ]
+}
