@@ -127,6 +127,18 @@ oversight.
   (2 valid, 5 mutation-control), matching this registry's established
   naming convention.
 
+## Review-gate correction (GOV-3192)
+
+The initial `jurisdiction` block set `"level": "national"` with no
+`subdivision`, inconsistent with this file's own text above (La Vega is a
+*regional* chamber of commerce, "not a single national agency") and with
+this registry's established convention for regionally-administered
+authorities (e.g. `br/mg/detran/...`, `br/pr/iipr/...`, `br/sp/jucesp/...`,
+all tagged `"level": "subnational"` with an ISO 3166-2 `subdivision` code).
+Corrected to `"subdivision": "DO-13"` (La Vega province) and
+`"level": "subnational"` during review, and `registry-index.json`
+regenerated to match. No other field was affected.
+
 ## Recovery note
 
 The initial authoring pass for this document (schema.json + 7 conformance
