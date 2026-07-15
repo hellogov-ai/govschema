@@ -190,9 +190,22 @@ own structure rather than any printed marker:
   established treatment of physical signature lines on print-and-fill
   government forms (`np/dop/mrp-offline-application-form`,
   `np/donidcr/national-identity-card-application`,
-  `do/mirex/passport-application`). Unlike those schemas, this form's
-  signature line carries no adjacent date field of its own to retain (the
-  only date field on the form, item 7(ख), is the passport issue date).
+  `do/mirex/passport-application`). **Review-gate correction:** the
+  original draft of this document claimed this form's signature line
+  "carries no adjacent date field of its own to retain" and modelled no
+  such field. Independent re-derivation during review (a 6x-scale targeted
+  crop of the bottom of page 37) found this claim was factually wrong — a
+  plain blank line labelled "मिति :" (Date:) sits directly beside/above the
+  signature line, the same footer pattern this registry already retains
+  elsewhere as its own field even though the signature itself is excluded
+  (`np/dop/mrp-offline-application-form`'s `applicantSignatureDate`,
+  `np/donidcr/national-identity-card-application`'s `declarationDate`).
+  Corrected: added `applicantSignatureDate` (`type: string`, `required:
+  false` — no digit-box structure or A.D./B.S. calendar label, and outside
+  this document's own disclosed required-field criteria of core identity/
+  passport particulars only), populated in `valid-full-application.json`,
+  and the top-level schema `description` and field count (19→20) updated
+  accordingly.
 
 ## `process.language`
 

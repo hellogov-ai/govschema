@@ -37,7 +37,7 @@
 > extraction, so the field list and the absence of any required-field marker
 > were confirmed visually via a node-canvas 4x-scale page render plus a
 > 6x-scale targeted crop of Section 10's four alternative visa-basis items
-> (ruling out any checkbox convention). Models 19 `fields[]`, including a
+> (ruling out any checkbox convention). Models 20 `fields[]`, including a
 > `boolean` field for the form's own single-investment-threshold declaration
 > ("invested more than USD 1 million at once") and a merged free-text field
 > for the source's three unlabelled "Other" continuation lines. Requiredness
@@ -46,7 +46,13 @@
 > from this registry's other three Nepal schemas (all `en`) since this
 > specific form's two pages carry zero English-language tokens, a more
 > spec-accurate reading of "language tag of the source form" for this
-> document. 6 conformance fixtures (2 valid, 4 mutation-control) committed
+> document. Review-gate correction: an `applicantSignatureDate` field was
+> added for the plain "मिति :" line beside the applicant's signature,
+> mirroring this registry's established retain-the-date/exclude-the-signature
+> convention (`np/dop/mrp-offline-application-form`,
+> `np/donidcr/national-identity-card-application`) — the original draft
+> had claimed no such field existed on this source, which a targeted
+> render crop showed to be incorrect. 6 conformance fixtures (2 valid, 4 mutation-control) committed
 > under `conformance/np/doi/residential-visa-application/1.0.0/`. See the
 > document's own VERIFICATION.md for the full sourcing record and every
 > disclosed judgment call. Numerator updated from 492 to 493; Nepal's Visa
@@ -18124,7 +18130,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   the Department's own consolidated Rules document, distinct from the
   online visa portal's login-gated wizard and from two other general
   "Download" PDFs on the same site that turned out not to be visa
-  applications at all — was modelled into 19 `fields[]`, with requiredness a
+  applications at all — was modelled into 20 `fields[]`, with requiredness a
   disclosed judgment call limited to the applicant's core identity and
   passport particulars; see the Executive Summary's GOV-3237 update and the
   document's own VERIFICATION.md for the full sourcing record, including the
