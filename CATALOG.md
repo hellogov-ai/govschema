@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**57 jurisdictions** | **463 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**58 jurisdictions** | **464 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3066/GOV-3070, "GovSchema Standard Research"):
+> Israel opens as this registry's 58th jurisdiction**, via
+> `il/tax-authority/1301-personal-details` — the Israel Tax Authority's
+> Form 1301 ("דוח ליחיד — דין וחשבון על ההכנסות בארץ ובחו"ל"), the annual
+> individual income tax return, filed under section 131 of the Income Tax
+> Ordinance. Opens Israel's Taxes vertical (1 of 6). GOV-3062 pre-scouted
+> and sourced this candidate (a strong, cleanly-sourced but dense ~89-
+> numbered-item comprehensive return with a known RTL-PDF-extraction
+> readability problem) and delegated authoring as a child issue (GOV-3066)
+> rather than attempting it under that cycle's own budget; this cycle
+> (GOV-3070) found GOV-3066 unclaimed and picked it up directly rather than
+> re-scouting fresh candidates. Scoped to Part A's basic filing-basis
+> declaration and Part B's personal-details section in full — filer/spouse
+> identity, marital status, address, contact details, business/employer
+> registration numbers, the tax-refund bank account, paid-preparer
+> disclosure, and the filer's own declaration — since these are the
+> identity/registration fields an agent needs to correctly address, route,
+> and attest a return, independent of the underlying tax computation. The
+> ~89 numbered income/deduction/credit line items across Parts C–O, and the
+> ~30 special-situation checkboxes elsewhere in Part A (virtual currency,
+> trusts, kibbutz income routing, new-immigrant elections, and similar
+> edge cases), are explicitly out of scope and disclosed as future
+> companion-schema candidates. Independently re-fetched the source PDF via
+> `curl` (no login/CAPTCHA gate; HTTP 200, 1,745,508 bytes, sha256
+> `4a08b47df48805e1577e72c34d0d0b9bc9630499093666e0bfa1585983c87c2a`,
+> matching GOV-3066's own pre-recorded figures exactly) and cross-checked
+> `pdfjs-dist`'s RTL-jumbled text extraction against a rendered page image
+> (`node-canvas`), which caught and corrected an initial misreading of the
+> bank-refund block's field order. Models 44 `fields[]` plus 2
+> `documents[]` attestation entries (the filer's and, when a paid preparer
+> is used, the preparer's declaration, both quoted verbatim from the
+> source). See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full sourcing chain and every disclosed scoping
+> decision.
 
 > **Update (2026-07-15, GOV-3062, "GovSchema Standard Research"): Pakistan
 > opens as this registry's 57th jurisdiction**, via
@@ -9625,7 +9660,7 @@
 
 ## By Vertical
 
-### Passport (42/57 jurisdictions — 74%)
+### Passport (42/58 jurisdictions — 72%)
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; Passport remains open,
@@ -10051,7 +10086,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (48/57 jurisdictions — 84%)
+### DMV — Vehicle Registration, Licensing, Permits (48/58 jurisdictions — 83%)
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; DMV remains open,
@@ -10527,7 +10562,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (54/57 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (54/58 jurisdictions — 93%)
 
 > **Update (2026-07-15, GOV-3062, "GovSchema Standard Research"): Pakistan
 > opens as this registry's 57th jurisdiction via this vertical**, via
@@ -11380,7 +11415,27 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (50/57 jurisdictions — 88%)
+### Taxes — Income Tax Return, Tax Filing (51/58 jurisdictions — 88%)
+
+> **Update (GOV-3066/GOV-3070): Israel opens Taxes (Israel's first schema
+> in this registry, opening Israel as this registry's 58th
+> jurisdiction)**, via `il/tax-authority/1301-personal-details` — the
+> Israel Tax Authority's Form 1301 ("דוח ליחיד"), the annual individual
+> income tax return, scoped to Part A's basic filing-basis declaration and
+> Part B's personal-details section in full (filer/spouse identity,
+> marital status, address, contact details, business/employer registration
+> numbers, the tax-refund bank account, paid-preparer disclosure, and the
+> filer's declaration). GOV-3062 pre-scouted and sourced this candidate but
+> delegated authoring (a dense ~89-numbered-item comprehensive return, RTL-
+> garbled `pdfjs-dist` text extraction, judged too large for that cycle's
+> own budget); this cycle picked up the unclaimed delegation. 44 `fields[]`
+> plus 2 `documents[]` attestation entries (the filer's and, when a paid
+> preparer is used, the preparer's declaration, both quoted verbatim). The
+> ~89 numbered income/deduction/credit line items across Parts C–O, and the
+> ~30 special-situation checkboxes elsewhere in Part A, are explicitly out
+> of scope — see the document's own VERIFICATION.md for the full sourcing
+> chain and every disclosed scoping decision. Denominator updated from 57
+> to 58 jurisdictions.
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only). Israel's Tax Authority
@@ -12305,7 +12360,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (46/57 jurisdictions — 81%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (46/58 jurisdictions — 79%)
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; Visa remains open,
@@ -12882,7 +12937,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (42/57 jurisdictions — 74%)
+### National ID & Civic Documents (42/58 jurisdictions — 72%)
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; National ID/CNIC remains
@@ -13372,6 +13427,7 @@ now closed.
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **IL** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16354,6 +16410,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   array is empty despite a Catalog-level `/AcroForm` reference; the DMV
   service-index page 403'd) — Taxes (Form 1301) remains the strongest
   lead for whichever future cycle opens Israel.
+
+  **Update (GOV-3066/GOV-3070): now resolved.** This delegated child issue
+  was picked up unclaimed and authored as
+  `il/tax-authority/1301-personal-details`, scoped exactly as suggested
+  above (Part A/B — filing basis and personal details), opening Israel as
+  this registry's 58th jurisdiction. See the Executive Summary's
+  GOV-3066/GOV-3070 update and the document's own VERIFICATION.md. The
+  ~89-item income/deduction/credit schedule (Parts C–O) remains open
+  backlog for a future companion-schema cycle.
 
 ---
 
