@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **484 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **485 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3169, picked up from GOV-3158's disclosed
+> backlog): Dominican Republic's National ID & Civic Documents vertical
+> opens, bringing the Dominican Republic to 5 of 6 verticals**, via
+> `do/jce/cedulacion-movil-especial` — the Junta Central Electoral's (JCE)
+> mobile cédula ("Cedulación Móvil Especial") request form (FO06(PRO-DNC-
+> 001), Versión 1.1), filed by a representative on behalf of a citizen who
+> cannot travel to a cedulación center due to illness, advanced age, or
+> disability. Independently re-fetched fresh this cycle (not trusted from
+> the prior GOV-3152 scouting note as-is): genuine single-page AcroForm,
+> sha256 `5e0468004d1f02f028ee63d7086e63ff160dbece56b0cd2e5ed73639c5d46b57`,
+> 39 Widget annotations independently re-derived field-by-field, matching
+> the prior scouting note's count. Models 24 `fields[]` (26 applicant-facing
+> widgets, with a day/month/year date grid consolidated into one
+> `requestDate` field) and 1 required `documents[]` entry, excluding an
+> explicitly header-labeled internal-processing block and two wet-ink
+> signature lines. 8 conformance fixtures committed under
+> `conformance/do/jce/cedulacion-movil-especial/1.0.0/`. **This issue's own
+> brief stated landing this document would close the Dominican Republic to
+> full 6/6 coverage; checked directly against the By-Jurisdiction table
+> below and found stale — the Dominican Republic's Visa vertical (GOV-3168)
+> remains open and unlanded, so this addition brings the Dominican Republic
+> to 5 of 6, not 6/6.** See the National ID & Civic Documents vertical
+> section below and the document's own VERIFICATION.md for the full
+> sourcing record and this correction.
 
 > **Update (2026-07-15, GOV-3167, delegated from GOV-3189/GOV-3158/GOV-3152,
 > "GovSchema Standard Research"): Dominican Republic's Business Formation
@@ -13788,7 +13813,11 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (44/62 jurisdictions — 71%)
+### National ID & Civic Documents (45/62 jurisdictions — 73%)
+
+> **Correction (2026-07-15, GOV-3169):** numerator updated from 44 to 45
+> following the Dominican Republic's National ID vertical opening via
+> `do/jce/cedulacion-movil-especial`, immediately below.
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; National ID remains open,
@@ -13805,6 +13834,41 @@ candidate, the other two as confirmed dead ends).
 > current registry total, following Moldova/Tanzania/Dominican Republic's
 > additions, none of which touched this vertical); numerator updated to 43
 > following Israel's addition immediately below.
+
+**The Dominican Republic's National ID & Civic Documents vertical opens
+(bringing the Dominican Republic to 5 of 6 verticals) (GOV-3169, picked up
+from GOV-3158's disclosed backlog)**, via `do/jce/cedulacion-movil-especial`
+— the Junta Central Electoral's (JCE) Dirección Nacional de Cedulación,
+"Solicitud de Cedulación Móvil Especial" (FO06(PRO-DNC-001), Versión 1.1), a
+mobile-service request filed by a representative on behalf of a citizen who
+cannot travel to a cedulación center due to illness, advanced age, or
+disability. Independently re-fetched fresh this cycle directly from
+`jce.gob.do` (no login/CAPTCHA/WAF gate): HTTP 200, content-type
+`application/pdf`, 605,231 bytes, sha256
+`5e0468004d1f02f028ee63d7086e63ff160dbece56b0cd2e5ed73639c5d46b57`. A
+genuine single-page AcroForm; `pdfjs-dist@3.11.174` confirmed exactly 39
+Widget annotations, independently re-derived field-by-field (not re-quoted
+from the prior GOV-3152 scouting note), reconciling to 26 applicant-facing
+widgets (consolidating to 24 `fields[]`, including a day/month/year date
+grid modeled as a single `requestDate`) plus 13 out-of-scope widgets (an
+explicitly header-labeled "PARA USO INTERNO PERSONAL DE CEDULACIÓN"
+office-workflow block and two wet-ink signature lines). The source carries
+no printed required-field marker anywhere on the page; requiredness instead
+follows published JCE eligibility/intake guidance
+(`jce.gob.do/Cedulacion-Movil`) plus the minimum data genuinely necessary to
+identify both parties and dispatch a mobile team — disclosed as a source
+limitation, not a confirmed per-field JCE determination. Models one required
+`documents[]` entry (`conditionEvidence`, a medical certificate or
+photograph evidencing the qualifying condition, per that same published
+guidance rather than the form's own unmarked checkboxes). 8 conformance
+fixtures (2 valid, 6 mutation-control) committed under
+`conformance/do/jce/cedulacion-movil-especial/1.0.0/`. **Note:** this
+issue's own brief described this as closing the Dominican Republic to full
+6/6 coverage; checked directly against the By-Jurisdiction table below and
+found stale — Visa (GOV-3168) remains open and unlanded, so this addition
+brings the Dominican Republic to 5 of 6, not 6/6 (see the document's own
+VERIFICATION.md for the full correction). See the document's own
+VERIFICATION.md for the complete sourcing record and scope decisions.
 
 **Tanzania's National ID & Civic Documents vertical opens (bringing
 Tanzania to 2 of 6 verticals, combined with Business Formation)
@@ -14339,7 +14403,7 @@ now closed.
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DO** | 4 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **DO** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

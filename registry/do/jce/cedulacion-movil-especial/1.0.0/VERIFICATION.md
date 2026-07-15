@@ -22,11 +22,22 @@ candidate, along with a preliminary field count (39) and a note about a
 Zenedge CDN in front of the asset. This issue (GOV-3169, picked up from
 GOV-3158's backlog) re-verified the source **from scratch** rather than
 trusting the prior scouting note's field count as-is, per this registry's
-standing convention. The Dominican Republic already has three published
-documents (Taxes, Passport, DMV); this document is its fourth, opening the
-National ID vertical — and, since Business Formation and Visa were already
-closed by earlier GOV-3152-derived cycles, **this document closes the
-Dominican Republic to full 6/6 vertical coverage.**
+standing convention.
+
+**Correction to this issue's own brief:** GOV-3169's task description
+states landing this document "closes the Dominican Republic to full 6/6
+vertical coverage." This was checked directly against `CATALOG.md`'s
+By-Jurisdiction table rather than taken on faith, and found to be stale: as
+of this cycle the Dominican Republic (`DO`) row shows Passport✓/DMV✓/
+Business✓/Taxes✓/Visa✗/National ID✗ — 4 of 6, with **both** Visa and
+National ID still open (Business Formation opened only very recently, via
+GOV-3167/`do/camara-comercio-la-vega/registro-mercantil`, in the same
+2026-07-15 research cycle this issue's brief was written from, and Visa
+(GOV-3168) is a separate still-open child issue, not yet landed). This
+document opens the Dominican Republic's National ID vertical, bringing it
+to **5 of 6** — not 6/6. This discrepancy is disclosed in this issue's
+comments and in the review-gate description rather than silently
+overwriting the brief's premise or fabricating a false "6/6" catalog claim.
 
 ## Sources examined
 
