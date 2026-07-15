@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **488 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **489 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3214, delegated from GOV-3212, "GovSchema
 > Standard Research"): Tanzania's DMV vertical opens, bringing Tanzania to
@@ -43,6 +43,50 @@
 > schema this cycle. Numerator updated from 487 to 488; Tanzania's DMV
 > column flips ✗→✓ in the By Jurisdiction table below, leaving Passport
 > and Visa as Tanzania's remaining open verticals.
+
+> **Update (2026-07-15, GOV-3217, scouted from GOV-3212, "GovSchema
+> Standard Research"): Nepal's National ID vertical opens, bringing Nepal
+> to 3 of 6 verticals**, via `np/donidcr/national-identity-card-application`
+> — the Department of National ID and Civil Registration's (DoNIDCR)
+> National Identity Card application form, embedded via a flipbook viewer
+> on the department's own content page and reachable only through a
+> `var pdf = '...'` JavaScript string literal in the page's raw HTML, not a
+> plain `<a href>` link. Independently re-fetched fresh this cycle: HTTP
+> 200, `application/pdf`, 509,556 bytes (matching the byte size disclosed
+> when this candidate was scouted), sha256
+> `122e2e6b04a64385b70e993aa0ecc9ba71d0fb15d28655691be019bb5052d6f6`. A
+> genuine 2-page PDF with a real text layer and zero AcroForm widgets, per
+> `pdfjs-dist`. Its bilingual English labels (First/Middle/Last Name, "Date
+> of Birth (AD)", NIN) extract cleanly, but the form's overwhelmingly
+> primary-language Devanagari (Nepali) text — every section heading, field
+> label, and checkbox caption — extracts as mismapped glyph sequences due
+> to a font-encoding gap in the embedded TrueType font, so the full field
+> list and every requirement signal were instead confirmed visually via a
+> node-canvas 3x-scale render of both pages plus a series of 6x-scale
+> targeted crops. Notably, unlike this registry's other two Nepal schemas,
+> **this source carries no printed asterisk, bold marker, or other
+> required/optional convention anywhere on either page** — confirmed by
+> the same high-resolution crop pass. Requiredness is instead a disclosed
+> judgment call anchored to the form's own "required documents" checklist,
+> whose six items are all conditionally worded ("as available", "in case
+> of", "if") except the applicant's own original citizenship certificate,
+> which carries no qualifier at all; the 13 fields required below trace to
+> that one unconditional document requirement plus the applicant's own
+> permanent address, with every other field — including the entire
+> father/mother/grandparent/spouse lineage blocks central to this form,
+> whose own supporting documents are explicitly conditional — modelled
+> optional. Models 72 `fields[]` total, including a merged
+> Bikram-Sambat/Gregorian `dateOfBirth` per this registry's established
+> parallel-calendar technique, and excludes the form's thumbprint boxes and
+> handwritten signature as physical biometric/wet-ink capture (its
+> accompanying declaration date is retained). 6 conformance fixtures
+> committed under
+> `conformance/np/donidcr/national-identity-card-application/1.0.0/`. See
+> the document's own VERIFICATION.md for the full sourcing record and every
+> disclosed judgment call. Numerator updated from 488 to 489; Nepal's
+> National ID column flips ✗→✓ in the By Jurisdiction table below, leaving
+> DMV, Taxes, and Visa as Nepal's remaining open verticals (DMV and Taxes
+> already confirmed dead ends per GOV-3212; Visa remains open, unscouted).
 
 > **Update (2026-07-15, GOV-3206, delegated from GOV-3204, picking up
 > GOV-3078's disclosed backlog): Nepal's Passport vertical opens, bringing
@@ -13976,7 +14020,12 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (45/62 jurisdictions — 73%)
+### National ID & Civic Documents (46/62 jurisdictions — 74%)
+
+> **Correction (2026-07-15, GOV-3217):** numerator updated from 45 to 46
+> following Nepal's National ID vertical opening via
+> `np/donidcr/national-identity-card-application`, see the Executive
+> Summary above for the full sourcing record.
 
 > **Correction (2026-07-15, GOV-3169):** numerator updated from 44 to 45
 > following the Dominican Republic's National ID vertical opening via
@@ -14594,7 +14643,7 @@ now closed.
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **NP** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **NP** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -17782,8 +17831,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   field via widget-geometry (rect-coordinate) clustering and label-proximity
   matching against a high-resolution render — see the document's own
   VERIFICATION.md for the full reconstruction method and disclosed judgment
-  calls. Nepal's Visa and National ID verticals remain unscreened, open
-  backlog candidates for a future cycle.
+  calls. **National ID: authored (GOV-3217, scouted from GOV-3212), bringing
+  Nepal to 3 of 6.** The Department of National ID and Civil Registration's
+  National Identity Card application form — a genuine 2-page text-layer PDF
+  with no AcroForm widgets, embedded via a JS string literal rather than a
+  plain link, and carrying no printed required/optional convention anywhere
+  on the source — was modelled into 72 `fields[]`, with requiredness a
+  disclosed judgment call anchored to the form's own required-documents
+  checklist; see the Executive Summary's GOV-3217 update and the document's
+  own VERIFICATION.md for the full sourcing record and every disclosed
+  judgment call. Nepal's Visa vertical remains unscreened, open backlog for
+  a future cycle.
 
 ---
 

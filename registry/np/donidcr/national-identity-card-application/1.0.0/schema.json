@@ -1,0 +1,674 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "np/donidcr/national-identity-card-application",
+  "version": "1.0.0",
+  "title": "Nepal — Department of National ID and Civil Registration National Identity Card Application",
+  "description": "The Department of National ID and Civil Registration's (DoNIDCR, under the Ministry of Home Affairs) National Identity Card application form, राष्ट्रिय परिचयपत्रको लागि निवेदन फाराम (नेपाली नागरिकता प्राप्त व्यक्तिको लागि मात्र) (\"Application Form for National Identity Card, for persons who have obtained Nepali citizenship\" — for first-time applicants only, per the form's own declaration \"मैले यसअघि राष्ट्रिय परिचयपत्र लिएको छैन।\", \"I have not previously obtained a National ID Card\"). Opens Nepal's National ID vertical (the country's 3rd schema in this registry, alongside `np/ocr/company-registration-private-ekal` (Business Formation) and `np/dop/mrp-offline-application-form` (Passport)). Embedded via a flipbook viewer on the department's own content page (`donidcr.gov.np/content/271/details-registration-application-form-for-national-identity/`), reachable only via a `var pdf = '...'` JS string in the page's raw HTML rather than a plain `<a href>` link. A genuine 2-page text-layer PDF (not scanned), entirely in Nepali (Devanagari) with a handful of bilingual English field labels (name/date-of-birth boxes only), and no AcroForm widgets at all — every field is a plain underlined blank or checkbox drawn as static page content, read from the PDF's own text layer and a high-resolution page render (Devanagari glyphs did not recover cleanly through direct text extraction due to a subsetted-font encoding issue, so the field labels, section structure, and the absence of any required-field marking convention were confirmed visually against a node-canvas render). Covers the applicant's own particulars (name, date of birth in parallel Bikram Sambat/Gregorian calendars, citizenship certificate basis and type, birthplace, permanent/temporary address, contact, caste/sex/religion/education/occupation/marital status), and, reflecting Nepali citizenship's descent-based legal basis, full name/citizenship/address blocks for the applicant's father and mother, name-only blocks for a grandfather and grandmother (the source does not specify paternal or maternal side for either), and a name/address block for a spouse. Thumbprint boxes and the applicant's handwritten signature are excluded as physical biometric/wet-ink capture, consistent with this registry's established treatment (its accompanying declaration date is retained); the verifying-officer block is excluded as staff-only office processing; the form's own required-documents checklist is excluded as informational text, not a field the applicant completes.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NP",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of National ID and Civil Registration",
+    "abbreviation": "DoNIDCR",
+    "url": "https://donidcr.gov.np"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://giwmscdnone.gov.np/media/pdf_upload/NID%20form%20eidited%20on%2077-6-7_rd2muyw.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "राष्ट्रिय परिचयपत्रको लागि निवेदन फाराम (National Identity Card Application Form), Department of National ID and Civil Registration"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3217, scouted from GOV-3212 (\"GovSchema Standard Research\"). Nepal stood at 2/6 verticals (Passport, Business Formation) with DMV and Taxes confirmed dead ends (DMV: quota-gated online portal only, no static form; Taxes: pure online e-form, no manual). This issue opens National ID. Independently re-fetched fresh this cycle, not trusted from the scouting note's numbers as final: the content page (`https://donidcr.gov.np/content/271/details-registration-application-form-for-national-identity/`) returned HTTP 200, and grepping its raw HTML for the `var pdf = '...'` JS string variable (the PDF is not reachable via any plain `<a href>` on the page) recovered `https://giwmscdnone.gov.np/media/pdf_upload/NID%20form%20eidited%20on%2077-6-7_rd2muyw.pdf`, which itself returned HTTP 200, 509,556 bytes, sha256 `122e2e6b04a64385b70e993aa0ecc9ba71d0fb15d28655691be019bb5052d6f6` — the byte size matches the scouting note's figure exactly. pdfjs-dist 3.11.174 confirms a genuine 2-page PDF (500 text items on page 1, 370 on page 2) with zero AcroForm annotations on either page (`getAnnotations()` returns an empty array) — every blank and checkbox is static page content, not a fillable widget. Direct text extraction recovers the form's handful of bilingual English labels (\"First Name\"/\"Middle Name\"/\"Last Name\"/\"Date of Birth (AD)\"/\"NIN\") cleanly, but its primary-language Devanagari text extracts as garbled/mismapped glyph sequences (pdfjs logs \"TT: undefined function: 32\" while decoding the embedded font's glyph table), so the full field list, section structure, and every requiredness marking were instead read from a node-canvas 3x-scale page render (plus several 6x-scale targeted crops to rule out small printed asterisks), not from the extracted text.\n\n**No required/optional convention on this source at all.** Unlike this registry's other Nepal schemas (`np/dop/mrp-offline-application-form`'s explicit `*` asterisk on every required field; `np/ocr/company-registration-private-ekal`), a full-page 3x render and a further 6x-scale crop of every section on both pages found not one printed asterisk, bold marker, or other required-field convention anywhere on this form. Requiredness below is therefore a disclosed judgment call, not read off the source directly, anchored to the one piece of textual evidence the form does provide: its own \"आवश्यक कागजातहरु\" (required documents) checklist lists six supporting documents (क)-(च), of which only (क) — \"नेपाली नागरिकताको प्रमाणपत्रको सक्कल\" (original Nepali citizenship certificate) — carries no conditional qualifier; every other item is explicitly conditional (\"उपलब्ध भएसम्म\"/as available, \"हकमा\"/in case of, \"भए\"/if, \"नभएमा\"/if not). Requiredness is therefore modelled as: the applicant's own core identity and citizenship-basis fields that this one unconditional document requirement implicates (first/last name, date of birth, place of birth, citizenship certificate number/issue date/issuing district, citizenship type) plus the applicant's own permanent address (the only location data every applicant must have — temporary address is explicitly form-gated \"only if different\"). Every other field, including sex/caste/religion/marital status/occupation/education and the entire father/mother/grandparent/spouse blocks (whose own supporting documents are explicitly qualified \"as available\"/\"in case of\" in checklist items ख-च), is modelled as optional. This is consistent with this registry's precedent for sources that provide no printed required/optional convention at all (`md/asp/vehicle-registration`'s disclosed structural-necessity judgment call, rather than either fabricating asterisks or marking every field optional by default).\n\n**`dateOfBirth`** merges the form's parallel वि.सं. (Bikram Sambat) and \"Date of Birth (AD)\" (Gregorian) 8-box Year/Month/Day comb grids into one canonical ISO value, consistent with this registry's established parallel-calendar technique (`np/dop/mrp-offline-application-form`, `th/mfa/passport-application-royal-thai-embassy-london`). By contrast, `citizenshipCertificateIssueDate` and the equivalent father's/mother's issue-date fields, and `previousCitizenshipRenunciationDate`, are each an 8-box YYYYMMDD comb grid with no calendar label at all (no वि.सं. or AD marker printed anywhere near them, unlike Date of Birth) — modelled as free-form strings rather than `type: date`, disclosing rather than fabricating an assumed calendar.\n\n**`sex`** is a blank single-line box (लिङ्ग) with no instructional key defining accepted values, printed identically to its neighbouring जात (caste) and धर्म (religion) free-text boxes — unlike `np/dop/mrp-offline-application-form`'s own Sex field, which carries an explicit \"M for Male, F for Female\" key. Modelled as free text, not a fabricated enum, since the source draws no distinction between it and its neighbours that would justify treating it differently.\n\n**`citizenshipType`** (नागरिकताको किसिम) and **`maritalStatus`** (वैवाहिक स्थिति) are both modelled as `enum` because, unlike `sex`, the source itself draws the boundary with explicit checkboxes (6 and 3 respectively), independent of the requiredness judgment call above.\n\n**Grandparent sections (7-8) carry no paternal/maternal qualifier.** The source labels these sections only \"हजुरबुबाको विवरण\" (Grandfather's details) and \"हजुरआमाको विवरण\" (Grandmother's details), with no \"बाबुतर्फको\"/\"आमातर्फको\" (paternal-side/maternal-side) qualifier anywhere near either heading (confirmed via a targeted crop) — modelled as plain `grandfather`/`grandmother` name fields rather than fabricating a side the source does not state.\n\n**`guardianName`** (\"पितृत्वको ठेगान नभएको हकमा संरक्षकको नाम\") is modelled as a plain optional field: \"in case there is no trace/record of paternity, name of the guardian\" — provided in place of the father's details when the applicant's paternal lineage cannot be established. The form gives no boolean field indicating whether a given applicant is in this situation, so it is not gated with `requiredWhen` against the father's-details fields.\n\n**No photo field.** Unlike this registry's passport schemas, this form has no photo-attachment box of any kind (confirmed: no \"फोटो\"/\"Photo\" string anywhere in either page's extracted text), consistent with National ID photo/biometric capture happening live at enrollment rather than via a submitted print.\n\n**Excluded as out of scope:** the thumbprint boxes (\"औंठाको छाप\", Right/Left) and the applicant's handwritten signature (\"निवेदकको दस्तखतः\") are excluded as physical biometric/wet-ink capture, consistent with this registry's established treatment of signature/thumbprint blocks on print-and-fill government forms (`np/dop/mrp-offline-application-form`, `do/mirex/passport-application`, `il/mot/medical-examination-driving-license-renewal`); the declaration's accompanying date (`declarationDate`) is retained since it is itself a distinct data value, not a physical mark. The \"रुजु गर्ने अधिकारीः\" (Verifying Officer) block (position/signature/date) is excluded as staff-only office processing. The \"आवश्यक कागजातहरु\" (required documents) checklist itself ((क)-(च)) is excluded as informational text describing what to attach, not a field the applicant fills in on the form (no checkboxes or blanks accompany the list items).\n\nConformance: an ephemeral, from-scratch conformance checker (deriving required/enum rules directly from this schema's own `fields[]`, discarded after use, not committed) ran the fixtures documented in this version's `VERIFICATION.md`. Structural validation: `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (ajv 2020-12 against spec/v0.3) both pass on the full registry after adding this document; `npm run build-index` re-run in `tools/govschema-client/` to regenerate `registry-index.json`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "nationalIdentityNumber",
+      "label": "National Identity Number (NIN)",
+      "type": "string",
+      "required": false,
+      "description": "A pre-existing National Identity Number, when one was already assigned to the applicant (e.g. at civil/citizenship registration) prior to this physical-card application. This form is explicitly restricted to applicants who have never previously received the physical National Identity Card (per the form's own declaration, \"मैले यसअघि राष्ट्रिय परिचयपत्र लिएको छैन\" / \"I have not previously obtained a National ID Card\"), so this value, when present, identifies a NIN issued independently of card issuance, not a prior card.",
+      "classification": "sensitive-pii",
+      "sourceRef": "1. राष्ट्रिय परिचय नं./National Identity Number(NIN)"
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — पहिलो नाम/First Name"
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — बीचको नाम/Middle Name"
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — थर/Last Name"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "description": "Modelled as a single canonical ISO date. The form prints this date twice, in two parallel calendars, each as its own 8-box Year/Month/Day comb grid: वि.सं. (Bikram Sambat, the calendar in official use in Nepal) and Date of Birth (AD) (Gregorian) — a consuming agent completing the literal paper form is expected to derive both calendar representations from this one canonical value, consistent with this registry's treatment of parallel-calendar date pairs (e.g. `np/dop/mrp-offline-application-form`).",
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — जन्म मिति (वि.सं.) / Date of Birth (AD)"
+    },
+    {
+      "name": "citizenshipCertificateNumber",
+      "label": "Citizenship Certificate Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — नागरिकता प्रमाणपत्र नं."
+    },
+    {
+      "name": "citizenshipCertificateIssueDate",
+      "label": "Citizenship Certificate Issue Date",
+      "type": "string",
+      "required": true,
+      "description": "An 8-digit Year/Month/Day comb grid, entered as digits (YYYYMMDD). Modelled as a free-form string rather than `type: date`: unlike the applicant's Date of Birth (which prints explicit वि.सं./AD calendar labels on parallel boxes), this box carries no calendar label at all, so the calendar it encodes (almost certainly Bikram Sambat, consistent with Nepali citizenship-certificate dating convention, but not confirmed by the form's own text) cannot be determined without fabricating an assumption the source does not support.",
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — नागरिकता जारी मिति"
+    },
+    {
+      "name": "citizenshipCertificateIssuingDistrict",
+      "label": "Citizenship Certificate Issuing District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — जारी जिल्ला"
+    },
+    {
+      "name": "citizenshipType",
+      "label": "Type of Citizenship",
+      "type": "enum",
+      "required": true,
+      "description": "Six checkboxes on the source, in this order: जन्मसिद्ध (by birth), जन्मको आधारमा (on the basis of birth), वंशज (by descent), सम्मानार्थ (honorary), अंगीकृत (naturalized), वैवाहिक अंगीकृत (naturalized by marriage).",
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — नागरिकताको किसिम: जन्मसिद्ध/जन्मको आधारमा/वंशज/सम्मानार्थ/अंगीकृत/वैवाहिक अंगीकृत",
+      "validation": {
+        "enum": [
+          "by-birth",
+          "on-basis-of-birth",
+          "by-descent",
+          "honorary",
+          "naturalized",
+          "naturalized-by-marriage"
+        ]
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — जन्म स्थान"
+    },
+    {
+      "name": "previousCitizenshipRenunciationDate",
+      "label": "Previous Citizenship Renunciation Date",
+      "type": "string",
+      "required": false,
+      "description": "An 8-digit Year/Month/Day comb grid (YYYYMMDD), calendar unlabeled on the source. Conditioned in the source's own parenthetical on having previously held another country's citizenship (\"पहिले अन्य देशको नागरिक भएमा\"), but the form provides no separate boolean/checkbox for that condition to gate requiredness on, so it is modelled as unconditionally optional, consistent with this registry's treatment of similarly gated-by-prose-only fields (e.g. `ng/nimc/nin-enrolment-form`'s Section B).",
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — (पहिले अन्य देशको नागरिक भएमा) अधिल्लो नागरिकता त्याग मिति"
+    },
+    {
+      "name": "previousNationality",
+      "label": "Previous Nationality (Country Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "2. आवेदकको व्यक्तिगत विवरण — अधिल्लो राष्ट्रियता (देशको नाम)"
+    },
+    {
+      "name": "permanentAddressProvince",
+      "label": "Permanent Address — Province",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (स्थायी) — प्रदेश"
+    },
+    {
+      "name": "permanentAddressDistrict",
+      "label": "Permanent Address — District",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (स्थायी) — जिल्ला"
+    },
+    {
+      "name": "permanentAddressMunicipality",
+      "label": "Permanent Address — Rural/Urban Municipality",
+      "type": "string",
+      "required": true,
+      "description": "Rural municipality (गाउँपालिका) or urban municipality (नगरपालिका).",
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (स्थायी) — गा.पा./न.पा."
+    },
+    {
+      "name": "permanentAddressWardNumber",
+      "label": "Permanent Address — Ward Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (स्थायी) — वडा नं."
+    },
+    {
+      "name": "permanentAddressVillageOrTole",
+      "label": "Permanent Address — Village/Tole",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (स्थायी) — गाउँ टोल"
+    },
+    {
+      "name": "temporaryAddressProvince",
+      "label": "Temporary Address — Province",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the permanent address, per the form's own instruction (\"स्थायी ठेगाना भन्दा फरक भएमा मात्र भर्नुहोस्\" / \"fill in only if different from the permanent address\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (अस्थायी) — प्रदेश"
+    },
+    {
+      "name": "temporaryAddressDistrict",
+      "label": "Temporary Address — District",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the permanent address, per the form's own instruction (\"स्थायी ठेगाना भन्दा फरक भएमा मात्र भर्नुहोस्\" / \"fill in only if different from the permanent address\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (अस्थायी) — जिल्ला"
+    },
+    {
+      "name": "temporaryAddressMunicipality",
+      "label": "Temporary Address — Rural/Urban Municipality",
+      "type": "string",
+      "required": false,
+      "description": "Rural municipality (गाउँपालिका) or urban municipality (नगरपालिका). Only completed when different from the permanent address, per the form's own instruction (\"स्थायी ठेगाना भन्दा फरक भएमा मात्र भर्नुहोस्\" / \"fill in only if different from the permanent address\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (अस्थायी) — गा.पा./न.पा."
+    },
+    {
+      "name": "temporaryAddressWardNumber",
+      "label": "Temporary Address — Ward Number",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the permanent address, per the form's own instruction (\"स्थायी ठेगाना भन्दा फरक भएमा मात्र भर्नुहोस्\" / \"fill in only if different from the permanent address\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (अस्थायी) — वडा नं."
+    },
+    {
+      "name": "temporaryAddressVillageOrTole",
+      "label": "Temporary Address — Village/Tole",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the permanent address, per the form's own instruction (\"स्थायी ठेगाना भन्दा फरक भएमा मात्र भर्नुहोस्\" / \"fill in only if different from the permanent address\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना (अस्थायी) — गाउँ टोल"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना — फोन नं."
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "3. ठेगाना — मोवाइल नं."
+    },
+    {
+      "name": "caste",
+      "label": "Caste/Ethnicity",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "4. अन्य विवरण — जात"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "string",
+      "required": false,
+      "description": "A blank single-line box with no printed instruction key defining accepted values (contrast `np/dop/mrp-offline-application-form`'s \"M for Male, F for Female\" key for its own comb-box Sex field). Modelled as free text rather than a fabricated enum, since the source draws no distinction between this field and its neighbouring जात (caste) and धर्म (religion) free-text boxes.",
+      "classification": "pii",
+      "sourceRef": "4. अन्य विवरण — लिङ्ग"
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "4. अन्य विवरण — धर्म"
+    },
+    {
+      "name": "educationalQualification",
+      "label": "Educational Qualification",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "4. अन्य विवरण — शैक्षिक योग्यता"
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "4. अन्य विवरण — पेशा"
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "4. अन्य विवरण — वैवाहिक स्थिति: विवाहित/अविवाहित/अन्य",
+      "validation": {
+        "enum": [
+          "married",
+          "unmarried",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "guardianName",
+      "label": "Guardian's Name",
+      "type": "string",
+      "required": false,
+      "description": "\"In case there is no trace/record of paternity (पितृत्वको ठेगान नभएको हकमा), name of the guardian (संरक्षक)\" — provided in place of the father's details when the applicant's paternal lineage cannot be established.",
+      "classification": "pii",
+      "sourceRef": "4. अन्य विवरण — पितृत्वको ठेगान नभएको हकमा संरक्षकको नाम"
+    },
+    {
+      "name": "fatherCitizenshipCertificateNumber",
+      "label": "Father's Citizenship Certificate Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — नागरिकता प्रमाणपत्र नं."
+    },
+    {
+      "name": "fatherCitizenshipCertificateIssueDate",
+      "label": "Father's Citizenship Certificate Issue Date",
+      "type": "string",
+      "required": false,
+      "description": "An 8-digit Year/Month/Day comb grid (YYYYMMDD); calendar unlabeled on the source (see `citizenshipCertificateIssueDate`).",
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — जारी मिति"
+    },
+    {
+      "name": "fatherCitizenshipCertificateIssuingDistrict",
+      "label": "Father's Citizenship Certificate Issuing District",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — जारी जिल्ला"
+    },
+    {
+      "name": "fatherNationalIdentityNumber",
+      "label": "Father's National Identity Number (NIN)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — राष्ट्रिय परिचय नं./NIN"
+    },
+    {
+      "name": "fatherFirstName",
+      "label": "Father's First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — पहिलो नाम/First Name"
+    },
+    {
+      "name": "fatherMiddleName",
+      "label": "Father's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — बीचको नाम/Middle Name"
+    },
+    {
+      "name": "fatherLastName",
+      "label": "Father's Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — थर/Last Name"
+    },
+    {
+      "name": "fatherAddressProvince",
+      "label": "Father's Address — Province",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — ठेगाना — प्रदेश"
+    },
+    {
+      "name": "fatherAddressDistrict",
+      "label": "Father's Address — District",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — ठेगाना — जिल्ला"
+    },
+    {
+      "name": "fatherAddressMunicipality",
+      "label": "Father's Address — Rural/Urban Municipality",
+      "type": "string",
+      "required": false,
+      "description": "Rural municipality (गाउँपालिका) or urban municipality (नगरपालिका). Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — ठेगाना — गा.पा./न.पा."
+    },
+    {
+      "name": "fatherAddressWardNumber",
+      "label": "Father's Address — Ward Number",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — ठेगाना — वडा नं."
+    },
+    {
+      "name": "fatherAddressVillageOrTole",
+      "label": "Father's Address — Village/Tole",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — ठेगाना — गाउँ टोल"
+    },
+    {
+      "name": "fatherForeignCitizenshipCountry",
+      "label": "Father's Country of Citizenship (if foreign)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "5. बाबु/पिताको विवरण — बाबु विदेशी भए बाबु नागरिक रहेको मुलुकको नाम"
+    },
+    {
+      "name": "motherCitizenshipCertificateNumber",
+      "label": "Mother's Citizenship Certificate Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "6. आमाको विवरण — नागरिकता प्रमाणपत्र नं."
+    },
+    {
+      "name": "motherCitizenshipCertificateIssueDate",
+      "label": "Mother's Citizenship Certificate Issue Date",
+      "type": "string",
+      "required": false,
+      "description": "An 8-digit Year/Month/Day comb grid (YYYYMMDD); calendar unlabeled on the source (see `citizenshipCertificateIssueDate`).",
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — जारी मिति"
+    },
+    {
+      "name": "motherCitizenshipCertificateIssuingDistrict",
+      "label": "Mother's Citizenship Certificate Issuing District",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — जारी जिल्ला"
+    },
+    {
+      "name": "motherNationalIdentityNumber",
+      "label": "Mother's National Identity Number (NIN)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "6. आमाको विवरण — राष्ट्रिय परिचय नं./NIN"
+    },
+    {
+      "name": "motherFirstName",
+      "label": "Mother's First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — पहिलो नाम/First Name"
+    },
+    {
+      "name": "motherMiddleName",
+      "label": "Mother's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — बीचको नाम/Middle Name"
+    },
+    {
+      "name": "motherLastName",
+      "label": "Mother's Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — थर/Last Name"
+    },
+    {
+      "name": "motherAddressProvince",
+      "label": "Mother's Address — Province",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — ठेगाना — प्रदेश"
+    },
+    {
+      "name": "motherAddressDistrict",
+      "label": "Mother's Address — District",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — ठेगाना — जिल्ला"
+    },
+    {
+      "name": "motherAddressMunicipality",
+      "label": "Mother's Address — Rural/Urban Municipality",
+      "type": "string",
+      "required": false,
+      "description": "Rural municipality (गाउँपालिका) or urban municipality (नगरपालिका). Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — ठेगाना — गा.पा./न.पा."
+    },
+    {
+      "name": "motherAddressWardNumber",
+      "label": "Mother's Address — Ward Number",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — ठेगाना — वडा नं."
+    },
+    {
+      "name": "motherAddressVillageOrTole",
+      "label": "Mother's Address — Village/Tole",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — ठेगाना — गाउँ टोल"
+    },
+    {
+      "name": "motherForeignCitizenshipCountry",
+      "label": "Mother's Country of Citizenship (if foreign)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "6. आमाको विवरण — आमा विदेशी भए आमा नागरिक रहेको मुलुकको नाम"
+    },
+    {
+      "name": "grandfatherFirstName",
+      "label": "Grandfather's First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "7. हजुरबुबाको विवरण — पहिलो नाम/First Name"
+    },
+    {
+      "name": "grandfatherMiddleName",
+      "label": "Grandfather's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "7. हजुरबुबाको विवरण — बीचको नाम/Middle Name"
+    },
+    {
+      "name": "grandfatherLastName",
+      "label": "Grandfather's Last Name",
+      "type": "string",
+      "required": false,
+      "description": "The source labels this section only \"हजुरबुबाको विवरण\" with no paternal/maternal qualifier; modelled without one rather than fabricating a side the source does not state.",
+      "classification": "pii",
+      "sourceRef": "7. हजुरबुबाको विवरण — थर/Last Name"
+    },
+    {
+      "name": "grandmotherFirstName",
+      "label": "Grandmother's First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "8. हजुरआमाको विवरण — पहिलो नाम/First Name"
+    },
+    {
+      "name": "grandmotherMiddleName",
+      "label": "Grandmother's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "8. हजुरआमाको विवरण — बीचको नाम/Middle Name"
+    },
+    {
+      "name": "grandmotherLastName",
+      "label": "Grandmother's Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "8. हजुरआमाको विवरण — थर/Last Name"
+    },
+    {
+      "name": "spouseFirstName",
+      "label": "Spouse's First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — पहिलो नाम/First Name"
+    },
+    {
+      "name": "spouseMiddleName",
+      "label": "Spouse's Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — बीचको नाम/Middle Name"
+    },
+    {
+      "name": "spouseLastName",
+      "label": "Spouse's Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — थर/Last Name"
+    },
+    {
+      "name": "spouseAddressProvince",
+      "label": "Spouse's Address — Province",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — ठेगाना — प्रदेश"
+    },
+    {
+      "name": "spouseAddressDistrict",
+      "label": "Spouse's Address — District",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — ठेगाना — जिल्ला"
+    },
+    {
+      "name": "spouseAddressMunicipality",
+      "label": "Spouse's Address — Rural/Urban Municipality",
+      "type": "string",
+      "required": false,
+      "description": "Rural municipality (गाउँपालिका) or urban municipality (नगरपालिका). Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — ठेगाना — गा.पा./न.पा."
+    },
+    {
+      "name": "spouseAddressWardNumber",
+      "label": "Spouse's Address — Ward Number",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — ठेगाना — वडा नं."
+    },
+    {
+      "name": "spouseAddressVillageOrTole",
+      "label": "Spouse's Address — Village/Tole",
+      "type": "string",
+      "required": false,
+      "description": "Only completed when different from the applicant's own address, per the form's own instruction (\"आवेदकको ठेगाना भन्दा फरक ठेगाना भएमा मात्र भर्नुहोस्\"); the form provides no separate yes/no checkbox to gate requiredness on, so it is modelled as unconditionally optional.",
+      "classification": "pii",
+      "sourceRef": "9. पति/पत्नीको विवरण — ठेगाना — गाउँ टोल"
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration Date",
+      "type": "string",
+      "required": false,
+      "description": "The date accompanying the applicant's handwritten signature on the declaration (\"मैले माथि उल्लेख गरेको व्यहोरा साँचो हो...\" / \"I declare the above particulars are true...\"). Modelled as a free-form string: unlike the form's several 8-box YYYYMMDD comb grids, this is a plain blank line with no digit-box structure or calendar label at all. The signature itself is excluded as a physical handwritten mark, consistent with this registry's established treatment of wet-ink signatures (e.g. `np/dop/mrp-offline-application-form`, `do/mirex/passport-application`); this accompanying date is retained since it is itself a distinct data value.",
+      "classification": "pii",
+      "sourceRef": "मितिः........ (beside निवेदकको दस्तखतः- / Applicant's Signature, under भवदीय / \"Yours faithfully\")"
+    }
+  ]
+}
