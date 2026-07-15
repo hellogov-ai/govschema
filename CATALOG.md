@@ -4,7 +4,30 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **474 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **475 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3134, delegated from GOV-3128, "GovSchema
+> Standard Research"): Pakistan's DMV vertical opens, bringing Pakistan to 3
+> of 6 verticals**, via `pk/excise-punjab/registration-of-motor-vehicles-form-f`
+> — the Excise, Taxation & Narcotics Control Department, Government of the
+> Punjab's Form F, "Application for Registration of Motor Vehicles," filed
+> under section 25(1) of the Motor Vehicles Ordinance, 1965. Pakistan has no
+> federal vehicle-registration system — registration is provincial — so this
+> document is explicitly scoped to Punjab, the largest province and the one
+> with a directly citable, unauthenticated official source. Picked up as an
+> unclaimed, pre-scouted child issue (GOV-3134) from the prior GOV-3128
+> cycle rather than re-scouted from nothing; independently re-fetched (sha256
+> recorded in VERIFICATION.md, matching GOV-3128's own pre-recorded notes)
+> and re-extracted with `pdfjs-dist@3.11.174` before authoring. A flat, native-text-layer,
+> non-AcroForm, single-page PDF with a two-column, 31-item numbered layout —
+> notably items 21 and 22 each carry an identical front/rear/rear axle
+> weight breakdown side by side (maximum laden weight vs. a separately
+> labelled maximum axle weight), confirmed via coordinate comparison rather
+> than assumed to be a duplicate. 32 `fields[]`. 6 conformance fixtures (2
+> valid, 4 mutation-control) committed under
+> `conformance/pk/excise-punjab/registration-of-motor-vehicles-form-f/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing record and
+> scope decisions.
 
 > **Update (2026-07-15, GOV-3133/GOV-3138, "GovSchema Standard Research"):
 > Israel's DMV vertical opens (6 of 6), bringing Israel to full coverage
@@ -10349,7 +10372,13 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (49/62 jurisdictions — 79%)
+### DMV — Vehicle Registration, Licensing, Permits (50/62 jurisdictions — 81%)
+
+> **Update (GOV-3134, delegated from GOV-3128): Pakistan's DMV vertical
+> opens**, via `pk/excise-punjab/registration-of-motor-vehicles-form-f` —
+> see the Executive Summary's GOV-3134 update above and the document's own
+> VERIFICATION.md. Scoped to Punjab province (no federal vehicle-
+> registration system exists in Pakistan). Numerator updated from 49 to 50.
 
 > **Update (GOV-3133/GOV-3138): Israel's DMV vertical opens**, via
 > `il/mot/medical-examination-driving-license-renewal` — see the Executive
@@ -13893,7 +13922,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **PK** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **RO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16218,9 +16247,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Deposit Request** (`HafkadatRisayon.pdf`, ~10 fields) remain confirmed
   live but unmodeled — disclosed as backlog for a future companion-schema
   cycle, not required to keep Israel at 6/6.
-- **Pakistan — DMV: scouted, ready to author, delegated as a child issue
-  (GOV-3128).** Pakistan is 2 of 6 (Business Formation, Taxes); this
-  cycle's scouting also re-confirmed Passport, Visa, and National ID as
+- **Pakistan — DMV: authored (GOV-3134, delegated from GOV-3128).** Pakistan
+  is now 3 of 6 (Business Formation, DMV, Taxes) — see the Executive
+  Summary's GOV-3134 update and the DMV vertical section above for the full
+  sourcing record. This cycle's earlier GOV-3128 scouting also re-confirmed
+  Passport, Visa, and National ID as
   dead ends (see below) and found DMV the only live candidate. Vehicle
   registration in Pakistan is provincial, not federal — the Punjab Excise,
   Taxation & Narcotics Control Department's **Form F**, "Application for
