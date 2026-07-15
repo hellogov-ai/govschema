@@ -1,0 +1,620 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "il/corporations-authority/company-registration-form-1",
+  "version": "1.0.0",
+  "title": "Israel — Application for Registration of a Company (Form 1 / טופס 1)",
+  "description": "The Israeli Corporations Authority's (Ministry of Justice) Form 1 (טופס 1, Regulation 1), 'Application for Registration of a Company', filed with the Registrar of Companies under section 8 of the Companies Law, 5759-1999. Opens Israel's Business Formation vertical (2 of 6, combined with the already-modelled Taxes vertical, `il/tax-authority/1301-personal-details`). Scoped to the simplest coherent pathway: a single natural-person founder who is simultaneously the company's sole initial applicant/shareholder, filing a private company limited by shares with one class of shares. Out of scope: a corporate (rather than natural-person) founder, multiple founders/shareholders (the form's own shareholder-declaration block and share-allocation table are open, many-row repeating structures; GovSchema's array/repeating-group proposal, GSP-0009, is not yet part of the accepted v0.3 specification, so this version models exactly one shareholder rather than fabricating a row cap), multiple distinct share classes (the form's own share-capital table is likewise a repeating table, collapsed here to one class), and the ambiguous single-checkbox row referencing section 175 of the Companies Law (a source-extraction artifact left this row's own heading text partially garbled in the underlying .doc file; rather than fabricate its meaning, it is disclosed here as an unresolved gap for a future review with cleaner source access). This document describes the form only; it does not submit anything on the founder's behalf, and does not imply endorsement by the State of Israel, the Ministry of Justice, or the Israeli Corporations Authority. GovSchema is independent and is not affiliated with, endorsed by, or operated by the State of Israel.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Registrar of Companies, Israeli Corporations Authority (Ministry of Justice)",
+    "abbreviation": "ICA",
+    "url": "https://www.gov.il/en/departments/israeli_corporations_authority"
+  },
+  "process": {
+    "type": "registration",
+    "language": "he"
+  },
+  "source": {
+    "url": "https://www.gov.il/BlobFolder/servicequestionnaire/company_registration/he/companyregistrationform2%20(2).doc",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Form 1 (טופס 1, תקנה 1), \"Application for Registration of a Company\" (בקשה לרישום חברה), filed under section 8 of the Companies Law, 5759-1999"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3087 'GovSchema Standard Research' cycle. This candidate was pre-scouted and left as disclosed, ready-to-author backlog by the prior GOV-3078 cycle (which opened Israel's Business Formation, Passport, and Visa verticals as strong leads but deferred authoring given that cycle's one-cycle budget already spent on Nepal), and independently re-fetched and re-verified from scratch this cycle rather than trusted as-is. Direct `curl` fetch (no login/CAPTCHA gate on this BlobFolder URL, though the `gov.il` service landing page is Cloudflare-gated): HTTP 200, content-length 441,856 bytes, sha256 `302bb540d3c970d7fe9bd5f53f03221ee6ebbfdb334fc55cb2e808b3c9feada5`. Magic-byte check (`D0 CF 11 E0 A1 B1 1A E1`) confirms a genuine legacy OLE/CFB Word .doc (not .docx, not a renamed HTML/mislabeled file — a distinct pitfall this registry has previously hit, see `sl/bnr.wp.gov.lk` mismatched-content precedent). Extracted via the `word-extractor` npm package's `getBody()` API, which recovers the document's full run of table cells and paragraph text in document order (including every FORMTEXT placeholder as a literal blank run); no bookmark/FFData (interactive form-field name/tooltip) extraction API is exposed by this library for legacy binary .doc, so field identity and scope were derived from the adjacent label text and table structure the extracted body itself carries (each block below quotes its own governing Hebrew label verbatim in `sourceRef`), the same label-proximity technique already established in this registry for other non-AcroForm/flat sources. Reading the extracted body end to end confirms Form 1's own structure: proposed company name (up to 3, priority order); the founder/applicant's identity and address (natural-person path only — the form's alternative corporate-founder path, 'שם התאגיד / מס' תאגיד', is out of scope for this version); the company's proposed registered-office address; optional company email/phone; two attachment checkboxes (signed Articles of Association, first directors' fitness declaration); a four-option company-purpose block under section 32 of the Law; three paired restriction/no-restriction checkbox blocks (share-transfer restriction, public-offering prohibition, 50-shareholder-cap, each 'mark the applicable alternative and detail the governing articles sections' per the form's own instruction); registered and allocated share-capital blocks (collapsed from the form's own open share-type and shareholder tables to one share class / one shareholder, matching this registry's established convention — see `pk/secp/company-incorporation-single-member-company`'s identical single-subscriber collapse of a wide, many-row source table — for the same GSP-0009 reason); shareholder-liability election (limited by shares, or unlimited with a professional/other-company description); legal-action-limitation and signing-rights disclosure; General Manager identity; the section-39 authorized-reporting-officer identity; the founder's own first-shareholder sworn declaration (including the form's own non-Israeli-ID-holder passport disclosure, modelled as a genuine boolean gate — 'האם החותם בעל ת\"ז ישראלית' is the real either/or distinction the form's own prose draws, unlike cases elsewhere in this registry where a conditional was disclosed rather than invented for lack of a real gate); and the certifying attorney's own identity and certification declaration (mandatory on every filing under this form, not optional — modelled as always-required fields/document, not gated behind a paid-preparer-style boolean, since the form provides no alternative unwitnessed pathway). One row (heading text approximating 'הוראות בתקנון לפי סעיף 175 לחוק', referencing a balance-sheet-attachment exemption contingent on the three restriction checkboxes above) came back from `word-extractor` with a garbled, partially duplicated heading fragment ('הור הוב הוראות...') that could not be confidently reconstructed into a single unambiguous field; disclosed above as an out-of-scope gap rather than guessed at, consistent with this registry's precision-over-fabrication convention. `documents[]` (5 entries) models the two attachment checkboxes as `supporting-evidence` (the fitness declaration is itself a distinct standalone document this form only references by title, not a statement this form itself states verbatim), the founder's own sworn first-shareholder declaration and the certifying attorney's own certification as `attestation` entries with statement text quoted verbatim from the extracted body, and the non-Israeli-ID passport copy as an `identity-document` entry gated on `founderHasIsraeliId`. 2 valid mock scenarios (a limited-by-shares single-founder company with no-par-value shares; an unlimited professional company with par-value shares and a non-Israeli-ID founder) plus 5 mutation-control fixtures (a missing statically-required field, a missing conditional field while `shareTransferRestricted` is true, a missing conditional field while `founderHasIsraeliId` is false, a missing required document, an invalid `shareholderLiabilityType` enum value) are committed under `conformance/il/corporations-authority/company-registration-form-1/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 7: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error, and confirmed every requiredWhen field/document reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "proposedCompanyNamePrimary",
+      "label": "שם החברה המוצע",
+      "type": "string",
+      "required": true,
+      "description": "The founder's first-choice proposed company name.",
+      "sourceRef": "\"שם החברה המוצע (בסדר עדיפות יורד)\" (\"Proposed company name, in descending order of priority\"), first line"
+    },
+    {
+      "name": "proposedCompanyNameAlternate2",
+      "label": "שם החברה המוצע (חלופה שנייה)",
+      "type": "string",
+      "required": false,
+      "description": "Second-choice proposed company name, used if the Registrar rejects the first choice.",
+      "sourceRef": "\"שם החברה המוצע (בסדר עדיפות יורד)\", second line"
+    },
+    {
+      "name": "proposedCompanyNameAlternate3",
+      "label": "שם החברה המוצע (חלופה שלישית)",
+      "type": "string",
+      "required": false,
+      "description": "Third-choice proposed company name, used if the Registrar rejects the first two choices.",
+      "sourceRef": "\"שם החברה המוצע (בסדר עדיפות יורד)\", third line"
+    },
+    {
+      "name": "founderLastName",
+      "label": "שם משפחה",
+      "type": "string",
+      "required": true,
+      "description": "Family name of the natural-person founder submitting this application.",
+      "sourceRef": "\"אני החתום מטה\" block — \"שם משפחה\""
+    },
+    {
+      "name": "founderFirstName",
+      "label": "שם פרטי",
+      "type": "string",
+      "required": true,
+      "description": "Given name of the founder.",
+      "sourceRef": "\"אני החתום מטה\" block — \"שם פרטי\""
+    },
+    {
+      "name": "founderIdNumber",
+      "label": "מס' זהות",
+      "type": "string",
+      "required": true,
+      "description": "National identity number (Teudat Zehut) of the founder.",
+      "sourceRef": "\"אני החתום מטה\" block — \"מס' זהות\""
+    },
+    {
+      "name": "founderCountry",
+      "label": "מדינה",
+      "type": "string",
+      "required": true,
+      "description": "Country of the founder's own address (\"שמענו\" — \"our address\").",
+      "sourceRef": "\"שמענו\" block — \"מדינה\""
+    },
+    {
+      "name": "founderCity",
+      "label": "יישוב",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"שמענו\" block — \"יישוב\""
+    },
+    {
+      "name": "founderStreet",
+      "label": "רחוב",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"שמענו\" block — \"רחוב\""
+    },
+    {
+      "name": "founderHouseNumber",
+      "label": "מס' בית",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"שמענו\" block — \"מס' בית\""
+    },
+    {
+      "name": "founderApartmentNumber",
+      "label": "מס' דירה",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"שמענו\" block — \"מס' דירה\""
+    },
+    {
+      "name": "founderPostalCode",
+      "label": "מיקוד",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"שמענו\" block — \"מיקוד\""
+    },
+    {
+      "name": "founderPhone",
+      "label": "טלפון",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"שמענו\" block — \"טלפון\""
+    },
+    {
+      "name": "registeredOfficeCity",
+      "label": "יישוב",
+      "type": "string",
+      "required": true,
+      "description": "Locality of the proposed company's registered office in Israel.",
+      "sourceRef": "\"מען המשרד הרשום שלה בישראל יהיה\" block — \"יישוב\""
+    },
+    {
+      "name": "registeredOfficeStreet",
+      "label": "רחוב",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"מען המשרד הרשום שלה בישראל יהיה\" block — \"רחוב\""
+    },
+    {
+      "name": "registeredOfficeHouseNumber",
+      "label": "מס' בית",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"מען המשרד הרשום שלה בישראל יהיה\" block — \"מס' בית\""
+    },
+    {
+      "name": "registeredOfficeApartmentNumber",
+      "label": "מס' דירה",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"מען המשרד הרשום שלה בישראל יהיה\" block — \"מס' דירה\""
+    },
+    {
+      "name": "registeredOfficePostalCode",
+      "label": "מיקוד",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"מען המשרד הרשום שלה בישראל יהיה\" block — \"מיקוד\""
+    },
+    {
+      "name": "registeredOfficeCareOfName",
+      "label": "אצל: שם מלא",
+      "type": "string",
+      "required": false,
+      "description": "Full name of the person the registered office is c/o, if the office is not held directly in the company's own name.",
+      "sourceRef": "\"מען המשרד הרשום שלה בישראל יהיה\" block — \"אצל: שם מלא\""
+    },
+    {
+      "name": "registeredOfficePoBoxLocality",
+      "label": "ת\"ד - יישוב",
+      "type": "string",
+      "required": false,
+      "description": "P.O. box and locality, if the registered office receives mail via a P.O. box.",
+      "sourceRef": "\"מען המשרד הרשום שלה בישראל יהיה\" block — \"ת\\\"ד - יישוב\""
+    },
+    {
+      "name": "companyEmail",
+      "label": "הדואר האלקטרוני של החברה",
+      "type": "string",
+      "required": false,
+      "description": "The proposed company's email address (not mandatory per the form's own instruction).",
+      "sourceRef": "\"הדואר האלקטרוני של החברה (אין חובה לציין)\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "companyPhone",
+      "label": "טלפון",
+      "type": "string",
+      "required": false,
+      "description": "The proposed company's phone number (not mandatory per the form's own instruction).",
+      "sourceRef": "\"טלפון (אין חובה לציין)\""
+    },
+    {
+      "name": "companyPurposeType",
+      "label": "מטרות החברה",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the Companies Law section 32 purpose pathways the company adopts.",
+      "sourceRef": "\"מטרות החברה: (נא סמן X ופרט ככל הנדרש)\" — options 1-4, each quoted verbatim in this field's enum documentation",
+      "validation": {
+        "enum": [
+          "LAWFUL_BUSINESS_UNRESTRICTED",
+          "LAWFUL_BUSINESS_EXCEPT_LISTED",
+          "SPECIFIED_BUSINESSES_ONLY",
+          "PUBLIC_PURPOSE_NO_PROFIT_DISTRIBUTION"
+        ]
+      }
+    },
+    {
+      "name": "companyPurposeDetail",
+      "label": "פירוט",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyPurposeType",
+        "notEquals": "LAWFUL_BUSINESS_UNRESTRICTED"
+      },
+      "description": "Detail supporting the chosen purpose type: the excluded businesses (per §32(2)), the specified businesses (per §32(3)), or the public purposes (per the fourth option), as applicable. Not required when the company adopts the unrestricted §32(1) pathway, which the form itself leaves undetailed.",
+      "sourceRef": "\"מטרות החברה\" block, options 2-4's own blank detail lines"
+    },
+    {
+      "name": "shareTransferRestricted",
+      "label": "סייגים על העברת מניות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the articles of association restrict the right to transfer the company's shares.",
+      "sourceRef": "\"סייגים על העברת מניות (נא סמן את החלופה המתאימה ופרט ככל הנדרש)\""
+    },
+    {
+      "name": "shareTransferRestrictionSections",
+      "label": "סעיפים בתקנון",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "shareTransferRestricted",
+        "equals": true
+      },
+      "description": "Article sections stating the share-transfer restriction.",
+      "sourceRef": "\"תקנון החברה מסייג את הזכות להעביר את מניות החברה, כאמור בסעיפים: ___ בתקנון\""
+    },
+    {
+      "name": "publicOfferingProhibited",
+      "label": "איסור על הצעה לציבור של מניות או אגרות חוב",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the articles of association prohibit a public offering of the company's shares or bonds.",
+      "sourceRef": "\"איסור על הצעה לציבור של מניות או אגרות חוב (נא סמן את החלופה המתאימה ופרט ככל הנדרש)\""
+    },
+    {
+      "name": "publicOfferingProhibitionSections",
+      "label": "סעיפים בתקנון",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "publicOfferingProhibited",
+        "equals": true
+      },
+      "description": "Article sections stating the public-offering prohibition.",
+      "sourceRef": "\"תקנון החברה אוסר הצעה לציבור של מניות או איגרות חוב כאמור בסעיפים: ___ בתקנון\""
+    },
+    {
+      "name": "shareholderCountLimited",
+      "label": "הגבלה על מספר בעלי המניות בחברה",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the articles of association limit the number of shareholders to fifty (excluding company employees).",
+      "sourceRef": "\"הגבלה על מספר בעלי המניות בחברה (נא סמן את החלופה המתאימה ופרט ככל הנדרש)\""
+    },
+    {
+      "name": "shareholderCountLimitationSections",
+      "label": "סעיפים בתקנון",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "shareholderCountLimited",
+        "equals": true
+      },
+      "description": "Article sections stating the fifty-shareholder limitation.",
+      "sourceRef": "\"תקנון החברה מגביל את מספר בעלי המניות בחברה עד חמישים, מלבד עובדי החברה בסעיפים: ___ בתקנון\""
+    },
+    {
+      "name": "sharesHaveParValue",
+      "label": "ערך נקוב",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the registered shares carry a stated par (nominal) value (true) or are no-par-value shares (false).",
+      "sourceRef": "\"הון החברה הרשום\" — \"___ מניות ללא ערך נקוב / בסך כולל של ___ ₪\""
+    },
+    {
+      "name": "registeredShareCount",
+      "label": "מספר המניות",
+      "type": "integer",
+      "required": true,
+      "description": "Total number of shares in the company's registered share capital.",
+      "sourceRef": "\"הון החברה הרשום\" — \"___ מניות\"",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "registeredShareCapitalTotalValue",
+      "label": "בסך כולל של ... ₪",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "sharesHaveParValue",
+        "equals": true
+      },
+      "description": "Total par value, in New Israeli Shekel, of the registered share capital.",
+      "sourceRef": "\"הון החברה הרשום\" — \"בסך כולל של ___ ₪\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "shareTypeName",
+      "label": "סוג/שם מניה",
+      "type": "string",
+      "required": true,
+      "description": "Name/type of the (single, in this version's scope) class of shares.",
+      "sourceRef": "Share-capital table — \"סוג/שם מניה\""
+    },
+    {
+      "name": "shareParValuePerShare",
+      "label": "ערך המניה",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "sharesHaveParValue",
+        "equals": true
+      },
+      "description": "Par value of a single share of this type, in New Israeli Shekel.",
+      "sourceRef": "Share-capital table — \"ערך המניה\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "allocatedShareCount",
+      "label": "הון החברה המוקצה",
+      "type": "integer",
+      "required": true,
+      "description": "Number of shares allocated to shareholders out of the registered share capital.",
+      "sourceRef": "\"הון החברה המוקצה\" — \"מתוך ההון הרשום, הוקצו לבעלי המניות: ___ מניות\"",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "allocatedShareCapitalTotalValue",
+      "label": "מניות בסך כולל של ... ₪",
+      "type": "number",
+      "required": false,
+      "requiredWhen": {
+        "field": "sharesHaveParValue",
+        "equals": true
+      },
+      "description": "Total par value, in New Israeli Shekel, of the allocated share capital.",
+      "sourceRef": "\"הון החברה המוקצה\" — \"מניות בסך כולל של ___ ₪\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "founderShareholdingType",
+      "label": "סוג ההחזקה",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the founder holds their allocated shares directly (ordinary) or in trust for another beneficial owner. Scoped to the single founder/shareholder this version models.",
+      "sourceRef": "Share-allocation table — \"סוג ההחזקה: רגילה או נאמנות\"",
+      "validation": {
+        "enum": ["ORDINARY", "TRUST"]
+      }
+    },
+    {
+      "name": "founderSharesAllocated",
+      "label": "מס' המניות מאותו סוג שהוקצו לבעל המניה",
+      "type": "integer",
+      "required": true,
+      "description": "Number of shares of the class above allocated to the founder.",
+      "sourceRef": "Share-allocation table — \"מס' המניות מאותו סוג שהוקצו לבעל המניה\"",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "shareholderLiabilityType",
+      "label": "אחריות בעלי המניות",
+      "type": "enum",
+      "required": true,
+      "description": "Whether shareholder liability is limited by shares, or unlimited (in which case the company must be a special professional company or another described company type).",
+      "sourceRef": "\"אחריות בעלי המניות (נא סמן X בחלופה המתאימה ופרט ככל הנדרש)\" — \"1. מוגבלת במניות\" / \"2. בלתי מוגבלת\"",
+      "validation": {
+        "enum": ["LIMITED_BY_SHARES", "UNLIMITED"]
+      }
+    },
+    {
+      "name": "unlimitedCompanyTypeDescription",
+      "label": "פרט",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "shareholderLiabilityType",
+        "equals": "UNLIMITED"
+      },
+      "description": "Description of the unlimited company's type: a special professional company (accountant, lawyer, private investigators) or another company type, as specified.",
+      "sourceRef": "\"2. בלתי מוגבלת - החברה היא חברה מקצועית מיוחדת (רו\\\"ח, עו\\\"ד, חוקרים פרטיים), חברה אחרת (פרט): ___\""
+    },
+    {
+      "name": "legalActionLimitationsExist",
+      "label": "מגבלות על פעולות משפטיות",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the articles of association contain limitations on the company's legal actions.",
+      "sourceRef": "\"מגבלות על פעולות משפטיות ומורשי חתימה\" — \"לא קיימות בתקנון מגבלות על פעולות משפטיות\" / \"קיימות בתקנון מגבלות על פעולות משפטיות\""
+    },
+    {
+      "name": "legalActionLimitationSections",
+      "label": "סעיפים",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "legalActionLimitationsExist",
+        "equals": true
+      },
+      "description": "Article sections stating the legal-action limitations.",
+      "sourceRef": "\"קיימות בתקנון מגבלות על פעולות משפטיות כאמור בסעיפים ___\""
+    },
+    {
+      "name": "signingRightsSections",
+      "label": "בסעיפים ... מפורטות הוראות בקשר לזכויות חתימה",
+      "type": "string",
+      "required": false,
+      "description": "Article sections detailing signing-rights provisions, if any.",
+      "sourceRef": "\"בסעיפים ___ בתקנון מפורטות הוראות בקשר לזכויות חתימה\""
+    },
+    {
+      "name": "generalManagerName",
+      "label": "שם",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the company's General Manager.",
+      "sourceRef": "\"המנהל הכללי של החברה\" — \"שם\""
+    },
+    {
+      "name": "generalManagerIdNumber",
+      "label": "מספר זיהוי",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"המנהל הכללי של החברה\" — \"מספר זיהוי\""
+    },
+    {
+      "name": "generalManagerAddress",
+      "label": "מען",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"המנהל הכללי של החברה\" — \"מען\""
+    },
+    {
+      "name": "generalManagerEmail",
+      "label": "דוא\"ל",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"המנהל הכללי של החברה\" — \"דוא\\\"ל\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "generalManagerPhone",
+      "label": "טלפון",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"המנהל הכללי של החברה\" — \"טלפון\""
+    },
+    {
+      "name": "authorizedReportingOfficerName",
+      "label": "שם",
+      "type": "string",
+      "required": true,
+      "description": "Name of the officer authorized to report to the Registrar on the company's behalf under section 39 of the Law.",
+      "sourceRef": "\"נושא משרה מוסמך לדווח לרשם בשם החברה לפי סעיף 39 לחוק הוא\" — \"שם\""
+    },
+    {
+      "name": "authorizedReportingOfficerIdNumber",
+      "label": "ת.ז.",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"נושא משרה מוסמך לדווח לרשם בשם החברה לפי סעיף 39 לחוק הוא\" — \"ת.ז.\""
+    },
+    {
+      "name": "authorizedReportingOfficerPosition",
+      "label": "תפקיד בחברה",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"נושא משרה מוסמך לדווח לרשם בשם החברה לפי סעיף 39 לחוק הוא\" — \"תפקיד בחברה\""
+    },
+    {
+      "name": "founderHasIsraeliId",
+      "label": "בעל ת\"ז ישראלית",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the founder signing the first-shareholder declaration holds an Israeli identity card (Teudat Zehut). If not, a passport number/issuing country and a certified copy must be provided instead.",
+      "sourceRef": "\"היה החותם מי שאינו בעל ת\\\"ז ישראלית, יציין מספר דרכונו, המדינה בה הוצא ויצורף לטופס זה העתק מאושר...\""
+    },
+    {
+      "name": "founderPassportNumber",
+      "label": "מספר דרכון",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "founderHasIsraeliId",
+        "equals": false
+      },
+      "sourceRef": "\"היה החותם מי שאינו בעל ת\\\"ז ישראלית, יציין מספר דרכונו\""
+    },
+    {
+      "name": "founderPassportIssuingCountry",
+      "label": "המדינה בה הוצא הדרכון",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "founderHasIsraeliId",
+        "equals": false
+      },
+      "sourceRef": "\"...המדינה בה הוצא...\""
+    },
+    {
+      "name": "founderDeclarationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date the founder signs the first-shareholder declaration.",
+      "sourceRef": "First-shareholder declaration row — \"תאריך\""
+    },
+    {
+      "name": "certifyingAttorneyName",
+      "label": "אני עורך הדין",
+      "type": "string",
+      "required": true,
+      "description": "Name of the attorney certifying the founder's signature and declaration, mandatory on every filing under this form.",
+      "sourceRef": "\"אני עורך הדין ___ מספר רישיון: ___\""
+    },
+    {
+      "name": "certifyingAttorneyLicenseNumber",
+      "label": "מספר רישיון",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"אני עורך הדין ___ מספר רישיון: ___\""
+    },
+    {
+      "name": "certifyingAttorneyCertificationDate",
+      "label": "תאריך",
+      "type": "date",
+      "required": true,
+      "description": "Date of the attorney's certification.",
+      "sourceRef": "Attorney-certification block — \"תאריך: ___ חתימת עורך הדין: ___\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "articlesOfAssociationCopy",
+      "label": "עותק תקנון חתום בידי בעל/י המניות הראשונים",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "\"ומצרף בזה: עותק תקנון חתום בידי בעל/י המניות הראשונים ומאומת כאמור בסעיף 23 (ב) לחוק\""
+    },
+    {
+      "id": "firstDirectorsDeclaration",
+      "label": "הצהרת הדירקטורים הראשונים על נכונותם לכהן כדירקטורים",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "\"ומצרף בזה: ... הצהרת הדירקטורים הראשונים על נכונותם לכהן כדירקטורים\""
+    },
+    {
+      "id": "founderDeclaration",
+      "label": "הצהרת בעל מניות ראשון",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "אני הח\"מ, לאחר שהוזהרתי כחוק כי עלי לומר את האמת וכי אהיה צפוי לעונשים הקבועים בחוק אם לא אעשה כן, מצהיר בזאת כלהלן: לגבי יחיד: אני כשיר לייסד חברה ולהחזיק מניות בה ואיני מוגבל על פי דין, ובכלל זה לפי פקודת פשיטת הרגל [נוסח חדש] התש\"ם-1980, לפי חוק ההוצאה לפועל, התשכ\"ז-1967, לפי חוק חדלות פירעון ושיקום כלכלי, התשע\"ח-2018, ולפי סעיף 7 לחוק.",
+      "sourceRef": "\"הצהרת בעלי מניות ראשונים\" — \"נוסח הצהרת בעלי המניות הראשונים\""
+    },
+    {
+      "id": "nonIsraeliIdCertifiedCopy",
+      "label": "העתק מאושר של הדרכון (למי שאינו בעל ת\"ז ישראלית)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "founderHasIsraeliId",
+        "equals": false
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "\"...ויצורף לטופס זה העתק מאושר כאמור בתקנה 16 לתקנות החברות (דיווח, פרטי רישום וטפסים), התש\"ס-1999\""
+    },
+    {
+      "id": "attorneyCertificationDeclaration",
+      "label": "אישור עורך הדין",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "אני עורך הדין מאשר בזה כי המוכר/ת לי אישית או שזיהה/תה עצמו/ה בפניי בתעודת זהות שמספרה [...], לאחר שהזהרתיו/ה כי עליו/ה להצהיר את האמת וכי יהיה/תהיה צפוי/ה לעונשים בחוק אם לא יעשה/תעשה כן, אישר/ה את נכונות הצהרתו/ה דלעיל, לרבות בדבר היותו מוסמך לחתום בשם התאגיד (אם הבקשה מוגשת על ידי תאגיד), וחתם/ה עליה בפניי.",
+      "sourceRef": "Attorney-certification block, full paragraph"
+    }
+  ]
+}

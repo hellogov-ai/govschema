@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**59 jurisdictions** | **465 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**59 jurisdictions** | **466 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3087, "GovSchema Standard Research"): Israel's
+> Business Formation vertical opens**, via
+> `il/corporations-authority/company-registration-form-1` — the Israeli
+> Corporations Authority's (Ministry of Justice) Form 1, "Application for
+> Registration of a Company", filed with the Registrar of Companies under
+> section 8 of the Companies Law, 5759-1999. This is the strongest of
+> three candidates the prior GOV-3078 cycle pre-scouted and left as
+> disclosed backlog (Israel's Business Formation, Passport, and Visa
+> verticals, plus Pakistan's Taxes vertical); independently re-fetched and
+> re-verified from scratch rather than trusted as pre-recorded (fresh
+> `curl`, sha256, magic-byte check confirming a genuine legacy OLE `.doc`).
+> Scoped to a single natural-person founder who is simultaneously the
+> company's sole applicant, sole initial shareholder, and general manager,
+> with one class of shares — the form's own shareholder/share-allocation
+> and share-capital-by-class tables are open, many-row repeating
+> structures, and GovSchema's repeating-groups proposal (GSP-0009) is not
+> yet part of the accepted v0.3 specification, so this version collapses
+> them to exactly one row each, following the identical precedent set by
+> `pk/secp/company-incorporation-single-member-company`. Models 60
+> `fields[]` and 5 `documents[]` entries; one checkbox row (referencing
+> section 175 of the Companies Law) came back from extraction with a
+> garbled, partially duplicated heading that could not be confidently
+> reconstructed and is disclosed as an out-of-scope gap rather than
+> guessed at. **Israel now stands at 2 of 6 verticals** (Taxes, Business
+> Formation); Passport and Visa remain pre-scouted, ready-to-author
+> backlog (see the GOV-3078 update below and the "Genuinely open,
+> well-sourced candidates" section for the full sourcing detail), and
+> Pakistan's Taxes candidate also remains open backlog.
 
 > **Update (2026-07-15, GOV-3078, "GovSchema Standard Research"): Nepal
 > opens as this registry's 59th jurisdiction**, via
@@ -10612,7 +10641,16 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (55/59 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (56/59 jurisdictions — 95%)
+
+> **Update (2026-07-15, GOV-3087, "GovSchema Standard Research"): Israel
+> opens this vertical (2 of 6 overall)**, via
+> `il/corporations-authority/company-registration-form-1` — the Israeli
+> Corporations Authority's Form 1, scoped to a single natural-person
+> founder/sole shareholder with one class of shares. See the Executive
+> Summary's GOV-3087 update above and the document's own VERIFICATION.md
+> for the full sourcing record. Denominator unchanged (Israel already
+> counted toward the 59-jurisdiction total via its Taxes vertical).
 
 > **Update (2026-07-15, GOV-3078, "GovSchema Standard Research"): Nepal
 > opens as this registry's 59th jurisdiction via this vertical**, via
@@ -13506,7 +13544,7 @@ now closed.
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IL** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **IL** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16529,6 +16567,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   one-cycle authoring budget already spent on Nepal (see the Executive
   Summary's GOV-3078 update above) — a future cycle should author Form 1
   first, then Passport (DR/1) and Visa as follow-ups.
+
+  **Update (GOV-3087, 2026-07-15): Business Formation (Form 1) authored,
+  Israel now stands at 2 of 6 verticals.**
+  `il/corporations-authority/company-registration-form-1` opens the
+  vertical, scoped to a single natural-person founder/sole shareholder
+  with one class of shares (the source's own shareholder/share-allocation
+  and share-capital-by-class tables are open, many-row repeating
+  structures GSP-0009 doesn't yet support modeling directly — collapsed to
+  one row each, the same convention `pk/secp/company-incorporation-single-
+  member-company` established). See the Executive Summary's GOV-3087
+  update above and the document's own VERIFICATION.md for the full
+  sourcing record. Passport (DR/1) and Visa remain the pre-scouted,
+  ready-to-author candidates described above for a future cycle.
 
 - **Pakistan — Passport and Visa: screened and confirmed dead ends this
   cycle (GOV-3078). Taxes: strong candidate found, delegated.** Pakistan's
