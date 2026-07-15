@@ -4,8 +4,46 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **456 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **457 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-15, GOV-3032, "GovSchema Standard Research"): Italy's
+> Visa vertical opens (now 3 of 6 overall)**, via
+> `it/maeci/domanda-di-visto-nazionale-d` — MAECI's (Ministero degli Affari
+> Esteri e della Cooperazione Internazionale) bilingual Italian/English
+> "National Visa Application (D)" / "Domanda di visto nazionale (D)", the
+> long-stay (Type D) national visa a non-EU/EEA/Swiss national applies for
+> at an Italian embassy or consulate. A prior scouting pass (GOV-3026) had
+> flagged this candidate but explicitly required a rigorous field-by-field
+> reconciliation against the registry's existing EU-harmonized long-stay-visa
+> siblings before authoring, per this registry's established precedent of
+> reversing "duplicate" findings only after an actual diff (ES/GOV-1861,
+> HR/GOV-2902). Independently re-fetched this cycle directly from `esteri.it`
+> (HTTP 200, `application/pdf`, 283,335 bytes, sha256
+> `eba970bc7eebfde7ed96f61a428172017e31b8586e6dd5effafe35ec41aa4dee`,
+> matching the scouting pass's own reported hash exactly) and independently
+> re-extracted via `pdfjs-dist`: 3 pages, zero Widget annotations on pages
+> 1-2 (a static hand-fill/print template, not a fillable AcroForm). A
+> field-by-field reconciliation against `de/auswaertiges-amt/national-visa-application`,
+> `bg/mvnr/zayavlenie-za-izdavane-na-natsionalna-viza-tip-d`,
+> `es/maec/solicitud-visado-nacional`, and `hr/mvep/zahtjev-za-dugotrajnu-vizu`
+> confirmed this is **not a duplicate**: this form has no spouse, children,
+> or parents sections at all, no criminal-conviction or notifiable-disease
+> disclosure questions, and no accommodation-type or previous-stays block —
+> while carrying genuinely Italy-specific content none of the siblings
+> carry: a Schengen-first-country-of-entry field, a numeric maximum-365-day
+> intended-stay cap, a two-sided EU-Annex-I-style travel-funding block
+> naming both an applicant-covered and a sponsor-covered means-of-subsistence
+> pathway, a dedicated "personal data of the family member who is an EU,
+> EEA or CH citizen" block with its own family-relationship taxonomy (with
+> no counterpart on any sibling long-stay-visa template in this registry),
+> and a closing declaration citing Article 331 of the Italian Code of
+> Criminal Procedure and the Garante per la Protezione dei Dati Personali by
+> name. Models 53 `fields[]` and 8 `documents[]` entries. 8 conformance
+> fixtures (2 valid, 6 mutation-control) committed under
+> `conformance/it/maeci/domanda-di-visto-nazionale-d/1.0.0/`. See the
+> document's own VERIFICATION.md for the full reconciliation table and
+> sourcing record. Italy now stands at 3 of 6 verticals (DMV, Taxes, Visa).
+>
 > **Update (2026-07-15, GOV-3026, "GovSchema Standard Research"): Greece's
 > DMV vertical opens (1 of 6, now 3 of 6 overall)**, via
 > `gr/yme/ekdosi-adeias-odigisis-katigorias-a` — Form Α1, the Hellenic
@@ -11932,7 +11970,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (45/56 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (46/56 jurisdictions — 82%)
 
 > **Correction (GOV-2981):** denominator updated from 55 to 56 jurisdictions
 > following Slovakia's addition (Taxes only; Visa remains open for
@@ -11944,6 +11982,39 @@ file-layout specification and authored a bounded 67-field core against it
 > all Schengen/national visa applications moved fully into the MIGRIS
 > online portal as of 2025-10-01, no static citizen-fillable form found)
 > as the registry's 55th jurisdiction.
+
+**Italy's Visa vertical opens (3 of 6) (GOV-3032)**, via
+`it/maeci/domanda-di-visto-nazionale-d` — MAECI's bilingual Italian/English
+national (Type D) long-stay visa application. A prior scouting pass
+(GOV-3026) required a rigorous field-by-field reconciliation against the
+registry's existing EU-harmonized long-stay-visa siblings before authoring;
+independently re-fetched directly from `esteri.it` (HTTP 200,
+`application/pdf`, 283,335 bytes, `sha256:
+eba970bc7eebfde7ed96f61a428172017e31b8586e6dd5effafe35ec41aa4dee`, matching
+the scouting pass's own reported hash exactly). A static, non-AcroForm
+3-page specimen (zero fillable Widget annotations on pages 1-2, confirmed
+via `pdfjs-dist`) with a genuine, fully extractable bilingual text layer
+across all 32 numbered items. A field-by-field reconciliation against
+`de/auswaertiges-amt/national-visa-application` (81 fields, 16 sections
+incl. spouse/children/parents/criminal-conviction/notifiable-disease),
+`bg/mvnr/zayavlenie-za-izdavane-na-natsionalna-viza-tip-d` (spouse + 4-child
+repeating table), `es/maec/solicitud-visado-nacional` (12-category purpose
+taxonomy), and `hr/mvep/zahtjev-za-dugotrajnu-vizu` (11-category purpose
+taxonomy, two-step residence-approval construct) found this is **not a
+duplicate**: this form omits spouse/children/parents/criminal-conviction/
+notifiable-disease/accommodation-type/previous-stays content entirely,
+while adding Italy-specific content none of the siblings carry — a
+Schengen-first-entry-state field, a numeric 365-day intended-stay cap, a
+two-sided EU-Annex-I-style applicant/sponsor travel-funding block, a
+dedicated EU/EEA/CH-family-member data-and-relationship block (items 29-30,
+with no counterpart on any sibling), and a closing declaration citing
+Article 331 of the Italian Code of Criminal Procedure and the Garante per
+la Protezione dei Dati Personali by name. Models 53 `fields[]` and 8
+`documents[]` entries, including a conditionally-required travel-funding
+block gated on the purpose-of-journey selection. See the Executive
+Summary's GOV-3032 update above and the document's own VERIFICATION.md for
+the full reconciliation table and sourcing record. Italy now stands at 3 of
+6 verticals (DMV, Taxes, Visa).
 
 **South Africa's Visa vertical closes (6 of 6) (GOV-2976)**, via
 `za/dha/application-for-visa-temporary-sojourn` — DHA's DHA-1738/Form 8,
@@ -12925,7 +12996,7 @@ now closed.
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IT** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **IT** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
@@ -15799,23 +15870,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   finding for Italy's Passport vertical, which relied solely on a single
   live-fetch WAF block against the same domain without checking a Wayback
   fallback. Delegated as a child issue of GOV-3026.
-- **Italy — Visa: scouted, not yet authored (GOV-3026).** Fetched directly,
-  unauthenticated, from the official domain
-  `https://www.esteri.it/mae/Servizi/Stranieri/Formulario_Visto_Nazionale_ING-ITA.pdf`
-  (HTTP 200, `application/pdf`, 283,335 bytes, sha256
-  `eba970bc7eebfde7ed96f61a428172017e31b8586e6dd5effafe35ec41aa4dee`) — the
-  **National Visa Application (D) / Domanda di visto nazionale (D)**,
-  Ministero degli Affari Esteri e della Cooperazione Internazionale,
-  free-of-charge, 3 pages, a genuine text layer (no AcroForm). Follows the
-  EU-harmonized long-stay-visa layout this registry already models for
-  DE/BG/ES/HR/RO, but per this registry's own established precedent
-  (multiple prior "duplicate" findings for that template were reversed —
-  ES/GOV-1861, HR/GOV-2902 — once diffed field-by-field), it should be
-  diffed rather than assumed duplicate before authoring: it visibly carries
-  Italy-specific content (an Art. 331 c.p.p. criminal-referral clause, a
-  Garante per la Protezione dei Dati Personali citation, an EU/EEA/CH-
-  family-member relationship block at item 30, a Schengen-first-entry-state
-  field) across 32 numbered items. Delegated as a child issue of GOV-3026.
+- ~~**Italy — Visa: scouted, not yet authored (GOV-3026).**~~ **Resolved
+  (GOV-3032):** authored as `it/maeci/domanda-di-visto-nazionale-d`, opening
+  Italy's Visa vertical (3 of 6) — the field-by-field reconciliation this
+  entry called for confirmed the form is not a duplicate. See the Executive
+  Summary's GOV-3032 update and the Visa section above.
 
 ---
 
