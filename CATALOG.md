@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **486 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **487 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3206, delegated from GOV-3204, picking up
+> GOV-3078's disclosed backlog): Nepal's Passport vertical opens, bringing
+> Nepal to 2 of 6 verticals**, via `np/dop/mrp-offline-application-form` —
+> the Department of Passports' (DoP) single-page "MRP Offline Application
+> Form", published on the department's own current Downloads page
+> (`nepalpassport.gov.np/downloads`). GOV-3078 had already screened and
+> confirmed this exact source strong (a genuine, unauthenticated, 337-widget
+> AcroForm PDF) but left it as disclosed backlog because every widget uses a
+> flat, semantically meaningless internal naming scheme (`sur1`..`sur337`)
+> rather than one field per named datum. Independently re-fetched fresh this
+> cycle: HTTP 200, 2,827,163 bytes, sha256
+> `603d84d1e91be379ab9c438426392b71143073ece7f87cc0a750f76c5d4d411b`,
+> matching GOV-3078's own recorded hash exactly. `pdfjs-dist` confirms 337
+> `Tx` Widget annotations and, notably, **zero extractable text** — every
+> label and instruction on the page is a background raster image, not a
+> text layer — so the full field list and every required-field asterisk
+> were read from a node-canvas high-resolution render, not text extraction.
+> The 337 widgets were reconstructed into 29 logical `fields[]` (plus a
+> `photo` file field) by clustering widget `rect` coordinates into rows/
+> columns and matching each cluster against the rendered image's numbered
+> labels; a natural-sort quirk in the source's own field-naming (a widget
+> named `sur226a`, not a renumbered integer, sitting between `sur226` and
+> `sur227`) was identified and disclosed rather than silently miscounted.
+> Consistent with this registry's established treatment of biometric/
+> wet-ink capture (`do/mirex/passport-application`, `mx/sre/passport-
+> application`, `il/mot/medical-examination-driving-license-renewal`), the
+> applicant's handwritten signature mark and the two required right/left
+> thumb-impression boxes are excluded as physical capture, not digitally
+> modelable data; the form's own "FOR OFFICE USE ONLY" section was checked
+> against the full widget inventory and confirmed to have zero backing
+> AcroForm widgets, out of scope as staff-only processing artwork. 7
+> conformance fixtures committed under
+> `conformance/np/dop/mrp-offline-application-form/1.0.0/`. Third-party
+> sources report Nepal discontinued MRP passports in 2021 in favor of
+> e-passports, but this exact form remains published on DoP's own live
+> Downloads page today — modelled as a currently-live offline/paper
+> pathway, not assumed defunct; see the document's own VERIFICATION.md for
+> the full sourcing record, widget-geometry reconstruction method, and
+> disclosed judgment calls (including a parallel-calendar Date of Birth
+> merge and two B.S./A.D.-only date fields left as plain strings rather
+> than fabricating a calendar conversion the source does not support).
 
 > **Update (2026-07-15, GOV-3169, picked up from GOV-3158's disclosed
 > backlog): Dominican Republic's National ID & Civic Documents vertical
@@ -10273,7 +10315,17 @@
 
 ## By Vertical
 
-### Passport (44/62 jurisdictions — 71%)
+### Passport (45/62 jurisdictions — 73%)
+
+> **Correction (GOV-3206):** numerator updated from 44 to 45 following
+> Nepal's Passport vertical opening via
+> `np/dop/mrp-offline-application-form` — Nepal was already counted in the
+> 62-jurisdiction denominator (added via GOV-3078's Business Formation
+> schema), with Passport open as disclosed backlog; this schema moves that
+> column to ✓, which is what moves the numerator — it does not change the
+> denominator. See the Executive Summary's GOV-3206 update above and the
+> document's own VERIFICATION.md for the full sourcing record and scope
+> decisions.
 
 > **Correction (GOV-3158):** numerator updated from 43 to 44 following the
 > Dominican Republic's Passport vertical opening via
@@ -14496,7 +14548,7 @@ now closed.
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **NP** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **NP** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -17676,14 +17728,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   driving-licence issuance is fully gated behind `applydlnew.dotm.gov.np`'s
   quota-based online portal; Taxes: PAN registration is a pure online
   e-form via `taxpayerportal.ird.gov.np`, no static form or manual found).
-  Passport (the Department of Passports' MRP Offline Application Form, a
-  genuine 337-widget AcroForm PDF at `verification1.nepalpassport.gov.np`)
-  was found strong but left as disclosed backlog: every widget uses a flat,
-  semantically meaningless internal naming scheme (`sur1`..`sur337`) rather
-  than one field per named datum, needing widget-geometry/label-proximity
-  reconstruction before it can be authored — meaningfully more effort than
-  the Business Formation manual. Nepal's Visa and National ID verticals
-  remain unscreened, open backlog candidates for a future cycle.
+  **Passport: authored (GOV-3206, delegated from GOV-3204), bringing Nepal
+  to 2 of 6.** The Department of Passports' MRP Offline Application Form
+  (the same genuine 337-widget AcroForm PDF at
+  `verification1.nepalpassport.gov.np` this cycle had left as disclosed
+  backlog) was reconstructed into 29 logical `fields[]` plus a `photo` file
+  field via widget-geometry (rect-coordinate) clustering and label-proximity
+  matching against a high-resolution render — see the document's own
+  VERIFICATION.md for the full reconstruction method and disclosed judgment
+  calls. Nepal's Visa and National ID verticals remain unscreened, open
+  backlog candidates for a future cycle.
 
 ---
 
