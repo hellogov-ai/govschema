@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **460 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **461 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3050, "GovSchema Standard Research"): Italy's
+> National ID vertical opens (6 of 6 — Italy reaches full coverage)**, via
+> `it/ministero-dell-interno/carta-identita-elettronica` — "Domanda per il
+> rilascio della Carta d'Identità Elettronica", the municipal intake form an
+> adult resident presents in person to their Comune's Ufficio Anagrafe,
+> sourced from Comune di Tre Ville (provincia di Trento) as a concrete
+> exemplar of this nationally standardized, Ministero dell'Interno-operated
+> process, following this registry's own `de/bmi` cross-jurisdiction-exemplar
+> convention for locally-administered-but-nationally-set processes. This
+> overturns this registry's own GOV-2382 "confirmed dead end" finding for
+> Italy's National ID vertical, which rested only on the fully
+> appointment-gated national CIE booking portal and never discovered this
+> municipal-form-publishing pattern. Independently re-fetched and hash-
+> verified all three PDFs named in the pre-scouted issue (adult request,
+> minor request, and an "ASSENSO" parental consent-to-expatriation deed);
+> modelled the adult request only (15 fields, 2 documents), following this
+> registry's own `it/poliziadistato` precedent of scoping to the adult
+> variant and leaving the minor variant — a materially different
+> declarant/consent chain with no organ-donation section — as a natural
+> follow-up companion schema. See the National ID & Civic Documents vertical
+> section below and the document's own VERIFICATION.md for the full sourcing
+> chain, including corroboration from `cartaidentita.interno.gov.it`'s own
+> "release and renew" page for the €16.79-plus-fixed-fees cost, the
+> organ-donation declaration, and the delivery/pickup-method choice.
 
 > **Update (2026-07-15, GOV-3045, "GovSchema Standard Research"): Italy's
 > Business Formation vertical opens (now 5 of 6 for Italy)**, via
@@ -12739,7 +12764,39 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (41/56 jurisdictions — 73%)
+### National ID & Civic Documents (42/56 jurisdictions — 75%)
+
+**Italy's National ID & Civic Documents vertical opens (6 of 6 — Italy
+reaches full coverage) (GOV-3050)**, via
+`it/ministero-dell-interno/carta-identita-elettronica` — "Domanda per il
+rilascio della Carta d'Identità Elettronica", the municipal intake form for
+Italy's Electronic Identity Card (CIE), sourced from Comune di Tre Ville
+(provincia di Trento) as a concrete exemplar of this nationally
+standardized, Ministero dell'Interno-operated process. This overturns this
+registry's own GOV-2382 "confirmed dead end" finding, which rested only on
+the fully appointment-gated national CIE booking portal and never
+discovered this municipal-form-publishing pattern, present across many of
+Italy's roughly 8,000 comuni. Modelled the adult (maggiorenne) request only
+— 15 fields, 2 documents — following this registry's own
+`it/poliziadistato` precedent of scoping to the adult variant and leaving
+the minor variant (a materially different declarant/consent chain, with no
+organ-donation section and an additional other-parent consent-to-
+expatriation requirement) as a natural follow-up companion schema; the
+minor request and a parental-consent ("ASSENSO") deed were both fetched and
+read in full this cycle purely as corroborating evidence of a genuine,
+internally consistent national form family. Independently cross-checked
+against `cartaidentita.interno.gov.it`'s own English-language "release and
+renew in Italy" page, which corroborates the €16.79-plus-fixed-and-
+secretarial-fees cost, fingerprint capture, the organ-donation declaration,
+and the applicant-facing delivery/pickup-method choice — see the document's
+own VERIFICATION.md for the full sourcing chain. **Italy now stands at 6 of
+6 verticals (DMV, Taxes, Visa, Passport, Business Formation, National ID &
+Civic Documents) — full coverage**, joining the registry's existing set of
+jurisdictions at 6/6 (AU, BD, BG, CA, CO, DE, DK, EE, FI, FR, GB, GH, IE, IN,
+IS, KR, NZ, PH, PT, RO, SE, SG, US, VN, ZA per the By-Jurisdiction table),
+reached this cycle in one continuous run of pre-scouted child issues
+(GOV-3026 → GOV-3031/GOV-3032 → GOV-3045 → GOV-3050). Moves this vertical's
+global coverage from 41/56 to 42/56 (75%).
 
 **Slovakia's National ID & Civic Documents vertical opens (GOV-3019/GOV-3014)**,
 via `sk/mzv/ziadost-o-obciansky-preukaz` — MZV's consular-channel citizen
@@ -13192,7 +13249,7 @@ now closed.
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
@@ -15203,12 +15260,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Commercio's own telematic channel; there is no plain downloadable
   fillable modulo distributed for direct citizen use. Do not re-attempt
   without a genuinely new source.
-- **IT National ID (Carta d'Identità Elettronica)** — GOV-2382, 2026-07-11.
+- ~~**IT National ID (Carta d'Identità Elettronica)** — GOV-2382, 2026-07-11.
   Fully appointment-based at the comune, with mandatory in-person
   biometric capture (photo, fingerprints, signature); no downloadable
   application form exists for the main flow, the same in-person-only
   pattern this registry has repeatedly confirmed dead-end elsewhere (e.g.
-  CZ, MY — see above). Do not re-attempt without a genuinely new source.
+  CZ, MY — see above). Do not re-attempt without a genuinely new source.~~
+  **Overturned (GOV-3050, 2026-07-15):** the GOV-2382 finding only checked
+  the fully appointment-gated national CIE booking portal
+  (`prenotazionicie.interno.gov.it`) and never discovered the municipal-
+  form-publishing pattern used by many of Italy's ~8,000 comuni, each of
+  which distributes its own downloadable, non-AcroForm intake PDF for the
+  same nationally standardized CIE process. Now published as
+  `it/ministero-dell-interno/carta-identita-elettronica` v1.0.0, sourced from
+  Comune di Tre Ville as a concrete exemplar — see that schema's own
+  VERIFICATION.md for the full sourcing chain. The in-person biometric
+  capture step is real and out of scope (procedural, not form data), but it
+  does not gate the intake form itself.
 - **IT Visa (Farnesina national D-visa)** — GOV-2382, 2026-07-11. The
   Ministero degli Affari Esteri's national (Type D) visa application form
   is a confirmed field-for-field duplicate of the already-modelled
