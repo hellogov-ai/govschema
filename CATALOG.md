@@ -26,8 +26,10 @@
 > `67ef4f41dd8ee5681aab1c1389a11f8608a52c208ddd93f0f3011ef1a7eee384`,
 > matching the issue's own citation exactly). **Major correction to the
 > issue's own pre-scouting note:** `pdfjs-dist`'s `getAnnotations()` found
-> this is a genuine 57-widget fillable AcroForm (44 text fields, 13
-> independent checkboxes) on page 1 of 3, not the zero-widget static PDF the
+> this is a genuine 57-widget fillable AcroForm (43 text fields, 14
+> independent checkboxes — corrected during review-gate re-verification
+> from an initial 44/13 miscount; the 57 total and every field-name mapping
+> were unaffected) on page 1 of 3, not the zero-widget static PDF the
 > note assumed — pages 1-2 are full-page image XObjects with the widgets
 > overlaid on top, and the PDF is AES-encrypted at the stream level
 > (transparent to `pdfjs-dist`, but it broke this sandbox's usual
@@ -9498,7 +9500,8 @@
 > table (this header had drifted out of sync over several prior cycles),
 > and updated for Lithuania's addition as the registry's 55th jurisdiction.
 
-**Italy's Passport vertical opens (1 of 6, now 3 of 6 overall) (GOV-3031)**,
+**Italy's Passport vertical opens (1 of 6, now 4 of 6 overall combined with
+the concurrently-merged GOV-3032 Visa opening) (GOV-3031)**,
 via `it/poliziadistato/richiesta-passaporto-maggiorenni` — Modello 308,
 "Modulo per la richiesta di passaporto per maggiorenni", published by the
 Polizia di Stato (Ministero dell'Interno) and filed with the Questura of the
@@ -9510,7 +9513,9 @@ inspected the document; a Wayback Machine snapshot (2025-08-07,
 `67ef4f41dd8ee5681aab1c1389a11f8608a52c208ddd93f0f3011ef1a7eee384`,
 independently re-verified byte-for-byte) made inspection possible. A further
 correction to this issue's own pre-scouting note: the form is a genuine
-57-widget fillable AcroForm (44 text fields, 13 independent checkboxes), not
+57-widget fillable AcroForm (43 text fields, 14 independent checkboxes —
+corrected during review-gate re-verification from an initial 44/13
+miscount; the 57 total and every field-name mapping were unaffected), not
 the zero-widget static PDF the note assumed, and its "Altro genitore" block
 records up to three OTHER PARENTS holding parental responsibility, not up to
 three children as the note stated. See the document's own VERIFICATION.md

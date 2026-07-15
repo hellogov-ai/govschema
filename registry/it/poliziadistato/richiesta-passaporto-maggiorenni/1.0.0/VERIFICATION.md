@@ -67,9 +67,12 @@ AcroForm widgets, but a clean labeled layout." **This is incorrect, and this
 cycle corrects it before authoring against the wrong premise:**
 
 - `pdfjs-dist` 4.10.38 (`legacy/build/pdf.mjs`) `page.getAnnotations()` found
-  **57 `/Widget` annotations on page 1 of 3** (44 `Tx` text fields, 13 `Btn`
+  **57 `/Widget` annotations on page 1 of 3** (43 `Tx` text fields, 14 `Btn`
   independent checkboxes, all with `radioButton: false` — confirmed
-  genuinely independent widgets, not a native PDF radio group). Page 2 of 3
+  genuinely independent widgets, not a native PDF radio group; the 43/14
+  split corrects an initial 44/13 miscount caught during review-gate
+  re-verification, the 57 total and every individual field-name mapping
+  were unaffected). Page 2 of 3
   has **zero** widgets (one flat image plus a `Link` annotation). Page 3 of
   3 has **zero** widgets and exactly one `Link` annotation, to
   `https://passaportonline.poliziadistato.it/`.
@@ -131,7 +134,7 @@ fields).
 
 ## Independent checkboxes vs. radio groups
 
-All 13 `Btn` widgets are confirmed genuinely independent (`radioButton:
+All 14 `Btn` widgets are confirmed genuinely independent (`radioButton:
 false`, `exportValue: "Yes"` on every one, no shared parent field). Per this
 registry's `si/ajpes` precedent (GOV-2910), each is modelled as its own
 independent `boolean` field rather than a single `enum`, with
