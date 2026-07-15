@@ -24,7 +24,7 @@
 > structures, and GovSchema's repeating-groups proposal (GSP-0009) is not
 > yet part of the accepted v0.3 specification, so this version collapses
 > them to exactly one row each, following the identical precedent set by
-> `pk/secp/company-incorporation-single-member-company`. Models 60
+> `pk/secp/company-incorporation-single-member-company`. Models 59
 > `fields[]` and 5 `documents[]` entries; one checkbox row (referencing
 > section 175 of the Companies Law) came back from extraction with a
 > garbled, partially duplicated heading that could not be confidently
