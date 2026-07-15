@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **491 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **492 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3227): Nigeria's DMV vertical opens, closing
+> Nigeria to full 6/6 coverage** — via `ng/frsc/vehicle-registration`, the
+> Federal Road Safety Corps' (FRSC) National Vehicle Identification System
+> (NVIS) online "Vehicle Registration" form. Nigeria already had Passport,
+> Business Formation, Taxes, Visa, and National ID open (5 of 6); this is
+> its last vertical. Independently re-fetched fresh this cycle rather than
+> trusted from the assigning issue's own description as-is:
+> `https://nvis.frsc.gov.ng/VehicleManagement/RegisterVehicle` returns HTTP
+> 200 (`text/html`, 153,370 bytes, sha256
+> `fe00305563a5fbb3c8259252e8df50b0d8f21ab4e7ca29a57253f24bbf31ab50`),
+> served directly with no login redirect/CAPTCHA/WAF gate — a genuine
+> live, unauthenticated ASP.NET web form, not a login-gated portal. Every
+> field was read from the raw HTML's `data-val-required`/`data-val-length`
+> attributes and `<option>` values, and several of the assigning issue's
+> own counts needed correcting against the live page: VehicleTypeId is 11
+> options (not 12), EngineCapacityId is 4 bands (not 5), OwnersTypeId is 5
+> options with a gap at value 5 (not 6), and StateId/PlateNoStateId are 38
+> options — Nigeria's 36 states + FCT + a "Federal Government" pseudo-entry
+> (not 39). Two fields remain disclosed-cap controlled vocabularies per the
+> issue's own guidance rather than enumerated in full: `vehicleMakeId`
+> (1,569 `<option>`s, the value itself the make name rather than an opaque
+> code, with genuine source noise — stray whitespace/tab characters and
+> outright duplicate entries such as "YAMAHA" ×10) and `ownerLgaId` (780
+> `<option>`s spanning every Local Government Area). A confirmed live
+> source defect surfaced in the Title dropdown: the last five of its 14
+> visually-offered options (Alhaji, Alhaja, Imam, Pastor, Engineer) all
+> share the literal HTML `value="Rev."` with the separately-labeled "Rev."
+> option before them, so only 9 values are genuinely distinguishable via
+> what the live form would submit — `ownerTitle`'s enum models those 9,
+> disclosed rather than fabricating 14 the source cannot actually produce.
+> The "Request Fancy Number Plate?" checkbox carries a `data-val-required`
+> attribute that is disclosed as standard ASP.NET `Html.CheckBoxFor()`
+> boilerplate for a non-nullable `bool` (confirmed via its paired hidden
+> `value="false"` input) rather than a genuine mandatory checkbox, and is
+> modeled `required: false` accordingly — a judgment call overriding the
+> raw attribute. Models 33 `fields[]` across Vehicle Information, Owner
+> Information, and Other Information sections; no `documents[]` array (a
+> full-text grep for file-upload inputs across the raw HTML returned zero
+> matches). 19 conformance fixtures (2 valid, 17 mutation-control)
+> committed under `conformance/ng/frsc/vehicle-registration/1.0.0/`. See
+> the document's own VERIFICATION.md for the full sourcing record and
+> every disclosed judgment call. Numerator updated from 491 to 492;
+> Nigeria's DMV column flips ✗→✓ in the By Jurisdiction table below,
+> bringing Nigeria to full 6/6 vertical coverage.
 
 > **Update (2026-07-15, GOV-3228, scouted from GOV-3225, "GovSchema
 > Standard Research"): Thailand's National ID vertical opens, closing
@@ -10939,7 +10984,14 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (53/62 jurisdictions — 85%)
+### DMV — Vehicle Registration, Licensing, Permits (54/62 jurisdictions — 87%)
+
+> **Update (2026-07-15, GOV-3227): Nigeria's DMV vertical opens, closing
+> Nigeria to full 6/6 coverage**, via `ng/frsc/vehicle-registration` — the
+> Federal Road Safety Corps' (FRSC) National Vehicle Identification System
+> (NVIS) online "Vehicle Registration" form. See the Executive Summary's
+> GOV-3227 update above for the full sourcing record, disclosed-cap
+> fields, and disclosed judgment calls. Numerator updated from 53 to 54.
 
 > **Update (2026-07-15, GOV-3214, delegated from GOV-3212, "GovSchema
 > Standard Research"): Tanzania's DMV vertical opens**, via
@@ -14793,7 +14845,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **NP** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
@@ -17382,6 +17434,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   gated behind a captcha/flow token not walked this cycle. **Not a dead
   end, but not yet ready to author** — left as disclosed backlog for a
   future cycle to walk the flow further before authoring.
+  **Resolved, GOV-3227, 2026-07-15**: authored via a different NVIS
+  endpoint than the one scouted here — `frsc.gov.ng`'s vehicle-registration
+  subdomain, `nvis.frsc.gov.ng/VehicleManagement/RegisterVehicle`, a live,
+  unauthenticated single-page vehicle-registration form (distinct from the
+  driving-licence flow at `nigeriadriverslicence.frsc.gov.ng` noted above,
+  which remains unwalked). See the Executive Summary's GOV-3227 update and
+  the document's own VERIFICATION.md. Nigeria now stands at 6 of 6
+  verticals.
 
 - **Bulgaria — Taxes: authored (GOV-2821), opens the registry's 51st
   jurisdiction.** `bg/nra/deklaratsiya-za-registratsiya-na-samoosiguryavashto-se-litse`

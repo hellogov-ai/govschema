@@ -1,0 +1,468 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ng/frsc/vehicle-registration",
+  "version": "1.0.0",
+  "title": "Nigeria FRSC National Vehicle Identification System (NVIS) — Vehicle Registration",
+  "description": "The Federal Road Safety Corps' (FRSC) National Vehicle Identification System (NVIS), a live, unauthenticated ASP.NET web form for registering a motor vehicle in Nigeria — https://nvis.frsc.gov.ng/VehicleManagement/RegisterVehicle. FRSC operates NVIS as Nigeria's national vehicle-registration platform (distinct from the separate 'Verify Number Plate' and 'Vehicle Revalidation' flows linked from the same navigation bar). The page renders directly at HTTP 200 with no login redirect, CAPTCHA, or WAF gate — a genuine citizen-facing intake form, not a staff-only or authenticated portal. The form uses ASP.NET MVC's unobtrusive client-side validation (data-val/data-val-required/data-val-length attributes rendered directly on each input/select), which this schema's requiredness follows field-by-field rather than assuming a uniform convention across every field: several fields a prior scouting pass expected to be required (Owner Identification Type, Title, First Name, Last Name, Company Name, State Of Plate Number Allocation) carry no data-val-required attribute on the live page and are modeled required:false accordingly. The submit button is labeled 'Preview' (not 'Submit'/'Register'), implying a further confirmation/payment step beyond this single-page data-entry form; this schema scopes to the data collected on this page only. Two fields are disclosed-cap controlled vocabularies rather than enumerated in full: vehicleMakeId (the live 'Vehicle Make' dropdown carries 1,569 <option> entries — vehicle makes as free text, not opaque codes; the dropdown's own option values equal the make names themselves, several with stray leading/trailing whitespace or tab characters, and with outright duplicate entries such as 'YAMAHA' appearing 10 times — a genuine source data-quality artifact, disclosed rather than silently cleaned up) and ownerLgaId (the live 'Local Government' dropdown carries 780 <option> entries spanning every Local Government Area in Nigeria, not scoped/paged per selected state in the static page load). Both are modeled as type 'string' with a documented note rather than enumerated; see VERIFICATION.md for the full disclosure. vehicleSubCategoryId is a cascading dropdown populated client-side via AJAX once a Vehicle Category is chosen — the static page load renders it empty, so its option set could not be independently enumerated this cycle either; modeled as a required opaque string. The 'Title' dropdown carries a confirmed live source defect: its last five <option> elements (labeled Alhaji, Alhaja, Imam, Pastor, Engineer) all share the literal HTML value=\"Rev.\" with the preceding, separately-labeled 'Rev.' option — so although the page visually offers 14 distinct title choices, only 9 are actually distinguishable via the value the live form would submit. ownerTitle's enum is modeled on the 9 genuinely distinct submittable values; the 5 colliding labels are disclosed in this field's own description and in VERIFICATION.md rather than fabricated as separately submittable values the source cannot actually produce. requestFancyNumberPlate (the 'Request Fancy Number Plate?' checkbox) carries a data-val-required attribute on the live page, but this is standard ASP.NET Html.CheckBoxFor() boilerplate for a non-nullable bool model property (the page also renders a paired hidden input of the same name with value \"false\", the standard MVC pattern guaranteeing an unchecked box still submits a valid false) rather than a genuine 'you must check this' requirement — modeled required:false, a disclosed judgment call overriding the raw attribute. fancyPlateNumber (the adjoining 'Request Fancy Number?' text box and its 'Check Available' lookup button) is wrapped in a container the page itself ids 'IsfancyCheck', strongly implying it is shown only once requestFancyNumberPlate is checked; modeled with a visibleWhen/requiredWhen condition on that basis, disclosed as inferred from the DOM's own container naming rather than confirmed by executing the page's client-side script. ownerFirstName/ownerLastName/ownerCompanyName sit in two separately-ided containers ('identitywithInfo' vs 'identitycompanyName') that structurally suggest one shows for an individual Owner Identification Type and the other for 'Company RC Number', but neither carries a data-val-required attribute on the static page and the exact client-side toggle logic was not independently executed/confirmed this cycle — modeled required:false with the inference disclosed in each field's own description rather than an asserted, unverified requiredWhen. GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of the Federal Republic of Nigeria or the Federal Road Safety Corps.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Road Safety Corps",
+    "abbreviation": "FRSC",
+    "url": "https://nvis.frsc.gov.ng"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://nvis.frsc.gov.ng/VehicleManagement/RegisterVehicle",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "FRSC National Vehicle Identification System (NVIS) — \"Vehicle Registration\" online form"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3227. Opens Nigeria's DMV vertical (6th of 6), closing Nigeria to full coverage. Independently re-fetched fresh this cycle rather than trusted from the prior scouting note as-is: HTTP 200, media type text/html; charset=utf-8, 153,370 bytes, sha256 fe00305563a5fbb3c8259252e8df50b0d8f21ab4e7ca29a57253f24bbf31ab50, server Kestrel/ASP.NET, from the official nvis.frsc.gov.ng domain, no login redirect/CAPTCHA/WAF gate encountered (a .AspNetCore.Antiforgery cookie is set, but the form itself renders unauthenticated). The full field list was read directly from the raw HTML's <label>/<input>/<select data-val-required=...> attributes, not any rendered/screenshot pass. Required-field derivation follows the source's own data-val-required attributes field-by-field, per the note in this document's own description: several fields the prior scouting summary assumed required (Owner Identification Type, Title, First Name, Last Name, Company Name, State Of Plate Number Allocation) carry no such attribute on the live page and are modeled required:false. Two fields are disclosed-cap controlled vocabularies rather than enumerated in full: vehicleMakeId (1,569 <option> entries, confirmed by direct count) and ownerLgaId (780 <option> entries, confirmed by direct count) — both modeled as type 'string' with a documented note rather than enumerated, per the assigning issue's own guidance. Smaller bounded lists were enumerated in full with real option values/labels read from the page: vehicleCategoryId (3), fuelType (4), vehicleTypeId (11), engineCapacityId (4), ownerIdentificationTypeId (5, with a gap at value 5 in the source's own numbering), ownerTitle (9 genuinely distinct submittable values out of 14 visually offered — see the field's own description for the disclosed value-collision defect), and ownerStateId/plateNumberStateId (38: Nigeria's 36 states + FCT + a 'Federal Government' pseudo-entry, confirmed by direct count; not the 39 a prior scouting note assumed). yearOfManufacture (1981-2027, 47 options, confirmed by direct count) is modeled as a bounded integer range rather than a 47-value enum. vehicleSubCategoryId is a cascading AJAX-populated dropdown (empty on static page load) modeled as a required opaque string, its own option set not independently enumerable this cycle. requestFancyNumberPlate carries a data-val-required attribute in the raw HTML that is disclosed as standard ASP.NET Html.CheckBoxFor() boilerplate for a non-nullable bool property (confirmed by the paired hidden input of the same name defaulting to \"false\") rather than a genuine mandatory checkbox, and is modeled required:false accordingly — an explicit judgment call overriding the raw attribute rather than a blind mechanical read. fancyPlateNumber's visibleWhen/requiredWhen gate on requestFancyNumberPlate is inferred from the page's own container id (\"IsfancyCheck\") rather than confirmed by executing client-side script, and is disclosed as such. The form's submit button reads \"Preview\", implying a further confirmation/payment step beyond this single-page form; this schema scopes to the data collected on this page only, consistent with the assigning issue's scope. No documents[] array is modeled: the live form has no file-upload input anywhere (confirmed via a direct grep for type=\"file\"/upload/attach across the raw HTML, all zero matches)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "vehicleCategoryId",
+      "label": "Vehicle Category",
+      "type": "enum",
+      "required": true,
+      "description": "Vehicle Category legend (raw option values as actually submitted): 1 Commercial; 2 Private; 3 Government.",
+      "sourceRef": "Vehicle Information — <select id=\"vehicleCategoryId\" name=\"VehicleInfoModel.CategoryId\" data-val-required=\"Vehicle Category must be selected\">",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "3"
+        ]
+      }
+    },
+    {
+      "name": "vehicleSubCategoryId",
+      "label": "Vehicle Sub-Category",
+      "type": "string",
+      "required": true,
+      "description": "Cascading sub-category, populated client-side via AJAX once vehicleCategoryId is chosen; the static page load renders this select with no <option>s of its own, so its option set could not be independently enumerated this cycle. Modeled as an opaque required string rather than an enum.",
+      "sourceRef": "Vehicle Information — <select id=\"vehicleSubCategoryId\" name=\"VehicleInfoModel.SubCategoryId\" data-val-required=\"Vehicle Sub-Category must be selected\">"
+    },
+    {
+      "name": "oldPlateNumber",
+      "label": "Old Plate Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_OldPlateNo\" name=\"VehicleInfoModel.OldPlateNo\">"
+    },
+    {
+      "name": "vehicleMakeId",
+      "label": "Vehicle Make",
+      "type": "string",
+      "required": true,
+      "description": "Disclosed cap: the live dropdown carries 1,569 <option> entries (vehicle makes as free text — the option value equals the make name itself, not an opaque numeric code), too many to enumerate in a maintainable closed list. Modeled as a free-text string; a controlled vocabulary sourced from FRSC's own live NVIS system, not invented here. See VERIFICATION.md.",
+      "sourceRef": "Vehicle Information — <select id=\"makeId\" name=\"VehicleInfoModel.VehicleMakeId\" data-val-required=\"Vehicle Make must be selected\">"
+    },
+    {
+      "name": "otherVehicleMake",
+      "label": "Others (Vehicle Make)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text vehicle make, used when the desired make is not found in the Vehicle Make list (the list's own last entry is literally 'OTHERS').",
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_Others\" name=\"VehicleInfoModel.Others\"> (container id=\"otherVehicleMakeId\")"
+    },
+    {
+      "name": "vehicleModel",
+      "label": "Model",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_Model\" name=\"VehicleInfoModel.Model\" data-val-required=\"Enter Vehicle Model\">"
+    },
+    {
+      "name": "vehicleColor",
+      "label": "Color",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_Color\" name=\"VehicleInfoModel.Color\">"
+    },
+    {
+      "name": "fuelType",
+      "label": "Fuel Type",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Vehicle Information — <select id=\"VehicleInfoModel_FuelType\" name=\"VehicleInfoModel.FuelType\" data-val-required=\"Fuel type must be selected\">",
+      "validation": {
+        "enum": [
+          "Petrol",
+          "Diesel",
+          "Bio-Fuel",
+          "Others"
+        ]
+      }
+    },
+    {
+      "name": "yearOfManufacture",
+      "label": "Year of Manufacture",
+      "type": "integer",
+      "required": true,
+      "description": "The live dropdown lists every year from 1981 through 2027 (47 options); modeled as a bounded integer range rather than a 47-value enum.",
+      "sourceRef": "Vehicle Information — <select id=\"VehicleInfoModel_YearOfManufacture\" name=\"VehicleInfoModel.YearOfManufacture\" data-val-required=\"Year of Manufacture must be selected\">",
+      "validation": {
+        "minimum": 1981,
+        "maximum": 2027
+      }
+    },
+    {
+      "name": "engineNumber",
+      "label": "Engine Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_EngineNo\" name=\"VehicleInfoModel.EngineNo\">"
+    },
+    {
+      "name": "insurancePolicyNumber",
+      "label": "Policy Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_PolicyNumber\" name=\"VehicleInfoModel.PolicyNumber\">"
+    },
+    {
+      "name": "vehicleTypeId",
+      "label": "Vehicle Type/Group",
+      "type": "enum",
+      "required": true,
+      "description": "Vehicle Type/Group legend (raw option values as actually submitted): 1 Bus; 2 Motor cycle; 3 Pick up; 4 Salon; 5 SUV; 6 Truck; 7 Wagon; 8 Tricycle; 9 Tractor; 10 Crane; 11 Van.",
+      "sourceRef": "Vehicle Information — <select id=\"VehicleInfoModel_VehicleTypeId\" name=\"VehicleInfoModel.VehicleTypeId\" data-val-required=\"Vehicle Type/Group must be selected\">",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11"
+        ]
+      }
+    },
+    {
+      "name": "chassisNumber",
+      "label": "Chassis No",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_ChasisNo\" name=\"VehicleInfoModel.ChasisNo\" data-val-required=\"Chassis No is required\" data-val-length-min=\"15\" data-val-length-max=\"17\">",
+      "validation": {
+        "minLength": 15,
+        "maxLength": 17
+      }
+    },
+    {
+      "name": "engineCapacityId",
+      "label": "Engine Capacity",
+      "type": "enum",
+      "required": true,
+      "description": "Engine Capacity legend (raw option values as actually submitted): 1 Below 1.6; 2 Between 1.6 and 2.0; 3 Between 2.1 and 3.0; 4 Above 3.0. Note: the source's own data-val-required message text ('Vehicle Category must be selected') is copy-pasted from the Vehicle Category field above and does not describe this field — a disclosed source authoring artifact, not a GovSchema error.",
+      "sourceRef": "Vehicle Information — <select id=\"VehicleInfoModel_EngineCapacityId\" name=\"VehicleInfoModel.EngineCapacityId\" data-val-required=\"Vehicle Category must be selected\">",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      }
+    },
+    {
+      "name": "tankCapacity",
+      "label": "Tank Capacity",
+      "type": "number",
+      "required": true,
+      "description": "Plain numeric text input on the source; no unit is printed on the page itself.",
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_TankCapacity\" name=\"VehicleInfoModel.TankCapacity\" data-val-required=\"Tank Capacity is required\">"
+    },
+    {
+      "name": "odometerReading",
+      "label": "Odometer",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Vehicle Information — <input id=\"VehicleInfoModel_Odometer\" name=\"VehicleInfoModel.Odometer\">"
+    },
+    {
+      "name": "ownerIdentificationTypeId",
+      "label": "Owner Identification",
+      "type": "enum",
+      "required": false,
+      "description": "Owner Identification Type legend (raw option values as actually submitted): 1 Driver's License; 2 National ID Card; 3 International Passport; 4 Company RC Number; 6 Tax Identification Number. Value 5 does not appear on the live page (a gap in the source's own numbering, not a GovSchema omission). Carries no data-val-required attribute on the live page (unlike most other selects in this form) — modeled required:false, a disclosed deviation from a prior scouting pass's assumption that this field was mandatory.",
+      "sourceRef": "Owner Information — <select id=\"identityTypeName\" name=\"VehicleOwnerDraftModel.OwnersTypeId\">",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "6"
+        ]
+      }
+    },
+    {
+      "name": "ownerTitle",
+      "label": "Title",
+      "type": "enum",
+      "required": false,
+      "description": "Confirmed live source defect: the live dropdown visually offers 14 title choices (Mr., Miss, Ms, Mrs., Dr., Prof., Engr., Chief, Rev., Alhaji, Alhaja, Imam, Pastor, Engineer), but the last five <option> elements' HTML value attribute is literally \"Rev.\" for all of them, identical to the separately-labeled 'Rev.' option immediately before them — so only 9 values are actually distinguishable via what the live form would submit. This enum models those 9 genuinely distinct submittable values; see VERIFICATION.md for the full disclosure. Carries no data-val-required attribute — modeled required:false.",
+      "sourceRef": "Owner Information — <select id=\"VehicleOwnerDraftModel_Title\" name=\"VehicleOwnerDraftModel.Title\">",
+      "validation": {
+        "enum": [
+          "Mr.",
+          "Miss",
+          "Ms",
+          "Mrs.",
+          "Dr.",
+          "Prof.",
+          "Engr.",
+          "Chief",
+          "Rev."
+        ]
+      }
+    },
+    {
+      "name": "ownerFirstName",
+      "label": "First Name",
+      "type": "string",
+      "required": false,
+      "description": "Sits in a container (id=\"identitywithInfo\") alongside Title and Last Name, structurally suggesting it is shown for an individual Owner Identification Type and hidden when ownerIdentificationTypeId is Company RC Number (see ownerCompanyName's sibling container). This toggle is inferred from the page's own DOM structure, not confirmed by executing its client-side script, and the field carries no data-val-required attribute on the static page — modeled required:false rather than an asserted, unverified requiredWhen.",
+      "sourceRef": "Owner Information — <input id=\"VehicleOwnerDraftModel_FirstName\" name=\"VehicleOwnerDraftModel.FirstName\"> (container id=\"identitywithInfo\")",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerLastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": false,
+      "description": "See ownerFirstName's description for the disclosed individual-vs-company container inference.",
+      "sourceRef": "Owner Information — <input id=\"VehicleOwnerDraftModel_LastName\" name=\"VehicleOwnerDraftModel.LastName\"> (container id=\"identitywithInfo\")",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerCompanyName",
+      "label": "Company Name",
+      "type": "string",
+      "required": false,
+      "description": "Sits in its own container (id=\"identitycompanyName\"), structurally suggesting it is shown instead of First/Last Name when ownerIdentificationTypeId is Company RC Number. Inferred from DOM structure only, not confirmed by executing client-side script; carries no data-val-required attribute — modeled required:false.",
+      "sourceRef": "Owner Information — <input id=\"VehicleOwnerDraftModel_Company\" name=\"VehicleOwnerDraftModel.Company\"> (container id=\"identitycompanyName\")"
+    },
+    {
+      "name": "ownerIdentificationNumber",
+      "label": "Identification No",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Owner Information — <input id=\"VehicleOwnerDraftModel_IdentificationNo\" name=\"VehicleOwnerDraftModel.IdentificationNo\" data-val-required=\"Please enter the identification number\">",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "ownerEmail",
+      "label": "Email Address",
+      "type": "string",
+      "required": false,
+      "description": "Plain text input on the source; no HTML5 type=\"email\", data-val-email, or other format-validation attribute is present, so no pattern constraint is asserted here beyond type.",
+      "sourceRef": "Owner Information — <input id=\"VehicleOwnerDraftModel_Email\" name=\"VehicleOwnerDraftModel.Email\">",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Owner Information — <textarea id=\"VehicleOwnerDraftModel_Address\" name=\"VehicleOwnerDraftModel.Address\">",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerCity",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Owner Information — <input id=\"VehicleOwnerDraftModel_City\" name=\"VehicleOwnerDraftModel.City\" data-val-required=\"Enter the city\">",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerMobileNumber",
+      "label": "Mobile Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Owner Information — <input id=\"VehicleOwnerDraftModel_MobileNo\" name=\"VehicleOwnerDraftModel.MobileNo\" data-val-required=\"Enter the required mobile number\">",
+      "classification": "pii"
+    },
+    {
+      "name": "ownerStateId",
+      "label": "State",
+      "type": "enum",
+      "required": true,
+      "description": "Nigerian state legend (raw option values as actually submitted): 1 Abia; 2 Adamawa; 3 Akwa Ibom; 4 Anambra; 5 Bauchi; 6 Bayelsa; 7 Benue; 8 Borno; 9 Cross River; 10 Delta; 11 Ebonyi; 12 Edo; 13 Ekiti; 14 Enugu; 15 FCT (Federal Capital Territory); 16 Gombe; 17 Imo; 18 Jigawa; 19 Kaduna; 20 Kano; 21 Katsina; 22 Kebbi; 23 Kogi; 24 Kwara; 25 Lagos; 26 Nasarawa; 27 Niger; 28 Ogun; 29 Ondo; 30 Osun; 31 Oyo; 32 Plateau; 33 Rivers; 34 Sokoto; 35 Taraba; 36 Yobe; 37 Zamfara; 38 Federal Government (a non-geographic pseudo-entry the source itself lists alongside the 36 states and the FCT).",
+      "sourceRef": "Owner Information — <select id=\"stateSelect\" name=\"VehicleOwnerDraftModel.StateId\" data-val-required=\"Select the state\">",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38"
+        ]
+      }
+    },
+    {
+      "name": "ownerLgaId",
+      "label": "Local Government",
+      "type": "string",
+      "required": true,
+      "description": "Disclosed cap: the live select carries 780 <option> entries spanning Local Government Areas across all of Nigeria's states (not scoped to a single state in the static page load, despite the field's dependency on ownerStateId in practice), too many to enumerate in a maintainable closed list. Modeled as an opaque required string whose valid values are state-dependent within FRSC's own live NVIS reference data. See VERIFICATION.md.",
+      "sourceRef": "Owner Information — <select id=\"lgaSelect\" name=\"VehicleOwnerDraftModel.Lgaid\" data-val-required=\"Select the local government area\">"
+    },
+    {
+      "name": "driversLicenseNumber",
+      "label": "Drivers License Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Other Information — <input id=\"VehicleInfoModel_LicenseNo\" name=\"VehicleInfoModel.LicenseNo\">",
+      "classification": "sensitive-pii"
+    },
+    {
+      "name": "licenseBearerName",
+      "label": "License Bearer Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Other Information — <input id=\"VehicleInfoModel_LicenseBearerName\" name=\"VehicleInfoModel.LicenseBearerName\">",
+      "classification": "pii"
+    },
+    {
+      "name": "plateNumberStateId",
+      "label": "State Of Plate Number Allocation",
+      "type": "enum",
+      "required": false,
+      "description": "Same 38-value Nigerian state legend as ownerStateId (see that field's description). Carries no data-val-required attribute on the live page, unlike ownerStateId — modeled required:false.",
+      "sourceRef": "Other Information — <select id=\"VehicleInfoModel_PlateNoStateId\" name=\"VehicleInfoModel.PlateNoStateId\">",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38"
+        ]
+      }
+    },
+    {
+      "name": "requestFancyNumberPlate",
+      "label": "Request Fancy Number Plate?",
+      "type": "boolean",
+      "required": false,
+      "description": "The live page carries a data-val-required attribute on this checkbox, but this is standard ASP.NET Html.CheckBoxFor() boilerplate for a non-nullable bool model property, not a genuine 'must check this box' requirement — the page also renders a paired hidden input of the same name defaulting to \"false\", the standard MVC pattern that lets an unchecked box still submit a valid, well-formed false. Modeled required:false, a disclosed judgment call overriding the raw attribute.",
+      "sourceRef": "Other Information — <input type=\"checkbox\" id=\"car-check\" name=\"VehicleInfoModel.FancyCheck\" value=\"true\" data-val-required=\"The Request Fancy Number? field is required.\"> (paired with a hidden <input name=\"VehicleInfoModel.FancyCheck\" value=\"false\">)"
+    },
+    {
+      "name": "fancyPlateNumber",
+      "label": "Request Fancy Number?",
+      "type": "string",
+      "required": false,
+      "description": "The desired fancy/personalized plate text, looked up via the page's own 'Check Available' button. Sits in a container the page itself ids 'IsfancyCheck', strongly implying it is shown (and, once shown, expected) only when requestFancyNumberPlate is checked. Modeled with a visibleWhen/requiredWhen condition on that basis — disclosed as inferred from the container's own naming, not confirmed by executing the page's client-side script.",
+      "sourceRef": "Other Information — <input id=\"checkPlateId\" name=\"VehicleInfoModel.FancyPlate\"> (container id=\"IsfancyCheck\") plus a 'Check Available' lookup button",
+      "visibleWhen": {
+        "field": "requestFancyNumberPlate",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "requestFancyNumberPlate",
+        "equals": true
+      }
+    }
+  ]
+}
