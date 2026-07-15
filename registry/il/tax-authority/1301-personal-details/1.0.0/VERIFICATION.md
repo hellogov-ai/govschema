@@ -58,8 +58,8 @@ pre-verified, ready backlog item.
     the sorted-text extraction. This caught and corrected an initial
     misreading of the bank-refund block: a text-only pass paired field
     numbers 277/278 with the wrong columns; the rendered image confirmed
-    (reading right-to-left) bank code → branch code (**field 277**,
-    "סמל סניף") → account number (**field 278**, "מספר חשבון"). Pages 2–4
+    (reading right-to-left) bank code → branch code (**field 278**,
+    "סמל סניף") → account number (**field 277**, "מספר חשבון"). Pages 2–4
     (Parts C–O, the ~89 numbered income/deduction/credit line items) were
     extracted as text only — sufficient to confirm the scale and shape of
     the material being excluded, not to individually verify field-by-field
