@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **458 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **459 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3030, "GovSchema Standard Research"): Greece's
+> Business Formation vertical opens (4 of 6)**, via
+> `gr/aade/dilosi-enarxis-metavolis-diakopis-ergasion-epiheirisis-d211` —
+> AADE's (Independent Authority for Public Revenue) unified Tax Registry
+> form Δ211, "Δήλωση έναρξης, μεταβολής, διακοπής εργασιών επιχείρησης"
+> (Declaration of Commencement/Modification/Cessation of Business
+> Activity). A pre-scouted GOV-3026 child issue, picked up this cycle
+> (GOV-3036). The direct `aade.gr` host is Akamai-gated against
+> non-browser fetches, consistent with this registry's established
+> pattern for Greek government hosts; the Athens Chamber of Commerce
+> (`acci.gr`) mirrors the identical current v0.3 (06/22) edition —
+> independently re-fetched this cycle via `curl` (HTTP 200,
+> `application/pdf`, 478,029 bytes, sha256
+> `5acd0e9902cde3a3cadf7fb9a9ca2ee62c8d936c3bfc7882bb7e2e545e050ffa`,
+> matching the pre-scouted byte count exactly). Independently re-extracted
+> via `pdfjs-dist`: 18 pages, 268 named AcroForm field entries, 339 total
+> Widget annotations — a genuine fillable AcroForm, matching the scouting
+> note's "268-field AcroForm" claim exactly. Δ211 is a single composite
+> form serving four filer categories (natural person; existing legal
+> person/entity; entity-under-formation founder; any of these ceasing
+> activity) across three actions (commencement/modification/cessation),
+> routed by the form's own page-2 section-selection table, read directly
+> from the position-sorted text layer to derive the scope. This v1.0.0
+> models 164 `fields[]`, scoped to the **commencement (Έναρξη)** action for
+> the **natural-person** and **entity-under-formation founder** pathways
+> only — the existing-legal-entity pathway (section 3.4-3.7, section 9
+> Members, section 12 Foreign Business Seat) and every
+> modification/cessation field (including all of section 14) are disclosed
+> out-of-scope future-version candidates. One `documents[]` attestation
+> entry (the paper-submission-only signature). 8 conformance fixtures (2
+> valid, 6 mutation-control) committed under
+> `conformance/gr/aade/dilosi-enarxis-metavolis-diakopis-ergasion-epiheirisis-d211/1.0.0/`.
+> See the document's own VERIFICATION.md for the full filer-category ×
+> section mapping, every disclosed scoping decision, and this registry's
+> established large-repeating-group/independent-checkbox/bounded-slot
+> modelling conventions applied throughout. Greece stood at 3 of 6
+> verticals (DMV, Taxes, Visa) before this update; this closes Business
+> Formation, reaching 4 of 6.
 
 > **Update (2026-07-15, GOV-3031, "GovSchema Standard Research"): Italy's
 > Passport vertical opens (1 of 6, now 4 of 6 overall — combined with the
@@ -10351,7 +10390,12 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (51/56 jurisdictions — 91%)
+### Business Formation — Incorporation, LLC, Company Registration (52/56 jurisdictions — 93%)
+
+> **Update (GOV-3030):** Greece's Business Formation vertical opens via
+> `gr/aade/dilosi-enarxis-metavolis-diakopis-ergasion-epiheirisis-d211`
+> (Form Δ211); recounted directly from the By-Jurisdiction table (51 +
+> Greece = 52).
 
 > **Update (GOV-3000):** Lithuania's Business Formation vertical opens via
 > `lt/registrucentras/individualios-imones-registravimas`; recounted
@@ -10372,6 +10416,23 @@ within an already-covered vertical:
 > (Business Formation remains open for Lithuania — Registrų centras
 > returned HTTP 403 on every fetch attempt this cycle, WAF-gated with no
 > static fallback found) as the registry's 55th jurisdiction.
+
+**Greece's Business Formation vertical opens (4 of 6) (GOV-3030)**, via
+`gr/aade/dilosi-enarxis-metavolis-diakopis-ergasion-epiheirisis-d211` —
+AADE's (Independent Authority for Public Revenue) unified Tax Registry
+form Δ211, "Δήλωση έναρξης, μεταβολής, διακοπής εργασιών επιχείρησης"
+(Declaration of Commencement/Modification/Cessation of Business Activity),
+mirrored by the Athens Chamber of Commerce (`acci.gr`) after the direct
+`aade.gr` host WAF-blocked non-browser fetches — a genuine 268-field,
+18-page AcroForm. Δ211 is a single composite form serving four filer
+categories across three actions, routed by the form's own page-2
+section-selection table; this v1.0.0 scopes to the **commencement**
+(Έναρξη) action for the **natural-person** and **entity-under-formation
+founder** pathways only, leaving the existing-legal-entity pathway and all
+modification/cessation fields as a disclosed future-version candidate — see
+the document's own VERIFICATION.md for the full filer-category × section
+mapping and scope rationale. Picked up from GOV-3026's scouting pass
+(pre-scouted as GOV-3030) in the GOV-3036 research cycle.
 
 **Lithuania's Business Formation vertical opens (1 of 6) (GOV-3000)**, via
 `lt/registrucentras/individualios-imones-registravimas` — Valstybės įmonė
@@ -13066,7 +13127,7 @@ now closed.
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GR** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **GR** | 3 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -15914,23 +15975,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   and National ID remain confirmed dead ends per GOV-2883's screening —
   none should be re-attempted without a genuinely new source.
 
-- **Greece — Business Formation: scouted, not yet authored (GOV-3026).**
-  AADE's unified registry form **Δ211** ("Δήλωση έναρξης, μεταβολής,
-  διακοπής εργασιών επιχείρησης" — Declaration of Commencement/Modification/
-  Cessation of Business Activity) is a genuine 268-field, 18-page AcroForm
-  PDF. The direct `aade.gr` URL 403s to non-browser fetches, but the
-  identical current version (v0.3, 06/22) is mirrored cleanly by the Athens
-  Chamber of Commerce at `https://acci.gr/wp-content/uploads/2022/11/D211-5.pdf`
-  (HTTP 200, `application/pdf`, 478,029 bytes). Field IDs are numbered by
-  section (1–14 main blocks, with sub-items like `4.2`, `4.3.4`, `7.2`–
-  `7.12`, `9.x`, `10.x`, plus checkboxes). Covers natural persons, legal
-  entities, and entities-under-formation registering with/modifying/ceasing
-  at the Tax Registry — Greece's functional equivalent of a business-
-  formation filing, since the newer ΓΕΜΗ e-one-stop-shop
-  (`eyms.businessportal.gr`) is fully myAADE/taxisnet-SSO-gated for the
-  incorporation step itself. Delegated as a child issue of GOV-3026 rather
-  than authored inline, to keep the parent research cycle's own deliverable
-  scoped to one document.
+- ~~**Greece — Business Formation: scouted, not yet authored (GOV-3026).**~~
+  **Authored (GOV-3030, 2026-07-15):** now published as
+  `gr/aade/dilosi-enarxis-metavolis-diakopis-ergasion-epiheirisis-d211` v1.0.0
+  (Form Δ211), opening Greece's Business Formation vertical (4 of 6).
+  Confirmed a genuine 268-field, 18-page AcroForm (339 total Widget
+  annotations); scoped to the commencement (Έναρξη) action for the
+  natural-person and entity-under-formation founder pathways only — see the
+  Executive Summary's GOV-3030 update above and the schema's own
+  VERIFICATION.md for the full filer-category × section scope mapping.
 - ~~**Italy — Passport: scouted, not yet authored (GOV-3026).**~~ **Authored
   (GOV-3031, 2026-07-15):** now published as
   `it/poliziadistato/richiesta-passaporto-maggiorenni` v1.0.0, opening
