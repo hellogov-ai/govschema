@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **479 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **480 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3166, delegated from GOV-3152, "GovSchema
 > Standard Research"): the Dominican Republic's DMV vertical opens (1 of
@@ -62,6 +62,43 @@
 > for Moldova's still-open verticals — Taxes, Visa, and two confirmed dead
 > ends (Passport, National ID) — remain disclosed in GOV-3157's own issue
 > description for a future cycle.)
+
+> **Update (2026-07-15, GOV-3159, delegated from GOV-3152, "GovSchema
+> Standard Research"): Tanzania's Taxes vertical opens, bringing Tanzania
+> to 3 of 6 verticals**, via
+> `tz/tra/itx201-01-e-individual-income-tax-return` — the Tanzania Revenue
+> Authority's (TRA) Form ITX201.01.E, "Return of Income Made by or on
+> Behalf of an Individual", filed under Section 91 of the Income Tax Act,
+> 2004. Picked up as an unclaimed, pre-scouted child issue (GOV-3159)
+> delegated from the GOV-3152 cycle, independently re-fetched and
+> re-verified from scratch (fresh `curl` + sha256 confirming a genuine
+> OLE2/Compound File Binary `.doc`, not scanned or gated; corroborated live
+> on `tra.go.tz/page/income-tax-for-individuals`, which names this exact
+> form verbatim). No PDF/AcroForm tooling applies to this legacy `.doc`
+> format; text was extracted with the npm package `word-extractor`,
+> following this registry's established legacy-`.doc` technique. Raw
+> tab-delimited structure analysis uncovered a two-column "Taxable Income"
+> / "Tax Payable/Paid (TZS)" table running uniformly from item 26 through
+> item 47 — each of those 22 numbered items models as **two** fields (an
+> income amount and its own computed tax), not one, corroborated by the
+> form's own Appendix 2 schedular tax-rate tables. Models 89 `fields[]`
+> (identity/address/contact/return-period/taxation-category data plus the
+> full Computation of Income and Tax section: business income, deductions,
+> employment, pension, and investment income categories each paired with
+> its own tax figure, plus both totals and the net-tax-payable settlement)
+> and 2 `documents[]` attestation entries (the taxpayer's declaration and
+> the optional paid-preparer's declaration under Section 135(1)). Two
+> source formula artifacts are disclosed rather than silently corrected:
+> items 31 and 45's own printed subtotal formulas each exclude one or two
+> sibling line items from their sum, exactly as printed. Appendix 1's
+> supporting schedules (assets/liabilities, bank accounts, children/
+> dependants, stock valuation, basis of accounting, accounting date,
+> foreign tax credits) and the form's own "FOR OFFICIAL USE ONLY" block are
+> disclosed out-of-scope backlog for a future companion schema. 7
+> conformance fixtures (2 valid, 5 mutation-control) committed under
+> `conformance/tz/tra/itx201-01-e-individual-income-tax-return/1.0.0/`. See
+> the Taxes vertical section below and the document's own VERIFICATION.md
+> for the full sourcing record and scope decisions.
 
 > **Update (2026-07-15, GOV-3158, delegated from GOV-3152, "GovSchema
 > Standard Research"): the Dominican Republic's Passport vertical opens (1
@@ -11915,7 +11952,63 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (53/62 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (54/62 jurisdictions — 87%)
+
+> **Update (2026-07-15, GOV-3159, delegated from GOV-3152, "GovSchema
+> Standard Research"): Tanzania opens Taxes (3 of 6, combined with the
+> already-modelled Business Formation and National ID & Civic
+> Documents)**, via `tz/tra/itx201-01-e-individual-income-tax-return` — the
+> Tanzania Revenue Authority's (TRA) Form ITX201.01.E, "Return of Income
+> Made by or on Behalf of an Individual", filed under Section 91 of the
+> Income Tax Act, 2004 by every individual required to declare worldwide
+> (resident) or Tanzania-source (non-resident) income within six months of
+> the end of the year of income. Picked up as an unclaimed, pre-scouted
+> child issue (GOV-3159) delegated from the GOV-3152 cycle. Independently
+> re-fetched directly from `tra.go.tz` (no login/CAPTCHA/WAF gate): HTTP
+> 200, content-type `application/msword`, 428,032 bytes, sha256
+> `8139aeb3282c0df0179755e2b04c13fbef575320416bf2031df08137dacffee2` — a
+> genuine legacy OLE2/Compound File Binary `.doc` (not scanned, not
+> gated), corroborated live on `tra.go.tz/page/income-tax-for-individuals`,
+> which names this exact form verbatim ("Forms: ITX201.01.E Return of
+> Income – Individual"). No `pdftotext`/`pdfjs-dist`/LibreOffice/`pip` is
+> usable on this binary format (and no PDF edition of this form exists);
+> text was extracted with the npm package `word-extractor`, this
+> registry's established legacy-`.doc` technique (e.g. `hr/mingo/obrtni-
+> registar`, `bg/nra/obrazets-2001-1`). Raw tab-delimited structure
+> (inspected via `cat -A`) revealed that items 10-25 sit under a
+> single-column "Amount" header, but items 26 through 47 sit under a
+> **second, distinct** table header — "Taxable Income" / "Tax Payable/Paid
+> (TZS)" — whose two-blank-cell-per-row pattern is uniform across all 22
+> rows, meaning each of those items is genuinely **two** fields (an income
+> amount and its own computed tax), not one; independently corroborated by
+> this form's own Appendix 2 schedular tax-rate tables (a progressive
+> employment-income scale, a turnover-based presumptive-tax scale, and a
+> per-category withholding-rate table). Models 89 `fields[]` (identity/
+> address/contact/return-period/taxation-category data, the Business
+> Income and Deductions/Expenses build-up, and the full income/tax pairs
+> for mining, agricultural, and other business income; final withholding
+> payments; employment; commuted pension; pension annuity; dividends
+> including DSE-registered dividends; interest/discount; investment rent;
+> royalties; natural resource payments; capital gains; other investment
+> income; repatriated permanent-establishment income; both totals; and the
+> net-tax-payable settlement) and 2 `documents[]` attestation entries (the
+> taxpayer's own declaration and the optional paid-preparer's declaration
+> under Section 135(1) of the Income Tax Act, 2004). Two source formula
+> artifacts are disclosed rather than silently corrected: items 31 and 45's
+> own printed subtotal formulas each omit one or two sibling line items
+> from their sum, reproduced exactly as printed. No visual/rendered
+> inspection of this OLE2 `.doc` was possible in this environment (no
+> LibreOffice/`soffice` available); two fields whose real-world
+> applicability could not be visually confirmed (`lessTaxPaidIncome`,
+> `netTaxPayableIncome`) are disclosed as such rather than silently
+> asserted. Out of scope for this version: Appendix 1's supporting
+> schedules (assets/liabilities, bank accounts, children/dependants, stock
+> valuation, basis of accounting, accounting date, foreign tax credits) and
+> the form's own "FOR OFFICIAL USE ONLY" staff block. 7 conformance
+> fixtures (2 valid, 5 mutation-control) committed under
+> `conformance/tz/tra/itx201-01-e-individual-income-tax-return/1.0.0/`. See
+> the document's own VERIFICATION.md for the full sourcing record and scope
+> decisions. Denominator updated from 53 to 54 jurisdictions.
 
 > **Update (2026-07-15, GOV-3114): the Dominican Republic opens Taxes (1 of
 > 6), its first vertical, opening the jurisdiction (62nd)**, via
@@ -14124,7 +14217,7 @@ now closed.
 | **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **TZ** | 2 | ✗ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **TZ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

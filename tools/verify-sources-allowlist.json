@@ -1,4 +1,17 @@
 {
   "$comment": "GOV-1763. Entries here SKIP a specific URL in tools/verify-sources.mjs's source-URL verification. Every entry must name a reason a human can audit — this file is reviewed like a schema PR, not a place to silence a real failure. Prefer fixing the citation (e.g. pointing it at an explicit web.archive.org snapshot) over adding an entry here.",
-  "entries": []
+  "entries": [
+    {
+      "url": "https://www.tra.go.tz/images/uploads/forms/FINAL_RETURN_OF_INCOME_INDIVIDUAL.doc",
+      "reason": "GOV-3159. Independently re-confirmed live via curl (HEAD and GET, both HTTP 200, content-type application/msword, content-length 428032, matching this document's cited sha256) immediately before this entry was added. tools/verify-sources.mjs's own Node fetch() fails on this exact URL with a reproducible `UND_ERR_RES_CONTENT_LENGTH_MISMATCH` (undici's strict response parser rejects this server's response), not a 404/DNS failure — a Node-fetch-vs-server-quirk incompatibility, not evidence of a fabricated or nonexistent source. curl (used throughout this repo's own verification workflow, including by this schema's own VERIFICATION.md) has no such issue with this host."
+    },
+    {
+      "url": "https://www.tra.go.tz",
+      "reason": "GOV-3159. Independently re-confirmed live via curl (HTTP 200) immediately before this entry was added. tools/verify-sources.mjs's own Node fetch() fails on this host with a reproducible `HTTPParserError: Invalid header value char` — this server's Content-Security-Policy response header spans multiple raw newlines without RFC 7230 header-folding, which Node's strict undici HTTP parser rejects outright (curl tolerates it without issue). A Node-fetch-vs-server-quirk incompatibility, not evidence of a fabricated or nonexistent source."
+    },
+    {
+      "url": "https://www.tra.go.tz/page/income-tax-for-individuals",
+      "reason": "GOV-3159. Independently re-confirmed live via curl (HTTP 200, article body names Form ITX201.01.E verbatim) immediately before this entry was added. Same reproducible Node undici `HTTPParserError: Invalid header value char` on this host as the tra.go.tz root entry above (this server's own malformed/unfolded multi-line CSP header, not a bot-block or a missing page)."
+    }
+  ]
 }

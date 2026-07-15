@@ -1,0 +1,917 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tz/tra/itx201-01-e-individual-income-tax-return",
+  "version": "1.0.0",
+  "title": "Tanzania — TRA Form ITX201.01.E, Return of Income Made by or on Behalf of an Individual (Individual Income Tax Return)",
+  "description": "The Tanzania Revenue Authority's (TRA) Form ITX201.01.E, \"Return of Income Made by or on Behalf of an Individual\", filed under Section 91 of the Income Tax Act, 2004 by every individual required to declare worldwide income (if resident) or Tanzania-source income (if non-resident) within six months of the end of the year of income. Opens Tanzania's Taxes vertical (Tanzania's third schema in this registry, following Business Formation via BRELA Form 14a and National ID via NIDA Form 2A; Tanzania now stands at 3 of 6 verticals). The official distribution is a legacy Microsoft Word `.doc` (OLE2/Compound File Binary) template, not a fillable AcroForm — a print-and-fill document whose blank lines the taxpayer completes by hand. This is a whole-of-form schema covering the General Information/Individual's Particulars section (items 1-9: identity, PIN, postal/physical/residential addresses, contact details, return period, and residency/taxation-category selection) and the Computation of Income and Tax section in full (items 10-48: the Business Income build-up to Gross Profit, the Deductions/Expenses build-up to Total Expenses and Net Profit, and — a two-column table the form's own header labels \"Taxable Income\" / \"Tax Payable/Paid (TZS)\", running uniformly from item 26 through item 47 — every income category (mining, agricultural, and other business income; final withholding payments; employment; commuted pension; pension annuity; dividends, including DSE-registered dividends; interest/discount; investment rent; royalties; natural resource payments; capital gains; other investment income; repatriated income of a domestic permanent establishment) alongside its own computed tax, plus the Total Business/Investment/overall Income and Tax subtotals, Less Tax Paid, Net Tax Payable, and the statutory Due Date), plus both declaration blocks (the taxpayer's own declaration of accuracy and the optional paid-preparer's declaration under Section 135(1) of the Income Tax Act, 2004, each modeled as a documents[] attestation entry). Out of scope for this version, disclosed rather than silently omitted: the form's own Appendix 1 supporting schedules — the Schedule of Assets and Liabilities, Particulars of Bank Accounts, Particulars of Children and Dependants, Stock Valuation Method, Basis of Accounting, Accounting Date, and Foreign Tax Credits — each a distinct repeating-row or single-item schedule a future version could model as a companion schema; and the entirety of the form's own \"FOR OFFICIAL USE ONLY\" second-page block (TRA data-entry/authorization/rejection-reason fields), which is staff-assigned intake data the taxpayer never supplies. This document describes the form only; it does not submit anything to TRA on a taxpayer's behalf, and does not imply endorsement by the United Republic of Tanzania or the Tanzania Revenue Authority. GovSchema is an independent, non-profit standards body.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Tanzania Revenue Authority",
+    "abbreviation": "TRA",
+    "url": "https://www.tra.go.tz"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.tra.go.tz/images/uploads/forms/FINAL_RETURN_OF_INCOME_INDIVIDUAL.doc",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Form ITX201.01.E, \"Return of Income Made by or on Behalf of an Individual\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3159, picked up as the pre-scouted, ready-to-author candidate delegated from the GOV-3152 cycle; re-verified from scratch rather than trusting the prior cycle's own curl/sha256 claims. Opens Tanzania's Taxes vertical (Tanzania's third schema in this registry, following Business Formation via BRELA Form 14a, GOV-3113, and National ID via NIDA Form 2A, GOV-3152; Tanzania now stands at 3 of 6 verticals). Independently re-fetched directly from `tra.go.tz` (no login/CAPTCHA/WAF gate): HTTP 200, content-type `application/msword`, content-length 428,032 bytes, sha256 `8139aeb3282c0df0179755e2b04c13fbef575320416bf2031df08137dacffee2`. A genuine legacy OLE2/Compound File Binary document (magic bytes `D0 CF 11 E0 A1 B1 1A E1`), not a PDF/AcroForm — a print-and-fill Word template. Corroborated live on `tra.go.tz/page/income-tax-for-individuals` (HTTP 200), whose own article body names this exact form verbatim: \"Forms: ITX201.01.E Return of Income – Individual\", alongside the six-month post-year-end filing deadline this document's own NOTE section also states.\n\nNo `pdftotext`/`pdfjs-dist`/`libreoffice`/`soffice`/`antiword`/`pip` was usable on this binary `.doc` format (no PDF edition of this form exists on `tra.go.tz`); text was extracted with the npm package `word-extractor` (installed standalone for this task, not committed as a repo dependency), following the same legacy-`.doc`-via-`word-extractor` technique already established elsewhere in this registry (e.g. `hr/mingo/obrtni-registar`, `bg/nra/obrazets-2001-1`). `doc.getBody()` returned the complete document text cleanly (a `getTextBoxes is not a function` error only surfaced on an unrelated, unused API call attempted after the body extraction had already succeeded). Raw tab-delimited structure (inspected via `cat -A`) confirmed a critical structural feature not obvious from a plain reading of the label text alone: items 10 through 25 (Business Income build-up and Deductions/Expenses) sit under a single-column header reading \"Business Income / Amount\", but a second, distinct table header — \"Taxable Income\" / \"Tax Payable/Paid (TZS)\" — appears immediately before item 26 and its two-blank-cell-per-row tab pattern (confirmed identical, cell-by-cell, through item 47) continues uniformly through every item from 26 to 47 inclusive, meaning each of those 22 items is in fact two fields (an income amount and its own computed tax), not one. This is independently corroborated by this form's own Appendix 2 tax-rate tables (a progressive individual-income scale, a turnover-based presumptive-tax scale keyed to whether incomplete or complete records are kept, and a schedular withholding-rate table with a distinct rate per income category — e.g. DSE-registered dividends at 5% vs other dividends at 10%) — exactly the category-by-category income/tax computation the two-column layout asks the taxpayer to perform. Items 46 (\"Less tax paid\") and 47 (\"Net Tax Payable\") carry the identical raw two-blank-cell tab pattern as items 26-45, so their own Taxable Income companion fields (`lessTaxPaidIncome`, `netTaxPayableIncome`) are modeled for structural completeness, but each field's own `description` discloses that their applicability could not be visually confirmed — no PDF/image rendering of this OLE2 `.doc` was possible in this environment (no LibreOffice/`soffice` available to convert it), so unlike this registry's usual PDF-grid cases (resolved via `node-canvas`), this is a genuine, disclosed text-only extraction limit for this particular source format. Item 48 (\"DUE DATE\") by contrast carries only a single trailing tab, confirmed as a single date field, not a third two-column row. Two source formula artifacts are disclosed rather than silently corrected: item 31's own printed formula (\"26+27+28+29\") excludes item 30 (Final withholding payments) from the Total Business Income/Tax subtotal, and item 45's own printed formula (\"26+27+28+29+32+33+34+43\") likewise excludes both item 30 and item 44 (Repatriated income of a domestic permanent establishment) from the Total Income/Tax figure — both reproduced exactly as printed, not corrected to a taxpayer's-intuition sum.\n\nEvery numbered item was checked against the raw extracted text for any asterisk or \"if applicable\" marking distinguishing required from optional fields; none exists anywhere on this form (consistent with this registry's other TZ schemas). Items 1-9 (identity, PIN, addresses, contact, return period, taxation category) are modeled required except where a field is one of several parallel convenience/continuation fields (middle name, PIN, plot/block numbers, second/third phone, fax, email) — modeled optional, disclosed per-field. Every numeric line 10-48 is modeled optional: this is a whole-of-form return covering business, employment, and investment income alike, and the form gives no indication a taxpayer with e.g. no business income must still enter zeroes across the Business Income build-up. `minimum: 0` was applied to every direct-entry amount field whose own label cannot logically be negative (turnover, purchases, individual income-category and tax-payable amounts); it was withheld from every field whose own formula can subtract to a negative result (costOfGoodsSold, grossProfit, netProfitIncome, totalBusinessIncome/totalIncomeAmount, netTaxPayable, and the two disclosed-ambiguous items 46/47 Taxable-Income companion fields), consistent with the `minimum: 0` departure already established and disclosed in the Dominican Republic's IR-2 schema (GOV-3114).\n\n2 valid mock scenarios (a resident individual with only employment income, filing a simple return with a small refund position; a resident individual with mixed business, investment, and employment income, taxed as Presumptive-tax/complete-record-keeping, filed through a paid preparer) plus 5 mutation-control fixtures (a missing statically-required field; an invalid date format; an invalid `taxationCategory` enum value; an invalid `title` enum value; an invalid email pattern) are committed under `conformance/tz/tra/itx201-01-e-individual-income-tax-return/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/pattern/enum rules directly from this schema's own `fields[]`/`documents[]`, discarded after use, not committed) ran all 7: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (ajv 2020-12 against spec/v0.3), individually and as part of the full registry run. `node tools/verify-sources.mjs` clean on this document's changed files. `npm run build-index` re-run in `tools/govschema-client/` to regenerate `registry-index.json`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "yearOfIncome",
+      "label": "Year of Income",
+      "type": "string",
+      "required": true,
+      "description": "The tax year (year of income) this return covers, printed at the top of the form above the taxpayer's TIN.",
+      "sourceRef": "Cover block — \"YEAR OF INCOME:\""
+    },
+    {
+      "name": "tin",
+      "label": "TIN",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's Tax Identification Number (TIN), issued by TRA. Printed both on the cover block and repeated as numbered item 1 of the General Information section; modeled once as a single field.",
+      "sourceRef": "Cover block and item 1 — \"TIN:\""
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": true,
+      "description": "The individual taxpayer's title, from the form's own three-option checkbox row.",
+      "sourceRef": "Item 2 — \"Title: Mr  Mrs  Ms\"",
+      "validation": {
+        "enum": [
+          "MR",
+          "MRS",
+          "MS"
+        ]
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 2 — \"First Name\""
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional: not every taxpayer has a middle name.",
+      "sourceRef": "Item 2 — \"Middle Name\""
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 2 — \"Surname\""
+    },
+    {
+      "name": "personalIdentificationNumber",
+      "label": "Personal Identification Number (PIN)",
+      "type": "string",
+      "required": false,
+      "description": "A separate national personal-identification number, distinct from the TIN. Modeled optional: unlike the TIN (mandatory for anyone filing a tax return), the form gives no indication every individual taxpayer holds a PIN.",
+      "sourceRef": "Item 3 — \"Personal Identification Number (PIN)\""
+    },
+    {
+      "name": "postalBoxNumber",
+      "label": "P.O. Box",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 4, Postal Address — \"P.O. Box\""
+    },
+    {
+      "name": "postalCity",
+      "label": "Postal City",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 4, Postal Address — \"Postal City\""
+    },
+    {
+      "name": "physicalAddressStreetLocation",
+      "label": "Physical Address — Street/Location",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 5, Physical Address — \"Street/Location\""
+    },
+    {
+      "name": "physicalAddressPlotNumber",
+      "label": "Physical Address — Plot No.",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional: not every physical address is on a numbered plot.",
+      "sourceRef": "Item 5, Physical Address — \"Plot No.\""
+    },
+    {
+      "name": "physicalAddressBlockNumber",
+      "label": "Physical Address — Block No.",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, per the same reasoning as Plot No.",
+      "sourceRef": "Item 5, Physical Address — \"Block No.\""
+    },
+    {
+      "name": "residentialAddressStreetLocation",
+      "label": "Residential Address — Street/Location",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 6, Residential Address — \"Street/Location\""
+    },
+    {
+      "name": "residentialAddressPlotNumber",
+      "label": "Residential Address — Plot No.",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, per the same reasoning as the physical address's Plot No.",
+      "sourceRef": "Item 6, Residential Address — \"Plot No.\""
+    },
+    {
+      "name": "residentialAddressBlockNumber",
+      "label": "Residential Address — Block No.",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, per the same reasoning as the physical address's Block No.",
+      "sourceRef": "Item 6, Residential Address — \"Block No.\""
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 7 — \"Phone number\""
+    },
+    {
+      "name": "secondPhoneNumber",
+      "label": "Second Phone",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional: a second phone number is a convenience, not every filer will have one to give.",
+      "sourceRef": "Item 7 — \"Second Phone\""
+    },
+    {
+      "name": "thirdPhoneNumber",
+      "label": "Third Phone",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, per the same reasoning as Second Phone.",
+      "sourceRef": "Item 7 — \"Third Phone\""
+    },
+    {
+      "name": "faxNumber",
+      "label": "Fax Number",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional: not every individual taxpayer has a fax line.",
+      "sourceRef": "Item 7 — \"Fax number\""
+    },
+    {
+      "name": "emailAddress",
+      "label": "E-mail Address",
+      "type": "string",
+      "required": false,
+      "description": "Modeled optional, consistent with the other contact-method fields in this item.",
+      "sourceRef": "Item 7 — \"E-mail address\"",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "returnPeriodFrom",
+      "label": "Period Covered — From",
+      "type": "date",
+      "required": true,
+      "description": "Start of the basis period this return covers.",
+      "sourceRef": "Item 8 — \"Period covered by this return (basis period): From Day Month Year\""
+    },
+    {
+      "name": "returnPeriodTo",
+      "label": "Period Covered — To",
+      "type": "date",
+      "required": true,
+      "description": "End of the basis period this return covers.",
+      "sourceRef": "Item 8 — \"Period covered by this return (basis period): ... To Day Month Year\""
+    },
+    {
+      "name": "taxationCategory",
+      "label": "Person's Status and Category of Taxation",
+      "type": "enum",
+      "required": true,
+      "description": "The taxpayer's residency status or the taxation regime applying to this return, from a single flat row of five checkboxes (\"Please tick the appropriate boxes\"). The two presumptive-tax options correspond directly to the record-keeping-dependent flat/percentage rates published in this form's own Appendix 2 (\"THE INDIVIDUAL PRESUMPTIVE TAX ASSESSMENT\" table), and Resident/Non-Resident to the standard progressive rate table there. Modeled as a single-select enum: the form's plural \"boxes\" wording is not by itself confirmed evidence of a multi-select intent, and Resident/Non-Resident are definitionally mutually exclusive; this is a disclosed judgment call, not a printed instruction.",
+      "sourceRef": "Item 9 — \"Resident / Non-Resident / Presumptive tax (incomplete record keeping) / Presumptive tax (complete record keeping) / Others\"",
+      "validation": {
+        "enum": [
+          "RESIDENT",
+          "NON_RESIDENT",
+          "PRESUMPTIVE_TAX_INCOMPLETE_RECORDS",
+          "PRESUMPTIVE_TAX_COMPLETE_RECORDS",
+          "OTHER"
+        ]
+      }
+    },
+    {
+      "name": "turnover",
+      "label": "10. Turnover (Gross Receipts)",
+      "type": "number",
+      "required": false,
+      "description": "Business turnover / gross receipts for the year of income.",
+      "sourceRef": "Item 10 — \"Turnover (Gross receipts)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "beginningInventory",
+      "label": "11. Beginning Inventory",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 11 — \"Beginning Inventory\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "purchases",
+      "label": "12. Purchases",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 12 — \"Purchases\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "goodsWithdrawnNotSold",
+      "label": "13. Goods Withdrawn Not Sold",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 13 — \"Goods withdrawn not sold\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "closingInventory",
+      "label": "14. Closing Inventory",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 14 — \"Closing Inventory\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "costOfGoodsSold",
+      "label": "15. Costs of Goods Sold",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: Beginning Inventory + Purchases − Goods Withdrawn Not Sold − Closing Inventory (11+12-13-14). The taxpayer computes and enters this figure by hand; this is a paper/manually-completed form, not a spreadsheet with live formulas.",
+      "sourceRef": "Item 15 — \"Costs of goods sold (11+12-13-14)\""
+    },
+    {
+      "name": "grossProfit",
+      "label": "16. Gross Profit",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: Turnover − Costs of Goods Sold (10-15); may be negative if costs exceed turnover.",
+      "sourceRef": "Item 16 — \"Gross profit (10-15)\""
+    },
+    {
+      "name": "wagesAndSalaries",
+      "label": "18. Wages and Salaries",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 18 — \"Wages and salaries\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stampDuty",
+      "label": "19. Stamp Duty",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 19 — \"Stamp duty\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "transport",
+      "label": "20. Transport",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 20 — \"Transport\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "bankChargesInterest",
+      "label": "21. Bank Charges/Interests",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 21 — \"Bank charges/interests\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "utilities",
+      "label": "22. Utilities",
+      "type": "number",
+      "required": false,
+      "description": "Utilities (electricity, water, phone, fax, etc.).",
+      "sourceRef": "Item 22 — \"Utilities (Electricity, Water, Phone, Fax, etc)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "businessRent",
+      "label": "23. Business Rent",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 23 — \"Business Rent\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherExpenses",
+      "label": "24. Other Expenses",
+      "type": "number",
+      "required": false,
+      "description": "Other business expenses, itemized by the taxpayer in a separate schedule (out of scope for this document).",
+      "sourceRef": "Item 24 — \"Other Expenses (specify in a separate schedule)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalExpenses",
+      "label": "25. Total Expenses",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: sum of items 18 through 24.",
+      "sourceRef": "Item 25 — \"Total expenses (add from 18 to 24)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netProfitIncome",
+      "label": "26. Net Profit — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: Gross Profit − Total Expenses (16-25); may be negative (a loss). Restates the business computation above in this item's own two-column Taxable Income/Tax Payable format.",
+      "sourceRef": "Item 26 — \"Net profit (16-25)\", Taxable Income column"
+    },
+    {
+      "name": "netProfitTax",
+      "label": "26. Net Profit — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "description": "Tax payable/paid on the net profit reported in this same item, computed by the taxpayer applying the individual income tax or presumptive-tax rate tables in this form's own Appendix 2, per the taxationCategory selected in item 9.",
+      "sourceRef": "Item 26 — \"Net profit (16-25)\", Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "miningBusinessIncome",
+      "label": "27. Mining Business Income — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Mining business income, itemized by the taxpayer in a separate schedule (out of scope for this document).",
+      "sourceRef": "Item 27 — \"Mining Business Income (specify in separate schedule)\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "miningBusinessTax",
+      "label": "27. Mining Business Income — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 27, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "agriculturalBusinessIncome",
+      "label": "28. Agricultural Business Income — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Agricultural business income, itemized by the taxpayer in a separate schedule (out of scope for this document).",
+      "sourceRef": "Item 28 — \"Agricultural Business Income (specify in separate schedule)\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "agriculturalBusinessTax",
+      "label": "28. Agricultural Business Income — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 28, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherBusinessIncome",
+      "label": "29. Other Business Income — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Other business income, itemized by the taxpayer in a separate schedule (out of scope for this document).",
+      "sourceRef": "Item 29 — \"Other Business Income (specify in separate schedule)\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherBusinessTax",
+      "label": "29. Other Business Income — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 29, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "finalWithholdingIncome",
+      "label": "30. Final Withholding Payments — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Income subject to final withholding tax, itemized by the taxpayer in a separate schedule (out of scope for this document).",
+      "sourceRef": "Item 30 — \"Final withholding payments (Specify in a separate schedule)\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "finalWithholdingTax",
+      "label": "30. Final Withholding Payments — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "description": "The final withholding tax already paid at source on the income reported alongside it in this same item.",
+      "sourceRef": "Item 30, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalBusinessIncome",
+      "label": "31. Total Business Income",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: sum of items 26+27+28+29 — notably excluding item 30 (Final withholding payments) from this subtotal, exactly as printed on the form; a genuine source artifact, not corrected here.",
+      "sourceRef": "Item 31 — \"Total Business Income (26+27+28+29) and Tax\", Taxable Income column"
+    },
+    {
+      "name": "totalBusinessTax",
+      "label": "31. Total Business Tax",
+      "type": "number",
+      "required": false,
+      "description": "Tax companion to totalBusinessIncome, same 26+27+28+29 formula and same disclosed exclusion of item 30.",
+      "sourceRef": "Item 31 — \"Total Business Income (26+27+28+29) and Tax\", Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentIncome",
+      "label": "32. Employment — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 32 — \"Employment\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employmentTax",
+      "label": "32. Employment — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 32, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "commutedPensionIncome",
+      "label": "33. Commuted Pension — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 33 — \"Commuted pension\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "commutedPensionTax",
+      "label": "33. Commuted Pension — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 33, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionAnnuityIncome",
+      "label": "34. Pension Annuity — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 34 — \"Pension Annuity\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "pensionAnnuityTax",
+      "label": "34. Pension Annuity — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 34, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "dividendsIncome",
+      "label": "35. Dividends — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 35 — \"Dividends\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "dividendsTax",
+      "label": "35. Dividends — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 35, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "dividendsDseIncome",
+      "label": "36. Dividends (DSE Registered) — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Dividends from a company registered on the Dar es Salaam Stock Exchange (DSE), which the Appendix 2 withholding-rate table taxes at a lower rate (5%) than dividends from other companies (10%).",
+      "sourceRef": "Item 36 — \"Dividends (DSE Registered)\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "dividendsDseTax",
+      "label": "36. Dividends (DSE Registered) — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 36, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "interestDiscountIncome",
+      "label": "37. Interest/Discount — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 37 — \"Interest/Discount\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "interestDiscountTax",
+      "label": "37. Interest/Discount — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 37, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentRentIncome",
+      "label": "38. Rent — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Rental income reported under the Investment category, distinct from the Business Rent expense claimed under item 23.",
+      "sourceRef": "Item 38 — \"Rent\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "investmentRentTax",
+      "label": "38. Rent — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 38, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "royaltiesIncome",
+      "label": "39. Royalties — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 39 — \"Royalties\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "royaltiesTax",
+      "label": "39. Royalties — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 39, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "naturalResourcePaymentIncome",
+      "label": "40. Natural Resource Payment — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 40 — \"Natural resource payment\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "naturalResourcePaymentTax",
+      "label": "40. Natural Resource Payment — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 40, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "capitalGainIncome",
+      "label": "41. Capital Gain — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 41 — \"Capital gain\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "capitalGainTax",
+      "label": "41. Capital Gain — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 41, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherInvestmentIncome",
+      "label": "42. Other Investment — Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Other investment income, itemized by the taxpayer in a separate schedule (out of scope for this document).",
+      "sourceRef": "Item 42 — \"Other investment (specify in a separate schedule)\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherInvestmentTax",
+      "label": "42. Other Investment — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 42, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalInvestmentIncome",
+      "label": "43. Total Investment Income",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: sum of items 35 through 42.",
+      "sourceRef": "Item 43 — \"Total Investment Income (from 35 to 42)\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalInvestmentTax",
+      "label": "43. Total Investment Tax",
+      "type": "number",
+      "required": false,
+      "description": "Tax companion to totalInvestmentIncome, same 35-through-42 formula.",
+      "sourceRef": "Item 43 — \"Total Investment Income (from 35 to 42)\", Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repatriatedDomesticPeIncome",
+      "label": "44. Repatriated Income of a Domestic Permanent Establishment — Taxable Income",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 44 — \"Repatriated Income of a Domestic Permanent Establishment\", Taxable Income column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repatriatedDomesticPeTax",
+      "label": "44. Repatriated Income of a Domestic Permanent Establishment — Tax Payable/Paid (TZS)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 44, Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalIncomeAmount",
+      "label": "45. Total Income",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: sum of items 26+27+28+29+32+33+34+43 — notably excluding items 30 (Final withholding payments) and 44 (Repatriated income of a domestic permanent establishment) from this subtotal, exactly as printed on the form; a genuine source artifact, not corrected here.",
+      "sourceRef": "Item 45 — \"TOTAL INCOME AND TAX (26+27+28+29+32+33+34+43)\", Taxable Income column"
+    },
+    {
+      "name": "totalTaxAmount",
+      "label": "45. Total Tax",
+      "type": "number",
+      "required": false,
+      "description": "Tax companion to totalIncomeAmount, same formula and same disclosed exclusion of items 30 and 44.",
+      "sourceRef": "Item 45 — \"TOTAL INCOME AND TAX (26+27+28+29+32+33+34+43)\", Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "lessTaxPaidIncome",
+      "label": "46. Less Tax Paid — Taxable Income column",
+      "type": "number",
+      "required": false,
+      "description": "This item's label (\"Less tax paid, excluding final withholding payments\") is itself a tax-amount deduction with no independent taxable-income concept of its own. The form's printed table nonetheless carries the same two-column Taxable Income/Tax Payable(TZS) layout through this row (confirmed from the raw document's own tab structure); this field is modeled for structural completeness, but its applicability is disclosed as unconfirmed rather than assumed meaningful — a rendering of this legacy .doc was not available in this environment to visually confirm whether this column is actually blank/unused on the printed form.",
+      "sourceRef": "Item 46 — \"Less tax paid (Excluding final Withholding payments)\", Taxable Income column"
+    },
+    {
+      "name": "lessTaxPaid",
+      "label": "46. Less Tax Paid (Excluding Final Withholding Payments)",
+      "type": "number",
+      "required": false,
+      "description": "Tax already paid during the year (excluding final withholding payments already captured in item 30), deducted from the total tax liability.",
+      "sourceRef": "Item 46 — \"Less tax paid (Excluding final Withholding payments)\", Tax Payable/Paid (TZS) column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netTaxPayableIncome",
+      "label": "47. Net Tax Payable — Taxable Income column",
+      "type": "number",
+      "required": false,
+      "description": "Same disclosed-applicability caveat as item 46's Taxable Income column: item 47's own label (\"Net tax payable\") is a settlement-stage tax figure with no independent taxable-income concept, but the form's printed two-column layout carries through this row per the raw document's tab structure.",
+      "sourceRef": "Item 47 — \"NET TAX PAYABLE (45-46)\", Taxable Income column"
+    },
+    {
+      "name": "netTaxPayable",
+      "label": "47. Net Tax Payable",
+      "type": "number",
+      "required": false,
+      "description": "The form's own printed formula: Total Tax − Less Tax Paid (45-46); may be negative (a refund position).",
+      "sourceRef": "Item 47 — \"NET TAX PAYABLE (45-46)\", Tax Payable/Paid (TZS) column"
+    },
+    {
+      "name": "dueDate",
+      "label": "48. Due Date",
+      "type": "date",
+      "required": false,
+      "description": "Statutory due date for payment of the tax still owing, computed per Appendix 2's own notes as within six months of the accounting date (Section 79 of the Income Tax Act, 2004), distinct from item 46/47's two-column format — this item prints only a single blank.",
+      "sourceRef": "Item 48 — \"DUE DATE\""
+    },
+    {
+      "name": "declarantPosition",
+      "label": "Declarant's Position",
+      "type": "string",
+      "required": false,
+      "description": "The declarant's position/capacity, relevant when the return is made \"on behalf of\" the individual by someone other than the taxpayer themself (per this form's own title).",
+      "sourceRef": "Declaration — \"Position\" (taxpayer's declaration block)"
+    },
+    {
+      "name": "preparerTitle",
+      "label": "Preparer's Title",
+      "type": "enum",
+      "required": false,
+      "description": "The tax return preparer's title, from this second declaration block's own checkbox row. Present only when a preparer assisted in completing the return (Section 135(1) of the Income Tax Act, 2004). The source form's own fourth option is abbreviated \"Ms/Bi\" (reproduced verbatim in the enum as MS_BI; likely a Swahili honorific, \"Bibi\").",
+      "sourceRef": "Declaration — \"Title: Mr  Mrs  Ms/Bi\" (preparer's declaration block)",
+      "validation": {
+        "enum": [
+          "MR",
+          "MRS",
+          "MS_BI"
+        ]
+      }
+    },
+    {
+      "name": "preparerFirstName",
+      "label": "Preparer's First Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Declaration — \"First Name\" (preparer's declaration block)"
+    },
+    {
+      "name": "preparerMiddleName",
+      "label": "Preparer's Middle Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Declaration — \"Middle Name\" (preparer's declaration block)"
+    },
+    {
+      "name": "preparerSurname",
+      "label": "Preparer's Surname",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Declaration — \"Surname\" (preparer's declaration block)"
+    },
+    {
+      "name": "preparerPosition",
+      "label": "Preparer's Position",
+      "type": "string",
+      "required": false,
+      "description": "The preparer's professional position, printed with the parenthetical example \"(Certified Public Accountant)\".",
+      "sourceRef": "Declaration — \"Position (Certified Public Accountant)\" (preparer's declaration block)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "declarationOfAccuracy",
+      "label": "Taxpayer's declaration",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I hereby declare that the information given on this form and any accompanying accounts/documents are correct, complete and contain a full and true statement of my income to the best of my knowledge and belief.",
+      "sourceRef": "Declaration — taxpayer's declaration block"
+    },
+    {
+      "id": "preparerDeclaration",
+      "label": "Tax return preparer's declaration",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "statement": "In accordance with the provision of Section 135(1) of the Income Tax Act, 2004 I declare that I prepared or assisted in the preparation of this return and to the best of my knowledge, the return and attachments therefore present a true and fair view of the financial position.",
+      "sourceRef": "Declaration — preparer's declaration block, Section 135(1) of the Income Tax Act, 2004"
+    }
+  ]
+}
