@@ -37,6 +37,18 @@ the prior scouting summary" below).
   own POST, standard ASP.NET behavior for any form, not an auth gate).
 - **Byte size:** 153,370 bytes.
 - **sha256:** `fe00305563a5fbb3c8259252e8df50b0d8f21ab4e7ca29a57253f24bbf31ab50`
+  — **not independently reproducible on a fresh fetch**: the page embeds a
+  fresh `__RequestVerificationToken` anti-forgery value on every request,
+  so no two fetches ever hash identically even when nothing else changed.
+  Independently re-fetched the page twice, moments apart, and diffed the
+  two responses: byte-identical except for that single token value (one
+  changed line), both containing the same 2,525 `<option>` elements
+  total. Hashing each response with the `__RequestVerificationToken`
+  value redacted first yields a stable,
+  **reproducible** structural sha256 across both fetches:
+  `b7ef3870a49b24ea6215cb1aeb68e861e61e558707997ed5938852f16fd32c08`. A
+  future re-verification pass should compare against this redacted-hash
+  value, not the raw single-fetch hash above.
 - Confirmed FRSC branding: the page's own nav bar renders
   `/vat-assets/images/logofrsc.jpg`, and the nav groups this page
   ("New Vehicle Registration") alongside sibling flows "Verify Number
@@ -180,12 +192,36 @@ Two disclosed judgment calls diverge from a literal mechanical read of
   `requiredWhen: { field: "requestFancyNumberPlate", equals: true }` on
   that basis — disclosed as inferred from the container's own naming, not
   confirmed by executing client-side script.
-- **`vehicleSubCategoryId` is a cascading, AJAX-populated dropdown.** The
-  live page renders `<select id="vehicleSubCategoryId" ...>` with only its
-  placeholder `<option>` — its real option set is populated client-side
-  once a Vehicle Category is chosen, and was not independently enumerated
-  this cycle (no browser session was driven to trigger the AJAX call).
-  Modeled as a required opaque `string` rather than an unverified enum.
+- **`vehicleSubCategoryId` is a cascading, AJAX-populated dropdown —
+  independently enumerated via its underlying endpoint.** The live page
+  renders `<select id="vehicleSubCategoryId" ...>` with only its
+  placeholder `<option>`; its real option set is populated client-side
+  once a Vehicle Category is chosen, by a call to
+  `GET /VehicleManagement/GetSubVehicleCategory?vehicelId={id}`. That
+  endpoint is itself public and unauthenticated (no cookie/token required
+  beyond what a plain page load already sets), so it does not require
+  driving a browser session — called it directly with `curl` for all
+  three `vehicleCategoryId` values and got: `vehicelId=1` (Commercial) →
+  `{"text":"Motor Cycle","value":"4"}`, `{"text":"Motor
+  Vehicle","value":"2"}`; `vehicelId=2` (Private) → `{"text":"Motor
+  Cycle","value":"3"}`, `{"text":"Motor Vehicle","value":"1"}`;
+  `vehicelId=3` (Government) → `{"text":"Diplomatic and Foreign
+  Mission","value":"5"}`, `{"text":"Federal
+  Parastatals/Agencies/Department","value":"6"}`, `{"text":"State
+  Ministries/Agencies/Department","value":"7"}`,
+  `{"text":"Military/Paramilitaries","value":"8"}`, `{"text":"LGA",
+  "value":"9"}`. These 9 raw ids are mutually distinct across all three
+  categories, so `vehicleSubCategoryId` is modeled as a flat 9-value
+  `enum` on those ids (matching this schema's raw-submitted-value
+  convention elsewhere) rather than the opaque unenumerated `string` a
+  prior pass of this schema modeled it as, with the per-category legend
+  and the category-scoping disclosed in the field's own `description`
+  (v0.3 has no per-enum-value conditional-visibility primitive to encode
+  the scoping itself). All conformance fixtures referencing this field
+  were updated from placeholder values to real derived ids (`"1"` Motor
+  Vehicle/Private for the Toyota Corolla fixture, `"2"` Motor
+  Vehicle/Commercial for the MAN truck fixture, propagated to every
+  fixture cloned from either).
 - **`otherVehicleMake` (the "Others" free-text field beside Vehicle
   Make).** No `data-val-required` attribute; modeled optional. Its
   relationship to `vehicleMakeId` (shown when the make is not in the list
