@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **481 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **482 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3181, delegated from GOV-3157/GOV-3152,
+> "GovSchema Standard Research"): Moldova's Visa vertical opens (2 of 6)**,
+> via `md/mfa/entry-visa-application` — the Ministry of Foreign Affairs and
+> European Integration's (MFAEI) consular entry-visa application form,
+> whose 33-item structure and much of its printed wording mirrors the
+> EU-harmonised ("Schengen", Annex I) uniform visa template despite Moldova
+> not being an EU/Schengen member state. Picked up as an unclaimed,
+> pre-scouted candidate delegated from the GOV-3157 cycle, independently
+> re-fetched and re-verified from scratch (fresh `curl` + sha256,
+> `pdfjs-dist` structural check confirming a genuine native text layer with
+> zero AcroForm widgets). A field-by-field reconciliation against this
+> registry's existing EU-Annex-I-style visa siblings (`at/bmeia`, `gr/mfa`,
+> `es/maec`, `il/mfa`) found this is **not a duplicate**: a single-country
+> visa with no multi-state destination/first-entry fields, a 12-month (not
+> 3-year) prior-visa lookback framed around the Republic of Moldova, no
+> EU/EEA/CH-family-member exemption footnote (its own family-member section
+> instead covers relatives who are citizens of the Republic of Moldova),
+> and Moldova's own "SIA \"Consul\"" data system named in the closing
+> declaration. Also discloses a genuine **two-signature structure** unique
+> among this registry's EU-Annex-I-style siblings so far — a numbered
+> "Place and date"/"Signature" row closing the main data-entry section, and
+> a second, unnumbered one after a multi-paragraph closing declaration —
+> confirmed via coordinate mapping and a `node-canvas` box-grid render to
+> be a genuine two-step sign-off, not a rendering artifact. Models 60
+> `fields[]` and 3 `documents[]` entries (an applicant photo and two
+> signature attestations) with 9 conformance fixtures (2 valid, 7
+> mutation-control) committed under
+> `conformance/md/mfa/entry-visa-application/1.0.0/`. See the Visa vertical
+> section below and the document's own VERIFICATION.md for the full
+> reconciliation and sourcing record. Moldova now stands at 2 of 6
+> verticals (DMV, Visa); Taxes remains the last open, previously-scouted
+> vertical, and Passport/National ID remain confirmed dead ends from the
+> GOV-3152 cycle.
 
 > **Update (2026-07-15, GOV-3179, delegated from GOV-3157, "GovSchema
 > Standard Research"): Moldova's DMV vertical gains a second schema**, via
@@ -13066,7 +13100,16 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (47/62 jurisdictions — 76%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (48/62 jurisdictions — 77%)
+
+**Moldova's Visa vertical opens (2 of 6) (GOV-3181)**, via
+`md/mfa/entry-visa-application` — MFAEI's consular entry-visa application
+form. See the Executive Summary's GOV-3181 update above and the document's
+own VERIFICATION.md for the full reconciliation against this registry's
+existing EU-Annex-I-style visa siblings and the disclosed two-signature
+structure. Header recounted directly from the By-Jurisdiction table (47 ✓
+of 62 rows before this addition, per the GOV-3123 correction below, now
+48 ✓ of 62).
 
 > **Correction (GOV-3123 review gate):** re-recounted directly from the
 > By-Jurisdiction table (47 ✓ of 61 rows, including that cycle's Moldova
@@ -14236,7 +14279,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **MD** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| **MD** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
