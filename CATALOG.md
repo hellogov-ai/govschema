@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **485 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **486 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3169, picked up from GOV-3158's disclosed
 > backlog): Dominican Republic's National ID & Civic Documents vertical
