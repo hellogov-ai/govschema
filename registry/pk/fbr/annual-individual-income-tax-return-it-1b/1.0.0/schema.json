@@ -1,0 +1,254 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pk/fbr/annual-individual-income-tax-return-it-1b",
+  "version": "1.0.0",
+  "title": "Pakistan FBR Form IT-1B — Individual Income Tax Return (Property, Capital Gains & Other Sources)",
+  "description": "The Federal Board of Revenue's (FBR) official 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'IND (PROP-CG-OS)' — Form IT-1B, 'Return of Total Income under the Income Tax Ordinance, 2001', filed by individuals deriving income under any head other than Salary or Business (property, capital gains, other sources, foreign income, and AOP-share income). This document opens Pakistan's Taxes vertical (combined with the already-modelled Business Formation vertical, `pk/secp/company-incorporation-single-member-company`), scoped to the return's identification block, its six unambiguous headline income/allowance totals (Capital Gains, Other Sources, Foreign Income, AOP untaxed share, AOP taxed share, Total Income, Deductible Allowances Total, Zakat, Education Expenses, Taxable Income), and the verification/declaration block. Out of scope for this version: the Property income sub-item breakdown (Sr. 2–10, e.g. rent received, forfeited deposits, repair allowances) that rolls up into the Property total (Sr. 1) — the workbook's own data-validation rules confirm Sr. 1 is a computed subtotal with no direct-entry validation of its own, consistent with the sibling IT-2 worksheet's explicit '[Sum of 2 to 10]' annotation, so it is not modelled as an independently reportable field; the workbook's own per-line three-column split (a 'Total Amount' / 'Amount Exempt from Tax or Subject to Fixed/Final Tax' / 'Amount Subject to Normal Tax' triple for income lines, redefined to 'Total' / 'Inadmissible' / 'Admissible' for the Deductible Allowances lines) — each field here reports a single headline figure per line rather than this breakdown, since the workbook's own data-validation ranges confirm the three columns are not uniformly fillable across every row (e.g. Sr. 11/12 validate only two of the three columns, Sr. 20 validates only one), a real but inconsistent structure not modelled reliably within this cycle's scope; the Computations/tax-liability section (Sr. 21–33: tax chargeable, tax credits, advance tax, and similar arithmetic derived from the return, not primary taxpayer-supplied data); the Final/Fixed/Minimum/Average/Relevant/Reduced Tax withholding schedule (Sr. 34–65, dozens of withholding-tax-rate categories); Annexes A through F; the Wealth Statement (mandatory under section 116 of the Income Tax Ordinance, a strong companion-schema candidate for a future cycle); and the sibling 'IND (BUS PLUS)' worksheet (Form IT-2, for individuals with business income). This document describes the form only; it does not submit anything on the filer's behalf, and does not imply endorsement by the Islamic Republic of Pakistan or the Federal Board of Revenue. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Pakistan.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Board of Revenue",
+    "abbreviation": "FBR",
+    "url": "https://www.fbr.gov.pk"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://download1.fbr.gov.pk/Docs/2024791373958696MANUALRETURN2024-NEW24-6-2024.xlsx",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "FBR 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'IND (PROP-CG-OS)' — Form IT-1B, 'Return of Total Income under the Income Tax Ordinance, 2001 (For Individual, Deriving Income under any Head other than Salary / Business)'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3104 (delegated from the GOV-3101 'GovSchema Standard Research' cycle, which pre-scouted this workbook as Pakistan's strongest open Taxes-vertical candidate but too large to author in that same cycle). Independently re-fetched this cycle via plain `curl` (no login/CAPTCHA gate): HTTP 200, size 104,097 bytes, sha256 `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f`, exactly matching the figures pre-recorded in GOV-3104's own sourcing notes. This is a native .xlsx (Office Open XML); unzipped directly via Python's `zipfile` (no `unzip`/pip/openpyxl available in this environment) and every worksheet's `sheetData` rows, `sharedStrings.xml` table, and `dataValidations` rules were parsed by hand from the raw XML. The workbook has 9 worksheets — 'IND (PROP-CG-OS)' (Form IT-1B, this document's scope), 'IND (BUS PLUS)' (Form IT-2, the business-income variant), Annex-A through Annex-F, and 'Wealth Statement' (Form under section 116) — confirmed via `xl/workbook.xml`'s `<sheets>` listing and cross-checked against each `xl/worksheets/sheetN.xml`'s own printed title row.\n\nThe scope decisions disclosed in this document's own `description` were derived from the worksheet's own `dataValidations` block (7 rules), not guessed: cell `C5` (the CNIC field) and `G76:H76` (the verification block's declarant-CNIC field) both carry an identical `type=\"whole\"` rule bounded `[1000000000000, 9999999999999]` — i.e. exactly a 13-digit whole number, confirming Pakistan's standard CNIC format independently of any external reference and confirming the two CNIC fields (taxpayer and declarant) share the same constraint. Cell `J5` (the NTN field) carries a separate `type=\"whole\"` rule bounded `[1, 99999999]` (up to 8 digits), modelled as `taxpayerNtn`'s pattern. A single `greaterThanOrEqual 0` rule's `sqref` union (`H41:J41 J19:J24 H21:I22 H23:H24 I24 H26:J27 I33:I35 H33:H37 H42 J28:J31 H28:I28 J33:J39 H44:J75`) was decoded cell-by-cell to determine, per Sr. line, which of the three amount columns (H/8, I/9, J/10) actually carry a fillable-numeric-cell constraint: Sr. 1 (Property, row 9) has none at all (confirming it is a computed subtotal, not directly entered); Sr. 11/12 (rows 19–20) validate only columns I and J, not H; Sr. 13/14/16 (rows 21/22/24) validate all three columns; Sr. 15 (row 23) validates only H and J; Sr. 17/18 (rows 26–27) validate all three; Sr. 19 (row 28) validates all three; Sr. 20 (row 29, Taxable Income) validates only column J. This per-row inconsistency — together with a distinct source-document quirk independently spotted this cycle, Sr. 17's own printed formula label '[18+19+20]' summing to a nonexistent third addend (Sr. 20 is 'Taxable Income', computed *after* allowances, not a third deductible-allowance component; only Sr. 18 Zakat and Sr. 19 Education Expenses actually exist as its sub-items, so the bracket almost certainly should read '[18+19]') — is the basis for this document's decision to model each in-scope line as a single reported total rather than fabricate a uniform three-column breakdown the source workbook does not itself apply consistently. This bracket-label quirk is disclosed here as a source-document artifact, not corrected or reinterpreted by this schema. A second, unrelated artifact — stray non-zero values (e.g. `734500`) left in an otherwise-unused column (C4) on two rows of this worksheet, outside the three defined amount columns — was also identified and excluded as template noise, not a field.\n\nThe verification/declaration paragraph (rows 76–77) was extracted and quoted verbatim into `documents[].statement`; its blanks (declarant name, declarant CNIC, and the printed 'Self / Representative' capacity choice, referencing section 172 of the Income Tax Ordinance, 2001) are modelled as `declarantName`, `declarantCnic`, and the `declarantCapacity` enum respectively. `declarantCapacity`'s two enum values are quoted directly from the form's own 'Self / Representative' wording.\n\n2 valid mock scenarios (a self-filing individual with only Total Income and Taxable Income reported, no capital gains/foreign/AOP income; a return with capital gains, foreign income, both AOP share types, Zakat and education-expense deductions, filed via a representative) plus 4 mutation-control fixtures (a missing statically-required field, an invalid `declarantCapacity` enum value, an out-of-range CNIC pattern violation, a negative amount on a `minimum: 0` field) are committed under `conformance/pk/fbr/annual-individual-income-tax-return-it-1b/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/pattern/minimum rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 6: both valid scenarios at 0 errors, all 4 mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the individual taxpayer filing this return.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 4 — \"Name*\""
+    },
+    {
+      "name": "taxpayerCnic",
+      "label": "CNIC",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's 13-digit Computerized National Identity Card (CNIC) number, issued by NADRA. The source workbook's own data-validation rule on this cell constrains it to a whole number between 1,000,000,000,000 and 9,999,999,999,999 (i.e. exactly 13 digits).",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 5 — \"CNIC*\" (cell C5, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{13}$"
+      }
+    },
+    {
+      "name": "taxpayerNtn",
+      "label": "NTN",
+      "type": "string",
+      "required": false,
+      "description": "Taxpayer's National Tax Number (NTN), if different from or in addition to the CNIC. The source workbook's own data-validation rule on this cell constrains it to a whole number between 1 and 99,999,999 (up to 8 digits).",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 5 — \"NTN\" (cell J5, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{1,8}$"
+      }
+    },
+    {
+      "name": "taxpayerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's address.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 6 — \"Address*\""
+    },
+    {
+      "name": "taxYear",
+      "label": "Tax Year",
+      "type": "string",
+      "required": true,
+      "description": "The tax year this return covers, e.g. \"2024\". This source is itself the Tax Year 2024 edition of the Manual Return workbook.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 4 — \"Tax Year\", pre-filled \"2024\""
+    },
+    {
+      "name": "capitalGainsIncome",
+      "label": "Gains / (Loss) from Capital Assets",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 11 — gains or losses from capital assets (including securities) for the tax year.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 19 — Sr. 11, Code 4000, \"Gains / (Loss) from Capital Assets\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherSourcesIncome",
+      "label": "Income / (Loss) from Other Sources",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 12 — income or loss from other sources for the tax year.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 20 — Sr. 12, Code 5000, \"Income / (Loss) from Other Sources\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignIncome",
+      "label": "Foreign Income",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 13 — foreign-source income for the tax year.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 21 — Sr. 13, Code 6000, \"Foreign Income\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "aopUntaxedIncomeShare",
+      "label": "Share in untaxed Income from AOP",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 14 — the taxpayer's share in an Association of Persons' (AOP) income that has not yet been taxed at the AOP level.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 22 — Sr. 14, Code 3131, \"Share in untaxed Income from AOP\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "aopTaxedIncomeShare",
+      "label": "Share in Taxed Income from AOP",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 15 — the taxpayer's share in an Association of Persons' (AOP) income that has already been taxed at the AOP level.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 23 — Sr. 15, Code 3141, \"Share in Taxed Income from AOP\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalIncome",
+      "label": "Total Income",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 16 — total income for the tax year, defined by the source form as the sum of Sr. 1 (Property), 11, 12, 13, 14, and 15. Sr. 1 (Property) is out of scope for this document (see the document-level description), so this field reports the return's own headline total figure rather than a value this schema can independently derive from its other fields.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 24 — Sr. 16, Code 9000, \"Total Income*\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "deductibleAllowancesTotal",
+      "label": "Deductible Allowances",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 17 — total deductible allowances. The source form's own printed formula label reads '[18+19+20]', but Sr. 20 is 'Taxable Income' (computed after allowances, not a deductible-allowance component); only Sr. 18 (Zakat) and Sr. 19 (Education Expenses) exist as this line's actual sub-items. Disclosed here as a source-document artifact, not corrected by this schema.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 26 — Sr. 17, Code 9009, \"Deductible Allowances [18+19+20]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "zakatDeduction",
+      "label": "Zakat u/s 60",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 18 — Zakat paid, deductible under section 60 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 27 — Sr. 18, Code 9001, \"Zakat u/s 60\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "educationExpensesDeduction",
+      "label": "Educational expenses u/s 60D",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 19 — educational expenses, deductible under section 60D of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 28 — Sr. 19, Code 9008, \"Educational expenses u/s 60D\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxableIncome",
+      "label": "Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 20 — taxable income, defined by the source form as Total Income (Sr. 16) minus Deductible Allowances (Sr. 17).",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 29 — Sr. 20, Code 9100, \"Taxable Income [16-17]*\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declarantName",
+      "label": "I,",
+      "type": "string",
+      "required": true,
+      "description": "Name of the person making the verification declaration — the taxpayer themselves, or their representative as defined in section 172 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 76 — Verification, \"I, ___\""
+    },
+    {
+      "name": "declarantCnic",
+      "label": "CNIC No.",
+      "type": "string",
+      "required": true,
+      "description": "13-digit CNIC number of the declarant (taxpayer or representative). The source workbook's own data-validation rule on this cell constrains it to the same whole-number range as the taxpayer's own CNIC field (1,000,000,000,000 to 9,999,999,999,999).",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 76 — Verification, \"CNIC No. ___\" (cells G76:H76, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{13}$"
+      }
+    },
+    {
+      "name": "declarantCapacity",
+      "label": "in my capacity as",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the declarant is signing as the taxpayer themselves (Self) or as their representative, as defined in section 172 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 76 — Verification, \"in my capacity as Self / Representative (as defined in section 172 of the Income Tax Ordinance, 2001)\"",
+      "validation": {
+        "enum": ["SELF", "REPRESENTATIVE"]
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the declarant signs the verification declaration.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', row 78 — \"Date:\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "returnDeclaration",
+      "label": "Verification",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I, [declarant name], CNIC No. [declarant CNIC], in my capacity as Self / Representative (as defined in section 172 of the Income Tax Ordinance, 2001) of the Taxpayer named above, do solemnly declare that to the best of my knowledge & belief the information given in this Return is correct & complete in accordance with the provisions of the Income Tax Ordinance, 2001 & Income Tax Rules, 2002.",
+      "sourceRef": "Worksheet 'IND (PROP-CG-OS)', rows 76–77 — Verification declaration"
+    }
+  ]
+}
