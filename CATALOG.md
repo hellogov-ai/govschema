@@ -16647,6 +16647,49 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **MK Visa (national visa application)** — GOV-3238, 2026-07-15. North
+  Macedonia's own Ministry of Foreign Affairs and Foreign Trade
+  (`mfa.gov.mk`, redesigned in a Laravel/Livewire CMS since the earlier
+  MVR-vertical cycles) states the visa procedure in prose on
+  `konzularni-uslugi/postapka-za-izdavanje-na-viza`, but the page's own
+  parenthetical form reference — `(Апликација за виза >>>)` — is literal
+  unlinked plain text in the raw HTML, not an anchor, on both the `mk-MK`
+  and `en-GB` locales; independently re-fetched and grep-confirmed this
+  cycle, not a rendering artefact. The site's own "Обрасци" (Forms)
+  library (`informacii-od-javen-karakter/obrasci`) lists exactly 3 forms —
+  a special-ID-card request, a certification/apostille request, and a
+  generic petition — none visa-related; confirmed the CMS itself does
+  serve real PDFs elsewhere on the same domain (e.g. its Budget page links
+  five `portal.mdt.gov.mk` PDFs), so this is a genuine content gap, not a
+  fetch failure. `mvr.gov.mk`'s own civil-procedures page (already the
+  source for this registry's `mk/mvr` passport/DMV/National-ID schemas)
+  has no visa-form heading either — visas are MFA's/consular missions'
+  domain, not MVR's, per the site's own structure. The national e-service
+  catalogue (`uslugi.gov.mk`, JS-rendered, independently browser-rendered
+  this cycle) lists exactly two visa services — "Виза за долгорочен
+  престој (виза д)" (long-stay Visa D, serviceId 1619) and "Виза издадена
+  на граничен премин" (border-crossing visa) — but both are narrative
+  requirements catalogues with no attached downloadable template; the
+  three PDF-like filenames present in the page's source (`Барање.pdf`,
+  `Решение.pdf`, `request.pdf`) are confirmed (via their surrounding JSON)
+  to be generic i18n localisation-key labels for documents the portal
+  generates dynamically inside an authenticated eID application session,
+  not static files. The only actual visa-application PDF found anywhere
+  this cycle is a Wayback Machine capture of `mfa.gov.mk`'s pre-redesign
+  site (`sites/default/files/Dokumenti/Aplikacija-za-viza.pdf`, captured
+  2014-07-08, one capture only, no later ones exist) — independently
+  rendered and read via `pdfjs-dist`, a genuine 43-field, 3-page EU-style
+  uniform visa application (types A/B/C/D on one form, unlike the
+  already-modelled `de/auswaertiges-amt`/`bg/mvnr`/`es/maec`/`hr/mvep`
+  long-stay-only siblings). It is disclosed here, not authored: it still
+  reads "Република Македонија," not "Република Северна Македонија" — it
+  predates the 2019 Prespa Agreement renaming by five years — and has no
+  live-site corroboration that it remains the current form, so authoring
+  from it would violate this registry's source-of-truth-fidelity
+  convention. Not a hard dead end if a genuinely new, live, post-2019
+  source surfaces (the live procedure page's €60 processing-fee figure is
+  at least consistent with the old PDF's era); a dead end for every
+  currently-published, unauthenticated channel screened this cycle.
 - **CZ Passport** — GOV-1819, 2026-07-08. Both `mv.gov.cz` and
   `portal.gov.cz` state identically that citizens do not complete a printed
   application form for a passport: a clerk enters the applicant's data
