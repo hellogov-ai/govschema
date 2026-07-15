@@ -66,8 +66,13 @@ if one surfaces.
 - `page.getAnnotations()` returns exactly **337** `Widget` annotations, all
   `fieldType: "Tx"` (plain text), field names `sur1`..`sur337`, matching
   GOV-3078's disclosed count exactly. 332 of the 337 have `maxLen: 1`
-  (single-character comb boxes); the remaining 5 have `maxLen` 8, 8, 15, 15,
-  and 30 (non-comb, free-width boxes for Email/Phone/signature-date fields).
+  (single-character comb boxes); the remaining 5 have `maxLen` 8, 15, 15, 30,
+  and 30 (non-comb, free-width boxes for Email/Phone/signature-date fields —
+  corrected during review-gate re-derivation from an initial "8, 8, 15, 15,
+  30" miscount; the actual widgets are `sur222`/`sur335` at `maxLen: 30`
+  (`email`/`nextOfKinEmail`), `sur223`/`sur334` at `maxLen: 15`
+  (`phoneNumber`/`nextOfKinPhoneNumber`), and `sur336` at `maxLen: 8`
+  (`applicantSignatureDate`)).
 
 Because there is no text layer, the entire field list and every
 required-field asterisk were read visually, from a `node-canvas` 3×-scale
@@ -145,6 +150,20 @@ Every required item on this form carries the source's own explicit printed
 non-asterisked items are modelled `required: false`. Two deliberate
 exceptions, both disclosed to avoid over- or under-claiming what the source
 states:
+
+> **Correction (review-gate re-derivation, GOV-3208):** the original
+> field-by-field asterisk pass missed the printed `*` on both **11D.
+> Town/Village** (`addressTownOrVillage`) and **14F. Town/Village**
+> (`nextOfKinTownOrVillage`) — confirmed present on a fresh, tightly-cropped
+> zoom of each label (visible as `टोल/गाउँ *`, unlike their neighbouring
+> `11E`/`14G` House No. boxes, which print no asterisk). Both fields are
+> corrected to `required: true` and their `sourceRef`s updated to include
+> the asterisk; `valid-minimal-required-only.json` and all four
+> mutation-control fixtures were updated to populate both fields so the
+> "exactly 1 error" invariant holds for the field each fixture actually
+> targets. All other `required: false` fields on this form (10, 10A, 10B,
+> 11E, 12, 13, 14G, 16, 17, `photo`) were independently re-checked against
+> the render this cycle and confirmed to genuinely carry no asterisk.
 
 - **`photo`** (the "35mm X 45mm Borderless Colour Photo" gluing box) has no
   backing AcroForm widget and — notably, given this form's otherwise
