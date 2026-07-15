@@ -4,10 +4,11 @@
 
 ## Executive Summary
 
-**60 jurisdictions** | **470 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**61 jurisdictions** | **471 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3113, "GovSchema Standard Research"): Tanzania
-> opens as this registry's 60th jurisdiction**, via
+> opens as this registry's 61st jurisdiction** (following Moldova's 60th,
+> GOV-3115, landed moments earlier in the same cycle), via
 > `tz/brela/company-registration-form-14a` — the Business Registrations and
 > Licensing Agency's (BRELA) Form 14a, "Application for Registration of a
 > Company", filed pursuant to section 14(2) of the Companies Act, Cap. 212.
@@ -29,6 +30,26 @@
 > `conformance/tz/brela/company-registration-form-14a/1.0.0/`. See the
 > document's own VERIFICATION.md for the full sourcing record. Business
 > Formation is Tanzania's first vertical (1 of 6).
+
+> **Update (2026-07-15, GOV-3115, "GovSchema Standard Research"): Moldova
+> opens as the registry's 60th jurisdiction**, via
+> `md/asp/cerere-inregistrare-intreprinzator-individual` — the Public
+> Services Agency's (Agenția Servicii Publice, ASP) sole-trader/individual-
+> entrepreneur state registration request (Business Formation, 1 of 6).
+> Picked up as an unclaimed, pre-scouted child issue (GOV-3115) delegated
+> from the GOV-3101 cycle, independently re-fetched and re-verified from
+> scratch (fresh `curl`, sha256, `pdfjs-dist` text extraction — confirmed a
+> genuine 2-page text-layer PDF, no AcroForm). Models 31 `fields[]` across
+> applicant identity/domicile/contact, principal activity, one bounded
+> beneficial owner, and an optional professional-seat address (per the
+> source's own footnote gating it to only when it differs from domicile).
+> See the Business Formation vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record and required/optional
+> determination reasoning. Two sibling candidates from the same GOV-3101
+> scouting pass (Tanzania's BRELA Form 14a, GOV-3113; Dominican Republic's
+> DGII IR-2, GOV-3114) were dispatched in parallel this same cycle. This
+> Tanzania candidate landed moments later in the same cycle (see the
+> GOV-3113 update above).
 
 > **Update (2026-07-15, GOV-3104, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical opens (2 of 6)**, via
@@ -9830,7 +9851,7 @@
 
 ## By Vertical
 
-### Passport (43/60 jurisdictions — 72%)
+### Passport (43/61 jurisdictions — 70%)
 
 > **Correction (GOV-3094):** numerator updated from 42 to 43 following
 > Israel's Passport vertical opening via `il/moin/dr1-passport-application`
@@ -10266,7 +10287,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (48/60 jurisdictions — 80%)
+### DMV — Vehicle Registration, Licensing, Permits (48/61 jurisdictions — 79%)
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; DMV confirmed a dead end this
@@ -10748,17 +10769,26 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (57/60 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (58/61 jurisdictions — 95%)
+
+> **Update (2026-07-15, GOV-3115, "GovSchema Standard Research"): Moldova
+> opens as this registry's 60th jurisdiction via this vertical**, via
+> `md/asp/cerere-inregistrare-intreprinzator-individual` — the Public
+> Services Agency's (ASP) sole-trader/individual-entrepreneur state
+> registration request, a clean 2-page text-layer PDF with no login/CAPTCHA
+> gate. See the Executive Summary's GOV-3115 update above and the
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-15, GOV-3113, "GovSchema Standard Research"): Tanzania
-> opens as this registry's 60th jurisdiction via this vertical**, via
+> opens as this registry's 61st jurisdiction via this vertical**, via
 > `tz/brela/company-registration-form-14a` — BRELA's Form 14a, "Application
 > for Registration of a Company". See the Executive Summary's GOV-3113
 > update above and the document's own VERIFICATION.md for the full sourcing
 > record, including the Companies Act, Cap. 212 corroboration for why both
 > Director blocks, both Shareholder blocks, and the Company Secretary block
 > are modeled required rather than optional. Denominator updated from 59 to
-> 60 jurisdictions.
+> 61 jurisdictions (Moldova and Tanzania both opened Business Formation
+> this cycle).
 
 > **Update (2026-07-15, GOV-3087, "GovSchema Standard Research"): Israel
 > opens this vertical (2 of 6 overall)**, via
@@ -11631,7 +11661,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (52/60 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (52/61 jurisdictions — 85%)
 
 > **Update (2026-07-15, GOV-3104, "GovSchema Standard Research"): Pakistan
 > opens Taxes (2 of 6, combined with the already-modelled Business
@@ -12620,7 +12650,14 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (51/60 jurisdictions — 85%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (47/61 jurisdictions — 77%)
+
+> **Correction (GOV-3123 review gate):** re-recounted directly from the
+> By-Jurisdiction table (47 ✓ of 61 rows, including this cycle's Moldova
+> and Tanzania additions, both Visa ✗). This section's header had drifted
+> to "51/60" — the GOV-3101 correction below's own "51 ✓ of 59" recount
+> does not reconcile against a fresh count of the table as it stands today;
+> treat this figure, not the GOV-3101 one, as current.
 
 > **Correction (GOV-3101):** recounted directly from the By-Jurisdiction
 > table (51 ✓ of 59 rows), which had drifted out of sync with this
@@ -13209,7 +13246,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (42/60 jurisdictions — 70%)
+### National ID & Civic Documents (42/61 jurisdictions — 69%)
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; National ID remains open,
@@ -13713,6 +13750,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **MD** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
@@ -16039,18 +16077,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
-- **Tanzania, Dominican Republic, and Moldova — scouted this cycle
-  (GOV-3101), not yet authored.** None are currently in the registry
-  (60th–62nd jurisdiction candidates). All three were independently
-  verified live this cycle (direct `curl`/`pdfjs-dist` fetch, not just
-  search snippets):
-  - **Tanzania — Business Formation.** BRELA's Form 14a, "Application for
-    Registration of a Company" (s.14(2), Companies Act Cap. 212), at
-    `https://www.brela.go.tz/uploads/documents/sw-1621406129-Form%2014a.pdf`
-    (HTTP 200, genuine 3-page native text-layer PDF, no AcroForm). Roughly
-    60-70 dotted-blank fields across applicant, company-info, registered-
-    office, business-activities, director/secretary, and share-capital/
-    shareholder blocks. Ready to author.
+- **Tanzania and Dominican Republic — scouted in the GOV-3101 cycle,
+  dispatched for authoring this cycle (GOV-3109/GOV-3115).** Tanzania
+  landed this same cycle (GOV-3113 — see the Executive Summary and
+  Business Formation vertical section above); Dominican Republic (GOV-3114)
+  remains open as of this write-up. Both were independently verified live
+  this cycle (direct `curl`/`pdfjs-dist` fetch, not just search snippets):
   - **Dominican Republic — Taxes.** DGII's IR-2 corporate income tax
     return, a multi-sheet `.xls` workbook (OLE2/BIFF, VBA-macro-driven) at
     `https://dgii.gov.do/herramientas/formularios/formularioDeclaraciones/ISR/Personas%20Jur%C3%ADdicas/IR-2-2018.zip`
@@ -16061,16 +16093,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Pakistan's own multi-annex FBR "Manual Return" workbook (see the Taxes
     vertical section above, GOV-3104) — strong but a nontrivial multi-annex
     candidate.
-  - **Moldova — Business Formation.** Agenția Servicii Publice's "Cerere
-    privind înregistrarea de stat a întreprinzătorului individual"
-    (sole-trader/individual-entrepreneur state registration request) at
-    `https://asp.gov.md/sites/default/files/servicii/e-servicii/formulare-tip/2/inregistrarea-de-stat/2%20Cerere%20privind%20inregistrarea%20de%20stat%20a%20intreprinzatorului%20individual.pdf`
-    (HTTP 200, direct, no gate). A clean 2-page, 9-numbered-item text-layer
-    PDF (no AcroForm): name, personal ID, domicile (8 sub-fields), contact
-    details, legal form, activity/CAEM code, beneficial-owner block (~10
-    sub-fields), professional headquarters address, activity term —
-    roughly 30 discrete fields. Simplest and cleanest of the three; ready
-    to author immediately.
+  - **Moldova — Business Formation: authored this cycle (GOV-3115), opens
+    the registry's 60th jurisdiction.** See the Executive Summary's
+    GOV-3115 update and the Business Formation vertical section above for
+    the full sourcing record.
   - **Dead ends ruled out this cycle** (don't re-scout without new
     tooling): Ivory Coast (CEPICI — the indexed `formulaire-unique.pdf`
     link is now stale/404, `cepici.gouv.ci`/`cepici.ci` redirect-loop
