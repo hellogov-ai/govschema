@@ -1,0 +1,327 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "do/mirex/passport-application",
+  "version": "1.0.0",
+  "title": "Dominican Republic Consular Passport Service Request (Formulario de Solicitud de Servicio de Pasaportes)",
+  "description": "Application filed by a Dominican citizen at a consular office abroad to request passport issuance, renewal, or modification, using the Ministerio de Relaciones Exteriores' (MIREX) 2-page 'Formulario de Solicitud de Servicio' (version revised and approved in 2008), served from the Portal de Servicios Consulares (servicios360.mirex.gob.do). The form is print-and-fill (no AcroForm layer; the applicant-data grid on page 2 is a native vector-drawn table, not a scanned image) and is freely downloadable with no login/CAPTCHA/WAF gate. It models the applicant's own biographic, identity-document, birth/nationality, education/occupation, and current-address data (sections 1-5 of page 2's 'a) SOLICITANTE' block), the single request-reason selection (section 'c) TIPO DE SOLICITUD'), and the supporting-document checklist (section 'b) DOCUMENTOS ENTREGADOS') the applicant brings to substantiate the request. Per the form's own printed instructions, an applicant under 18 must have a parent or legal representative file on their behalf (or, absent both parents, a notarized third-party authorization) — this version does not model a separate parent/guardian/legal-representative data block, since the form itself carries no distinct fields for that role (the same 'a) SOLICITANTE' block is filled in by whoever is filing). Three categories of the source form are deliberately out of scope: the office-assigned header box (Lugar de Emisión, Solicitud Número, Fecha de Solicitud — consular-office tracking metadata, not applicant-supplied data); the internal instructional note that sections b) and c) are 'to be filled in by consular personnel' (recorded here anyway per this registry's established convention — see mx/sre/passport-application — that a checkbox physically marked by staff still represents applicant-facing substantive data, e.g. which request the applicant is making and which documents they physically hand over, rather than an office-internal processing/routing note); and section 'd) FIRMA Y HUELLA' (wet-ink signature and two fingerprint captures), excluded as physical biometric/signature capture performed in the presence of consular staff, consistent with this registry's treatment of biometric capture elsewhere (e.g. mx/sre/passport-application, il/mot medical-examination-driving-license-renewal).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "DO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministerio de Relaciones Exteriores",
+    "abbreviation": "MIREX",
+    "url": "https://mirex.gob.do"
+  },
+  "process": {
+    "type": "application",
+    "language": "es-DO"
+  },
+  "source": {
+    "url": "https://servicios360.mirex.gob.do/pdf/formularios/Pasaportes.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Formulario de Solicitud de Servicio — Expedición, Renovación o Modificación de Pasaportes (versión revisada y aprobada en el 2008)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "Source re-fetched fresh this cycle (not trusted from the prior scouting note as-is): HTTP 200, media type application/pdf, 182,128 bytes, sha256 1919548330a2d81dbd542e35d55ea145cdd0e6acd9bc884da33abe1f1f178245, genuine %PDF-1.3 header, no login/CAPTCHA/WAF gate. pdfjs-dist 3.11.174 text-content extraction confirmed page 1 (instructions) and the form's own printed chrome (section headers, the b)/c) checklist item labels, the header box, and the d) signature/fingerprint block captions) are native selectable text — but the entire numbered 'a) SOLICITANTE' applicant-data grid (sections 1-5) returned zero text items, because the whole table is drawn as native vector paths/lines with its own field-label text rendered via a different content stream than pdfjs-dist's getTextContent() surfaces (confirmed not an image: page.getAnnotations() returned 0 for both pages, ruling out an AcroForm, and re-checking the raw content stream showed real Tj text-showing operators for those labels, just outside the first extraction pass's y-coordinate grouping). Every field in sections 1-5 plus the required-field asterisks were independently re-confirmed via a node-canvas page render at 6x scale (see /tmp/do_page2_hires.png in this session) — high-resolution visual inspection is the source of truth for this document's field list, not the coarse text-extraction pass alone, and every field name/requiredness below traces to a specific labeled box or checkbox visible in that render. All fields in sections 1-4 and 5.1-5.6 carry the source's own asterisk ('* Campos obligatorios'); 3.6, 4.1, 4.2, 5.7, and 5.8 do not and are modeled as optional. Section 2's grid (Documento de Identidad según país del documento) collapses six labeled boxes (Pasaporte/Cédula de Identidad/Otro under 2.1 De la República Dominicana, and Pasaporte/Documento de Identidad/Otro under 2.2 Otro País) into a smaller set of fields — identityDocumentCountry, an optional country name for the 'Otro País: ___' blank, identityDocumentType (unifying 'Cédula de Identidad' and the foreign 'Documento de Identidad' as the same functional national-ID-card concept, disclosed here rather than silently assumed equivalent), an optional free-text specification for 'Otro (especifique)', and a single document-number field — rather than one field per box, since the six boxes are mutually exclusive alternatives for entering the same underlying identity-document number, not six independently meaningful data points. Section 5's three phone-number rows (5.5/5.6/5.7) each render as two adjacent boxes with no printed sub-label distinguishing them (unlike 3.1's explicitly labeled dd/mm/yyyy triple), so each is modeled as a single free-text phone field rather than guessing an unlabeled country-code/number split. The b) DOCUMENTOS ENTREGADOS 13-item checklist is modeled as a single documents[] supporting-evidence entry with acceptedTypes enumerating all 13 source-defined document-type slugs, per the same modeling choice used for mx/sre/passport-application's proofOfMexicanNationality/proofOfIdentity entries, rather than as 13 separate boolean fields. Because this is a print-and-fill form completed in the presence of consular staff rather than a live web form, no rendered required-field asterisk beyond the form's own printed '*' convention could be observed; requiredness is asserted from that printed convention and the form's own explicit instructional text, not a DOM/live-site convention. Status remains draft pending an independent second reviewer's field-by-field pass and a mock-data test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "lastNamePaternal",
+      "label": "Primer Apellido",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 1.1. Primer Apellido",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "lastNameMaternal",
+      "label": "Segundo Apellido",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The source form marks this required with its own printed asterisk, unlike some other jurisdictions' passport forms in this registry (e.g. mx/sre/passport-application) which treat a second surname as conditional. Modeled as required per this form's own explicit convention, not overridden.",
+      "sourceRef": "Page 2, Section 1.2. Segundo Apellido",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Nombres",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 1.3. Nombres",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "sex",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 1.4. Sexo — Femenino / Masculino",
+      "validation": { "enum": ["femenino", "masculino"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Estado Civil",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 1.5. Estado Civil — Casado / Viudo / Soltero / Divorciado / Unión Libre",
+      "validation": { "enum": ["casado", "viudo", "soltero", "divorciado", "union_libre"] }
+    },
+    {
+      "name": "identityDocumentCountry",
+      "label": "Documento de Identidad según país del documento",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 2, Section 2 — 2.1 De la República Dominicana / 2.2 Otro País",
+      "validation": { "enum": ["dominican_republic", "other"] }
+    },
+    {
+      "name": "identityDocumentOtherCountryName",
+      "label": "Otro País",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "identityDocumentCountry", "equals": "other" },
+      "sourceRef": "Page 2, Section 2.2. Otro País: ___ (blank line)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Tipo de documento",
+      "type": "enum",
+      "required": true,
+      "description": "Unifies the source form's 'Cédula de Identidad' (under 2.1 De la República Dominicana) and 'Documento de Identidad' (under 2.2 Otro País) as the same functional national-ID-card concept, since each column offers exactly one such option alongside Pasaporte and Otro. Disclosed as a modeling simplification, not confirmed as a formal equivalence by MIREX.",
+      "sourceRef": "Page 2, Section 2.1/2.2 — Pasaporte / Cédula de Identidad / Documento de Identidad / Otro",
+      "validation": { "enum": ["pasaporte", "national_id_card", "otro"] }
+    },
+    {
+      "name": "identityDocumentOtherTypeSpecify",
+      "label": "Otro (especifique)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "identityDocumentType", "equals": "otro" },
+      "sourceRef": "Page 2, Section 2.1/2.2 — Otro (especifique)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "identityDocumentNumber",
+      "label": "Número de documento",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Section 2.1/2.2 — number box beside the selected document type",
+      "validation": { "maxLength": 40 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Fecha de Nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 3.1. Fecha de Nacimiento (dd/mm/yyyy)"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "País de Nacimiento",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 3.2. País de Nacimiento",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "stateOfBirth",
+      "label": "Provincia/Estado/Departamento/Región/Ciudad (de nacimiento)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 3.3. Provincia/Estado/Departamento/Región/Ciudad",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "localityOfBirth",
+      "label": "Localidad/Municipio/Condado (de nacimiento)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 3.4. Localidad/Municipio/Condado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "countryOfNationality",
+      "label": "País de Nacionalidad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 3.5. País de Nacionalidad",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "secondNationalityCountry",
+      "label": "País de Segunda Nacionalidad",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed if the applicant holds a second nationality, per the form's own '(si tiene)' qualifier.",
+      "sourceRef": "Page 2, Section 3.6. País de Segunda Nacionalidad (si tiene)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "highestEducationLevel",
+      "label": "Mayor Grado Académico Alcanzado",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section 4.1. Mayor Grado Académico Alcanzado",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "currentOccupation",
+      "label": "Ocupación Actual",
+      "type": "string",
+      "required": false,
+      "description": "The occupation to which the applicant devotes the most time, per the form's own qualifier.",
+      "sourceRef": "Page 2, Section 4.2. Ocupación Actual (a la que dedica mayor tiempo)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "currentCountry",
+      "label": "País (ubicación actual)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, Section 5.1. País",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "currentState",
+      "label": "Provincia/Estado/Departamento/Región/Ciudad (ubicación actual)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, Section 5.2. Provincia/Estado/Departamento/Región/Ciudad",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "currentLocality",
+      "label": "Localidad/Municipio/Condado (ubicación actual)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, Section 5.3. Localidad/Municipio/Condado",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "currentAddress",
+      "label": "Dirección",
+      "type": "string",
+      "required": true,
+      "description": "Street type and name, number, floor, apartment, postal/ZIP code, and P.O. box, per the form's own parenthetical guidance.",
+      "sourceRef": "Page 2, Section 5.4. Dirección (Tipo y nombre de la vía, número, escalera, piso, apartamento, CP/ZIP, Apartado Postal)",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Teléfono celular/móvil",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Rendered on the source form as two adjacent boxes with no printed sub-label distinguishing them (unlike the explicitly labeled dd/mm/yyyy date-of-birth boxes); modeled as a single free-text phone field rather than assuming an unlabeled country-code/number split.",
+      "sourceRef": "Page 2, Section 5.5. Teléfono celular/móvil",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "homePhone",
+      "label": "Teléfono fijo/residencial",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 5.6. Teléfono fijo/residencial",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "workPhone",
+      "label": "Teléfono de trabajo/oficina",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 5.7. Teléfono de trabajo/oficina",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "E-mail/correo electrónico",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 5.8. E-mail/correo electrónico",
+      "validation": {
+        "pattern": "^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$",
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "requestType",
+      "label": "Tipo de Solicitud",
+      "type": "enum",
+      "required": true,
+      "description": "The reason for the passport request. The source form's own printed instructions describe this checkbox block as completed by consular personnel ('Para ser llenado por el funcionario consular'), but the underlying value — which of the six service reasons the citizen is requesting — is substantive applicant-facing data the consular officer records on the citizen's behalf during the in-person interview, not office-internal routing/processing metadata; modeled as an applicant-facing field per the same convention as mx/sre/passport-application's checkbox-derived document fields. If the passport was lost or damaged, the form's own instructions additionally require a police report or a sworn statement at the consular office, which is out of scope for this version (see documents[]).",
+      "sourceRef": "Page 2, Section c) TIPO DE SOLICITUD",
+      "validation": {
+        "enum": [
+          "expedicion_primera_vez",
+          "renovacion_libreta",
+          "agotamiento",
+          "deterioro_danos_libreta",
+          "cambios_diversos_en_datos",
+          "naturalizado"
+        ]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "supportingDocumentation",
+      "label": "Documentos Entregados",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "copia_cedula_identidad_electoral_dominicana",
+        "acta_nacimiento_dominicana",
+        "transcripcion_acta_nacimiento_dominicana",
+        "copia_pasaporte_vencido_dominicano",
+        "copia_visa",
+        "acta_matrimonio_defuncion",
+        "certificado_perdida_pasaporte",
+        "carta_de_menor",
+        "poder_de_tutor",
+        "recibo_pago_impuesto",
+        "certificado_naturalizacion",
+        "decreto_naturalizacion",
+        "copia_gaceta_oficial_naturalizacion"
+      ],
+      "handling": "recorded-by-consular-staff-in-documentos-entregados-checkbox-block-modelled-as-applicant-document-requirement-not-a-staff-only-field-at-least-one-required-per-general-instructions-exact-per-requesttype-subset-not-fixed-in-source-text",
+      "sourceRef": "Page 2, Section b) DOCUMENTOS ENTREGADOS — 13-item checklist marked with an X for each document the citizen delivers; page 1's own instructions (item 5.b) describe the citizen as the one supplying these documents"
+    }
+  ]
+}
