@@ -40,10 +40,12 @@ via `gr/mfa`).
   - `getDocument(...).numPages` → **18 pages** — matches the scouting note.
   - `getFieldObjects()` → **268 named AcroForm field entries** — matches the
     scouting note's "genuine 268-field AcroForm" claim exactly.
-  - Per-page `getAnnotations()` → **339 total Widget annotations** across
-    pages 3-16 (pages 1-2 and 17-18 are instructional/reference text with
-    zero widgets — the field-count discrepancy between "268 field objects"
-    and "339 widget annotations" is expected: several field objects such as
+  - Per-page `getAnnotations()` → **339 total Widget annotations**: 337
+    across pages 3-16, plus 2 non-data "Print BTN 3"/"Clear Form 2" utility
+    buttons on page 1 (correctly excluded from this schema's `fields[]`);
+    pages 2, 17, and 18 are instructional/reference text with zero widgets
+    — the field-count discrepancy between "268 field objects" and "339
+    widget annotations" is expected: several field objects such as
     checkbox/radio groups and the numbered section-header nodes (`1`
     through `14`) have multiple child widgets or none directly, consistent
     with a composite hierarchical AcroForm).
