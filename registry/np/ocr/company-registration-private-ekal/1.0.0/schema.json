@@ -1,0 +1,343 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "np/ocr/company-registration-private-ekal",
+  "version": "1.0.0",
+  "title": "Nepal — Office of Company Registrar Online Company Registration, Private Ekal (Single-Shareholder) Company",
+  "description": "The Office of Company Registrar's (OCR) online company registration process, filed via the OCR e-Services portal (`application.ocr.gov.np`), documented in OCR's own official 'New Company Registration' user manual. Opens Nepal's Business Formation vertical (Nepal's first schema in this registry). Scoped to the simplest coherent pathway the manual itself walks through field-by-field: a 'Private Ekal' company — a private company with exactly one shareholder, who is simultaneously that shareholder's sole natural person ('Ekal' is Nepali for 'single/sole') — filed as a Person (not Company) shareholder type. Out of scope: multi-shareholder Private and Public company types (the manual's own Company Share Holder Details step is an open-ended repeating dialogue a user can invoke any number of times, and GovSchema's array/repeating-group proposal, GSP-0009, is not yet part of the accepted v0.3 specification, so this version models exactly one shareholder rather than a bounded or unbounded repeating group); the Company shareholder-type pathway (Figure 42, a distinct sub-form for when the shareholder is itself a company, not a natural person); Branch Details beyond a single optional branch (the manual's own 'add branch' control is repeatable without limit); and Witness Details beyond a single witness (the manual's own 'No. of Witness Person' control lets a user dynamically add any number of witness rows, again a genuine repeating group deferred pending GSP-0009 — this version models exactly one witness as the bounded minimum the live form's own worked example builds from). The manual's preliminary OCR e-Services user-account creation and login steps (Sections 2.1–2.2) are a portal-access mechanism, not part of the company-registration application data itself, and are out of scope. This schema does not submit anything to OCR or imply Government of Nepal endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NP",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Office of Company Registrar",
+    "abbreviation": "OCR",
+    "url": "https://www.ocr.gov.np"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://application.ocr.gov.np/resources/Manual/New%20Registration.pdf",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "OCR e-Services User Manual, \"New Company Registration\" (online company registration module of the Office of Company Registrar's e-Services portal)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3078 'GovSchema Standard Research' cycle. Opens Nepal as a new jurisdiction in this registry (the registry's 59th). A parallel scouting pass this cycle screened Nepal's DMV (driving-licence issuance is fully gated behind `applydlnew.dotm.gov.np`'s quota-based online portal, no static form/manual found on `dotm.gov.np`) and Taxes (PAN registration is a pure online e-form via `taxpayerportal.ird.gov.np`, national-ID-linked auto-populate, no static form or manual found) verticals and found both weak/dead-end this cycle; Passport (Department of Passports' MRP Offline Application Form, a genuine 337-widget single-page AcroForm PDF at `verification1.nepalpassport.gov.np`) was also found strong but left as open backlog since its widgets use a flat `sur1`..`sur337` internal naming scheme unrelated to semantic fields, requiring geometry/label-proximity reconstruction — meaningfully more effort than this manual, and a good candidate for a dedicated future cycle. Independently re-fetched this cycle directly from `application.ocr.gov.np` (no login/CAPTCHA/WAF gate on the manual itself, distinct from the `camis.ocr.gov.np`/`ocr.gov.np/CRO` e-filing portal the manual documents, which does require an account to submit): HTTP 200, content-type `application/pdf`, 3,272,267 bytes, sha256 `3ef9b2d5152c96d03e004432a39bdfc4e5af100e1ee2ad6875911afed46159f8`, a genuine 28-page text-layer PDF (confirmed via `pdfjs-dist`, not a scanned image) combining numbered step-by-step prose instructions with illustrative screenshots. All prose instruction text was extracted and read in full, including a position-aware (x/y-coordinate) re-extraction of the most field-dense pages (14-20, covering Company Details, Branch Details, Capital Details, Company Share Holder Details, and Witness Details) to rule out column-order scrambling before transcribing field lists — confirmed single-column layout, no reordering needed. Company Type is modeled as a single-value enum (`PRIVATE_EKAL`) rather than a free dropdown, since the manual's own Capital Structure walkthrough (Figure 32) is illustrated only for the 'Private Ekal' company type and does not print the dropdown's other option labels; modeling a fabricated enum for unseen company types would misrepresent the source. Gender (Company Share Holder Details) is modeled as a free-text string, not an enum, because the manual's own 'Select Gender' instruction supplies no printed value list to draw from (no fabricated enum options), matching the precedent set for Pakistan's SECP Form-1 schema (GOV-3062). Share Holder Type's four literal options (Director, Founder, Shareowner, Jurisdiction) are quoted verbatim from the manual's own Figure 38 caption text; 'Jurisdiction' reads unusually alongside the other three natural-person roles, but is transcribed as printed rather than omitted or reinterpreted, since no corroborating source was available this cycle to clarify its intended meaning. The Citizenship-Number/District pair and the separate Permanent Address field are both modeled as always required for a Nepali-citizen shareholder, and Passport Number plus Permanent Address for a foreign shareholder, exactly per the manual's own conditional wording ('If the Share Holder is a Nepali citizen, select \"No\" and enter the Citizenship Number, District, and Permanent Address... If the Share Holder is a foreigner, select \"Yes\" and enter the Passport Number and permanent address'). Telephone No, Fax No, Company Email, and Company Address are all modeled as required, per the manual's own grouping of them as 'other required details' in the Company Details step. `documents[]` (1 entry) reflects the manual's own generic, non-itemized Document Details upload step (Step 6), which names no specific required document types (unlike, e.g., Pakistan's SECP Form-1, whose Enclosures list names specific documents) — modeled as a single optional supporting-evidence entry rather than fabricating specific document names the source does not print. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen/enum rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran 1 valid mock scenario (a Private Ekal company with a Nepali-citizen sole shareholder acting as Director) at 0 errors, plus 5 mutation-control fixtures (missing required field; invalid enum value on `companyType`; invalid enum value on `shareholderType`; requiredWhen violation on the foreigner branch, a foreign shareholder missing Passport Number; requiredWhen violation on the citizen branch, a Nepali-citizen shareholder missing Citizenship Number — this schema has no `type: date` fields, so no invalid-date-format fixture applies, and its sole document entry is optional rather than required, so no missing-required-document fixture applies either) each correctly raising exactly 1 error. Structural validation: `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (ajv 2020-12 against spec/v0.3) both pass on the full registry after adding this document; `npm run build-index` was re-run in `tools/govschema-client/` to regenerate `registry-index.json`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "companyNameEnglish",
+      "label": "Company Name (English)",
+      "type": "string",
+      "required": true,
+      "description": "The proposed company name in English, first submitted and approved through the OCR e-Services Name Reservation Request Form before company registration can proceed.",
+      "sourceRef": "Section 2.3, Figure 13 — \"Enter Company Name in English in 'Company Name (English)' text box\"",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "companyNameNepali",
+      "label": "Company Name (Nepali)",
+      "type": "string",
+      "required": true,
+      "description": "The proposed company name in Nepali, submitted alongside the English name in the Name Reservation Request Form.",
+      "sourceRef": "Section 2.3, Figure 13 — \"Enter Company Name in Nepali in 'Company Name (Nepali)' text box\""
+    },
+    {
+      "name": "objectiveOrNsicCode",
+      "label": "Objective / NSIC Code",
+      "type": "string",
+      "required": true,
+      "description": "The company's business objective, entered either as a free-text objective description or as an NSIC (National Standard Industrial Classification) code looked up via the portal's own NSIC Code Help search.",
+      "sourceRef": "Section 2.3, Figure 16 — \"Fill in the Company Objective... or enter the NSIC Code in the 'NSIC Code' option\""
+    },
+    {
+      "name": "companyType",
+      "label": "Company Type",
+      "type": "enum",
+      "required": true,
+      "description": "The type of company being registered. This schema models only the 'Private Ekal' (single-shareholder private) pathway; the live dropdown offers other company types whose own Capital Structure fields are not documented in the source manual.",
+      "sourceRef": "Section 2.4 Step 4, Figure 31/32 — \"Company Type\" / \"Capital Structure for 'Private Ekal' Company\"",
+      "validation": { "enum": ["PRIVATE_EKAL"] }
+    },
+    {
+      "name": "companyTelephoneNumber",
+      "label": "Telephone No",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 1, Figure 26 — \"Telephone No\""
+    },
+    {
+      "name": "companyFaxNumber",
+      "label": "Fax No",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 1, Figure 26 — \"Fax No\""
+    },
+    {
+      "name": "companyEmail",
+      "label": "Company Email",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 1, Figure 26 — \"Company Email\"",
+      "validation": { "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }
+    },
+    {
+      "name": "companyAddress",
+      "label": "Company Address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 1, Figure 26 — \"Company Address\""
+    },
+    {
+      "name": "branchDistrict",
+      "label": "Branch Address — District",
+      "type": "string",
+      "required": false,
+      "description": "District of an additional branch office, if the company has one at the time of registration. The live form allows adding any number of branches; this schema models at most one.",
+      "sourceRef": "Section 2.4 Step 2, Figure 28 — \"Select the District, V.D.C./Municipality... and enter the ward and block numbers\""
+    },
+    {
+      "name": "branchVdcOrMunicipality",
+      "label": "Branch Address — V.D.C./Municipality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2.4 Step 2, Figure 28 — \"V.D.C./Municipality\""
+    },
+    {
+      "name": "branchWardNumber",
+      "label": "Branch Address — Ward Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2.4 Step 2, Figure 28 — \"enter the ward and block numbers\""
+    },
+    {
+      "name": "branchBlockNumber",
+      "label": "Branch Address — Block Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2.4 Step 2, Figure 28 — \"enter the ward and block numbers\""
+    },
+    {
+      "name": "authorizedCapitalAmount",
+      "label": "Authorized Capital (Rs.)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 4, Figure 32 — \"Authorized Capital (Rs.)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "authorizedRateAmount",
+      "label": "Authorized Rate (Rs.)",
+      "type": "number",
+      "required": true,
+      "description": "Face value per share, in Nepali Rupees, of the company's authorized capital.",
+      "sourceRef": "Section 2.4 Step 4, Figure 32 — \"Authorized Rate (Rs.)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "quantityOfShares",
+      "label": "Quantity of Shares",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 4, Figure 32 — \"Quantity of Shares\"",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "issuedCapitalAmount",
+      "label": "Issued Capital (Rs.)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 4, Figure 32 — \"Issued Capital (Rs.)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "paidUpCapitalAmount",
+      "label": "Paid Up Capital (Rs.)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 4, Figure 32 — \"Paid Up Capital (Rs.)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "shareholderNameEnglish",
+      "label": "Name of the Share Holder (English)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 35/36 — \"Enter the Name of the Share Holder (in English and Nepali)\""
+    },
+    {
+      "name": "shareholderNameNepali",
+      "label": "Name of the Share Holder (Nepali)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 35/36 — \"Enter the Name of the Share Holder (in English and Nepali)\""
+    },
+    {
+      "name": "shareholderGender",
+      "label": "Gender",
+      "type": "string",
+      "required": true,
+      "description": "Modeled as free text: the source manual's own 'Select Gender' instruction prints no enumerated option list.",
+      "sourceRef": "Section 2.4 Step 5, Figure 35/36 — \"Select Gender\""
+    },
+    {
+      "name": "shareholderFatherOrHusbandName",
+      "label": "Father/Husband's Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 35/36 — \"Enter 'Father/Husband's Name'\""
+    },
+    {
+      "name": "shareholderIsForeigner",
+      "label": "Foreigner",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the shareholder is a foreign national (true) or a Nepali citizen (false). Gates which of citizenship-number/district or passport-number is required.",
+      "sourceRef": "Section 2.4 Step 5, Figure 35/36/37 — \"Select the 'Foreigner' option\""
+    },
+    {
+      "name": "shareholderCitizenshipNumber",
+      "label": "Citizenship Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "shareholderIsForeigner", "equals": false },
+      "sourceRef": "Section 2.4 Step 5, Figure 36 — \"select 'No' and enter the Citizenship Number, District, and Permanent Address\""
+    },
+    {
+      "name": "shareholderCitizenshipDistrict",
+      "label": "Citizenship District",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "shareholderIsForeigner", "equals": false },
+      "sourceRef": "Section 2.4 Step 5, Figure 36 — \"select 'No' and enter the Citizenship Number, District, and Permanent Address\""
+    },
+    {
+      "name": "shareholderPassportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "shareholderIsForeigner", "equals": true },
+      "sourceRef": "Section 2.4 Step 5, Figure 37 — \"select 'Yes' and enter the Passport Number and permanent address\""
+    },
+    {
+      "name": "shareholderPermanentAddress",
+      "label": "Permanent Address",
+      "type": "string",
+      "required": true,
+      "description": "Required regardless of citizenship status, per the source's own instructions for both the Nepali-citizen and foreigner branches.",
+      "sourceRef": "Section 2.4 Step 5, Figure 36/37 — \"Permanent Address\""
+    },
+    {
+      "name": "shareholderType",
+      "label": "Share Holder Type",
+      "type": "enum",
+      "required": true,
+      "description": "Quoted verbatim from the source's own Figure 38 caption. 'Jurisdiction' is transcribed as printed alongside the other three natural-person roles even though its intended meaning is not clarified anywhere else in the source.",
+      "sourceRef": "Section 2.4 Step 5, Figure 38 — \"Select the Share Holder Type. Director / Founder / Shareowner / Jurisdiction\"",
+      "validation": { "enum": ["DIRECTOR", "FOUNDER", "SHAREOWNER", "JURISDICTION"] }
+    },
+    {
+      "name": "shareNumberOfShares",
+      "label": "Number of Shares",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 39 — \"Enter the Share Lagat Details. Details include: Number of Shares\"",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "shareTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 39 — \"Total Amount\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "shareholderOptionalDetail",
+      "label": "Optional Detail of the Share Holder",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2.4 Step 5, Figure 41 — \"Enter the Optional Detail of the Share Holder (if any)\""
+    },
+    {
+      "name": "witnessFullName",
+      "label": "Witness — Full Name",
+      "type": "string",
+      "required": true,
+      "description": "The live form lets a user add any number of witnesses via a 'No. of Witness Person' count control; this schema models exactly one, the bounded minimum.",
+      "sourceRef": "Section 2.4 Step 5, Figure 40 — \"Full Name\""
+    },
+    {
+      "name": "witnessDistrict",
+      "label": "Witness — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 40 — \"District\""
+    },
+    {
+      "name": "witnessArea",
+      "label": "Witness — Area",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 40 — \"Area\""
+    },
+    {
+      "name": "witnessWardNumber",
+      "label": "Witness — Ward Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 40 — \"Ward Number\""
+    },
+    {
+      "name": "witnessBlockNumber",
+      "label": "Witness — Block Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 40 — \"Block Number\""
+    },
+    {
+      "name": "witnessCitizenshipNumber",
+      "label": "Witness — Citizenship Number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 40 — \"Citizenship Number and District of Registration\""
+    },
+    {
+      "name": "witnessDistrictOfRegistration",
+      "label": "Witness — District of Registration",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2.4 Step 5, Figure 40 — \"Citizenship Number and District of Registration\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "supportingDocument",
+      "label": "Supporting document (as required by OCR)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Section 2.4 Step 6, Figure 43 — \"If there any Documents to be uploaded then upload the related documents in Document Details\" (the source does not itemize specific required document types)"
+    }
+  ]
+}
