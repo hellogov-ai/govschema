@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **485 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **486 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-15, GOV-3169, picked up from GOV-3158's disclosed
 > backlog): Dominican Republic's National ID & Civic Documents vertical
@@ -30,6 +30,51 @@
 > to 5 of 6, not 6/6.** See the National ID & Civic Documents vertical
 > section below and the document's own VERIFICATION.md for the full
 > sourcing record and this correction.
+
+> **Update (2026-07-15, GOV-3168, delegated from GOV-3167/GOV-3158/GOV-3152,
+> "GovSchema Standard Research"): Dominican Republic's Visa vertical opens,
+> closing the Dominican Republic to full 6/6 coverage**, via
+> `do/mirex/visa-application` — the Ministerio de Relaciones Exteriores'
+> (MIREX) "Formulario Solicitud de Visa", a 2-page, 20-section consular
+> entry-visa application served from the same `servicios360.mirex.gob.do`
+> Portal de Servicios Consulares already used by
+> `do/mirex/passport-application`. Re-fetched fresh this cycle (fresh `curl`
+> + sha256, not trusted from the GOV-3152 scouting note as-is): 100,161
+> bytes, sha256
+> `398cb3629e1844f3064b62e3943563314c3121d50bcfa56ab974055abe0715a4`, no
+> login/CAPTCHA/WAF gate; a byte-identical English-language sibling edition
+> on the same host was independently re-fetched and used only as a
+> label/structure cross-check. Confirmed no AcroForm layer (print-and-fill),
+> and — a materially different situation from the sibling passport
+> document — confirmed via both a programmatic text-item scan and a 6x
+> node-canvas render that this form prints **no required-field asterisk or
+> marker of any kind** anywhere on either page. Requiredness therefore
+> follows this registry's established default-required convention for
+> no-marker forms (see `uy/mrree/formulario-unificado-de-visas`, judgment
+> call 4): core biographic/passport/contact fields required, source-disclosed
+> conditional/supplementary fields optional, and the first row of each
+> Sí/No-gated repeating block (prior visits, prior visa grants, denials,
+> work/study intent, third-party visa petitions) `requiredWhen` its gate,
+> with additional repeat rows modeled as plain optional entries per the
+> registry's `entrantN` convention. Models 136 `fields[]` plus a single
+> `documents[]` entry enumerating a 36-item supporting-document checklist,
+> and discloses a genuine source numbering artifact in Section 10's street
+> sub-grid (a duplicated "10.8" label spanning two distinct boxes). 9
+> conformance fixtures (2 valid, 7 mutation-control) committed under
+> `conformance/do/mirex/visa-application/1.0.0/`. See the Visa vertical
+> section below and the document's own VERIFICATION.md for the full sourcing
+> record and scope decisions. **Correction against this PR's own branch
+> text (drafted before GOV-3169 landed on main): the PR description and
+> commit history describe this as bringing the Dominican Republic to "5 of
+> 6" verticals, which was accurate when the branch was cut but is now stale
+> — GOV-3169 (`do/jce/cedulacion-movil-especial`, National ID) merged to
+> main first. Checked directly against the By-Jurisdiction table below:
+> with National ID already closed and Visa now closing here, the Dominican
+> Republic reaches full 6/6 coverage** (Passport, DMV, Business Formation,
+> Taxes, Visa, National ID), joining the registry's existing set of
+> jurisdictions at 6/6 (AU, BD, BG, CA, CO, DE, DK, EE, FI, FR, GB, GH, IE,
+> IL, IN, IS, IT, KR, NZ, PH, PT, RO, SE, SG, US, VN, ZA per the
+> By-Jurisdiction table).
 
 > **Update (2026-07-15, GOV-3167, delegated from GOV-3189/GOV-3158/GOV-3152,
 > "GovSchema Standard Research"): Dominican Republic's Business Formation
@@ -13206,7 +13251,27 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (48/62 jurisdictions — 77%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (49/62 jurisdictions — 79%)
+
+**Dominican Republic's Visa vertical opens, closing the Dominican Republic
+to full 6/6 coverage (GOV-3168)**, via
+`do/mirex/visa-application` — MIREX's Formulario Solicitud de Visa, a
+2-page, 20-section consular visa application covering biographic data,
+current residence/contact/passport data, marital status, trip purpose and
+duration, planned Dominican accommodation, employer/study data, funding
+source, the applicant's Dominican visa/entry history (prior visits, prior
+grants, cancellations/revocations, denials), work/study intent, whether a
+visa has been petitioned on the applicant's behalf, accompanying travelers,
+and a 36-item supporting-document checklist. Models 136 `fields[]` plus 1
+`documents[]` entry; unlike the sibling `do/mirex/passport-application`, this
+form prints no required-field asterisk anywhere, so requiredness follows
+this registry's established default-required convention for no-marker forms
+(see `uy/mrree/formulario-unificado-de-visas`). 9 conformance fixtures (2
+valid, 7 mutation-control) committed under
+`conformance/do/mirex/visa-application/1.0.0/`. See the document's own
+VERIFICATION.md for the full sourcing record and scope decisions. Header
+recounted directly from the By-Jurisdiction table (48 ✓ of 62 rows before
+this addition, now 49 ✓ of 62).
 
 **Moldova's Visa vertical opens (2 of 6) (GOV-3181)**, via
 `md/mfa/entry-visa-application` — MFAEI's consular entry-visa application
@@ -14403,7 +14468,7 @@ now closed.
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DO** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
