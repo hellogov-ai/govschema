@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**58 jurisdictions** | **464 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**59 jurisdictions** | **465 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3078, "GovSchema Standard Research"): Nepal
+> opens as this registry's 59th jurisdiction**, via
+> `np/ocr/company-registration-private-ekal` — the Office of Company
+> Registrar's (OCR) online company registration process, sourced from
+> OCR's own official "New Company Registration" e-Services user manual.
+> Opens Nepal's Business Formation vertical (1 of 6). This cycle picked up
+> with no unclaimed child issues open from the prior GOV-3062/GOV-3066
+> cycles, so it re-scanned `CATALOG.md`'s gap list fresh and dispatched
+> three parallel scouting passes — Pakistan's three remaining unscreened
+> verticals, Israel's three remaining unscreened verticals, and fresh
+> candidate jurisdictions beyond the registry's then-58 — all three of
+> which came back with strong, independently-verified leads (see the
+> "Genuinely open, well-sourced candidates" section below for the full
+> record of all three). Nepal was selected to author inline this cycle as
+> the new-jurisdiction candidate, consistent with the charter's global-
+> coverage priority; Israel's Business Formation/Passport/Visa findings and
+> Pakistan's Taxes finding are delegated as fully-sourced child issues
+> rather than authored inline. Scoped to the "Private Ekal" (single-
+> shareholder) company type filed with a Person (not Company) shareholder,
+> exactly one optional branch, and exactly one witness — the manual's own
+> Company Share Holder Details and Witness Details steps are genuinely
+> open-ended repeating dialogues, and GovSchema's repeating-groups proposal
+> (GSP-0009) is not yet part of the accepted v0.3 specification. Models 37
+> `fields[]` plus 1 optional `documents[]` entry. Independently re-fetched
+> the source PDF via `curl` (no login/CAPTCHA/WAF gate; HTTP 200, 3,272,267
+> bytes, sha256
+> `3ef9b2d5152c96d03e004432a39bdfc4e5af100e1ee2ad6875911afed46159f8`,
+> confirmed genuine text-layer via `pdfjs-dist`) and re-extracted the most
+> field-dense pages with `(x, y)`-coordinate-aware row reconstruction to
+> rule out column-order scrambling (confirmed clean single-column layout,
+> no misreadings found). Nepal's DMV and Taxes verticals were screened this
+> cycle and confirmed dead ends (both are pure online e-forms/portals with
+> no static form or manual found); Passport (a genuine 337-widget AcroForm
+> with a flat, semantically meaningless field-naming scheme) was found
+> strong but left as disclosed backlog for a future cycle needing
+> widget-geometry reconstruction. See the Business Formation vertical
+> section below and the document's own VERIFICATION.md for the full
+> sourcing chain and every disclosed scoping decision.
 
 > **Update (2026-07-15, GOV-3066/GOV-3070, "GovSchema Standard Research"):
 > Israel opens as this registry's 58th jurisdiction**, via
@@ -9660,7 +9699,12 @@
 
 ## By Vertical
 
-### Passport (42/58 jurisdictions — 72%)
+### Passport (42/59 jurisdictions — 71%)
+
+> **Correction (GOV-3078):** denominator updated from 58 to 59 following
+> Nepal's addition (Business Formation only; Passport remains open,
+> disclosed backlog for Nepal — a strong 337-widget AcroForm candidate was
+> found this cycle but needs widget-geometry reconstruction).
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; Passport remains open,
@@ -10086,7 +10130,13 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (48/58 jurisdictions — 83%)
+### DMV — Vehicle Registration, Licensing, Permits (48/59 jurisdictions — 81%)
+
+> **Correction (GOV-3078):** denominator updated from 58 to 59 following
+> Nepal's addition (Business Formation only; DMV confirmed a dead end this
+> cycle — driving-licence issuance is fully gated behind
+> `applydlnew.dotm.gov.np`'s quota-based online portal, no static form or
+> manual found).
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; DMV remains open,
@@ -10562,7 +10612,18 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (54/58 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (55/59 jurisdictions — 93%)
+
+> **Update (2026-07-15, GOV-3078, "GovSchema Standard Research"): Nepal
+> opens as this registry's 59th jurisdiction via this vertical**, via
+> `np/ocr/company-registration-private-ekal` — the Office of Company
+> Registrar's (OCR) "New Company Registration" e-Services user manual,
+> scoped to the "Private Ekal" (single-shareholder) company type. See the
+> Executive Summary's GOV-3078 update above and the document's own
+> VERIFICATION.md for the full sourcing record, including Israel's
+> Business Formation/Passport/Visa findings and Pakistan's Taxes finding
+> delegated as fully-sourced child issues this same cycle. Denominator
+> updated from 58 to 59 jurisdictions.
 
 > **Update (2026-07-15, GOV-3062, "GovSchema Standard Research"): Pakistan
 > opens as this registry's 57th jurisdiction via this vertical**, via
@@ -11415,7 +11476,15 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (51/58 jurisdictions — 88%)
+### Taxes — Income Tax Return, Tax Filing (51/59 jurisdictions — 86%)
+
+> **Correction (GOV-3078):** denominator updated from 58 to 59 following
+> Nepal's addition (Business Formation only; Taxes confirmed a dead end
+> this cycle — PAN registration is a pure online e-form via
+> `taxpayerportal.ird.gov.np`, no static form or manual found). Pakistan's
+> Taxes vertical was also screened this cycle: a strong candidate (FBR's
+> "Manual Return" workbook for individuals) was found and delegated as a
+> fully-sourced child issue rather than authored inline.
 
 > **Update (GOV-3066/GOV-3070): Israel opens Taxes (Israel's first schema
 > in this registry, opening Israel as this registry's 58th
@@ -12360,7 +12429,13 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (46/58 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (46/59 jurisdictions — 78%)
+
+> **Correction (GOV-3078):** denominator updated from 58 to 59 following
+> Nepal's addition (Business Formation only; Visa remains open, unscouted
+> for Nepal). Israel's Visa vertical was screened this cycle: a strong
+> candidate (the MFA's tourist entry-visa application form) was found and
+> delegated as a fully-sourced child issue rather than authored inline.
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; Visa remains open,
@@ -12937,7 +13012,11 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (42/58 jurisdictions — 72%)
+### National ID & Civic Documents (42/59 jurisdictions — 71%)
+
+> **Correction (GOV-3078):** denominator updated from 58 to 59 following
+> Nepal's addition (Business Formation only; National ID remains open,
+> unscouted for Nepal).
 
 > **Correction (GOV-3062):** denominator updated from 56 to 57 following
 > Pakistan's addition (Business Formation only; National ID/CNIC remains
@@ -13443,6 +13522,7 @@ now closed.
 | **NG** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
+| **NP** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16419,6 +16499,101 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   GOV-3066/GOV-3070 update and the document's own VERIFICATION.md. The
   ~89-item income/deduction/credit schedule (Parts C–O) remains open
   backlog for a future companion-schema cycle.
+
+  **Update (GOV-3078, 2026-07-15): Israel's Business Formation, Passport,
+  and Visa verticals all screened and found strong; delegated as
+  fully-sourced child issues rather than authored inline.** Israel's
+  remaining verticals were National ID (confirmed weak, MR41a's own
+  `/AcroForm/Fields` array is empty) and DMV (confirmed weak, the service-
+  index page 403'd), per the note above, plus three verticals unscreened
+  going into this cycle. All three unscreened verticals turned out to have
+  genuine, unauthenticated `gov.il`/`embassies.gov.il` sources this cycle:
+  **Business Formation** — Form 1 (טופס 1), "Application for Company
+  Registration" under §8 of the Companies Law 5759-1999, a native fillable
+  `.doc` at `gov.il/BlobFolder/servicequestionnaire/company_registration/
+  he/companyregistrationform2%20(2).doc` with 154 `FORMTEXT` + 19
+  `FORMCHECKBOX` fields carrying Hebrew tooltip labels (a "Sole Company"
+  simplified companion template, `SoleCompanyOnline.docx`, was also found at
+  the same path for a future single-member-company cycle); **Passport** —
+  Form DR/1 (דר/1), "Application for Passport/Travel Document," at
+  `gov.il/BlobFolder/service/apply_for_passport/he/dr1_20.pdf`, a genuine
+  50-numbered-field text-layer PDF (no AcroForm, same numbered-marker style
+  as the already-authored Form 1301); **Visa** — the Ministry of Foreign
+  Affairs' "Entry Visa to Israel – Application Form" (tourist), a genuine
+  bilingual Hebrew/English 3-page text-layer PDF at
+  `embassies.gov.il/sites/default/files/media_upload/
+  application_form_for_granting_an_entry_visa_to_israel-tourist.pdf`, with
+  repeating dependent/relative rows. The strongest of the three by field
+  richness and native form-field markup is Business Formation (Form 1);
+  left as disclosed backlog rather than authored this cycle given a
+  one-cycle authoring budget already spent on Nepal (see the Executive
+  Summary's GOV-3078 update above) — a future cycle should author Form 1
+  first, then Passport (DR/1) and Visa as follow-ups.
+
+- **Pakistan — Passport and Visa: screened and confirmed dead ends this
+  cycle (GOV-3078). Taxes: strong candidate found, delegated.** Pakistan's
+  Passport candidate is not the actual MRP (Machine Readable Passport)
+  application — `dgip.gov.pk`'s own downloads page lists only Citizenship/
+  Naturalization forms under the Pakistan Citizenship Act 1951; the real
+  online MRP application at `onlinemrp.dgip.gov.pk` returns HTTP 403 from
+  an Akamai edge WAF on every path tested, a hard wall rather than a login
+  form. Visa is likewise a dead end this cycle: `pakvisaonline.gov.pk` no
+  longer resolves (dead DNS), and the live POVS portal's own downloadable
+  guides (`visa.nadra.gov.pk/downloads/*.pdf`, all genuine text-layer PDFs)
+  are pure screenshot-navigation walkthroughs with zero extractable
+  application-field labels. **Taxes is a strong candidate**: FBR's official
+  "Manual Return" workbook for individuals (Tax Year 2024), a genuine
+  multi-sheet `.xlsx` (9 worksheets: `IND (PROP-CG-OS)`, `IND (BUS PLUS)`,
+  Annex-A through Annex-F, and Wealth Statement) at
+  `download1.fbr.gov.pk/Docs/2024791373958696MANUALRETURN2024-NEW24-6-2024.xlsx`,
+  directly linked from `fbr.gov.pk/income-tax-return-form/51147/131234`
+  with real coded fields (Name, Tax Year, CNIC, NTN, Address, dozens of
+  coded withholding-tax rows, Zakat, Workers Welfare Fund, and a full Wealth
+  Statement). **Left as disclosed backlog rather than authored this cycle**
+  (same one-cycle-budget reasoning as Israel's Business Formation, above) —
+  a future cycle should author this workbook directly to open Pakistan's
+  Taxes vertical (2 of 6, combined with the already-modelled Business
+  Formation).
+
+- **Georgia — screened, not viable this cycle (GOV-3078).** Visa
+  (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
+  D1/D3/D4/D5 "visa" PDFs (e.g. `mfa.gov.ge/pfiles/files/Study%20visa-
+  %20D3.pdf`, genuine text-layer, HTTP 200) are document checklists with
+  zero AcroForm fields, confirmed via `pdfjs-dist`. Business Formation
+  (`napr.gov.ge`, the National Agency of Public Registry) is a Next.js
+  client-rendered SPA whose raw HTML is an 840-byte shell with no
+  server-rendered form links; `rs.ge` (Revenue Service) is similarly
+  AJAX-driven with no static PDF hrefs in raw HTML. Not a confirmed dead
+  end for Business Formation — a future cycle with browser/Playwright
+  tooling to render the client-side app could still find a genuine source —
+  but not viable with a static-fetch-only pass this cycle.
+
+- **Ukraine — confirmed broadly WAF-gated this cycle (GOV-3078), deprioritize
+  until a non-gated subdomain is found.** The MFA's static visa form
+  (`mfa.gov.ua/storage/app/sites/1/2018-02-02-visapp-en.pdf`) returns HTTP
+  403 (Cloudflare "Attention Required"); the Tax Service's individuals page
+  (`tax.gov.ua/en/individuals`) returns HTTP 403 (Akamai "Access Denied").
+  Both consistent with a wartime security posture across the `.gov.ua`
+  estate broadly, not a missing-source problem specific to either vertical.
+
+- **Nepal — Business Formation: authored (GOV-3078), opens the registry's
+  59th jurisdiction.** `np/ocr/company-registration-private-ekal` (37
+  `fields[]`), sourced from the Office of Company Registrar's own
+  unauthenticated "New Company Registration" e-Services user manual —
+  see the Executive Summary's GOV-3078 update and the document's own
+  VERIFICATION.md for the full sourcing record. Nepal's DMV and Taxes
+  verticals were screened this same cycle and confirmed dead ends (DMV:
+  driving-licence issuance is fully gated behind `applydlnew.dotm.gov.np`'s
+  quota-based online portal; Taxes: PAN registration is a pure online
+  e-form via `taxpayerportal.ird.gov.np`, no static form or manual found).
+  Passport (the Department of Passports' MRP Offline Application Form, a
+  genuine 337-widget AcroForm PDF at `verification1.nepalpassport.gov.np`)
+  was found strong but left as disclosed backlog: every widget uses a flat,
+  semantically meaningless internal naming scheme (`sur1`..`sur337`) rather
+  than one field per named datum, needing widget-geometry/label-proximity
+  reconstruction before it can be authored — meaningfully more effort than
+  the Business Formation manual. Nepal's Visa and National ID verticals
+  remain unscreened, open backlog candidates for a future cycle.
 
 ---
 
