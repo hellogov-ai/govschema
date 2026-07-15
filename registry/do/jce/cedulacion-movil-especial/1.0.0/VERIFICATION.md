@@ -246,9 +246,13 @@ field-by-field conformance checker (derived directly from this schema's own
 - `node tools/validate.mjs registry/do/jce/cedulacion-movil-especial/1.0.0/schema.json` — **ok**.
 - `node tools/validate-ajv.mjs registry/do/jce/cedulacion-movil-especial/1.0.0/schema.json` (ajv 2020-12 against `spec/v0.3`) — **ok**.
 - Full-registry re-run after adding this document: `node tools/validate.mjs`
-  → **484/484**; `node tools/validate-ajv.mjs` → **484/484**.
+  → **485/485** documents (plus 3 `mapping.json` companions unaffected);
+  `node tools/validate-ajv.mjs` → **485/485** documents (plus 3 `mapping.json`
+  companions).
 - `node tools/verify-sources.mjs registry/do/jce/cedulacion-movil-especial/1.0.0` —
-  1 directory, 1 URL checked, **0 warnings**, **0 failures**.
+  1 directory, **5 URLs checked** (the primary form URL, the JCE authority
+  URL, and the secondary sources cited in `verification.notes`), **0
+  warnings**, **0 failures**.
 - `npm run build-index` re-run in `tools/govschema-client/` to regenerate
   `registry-index.json` with this document included.
 
