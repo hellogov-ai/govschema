@@ -4,7 +4,22 @@
 
 ## Executive Summary
 
-**56 jurisdictions** | **459 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**56 jurisdictions** | **460 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-15, GOV-3045, "GovSchema Standard Research"): Italy's
+> Business Formation vertical opens (now 5 of 6 for Italy)**, via
+> `it/agenzia-entrate/modello-aa9-12-inizio-attivita-partita-iva` — the
+> Agenzia delle Entrate's Modello AA9/12 VAT-registration (Partita IVA)
+> business-start declaration, overturning this registry's own GOV-2382
+> "confirmed dead end" finding for this vertical. See the Business Formation
+> vertical section below and the document's own VERIFICATION.md for the full
+> sourcing chain and reversal rationale. Two further strong candidates found
+> this same cycle — Greece's Passport vertical and Italy's National ID
+> (Carta d'Identità Elettronica) — were delegated as child issues rather
+> than authored in this PR, per this registry's one-deliverable-per-PR
+> convention; Greece's National ID was screened and confirmed a dead end
+> (pure in-person biometric-appointment system, no fillable form). See Known
+> Gaps & Opportunities below for full disclosure of all three.
 
 > **Update (2026-07-15, GOV-3030, "GovSchema Standard Research"): Greece's
 > Business Formation vertical opens (4 of 6)**, via
@@ -10390,7 +10405,51 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (52/56 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (53/56 jurisdictions — 95%)
+
+> **Update (2026-07-15, GOV-3045, "GovSchema Standard Research"): Italy's
+> Business Formation vertical opens (now 5 of 6 for Italy)**, via
+> `it/agenzia-entrate/modello-aa9-12-inizio-attivita-partita-iva` — the
+> Agenzia delle Entrate's Modello AA9/12, the VAT-registration (Partita IVA)
+> business-start declaration individual entrepreneurs and self-employed
+> workers file under Art. 35 of D.P.R. 633/1972. **This overturns this
+> registry's own GOV-2382 "confirmed dead end" finding** for Italy's Business
+> Formation vertical, which examined only the centralized Registro Imprese
+> ComUnica telematic-filing system (digital-signature/intermediary-only —
+> correctly still a dead end for a plain downloadable form) and did not
+> consider the Agenzia delle Entrate's own separate AA9/12 declaration, an
+> independently sufficient Business Formation entry point sourced from the
+> same agency/source tier already established via `it/agenzia-entrate/
+> modello-730`. Independently re-fetched this cycle via direct `curl` (both
+> the 5-page form and its 12-page istruzioni companion: HTTP 200,
+> `application/pdf`, no login/CAPTCHA/WAF gate, sha256
+> `a75a7ddab209b5355dc0ab40f78e6ba27d43806140ab60de1f9c8857dc32c599` and
+> `89438517659fe2b209e0f75a43e8eb2f44243b6be676b80da2d83e95030f0d55`
+> respectively, both matching the scouting subagent's own reported hashes
+> exactly) and independently re-extracted via `pdfjs-dist`: zero AcroForm
+> Widget annotations across all 5 pages of the form (a static print/hand-fill
+> template), but every field unambiguously labelled in the form's own printed
+> Quadro structure and explained Quadro-by-Quadro in the istruzioni. This
+> v1.0.0 models 35 `fields[]` scoped to the **inizio attività**
+> (business-start) declaration pathway only — Quadro A's declaration-type
+> selector, Quadro B's soggetto d'imposta identifying/activity/e-commerce/
+> preferential-regime data, Quadro C's titolare personal/residence data, the
+> submission-channel choice with its conditional identity-document
+> attachment, and the closing quadri-compilati/signature block — deferring
+> the variazione-dati/cessazione-attività declaration types and Quadri D
+> through I (representative, extraordinary operations, multiple accounting
+> locations, secondary activities, presunzione di cessione, and the
+> ATECO-code-gated additional disclosures) as disclosed out-of-scope future-
+> version candidates. 1 `documents[]` entry (the conditional identity-document
+> photocopy, required only for registered-mail filing). 8 conformance
+> fixtures (2 valid, 6 mutation-control) committed under
+> `conformance/it/agenzia-entrate/modello-aa9-12-inizio-attivita-partita-iva/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing chain, every
+> disclosed scoping decision, and the reversal rationale. Italy stood at 4 of
+> 6 verticals (DMV, Taxes, Visa, Passport) before this update; this closes
+> Business Formation, reaching 5 of 6 — only National ID remains open (a
+> strong candidate found this same cycle and delegated as a child issue, see
+> Known Gaps below).
 
 > **Update (GOV-3030):** Greece's Business Formation vertical opens via
 > `gr/aade/dilosi-enarxis-metavolis-diakopis-ergasion-epiheirisis-d211`
@@ -13133,7 +13192,7 @@ now closed.
 | **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **IT** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **IT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
@@ -14909,6 +14968,36 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     full sourcing record. **Bangladesh now stands at 6 of 6 verticals**
     (Taxes, DMV, Passport, Visa, Business Formation, National ID) — no
     vertical remains open for Bangladesh.
+30. **GR Passport — strong candidate found, delegated (GOV-3045,
+    2026-07-15).** The Hellenic Police's own official specimen application
+    form (`passport.gov.gr/en/tools/downloads/samples/`, "Υπόδειγμα αίτησης
+    έκδοσης Διαβατηρίου") is a scanned/rasterized specimen (0 AcroForm/Widget
+    annotations) but a rendered preview image
+    (`passport.gov.gr/media/images/articles/tools/AppFSpl.png`) is fully
+    legible, showing every field label: application type (initial issue/
+    renewal/theft-loss), surname/first name (Greek + Latin transliteration),
+    ID document number, DOB, gender, height, place of birth, parents' names,
+    address, contact details, municipal registry number, fingerprint-capture
+    percentages, a 9-item sworn declaration, and signature blocks.
+    Corroborating instructions/required-documents/legislation pages (all
+    directly fetched, HTTP 200) give full sourcing for `requiredWhen`/
+    citation material, following the same no-fillable-PDF, prose-plus-
+    specimen-image recipe already used successfully for `gr/yme` (GOV-3026).
+    Delegated as a child issue rather than authored in this same PR, per this
+    registry's one-deliverable-per-PR convention.
+31. **IT National ID (CIE) — strong candidate found, delegated (GOV-3045,
+    2026-07-15).** Directly-fetchable, real field-by-field application PDFs
+    (adult/minor/parental-consent trio, no AcroForm but a blank-template
+    style with underscore fill-ins) are published by a municipality (Comune
+    di Tre Ville), corroborated by the national
+    `cartaidentita.interno.gov.it` portal's prose walkthrough of the
+    centralized CIE process (required documents, in-person steps, fee,
+    delivery time; booking via `prenotazionicie.interno.gov.it` is optional,
+    not a hard gate). This overturns this registry's own `modello-730`
+    VERIFICATION.md (GOV-2382) "fully appointment-based... no downloadable
+    form" finding for this vertical — that prior screening did not locate
+    this municipal-form publishing pattern. Delegated as a child issue
+    rather than authored in this same PR.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -15402,6 +15491,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   on `e-seimas.lrs.lt`, but that entire domain returned HTTP 522
   (origin unreachable) on every retry this cycle — a live-site outage, not
   confirmed auth-gating, worth a retry in a future cycle.
+- **GR National ID (Δελτίο Ταυτότητας)** — GOV-3045, 2026-07-15. A pure
+  in-person, biometric-appointment system: the citizen books a slot on
+  `id.gov.gr` (TaxisNet-authenticated) with no form submitted online beyond
+  contact details for the appointment itself. At the in-person visit, both
+  the "Αίτηση – υπεύθυνη δήλωση" and "Αίτηση έκδοσης δελτίου ταυτότητας" are
+  generated and printed by the issuing police officer from the Μητρώο
+  Πολιτών (Citizen Registry) — the citizen only reviews and hand-signs the
+  printout at the counter, with nothing to fill out in advance. Two
+  fingerprints are captured live via police equipment. Confirmed directly
+  from `mitos.gov.gr` (Greece's own National Administrative Procedures
+  Registry): submission type is explicitly "Κατάθεση από τον αιτούντα
+  (αποκλειστικά δια ζώσης)" — in-person only, no other channel exists. The
+  related "expatriate ID card" online application
+  (`portal.astynomia.gr/webcenter/portal/eTap/...`) is also gated, returning
+  HTTP 403 even with SSL verification disabled. Not a hard dead end if a
+  genuinely new source surfaces; a dead end for the current official
+  publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
