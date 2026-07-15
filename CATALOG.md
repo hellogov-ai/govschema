@@ -41,8 +41,8 @@
 > a marketing walkthrough for the login-gated IDRAS online portal) was
 > screened and confirmed a soft dead end for a standalone driving-license
 > schema this cycle. Numerator updated from 487 to 488; Tanzania's DMV
-> column flips ✗→✓ in the By Jurisdiction table below, leaving Visa as
-> Tanzania's sole remaining open vertical.
+> column flips ✗→✓ in the By Jurisdiction table below, leaving Passport
+> and Visa as Tanzania's remaining open verticals.
 
 > **Update (2026-07-15, GOV-3206, delegated from GOV-3204, picking up
 > GOV-3078's disclosed backlog): Nepal's Passport vertical opens, bringing
