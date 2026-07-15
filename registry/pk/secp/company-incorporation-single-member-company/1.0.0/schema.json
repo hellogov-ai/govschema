@@ -1,0 +1,647 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pk/secp/company-incorporation-single-member-company",
+  "version": "1.0.0",
+  "title": "Pakistan — Application for Company Incorporation (Form-1), Single Member Company",
+  "description": "The Securities and Exchange Commission of Pakistan's (SECP) Form-1, 'Application for Company Incorporation', filed under section 16 of the Companies Act, 2017, read with Regulations 8 and 30 of the Companies Regulations, 2024, via SECP's e-Services portal. Opens Pakistan's Business Formation vertical (Pakistan's first schema in this registry). Scoped to the simplest coherent pathway: a Single Member Company (SMC) limited by shares — exactly one natural person who is simultaneously the company's sole subscriber, sole director, and chief executive, together with the single mandatory nominee a Single Member Company must appoint. Out of scope: multi-subscriber/multi-director Private and Public Limited Companies (Form-1's own subscriber/director table, and its Ultimate Beneficial Owner table, are both open repeating tables sized for many rows; this version models exactly one subscriber-director-CEO, one nominee, and one direct natural-person UBO rather than a bounded or unbounded repeating group, since GovSchema's array/repeating-group proposal, GSP-0009, is not yet part of the accepted v0.3 specification), the 'Additional UBO information' table for indirect/layered beneficial ownership (Part IIA, Regulation 13(3)), companies limited by guarantee or unlimited companies (Section E's Table C/D/E pathways), the Minimum Subscription field (applicable only to Public Companies), and the witness-signature block (the form's own text states it applies 'Only for the documents submitted in physical form'; this schema assumes online e-Services filing, which the form itself says is signed electronically). It does not submit anything or imply Government of Pakistan endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Securities and Exchange Commission of Pakistan",
+    "abbreviation": "SECP",
+    "url": "https://www.secp.gov.pk"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.secp.gov.pk/document/form-1-application-for-company-incorporation/?wpdmdl=56457",
+    "retrievedAt": "2026-07-15",
+    "documentRef": "Form-1, \"Application for Company Incorporation\", issued pursuant to section 16 of the Companies Act, 2017 read with Regulations 8 & 30 of the Companies Regulations, 2024"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-15",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-15",
+    "notes": "GOV-3062 'GovSchema Standard Research' cycle. Opens Pakistan as a new jurisdiction in this registry. A parallel scouting pass this cycle screened NADRA's CNIC application (dead end: only an 'attestation verification' request PDF is published, zero /AcroForm or /Widget markers, no extractable text layer over the actual application; the live CNIC application itself is filled in-person via NADRA's biometric system) and Punjab/Sindh Excise & Taxation vehicle-registration forms (dead end: all downloadable PDFs are scanned photocopies with near-zero extractable Tj text-show operators, field-level authoring not practical) before selecting this SECP form as the strongest verified candidate. Independently re-fetched this cycle from `secp.gov.pk`'s own Statutory Forms listing page (`https://www.secp.gov.pk/company-formation/formsapplications-schedule-of-filling-of-returns/statutory-forms/`, HTTP 200) via a WordPress Download Manager link, no login/CAPTCHA gate: HTTP 200, content-type `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, 162,301 bytes, sha256 `5e34cf31a6590936726abe70fdfacb9c07e8c2ba32ecdec22430f4d27e5ac75c`. This is a native .docx (not PDF); unzipped directly and every `<w:t>` text run in `word/document.xml` was extracted and read in full (all three Parts, all lettered sections A–E, Part IIA, Part III, and the enclosures list), plus each of the form's data tables was parsed structurally (`<w:tbl>`/`<w:tr>`/`<w:tc>`) to confirm column headers, footnote markers, and the pre-numbered blank-row counts (the subscriber/director table's 17 lettered footnote markers (a)-(q) are attached one per column header, not per repeated row; the UBO table's own printed Sr.no. column runs 1 through 13 and the indirect-control UBO table's runs 1 through 10, confirming both are wide, many-row repeating tables in the live form). No `w:sdt`/`FORMTEXT` interactive form controls exist — this is a fill-in-the-blank template, not an interactive Word form, consistent with the byte-for-byte structure independently re-parsed this cycle. Given GSP-0009 (repeating groups/arrays) is not yet accepted into v0.3, and modeling the full open-ended subscriber/director and dual UBO tables would require either fabricating an arbitrary row cap not printed on the form or omitting the tables' own column semantics, this document is scoped to the Single Member Company (SMC) pathway instead: SECP's own minimum-directors table (2.9) states an SMC requires exactly one director, collapsing the subscriber/director/CEO table to a single natural person and the direct-ownership UBO table to that same person's own particulars — a real, commonly used Pakistani company type (not a toy example), and the only pathway in this form whose repeating tables reduce to exactly one row each without fabricating a bound. The mandatory Nominee block (2.11, required only for SMCs) is modeled in full, including its own literal relative-of-the-member enumerated list (spouse, father, mother, brother, sister, son, daughter) quoted verbatim from the form's own section heading. Field 2.10's \"Designation (Director/Subscriber/CEO) Please specify\" is modeled as a single-select enum using exactly the three literal labels printed on the form, even though in the SMC pathway one natural person functionally holds all three roles simultaneously — the schema captures the single value the source form's own \"Please specify\" instruction asks for, not an invented compound label. Gender is modeled as a free-text string, not an enum, because the form's own table column supplies no printed value list to draw from (no fabricated enum options). The registered-office/correspondence-address conditional relationship (2.1 vs. 2.2: correspondence address required only when no registered office address is given at incorporation) is disclosed here in prose rather than encoded as a `requiredWhen`, because doing so would require inventing a boolean gate field the source form does not itself print as a distinct checkbox; both address blocks are instead modeled with `required: false`, matching 2.1's own \"if any\" qualifier. `documents[]` (7 entries) is derived directly from the form's own numbered Enclosures list and Part III declaration text (quoted verbatim into the `attestation` entry's `statement`), with the custom-articles-of-association and specialized-business-NOC entries gated via `requiredWhen` on `articlesOfAssociationTable`/`isSpecializedBusinessRequiringLicense` matching the form's own conditional instructions ('if the company has not adopted the Articles contained in First Schedule...it shall attach the articles of association'; 'Applicable in case of Banking Company...or any other business subject to license'). An ephemeral, from-scratch conformance checker (deriving required/requiredWhen/enum rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran 1 valid mock scenario (a Single Member Company incorporation with a spouse nominee) at 0 errors, plus 5 mutation-control fixtures (missing required field, missing required document, enum violation, requiredWhen violation on the custom-articles document, invalid date format) each correctly raising exactly 1 error."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-15"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "companyName",
+      "label": "Name of the Company",
+      "type": "string",
+      "required": true,
+      "description": "The proposed name of the company being incorporated.",
+      "sourceRef": "Part I, 1.1 — \"Name of the Company\"",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "challanNumber",
+      "label": "Challan No",
+      "type": "string",
+      "required": true,
+      "description": "Reference number of the bank challan (or e-Services equivalent) evidencing payment of the incorporation fee.",
+      "sourceRef": "Part I, 1.2.1 — \"Challan No\""
+    },
+    {
+      "name": "challanAmount",
+      "label": "Challan Amount (Rs.)",
+      "type": "number",
+      "required": true,
+      "description": "Amount paid, in Pakistani Rupees, per the fee challan.",
+      "sourceRef": "Part I, 1.2.2 — \"Challan Amount (Rs.)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "registeredOfficeAddressLine",
+      "label": "Registered office Address",
+      "type": "string",
+      "required": false,
+      "description": "Street/building address of the company's registered office, if given at the time of incorporation. If not given, a Correspondence Address (below) is required instead.",
+      "sourceRef": "Part II, Section A, 2.1 — \"Registered office Address, if any\""
+    },
+    {
+      "name": "registeredOfficeCity",
+      "label": "Registered office — City",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.1 — \"City\""
+    },
+    {
+      "name": "registeredOfficeDistrict",
+      "label": "Registered office — District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.1 — \"District\""
+    },
+    {
+      "name": "registeredOfficeProvince",
+      "label": "Registered office — Province",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.1 — \"Province\""
+    },
+    {
+      "name": "registeredOfficeTelephoneNumber",
+      "label": "Registered office — Telephone Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.1 — \"Telephone Number\""
+    },
+    {
+      "name": "registeredOfficeEmailAddress",
+      "label": "Registered office — Email Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.1 — \"Email Address\""
+    },
+    {
+      "name": "registeredOfficeMobileNumber",
+      "label": "Mobile Number of the Chief Executive/Secretary/any director",
+      "type": "string",
+      "required": true,
+      "description": "Mobile number of the Chief Executive, Secretary, or any director, preferably WhatsApp-enabled. For a Single Member Company this is the sole director/CEO's own mobile number.",
+      "sourceRef": "Part II, Section A, 2.1 — \"Mobile Number of the Chief Executive/Secretary/any director (Preferably Whatsapp enabled number)\""
+    },
+    {
+      "name": "financialYearEnd",
+      "label": "Financial Year End",
+      "type": "string",
+      "required": true,
+      "description": "The company's chosen financial year-end date (day and month, recurring annually).",
+      "sourceRef": "Part II, Section A, 2.1 — \"Financial Year End\""
+    },
+    {
+      "name": "correspondenceAddressLine",
+      "label": "Correspondence Address",
+      "type": "string",
+      "required": false,
+      "description": "Only to be provided if the company has not given a registered office address at the time of incorporation (2.1 above).",
+      "sourceRef": "Part II, Section A, 2.2 — \"Correspondence Address\""
+    },
+    {
+      "name": "correspondenceCity",
+      "label": "Correspondence — City",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.2 — \"City\""
+    },
+    {
+      "name": "correspondenceDistrict",
+      "label": "Correspondence — District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.2 — \"District\""
+    },
+    {
+      "name": "correspondenceProvince",
+      "label": "Correspondence — Province",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.2 — \"Province\""
+    },
+    {
+      "name": "correspondenceTelephoneNumber",
+      "label": "Correspondence — Telephone Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.2 — \"Telephone Number\""
+    },
+    {
+      "name": "correspondenceEmailAddress",
+      "label": "Correspondence — Email Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.2 — \"Email Address\""
+    },
+    {
+      "name": "correspondenceMobileNumber",
+      "label": "Correspondence — Mobile Number of the Chief Executive/Secretary/any director",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section A, 2.2 — \"Mobile Number of the Chief Executive/Secretary/any director\""
+    },
+    {
+      "name": "isWhollyOwnedFederalGovernmentSubsidiary",
+      "label": "Whether the company is a wholly owned subsidiary of the Federal Government",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the company is wholly owned by the Federal Government and has been notified in the Official Gazette.",
+      "sourceRef": "Part II, Section A, 2.3 — \"Whether the company is wholly owned subsidiary of Federal Government and has been notified by the federal Government in Official Gazette.\""
+    },
+    {
+      "name": "principalLineOfBusiness",
+      "label": "Principal line of business",
+      "type": "string",
+      "required": true,
+      "description": "Brief objects of the company as per clause 3(i) of the Memorandum of Association, including up to 3 additional clauses if any.",
+      "sourceRef": "Part II, Section A, 2.4 — \"Principal line of business (Brief objects as per clause 3 (i) of the Memorandum may be mentioned) including additional clauses (up to 3), if any.\""
+    },
+    {
+      "name": "authorizedCapitalClassOfShares",
+      "label": "Authorized Capital — Class/Kind",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.5 — \"Authorized Capital\" table, \"Class/Kind\" column"
+    },
+    {
+      "name": "authorizedCapitalFaceValue",
+      "label": "Authorized Capital — Face Value",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.5 — \"Authorized Capital\" table, \"Face Value\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "authorizedCapitalNumberOfShares",
+      "label": "Authorized Capital — Number of shares",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.5 — \"Authorized Capital\" table, \"Number of shares\" column",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "authorizedCapitalTotalAmount",
+      "label": "Authorized Capital — Total Amount",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.5 — \"Authorized Capital\" table, \"Total Amount\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "paidUpCapitalClassOfShares",
+      "label": "Paid Up Capital — Class/Kind",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.6 — \"Paid Up Capital\" table, \"Class/Kind\" column"
+    },
+    {
+      "name": "paidUpCapitalFaceValue",
+      "label": "Paid Up Capital — Face Value",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.6 — \"Paid Up Capital\" table, \"Face Value\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "paidUpCapitalNumberOfShares",
+      "label": "Paid Up Capital — Number of shares",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.6 — \"Paid Up Capital\" table, \"Number of shares\" column",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "paidUpCapitalTotalAmount",
+      "label": "Paid Up Capital — Total Amount",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Part II, Section B, 2.6 — \"Paid Up Capital\" table, \"Total Amount\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "isSpecializedBusinessRequiringLicense",
+      "label": "Special business information applicable",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the company's business is one requiring a license/permission/approval under Section C (e.g. banking, non-banking finance, insurance, modaraba management, stock brokerage, forex, clearing house, or a business otherwise restricted/licensed by law).",
+      "sourceRef": "Part II, Section C — heading and 2.8 conditions"
+    },
+    {
+      "name": "specializedBusinessNatureDescription",
+      "label": "Nature of specialized business",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isSpecializedBusinessRequiringLicense", "equals": true },
+      "description": "Nature of the specialized business requiring license/permission/approval.",
+      "sourceRef": "Part II, Section C, 2.8 — \"Nature of business in case of specialized business requiring license / permission / approval (please specify and also attach NOC / approval of the relevant authority)\""
+    },
+    {
+      "name": "numberOfDirectors",
+      "label": "Number of directors fixed by subscribers",
+      "type": "integer",
+      "required": true,
+      "description": "For a Single Member Company, the law fixes this at exactly one director.",
+      "sourceRef": "Part II, Section D, 2.9 — \"State Number of directors fixed by subscribers\"; minimum-directors table, \"Single Member Company: 01\"",
+      "validation": { "minimum": 1, "maximum": 1 }
+    },
+    {
+      "name": "subscriberFullName",
+      "label": "Name and surname (present and former) in full",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the sole subscriber, who is also this Single Member Company's sole director and chief executive.",
+      "sourceRef": "Part II, Section D, 2.10 — \"Name and surname (present and former) in full\""
+    },
+    {
+      "name": "subscriberIdentityDocumentType",
+      "label": "Identity document type",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"CNIC/NICOP (in case of Pakistani national) or Passport No (in case of foreigner)\"",
+      "validation": { "enum": ["CNIC", "NICOP", "PASSPORT"] }
+    },
+    {
+      "name": "subscriberIdentityDocumentNumber",
+      "label": "CNIC/NICOP/Passport No",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"CNIC/NICOP (in case of Pakistani national) or Passport No (in case of foreigner)\""
+    },
+    {
+      "name": "subscriberIdentityDocumentIssueDate",
+      "label": "Date of issue of CNIC/NICOP/Passport",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"Date of issue of CNIC/NICOP/Passport\""
+    },
+    {
+      "name": "subscriberIdentityDocumentExpiryDate",
+      "label": "Date of expiry of CNIC/NICOP/Passport",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"Date of expiry of CNIC/NICOP/Passport\""
+    },
+    {
+      "name": "subscriberGender",
+      "label": "Gender",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"Gender\""
+    },
+    {
+      "name": "subscriberNationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "Nationality, with former nationality and nationality of origin, if different.",
+      "sourceRef": "Part II, Section D, 2.10 — \"Nationality (with former nationality and nationality of the origin, if different)\""
+    },
+    {
+      "name": "subscriberOccupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"Occupation\""
+    },
+    {
+      "name": "subscriberAddressPerIdentityDocument",
+      "label": "Address as per CNIC/NICOP/Passport",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"Address as per CNIC/NICOP/Passport\""
+    },
+    {
+      "name": "subscriberResidentialAddress",
+      "label": "Residential address (if different)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section D, 2.10 — \"Residential address (in case different than CNIC/NICOP/Passport)/ registered office address or principal office\""
+    },
+    {
+      "name": "subscriberNtn",
+      "label": "NTN",
+      "type": "string",
+      "required": false,
+      "description": "National Tax Number, where applicable.",
+      "sourceRef": "Part II, Section D, 2.10 — \"NTN (in case of director, where applicable)\""
+    },
+    {
+      "name": "subscriberDesignation",
+      "label": "Designation",
+      "type": "enum",
+      "required": true,
+      "description": "For a Single Member Company the sole natural person functionally holds all three roles simultaneously; this field records the single label the source form's own table asks to specify.",
+      "sourceRef": "Part II, Section D, 2.10 — \"Designation (Director/Subscriber/ CEO) Please specify\"",
+      "validation": { "enum": ["DIRECTOR", "SUBSCRIBER", "CHIEF_EXECUTIVE"] }
+    },
+    {
+      "name": "natureOfDirectorship",
+      "label": "Nature of directorship",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"Nature of directorship (appointed/ nominee/ independent/ other)\"",
+      "validation": { "enum": ["APPOINTED", "NOMINEE", "INDEPENDENT", "OTHER"] }
+    },
+    {
+      "name": "nominatingEntityName",
+      "label": "Name of entity nominating the director",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "natureOfDirectorship", "equals": "NOMINEE" },
+      "sourceRef": "Part II, Section D, 2.10 — \"Name of entity nominating the director\""
+    },
+    {
+      "name": "sharesSubscribed",
+      "label": "No. of shares subscribed",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"No. of shares subscribed (for subscriber)\"",
+      "validation": { "minimum": 1 }
+    },
+    {
+      "name": "sharesKindAndClass",
+      "label": "Kind & Class of shares",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.10 — \"Kind & Class of shares\""
+    },
+    {
+      "name": "nomineeFullName",
+      "label": "Name of Nominee",
+      "type": "string",
+      "required": true,
+      "description": "A Single Member Company must appoint a nominee, who must be a relative of the member.",
+      "sourceRef": "Part II, Section D, 2.11 — \"Name of Nominee\""
+    },
+    {
+      "name": "nomineeIdentityDocumentNumber",
+      "label": "NIC/CNIC/NICOP of Nominee",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.11 — \"NIC/CNIC/NICOP of Nominee\""
+    },
+    {
+      "name": "nomineeResidentialAddress",
+      "label": "Residential address of Nominee",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part II, Section D, 2.11 — \"Residential address of Nominee\""
+    },
+    {
+      "name": "nomineeContactNumber",
+      "label": "Telephone/Mobile number of Nominee",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section D, 2.11 — \"Telephone/Mobile number of Nominee\""
+    },
+    {
+      "name": "nomineeEmailAddress",
+      "label": "Email address of Nominee",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part II, Section D, 2.11 — \"Email address of Nominee\""
+    },
+    {
+      "name": "nomineeRelationshipToSubscriber",
+      "label": "Relationship of Nominee with subscriber",
+      "type": "enum",
+      "required": true,
+      "description": "The nominee shall not be a person other than a relative of the member.",
+      "sourceRef": "Part II, Section D, 2.11 heading — \"Nominee shall not be a person other than relatives of the member- namely, a spouse, father, mother, brother, sister and son or daughter\"; \"Relationship of Nominee with subscriber\"",
+      "validation": { "enum": ["SPOUSE", "FATHER", "MOTHER", "BROTHER", "SISTER", "SON", "DAUGHTER"] }
+    },
+    {
+      "name": "articlesOfAssociationTable",
+      "label": "Articles of Association",
+      "type": "enum",
+      "required": true,
+      "description": "Which First Schedule model articles table the company adopts, or that it attaches its own custom articles instead.",
+      "sourceRef": "Part II, Section E, 2.12 — \"Status of company / Applicable relevant table of First Schedule\" (Company limited by shares: Table A-I; Single member company limited by shares: Table A-II; Company limited by guarantee, no share capital: Table C; Company limited by guarantee, with share capital: Table D; Unlimited company with share capital: Table E); 2.13 — custom articles",
+      "validation": { "enum": ["TABLE_A_PART_I", "TABLE_A_PART_II", "TABLE_C", "TABLE_D", "TABLE_E", "CUSTOM"] }
+    },
+    {
+      "name": "uboFullName",
+      "label": "Name of the natural person who is the Ultimate Beneficial Owner (UBO)",
+      "type": "string",
+      "required": true,
+      "description": "Scoped to direct ownership: the sole subscriber's own particulars as the company's Ultimate Beneficial Owner.",
+      "sourceRef": "Part IIA, 2A.1 — \"Name of the natural person(s) who is/are the Ultimate Beneficial Owner (UBO) of subscriber\""
+    },
+    {
+      "name": "uboFatherOrSpouseName",
+      "label": "Father's name/Spouse's Name of UBO",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"Father’s name/Spouse’s Name of UBO\""
+    },
+    {
+      "name": "uboIdentityDocumentNumber",
+      "label": "CNIC/NICOP/Passport no. of UBO",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"CNIC/NICOP/ Passport no. of UBO along with date of issue & expiry\""
+    },
+    {
+      "name": "uboIdentityDocumentIssueDate",
+      "label": "Date of issue of UBO's identity document",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"CNIC/NICOP/ Passport no. of UBO along with date of issue & expiry\""
+    },
+    {
+      "name": "uboIdentityDocumentExpiryDate",
+      "label": "Date of expiry of UBO's identity document",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"CNIC/NICOP/ Passport no. of UBO along with date of issue & expiry\""
+    },
+    {
+      "name": "uboDateOfBirth",
+      "label": "Date of birth of UBO",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"Date of birth of UBO\""
+    },
+    {
+      "name": "uboGender",
+      "label": "Gender of UBO",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"Gender of UBO\""
+    },
+    {
+      "name": "uboNationality",
+      "label": "Nationality of UBO",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"Nationality of UBO\""
+    },
+    {
+      "name": "uboCountryOfOrigin",
+      "label": "Country of Origin of UBO",
+      "type": "string",
+      "required": false,
+      "description": "Only applicable in case of a foreign national or dual national.",
+      "sourceRef": "Part IIA, 2A.1 — \"Country of Origin (in case of foreign national or dual national) of UBO\""
+    },
+    {
+      "name": "uboAddressPerIdentityDocument",
+      "label": "Address of UBO as per CNIC/NICOP/Passport",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"Address of UBO as per CNIC/NICOP/Passport\""
+    },
+    {
+      "name": "uboResidentialAddress",
+      "label": "Usual Residential Address of UBO (if different)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part IIA, 2A.1 — \"Usual Residential Address of UBO (in case different than given in CNIC/NICOP/ Passport)\""
+    },
+    {
+      "name": "uboEmailAddress",
+      "label": "Email Address of UBO",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Part IIA, 2A.1 — \"Email Address of UBO\""
+    },
+    {
+      "name": "uboStatusAcquiredDate",
+      "label": "Date in which the UBO status was acquired",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part IIA, 2A.1 — \"Date in which the UBO status was acquired\""
+    },
+    {
+      "name": "declarantName",
+      "label": "Declarant Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Part III, 3.1 — \"Declarant Name\""
+    },
+    {
+      "name": "declarantDesignation",
+      "label": "Declarant Profession / Designation",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Part III, 3.2 — \"Declarant Profession / Designation (Please tick the relevant box) Authorized Intermediary / a person named in the articles as Director of the proposed company\"",
+      "validation": { "enum": ["AUTHORIZED_INTERMEDIARY", "DIRECTOR"] }
+    },
+    {
+      "name": "authorizedIntermediaryRegistrationNumber",
+      "label": "Registration No of authorized intermediary",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "declarantDesignation", "equals": "AUTHORIZED_INTERMEDIARY" },
+      "sourceRef": "Part III, 3.5 — \"Registration No of authorized intermediary, if applicable\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Part III, 3.6 — \"Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "memorandumOfAssociation",
+      "label": "Memorandum of Association",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Enclosures — \"Memorandum of Association\""
+    },
+    {
+      "id": "articlesOfAssociationCustom",
+      "label": "Articles of Association (custom, not adopted from First Schedule)",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "articlesOfAssociationTable", "equals": "CUSTOM" },
+      "belongsTo": "applicant",
+      "sourceRef": "Part II, Section E, 2.13 — \"If the company has not adopted articles of association contained in First Schedule to the Act, it shall attach the articles of association\"; Enclosures — \"Articles of Association, (if the company has not adopted the Articles from the First Schedule)\""
+    },
+    {
+      "id": "subscriberIdentityDocumentCopy",
+      "label": "Copy of valid CNIC/NICOP of the subscriber (or Passport, if a foreigner)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Enclosures — \"Copies of valid CNIC/NICOP of the subscribers/directors/chief executive officer or copy of Passport in case of a foreigner\""
+    },
+    {
+      "id": "nomineeIdentityDocumentCopy",
+      "label": "Copy of valid CNIC/NICOP of the nominee (or Passport, if a foreigner)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "dependent",
+      "sourceRef": "Enclosures — \"Copy of valid CNIC/NICOP of nominee only in case of single member company or copy of Passport in case of a foreigner\""
+    },
+    {
+      "id": "specializedBusinessNoc",
+      "label": "NOC / Letter of Intent / License of the relevant regulatory authority",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "isSpecializedBusinessRequiringLicense", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Part II, Section C, 2.8 — \"please specify and also attach NOC / approval of the relevant authority\"; Enclosures — \"NOC/Letter of Intent/ License (if any) of the relevant regulatory authority in case of specialized business\""
+    },
+    {
+      "id": "feePaymentEvidence",
+      "label": "Original challan or other evidence of payment of fee",
+      "category": "payment",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Enclosures — \"Original challan or other evidence of payment of fee specified in Seventh Schedule of the Act (not applicable in case of online filing)\""
+    },
+    {
+      "id": "declarationStatement",
+      "label": "Declaration under section 16",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I do hereby solemnly and sincerely declare that: a) I have been authorized as declarant by the subscribers; b) all the requirements of the Companies Act, 2017, and the regulations made there under in respect of matters precedent to the registration of the said Company and incidental thereto have been complied with. c) necessary information about the ultimate beneficial owners of the proposed company, if any, as specified in regulation 13, has been obtained and is available on record. d) I make this solemn declaration conscientiously believing the same to be true.",
+      "sourceRef": "Part III, 3.3 — \"DeclarationI do hereby solemnly and sincerely declare that...\""
+    }
+  ]
+}
