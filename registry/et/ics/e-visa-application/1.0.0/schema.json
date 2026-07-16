@@ -1,0 +1,545 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "et/ics/e-visa-application",
+  "version": "1.0.0",
+  "title": "Ethiopia e-Visa Application",
+  "description": "The Immigration And Citizenship Service (ICS)'s live Ethiopian e-Visa wizard at evisa.gov.et, applied for live and unauthenticated — no account creation or login is required to reach or fill the application form. This schema models the individual Tourist Visa pathway across the wizard's own six-step navigation: Visa Category (visa type/validity selection plus a genuinely conditional Company Reference Number field observed when Medical Treatment Visa is selected instead), Arrival Information (flight details and Ethiopian accommodation address), and Personal Information (identity, contact, and address details), all live-walked and interactively filled and validated with real browser input. The Passport Information step's six fields were confirmed present, labelled, and marked required via direct DOM inspection (the site pre-mounts every step's form markup in a single page load, only gating visibility/navigation by step), but were not interactively filled and validated live this session. The Review and Attachments steps were not reached: unlike every preceding step, the Attachments step's file-upload inputs are not part of the page's pre-mounted markup, so its exact document/file composition could not be confirmed without further live navigation — disclosed as an accepted scope boundary rather than silently omitted or guessed. No visa fee was paid and no application was actually submitted in producing this schema. Filing this application is a traveller action performed directly with the Immigration And Citizenship Service through evisa.gov.et; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Federal Democratic Republic of Ethiopia or its Immigration And Citizenship Service.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ET",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration And Citizenship Service",
+    "abbreviation": "ICS",
+    "url": "https://www.evisa.gov.et"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.evisa.gov.et/visa",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "The live Ethiopian e-Visa wizard, individual Tourist Visa pathway, from Visa Category through Personal Information (live-filled and validated), plus Passport Information's field labels (DOM-confirmed, not interactively validated). Review and Attachments were not reached."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3313 (\"GovSchema Standard Research\"). Opens Ethiopia as a new jurisdiction (1/6 verticals: Visa). This cycle scouted five live e-visa/e-government portals for genuinely new (not-yet-in-registry) jurisdictions in parallel: Cambodia's evisa.gov.kh (confirmed a live but currently-outaged WAF stub, TLS-certificate-confirmed as a genuine MFAIC domain, not retired — re-check in a future cycle), Uzbekistan's e-visa.gov.uz (a real live Angular SPA blocked by a client-side rendering bug that leaves a permanent loading overlay before any step-2+ field could be confirmed), Ethiopia's evisa.gov.et (this schema), and Georgia's evisa.gov.ge (a strong ~74-field candidate, left as a disclosed, ready-to-author backlog item for a future cycle rather than authored this same session). Walked live with Playwright + Chromium (`executablePath` pointed at the locally cached Chromium build; `LD_LIBRARY_PATH` set for the sysroot's libraries; `waitUntil: 'domcontentloaded'` plus explicit settle delays — this site is a React SPA that a plain WebFetch cannot render). The site pre-mounts every step's form markup into the DOM on the very first page load (all six steps' `<label>`/`<input>`/`<select>` elements are queryable immediately), with only visibility and interactivity gated per-step by React state — used to independently corroborate the Passport Information step's field labels/required markers even though that step was not reached by live navigation. Steps 1 through 3 (Visa Category, Arrival Information, Personal Information) were live-filled end to end with real Playwright interactions (dropdown selection via PrimeReact's `.p-dropdown`, an Ant Design (`ant-picker`) calendar for every date field, a custom radio group for gender, and a phone-input widget pre-filled with a `+251` country-code prefix), each step's own client-side required-field validation confirmed to genuinely block the \"Next\" button until satisfied (e.g. \"Accommodation Telephone is required\", \"Arrival Date is required!\" observed live), and a screenshot taken of the reached Personal Information step's Date-of-Birth calendar open and populated. A genuinely conditional field was found and modelled: selecting \"Medical Treatment Visa\" (instead of \"Tourist Visa\") reveals a required `companyReferenceNumber` text field not present for Tourist Visa, and reveals a different, larger `visaValidity` option set (4 options vs. Tourist's single \"Single Entry 30 Days\") — confirming genuine per-visa-type cascading logic, not a static form. See the field-level `sourceRef`s and VERIFICATION.md for the full step-by-step record, every disclosed scope boundary, and every enum value list's exact provenance."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "visa_category",
+      "title": "Visa Category",
+      "fields": [
+        "visaType",
+        "visaValidity",
+        "companyReferenceNumber",
+        "termsAccepted"
+      ],
+      "next": "arrival_information"
+    },
+    {
+      "id": "arrival_information",
+      "title": "Arrival Information / Address in Ethiopia",
+      "fields": [
+        "arrivalDate",
+        "departureCountry",
+        "departureCity",
+        "airline",
+        "flightNumber",
+        "accommodationType",
+        "accommodationName",
+        "accommodationCity",
+        "accommodationStreetAddress",
+        "accommodationTelephone"
+      ],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": [
+        "givenName",
+        "surname",
+        "citizenship",
+        "gender",
+        "countryOfBirth",
+        "dateOfBirth",
+        "placeOfBirth",
+        "emailAddress",
+        "emailAddressConfirmation",
+        "phoneNumber",
+        "occupation",
+        "streetAddress",
+        "addressCity",
+        "addressCountry"
+      ],
+      "next": "passport_information"
+    },
+    {
+      "id": "passport_information",
+      "title": "Passport Information",
+      "fields": [
+        "passportType",
+        "passportNumber",
+        "passportIssueDate",
+        "passportExpiryDate",
+        "issuingCountry",
+        "passportIssuingAuthority"
+      ],
+      "next": "review"
+    },
+    {
+      "id": "review",
+      "title": "Review",
+      "fields": []
+    }
+  ],
+  "fields": [
+    {
+      "name": "visaType",
+      "label": "Visa Type",
+      "type": "enum",
+      "required": true,
+      "description": "The category of visa being applied for, read directly from the live visa-category `<select>`'s 13 real options. This schema models the Tourist Visa branch; other branches (e.g. Medical Treatment Visa) reveal additional/different downstream fields not modelled here — see `companyReferenceNumber` and VERIFICATION.md.",
+      "sourceRef": "Visa Category step, `select[name=\"visaType\"]`, confirmed live",
+      "validation": {
+        "enum": [
+          "MEDICAL_TREATMENT_VISA",
+          "SPORTS_COMPETITION_AND_TRAINING_VISA",
+          "RESIDENCE_VISA",
+          "RELIGION_VISA",
+          "STUDENT_VISA",
+          "ENTERTAINMENT_INDUSTRY_VISA",
+          "PRIVATE_WORK_VISA",
+          "NGO_VISA",
+          "GOVERNMENT_WORK_VISA",
+          "INVESTMENT_VISA",
+          "TOURIST_VISA",
+          "WORKSHOP_CONFERENCE_VISA",
+          "JOURNALIST_VISA"
+        ]
+      }
+    },
+    {
+      "name": "visaValidity",
+      "label": "Visa Validity",
+      "type": "enum",
+      "required": true,
+      "description": "The visa's validity/entry option. This field's option set cascades from `visaType` — live-confirmed to offer exactly one option (\"Single Entry 30 Days\") for Tourist Visa, but four options for Medical Treatment Visa (\"Single Entry 30 Days\", \"Multiple Entry 6 Months\", \"Multiple Entry 1 Year\", \"Multiple Entry 90 Days\"). Only the Tourist Visa branch's single confirmed value is modelled here, consistent with this schema's Tourist Visa scope; other `visaType` selections may reveal different/additional validity options not enumerated below — a disclosed judgment call, see VERIFICATION.md.",
+      "sourceRef": "Visa Category step, `select[name=\"visaValidity\"]`, confirmed live for the Tourist Visa branch",
+      "validation": {
+        "enum": [
+          "SINGLE_ENTRY_30_DAYS"
+        ]
+      }
+    },
+    {
+      "name": "companyReferenceNumber",
+      "label": "Company Reference Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "visaType",
+        "equals": "MEDICAL_TREATMENT_VISA"
+      },
+      "description": "A reference number tying the application to a sponsoring company, required only when Medical Treatment Visa is selected — confirmed live via the field's own real-time \"Company Reference Number is required!\" validation message, which appears only on that branch. Not present at all for Tourist Visa.",
+      "sourceRef": "Visa Category step, `input[name=\"companyReferenceNumber\"]`, confirmed live to appear and become required only when `visaType` is Medical Treatment Visa",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "termsAccepted",
+      "label": "I agree to the terms and conditions",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant's acceptance of the site's terms and conditions. The live \"Next\" button is genuinely blocked (\"Please agree terms and conditions\") until this box is checked.",
+      "sourceRef": "Visa Category step, `input[name=\"accept\"]`, confirmed live to gate step progression"
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Arrival Date",
+      "type": "date",
+      "required": true,
+      "description": "The traveller's planned date of arrival in Ethiopia, selected live via an Ant Design calendar widget.",
+      "sourceRef": "Arrival Information step, `input[name=\"arrivalDate\"]` (an `ant-picker` calendar), confirmed live to require a real selection (\"Arrival Date is required!\") before it clears",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "departureCountry",
+      "label": "Departure Country",
+      "type": "string",
+      "required": true,
+      "description": "The country the traveller is departing from, selected from the live portal's own complete country picker (confirmed to include entries alphabetically from Afghanistan; not reproduced in full here, consistent with this registry's convention for large country pickers — see VERIFICATION.md).",
+      "sourceRef": "Arrival Information step, `select[name=\"departureCountry\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "departureCity",
+      "label": "Departure City",
+      "type": "string",
+      "required": true,
+      "description": "The city the traveller is departing from.",
+      "sourceRef": "Arrival Information step, `input[name=\"departureCity\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "airline",
+      "label": "Airline",
+      "type": "string",
+      "required": false,
+      "description": "The airline the traveller is arriving on. Confirmed live to carry no asterisk and no required-field validation error, unlike every neighbouring field on this step.",
+      "sourceRef": "Arrival Information step, `input[name=\"airline\"]`, confirmed live to be optional",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "flightNumber",
+      "label": "Flight Number",
+      "type": "string",
+      "required": false,
+      "description": "The traveller's flight number. Confirmed live to carry no asterisk and no required-field validation error, unlike every neighbouring field on this step.",
+      "sourceRef": "Arrival Information step, `input[name=\"flightNumber\"]`, confirmed live to be optional",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "accommodationType",
+      "label": "Accommodation Type",
+      "type": "enum",
+      "required": true,
+      "description": "The type of accommodation the traveller will stay in while in Ethiopia, read directly from the live `<select>`'s 4 real options.",
+      "sourceRef": "Arrival Information step, `select[name=\"accommodationType\"]`, confirmed live",
+      "validation": {
+        "enum": [
+          "HOTEL",
+          "GUEST_HOUSE",
+          "RESORT",
+          "OTHER"
+        ]
+      }
+    },
+    {
+      "name": "accommodationName",
+      "label": "Accommodation Name",
+      "type": "string",
+      "required": true,
+      "description": "The name of the hotel/guest house/resort where the traveller will stay.",
+      "sourceRef": "Arrival Information step, `input[name=\"accommodationName\"]`, confirmed live",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "accommodationCity",
+      "label": "Accommodation City",
+      "type": "string",
+      "required": true,
+      "description": "The city of the traveller's accommodation in Ethiopia.",
+      "sourceRef": "Arrival Information step, `input[name=\"accommodationCity\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "accommodationStreetAddress",
+      "label": "Accommodation Street Address",
+      "type": "string",
+      "required": true,
+      "description": "The street address of the traveller's accommodation in Ethiopia.",
+      "sourceRef": "Arrival Information step, `input[name=\"accommodationStreetAddress\"]`, confirmed live",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "accommodationTelephone",
+      "label": "Accommodation Telephone",
+      "type": "string",
+      "required": true,
+      "description": "The telephone number of the traveller's accommodation in Ethiopia. The live input is a phone widget pre-filled with a non-removable \"+251\" country-code prefix that the applicant appends digits to.",
+      "sourceRef": "Arrival Information step, a `type=\"tel\"` phone-input widget (no static `name` attribute; identified by its \"Accommodation Telephone\" label), confirmed live to require a real value (\"Accommodation Telephone is required\") beyond the bare prefix",
+      "validation": {
+        "maxLength": 17
+      }
+    },
+    {
+      "name": "givenName",
+      "label": "Given Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's given name(s).",
+      "sourceRef": "Personal Information step, `input[name=\"firstName\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's surname.",
+      "sourceRef": "Personal Information step, `input[name=\"surname\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "citizenship",
+      "label": "Citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's country of citizenship, selected from the live portal's own complete country picker (confirmed live to offer 260 entries, alphabetically from Afghanistan; not reproduced in full here, consistent with this registry's convention for large country pickers).",
+      "sourceRef": "Personal Information step, `select[name=\"citizenship\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's gender, a two-option radio group.",
+      "sourceRef": "Personal Information step, radio group `name=\"gender\"` (`#male`/`#female`), confirmed live",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's country of birth, selected from the same complete country picker as `citizenship`.",
+      "sourceRef": "Personal Information step, `select[name=\"countryOfBirth\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's date of birth, selected live via an Ant Design calendar widget.",
+      "sourceRef": "Personal Information step, `input[name=\"dateOfBirth\"]` (an `ant-picker` calendar), confirmed live (calendar opened and a date selected during this session)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's specific place (city/town) of birth.",
+      "sourceRef": "Personal Information step, `input[name=\"placeOfBirth\"]`, confirmed live",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's email address.",
+      "sourceRef": "Personal Information step, `input[name=\"emailAddress\"]`, confirmed live",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "emailAddressConfirmation",
+      "label": "Confirm Email Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Repeat entry of the traveller's email address; must match `emailAddress` exactly.",
+      "sourceRef": "Personal Information step, `input[name=\"emailAddressConfirmation\"]`, confirmed live",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's own contact phone number, entered via the same kind of country-code-prefixed phone widget as `accommodationTelephone`.",
+      "sourceRef": "Personal Information step, a `type=\"tel\"` phone-input widget (no static `name` attribute; identified by its \"Phone Number\" label), confirmed live",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "description": "The traveller's occupation, a free-text field (confirmed live to be a plain text `<input>`, not a dropdown, unlike this registry's `ke/immigration/eta-visa-application` occupation field).",
+      "sourceRef": "Personal Information step, `input[name=\"occupation\"]`, confirmed live",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "streetAddress",
+      "label": "Street Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's home street address.",
+      "sourceRef": "Personal Information step, `input[name=\"streetAddress\"]`, confirmed live",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "addressCity",
+      "label": "Address City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The city of the traveller's home address.",
+      "sourceRef": "Personal Information step, `input[name=\"addressCity\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "addressCountry",
+      "label": "Address Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The country of the traveller's home address, selected from the same complete country picker as `citizenship`.",
+      "sourceRef": "Personal Information step, `select[name=\"addressCountry\"]`, confirmed live",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "passportType",
+      "label": "Passport Type",
+      "type": "enum",
+      "required": true,
+      "description": "The type of travel document being presented, read directly from the live `<select>`'s 3 real options. This step's fields were confirmed present, labelled, and marked required via direct DOM inspection (the site pre-mounts every step's markup on initial page load) but were not interactively filled and validated live this session — an accepted scope boundary, see VERIFICATION.md.",
+      "sourceRef": "Passport Information step, `select[name=\"passportType\"]`, DOM-confirmed (not interactively validated)",
+      "validation": {
+        "enum": [
+          "ORDINARY_PASSPORT",
+          "LAISSEZ_PASSER",
+          "TRAVEL_DOCUMENT"
+        ]
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The passport/travel document number.",
+      "sourceRef": "Passport Information step, `input[name=\"passportNumber\"]`, DOM-confirmed (not interactively validated)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport Issue Date",
+      "type": "date",
+      "required": true,
+      "description": "The date the passport/travel document was issued.",
+      "sourceRef": "Passport Information step, a date field labelled \"Passport Issue Date\", DOM-confirmed (not interactively validated)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Passport Expiry Date",
+      "type": "date",
+      "required": true,
+      "description": "The date the passport/travel document expires.",
+      "sourceRef": "Passport Information step, a date field labelled \"Passport Expiry Date\", DOM-confirmed (not interactively validated)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "issuingCountry",
+      "label": "Passport Issuing Country",
+      "type": "string",
+      "required": true,
+      "description": "The country that issued the passport/travel document, selected from the same complete country picker as `citizenship`.",
+      "sourceRef": "Passport Information step, a country-picker dropdown labelled \"Passport Issuing Country\", DOM-confirmed (not interactively validated)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "passportIssuingAuthority",
+      "label": "Passport Issuing Authority",
+      "type": "string",
+      "required": true,
+      "description": "The specific authority that issued the passport/travel document.",
+      "sourceRef": "Passport Information step, `input[name=\"passportIssuingAuthority\"]`, DOM-confirmed (not interactively validated)",
+      "validation": {
+        "maxLength": 150
+      }
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "emailMustMatchConfirmation",
+      "compare": {
+        "field": "emailAddressConfirmation",
+        "operator": "equals",
+        "compareTo": "emailAddress"
+      }
+    }
+  ]
+}
