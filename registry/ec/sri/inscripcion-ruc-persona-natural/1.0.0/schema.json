@@ -1,0 +1,421 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ec/sri/inscripcion-ruc-persona-natural",
+  "version": "1.0.0",
+  "title": "Ecuador RUC Registration for Natural Persons (Inscripción del Registro Único de Contribuyentes)",
+  "description": "Register a natural person (Ecuadorian or foreign resident) in Ecuador's Registro Único de Contribuyentes (RUC) — the national taxpayer registry administered by the Servicio de Rentas Internas (SRI) — using SRI's own official request-form template, \"Solicitud de Inscripción del RUC\". Opens Ecuador's Business Formation vertical (2 of 6). SRI publishes this template as the standard cover request accompanying the supporting documentation required whenever an applicant cannot or does not complete the fully online `SRI en Línea` self-service wizard (which requires an already-issued online-access password and is not reachable without one); the template's own field set — applicant identity, up to several economic activities each carrying an INEC/SRI CIIU classifier code, a domicile address and a separate principal-establishment address (each with 13 identically-structured sub-fields), and an estimated annual gross income — is a faithful, government-authored field-by-field description of what RUC registration collects regardless of channel, corroborated by SRI's own published step-by-step guide for the online channel (see VERIFICATION.md). This schema models the printed template's own structure: 3 economic-activity slots (matching the template's own printed table), 26 address fields (13 per address block), applicant identity, and estimated annual income, plus the template's own supporting-document and truthfulness-attestation requirements.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "EC",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Servicio de Rentas Internas",
+    "abbreviation": "SRI",
+    "url": "https://www.sri.gob.ec/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/057da380-7223-4000-9e43-fd44c2550cd6/Formato%20solicitudes%20RUC%20inscripcion-%20persona%20natural.docx",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "Solicitud de Inscripción del RUC (persona natural)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GovSchema Standard Research cycle GOV-3328. Opens Ecuador's Business Formation vertical (2 of 6). Fetched directly from www.sri.gob.ec (HTTP 200, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 41,387 bytes, sha256:1dacd4966d4a82648744b1500ba967e86c53f2d470dea37c7c9d425be660cca) — the same SRI web server the prior GOV-3305 cycle's own VERIFICATION.md recorded as connection-timeout-unreachable ('curl: exit 28') is now live and responding, confirmed by re-fetching both this .docx and the corroborating GUIA RUC EN LINEA.pdf below with a realistic desktop User-Agent header. The .docx's own document.xml was parsed directly (zipfile + XML, no full docx-to-text conversion) to walk its 3 tables cell-by-cell: table 1 is a 4-row 'Actividad Solicitada' grid (header row + 3 identical Código-CIIU/Descripción rows, each implicitly nominatable as the one 'principal' activity per the header's own instruction); table 2 is a 14-row, 2-column-block grid ('DIRECCIÓN DEL DOMICILIO' / 'DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ'), each block carrying the identical 13 labelled blanks (Provincia, Cantón, Parroquia, Calle principal, Número, Intersección, Edificio, Piso, Oficina o local, Referencia de Ubicación, Teléfono convencional, Celular, Correo electrónico), 9 of which carry the template's own leading asterisk and 4 of which do not; table 3 is the single-cell estimated-annual-income question. `docProps/core.xml` confirms authorship by an identified SRI staff member and a 2022-08-17 creation timestamp, corroborating this is a genuine internal SRI template rather than a third-party facsimile. The preamble's applicant-name and cédula/pasaporte-number blanks carry no asterisk of their own (the template's '* Datos obligatorios' footnote is positioned directly beneath the two address tables, governing only those), but are modelled `required: true` regardless since they are the operative identification clauses without which the request has no addressee — the same reasoning this registry's own `ec/cancilleria/formulario-solicitud-visa` schema already applied to its own unmarked-but-essential fields. The estimated-annual-income question likewise carries no asterisk on this template, but the corroborating GUIA RUC EN LINEA.pdf (fetched from the same server, HTTP 200, application/pdf, 1,044,290 bytes, sha256:a94f767fb26d1f79862e8049678b704711ddc6f2373ff78286a6e91cc199757f) states on its own page 8 that this field 'debe ser llenado de manera obligatoria' (must be filled in as mandatory) for every applicant, including those with only RIMPE-excluded economic activities — corroboration used to justify `required: true` here too. CIIU code format (a letter, 4 digits, and an optional 2-digit decimal sub-code, e.g. G4711 or G4711.01) was confirmed against INEC's own live Sistema Integrado de Consultas de Clasificaciones y Nomenclaturas (aplicaciones2.ecuadorencifras.gob.ec/SIN/), not assumed. Two SRI-published trámite-guide pages (gob.ec/sri/tramites/inscripcion-registro-unico-contribuyente-ruc-persona-natural and its 'documento-habilitante' sibling) were also fetched and cross-checked; both corroborate the same required-document and channel structure the template itself describes. Scope boundary, disclosed rather than silently omitted: GUIA RUC EN LINEA.pdf documents additional online-wizard-only business logic not present on the printed template itself — a RIMPE (Negocio Popular / Emprendedor) regime classification derived from the declared annual income, an optional professional-title (SENESCYT) or artisan-qualification (Junta Nacional de Defensa del Artesano) selection that changes which CIIU activities are offered, and a conditional VAT-withholding ('retención de IVA') question for professional/property-rental activities, plus a hard 'mínimo 1 y máximo 20' cap on economic activities per establishment (this schema's 3-slot cap instead matches the printed template's own 3 printed example rows, corresponding to the pattern this registry already uses for other bounded-repeating-group fields, e.g. `ec/cancilleria/formulario-solicitud-visa`'s 9-slot `documentoEntregadoN` group) — none of this online-only conditional logic is modelled in this v1.0.0, a candidate for a future companion/minor-version cycle once the login-gated `SRI en Línea` wizard itself can be walked live. No submission was made and no live account credentials were used or required to author this schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicantFullName",
+      "label": "Yo, ___ (nombre completo del solicitante)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the natural person requesting RUC inscription, filled into the request letter's opening blank. Carries no asterisk of its own (the template's asterisk system covers only the two address tables below), but is structurally mandatory: the request has no addressee without it.",
+      "sourceRef": "Preamble, \"Yo, ___\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "applicantIdNumber",
+      "label": "Cédula/pasaporte No.",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's cédula de identidad (Ecuadorian nationals/foreign residents) or passport number, whichever applies. Carries no asterisk of its own for the same reason as applicantFullName, but is structurally mandatory.",
+      "sourceRef": "Preamble, \"identificado con cédula/pasaporte No.___\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "economicActivity1CiiuCode",
+      "label": "Código CIIU (Actividad 1)",
+      "type": "string",
+      "required": true,
+      "description": "INEC/SRI Classificación Industrial Internacional Uniforme (CIIU) code for the first declared economic activity, per INEC's own Sistema Integrado de Consultas de Clasificaciones y Nomenclaturas. At least one activity must be declared for the request to have any purpose, so this first slot is required; economicActivity2/3 are additional, optional slots.",
+      "sourceRef": "Tabla \"Actividad Solicitada\", fila 1, \"Código CIIU\"",
+      "validation": { "pattern": "^[A-U][0-9]{4}(\\.[0-9]{2})?$", "maxLength": 10 }
+    },
+    {
+      "name": "economicActivity1Description",
+      "label": "Descripción (Actividad 1)",
+      "type": "string",
+      "required": true,
+      "description": "Free-text description of the first declared economic activity corresponding to economicActivity1CiiuCode.",
+      "sourceRef": "Tabla \"Actividad Solicitada\", fila 1, \"Descripción\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "economicActivity1IsPrincipal",
+      "label": "Actividad 1 — Señale como principal",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether this is the activity marked as the applicant's principal one, per the table header's own instruction (\"Señale una de las actividades como principal\"). At most one of economicActivity1IsPrincipal/economicActivity2IsPrincipal/economicActivity3IsPrincipal may be true — see exclusivityGroups.",
+      "sourceRef": "Tabla \"Actividad Solicitada\" header, \"Señale una de las actividades como principal\""
+    },
+    {
+      "name": "economicActivity2CiiuCode",
+      "label": "Código CIIU (Actividad 2)",
+      "type": "string",
+      "required": false,
+      "description": "CIIU code for a second, additional declared economic activity, if any. The template prints 3 identical rows for this table; the corroborating GUIA RUC EN LINEA.pdf documents the live online system's own higher cap (up to 20 per establishment) as an online-only detail not reflected on this printed template — see VERIFICATION.md.",
+      "sourceRef": "Tabla \"Actividad Solicitada\", fila 2, \"Código CIIU\"",
+      "validation": { "pattern": "^[A-U][0-9]{4}(\\.[0-9]{2})?$", "maxLength": 10 }
+    },
+    {
+      "name": "economicActivity2Description",
+      "label": "Descripción (Actividad 2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Tabla \"Actividad Solicitada\", fila 2, \"Descripción\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "economicActivity2IsPrincipal",
+      "label": "Actividad 2 — Señale como principal",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Tabla \"Actividad Solicitada\" header, \"Señale una de las actividades como principal\""
+    },
+    {
+      "name": "economicActivity3CiiuCode",
+      "label": "Código CIIU (Actividad 3)",
+      "type": "string",
+      "required": false,
+      "description": "CIIU code for a third, additional declared economic activity, if any — the last of the 3 rows printed on this template.",
+      "sourceRef": "Tabla \"Actividad Solicitada\", fila 3, \"Código CIIU\"",
+      "validation": { "pattern": "^[A-U][0-9]{4}(\\.[0-9]{2})?$", "maxLength": 10 }
+    },
+    {
+      "name": "economicActivity3Description",
+      "label": "Descripción (Actividad 3)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Tabla \"Actividad Solicitada\", fila 3, \"Descripción\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "economicActivity3IsPrincipal",
+      "label": "Actividad 3 — Señale como principal",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Tabla \"Actividad Solicitada\" header, \"Señale una de las actividades como principal\""
+    },
+    {
+      "name": "domicilioProvincia",
+      "label": "Provincia (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Provincia:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "domicilioCanton",
+      "label": "Cantón (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Cantón:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "domicilioParroquia",
+      "label": "Parroquia (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Parroquia:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "domicilioCallePrincipal",
+      "label": "Calle principal (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Calle principal:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "domicilioNumero",
+      "label": "Número (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Número:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "domicilioInterseccion",
+      "label": "Intersección (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Intersección:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "domicilioEdificio",
+      "label": "Edificio (Dirección del Domicilio)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field.",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"Edificio:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "domicilioPiso",
+      "label": "Piso (Dirección del Domicilio)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field.",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"Piso:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "domicilioOficinaOLocal",
+      "label": "Oficina o local (Dirección del Domicilio)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field.",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"Oficina o local:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "domicilioReferenciaUbicacion",
+      "label": "Referencia de Ubicación (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Referencia de Ubicación:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "domicilioTelefonoConvencional",
+      "label": "Teléfono convencional (Dirección del Domicilio)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field, consistent with a landline being optional alongside the required domicilioCelular below.",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"Teléfono convencional:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "domicilioCelular",
+      "label": "Celular (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Celular:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "domicilioCorreoElectronico",
+      "label": "Correo electrónico (Dirección del Domicilio)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL DOMICILIO, \"*Correo electrónico:\"",
+      "validation": { "maxLength": 254, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "establecimientoProvincia",
+      "label": "Provincia (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Provincia:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "establecimientoCanton",
+      "label": "Cantón (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Cantón:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "establecimientoParroquia",
+      "label": "Parroquia (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Parroquia:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "establecimientoCallePrincipal",
+      "label": "Calle principal (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Calle principal:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "establecimientoNumero",
+      "label": "Número (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Número:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "establecimientoInterseccion",
+      "label": "Intersección (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Intersección:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "establecimientoEdificio",
+      "label": "Edificio (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field.",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"Edificio:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "establecimientoPiso",
+      "label": "Piso (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field.",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"Piso:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "establecimientoOficinaOLocal",
+      "label": "Oficina o local (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field.",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"Oficina o local:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "establecimientoReferenciaUbicacion",
+      "label": "Referencia de Ubicación (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Referencia de Ubicación:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "establecimientoTelefonoConvencional",
+      "label": "Teléfono convencional (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the template prints no leading asterisk on this field.",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"Teléfono convencional:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "establecimientoCelular",
+      "label": "Celular (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Celular:\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "establecimientoCorreoElectronico",
+      "label": "Correo electrónico (Dirección del Establecimiento Matriz)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DIRECCIÓN DEL ESTABLECIMIENTO MATRIZ, \"*Correo electrónico:\"",
+      "validation": { "maxLength": 254, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "ingresoBrutoAnualEstimado",
+      "label": "¿Cuál es el ingreso bruto anual que estima recibir por la actividad que realiza?",
+      "type": "number",
+      "required": true,
+      "classification": "financial",
+      "description": "Estimated annual gross income (US$) from the declared economic activity/activities. Carries no asterisk on this printed template, but the corroborating GUIA RUC EN LINEA.pdf states this field is mandatory for every applicant regardless of RIMPE regime — see VERIFICATION.md.",
+      "sourceRef": "\"¿Cuál es el ingreso bruto anual que estima recibir por la actividad que realiza? $\"",
+      "validation": { "minimum": 0 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "documentoRespaldo",
+      "label": "Documento de respaldo para sustentar la petición",
+      "category": "supporting-evidence",
+      "required": true,
+      "handling": "Exact composition depends on the applicant's specific circumstances (residency status, activity type) per the requisitos published at www.sri.gob.ec/requisitos-personas-naturales; not enumerated by the template itself.",
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documento que respalda la inscripción solicitada, de acuerdo a los requisitos publicados en el portal web institucional www.sri.gob.ec\""
+    },
+    {
+      "id": "truthfulnessAttestation",
+      "label": "Declaración de veracidad de los documentos presentados",
+      "category": "attestation",
+      "required": true,
+      "statement": "Declaro que todos los documentos presentados ante el Servicio de Rentas Internas son auténticos y verdaderos, y me hago responsable de los mismos dentro de los controles posteriores que la Administración Tributaria pueda realizar.",
+      "belongsTo": "applicant",
+      "sourceRef": "Closing declaration paragraph"
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "economicActivityPrincipalSelection",
+      "fields": ["economicActivity1IsPrincipal", "economicActivity2IsPrincipal", "economicActivity3IsPrincipal"]
+    }
+  ]
+}
