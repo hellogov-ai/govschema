@@ -4,7 +4,23 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **496 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **497 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3267, "GovSchema Standard Research"): Sri
+> Lanka's Taxes vertical opens (5 of 6 for Sri Lanka)**, via
+> `lk/ird/return-of-income-individual` — IRD's annual "Return of Income –
+> Individual" (Form Asmt_IIT_001). Sri Lanka's Business Formation vertical
+> was re-screened and re-confirmed a dead end at the national level. This
+> cycle also independently confirmed three items the issue's own research
+> notes flagged as possibly missing — Germany's Steuer-ID re-issuance
+> (`de/finanzamt/tax-identification-number`), Singapore's NRIC loss/damage
+> replacement and age-30/55 re-registration
+> (`sg/ica/identity-card-replacement`, `sg/ica/identity-card-reregistration`),
+> and New Zealand's RealMe enrolment (`nz/dia/realme-verified-identity`) —
+> are all already published in this registry, so no duplicate work was
+> needed there. See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scoping
+> decision.
 
 > **Update (2026-07-16, GOV-3258, "GovSchema Standard Research"): Slovakia's
 > Passport vertical opens**, via `sk/mzv/ziadost-o-cestovny-pas` — the "Žiadosť
@@ -12683,7 +12699,52 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (56/62 jurisdictions — 90%)
+### Taxes — Income Tax Return, Tax Filing (57/62 jurisdictions — 92%)
+
+> **Update (2026-07-16, GOV-3267, "GovSchema Standard Research"): Sri
+> Lanka's Taxes vertical opens, bringing Sri Lanka to 5 of 6 verticals**
+> (Passport, DMV, Visa, National ID, and now Taxes; Business Formation
+> remains a confirmed dead end — see the Known Gaps section below), via
+> `lk/ird/return-of-income-individual` — the Inland Revenue Department's
+> (IRD) annual "Return of Income – Individual" (Form Asmt_IIT_001), the
+> principal individual income tax return filed under section 126 of the
+> Inland Revenue Act, No. 24 of 2017 for the year of assessment 2025/2026.
+> Independently re-fetched via plain `curl` (no login/CAPTCHA gate): HTTP
+> 200, `application/pdf`, 778,937 bytes, sha256
+> `d89252750a27800e82139de8543eaa5be0f48236f3c61df47c95dea01aab6161`. A
+> genuine, non-scanned, flat print-and-hand-fill specimen (zero
+> `/AcroForm`/`/Widget` markers, confirmed via `pdfjs-dist`) with no
+> asterisk/required-field convention at all — requiredness is a disclosed
+> statutory judgment call rather than derived from an explicit marking.
+> Models Section 01's cage-numbered Statement of Tax Calculation (income,
+> relief, deduction, and tax-payable summary lines that roll up figures
+> computed in the return's own ten numbered Schedules), the Part E
+> schedule-attached checklist, and Section 02's optional approved-
+> accountant/preparer disclosure plus the taxpayer's own mandatory
+> declaration. The detailed line-by-line breakdown inside Schedules 1
+> through 10 (a separate 12-page, 130+-cage companion document,
+> Asmt_IIT_002, independently cross-checked this cycle for every schedule's
+> own title/cage range but not modelled in `fields[]`) and the Statement of
+> Assets and Liabilities (Asmt_IIT_003) are disclosed as future companion
+> schemas, following this registry's established convention for large
+> multi-schedule returns (e.g. `il/tax-authority/1301-personal-details`).
+> Models 48 `fields[]` plus 2 `documents[]` entries (the taxpayer's
+> declaration, quoted verbatim, and the approved-accountant certificate
+> attachment). 7 conformance fixtures (2 valid, 5 mutation-control, each
+> mutation raising exactly 1 error under an independent from-scratch mock
+> validator) committed under
+> `conformance/lk/ird/return-of-income-individual/1.0.0/`. See the
+> document's own VERIFICATION.md for the full sourcing record. Sri Lanka's
+> Business Formation vertical was re-screened this cycle: the national
+> Department of the Registrar of Companies' core incorporation pathway
+> (Form 1/Form 5) is exclusively system-generated through the authenticated
+> eROC portal with no static specimen, and its only downloadable static
+> forms are secondary filings (director/secretary consent/change forms, a
+> re-registration form for companies already incorporated under the 1982
+> Companies Act) — re-confirmed a dead end at the national level, alongside
+> the already-known thin Western-Province-only BNR-01 candidate left on
+> backlog by a prior cycle. Numerator updated from 496 to 497; Sri Lanka's
+> Taxes column flips ✗→✓ in the By Jurisdiction table below.
 
 > **Update (2026-07-15, GOV-3180, delegated from GOV-3157): Moldova opens
 > Taxes (1 of 6), bringing Moldova to 3 of 6 verticals (following DMV via
@@ -15099,7 +15160,7 @@ now closed.
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LK** | 4 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ |
+| **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -17509,6 +17570,45 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3267 ("GovSchema Standard Research") — Sri Lanka Taxes: authored
+  (see the Executive Summary and Taxes vertical section above), Rwanda
+  Taxes and Sri Lanka Business Formation: re-confirmed dead ends, a new
+  Brazil voter-registration candidate found for a future cycle.** This
+  cycle re-checked the two standing backlog leads flagged by GOV-3258
+  (immediately below): **Rwanda's Taxes vertical remains a genuine dead
+  end** — RRA's actual annual Personal Income Tax declaration is filed
+  exclusively through the authenticated `etax.rra.gov.rw` e-Tax portal (own
+  2023 filing guide confirms line references to at least line 191, entered
+  on-screen, no downloadable PDF of the full return exists); a fresh check
+  of `businessprocedures.rdb.rw/media/` found its complete inventory is
+  only 5 form PDFs, none a principal PIT return (`RRA-PIT-ANA-E11`, the
+  already-known weak annex, remains the closest artifact; a newly-checked
+  sibling, `RRA-IQP-DF2-E07`, is a genuine declaration-shaped form but
+  covers quarterly prepayment of an already-assessed tax, not the return
+  itself). **Sri Lanka's Business Formation vertical remains a genuine dead
+  end at the national level** — see the Taxes vertical section above for
+  the full re-screening record (superseding the "left as backlog" framing
+  in the GOV-3258 entry below; Sri Lanka's Taxes gap, the other standing
+  lead from that same entry, is now closed instead). Separately, scouting
+  for a "remaining voter registration" candidate (per this cycle's own
+  issue notes) found Brazil's TSE **Requerimento de Alistamento Eleitoral**
+  (`tse.jus.br`) — first-time voter registration is an active administrative
+  act in Brazil, not automatic as often assumed, and TSE's own how-to pages
+  document a genuine field-by-field self-service wizard (full name,
+  filiação, date/place of birth, sex/gender identity, RG number, race/color
+  self-declaration, indigenous/quilombola status, residential address and
+  polling-place selection, military-service status for men 18-45, and
+  selfie/ID/proof-of-residence document uploads) — not a downloadable PDF,
+  but a strong, well-documented live-wizard source in the same tier as this
+  registry's own Indonesia e-visa precedent. Left un-authored this cycle in
+  favor of the stronger, more concretely-sourced Sri Lanka Taxes candidate;
+  disclosed as a ready-to-author candidate for a future cycle. Spain's CERA
+  overseas "voto rogado" ballot-request PDF and Poland's out-of-constituency
+  voter-register application were also found but are weaker (the former is
+  arguably a ballot request rather than registration; the latter's only
+  located specimens are scanned images with no extractable text) — left as
+  lower-priority backlog.
 
 - **Israel — DMV: closed (GOV-3133/GOV-3138).** Israel is now 6 of 6, the
   Ministry of Transport and Road Safety's Licensing Bureau (אגף הרישוי)
