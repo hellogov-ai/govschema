@@ -21,8 +21,24 @@ fingerprint, but succeed immediately once a normal UA is set — this was
 independently reconfirmed, matching the prior cycle's own note):
 
 - HTTP 200, `Content-Type: text/html; charset=utf-8`, `Content-Length: 95545`
-- sha256 `98ed9f59219a74850b6aee3b2ec0a145ae73a1349bb92f78085f760e0c80b652`
   both times.
+- **Correction (GOV-3324 review gate):** the page embeds a fresh, per-request
+  `__RequestVerificationToken` anti-forgery value as a hidden input on every
+  single response — confirmed by re-fetching four times (including twice
+  with a persisted cookie jar, ruling out session affinity) and observing
+  four distinct token values and four distinct raw sha256 hashes, all at
+  the same 95,545-byte length. A raw whole-page sha256 is therefore not a
+  reproducible fidelity check for this source (the originally recorded
+  `98ed9f59219a74850b6aee3b2ec0a145ae73a1349bb92f78085f760e0c80b652` could
+  not be reproduced by this review). Applying this registry's own
+  established redacted-token technique (see `ng/frsc/vehicle-registration`
+  v1.0.0's VERIFICATION.md, GOV-3231) — replacing the
+  `__RequestVerificationToken` hidden input's `value` attribute with a
+  fixed placeholder before hashing — produces a byte-identical structural
+  sha256 of `0050f9db95c380decf0ff251db9f97f3a7f037fe4c052578dc3235465c415297`
+  across all four independent fetches, confirming the rest of the page
+  (all field markup, `data-val-*` attributes, and dropdown option lists
+  this schema is sourced from) is in fact stable and reproducible.
 - Response headers confirm `Server: Microsoft-IIS/10.0`, `X-AspNetMvc-Version: 4.0`,
   `X-AspNet-Version: 4.0.30319`, and a custom `Server: MFA of Georgia` header —
   a genuine, government-operated ASP.NET MVC application, not a CDN/WAF stub.
@@ -132,6 +148,22 @@ before the step can advance; `HasInsurance` and `SupportingDocumentCountry`
 are validated by lines that are commented out in the live script (visible
 directly in the page source as JS `//` comments) — confirmed live, not
 inferred, and the basis for modelling both as optional in this schema.
+
+**Correction (GOV-3324 review gate):** the schema's original field
+descriptions for `hasTravelInsurance` and `supportingDocumentCountry`
+stated that their controls carry no `data-val-required` attribute at all.
+That is inaccurate — both the visible `#HasInsurance` checkbox and the
+visible `#SupportingDocumentCountry` `<select>` do carry a
+`data-val-required` attribute (`"The Check the box if applicant has
+insurance field is required."` and `"The Country of supporting document
+field is required."` respectively), independently reconfirmed live. The
+`required: false` modelling itself still holds — for the same reason
+already established for `visaType`'s stale `data-val-range` above: the
+page's own `checkfirstpage()` function, the mechanism that actually gates
+whether the wizard advances, explicitly comments out the check for both
+fields, so the static attribute is present but functionally unenforced.
+The two fields' descriptions in `schema.json` have been corrected to state
+this accurately rather than claim the attribute is absent.
 
 ## The CAPTCHA gate, and why Representative/Companion and documents are out of scope
 
