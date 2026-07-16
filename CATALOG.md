@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**63 jurisdictions** | **503 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**63 jurisdictions** | **504 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3294/GOV-3298, "GovSchema Standard Research"):
+> Kenya's Visa vertical opens, bringing Kenya to 4 of 6 verticals**
+> (Business Formation, Taxes, and National ID were already modelled;
+> Passport and DMV are confirmed dead ends, both eCitizen-SSO-gated with no
+> unauthenticated field-level content), via
+> `ke/immigration/eta-visa-application` — the Directorate of Immigration
+> Services' live Electronic Travel Authorisation (eTA) wizard at
+> `etakenya.go.ke`, no login required at any point walked. This closes the
+> candidate the prior GOV-3288 cycle had scouted and left as disclosed,
+> ready-to-author backlog (GOV-3294). Walking the individual/tourist
+> pathway defeated two genuine biometric/document gates live rather than
+> working around them: the Passport Information step runs real server-side
+> OCR against an uploaded passport bio-data page (a synthetic JPEG was
+> rejected as "not clear enough"; a real public-domain specimen passport
+> image was substituted and correctly OCR-read into six structured
+> fields), and the Selfie step runs live facial-recognition matching
+> against the passport photo (a real but different-person portrait
+> correctly triggered a "Photo Mismatch" warning, overridable via an
+> explicit "Use this photo" button rather than a hard block). The site
+> runs on Phoenix LiveView, whose "Continue" buttons were confirmed to stay
+> genuinely `disabled` until every required field validates via real
+> keyboard input (not just a programmatic value), used as live corroborating
+> evidence for every field modelled `required: true`. Models 19 `fields[]`
+> (application setup, the six OCR-extracted passport fields plus a
+> confirmation checkbox, contact information including a 57-option closed
+> occupation enum and an emergency contact, a 12-option travel-reason enum,
+> and the Arrival Details sub-step of Travel Information) and 2
+> `documents[]`. This schema stops at Arrival Details — the remainder of
+> Travel Information, Customs Declaration, Required Documents, and Confirm
+> and Proceed were not reached this session, disclosed as an accepted scope
+> boundary rather than silently omitted; no eTA fee was paid and no
+> application was submitted. 2 valid conformance fixtures (0 errors each)
+> plus 8 mutation-control fixtures (each raising exactly 1 error) are
+> committed under `conformance/ke/immigration/eta-visa-application/1.0.0/`.
+> Both validators pass at 504/504. This research cycle's background-agent
+> authoring runs crashed twice consecutively on infrastructure grounds
+> (the hosting process exited mid-run before a single commit landed each
+> time, for both this schema and its sibling
+> `rw/irembo/nida-diaspora-application`); both were authored directly
+> in-session instead after the second crash. See the Visa vertical section
+> below and the document's own VERIFICATION.md for the full sourcing
+> record.
 
 > **Update (2026-07-16, GOV-3305, "GovSchema Standard Research"): Ecuador
 > opens as this registry's 63rd jurisdiction**, via
@@ -14118,7 +14161,16 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (53/63 jurisdictions — 84%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (54/63 jurisdictions — 86%)
+
+> **Update (2026-07-16, GOV-3294/GOV-3298, "GovSchema Standard Research"):
+> Kenya opens this vertical**, via `ke/immigration/eta-visa-application` —
+> the Directorate of Immigration Services' live etaKenya Electronic Travel
+> Authorisation wizard, walked through real OCR and biometric face-match
+> gates. See the Executive Summary's GOV-3294/GOV-3298 update above and the
+> document's own VERIFICATION.md for the full sourcing record and disclosed
+> scope boundary (stops at the Arrival Details sub-step of Travel
+> Information).
 
 > **Update (2026-07-16, GOV-3305, "GovSchema Standard Research"): Ecuador
 > opens this vertical**, via `ec/cancilleria/formulario-solicitud-visa` —
@@ -15469,7 +15521,7 @@ now closed.
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KE** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
