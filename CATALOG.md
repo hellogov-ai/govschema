@@ -4,7 +4,57 @@
 
 ## Executive Summary
 
-**65 jurisdictions** | **507 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**65 jurisdictions** | **508 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3336, "GovSchema Standard Research"): Ecuador's
+> Taxes vertical opens (3 of 6)**, via
+> `ec/sri/declaracion-impuesto-renta-personas-naturales-formulario-102a` —
+> the Servicio de Rentas Internas' (SRI) own dedicated instructivo for
+> Formulario 102A, the annual individual income tax return (Impuesto a la
+> Renta) filed by natural persons and undivided estates **not** obligated to
+> keep accounting records. Continuing directly on from the prior GOV-3305
+> (Visa) and GOV-3328 (Business Formation) cycles' own SRI research rather
+> than re-screening Ecuador's other three verticals from scratch (each
+> already re-confirmed weak/gated as recently as GOV-3328), this cycle
+> compared SRI's two sibling individual-return forms: Formulario 102 (for
+> filers *obligated* to keep accounting records, whose own instructivo
+> documents over 100 casilleros spanning full balance-sheet/income-statement
+> transposition, construction-contract accounting, deferred tax, transfer
+> pricing, and ZEDE-operator tariffs — judged too broad for one schema, the
+> same bar that has repeatedly set aside Ireland's Form CT1) against
+> Formulario 102A (for the ordinary employee/independent-professional/
+> landlord case), which has its own dedicated 25-page instructivo rather
+> than being a subset extracted by judgment call from Form 102's. Formulario
+> 102A is filed exclusively through the login-gated `SRI en Línea` portal —
+> there is no downloadable blank specimen — so this schema is built entirely
+> from that instructivo's own casillero-by-casillero legal-reference prose
+> (confirmed live, HTTP 200, a genuine text-layer PDF, sha256-recorded).
+> Three identification casilleros (102/104/198) and one worked-example
+> casillero (859) are corroborated from the sibling Form 102 instructivo,
+> which the 102A instructivo's own screenshots confirm collect the same data
+> without restating box numbers — every other casillero shared between both
+> documents is worded identically, making this a disclosed, reasoned
+> inference rather than an assumption. Models 66 `fields[]` across
+> identification, taxable income by type (business, professional,
+> rental, foreign, financial-yield, dividend, and capital-gains income and
+> their attributable deductions), personal-expense deductions (including
+> mutually-exclusive elderly/disability exemptions and conjugal-partnership
+> income attribution), other exempt income, the tax-computation summary,
+> next year's advance-tax calculation, and payment-method/credit-note
+> details, plus 1 conditional `documents[]` entry (the Personal Expenses
+> Annex). Disclosed scope boundaries rather than silent omissions: deprecated
+> pre-2008/pre-2010 casilleros are excluded; two obliquely-referenced
+> withholding boxes (845/846) with no independently-defining prose are left
+> unmodelled; the five personal-expense category boxes (771-775) are
+> modelled as five fields without a confirmed one-to-one box-to-category
+> mapping, since the source itself doesn't disambiguate. 2 valid conformance
+> fixtures (0 errors each) plus 6 mutation-control fixtures (each raising
+> exactly 1 error, including a `requiredWhen` violation and a
+> `crossFieldValidation` violation on the elderly/disability exemption
+> exclusivity rule) are committed under
+> `conformance/ec/sri/declaracion-impuesto-renta-personas-naturales-formulario-102a/1.0.0/`.
+> Both validators pass at 508/508. See the Taxes vertical section below and
+> the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3328, "GovSchema Standard Research"): Ecuador's
 > Business Formation vertical opens (2 of 6)**, via
@@ -13146,7 +13196,12 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (57/65 jurisdictions — 88%)
+### Taxes — Income Tax Return, Tax Filing (58/65 jurisdictions — 89%)
+
+> **Update (2026-07-16, GOV-3336, "GovSchema Standard Research"): Ecuador's
+> Taxes vertical opens, bringing Ecuador to 3 of 6 verticals**, via
+> `ec/sri/declaracion-impuesto-renta-personas-naturales-formulario-102a` —
+> see the Executive Summary update above for the full sourcing record.
 
 > **Correction (GOV-3309 review gate):** numerator corrected from a stale
 > 58 to 57, recounted directly from the By-Jurisdiction table's Taxes
@@ -15665,7 +15720,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EC** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
+| **EC** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ET** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -18133,6 +18188,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3336 ("GovSchema Standard Research") — Ecuador Taxes: authored
+  (see the Executive Summary and Taxes vertical section above), Ecuador's
+  DMV/Passport/National ID re-confirmed as still-open backlog rather than
+  re-screened from scratch.** Ecuador's SRI publishes two sibling
+  individual-return forms: Formulario 102 (accounting-obligated regime,
+  100+ casilleros including full balance-sheet transposition, deferred tax,
+  and transfer pricing — too broad for one schema) and Formulario 102A (the
+  ordinary employee/professional/landlord case, with its own dedicated
+  25-page instructivo). This cycle authored against the 102A instructivo —
+  see `ec/sri/declaracion-impuesto-renta-personas-naturales-formulario-102a`.
+  Ecuador now stands at 3 of 6 verticals (Visa, Business Formation, Taxes);
+  DMV, Passport, and National ID remain open, previously-screened backlog
+  candidates (see GOV-3328's own disclosed findings above, carried forward
+  unchanged this cycle).
 
 - **GOV-3328 ("GovSchema Standard Research") — Ecuador National ID
   ("Duplicado de cédula Express"): a live, unauthenticated, but thin and
