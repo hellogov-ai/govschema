@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**68 jurisdictions** | **517 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**69 jurisdictions** | **518 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3410, "GovSchema Standard Research"): Cambodia
+> opens as the registry's 69th jurisdiction**, with its Business Formation
+> vertical, via `kh/gdt/legal-form-limited-company-registration` — the
+> General Department of Taxation's (GDT) Form 101-P2 ("Legal Form for
+> Limited Company (Private/Public Limited Company)"), the tax-registration
+> counterpart to company incorporation (functionally analogous to a US EIN),
+> directly downloadable and unauthenticated from `tax.gov.kh`. With
+> Mongolia's own last vertical (National ID) a twice-confirmed dead end and
+> three previously-scouted backlog candidates (CH Business Formation, KE
+> Visa, RW National ID) already authored by prior cycles, this cycle
+> scouted 3 new-jurisdiction candidates in parallel — Azerbaijan, Egypt, and
+> Cambodia. Azerbaijan's Visa/DMV/Business Formation were Cloudflare-gated
+> or hard-403'd and Passport's e-service rendered an empty shell (only its
+> Taxes individual-income-tax declaration, 173 fields, came back strong,
+> left as backlog); Egypt's every vertical was login-gated, reCAPTCHA-gated
+> at account creation, or unreachable (no strong candidate found). Cambodia
+> won on source strength: a genuine 179-widget AcroForm PDF, no login/
+> CAPTCHA/WAF gate, fetched directly (HTTP 200, sha256:
+> `9edd0d77f394d625eb6c38bbcbebd6a572405926339f89f4d81eed00619f5c5`).
+> Extracted via `pdfjs-dist`, merging widget positions with the text
+> layer's own per-glyph coordinates to correlate each of the source's
+> non-self-describing field names (`Text8`, `Check Box4`, reused across
+> distinct logical checkboxes on the same page) to its true label by
+> position. Models 60 `fields[]` across legal-form selection, business-
+> enterprise profile (identity, contact, address with geographic
+> coordinates, share capital/structure), a single shareholder/
+> representative's identity (gated by the form's own "same as Form 101"
+> skip logic), that representative's declared company position, taxpayer
+> classification (employee counts, working conditions, turnover-based size
+> bracket), and a closing declaration/signature block, plus 9 `documents[]`
+> entries transcribed from the form's own attachment checklist. Cambodia's
+> other 5 verticals were screened and found weaker or dead this cycle
+> (Visa CAPTCHA-gated pre-field-level-DOM; Business Formation's own primary
+> Ministry of Commerce channel down for maintenance; DMV and Passport
+> login-gated; National ID in-person only) — left as open backlog, with a
+> second Cambodian GDT form (Form P101, Monthly Tax Declaration, 294
+> AcroForm fields) flagged as a ready-to-author Taxes candidate for a
+> future cycle. See the Business Formation vertical section below and the
+> document's own VERIFICATION.md for the full sourcing record. Both
+> validators pass at 518/518; `verify-sources.mjs` reports all 4 cited URLs
+> clear; 11 conformance fixtures (2 valid + 9 mutation-control) committed.
 
 > **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
 > DMV vertical opens (5/6)**, via `mn/atunt/vehicle-plate-number-reservation` —
@@ -11573,7 +11615,7 @@
 
 ## By Vertical
 
-### Passport (49/68 jurisdictions — 72%)
+### Passport (49/69 jurisdictions — 71%)
 
 > **Correction (GOV-3389):** numerator updated from 48 to 49 following
 > Mongolia's Passport vertical opening via
@@ -12073,7 +12115,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (56/68 jurisdictions — 82%)
+### DMV — Vehicle Registration, Licensing, Permits (56/69 jurisdictions — 81%)
 
 > **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
 > DMV vertical opens**, via `mn/atunt/vehicle-plate-number-reservation` — the
@@ -12638,7 +12680,19 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (62/68 jurisdictions — 91%)
+### Business Formation — Incorporation, LLC, Company Registration (63/69 jurisdictions — 91%)
+
+> **Update (2026-07-16, GOV-3410, "GovSchema Standard Research"): Cambodia
+> opens as the registry's 69th jurisdiction via this vertical**, via
+> `kh/gdt/legal-form-limited-company-registration` — the General Department
+> of Taxation's Form 101-P2 ("Legal Form for Limited Company"), the
+> tax-registration counterpart to company incorporation (functionally
+> analogous to a US EIN), fetched directly and unauthenticated as a genuine
+> 179-widget AcroForm PDF. See the Executive Summary's GOV-3410 update above
+> and the document's own VERIFICATION.md for the full sourcing record,
+> including the parallel screening of Azerbaijan and Egypt that did not
+> yield a new jurisdiction this cycle. Denominator updated from 68 to 69
+> (Cambodia is a brand-new jurisdiction); numerator updated from 62 to 63.
 
 > **Update (2026-07-16, GOV-3382, "GovSchema Standard Research"): Mongolia
 > opens this vertical (2 of 6 overall)**, via
@@ -13571,7 +13625,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (59/68 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (59/69 jurisdictions — 86%)
 
 > **Update (2026-07-16, GOV-3396, "GovSchema Standard Research"): Mongolia's
 > Taxes vertical opens, bringing Mongolia to 4 of 6 verticals**, via
@@ -14754,7 +14808,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (59/68 jurisdictions — 87%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (59/69 jurisdictions — 86%)
 
 > **Update (2026-07-16, GOV-3375, "GovSchema Standard Research"): Mongolia
 > opens as this registry's 68th jurisdiction, via this vertical**, via
@@ -15485,7 +15539,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (48/68 jurisdictions — 71%)
+### National ID & Civic Documents (48/69 jurisdictions — 70%)
 
 > **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
 > Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
@@ -16171,6 +16225,7 @@ now closed.
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **KH** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
@@ -18020,6 +18075,68 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **KH Visa (evisa.gov.kh)** — GOV-3410, 2026-07-16. A real headless
+  Chromium session passes the site's bot challenge, but the wizard's own
+  Step 1 (labelled "SECURITY") renders exactly one input, a custom text
+  CAPTCHA, blocking the entire flow before any visa-application field
+  becomes reachable — not just at final submit.
+- **KH Business Formation, Ministry of Commerce channel
+  (businessregistration.moc.gov.kh)** — GOV-3410, 2026-07-16. Returns
+  HTTP 403 with a "Site Under Maintenance" body via both curl and a real
+  browser UA; a Wayback snapshot exists from January 2026 but the live
+  source is currently down. This vertical's opening schema instead uses
+  the GDT's own Form 101-P2 (see the Business Formation vertical section
+  above) — a companion tax-registration filing, not incorporation itself.
+- **KH DMV (vehicle.mpwt.gov.kh)** — GOV-3410, 2026-07-16. Live (HTTP 200)
+  but a real Playwright render shows the homepage offers only two
+  "ចូលប្រព័ន្ធ" (Log in to system) buttons, one per vehicle category — an
+  account login is required before any field entry, and no standalone
+  downloadable form was found on the static domain either.
+- **KH Passport (online.gdi.gov.kh)** — GOV-3410, 2026-07-16. The General
+  Department of Identification's own online portal path is explicitly
+  `/login`; it also timed out on direct fetch this cycle.
+- **KH National ID** — GOV-3410, 2026-07-16. The Khmer National ID card has
+  no online application; issuance is in-person only at police
+  commissariats.
+- **AZ Visa (evisa.gov.az)** — GOV-3410, 2026-07-16. A genuine Cloudflare
+  managed JS challenge (`cf-mitigated: challenge`, rendered title "Just a
+  moment...") on both curl and a real headless-browser session — the
+  "public unauthenticated e-visa portal" reputation does not hold up on
+  direct inspection.
+- **AZ DMV (dmx.gov.az) and Business Formation (e-taxes.gov.az)** —
+  GOV-3410, 2026-07-16. Both hard-403, empty body, on both curl and a real
+  browser UA — a static WAF/geo deny rule with no observed bypass.
+- **AZ Passport (migration.gov.az / eservice.migration.gov.az)** —
+  GOV-3410, 2026-07-16. The e-service subdomain returns HTTP 200 but
+  renders only a near-blank app-shell landing page (header/logo, no
+  visible services or fields) — likely gated behind further ASAN login.
+- **AZ National ID (asan.gov.az)** — GOV-3410, 2026-07-16. ID-card issuance
+  is listed only as an in-person ASAN service-center (biometric
+  enrollment) process; no downloadable form or online wizard found.
+- **EG Visa (visa2egypt.gov.eg)** — GOV-3410, 2026-07-16. The account-
+  creation step itself (before reaching any visa-type/field wizard) embeds
+  a real Google reCAPTCHA widget — a harder gate than the email-only
+  double-opt-in pattern this registry has passed for other jurisdictions,
+  since the field-level DOM is unreachable without solving it.
+- **EG Business Formation (GAFI, portal.gafi.gov.eg)** — GOV-3410,
+  2026-07-16. `Registration.aspx` 301-redirects straight to a dedicated
+  login/account-creation portal; no field list reachable without an
+  account.
+- **EG DMV (traffic.moi.gov.eg)** — GOV-3410, 2026-07-16. Returns HTTP 200
+  but the body is a WAF block page ("The requested URL was rejected"),
+  consistent with other `moi.gov.eg` subdomains.
+- **EG Passport (emoves.moi.gov.eg)** — GOV-3410, 2026-07-16. Unreachable
+  from this environment (connection failed entirely); secondary reporting
+  confirms the portal requires account login for all of its services.
+- **EG Taxes (eta.gov.eg) — inconclusive, not a hard dead end** —
+  GOV-3410, 2026-07-16. Unauthenticated downloadable forms exist
+  (`/en/payroll-forms`), but they are employer/withholding-agent salary
+  declarations (Forms 2/3/6/7/8), not an individual's own return; the
+  actual individual/self-employed return ("Form 25") was not located as a
+  standalone downloadable specimen this cycle, and e-filing itself routes
+  through a login-gated taxpayer portal (`eservice.incometax.gov.eg`).
+  Worth a fresh, more targeted search for Form 25 in a future cycle before
+  treating Egypt as fully exhausted.
 - **MN Taxes (itax.mta.mn)** — GOV-3382, 2026-07-16 (re-screen of a
   GOV-3375 finding). Unreachable this cycle too — connection timeout on
   both `https://` and `http://` from this environment, consistent with the
@@ -18675,6 +18792,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3410 ("GovSchema Standard Research") — Cambodia opens as the
+  registry's 69th jurisdiction via Business Formation (see the Executive
+  Summary and Business Formation vertical section above); a second GDT
+  form (Taxes) and a re-openable Egypt Taxes lead both left as backlog.**
+  Cambodia's General Department of Taxation (`tax.gov.kh`) publishes its
+  entire form library unauthenticated; alongside the Form 101-P2 authored
+  this cycle, **Form P101 v4 ("Monthly Tax Declaration")** is a genuine
+  294-field AcroForm at the same `gdtstream` channel — not authored this
+  cycle since it is a business's periodic withholding/VAT/profit-tax-
+  prepayment filing rather than an individual return, and deserved its own
+  focused session rather than a second large form under this cycle's time
+  budget. Ready-to-author for a future Taxes-vertical cycle. Separately,
+  Egypt's Tax Authority (`eta.gov.eg`) publishes unauthenticated employer/
+  withholding-agent forms but not (found this cycle) a standalone
+  individual return ("Form 25") — worth a fresh, more targeted search
+  before writing Egypt off as a Taxes candidate; see the Known Gaps
+  section above for the full disclosed reasoning on both.
 
 - **GOV-3396 ("GovSchema Standard Research") — Mongolia Taxes: authored
   (see the Executive Summary and Taxes vertical section above), opening
