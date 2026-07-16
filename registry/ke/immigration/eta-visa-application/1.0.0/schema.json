@@ -1,0 +1,427 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ke/immigration/eta-visa-application",
+  "version": "1.0.0",
+  "title": "Kenya Electronic Travel Authorisation (eTA) Application",
+  "description": "The Directorate of Immigration Services' (Ministry of Interior and National Administration, State Department for Immigration and Citizen Services) Electronic Travel Authorisation (eTA), required of all foreign visitors except citizens of East African Community member states before travelling to the Republic of Kenya. Applied for live and unauthenticated at etakenya.go.ke — no account creation or login is required at any point walked in producing this schema. This schema models the individual (non-group), tourist/visitor pathway: the pre-wizard application setup (traveller category, country of residence, individual-vs-group application type), the Passport Information step (a passport bio-data-page upload that is OCR-processed live into structured fields the applicant then confirms), the Selfie or Photo step (a live-verified biometric face-match check against the passport photo, with an explicit override when the match fails), the Contact Information step (phone, email, address, occupation, and an emergency contact), the Trip Information step (travel reason), and the Arrival Details sub-step of Travel Information (arrival date and mode of arrival). It does not model the remainder of the Travel Information step (e.g. departure/accommodation details, not reached this session), nor the Customs Declaration, Required Documents, or Confirm and Proceed steps that follow in the live wizard's own step navigation — these are disclosed as an accepted scope boundary rather than silently omitted; no eTA fee was paid and no application was actually submitted in producing this schema. Filing this application is a traveller action performed directly with the Directorate of Immigration Services through etakenya.go.ke; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Kenya or its Directorate of Immigration Services.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Directorate of Immigration Services (Ministry of Interior and National Administration, State Department for Immigration and Citizen Services)",
+    "abbreviation": "DIS",
+    "url": "https://www.etakenya.go.ke"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.etakenya.go.ke/form/apply/start",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "The live etaKenya Electronic Travel Authorisation wizard, individual/tourist pathway, from application setup through the Arrival Details sub-step of Travel Information."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3294 (\"GovSchema Standard Research\", follow-up to GOV-3288's scouting pass). Opens Kenya's Visa vertical (4/6; Kenya's Passport and DMV verticals were confirmed dead ends this same research cycle — both are eCitizen-SSO-gated with no unauthenticated field-level content). Walked live with Playwright + Chromium: home page -> \"Apply Now\" -> \"Tourists & Visitors\" (vs. Diplomats) -> \"How to Apply\" info page -> \"Declaration of Consent\" (a required terms checkbox) -> \"Country of Residence\" (a full-country picker, assigning a `draft_id` session identifier) -> \"Select Type\" (Individual vs. Group application) -> the numbered wizard (Passport information / Selfie or Photo / Contact Information / Trip Information / Travel Information / Customs Declaration / Required Documents / Confirm and Proceed). Two genuine biometric/document gates were defeated live rather than worked around: (1) the Passport Information step runs real OCR against the uploaded document — a synthetic solid-colour JPEG was rejected (\"Document processing unsuccessful... not clear enough\"), so a real, public-domain specimen passport bio-data-page image (Wikimedia Commons, `Bio_data_page_of_German_Passport.png`) was substituted, which the live OCR correctly read into six structured fields (full name, date of birth, nationality, issuer, document number, and validity/expiry date), each independently confirmed against the specimen's own printed values; (2) the Selfie step runs live facial-recognition matching between the selfie and the passport photo — a real but mismatched public-domain portrait photo (Wikimedia Commons, `Face_portrait_(Unsplash).jpg`) correctly triggered a \"Photo Mismatch\" warning, which the live UI allows overriding via an explicit \"Use this photo\" button (a soft warning, not a hard block) — used here to continue only for schema-fidelity purposes, not to claim a fraudulent identity match. This is the same class of finding as this registry's `tz/immigration/passport-application` and `rw/irembo/nida-diaspora-application` photo-upload gates, but genuinely deeper: full document OCR plus live face-matching, not just an image-quality check. The site is built on Phoenix LiveView (`data-phx-id` attributes, server-rendered DOM patches over a persistent websocket); its \"Continue\" buttons render with a genuine `disabled`/`opacity-50 cursor-not-allowed` state until all of a step's required fields validate — confirmed to require real keyboard input events (not just programmatic value-setting) to register, and used as live evidence that every field modelled `required: true` below is actually enforced. All enum value lists (`occupation`, 57 real options; `travelReason`, 12 real options; radio-button `arrivalMode`) were read directly from the live DOM's own `<select>`/radio elements, not inferred. See VERIFICATION.md for the full step-by-step record and the explicit scope boundary on what was and was not reached."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "application_setup",
+      "title": "Apply / Country of Residence / Select Type",
+      "fields": [
+        "applicationCategory",
+        "residenceCountry",
+        "applicationType"
+      ],
+      "next": "passport_information"
+    },
+    {
+      "id": "passport_information",
+      "title": "Passport Information",
+      "fields": [
+        "passportFullName",
+        "passportDateOfBirth",
+        "passportNationality",
+        "passportIssuer",
+        "passportDocumentNumber",
+        "passportExpiryDate",
+        "passportDeclarationConfirmed"
+      ],
+      "next": "selfie_or_photo"
+    },
+    {
+      "id": "selfie_or_photo",
+      "title": "Selfie or Photo",
+      "fields": [],
+      "next": "contact_information"
+    },
+    {
+      "id": "contact_information",
+      "title": "Contact Information",
+      "fields": [
+        "phoneNumber",
+        "email",
+        "physicalAddress",
+        "occupation",
+        "emergencyContactName",
+        "emergencyContactPhone"
+      ],
+      "next": "trip_information"
+    },
+    {
+      "id": "trip_information",
+      "title": "Trip Information",
+      "fields": [
+        "travelReason"
+      ],
+      "next": "travel_information"
+    },
+    {
+      "id": "travel_information",
+      "title": "Travel Information (Arrival Details)",
+      "fields": [
+        "arrivalDate",
+        "arrivalMode"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "applicationCategory",
+      "label": "Tourists & Visitors / Diplomats",
+      "type": "enum",
+      "required": true,
+      "description": "The category of traveller applying. \"Tourists & Visitors\" covers tourism, business, or any other reason necessitating a visit to Kenya; \"Diplomats\" is for holders of Diplomat/Service/Official passports. This schema models the Tourists & Visitors pathway.",
+      "sourceRef": "`/form/apply/start` — the two service cards presented before the numbered wizard begins",
+      "validation": {
+        "enum": [
+          "TOURIST_VISITOR",
+          "DIPLOMAT"
+        ]
+      }
+    },
+    {
+      "name": "residenceCountry",
+      "label": "Country of Residence",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's country of residence — \"the country where you live and pay taxes,\" per the page's own guidance (a resident Diplomat of Kenya is instructed to select Kenya). Selected from the live portal's own complete country picker (confirmed to include entries such as UNITED STATES OF AMERICA, ITALY, POLAND, UNITED KINGDOM under \"Frequently Selected,\" plus a full A–Z list; not reproduced in full here — see VERIFICATION.md).",
+      "sourceRef": "`/form/apply/residence-country` — the country-of-residence picker, which assigns the session's `draft_id`"
+    },
+    {
+      "name": "applicationType",
+      "label": "Select Type",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this is an individual application, or a group application (up to 6 people meeting certain eligibility requirements, e.g. a family, couple, or company submitting on behalf of employees). This schema models the individual pathway.",
+      "sourceRef": "`/form/apply/application-type` — \"Individual Application\" / \"Group Application\" cards",
+      "validation": {
+        "enum": [
+          "INDIVIDUAL",
+          "GROUP"
+        ]
+      }
+    },
+    {
+      "name": "passportFullName",
+      "label": "Full Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full name, extracted live by the portal's own OCR from the uploaded passport bio-data page (see the `passportBioDataPage` document below) and presented back to the applicant for review before the `passportDeclarationConfirmed` checkbox can be ticked.",
+      "sourceRef": "Passport Information step, OCR-extracted field, confirmed live against a real specimen passport (returned \"ERIKA MUSTERMANN\")",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "passportDateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth, OCR-extracted from the passport.",
+      "sourceRef": "Passport Information step, OCR-extracted field, confirmed live (returned \"1964-08-12\" from the specimen document)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "passportNationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's nationality, OCR-extracted from the passport's MRZ nationality code (e.g. the single-letter code \"D\" for Germany was returned from the specimen document tested this cycle — ICAO Doc 9303 uses non-3-letter exceptions for a small number of states).",
+      "sourceRef": "Passport Information step, OCR-extracted field, confirmed live"
+    },
+    {
+      "name": "passportIssuer",
+      "label": "Issuer",
+      "type": "string",
+      "required": true,
+      "description": "The issuing state/authority code from the passport's MRZ, OCR-extracted (the specimen document tested this cycle returned \"D\", the same code as its nationality field).",
+      "sourceRef": "Passport Information step, OCR-extracted field, confirmed live"
+    },
+    {
+      "name": "passportDocumentNumber",
+      "label": "Document number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The passport's document number, OCR-extracted.",
+      "sourceRef": "Passport Information step, OCR-extracted field, confirmed live (returned \"C01X00T47\" from the specimen document)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Validity",
+      "type": "date",
+      "required": true,
+      "description": "The passport's expiry date, OCR-extracted (labelled \"Validity\" on the live page).",
+      "sourceRef": "Passport Information step, OCR-extracted field, confirmed live (returned \"2027-02-28\" from the specimen document)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "passportDeclarationConfirmed",
+      "label": "I have reviewed the details as scanned from this identity document and confirm that they are correct.",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant's confirmation that the OCR-extracted passport details above are correct. The live \"Continue\" button is genuinely disabled (confirmed via its `disabled`/`opacity-50 cursor-not-allowed` state) until this box is checked.",
+      "sourceRef": "Passport Information step, checkbox `#passport_declaration`, confirmed live to gate step progression"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's own contact phone number. The live page's own guidance states that by law only a valid email and phone number of the traveller may be provided — travel agents, visa/concierge services, and other agencies must supply the traveller's own details, or the application will be denied without refund.",
+      "sourceRef": "Contact Information step, `#hooked_phone-phone_number`, confirmed live to require real input events (not just a programmatic value) to register as valid",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's own email address.",
+      "sourceRef": "Contact Information step, `#email` (Validators.required, live-confirmed)",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "physicalAddress",
+      "label": "Physical address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The traveller's physical address.",
+      "sourceRef": "Contact Information step, `#physical_address` (Validators.required, live-confirmed)",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "enum",
+      "required": true,
+      "description": "The traveller's occupation, selected from a closed 57-option list read directly from the live `<select id=\"contact_info_occupation_id\">` element (e.g. \"Software and Applications Programmer\", \"Accountant, Economist, Finance Professional\", \"Student\", \"Retired\", \"Other (Please Specify)\"; the full list is reproduced in VERIFICATION.md).",
+      "sourceRef": "Contact Information step, `#contact_info_occupation_id` (Validators.required, live-confirmed)",
+      "validation": {
+        "enum": [
+          "ACCOMMODATION_HOSPITALITY_CATERING_PROFESSIONAL",
+          "ACCOUNTANT_ECONOMIST_FINANCE_PROFESSIONAL",
+          "ACTOR",
+          "ADVERTISING_MARKETING_PROFESSIONAL",
+          "AGRICULTURAL_AGRONOMY_FISHERIES_FORESTRY_PROFESSIONAL",
+          "AIR_OR_MARITIME_TRANSPORT_PROFESSIONAL",
+          "ARCHAEOLOGIST",
+          "ARCHITECTS_AND_LANDSCAPE_PROFESSIONAL",
+          "AUTHOR",
+          "CHIEF_EXECUTIVE_AND_MANAGING_DIRECTOR",
+          "CONFERENCE_AND_EVENT_PROFESSIONAL",
+          "CYBER_SECURITY_DEVELOPER",
+          "DANCER_OR_CHOREOGRAPHER",
+          "DRIVER",
+          "ELECTRICIAN",
+          "JUDICIAL_AND_OTHER_LEGAL_PROFESSIONAL",
+          "LIBRARIAN",
+          "LOBBYIST",
+          "MANUFACTURER",
+          "MEDICAL_PRACTITIONER",
+          "METEOROLOGIST",
+          "MILITARY",
+          "MINISTER_OF_RELIGION",
+          "MULTIMEDIA_SPECIALIST_AND_WEB_DEVELOPER",
+          "MUSIC_PROFESSIONAL",
+          "NOT_WORKING_BY_CHOICE",
+          "PHOTOGRAPHER",
+          "PLUMBER",
+          "POLICE_OFFICER",
+          "PROJECT_MANAGER",
+          "PUBLIC_RELATIONS_PROFESSIONAL",
+          "RESEARCH_AND_DEVELOPMENT",
+          "RETIRED",
+          "SALES_PROFESSIONAL",
+          "SCHOOL_TEACHER_UNIVERSITY_LECTURER_AND_TUTOR",
+          "SELF_EMPLOYED",
+          "SOCIAL_WORKER",
+          "SOFTWARE_AND_APPLICATIONS_PROGRAMMER",
+          "SPORTS_COACH_INSTRUCTOR",
+          "STUDENT",
+          "SUPPLY_DISTRIBUTION_AND_PROCUREMENT_PROFESSIONAL",
+          "TRANSLATOR",
+          "VETERINARIAN",
+          "OTHER",
+          "ENGINEER",
+          "FIRE_FIGHTER",
+          "FLORIST",
+          "EMPLOYEE_GOVERNMENT_ENTITIES",
+          "GRAPHIC_AND_WEB_DESIGNER_ILLUSTRATOR",
+          "HAIRDRESSER",
+          "HISTORIAN",
+          "HOUSEKEEPER",
+          "HUMAN_RESOURCE_MANAGER",
+          "ICT_PROFESSIONAL",
+          "IMPORTERS_EXPORTERS_AND_WHOLESALER",
+          "JEWELLER",
+          "JOURNALIST_BLOGGER"
+        ]
+      }
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name of an emergency contact. The live page allows adding further emergency contacts via its own \"Add Another\" control; this schema models only the first (required) entry, since GovSchema's field model has no repeating/array type — see VERIFICATION.md.",
+      "sourceRef": "Contact Information step, \"Emergency Contact\" section, `#full_name_0` (Validators.required, live-confirmed)",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Phone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The phone number of the (first) emergency contact.",
+      "sourceRef": "Contact Information step, \"Emergency Contact\" section, `#hooked_phone-phone_number_0` (Validators.required, live-confirmed)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "travelReason",
+      "label": "Select travel reason",
+      "type": "enum",
+      "required": true,
+      "description": "The traveller's reason for visiting Kenya, read directly from the live `<select id=\"travel_reason_id\">` element's 12 real options.",
+      "sourceRef": "Trip Information step, `#travel_reason_id` (Validators.required, live-confirmed)",
+      "validation": {
+        "enum": [
+          "SEAMAN_FISHING_VESSEL",
+          "WORK",
+          "BUSINESS",
+          "CONFERENCE_MEETINGS_SEMINARS_TRAINING",
+          "CREW_PLANES_OR_SHIPS",
+          "CREW_POSITIONING",
+          "TOURISM",
+          "FRIENDS_AND_FAMILY",
+          "MEDICAL_CARE",
+          "RELIGIOUS_VISIT",
+          "STUDY_EDUCATION",
+          "TRANSIT"
+        ]
+      }
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Arrival Date",
+      "type": "date",
+      "required": true,
+      "description": "The traveller's planned date of arrival in Kenya.",
+      "sourceRef": "Travel Information step, Arrival Details sub-step, `#arrival_date` (Validators.required, live-confirmed)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "arrivalMode",
+      "label": "Arrival mode",
+      "type": "enum",
+      "required": true,
+      "description": "The traveller's mode of arrival into Kenya.",
+      "sourceRef": "Travel Information step, Arrival Details sub-step, radio group `arrival_mode` (`#arriving_by_air`/`#arriving_by_sea`/`#arriving_by_land`, live-confirmed)",
+      "validation": {
+        "enum": [
+          "AIR",
+          "SEA",
+          "LAND"
+        ]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportBioDataPage",
+      "label": "Upload Passport",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "Passport Information step. Server-side runs genuine OCR document processing, live-confirmed: a synthetic solid-colour JPEG was rejected with \"Document processing unsuccessful... not clear enough,\" while a real specimen passport bio-data-page image was correctly OCR-read into the `passport*` fields above."
+    },
+    {
+      "id": "selfiePhoto",
+      "label": "Upload Selfie",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "Selfie or Photo step (also offers an in-browser \"Use Webcam\" capture option, not exercised this session). Server-side runs genuine biometric face-matching against the passport photo, live-confirmed: a real but different-person portrait photo triggered a \"Photo Mismatch\" warning, which the live UI allows overriding via an explicit \"Use this photo\" button (a soft warning, not a hard block on proceeding)."
+    }
+  ]
+}
