@@ -4,7 +4,20 @@
 
 ## Executive Summary
 
-**68 jurisdictions** | **515 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**68 jurisdictions** | **516 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3396, "GovSchema Standard Research"): Mongolia's
+> Taxes vertical opens (4/6)**, via
+> `mn/mta/simplified-individual-income-tax-report` — the Mongolian Tax
+> Administration's own official filing guide for Form ТТ-06-ХГ (simplified
+> individual income tax report, flat 1% rate), directly downloadable and
+> unauthenticated, independently corroborated via Mongolia's
+> legal-information portal. See the Taxes vertical section below for the
+> full sourcing record, including a disclosed source discrepancy (a stray
+> "ТТ-02-ХГ" typo on one page of an otherwise-consistent "ТТ-06-ХГ" guide)
+> and this cycle's re-screen of Mongolia's DMV backlog lead
+> (`burtgel.transdep.mn`), found live but more complex than a prior cycle's
+> note implied and left un-authored.
 
 > **Update (2026-07-16, GOV-3389, "GovSchema Standard Research"): Mongolia's
 > Passport vertical opens (3/6)**, via `mn/gasr/foreign-passport-application` —
@@ -13528,7 +13541,30 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (58/68 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (59/68 jurisdictions — 87%)
+
+> **Update (2026-07-16, GOV-3396, "GovSchema Standard Research"): Mongolia's
+> Taxes vertical opens, bringing Mongolia to 4 of 6 verticals**, via
+> `mn/mta/simplified-individual-income-tax-report` — the Mongolian Tax
+> Administration's (Татварын ерөнхий газар) own official filing guide for
+> Form ТТ-06-ХГ, the simplified-regime individual income tax report (a flat
+> 1% tax on operating income, available to filers under a MNT 50 million
+> prior-year-income threshold), directly downloadable and unauthenticated at
+> `mta.gov.mn` (a genuine text-layer PDF, `sha256:174f94c63d90...`, no login/
+> CAPTCHA/WAF gate) and independently corroborated by Mongolia's own
+> legal-information portal (`legalinfo.mn`), which reproduces the tax
+> authority's 2020-08-13 order approving the form. The guide's own page-4
+> blank specimen prints a stray "ТТ-02-ХГ" typo where every other occurrence
+> in the same document (and the corroborating source) reads "ТТ-06-ХГ" —
+> disclosed rather than silently corrected; see the document's own
+> VERIFICATION.md. This cycle also re-fetched Mongolia's DMV backlog lead
+> (`burtgel.transdep.mn`, license-plate ordering) a prior cycle's research
+> notes had flagged author-ready: still live and unauthenticated, but a
+> category-dependent plate-character-combination builder plus an
+> appointment-day picker, materially more involved than that summary
+> implied — left open, not authored this cycle. Mongolia's remaining
+> vertical is DMV; National ID remains a confirmed dead end (in-person/
+> biometric-only).
 
 > **Update (2026-07-16, GOV-3336, "GovSchema Standard Research"): Ecuador's
 > Taxes vertical opens, bringing Ecuador to 3 of 6 verticals**, via
@@ -16110,7 +16146,7 @@ now closed.
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **MN** | 3 | ✓ | ✗ | ✓ | ✗ | ✓ | ✗ |
+| **MN** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18594,6 +18630,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3396 ("GovSchema Standard Research") — Mongolia Taxes: authored
+  (see the Executive Summary and Taxes vertical section above), opening
+  Mongolia's Taxes vertical (4/6); Mongolia's DMV backlog lead re-screened
+  and found live but more complex than previously summarized, left
+  un-authored.** The Mongolian Tax Administration's own filing guide for
+  the simplified-regime individual income tax report (Form ТТ-06-ХГ) was a
+  ready-to-author candidate this cycle's own pre-cycle research had not yet
+  located a fetchable copy of — a plain web search surfaced the direct PDF
+  URL, corroborated by Mongolia's `legalinfo.mn` legal-information portal
+  for the form's own designation (resolving a stray "ТТ-02-ХГ" typo on one
+  page of the otherwise-consistent guide). MN DMV's plate-ordering
+  candidate (`burtgel.transdep.mn`, flagged author-ready by the immediately
+  preceding GOV-3389 cycle) was re-fetched and confirmed still live and
+  unauthenticated, but is a category-dependent plate-character-combination
+  builder plus an appointment-day picker rather than the flat ~20-field
+  form the prior summary implied — a genuine, open backlog candidate for a
+  future cycle willing to do a live/Playwright walk, not a dead end.
+  Mongolia now stands at 4 of 6 verticals (Visa, Business Formation,
+  Passport, Taxes); National ID remains a confirmed dead end.
 
 - **GOV-3389 ("GovSchema Standard Research") — Mongolia Passport: authored
   (see the Executive Summary above), opening Mongolia's Passport vertical
