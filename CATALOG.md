@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **500 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **501 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3293/GOV-3298, "GovSchema Standard Research"):
+> Switzerland's Business Formation vertical opens, bringing Switzerland to
+> 5 of 6 verticals** (Passport, DMV, Taxes, and National ID were already
+> modelled; Visa remains Switzerland's sole open vertical, re-screened fresh
+> this cycle and confirmed a duplicate dead end — see below), via
+> `ch/sg/handelsregisteramt/anmeldung-neueintragung-einzelunternehmen` — the
+> Canton of St. Gallen's Amt für Handelsregister und Notariate's paper
+> application for registering a new sole proprietorship (Einzelunternehmen)
+> in the cantonal commercial register. This closes the candidate the prior
+> GOV-3288 cycle had scouted and left as disclosed, ready-to-author backlog
+> (GOV-3293): the federal EasyGov.swiss one-stop-shop wizard is a confirmed
+> dead end (login-gated on its very first screen), so this schema instead
+> models one of several structurally similar cantonal commercial-registry
+> AcroForm PDFs. Five cantons' sibling forms (St. Gallen, Graubünden,
+> Aargau, Lucerne, Appenzell Ausserrhoden) were fetched and widget-counted
+> before picking St. Gallen's as the richest (50 AcroForm widgets across 3
+> pages) with the clearest self-documenting field names. Independently
+> re-fetched twice this session with a plain HTTP GET (no login/CAPTCHA/WAF
+> gate): HTTP 200, 206,104 bytes both times, identical sha256
+> `8f643f455e075e22ba76f9cb209a23f38395326b86150f9d9baab7fdbdc0a433`.
+> Extracted via `pdfjs-dist`'s `getAnnotations()`/`getTextContent()`; all 50
+> widgets are accounted for across 33 `fields[]` (the firm name and
+> registered-office block, a conditional c/o-domicile-holder address, the
+> business-purpose description, the owner's personal details, an optional
+> joint co-signatory gated by the signing-authority-type selection, an
+> optional UID/VAT-number declaration, and a non-public
+> contact/submitter block) and 4 `documents[]` (two identity-document
+> copies, a conditional domicile-holder declaration, and an optional
+> register-extract payment order). 2 valid conformance fixtures (0 errors
+> each, one exercising every `requiredWhen` branch) plus 6 mutation-control
+> fixtures (each raising exactly 1 error) are committed under
+> `conformance/ch/sg/handelsregisteramt/anmeldung-neueintragung-einzelunternehmen/1.0.0/`.
+> Both validators pass at 501/501. This same research cycle also re-checked
+> Switzerland's Visa candidate (`sem.admin.ch`'s national-visa AcroForm PDF)
+> and found it to be a field-for-field duplicate of the EU harmonized
+> Schengen visa questionnaire already modelled many times in this registry
+> — not authored; see the Known Gaps section's "CH Visa" dead-end entry
+> below. See the Business Formation vertical section below and the
+> document's own VERIFICATION.md for the full sourcing record, including the
+> five-canton comparison table.
 
 > **Update (2026-07-16, GOV-3288, "GovSchema Standard Research"): Norway's
 > Taxes vertical opens, bringing Norway to 5 of 6 verticals** (Business
@@ -11917,7 +11958,19 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (59/62 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (60/62 jurisdictions — 97%)
+
+> **Update (2026-07-16, GOV-3293/GOV-3298, "GovSchema Standard Research"):
+> Switzerland opens this vertical**, via
+> `ch/sg/handelsregisteramt/anmeldung-neueintragung-einzelunternehmen` — the
+> Canton of St. Gallen's Amt für Handelsregister und Notariate's paper
+> sole-proprietorship commercial-register registration form, picked as the
+> richest of five structurally similar cantonal siblings screened this
+> cycle. See the Executive Summary's GOV-3293/GOV-3298 update above and the
+> document's own VERIFICATION.md for the full five-canton comparison and
+> sourcing record. Denominator unchanged (Switzerland already counted toward
+> the 62-jurisdiction total via Passport/DMV/Taxes/National ID); numerator
+> updated from 59 to 60.
 
 > **Update (2026-07-15, GOV-3167, delegated from GOV-3189/GOV-3158/GOV-3152,
 > "GovSchema Standard Research"): Dominican Republic opens this vertical
@@ -15272,7 +15325,7 @@ now closed.
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
+| **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -17122,6 +17175,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   confirmation for Slovakia specifically, since Slovakia's Visa vertical
   remains its sole open gap (5/6) after this cycle. Do not re-attempt
   without a genuinely new, structurally distinct source.
+- **CH Visa (national visa)** — GOV-3293/GOV-3298, 2026-07-16.
+  `sem.admin.ch` (the State Secretariat for Migration) hosts a national-visa
+  AcroForm PDF directly, unauthenticated. Fetched and extracted with
+  `pdfjs-dist`, then compared field-for-field against
+  `de/auswaertiges-amt/national-visa-application`, already modelled in this
+  registry: same EU-harmonized long-stay-visa questionnaire, same field
+  sequence. This is the same
+  "national-visa-form-duplicates-the-EU-harmonized-Schengen-template"
+  pattern already found and declined for Czechia, Portugal, Poland, and (see
+  above) Slovakia; recorded here as a fresh confirmation for Switzerland,
+  whose Visa vertical is now its sole open gap (5/6) after this cycle's
+  Business Formation authoring (see the Executive Summary and Business
+  Formation vertical section above). Do not re-attempt without a genuinely
+  new, structurally distinct source.
 - **SI DMV — driving-licence issuance (vozniško dovoljenje)** — GOV-3248,
   2026-07-16. `e-uprava.gov.si` states the application "is filed directly
   (in person) at the administrative unit," requiring the applicant's
