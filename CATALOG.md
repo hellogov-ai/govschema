@@ -4,7 +4,56 @@
 
 ## Executive Summary
 
-**65 jurisdictions** | **506 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**65 jurisdictions** | **507 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3328, "GovSchema Standard Research"): Ecuador's
+> Business Formation vertical opens (2 of 6)**, via
+> `ec/sri/inscripcion-ruc-persona-natural` — the Servicio de Rentas Internas'
+> (SRI) own official request-form template, "Solicitud de Inscripción del
+> RUC (persona natural)", for registering a natural person in Ecuador's
+> Registro Único de Contribuyentes (RUC), the national taxpayer registry.
+> Rather than open a 66th brand-new jurisdiction, this cycle re-checked
+> `www.sri.gob.ec` first — the prior GOV-3305 cycle's own VERIFICATION.md had
+> recorded this same server as connection-timeout-unreachable when Ecuador
+> first opened three cycles ago, and it now responds normally with a
+> realistic desktop User-Agent header set. The primary source is a genuine
+> `.docx` template (parsed directly as a ZIP archive/WordprocessingML, not
+> converted to plain text, to preserve its table structure): a 4-row
+> economic-activities table (header + 3 identical Código-CIIU/Descripción
+> rows, one markable as principal), a 14-row two-column address block
+> (identical 13 sub-fields — Provincia, Cantón, Parroquia, Calle principal,
+> Número, Intersección, Edificio, Piso, Oficina o local, Referencia de
+> Ubicación, Teléfono convencional, Celular, Correo electrónico — repeated
+> for both "Dirección del Domicilio" and "Dirección del Establecimiento
+> Matriz", 9 of 13 marked required by the template's own asterisk), and a
+> single estimated-annual-income question. Corroborated by SRI's own
+> official screenshot-driven "GUIA RUC EN LINEA.pdf" step-by-step guide for
+> the fully online (but login-gated) filing channel, which also justified
+> marking the income field required despite no asterisk on the primary
+> template, and disclosed a higher 20-activity online-only cap this schema's
+> 3-slot group (matching the template's own printed rows) does not model.
+> CIIU code format (`[A-U][0-9]{4}` plus an optional `.NN` sub-code) was
+> confirmed live against INEC's own classification lookup system rather than
+> assumed. Models 38 `fields[]` (applicant identity, 3 economic-activity
+> slots with an `exclusivityGroups` constraint on which is principal, and 26
+> address fields across the two address blocks) and 2 `documents[]` (a
+> supporting-evidence attachment and a truthfulness attestation, both
+> transcribed from the template's own closing paragraphs). This cycle also
+> screened and left open, disclosed backlog candidates: Ecuador's Registro
+> Civil "Duplicado de cédula Express" (a live, unauthenticated National-ID
+> service confirmed via both `curl` and a real Playwright/Chromium session,
+> but gated after its 3-field search step by a CAPTCHA-plus-real-citizen-data
+> requirement this cycle could not pass) and passport renewal (login-gated,
+> no field-level fallback found); ANT's vehicle-registration forms were
+> re-checked and found weaker (a stale 2020 Wayback snapshot of mostly
+> commercial-transport paperwork, no core registration form). 2 valid
+> conformance fixtures (0 errors each) plus 6 mutation-control fixtures (each
+> raising exactly 1 error, including a missing-required-field case, an
+> invalid email format, an invalid CIIU-pattern case, and an
+> `exclusivityGroups` violation) are committed under
+> `conformance/ec/sri/inscripcion-ruc-persona-natural/1.0.0/`. Both
+> validators pass at 507/507. See the Business Formation vertical section
+> below and the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3321, "GovSchema Standard Research"): Georgia
 > opens as this registry's 65th jurisdiction**, via `ge/mfa/evisa-application` —
@@ -12174,7 +12223,16 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (60/65 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (61/65 jurisdictions — 94%)
+
+> **Update (2026-07-16, GOV-3328, "GovSchema Standard Research"): Ecuador
+> opens this vertical (2 of 6 overall)**, via
+> `ec/sri/inscripcion-ruc-persona-natural` — SRI's own official RUC
+> (Registro Único de Contribuyentes) registration request template for
+> natural persons. See the Executive Summary's GOV-3328 update above and the
+> document's own VERIFICATION.md for the full sourcing record. Denominator
+> unchanged (Ecuador already counted toward the 65-jurisdiction total via
+> its Visa vertical); numerator updated from 60 to 61.
 
 > **Update (2026-07-16, GOV-3293/GOV-3298, "GovSchema Standard Research"):
 > Switzerland opens this vertical**, via
@@ -15607,7 +15665,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EC** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **EC** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ET** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -18075,6 +18133,27 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3328 ("GovSchema Standard Research") — Ecuador National ID
+  ("Duplicado de cédula Express"): a live, unauthenticated, but thin and
+  CAPTCHA-plus-real-citizen-data-gated candidate, left un-authored this
+  cycle.** `apps.registrocivil.gob.ec/portalCiudadano/cedulaexpress/buscaCiudadano.jsf`
+  is a genuine JSF/PrimeFaces application confirmed live via direct `curl`
+  (HTTP 200) and a real Playwright/Chromium session (screenshot captured).
+  Its entire visible field surface is a 3-field search step: a 10-digit
+  cédula/NUI number, date of birth (dd/MM/yyyy), and a digit-image CAPTCHA.
+  The actual duplicate-request/payment step that would follow a successful
+  search is rendered server-side only after the CAPTCHA is solved against a
+  real citizen's own registered identity — this cycle could not pass that
+  gate without impersonating a real person, so the candidate stops at 3
+  fields, too thin to author as its own schema. A future cycle with either
+  a legitimate test/sandbox citizen record or a different technique for
+  reaching the post-search markup (e.g. inspecting the app's own
+  client-side JS bundle for the next panel's field definitions, the
+  technique that worked for Brazil's TSE Angular bundle) could complete
+  this. Ecuador's Registro Civil passport channel was also screened and
+  found login-gated (`Agencia Virtual` account required) with no
+  field-level fallback found.
 
 - **GOV-3313 ("GovSchema Standard Research") — Georgia (the country): a
   strong, disclosed backlog candidate, left un-authored this cycle in
