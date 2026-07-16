@@ -1,0 +1,488 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "lk/ird/return-of-income-individual",
+  "version": "1.0.0",
+  "title": "Sri Lanka Return of Income — Individual (Form Asmt_IIT_001)",
+  "description": "The Inland Revenue Department's (IRD) annual \"Return of Income – Individual\", the principal individual income tax return filed under section 126 of the Inland Revenue Act, No. 24 of 2017 for the year of assessment 2025/2026. Electronic filing is mandatory for every person under section 113(1B) of the same Act; this document models the static, currently-published specimen IRD itself distributes to describe the return's structure, not IRD's authenticated e-filing wizard. Models the return's own Section 01 (Statement of Tax Calculation — the cage-numbered income, deduction, relief, and tax-payable summary lines that roll up figures computed in the return's own ten numbered Schedules), the Part E schedule-attached checklist, and Section 02 (the optional approved-accountant/preparer disclosure and the taxpayer's own mandatory declaration). Out of scope: the detailed line-by-line breakdown inside Schedules 1 through 10 themselves (over 130 further numbered cages across a separate 12-page companion document, Asmt_IIT_002, covering employment/business/investment/other income detail, qualifying-payment and solar-panel relief computations, withholding/advance-tax credits, and multi-year loss carry-forward) and the Statement of Assets and Liabilities (Asmt_IIT_003) — each a natural future companion schema, following this registry's established convention (e.g. `il/tax-authority/1301-personal-details`) of scoping a first schema to a large multi-schedule return's own summary/identity/declaration structure rather than every downstream schedule. This document describes the return only; it does not submit anything on the filer's behalf, and does not imply endorsement by the Government of Sri Lanka or the Inland Revenue Department. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Sri Lanka.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "LK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Inland Revenue Department",
+    "abbreviation": "IRD",
+    "url": "https://www.ird.gov.lk"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_001_2025_2026_E.pdf",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "Form No. Asmt_IIT_001_E, \"Return of Income – Individual\", Year of Assessment 2025/2026, English edition"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3267 (\"GovSchema Standard Research\"). Opens Sri Lanka's Taxes vertical (Sri Lanka now 5 of 6: Passport, DMV, Visa, National ID, Taxes; Business Formation remains a confirmed dead end — see below). Independently re-fetched via plain `curl` (no login/CAPTCHA gate; the IRD site serves this PDF directly from a SharePoint-backed document library): HTTP 200, content-type `application/pdf`, content-length 778,937 bytes, `Last-Modified: Thu, 09 Jul 2026`, sha256 `d89252750a27800e82139de8543eaa5be0f48236f3c61df47c95dea01aab6161`. Companion schedule document cross-referenced for schedule-number/content accuracy: `https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_002_2025_2026_E.pdf`, HTTP 200, `application/pdf`, 3,107,459 bytes, sha256 `13941f60b8f45824eb5eb5d6d97387dd25c7078ee86c4e35a555b84fbcbb0264` (not modelled in this document's own `fields[]`, only used to verify each Schedule's own title/cage-number range for the Part E checklist and the cage-cross-reference notes in this document's field descriptions). Both PDFs extracted via `pdfjs-dist` (legacy CJS build, 3.11.174, pinned per this registry's own convention): a genuine, non-scanned text layer confirmed on both (2 and 12 pages respectively), zero `/AcroForm`/`/Widget` markers on either (a flat print-and-hand-fill specimen, not an interactive PDF). Both pages of Asmt_IIT_001 were additionally rendered to PNG via `pdfjs-dist`+`node-canvas` to check for asterisk/required-field markers; the embedded TrueType font did not fully rasterize glyphs in this renderer (most cell labels render blank, a known pdfjs/node-canvas embedded-font limitation, not a defect in the source), but the visible cage/checkbox grid structure was confirmed and, combined with a full-text grep of the extracted layer (exactly one `*` character, an unrelated \"more than one person\" footnote on the accountant/preparer block — \"*If more than one person involved, use a separate sheet to fill the above details and attach to the return.\", not modelled as a field since it carries no filer-entered data of its own), confirms this form carries no asterisk/required-marker convention at all. Requiredness for every field below is therefore a disclosed judgment call from statutory context (the return is legally mandatory; every cage feeding Part A/B/C's own running tax computation is filled with a figure, zero if not applicable) rather than derived from an explicit form marking, following the same approach this registry already took for `pl/mf/zeznanie-pit-37` and other flat print-form Taxes-vertical schemas with no JS-validation rules block to consult. `taxYear` follows this registry's own established convention for annual return schemas of a plain `taxYear`/`yearOfAssessment`-style field rather than the `edition` axis (see `pl/mf/zeznanie-pit-37`'s own `taxYear` field and VERSIONING.md §4 — a new assessment year would be a new `edition`, but the filer-entered assessment-year value on the form itself is still modelled as a field, matching precedent). `balanceTaxPayable` (cage 190) and `refundClaimed` (cage 200) are mutually exclusive per the form's own printed instructions (\"If 170>180, Then 170–180\" / \"If 170<180, Then 180–170\") but are both modelled as optional rather than requiredWhen-gated on each other, since GovSchema's `requiredWhen` only supports simple field-equality conditions, not a comparison between two other numeric fields; this exclusivity is disclosed here rather than mis-modelled. `residencyStatus` and `seniorCitizen` are both modelled as required, matching the form's own top-right always-present checkbox/Yes-No block with no visible option to leave blank. The Part E schedule-attached checklist (Sch. 1–10) is modelled as ten independent booleans, each optional, since a filer only attaches the schedules relevant to their own income types — Schedule labels/scope (Employment; Business; Investment; Other; Qualifying Payments & Expenditure Relief, including the solar-panel-relief sub-schedule 5C; WHT on Final Withholding Payments; Advance Income Tax/WHT; Tax Calculation; Tax Credits; Loss Adjustment) were independently confirmed against each schedule's own printed title in Asmt_IIT_002. Section 02's approved-accountant/preparer block is requiredWhen-gated on `preparedByApprovedAccountant`; its own printed instruction (\"If 'Yes' fill PART-A and attach the certificate/s issued by such person\") is additionally modelled as a `documents[]` supporting-evidence entry (`approvedAccountantCertificate`) gated the same way, since the certificate is a physical attachment distinct from the disclosure fields themselves. The taxpayer's own declaration statement is modelled as a required `documents[]` attestation entry, quoted verbatim, following this registry's established convention for signed/quoted declaration text (see `il/tax-authority/1301-personal-details`). `Date of Issue` and `Due Date`, printed in the same header block as the TIN/Address cage, are excluded as IRD-populated administrative fields, not filer-entered data, consistent with this registry's convention of excluding office-only content (the general statutory due date — 30 November following the year of assessment — is also stated in the form's own footer instructions rather than being a per-filer variable).\n\n**Business Formation vertical re-screened this cycle and remains a confirmed dead end.** The national Department of the Registrar of Companies' (`drc.gov.lk`) core incorporation pathway (Form 1 name reservation, Form 5 incorporation) is exclusively system-generated through the authenticated eROC portal (`eroc.drc.gov.lk`) with no static blank specimen; the only downloadable static specimens on `drc.gov.lk` are secondary filings (Form 18/19/20 director-and-secretary consent/change forms, Form 40 re-registration of a company already incorporated under the 1982 Companies Act) — none is a first-time company-formation application. No national-level sole-proprietorship/partnership registration form exists either; that function is genuinely decentralized to provincial registrars, consistent with the already-known thin Western-Province-only BNR-01 candidate (`bnr.wp.gov.lk`, ~15 fields) left on backlog by a prior cycle. Not re-authored this cycle in favor of the stronger, national-level Taxes candidate documented above.\n\n2 valid mock scenarios (a resident salaried filer with no preparer and a refund claimed; a self-employed filer using a paid preparer with a balance tax payable and two schedules attached) plus 5 mutation-control fixtures (a missing statically-required field, a missing accountant field while `preparedByApprovedAccountant` is true, an invalid `residencyStatus` enum value, an invalid `taxYear` format, and a missing required `taxpayerDeclaration` document) are committed under `conformance/lk/ird/return-of-income-individual/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`/`documents[]`, discarded after use, not committed) ran all 7: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error. The same script confirmed every `requiredWhen` field reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxYear",
+      "label": "Year of Assessment",
+      "type": "string",
+      "required": true,
+      "description": "The year of assessment this return covers, in the form's own \"YYYY/YYYY\" split-year format (Sri Lanka's tax year runs 1 April to 31 March).",
+      "sourceRef": "Page 1, header — \"YEAR OF ASSESSMENT: 2025/2026\"",
+      "validation": {
+        "pattern": "^[0-9]{4}/[0-9]{4}$"
+      }
+    },
+    {
+      "name": "taxpayerIdentificationNumber",
+      "label": "Taxpayer Identification Number (TIN)",
+      "type": "string",
+      "required": true,
+      "description": "The filer's Taxpayer Identification Number issued by IRD.",
+      "sourceRef": "Page 1, header — \"Taxpayer Identification Number (TIN)\""
+    },
+    {
+      "name": "taxpayerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "description": "The filer's address as registered with IRD.",
+      "sourceRef": "Page 1, header — \"Address\""
+    },
+    {
+      "name": "residencyStatus",
+      "label": "Resident / Non-Resident",
+      "type": "enum",
+      "required": true,
+      "description": "The filer's residency status for the year of assessment.",
+      "sourceRef": "Page 1, top-right box — \"Resident\" / \"Non-Resident\"",
+      "validation": {
+        "enum": ["RESIDENT", "NON_RESIDENT"]
+      }
+    },
+    {
+      "name": "seniorCitizen",
+      "label": "Senior Citizen",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the filer qualifies as a senior citizen.",
+      "sourceRef": "Page 1, top-right box — \"Senior Citizen Yes / No\""
+    },
+    {
+      "name": "employmentIncome",
+      "label": "Employment Income (Schedule 1)",
+      "type": "number",
+      "required": true,
+      "description": "Total employment income, carried forward from Schedule 1 cage 111.",
+      "sourceRef": "Page 1, Section 01 Part A, cage 10"
+    },
+    {
+      "name": "businessIncome",
+      "label": "Business Income (Schedule 2)",
+      "type": "number",
+      "required": true,
+      "description": "Total business income (sole proprietorship, partnership share, and trust-beneficiary share), carried forward from Schedule 2 cage 215.",
+      "sourceRef": "Page 1, Section 01 Part A, cage 20"
+    },
+    {
+      "name": "investmentIncome",
+      "label": "Investment Income (Schedule 3)",
+      "type": "number",
+      "required": true,
+      "description": "Total investment income, carried forward from Schedule 3 cage 315.",
+      "sourceRef": "Page 1, Section 01 Part A, cage 30"
+    },
+    {
+      "name": "otherIncome",
+      "label": "Other Income (Schedule 4)",
+      "type": "number",
+      "required": true,
+      "description": "Total other income, carried forward from Schedule 4 cage 403.",
+      "sourceRef": "Page 1, Section 01 Part A, cage 40"
+    },
+    {
+      "name": "assessableIncome",
+      "label": "Assessable Income",
+      "type": "number",
+      "required": true,
+      "description": "Sum of employment, business, investment, and other income (cages 10+20+30+40).",
+      "sourceRef": "Page 1, Section 01 Part A, cage 50"
+    },
+    {
+      "name": "reliefForRentIncome",
+      "label": "Relief for Rent Income (Schedule 3)",
+      "type": "number",
+      "required": true,
+      "description": "Relief for rent income — 25% of total rent income from sole proprietorship and partnership — carried forward from Schedule 3 cage 316.",
+      "sourceRef": "Page 1, Section 01 Part B, cage 60"
+    },
+    {
+      "name": "reliefOnSolarPanel",
+      "label": "Relief on resident's Solar panel (Schedule 5)",
+      "type": "number",
+      "required": true,
+      "description": "Relief for a resident individual's expenditure on fixing solar panels on their premises, carried forward from Schedule 5C cage 512.",
+      "sourceRef": "Page 1, Section 01 Part B, cage 70"
+    },
+    {
+      "name": "personalRelief",
+      "label": "Personal Relief",
+      "type": "number",
+      "required": true,
+      "description": "The filer's statutory personal relief amount.",
+      "sourceRef": "Page 1, Section 01 Part B, cage 80"
+    },
+    {
+      "name": "totalReliefs",
+      "label": "Total Reliefs",
+      "type": "number",
+      "required": true,
+      "description": "Sum of the rent-income relief, solar-panel relief, and personal relief (cages 60+70+80).",
+      "sourceRef": "Page 1, Section 01 Part B, cage 90"
+    },
+    {
+      "name": "qualifyingPayments",
+      "label": "Qualifying Payments (Schedule 5)",
+      "type": "number",
+      "required": true,
+      "description": "Total deductible qualifying payments (approved-charity/government donations and related expenditure reliefs), carried forward from Schedule 5A/5B cage 510.",
+      "sourceRef": "Page 1, Section 01 Part B, cage 100"
+    },
+    {
+      "name": "totalDeductionsFromAssessableIncome",
+      "label": "Total Deductions from Assessable Income",
+      "type": "number",
+      "required": true,
+      "description": "Sum of total reliefs and qualifying payments (cages 90+100).",
+      "sourceRef": "Page 1, Section 01 Part B, cage 110"
+    },
+    {
+      "name": "taxableIncome",
+      "label": "Taxable Income",
+      "type": "number",
+      "required": true,
+      "description": "Assessable income less total deductions from assessable income (cage 50 minus cage 110).",
+      "sourceRef": "Page 1, Section 01 Part B, cage 120"
+    },
+    {
+      "name": "taxOnTerminalBenefits",
+      "label": "Tax on Terminal Benefits (Schedule 8)",
+      "type": "number",
+      "required": true,
+      "description": "Tax on terminal benefits, carried forward from Schedule 8 cage 805.",
+      "sourceRef": "Page 1, Section 01 Part C, cage 130"
+    },
+    {
+      "name": "taxOnGainOnRealizationOfInvestmentAssets",
+      "label": "Tax on Gain on Realization of Investment Assets (Schedule 8)",
+      "type": "number",
+      "required": true,
+      "description": "Tax on gain on realization of investment assets (own and from partnership), carried forward from Schedule 8 cages 806.3 and 807.3.",
+      "sourceRef": "Page 1, Section 01 Part C, cage 140"
+    },
+    {
+      "name": "taxOnBalanceTaxableIncome",
+      "label": "Tax on Balance Taxable Income (Schedule 8)",
+      "type": "number",
+      "required": true,
+      "description": "Tax on the balance of taxable income at the applicable special/progressive rates, carried forward from Schedule 8 cage 810.",
+      "sourceRef": "Page 1, Section 01 Part C, cage 150"
+    },
+    {
+      "name": "taxOnFinalWithholdingPayments",
+      "label": "Tax on Final Withholding Payments (WHT not deducted) (Schedule 8)",
+      "type": "number",
+      "required": true,
+      "description": "Tax on final withholding payments where WHT was not deducted, carried forward from Schedule 6B cage 614 via Schedule 8 cage 811.",
+      "sourceRef": "Page 1, Section 01 Part C, cage 160"
+    },
+    {
+      "name": "totalTaxPayable",
+      "label": "Total Tax Payable",
+      "type": "number",
+      "required": true,
+      "description": "Sum of the four tax-on-income components (cages 130+140+150+160).",
+      "sourceRef": "Page 1, Section 01 Part C, cage 170"
+    },
+    {
+      "name": "taxCredits",
+      "label": "Tax Credits (Schedule 9)",
+      "type": "number",
+      "required": true,
+      "description": "Total tax credits (foreign tax credit, APIT, advance income tax, withholding tax, and installment payments), carried forward from Schedule 9 cage 912.",
+      "sourceRef": "Page 1, Section 01 Part C, cage 180"
+    },
+    {
+      "name": "balanceTaxPayable",
+      "label": "Balance Tax Payable",
+      "type": "number",
+      "required": false,
+      "description": "Populated only when total tax payable (cage 170) exceeds tax credits (cage 180); equal to cage 170 minus cage 180. Mutually exclusive with refundClaimed — the form's own instruction directs the filer to complete exactly one of the two, and GovSchema's requiredWhen condition does not support a numeric-comparison gate between two other fields, so this exclusivity is disclosed here rather than encoded.",
+      "sourceRef": "Page 1, Section 01 Part C, cage 190"
+    },
+    {
+      "name": "refundClaimed",
+      "label": "Refund Claimed",
+      "type": "number",
+      "required": false,
+      "description": "Populated only when tax credits (cage 180) exceed total tax payable (cage 170); equal to cage 180 minus cage 170. Mutually exclusive with balanceTaxPayable — see that field's own description.",
+      "sourceRef": "Page 1, Section 01 Part C, cage 200"
+    },
+    {
+      "name": "totalExemptExcludedIncome",
+      "label": "Total Exempt/Excluded Income",
+      "type": "number",
+      "required": false,
+      "description": "Total exempt/excluded income across all four income categories, applicable only when the filer has such income; sum of Schedule 1 cage 115, Schedule 2 cage 216, Schedule 3 cage 317, and Schedule 4 cage 407.",
+      "sourceRef": "Page 1, Section 01 Part D, cage 210"
+    },
+    {
+      "name": "foreignCurrencyRemittedAmount",
+      "label": "Foreign Currency Remitted Amounts into Sri Lanka during the year",
+      "type": "number",
+      "required": false,
+      "description": "Total foreign currency remitted into Sri Lanka during the year across employment, business, investment, and other income, applicable only when the filer remitted foreign currency; carried forward from Schedule 4 cage 406.e.",
+      "sourceRef": "Page 1, Section 01 Part D, cage 210A"
+    },
+    {
+      "name": "schedule1Attached",
+      "label": "Sch. 1 — Employment Income",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 1 (Employment Income) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 1\""
+    },
+    {
+      "name": "schedule2Attached",
+      "label": "Sch. 2 — Business Income",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 2 (Business Income) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 2\""
+    },
+    {
+      "name": "schedule3Attached",
+      "label": "Sch. 3 — Investment Income",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 3 (Investment Income) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 3\""
+    },
+    {
+      "name": "schedule4Attached",
+      "label": "Sch. 4 — Other Income",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 4 (Other Income) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 4\""
+    },
+    {
+      "name": "schedule5Attached",
+      "label": "Sch. 5 — Qualifying Payments & Expenditure Relief",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 5 (Qualifying Payments & Expenditure Relief, including the solar-panel-relief sub-schedule 5C) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 5\""
+    },
+    {
+      "name": "schedule6Attached",
+      "label": "Sch. 6 — WHT on Final Withholding Payments",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 6 (WHT on Final Withholding Payments) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 6\""
+    },
+    {
+      "name": "schedule7Attached",
+      "label": "Sch. 7 — Advance Income Tax (AIT) / Withholding Tax (WHT)",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 7 (Advance Income Tax / Withholding Tax) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 7\""
+    },
+    {
+      "name": "schedule8Attached",
+      "label": "Sch. 8 — Tax Calculation",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 8 (Tax Calculation) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 8\""
+    },
+    {
+      "name": "schedule9Attached",
+      "label": "Sch. 9 — Tax Credits",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 9 (Tax Credits) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 9\""
+    },
+    {
+      "name": "schedule10Attached",
+      "label": "Sch. 10 — Loss Adjustment",
+      "type": "boolean",
+      "required": false,
+      "description": "Marked when Schedule 10 (Loss Adjustment) is filled and attached to this return.",
+      "sourceRef": "Page 2, Part E — schedule-attached checklist, \"Sch. 10\""
+    },
+    {
+      "name": "preparedByApprovedAccountant",
+      "label": "Whether the return or part of the return is prepared by an Approved Accountant or any other person for a payment",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether this return, or part of it, was prepared by an approved accountant or any other person for payment. If \"Yes\", Part A of Section 02 must be completed and the person's certificate attached.",
+      "sourceRef": "Page 2, Section 02 — \"Whether the return or part of the return is prepared by an Approved Accountant or any other person for a payment? YES / NO\""
+    },
+    {
+      "name": "accountantName",
+      "label": "Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "preparedByApprovedAccountant",
+        "equals": true
+      },
+      "description": "Name of the approved accountant or other paid preparer.",
+      "sourceRef": "Page 2, Section 02, Part A — \"Name\""
+    },
+    {
+      "name": "accountantDesignation",
+      "label": "Designation",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "preparedByApprovedAccountant",
+        "equals": true
+      },
+      "description": "Professional designation of the approved accountant or other paid preparer.",
+      "sourceRef": "Page 2, Section 02, Part A — \"Designation\""
+    },
+    {
+      "name": "accountantTelephoneOrMobile",
+      "label": "Telephone Number / Mobile",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "preparedByApprovedAccountant",
+        "equals": true
+      },
+      "description": "Telephone or mobile number of the approved accountant or other paid preparer.",
+      "sourceRef": "Page 2, Section 02, Part A — \"Telephone Number Mobile\""
+    },
+    {
+      "name": "accountantEmail",
+      "label": "E-Mail",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "preparedByApprovedAccountant",
+        "equals": true
+      },
+      "description": "Email address of the approved accountant or other paid preparer.",
+      "sourceRef": "Page 2, Section 02, Part A — \"E-Mail\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "accountantCertificationDate",
+      "label": "Date of the Certification",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "preparedByApprovedAccountant",
+        "equals": true
+      },
+      "description": "Date the approved accountant or other paid preparer signed the certification.",
+      "sourceRef": "Page 2, Section 02, Part A — \"Date of the Certification\""
+    },
+    {
+      "name": "declarantFullName",
+      "label": "Full Name of the Declarant",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the taxpayer declaring this return.",
+      "sourceRef": "Page 2, Section 02, Part B — \"Full Name of the Declarant\""
+    },
+    {
+      "name": "declarantTelephoneOrMobile",
+      "label": "Telephone Number / Mobile",
+      "type": "string",
+      "required": false,
+      "description": "Telephone or mobile number of the declarant.",
+      "sourceRef": "Page 2, Section 02, Part B — \"Telephone Number Mobile\""
+    },
+    {
+      "name": "declarantEmail",
+      "label": "E-Mail",
+      "type": "string",
+      "required": false,
+      "description": "Email address of the declarant.",
+      "sourceRef": "Page 2, Section 02, Part B — \"E-Mail\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "declarantNicOrPassportNumber",
+      "label": "NIC Number/Passport Number",
+      "type": "string",
+      "required": true,
+      "description": "National Identity Card number or passport number of the declarant.",
+      "sourceRef": "Page 2, Section 02, Part B — \"NIC Number/Passport Number\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the declarant signs the declaration.",
+      "sourceRef": "Page 2, Section 02, Part B — \"Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "taxpayerDeclaration",
+      "label": "Declaration of the Taxpayer",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I declare to the best of my knowledge and belief that all particulars furnished in the Return of Income are true, correct and complete. I am aware that making an incorrect, false, or misleading statement is an offence.",
+      "sourceRef": "Page 2, Section 02, Part B — Declaration of the Taxpayer"
+    },
+    {
+      "id": "approvedAccountantCertificate",
+      "label": "Certificate issued by the Approved Accountant or other paid preparer",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "preparedByApprovedAccountant",
+        "equals": true
+      },
+      "belongsTo": "other",
+      "sourceRef": "Page 2, Section 02 — \"(If 'Yes' fill PART-A and attach the certificate/s issued by such person.)\""
+    }
+  ]
+}
