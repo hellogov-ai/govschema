@@ -29,8 +29,9 @@
 > `48abd6213483afb06f0caf091814de0a5a7d846d351f1a57879641a8ad0dfb4b`) —
 > the same "narrower dedicated form over the too-broad combined one"
 > pattern this registry picked before for `ec/sri/formulario-102a`. Models
-> the form's 18 numbered computation boxes (input tax, output tax, and the
-> resulting payable/refund/credit-carried-forward outcome) plus taxpayer
+> the form's 14 numbered computation boxes (boxes 05-18: input tax, output
+> tax, and the resulting payable/refund/credit-carried-forward outcome)
+> plus taxpayer
 > identification and an explicit NIL-return declaration; the page-2
 > invoice-level annex and three further sibling return forms (Withholding
 > Tax WT 03, Tax on Salary TOS 01, Patent Tax PR 008 — all sized and
