@@ -1,0 +1,349 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ge/mfa/evisa-application",
+  "version": "1.0.0",
+  "title": "Georgia Electronic Visa (e-Visa) Application",
+  "description": "The Ministry of Foreign Affairs of Georgia's Electronic Visa (e-Visa) application, served unauthenticated at evisa.gov.ge (a classic server-rendered ASP.NET MVC wizard: `Citizenship/Country`, `Travel Information`, `Terms & Conditions`, `Personal Information`, `Verification`). No account creation or login is required to reach the form. This schema models the Citizenship/Country step in full (citizenship, travel document type, visa type/purpose of visit, an optional travel-insurance declaration, an optional supporting-document country, and a border-crossing-information acknowledgement), the Travel Information step's arrival date, the Terms & Conditions step's eleven required attestation checkboxes (their exact text is rendered server-side, verified directly from the page's own markup), and the Personal Information step's core identity fields (name, document number, date of birth, sex, email, and travel-document expiry date). It does not model the optional Representative or Travelling-With-Companion sub-flows (each gated by its own opt-in checkbox, and each requiring a `relationship to the applicant`/`relationship to the accompanying person` selection whose option-value labels could not be confirmed this session — see VERIFICATION.md), nor any of the form's file-upload fields (photo, passport scan, and up to five supporting documents whose exact required/optional combination is determined server-side per the applicant's selected country and visa type, via an AJAX endpoint this session could not exercise without solving the form's own CAPTCHA — see VERIFICATION.md). These are disclosed as an accepted scope boundary rather than silently omitted; no application fee was paid and no application was actually submitted in producing this schema. Filing this application is a traveller action performed directly with the Ministry of Foreign Affairs of Georgia through evisa.gov.ge; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Georgia or its Ministry of Foreign Affairs.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "GE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs of Georgia",
+    "abbreviation": "MFA",
+    "url": "https://evisa.gov.ge"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://evisa.gov.ge/GeoVisa/en/VisaApp",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "The live e-Visa application wizard's own server-rendered markup, Citizenship/Country step (fully reachable) plus the declared validation metadata (ASP.NET `data-val-*` attributes, generated from the underlying model's own `[Required]`/`[Range]` attributes and therefore accurate regardless of which step currently renders them) for the Travel Information, Terms & Conditions, and Personal Information steps."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3321 (\"GovSchema Standard Research\"), closing the disclosed, ready-to-author backlog candidate the prior GOV-3313 cycle had scouted and left un-authored in favor of Ethiopia (see this registry's own CATALOG.md \"Known Gaps & Opportunities\" section). Opens Georgia as the registry's 65th jurisdiction. Fetched twice this session with a plain `curl` using a standard desktop Chrome User-Agent string (the root domain WAF-blocks a default headless/no-UA fingerprint, but succeeds immediately once a normal UA is set — confirmed both via curl and via a real Playwright/Chromium session): HTTP 200, `text/html`, 95,545 bytes both times. **Correction (GOV-3324 review gate):** the page embeds a fresh per-request `__RequestVerificationToken` anti-forgery value on every response, so a raw whole-page sha256 is not reproducible across fetches (independently reconfirmed: four fresh fetches, including two with a persisted cookie jar, produced four distinct tokens and four distinct hashes at the same byte length); redacting that one token's value before hashing (this registry's established technique for CSRF-token-bearing sources, see GOV-3231) yields a byte-identical structural sha256 of `0050f9db95c380decf0ff251db9f97f3a7f037fe4c052578dc3235465c415297` across all four fetches — see VERIFICATION.md. This is a single ASP.NET MVC page whose one <form> spans the entire multi-step wizard's model: the Citizenship/Country step's own inputs render fully visible and interactive, while every other step's fields are already present in the same response as `type=\"hidden\"` placeholders (standard ASP.NET MVC state-preservation across postbacks) carrying the real `data-val-required`/`data-val-date`/`data-val-number`/`data-val-range` attributes ASP.NET auto-generates from the underlying C# model's own `[Required(ErrorMessage=\"...\")]`/`[Range(...)]` attributes — these messages are accurate, government-authored field descriptions regardless of which step currently displays the corresponding visible input, not a guess. A live Playwright/Chromium session confirmed the Citizenship/Country step's four dropdowns' full option lists by reading the live DOM directly (Citizenship, 193 entries; DocumentType, 5 entries; VisaType, 8 entries; SupportingDocumentCountry, 46 entries — full lists in this document's own VERIFICATION.md) and confirmed, by attempting to advance past step 1 with Playwright, that the wizard requires solving an image CAPTCHA (`SecurityCode`, backed by `/GeoVisa/CaptchaImageHandler.ashx`) server-side before the second step is rendered: a real form submission with an arbitrary `SecurityCode` value was rejected with \"Security verifivation code is incorrect\" [sic] and the server re-rendered step 1 rather than advancing. This CAPTCHA was not solved or bypassed (out of scope for reading the form's own structure), which is why the Representative/Companion relationship-enum values and the exact per-country/per-visa-type required-document combination (driven by an AJAX endpoint, `CheckAllDocuments`, that itself returned HTTP 500 to a plain unauthenticated GET this session, consistent with it expecting a validated in-session CAPTCHA token) could not be confirmed and are excluded from this schema as a disclosed scope boundary rather than guessed at. `VisaType`'s client-side `data-val-range` (`min=1, max=2`) is visibly stale relative to its own `<option>` list (which includes values up to 8, e.g. `TOURISM_UP_TO_1_YEAR`) — noted as an observed government-side inconsistency; this schema's `visaType` enum reflects the DOM's own live `<option>` values, the more authoritative source. Models 25 `fields[]` across four steps and 0 `documents[]` (the disclosed scope boundary above). 2 valid conformance fixtures (0 errors each) plus 6 mutation-control fixtures (each raising exactly 1 error) are committed under `conformance/ge/mfa/evisa-application/1.0.0/`. Both validators pass. See VERIFICATION.md for the full sourcing record, including the complete Citizenship/DocumentType/VisaType/SupportingDocumentCountry option lists."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "citizenship_country",
+      "title": "Citizenship/Country",
+      "fields": [
+        "citizenship",
+        "travelDocumentType",
+        "visaType",
+        "hasTravelInsurance",
+        "supportingDocumentCountry",
+        "borderCrossInfoAcknowledged"
+      ],
+      "next": "travel_information"
+    },
+    {
+      "id": "travel_information",
+      "title": "Travel Information",
+      "fields": [
+        "arrivalDate"
+      ],
+      "next": "terms_and_conditions"
+    },
+    {
+      "id": "terms_and_conditions",
+      "title": "Terms & Conditions",
+      "fields": [
+        "hasReturnTicketHotelPerDiem",
+        "hasValidSupportingDocument",
+        "passportCoversStayPeriod",
+        "travelPurposeIsTourismOrBusiness",
+        "awareApplyingFromGeorgiaGroundsForRefusal",
+        "travelDocumentValidThreeMonthsAfterVisa",
+        "canProveSufficientFundsAtBorder",
+        "acknowledgesFalseDocumentGroundsForRefusal",
+        "acknowledgesResponsibleForEntryDate",
+        "confirmsMeetsAllConditions",
+        "confirmsBorderCrossingConditions"
+      ],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information"
+    }
+  ],
+  "fields": [
+    {
+      "name": "citizenship",
+      "label": "Citizenship/Country",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's citizenship/country, selected from the live portal's own complete country picker (193 entries, e.g. AFGHANISTAN, ALBANIA, ALGERIA ... ZIMBABWE; not reproduced in full here — see VERIFICATION.md). The live page's own guidance: a stateless person selects the country according to their travel document; in case of dual citizenship, select the country according to the travel document that will be used for travel to Georgia.",
+      "sourceRef": "Citizenship/Country step, `#Citizenship` (title: \"Select country that issued your travel document/passport\"), `data-val-required=\"The Citizenship/Country field is required.\"`, confirmed live via DOM inspection"
+    },
+    {
+      "name": "travelDocumentType",
+      "label": "Type of Travel Document/Passport",
+      "type": "enum",
+      "required": true,
+      "description": "The type of travel document the applicant will use for this trip, read directly from the live `<select id=\"DocumentType\">` element's real option list.",
+      "sourceRef": "Citizenship/Country step, `#DocumentType` (title: \"Select type of travel document/passport you intend to use for trip\"), `data-val-required=\"The Type of Travel Document/Passport field is required.\"`, confirmed live via DOM inspection",
+      "validation": {
+        "enum": [
+          "DIPLOMATIC",
+          "ORDINARY",
+          "SERVICE_SPECIAL_OFFICIAL",
+          "TRAVEL_DOCUMENT_FOR_STATELESS_PERSON"
+        ]
+      }
+    },
+    {
+      "name": "visaType",
+      "label": "Purpose of visit",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's purpose of visit, read directly from the live `<select id=\"VisaType\">` element's real option list (which includes a gap, `7`, and a non-contiguous final value, `8` — the government's own numbering, not an extraction error).",
+      "sourceRef": "Citizenship/Country step, `#VisaType`, `data-val-required=\"The Purpose of visit field is required.\"`, confirmed live via DOM inspection",
+      "validation": {
+        "enum": [
+          "TOURISM",
+          "BUSINESS_PROFESSIONAL",
+          "VISITING_FRIENDS_AND_RELATIVES",
+          "STUDY_AND_TRAINING_LESS_THAN_90_DAYS",
+          "HEALTH_AND_MEDICAL_CARE",
+          "RELIGION_PILGRIMAGES",
+          "TOURISM_UP_TO_1_YEAR"
+        ]
+      }
+    },
+    {
+      "name": "hasTravelInsurance",
+      "label": "I have valid travel insurance.",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant holds valid travel insurance. The visible checkbox does carry a `data-val-required` attribute, but the page's own client-side `checkfirstpage()` validator (the function that actually gates advancing past the Citizenship/Country step) explicitly comments out the check for this field, confirmed by reading the live script directly — modelled as optional on that basis, matching the same live-behavior-over-stale-attribute standard applied to `visaType`'s own disclosed inconsistency.",
+      "sourceRef": "Citizenship/Country step, \"Insurance\" section, `#HasInsurance`, confirmed live via DOM inspection and script review"
+    },
+    {
+      "name": "supportingDocumentCountry",
+      "label": "I am holder of valid visa and/or residence permit of respective country (if applicable)",
+      "type": "string",
+      "required": false,
+      "description": "The country that issued a supporting visa or residence permit the applicant holds, if any, selected from a distinct 46-entry country list (e.g. Australia, Austria, Bahrain, Belgium ... United States; not reproduced in full here — see VERIFICATION.md). The visible `<select>` does carry a `data-val-required` attribute, but the page's own `checkfirstpage()` validator (the function that actually gates advancing) explicitly comments out the check for this field — modelled as optional on that basis, matching the same live-behavior-over-stale-attribute standard applied to `visaType`'s own disclosed inconsistency.",
+      "sourceRef": "Citizenship/Country step, `#SupportingDocumentCountry` (title: \"Select the country that issued your visa or residence permit\"), confirmed live via DOM inspection and script review"
+    },
+    {
+      "name": "borderCrossInfoAcknowledged",
+      "label": "I confirm that I have read and understood terms and conditions for entering territory Georgia. Border cross info",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant's acknowledgement of a \"Border cross info\" notice (a modal dialog on entry conditions for foreign citizens, including COVID-19-era vaccination/PCR-test provisions) shown by the live page. Distinct from `confirmsBorderCrossingConditions` below, which is a longer, differently-worded attestation on the Terms & Conditions step — the live site uses two separate fields with near-identical names (`HasReadBorderCrossInfo` here vs. `ReadBorderCorssInfo`, sic, on Terms & Conditions) for what are, on inspection, two distinct checkboxes; both are modelled.",
+      "sourceRef": "Citizenship/Country step, `#HasReadBorderCrossInfo`, `data-val-required=\"The Check the box if read border cross info field is required.\"`, confirmed live via DOM inspection and the page's own `checkfirstpage()` validator"
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Select the date of intended arrival to Georgia",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's planned date of arrival in Georgia.",
+      "sourceRef": "Travel Information step, `#ArrivalDate`, `data-val-required=\"The Select the date of intended arrival to Georgia field is required.\"`, `data-val-date`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "hasReturnTicketHotelPerDiem",
+      "label": "I can prove that I hold a return ticket, hotel reservation and at least 50 $ per each day of my stay",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#Rettickethotelperdiem`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "hasValidSupportingDocument",
+      "label": "I hold a valid supporting document (Schengen or other visa from any OECD member country)",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#Validsupportindocument`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "passportCoversStayPeriod",
+      "label": "My passport covers the period that I will be staying in Georgia",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#Passportcoverperiod`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "travelPurposeIsTourismOrBusiness",
+      "label": "I'm travelling for the purpose of tourism or business",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#Traveltourismofbusiness`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "awareApplyingFromGeorgiaGroundsForRefusal",
+      "label": "I am aware that applying for e-Visa from the territory of Georgia is the ground for refusal.",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#AwareAboutApplyingFromGeorgia`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "travelDocumentValidThreeMonthsAfterVisa",
+      "label": "My travel document/passport validity extends at least three months after validity of Georgian Visa.",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#MyTravelDocument`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "canProveSufficientFundsAtBorder",
+      "label": "I can prove at the border that I have sufficient funds to cover all the costs associated with my travel to Georgia including funds for financing accompanying me minors and persons under guardianship or custody.",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#ICanProveAtThe`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "acknowledgesFalseDocumentGroundsForRefusal",
+      "label": "I fully acknowledge that submission of any false document/information may become the ground for visa/entry refusal.",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#SubmissionFalseDocument`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "acknowledgesResponsibleForEntryDate",
+      "label": "I fully acknowledge that I am responsible for determining the date from which I will have a right to enter Georgia",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step.",
+      "sourceRef": "Terms & Conditions step, `#ResponsibleForDetermining`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "confirmsMeetsAllConditions",
+      "label": "I confirm that I meet each and every one of the conditions listed above",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step, confirming all of the conditions above it.",
+      "sourceRef": "Terms & Conditions step, `#Meeteachcondition`, `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "confirmsBorderCrossingConditions",
+      "label": "I confirm that I meet conditions for crossing the Georgian Border. I understand that if I fail to provide documents required for crossing the Georgian border I will be refused to enter Georgia.",
+      "type": "boolean",
+      "required": true,
+      "description": "A required attestation on the Terms & Conditions step. Distinct from `borderCrossInfoAcknowledged` above — see that field's own description for the site's own near-duplicate naming.",
+      "sourceRef": "Terms & Conditions step, `#ReadBorderCorssInfo` (sic), `data-val-required` (exact text is this field's own label)"
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first name, matching their travel document. The live page's own client-side script strips any character outside `[A-Za-z ]` on keyup/blur.",
+      "sourceRef": "Personal Information step, `#FirstName`, `data-val-required=\"Please specify your first name!\"`",
+      "validation": {
+        "maxLength": 100,
+        "pattern": "^[A-Za-z ]+$"
+      }
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's last name, matching their travel document. The live page's own client-side script strips any character outside `[A-Za-z ]` on keyup/blur.",
+      "sourceRef": "Personal Information step, `#LastName`, `data-val-required=\"Please specify your last name!\"`",
+      "validation": {
+        "maxLength": 100,
+        "pattern": "^[A-Za-z ]+$"
+      }
+    },
+    {
+      "name": "documentNumber",
+      "label": "Document number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's travel document/passport number. The live page's own client-side script strips any character outside `[A-Za-z0-9]` on keyup/blur.",
+      "sourceRef": "Personal Information step, `#DocumentNumber`, `data-val-required=\"Please specify your document number!\"`",
+      "validation": {
+        "maxLength": 100,
+        "pattern": "^[A-Za-z0-9]+$"
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's sex, per their travel document. The live model constrains this to a numeric range of exactly two values (`data-val-range-min=\"0\"`, `data-val-range-max=\"1\"`); the actual UI control rendering this field (and therefore which option text corresponds to which underlying value) was not reachable this session — see VERIFICATION.md. Modelled as a binary enum on that basis.",
+      "sourceRef": "Personal Information step, `#Sex`, `data-val-required=\"The Sex field is required.\"`, `data-val-range=\"Please select sex!\"`",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth.",
+      "sourceRef": "Personal Information step, `#DateOfBirth`, `data-val-required=\"The Date of Birth field is required.\"`, `data-val-date`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's email address.",
+      "sourceRef": "Personal Information step, `#Email`, `data-val-required=\"Please specify your Email!\"`",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "documentExpiryDate",
+      "label": "Expiration date of Travel Document/Passport",
+      "type": "date",
+      "required": true,
+      "description": "The expiry date of the applicant's travel document/passport.",
+      "sourceRef": "Personal Information step, `#ExpirationDate`, `data-val-required=\"The Expiration date of Travel Document/Passport field is required.\"`, `data-val-date`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    }
+  ]
+}
