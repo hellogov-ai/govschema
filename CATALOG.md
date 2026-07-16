@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**69 jurisdictions** | **518 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**69 jurisdictions** | **519 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3417, "GovSchema Standard Research"): Cambodia's
+> Taxes vertical opens, bringing Cambodia to 2 of 6 verticals**, via
+> `kh/gdt/monthly-vat-return` — the General Department of Taxation's (GDT)
+> Form VAT 200 ("Return for Value Added Tax"), Cambodia's standard recurring
+> monthly VAT-filing obligation for every VAT-registered enterprise. The
+> prior GOV-3410 cycle had flagged a specific backlog candidate for this
+> slot — "Form P101, Monthly Tax Declaration, 294 fields" — which turned
+> out, on re-fetch, to be a mislabeled taxpayer-contact-update form with
+> only 23 fields on a single page, not a monthly declaration at all (a
+> prior cycle's own scouting note simply wrong, the same category of
+> mistake this catalog has caught before, e.g. GOV-2195's AFIP 460/F
+> correction). Re-screened `tax.gov.kh`'s full public document-form
+> library instead and found its "MONTHLY TAX RETURN FORM" category
+> contains an oversized 1,802-widget/16-page combined return (VAT, profit-
+> tax prepayment, withholding tax, and salary tax together — left
+> unauthored as too large to responsibly scope in one cycle) alongside
+> several genuine standalone single-tax-type returns. Picked Form VAT 200
+> (289 AcroForm widgets across 2 pages: 50 on the header/computation page,
+> 239 on a supporting invoice-level annex), directly downloadable and
+> unauthenticated (HTTP 200, no login/CAPTCHA/WAF gate, sha256:
+> `48abd6213483afb06f0caf091814de0a5a7d846d351f1a57879641a8ad0dfb4b`) —
+> the same "narrower dedicated form over the too-broad combined one"
+> pattern this registry picked before for `ec/sri/formulario-102a`. Models
+> the form's 18 numbered computation boxes (input tax, output tax, and the
+> resulting payable/refund/credit-carried-forward outcome) plus taxpayer
+> identification and an explicit NIL-return declaration; the page-2
+> invoice-level annex and three further sibling return forms (Withholding
+> Tax WT 03, Tax on Salary TOS 01, Patent Tax PR 008 — all sized and
+> screened this cycle) are disclosed, ready-to-scope backlog for future
+> companion schemas. See the document's own VERIFICATION.md for the full
+> sourcing record, including a disclosed off-by-one extraction gotcha in
+> the source site's own document-listing HTML. Both validators pass at
+> 519/519; `verify-sources.mjs` reports all 5 cited URLs clear; 8
+> conformance fixtures (2 valid + 6 mutation-control) committed.
 
 > **Update (2026-07-16, GOV-3410, "GovSchema Standard Research"): Cambodia
 > opens as the registry's 69th jurisdiction**, with its Business Formation
@@ -13625,7 +13660,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (59/69 jurisdictions — 86%)
+### Taxes — Income Tax Return, Tax Filing (60/69 jurisdictions — 87%)
+
+> **Update (2026-07-16, GOV-3417, "GovSchema Standard Research"): Cambodia's
+> Taxes vertical opens, bringing Cambodia to 2 of 6 verticals**, via
+> `kh/gdt/monthly-vat-return` — see the Executive Summary update above for
+> the full sourcing record, including how a prior cycle's own flagged
+> backlog candidate turned out to be mislabeled and was replaced with a
+> genuinely re-screened, correctly-sized standalone VAT return.
 
 > **Update (2026-07-16, GOV-3396, "GovSchema Standard Research"): Mongolia's
 > Taxes vertical opens, bringing Mongolia to 4 of 6 verticals**, via
@@ -16225,7 +16267,7 @@ now closed.
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KH** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **KH** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
@@ -18793,23 +18835,36 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
 
+- **GOV-3417 ("GovSchema Standard Research") — Cambodia's Taxes vertical
+  authored via `kh/gdt/monthly-vat-return` (see the Executive Summary and
+  Taxes vertical section above); the GOV-3410 "Form P101, 294 fields"
+  candidate below was found mislabeled and superseded, not used.** Three
+  further standalone `tax.gov.kh` Taxes candidates were sized and screened
+  this cycle but not authored, all ready-to-scope backlog: **Withholding
+  Tax (Form WT 03)** — 327 AcroForm widgets across 2 pages; **Tax on
+  Salary (Form TOS 01)** — 292 widgets across 2 pages; **Patent Tax (Form
+  PR 008)** — 80 widgets across 3 pages. A fourth, the combined **"Monthly
+  Tax Return in New Form without Branch"** (1,802 widgets across 16 pages,
+  bundling VAT/profit-tax-prepayment/withholding/salary tax together) was
+  also found but is likely too large to responsibly scope in a single
+  cycle even as a future candidate — flag before attempting. Separately,
+  Egypt's Tax Authority (`eta.gov.eg`) publishes unauthenticated employer/
+  withholding-agent forms but not (found in the GOV-3410 cycle) a
+  standalone individual return ("Form 25") — worth a fresh, more targeted
+  search before writing Egypt off as a Taxes candidate.
+
 - **GOV-3410 ("GovSchema Standard Research") — Cambodia opens as the
   registry's 69th jurisdiction via Business Formation (see the Executive
-  Summary and Business Formation vertical section above); a second GDT
-  form (Taxes) and a re-openable Egypt Taxes lead both left as backlog.**
-  Cambodia's General Department of Taxation (`tax.gov.kh`) publishes its
-  entire form library unauthenticated; alongside the Form 101-P2 authored
-  this cycle, **Form P101 v4 ("Monthly Tax Declaration")** is a genuine
-  294-field AcroForm at the same `gdtstream` channel — not authored this
-  cycle since it is a business's periodic withholding/VAT/profit-tax-
-  prepayment filing rather than an individual return, and deserved its own
-  focused session rather than a second large form under this cycle's time
-  budget. Ready-to-author for a future Taxes-vertical cycle. Separately,
-  Egypt's Tax Authority (`eta.gov.eg`) publishes unauthenticated employer/
-  withholding-agent forms but not (found this cycle) a standalone
-  individual return ("Form 25") — worth a fresh, more targeted search
-  before writing Egypt off as a Taxes candidate; see the Known Gaps
-  section above for the full disclosed reasoning on both.
+  Summary and Business Formation vertical section above).** Cambodia's
+  General Department of Taxation (`tax.gov.kh`) publishes its entire form
+  library unauthenticated. **Correction (GOV-3417):** this cycle's own
+  flagged Taxes candidate, "Form P101 v4 (\"Monthly Tax Declaration\"),
+  294-field AcroForm," was re-fetched the following cycle and found to
+  actually be a single-page, 23-field taxpayer-contact-update form (titled
+  "Application Form for the Updating Information for E-Tax System" per its
+  own printed heading) — a scouting note taken at face value rather than
+  re-verified. See the GOV-3417 entry above for the genuine Taxes
+  candidate that replaced it.
 
 - **GOV-3396 ("GovSchema Standard Research") — Mongolia Taxes: authored
   (see the Executive Summary and Taxes vertical section above), opening

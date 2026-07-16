@@ -1,0 +1,320 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "kh/gdt/monthly-vat-return",
+  "version": "1.0.0",
+  "title": "Cambodia Return for Value Added Tax (Form VAT 200)",
+  "description": "File a monthly Value Added Tax return with Cambodia's General Department of Taxation (GDT), per Form VAT 200 (\"Return for Value Added Tax\"). This is Cambodia's standard recurring monthly tax-filing obligation for any VAT-registered enterprise — every registered business files this return each month, whether or not it had reportable purchases or sales, and it is due by the 20th day of the following month. This schema models the form's page-1 cover sheet: taxpayer identification (TIN, enterprise name, business activity, registered address, contact details), the period covered, an explicit NIL-return declaration, and the form's 18 numbered computation boxes covering input tax (credit brought forward, non-taxable/non-creditable purchases, standard-rated local purchases and imports split into value-exclusive-of-VAT and VAT-amount columns, and the total), output tax (non-taxable sales, zero-rated exports, standard-rated sales split the same way), and the resulting amount payable, refund requested, or credit carried forward. Out of scope, and disclosed rather than silently omitted: page 2's own \"Summary of Creditable Purchases and Taxable Sales for the Month\" annex, a set of three repeating line-item schedules (goods/services imported or purchased on which a credit is claimed; goods/services exported at the zero rate; goods/services locally supplied at the standard rate), each entered as supporting detail behind the page-1 totals rather than resubmitted as independent declarations — a future companion schema/version could model these as repeating line-item arrays. The form's own \"For Tax Official\" filing-date stamp block (bottom right of page 1) is staff-only annotation, not applicant input, and is excluded from fields[] for the same reason equivalent staff-only blocks are excluded elsewhere in this registry. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Cambodia or the General Department of Taxation.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "General Department of Taxation of Cambodia",
+    "abbreviation": "GDT",
+    "url": "https://www.tax.gov.kh/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "km"
+  },
+  "source": {
+    "url": "https://www.tax.gov.kh/u6rhf7ogbi6/gdtstream/dbb8552d-73b8-4eb2-84e3-8846205ccae0",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "Form VAT 200 — Return for Value Added Tax"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GovSchema Standard Research cycle GOV-3417, continuing Cambodia's build-out from GOV-3410 (which opened Cambodia's 69th-jurisdiction Business Formation vertical and left a 'Form P101, Monthly Tax Declaration, 294 fields' candidate flagged as ready-to-author backlog). That flagged candidate turned out to be wrong on inspection: the linked P101 PDF (https://www.tax.gov.kh/u6rhf7ogbi6/gdtstream/6d75d313-fd60-4268-a53a-09b9b5172f0e, fetched fresh this cycle, HTTP 200, genuine %PDF-1.6, 3,548,987 bytes) is a single-page, 23-widget 'Application Form for the Updating Information for E-Tax System' (a taxpayer-contact-detail update form), not a monthly tax declaration, and its widget count was nowhere near 294 — a prior cycle's own scouting note was simply wrong, consistent with this catalog's own precedent of re-verifying rather than trusting an earlier cycle's transcribed figures (e.g. the GOV-2195 AFIP 460/F correction). Re-screened tax.gov.kh's full public document-form library (`https://www.tax.gov.kh/en/document-form`, paginated across 5 pages) instead of authoring the wrong candidate, and found a 'MONTHLY TAX RETURN FORM' category containing several genuine standalone return forms plus one oversized combined return ('Monthly Tax Return in New Form without Branch', 17,216,797 bytes, 1,802 AcroForm widgets across 16 pages — a combined VAT/profit-tax-prepayment/withholding-tax/salary-tax return, far too large to responsibly scope in one cycle and left undisclosed as a candidate rather than authored). Picked the standalone 'Return for Value Added- Form VAT 200' instead: a genuine, unauthenticated, directly downloadable AcroForm PDF, sha256:48abd6213483afb06f0caf091814de0a5a7d846d351f1a57879641a8ad0dfb4b, HTTP 200, no login/CAPTCHA/WAF gate, linked from the same document-form library (page 3 of the paginated listing) under the entry 'Return for Value Added- Form VAT 200'. One extraction gotcha worth recording: the document-form listing page renders each document's title inside a `<script type=\"application/ld+json\">` block immediately preceding its own table row, but naive regex-based 'search backward from the link text for the nearest href' picks up the PRECEDING row's download link instead of the current row's — an off-by-one that this cycle first hit and caught (it silently produced 'Application Form for Cancel Tax Payment Receipt- Form CTR 001' when searching for 'Return for Value Added- Form VAT 200'). Fixed by searching forward from each title's position to that same row's own `<a href>` instead. Extracted with pdfjs-dist@3 (installed standalone in a scratch directory for extraction only, not added as a repository dependency): getAnnotations() (50 Widget annotations on page 1) merged by position with getTextContent()'s bilingual Khmer/English text layer, since the source PDF's internal field names are non-self-describing and in places reused/mismatched by position across the form (e.g. the widget named 'Exports_01' sits positionally at box 15, the standard-rated-sales VAT-amount column, not beside the Exports row it is named after — corroborated against the form's own printed box numbers 01-18 rather than trusted at face value). All field labels use the form's own printed English column (the form is genuinely bilingual, not translated by this schema). Page 2 (239 further widgets, confirmed via getAnnotations()) is a repeating three-schedule invoice-level annex ('SUMMARY OF CREDITABLE PURCHASES AND TAXABLE SALES FOR THE MONTH') supporting the page-1 totals — disclosed as an out-of-scope companion schedule per the description field above, not modelled as fields[] in this version. The form's own 'For Tax Official' filing-date-stamp block (right column, bottom of page 1 — 'Filed in ... DD/MM/YYYY') is staff-only and excluded from fields[]; the left-column declarant signature/seal line has no fillable widget (a printed line for a physical signature and company seal, consistent with wet-signature blocks excluded elsewhere in this registry). Boxes without an explicit optionality marker are modelled required, per this registry's established convention; the isNilReturn field and box 05/16/17/18 (previous-period credit, amount payable, refund, and credit-carried-forward) are the only fields modelled genuinely optional/conditional, since the form's own text explicitly describes each of them as situational (NIL filing; carried-forward credit only if one exists; payable/refund/credit-forward being three mutually-exclusive alternative outcomes of the box 11 vs box 15 comparison). No submission was made and no live tax.gov.kh account was created or required to author this schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "periodFromDate",
+      "label": "Period covered by this return — From (DD/MM/YYYY)",
+      "type": "date",
+      "required": true,
+      "description": "First day of the calendar month covered by this VAT return.",
+      "sourceRef": "Box 01, widgets 01_DD/01_MM/01_YYYY"
+    },
+    {
+      "name": "periodToDate",
+      "label": "Period covered by this return — To (DD/MM/YYYY)",
+      "type": "date",
+      "required": true,
+      "description": "Last day of the calendar month covered by this VAT return.",
+      "sourceRef": "Box 02, widgets 02_DD/02_MM/02_YYYY"
+    },
+    {
+      "name": "taxIdentificationNumber",
+      "label": "TIN",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The enterprise's 9-digit Tax Identification Number.",
+      "sourceRef": "Box 03, widgets TIN_01-TIN_09",
+      "validation": { "pattern": "^[0-9]{9}$" }
+    },
+    {
+      "name": "enterpriseName",
+      "label": "Name of Enterprise",
+      "type": "string",
+      "required": true,
+      "description": "The registered name of the enterprise filing this return.",
+      "sourceRef": "widget \"Name of Enterprise_01\"",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "businessActivities",
+      "label": "Business Activities",
+      "type": "string",
+      "required": true,
+      "description": "Description of the enterprise's business activity.",
+      "sourceRef": "widget \"Business Activities_01\"",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "addressHouseNumber",
+      "label": "Address: No",
+      "type": "string",
+      "required": true,
+      "description": "House/building number of the enterprise's registered address.",
+      "sourceRef": "widget \"House No_01\"",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "addressStreet",
+      "label": "Street",
+      "type": "string",
+      "required": true,
+      "description": "Street of the enterprise's registered address.",
+      "sourceRef": "widget \"Street_01\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "addressGroup",
+      "label": "Group",
+      "type": "string",
+      "required": true,
+      "description": "Group (Krom) of the enterprise's registered address.",
+      "sourceRef": "widget \"group\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressVillage",
+      "label": "Village",
+      "type": "string",
+      "required": true,
+      "description": "Village (Phum) of the enterprise's registered address.",
+      "sourceRef": "widget \"village\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "addressSangkat",
+      "label": "Sangkat",
+      "type": "string",
+      "required": true,
+      "description": "Commune (Sangkat) of the enterprise's registered address.",
+      "sourceRef": "widget \"Sangkat_01\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "addressDistrict",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "description": "District (Khan/Srok) of the enterprise's registered address.",
+      "sourceRef": "widget \"Khann_01\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "addressMunicipality",
+      "label": "Municipality",
+      "type": "string",
+      "required": true,
+      "description": "Municipality/Capital (Khett/Reach Thani) of the enterprise's registered address.",
+      "sourceRef": "widget \"Municipality_01\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "faxOrPhone",
+      "label": "Fax/Phone",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Fax or telephone number for the enterprise.",
+      "sourceRef": "widget \"Fax/Phone_01\"",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Email address for the enterprise.",
+      "sourceRef": "widget \"Email_01\"",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 200 }
+    },
+    {
+      "name": "isNilReturn",
+      "label": "NIL",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether this is a NIL return (the enterprise made no purchases and no sales during the period). If true, boxes 06-15 below do not apply. Per the form's own instructions: if there is no entry for a box, fill \"NIL\" — do not leave any box blank without doing so.",
+      "sourceRef": "Box 04, widget \"NIL\""
+    },
+    {
+      "name": "inputTaxCreditBroughtForward",
+      "label": "Input tax credit from previous month",
+      "type": "number",
+      "required": false,
+      "description": "VAT credit amount carried forward from the previous month's return, if any.",
+      "sourceRef": "Box 05, widget \"tax credit\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "nonCreditablePurchasesValue",
+      "label": "Non-taxable or non-creditable purchases",
+      "type": "number",
+      "required": false,
+      "description": "Value of purchases that are non-taxable or not eligible for input tax credit.",
+      "sourceRef": "Box 06, widget \"Non-taxable\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "standardRatedLocalPurchasesValue",
+      "label": "10% Standard rated local purchases — Value exclusive of VAT",
+      "type": "number",
+      "required": false,
+      "description": "Value, exclusive of VAT, of standard-rated (10%) local purchases of goods and services.",
+      "sourceRef": "Box 07, widget \"Stdrated\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "standardRatedLocalPurchasesVat",
+      "label": "10% Standard rated local purchases — Total amount of input tax",
+      "type": "number",
+      "required": false,
+      "description": "VAT amount on standard-rated (10%) local purchases of goods and services.",
+      "sourceRef": "Box 08, widget \"Stdrated_01\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "standardRatedImportsValue",
+      "label": "10% Standard rated imports — Value exclusive of VAT",
+      "type": "number",
+      "required": false,
+      "description": "Value, exclusive of VAT, of standard-rated (10%) imports of goods and services.",
+      "sourceRef": "Box 09, widget \"Stdrateimp\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "standardRatedImportsVat",
+      "label": "10% Standard rated imports — Total amount of input tax",
+      "type": "number",
+      "required": false,
+      "description": "VAT amount on standard-rated (10%) imports of goods and services.",
+      "sourceRef": "Box 10, widget \"Stdrateimp_02\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "totalInputTax",
+      "label": "Total amount of input tax (05+08+10)",
+      "type": "number",
+      "required": false,
+      "description": "Sum of boxes 05, 08, and 10 — the total input tax available for the period.",
+      "sourceRef": "Box 11, widget \"Total amount\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "nonTaxableSalesValue",
+      "label": "Non-taxable sales",
+      "type": "number",
+      "required": false,
+      "description": "Value of sales that are non-taxable.",
+      "sourceRef": "Box 12, widget \"Non-taxable sales\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "exportSalesValue",
+      "label": "0% Exports",
+      "type": "number",
+      "required": false,
+      "description": "Value of goods and services exported, taxed at the zero rate.",
+      "sourceRef": "Box 13, widget \"Exports\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "standardRatedSalesValue",
+      "label": "10% Standard rated sales — Value exclusive of VAT",
+      "type": "number",
+      "required": false,
+      "description": "Value, exclusive of VAT, of standard-rated (10%) sales of goods and services or exports.",
+      "sourceRef": "Box 14, widget \"Stdratedsales\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "standardRatedSalesVat",
+      "label": "10% Standard rated sales — VAT amount",
+      "type": "number",
+      "required": false,
+      "description": "VAT amount on standard-rated (10%) sales of goods and services or exports. Note: this widget is positioned at Box 15, though the source PDF's own internal field name ('Exports_01') is copied from the adjacent Box 13 row — a source-side naming artifact, not a distinct exports-VAT box (Box 13 is a 0% rate and cannot itself carry a VAT amount). This schema names and positions the field by its true location, Box 15.",
+      "sourceRef": "Box 15, widget \"Exports_01\"",
+      "validation": { "minimum": 0 },
+      "requiredWhen": { "field": "isNilReturn", "equals": false }
+    },
+    {
+      "name": "amountPayable",
+      "label": "If box 15 exceeds box 11, pay the difference",
+      "type": "number",
+      "required": false,
+      "description": "Amount payable to GDT, when output VAT (box 15) exceeds total input tax (box 11).",
+      "sourceRef": "Box 16, widget \"Stdratedsales_01\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "refundRequested",
+      "label": "If box 11 exceeds box 15, claim the difference for: Refund",
+      "type": "number",
+      "required": false,
+      "description": "Amount claimed as a refund, when total input tax (box 11) exceeds output VAT (box 15). Mutually exclusive in practice with creditCarriedForward — the form lets the filer choose one alternative treatment for the same excess.",
+      "sourceRef": "Box 17, widget \"Refund\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "creditCarriedForward",
+      "label": "If box 11 exceeds box 15, claim the difference for: Credit carried forward",
+      "type": "number",
+      "required": false,
+      "description": "Amount claimed as credit carried forward to the following month, when total input tax (box 11) exceeds output VAT (box 15). Mutually exclusive in practice with refundRequested.",
+      "sourceRef": "Box 18, widget \"Credit carried forward\"",
+      "validation": { "minimum": 0 }
+    }
+  ]
+}
