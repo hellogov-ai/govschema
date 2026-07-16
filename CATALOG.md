@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **498 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **499 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3281, "GovSchema Standard Research"): Tanzania's
+> Passport vertical opens, bringing Tanzania to full 6 of 6 verticals** (the
+> registry's 32nd jurisdiction at full coverage, joining AU, BD, BG, CA, CO,
+> DE, DK, DO, EE, FI, FR, GB, GH, IE, IL, IN, IS, IT, KR, NG, NZ, PH, PT, RO,
+> SE, SG, SI, TH, US, VN, ZA), via `tz/immigration/passport-application` —
+> the Immigration Department's (Idara ya Uhamiaji) live "Ombi la Pasipoti"
+> multi-step wizard, served unauthenticated at
+> `eservices.immigration.go.tz`. This closes the sole vertical the prior
+> GOV-3216 cycle had left explicitly disclosed as unscreened for Tanzania
+> (see that cycle's own Executive Summary update below, "leaving only
+> Passport open for Tanzania"). No downloadable PDF/AcroForm exists for this
+> process — the Immigration Department's own public forms library lists no
+> ordinary passport application, and two adjacent AcroForm PDFs on the
+> Washington, D.C. embassy site are post-issuance amendment forms only, not
+> the application itself (disclosed as a narrower backlog candidate for a
+> future companion schema). The live wizard was walked directly with a real
+> Playwright/Chromium session (a static fetch cannot see any step beyond the
+> first, since each step is server-rendered only after the previous step's
+> own successful POST), reaching six full data-collection steps —
+> application setup, personal information (including a photo upload and a
+> birth-country-gated administrative-address cascade independently confirmed
+> live via real server validation error messages), contact/residential
+> address, parents' information, travel purpose, and two emergency
+> contacts — plus the Attachments step's three-document checklist, before
+> stopping short of Declaration/Payment/Complete (disclosed out of scope
+> rather than silently omitted; no real payment was made and no application
+> was actually submitted for processing). Models 53 `fields[]` plus 3
+> `documents[]`. 2 valid conformance fixtures (0 errors each) plus 6
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/tz/immigration/passport-application/1.0.0/`. Both
+> validators pass at 499/499. See the Passport vertical section below and
+> the document's own VERIFICATION.md for the full sourcing record, including
+> the live-server-error evidence for every `requiredWhen` condition and the
+> disclosed scope boundaries.
 
 > **Update (2026-07-16, GOV-3274, "GovSchema Standard Research"): a new
 > companion schema opens for Brazil's National ID & Civic Documents
@@ -10807,7 +10842,18 @@
 
 ## By Vertical
 
-### Passport (46/62 jurisdictions — 74%)
+### Passport (47/62 jurisdictions — 76%)
+
+> **Correction (GOV-3281):** numerator updated from 46 to 47 following
+> Tanzania's Passport vertical opening via
+> `tz/immigration/passport-application` — Tanzania was already counted in
+> the 62-jurisdiction denominator (added via an earlier Business Formation
+> schema), with Passport its sole remaining open vertical; this schema moves
+> that column to ✓, which is what moves the numerator — it does not change
+> the denominator, and it brings Tanzania to full 6/6 coverage. See the
+> Executive Summary's GOV-3281 update above and the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scope
+> decision.
 
 > **Correction (GOV-3258):** numerator updated from 45 to 46 following
 > Slovakia's Passport vertical opening via `sk/mzv/ziadost-o-cestovny-pas` —
@@ -15226,7 +15272,7 @@ now closed.
 | **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
