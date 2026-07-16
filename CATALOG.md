@@ -4,7 +4,28 @@
 
 ## Executive Summary
 
-**68 jurisdictions** | **516 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**68 jurisdictions** | **517 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
+> DMV vertical opens (5/6)**, via `mn/atunt/vehicle-plate-number-reservation` —
+> the Auto Transport National Center's (Автотээврийн үндэсний төв, ATÜNT) live
+> online plate-ordering system at `burtgel.transdep.mn`. The three immediately
+> preceding cycles (GOV-3382/GOV-3389/GOV-3396) had each re-screened this exact
+> candidate and left it un-authored as "live but more complex than previously
+> summarized, needs a live/Playwright walk" — this cycle did that walk with a
+> real Playwright/Chromium session (a plain static fetch cannot see this SPA's
+> field structure) and found the reservation modal itself is a small, bounded,
+> 8-field form: a province + pickup-weekday + chosen-plate-number selection
+> (from a live availability grid, modelled as fields since an agent must
+> choose them), a registrant-category radio (person/company/foreign
+> citizen) gating one of three mutually-exclusive registration-number field
+> groups, and a vehicle frame/chassis-number suffix common to all three. A
+> Cloudflare Turnstile CAPTCHA gates the modal's own submit button from the
+> moment it opens (a correction to a prior cycle's "gated only at final
+> submit" characterization) and is disclosed, not modelled or attempted. See
+> the DMV vertical section below and the document's own VERIFICATION.md-
+> equivalent `verification.notes` for the full sourcing record. Mongolia now
+> stands at 5 of 6 verticals; National ID remains a confirmed dead end.
 
 > **Update (2026-07-16, GOV-3396, "GovSchema Standard Research"): Mongolia's
 > Taxes vertical opens (4/6)**, via
@@ -12052,7 +12073,16 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (55/68 jurisdictions — 81%)
+### DMV — Vehicle Registration, Licensing, Permits (56/68 jurisdictions — 82%)
+
+> **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
+> DMV vertical opens**, via `mn/atunt/vehicle-plate-number-reservation` — the
+> Auto Transport National Center's live online vehicle plate-number-ordering
+> system (`burtgel.transdep.mn`), mapped via a real Playwright/Chromium
+> session after three prior cycles had each re-screened it and left it
+> un-authored as more complex than first assumed. See the Executive
+> Summary's GOV-3403 update above for the full sourcing record. Numerator
+> updated from 55 to 56.
 
 > **Update (2026-07-16, GOV-3248, scouted from GOV-3246, "GovSchema
 > Standard Research"): Slovenia's DMV vertical opens**, via
@@ -16146,7 +16176,7 @@ now closed.
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **MN** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -17972,6 +18002,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     sourcing record. This is a genuinely new channel, not a re-test of the
     domestic e-mongolia.mn portal's own dead-end finding below, which
     stands unchanged.
+34. **MN Taxes opens (4/6), authored (GOV-3396, 2026-07-16).** The Mongolian
+    Tax Administration's own filing guide for the simplified-regime
+    individual income tax report (Form ТТ-06-ХГ) was authored as
+    `mn/mta/simplified-individual-income-tax-report`; see the Executive
+    Summary update above and the document's own VERIFICATION.md for the
+    full sourcing record.
+35. **MN DMV opens (5/6), authored (GOV-3403, 2026-07-16).** The Auto
+    Transport National Center's live online vehicle plate-number-ordering
+    system (`burtgel.transdep.mn`) was mapped via a real Playwright/Chromium
+    session — after three prior cycles' re-screens had each left it
+    un-authored as "more complex than previously summarized" — and authored
+    as `mn/atunt/vehicle-plate-number-reservation`; see the Executive
+    Summary update above and the document's own `verification.notes` for
+    the full sourcing record. Mongolia now stands at 5 of 6 verticals;
+    National ID remains a confirmed dead end.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -18649,7 +18694,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   form the prior summary implied — a genuine, open backlog candidate for a
   future cycle willing to do a live/Playwright walk, not a dead end.
   Mongolia now stands at 4 of 6 verticals (Visa, Business Formation,
-  Passport, Taxes); National ID remains a confirmed dead end.
+  Passport, Taxes); National ID remains a confirmed dead end. **Resolved
+  (GOV-3403, 2026-07-16): authored**, via
+  `mn/atunt/vehicle-plate-number-reservation` — the live/Playwright walk
+  this entry called for found the reservation modal itself is a small,
+  bounded 8-field form once the per-character `<select>` widgets are
+  modelled as single pattern-constrained fields (the same convention this
+  registry already used for taxpayerNumber-style boxed digits elsewhere).
+  See the Executive Summary and DMV vertical section above. Mongolia now
+  stands at 5 of 6 verticals; National ID remains a confirmed dead end.
 
 - **GOV-3389 ("GovSchema Standard Research") — Mongolia Passport: authored
   (see the Executive Summary above), opening Mongolia's Passport vertical
