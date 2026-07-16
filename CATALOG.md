@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **497 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **498 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3274, "GovSchema Standard Research"): a new
+> companion schema opens for Brazil's National ID & Civic Documents
+> vertical (Brazil already had one schema in this vertical, so this does
+> not change Brazil's own vertical-coverage count)**, via
+> `br/tse/requerimento-alistamento-eleitoral` — the Tribunal Superior
+> Eleitoral's (TSE) "Autoatendimento Eleitoral - Título Net" first-time
+> voter-registration service. This closes the "remaining voter
+> registration" candidate the prior GOV-3267 cycle had scouted and left as
+> disclosed, ready-to-author backlog (see CATALOG.md's own "Genuinely open,
+> well-sourced candidates" section). Título Net is a live Angular
+> single-page application with no downloadable PDF/AcroForm equivalent;
+> every field was confirmed by independently fetching and decompiling the
+> real production bundle served from `tn3.tse.jus.br` (a genuine
+> `formBuilder.group({...})` reactive-form definition with real Angular
+> validators, not just informal internal field-name guesses), cross-checked
+> against TSE's own official step-by-step guide and FAQ prose. Scoped to
+> domestic (Brazil-resident) first-time applicants only — the separate
+> "Eleitorado no Exterior" pathway for citizens abroad and the
+> título-transferência/revisão flows for existing registrations are
+> disclosed as out of scope. **Important, confirmed live 2026-07-16**: TSE's
+> own site currently displays "O atendimento remoto via Título Net está
+> bloqueado entre os dias 07/05/2026 e 02/11/2026, conforme prevê a norma
+> eleitoral vigente" — remote Título Net service is nationwide-suspended
+> under Brazil's pre-election blackout law, confirming and updating the
+> prior GOV-1483 cycle's own finding of the same blackout (that cycle used
+> a live Playwright walk only; this cycle additionally decompiled the
+> underlying Angular bundle, which is still served normally and remains an
+> accurate structural description of the process even while the runtime
+> submission gate is closed until Q4 2026). See the National ID & Civic
+> Documents vertical section below and the document's own VERIFICATION.md
+> for the full sourcing record and every disclosed scoping decision.
 
 > **Update (2026-07-16, GOV-3267, "GovSchema Standard Research"): Sri
 > Lanka's Taxes vertical opens (5 of 6 for Sri Lanka)**, via
@@ -15109,7 +15141,17 @@ a dead end — the strongest remaining National ID & Civic Documents candidate
 for Brazil once it reopens 2026-11-03; see
 `kr/nts/corporation-establishment-and-business-registration`'s own
 VERIFICATION.md ("Candidates rejected or deferred this cycle") for the full
-citation trail. Singapore's lack of a
+citation trail. **Update (GOV-3274, 2026-07-16): authored anyway, as a
+structural-reference schema, with the blackout prominently disclosed.**
+Rather than waiting for the blackout to lift, this cycle independently
+decompiled Título Net's own live production Angular bundle
+(`tn3.tse.jus.br/main.js`, still served normally even while the runtime
+submission gate is closed) to model every field from real reactive-form
+definitions and validators, and re-confirmed live via Playwright that the
+same blackout banner is still displayed today ("bloqueado entre os dias
+07/05/2026 e 02/11/2026"). See `br/tse/requerimento-alistamento-eleitoral`'s
+own VERIFICATION.md for the full method and every disclosed scoping
+decision. Singapore's lack of a
 voter-registration schema is a **confirmed non-gap**
 (GOV-1075): Singapore voting is compulsory and NRIC-linked, with no
 citizen-initiated online registration step to model. **South Korea** has two
@@ -15133,7 +15175,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BR** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 3 | ✓ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
@@ -17603,7 +17645,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   but a strong, well-documented live-wizard source in the same tier as this
   registry's own Indonesia e-visa precedent. Left un-authored this cycle in
   favor of the stronger, more concretely-sourced Sri Lanka Taxes candidate;
-  disclosed as a ready-to-author candidate for a future cycle. Spain's CERA
+  disclosed as a ready-to-author candidate for a future cycle. **Update
+  (GOV-3274, 2026-07-16): authored**, as
+  `br/tse/requerimento-alistamento-eleitoral` — see the Executive Summary
+  update above. That cycle also independently decompiled the live production
+  Angular bundle (not just the descriptive how-to prose cited here) and
+  confirmed live that Título Net's remote service, including alistamento,
+  is currently nationwide-suspended (2026-05-07 to 2026-11-02) under
+  Brazil's pre-election blackout law — the same blackout the earlier
+  GOV-1483 cycle had found, still in effect on this later re-check; see the
+  document's own VERIFICATION.md. Spain's CERA
   overseas "voto rogado" ballot-request PDF and Poland's out-of-constituency
   voter-register application were also found but are weaker (the former is
   arguably a ballot request rather than registration; the latter's only
