@@ -89,8 +89,12 @@ pathway. No registry duplication risk exists.
   `curl -sL`, not trusted from the issue's own citation as-is.
 - **HTTP status:** `200`. **Content-Type:** `application/pdf`. **Size:**
   `185,843` bytes. **sha256:**
-  `6a8b2c1f5e9d7a3b4c2e1f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b`
-  (independently computed this cycle with `sha256sum` against a fresh download).
+  `d8ac15a7429f77fd7a564435c1dff7daff36dcd28c54887975505a5cd1387d93`
+  — re-derived from scratch during this PR's own re-verification pass (the
+  hash string in the crashed run's original draft was a malformed 62-character
+  placeholder, not real `sha256sum` output; every other claim in this section
+  — HTTP status, content-type, byte size, page count, bilingual content — was
+  independently re-confirmed against a fresh download and is accurate).
 - **File type:** a genuine PDF with embedded text content (`%PDF` header).
 - **Extraction method:** `pdfjs-dist@3.11.174` (`legacy/build/pdf.js`), run from
   scratch this cycle in a clean scratch directory against the freshly
@@ -117,7 +121,7 @@ signature) are accounted for and sourced from the form text:
 | 7. Državljanstvo ob rojstvu / Nationality at birth | `nationalityAtBirth` | Optional |
 | 8. Spol / Sex | `sex` | Required enum: moški/ženski |
 | 9. Zakonski stan / Marital status | `maritalStatus` | Required enum: samski/poročen/živi ločeno/razvezan/vdovec/vdova |
-| 10. Guardian data (minors) | `guardianInformation` | Optional object with surname/givenName/address/nationality |
+| 10. Guardian data (minors) | `guardianInformation` | Optional opaque object (surname/givenName/address/nationality carried in `description`, not as a nested schema — GovSchema v0.3's `field` definition has no `properties` keyword) |
 | 11. Vrsta potne listine / Travel document type | `travelDocumentType` | Required |
 | 11. Številka potne listine / Number | `travelDocumentNumber` | Required |
 | 11. Organ, ki jo je izdal / Issued by | `travelDocumentIssuingAuthority` | Required |
@@ -134,25 +138,39 @@ signature) are accounted for and sourced from the form text:
 | 15. Telefonska številka / Employer phone | `employerPhoneNumber` | Optional |
 | 17. Predvideni datum prihoda / Arrival date | `intentedDateOfArrival` | Required date |
 | 17. Predvideni datum odhoda / Departure date | `intentedDateOfDeparture` | Required date |
-| 16. Razlog za vizum / Visa purpose | `purposeOfVisa` | Required object with 10 boolean properties (a-j) |
+| 16. Razlog za vizum / Visa purpose | `purposeOfVisa` | Required `enum` (single-select among the form's 10 lettered purpose checkboxes a-j) |
 | 16. Opis razlogov / Purpose description | `purposeDescription` | Optional |
 | 18. Družinski član / Family member | `familyMemberName` | Optional (for family reunification) |
 | 19. Naziv podjetja/organizacije / Company | `companyOrganisationName` | Optional |
 | 19. Telefon in faks / Company phone/fax | `companyPhoneAndFax` | Optional |
-| 19. Kontaktna oseba / Contact person | `contactPersonDetails` | Optional object (surname/givenName/address/phone/fax/email) |
+| 19. Kontaktna oseba / Contact person | `contactPersonDetails` | Optional opaque object (surname/givenName/address/phone/fax/email carried in `description`) |
 | 20. Kraj in datum / Place and date | `placeAndDateOfApplication` | Required |
 | 21. Podpis / Signature | `applicantSignature` | Required |
 
 ## Judgment calls
 
-1. **Purpose-of-visa modelling as a required object with 10 boolean properties.**
-   The form displays 10 checkboxes (labeled a–j) for purposes under Article 20
-   of the Aliens Act. The schema models this as a single required object,
-   `purposeOfVisa`, with 10 boolean properties. In a real-world form implementation,
-   validation would ensure at least one (or exactly one) of the properties is true.
-   This schema does not prescribe a mutual-exclusivity constraint (though one is
-   likely in practice) to remain flexible for combined-purpose applications or
-   future variations. Fixtures demonstrate single-purpose selection.
+1. **Purpose-of-visa modelling as a required single-select `enum`, not an object
+   with 10 boolean properties.** The form displays 10 checkboxes (labeled a–j)
+   for purposes under Article 20 of the Aliens Act, and its own instructions
+   ("Exactly one of the 10 purpose categories must be selected") describe a
+   single-select choice, not 10 independent flags. An earlier draft of this
+   schema (produced by a run that crashed before completing validation) had
+   modelled `purposeOfVisa` as `type: "object"` with 10 boolean `properties` —
+   this fails GovSchema v0.3's meta-schema, since the `field` definition has no
+   `properties` keyword at all (object-type fields are carried opaquely; see
+   `ca/on/registration/business-incorporation`'s `incorporatorAddress` for the
+   established precedent). Caught during independent re-validation
+   (`node tools/validate-ajv.mjs`) before this PR was opened, and re-modelled as
+   `type: "enum"` with the 10 lettered categories as `validation.enum` values —
+   a more accurate reading of the source's own "exactly one" instruction than
+   the crashed draft's object shape, not merely a mechanical fix. The same
+   pass also corrected `dateOfBirth` and four other date fields (previously
+   `type: "string"` + a disallowed `format: "date"` combination — GovSchema
+   has no `format` keyword either; the correct spelling is `type: "date"`),
+   `sex`/`maritalStatus` (previously `type: "string"` + a disallowed top-level
+   `enum` array — moved into `type: "enum"` + `validation.enum`), and
+   `emailAddress` (previously `format: "email"`, replaced with a `validation.pattern`
+   regex, per this registry's established `format`-is-unsupported convention).
 
 2. **Conditional fields modelled as optional.**
    Fields like `residencePermitNumber`, `residencePermitValidUntil`,
@@ -194,10 +212,12 @@ Three conformance fixtures are included:
    company contact fields (not applicable). Demonstrates an alternative purpose
    selection.
 
-3. **`invalid-missing-required-purpose.json`:** An invalid fixture with all
-   purpose flags set to false (no purpose selected). This violates the
-   `purposeOfVisa` requirement and should fail validation. Demonstrates the
-   importance of selecting at least one visa purpose.
+3. **`invalid-missing-required-purpose.json`:** An invalid fixture that omits
+   the required `purposeOfVisa` field entirely (no purpose selected). Raises
+   exactly one error (`required` on `purposeOfVisa`), independently confirmed
+   via an ad hoc ajv check built from this schema's own `fields[]`
+   (`required`/`type`/`validation.enum`/`validation.pattern`) — see
+   "Verification summary" below.
 
 ## Verification summary
 
@@ -211,6 +231,12 @@ Three conformance fixtures are included:
 - **Office-only sections:** Decision section appropriately excluded.
 - **Maturity:** Structural-reference (draft status) — schema captures the form's
   published structure without execution testing or agent-ready validation.
+- **Meta-schema conformance:** `node tools/validate.mjs` and
+  `node tools/validate-ajv.mjs` both pass 494/494 documents (this schema
+  included) after the field-shape corrections above. All 3 conformance
+  fixtures independently re-checked against an ad hoc ajv schema built from
+  this document's own `fields[]`: both valid fixtures raise 0 errors, the
+  mutation-control fixture raises exactly 1 (`required` on `purposeOfVisa`).
 
 ## Commit metadata
 

@@ -75,8 +75,7 @@
     {
       "name": "dateOfBirth",
       "label": "Datum rojstva",
-      "type": "string",
-      "format": "date",
+      "type": "date",
       "required": true,
       "classification": "pii",
       "description": "The applicant's date of birth in day-month-year format.",
@@ -121,8 +120,10 @@
     {
       "name": "sex",
       "label": "Spol",
-      "type": "string",
-      "enum": ["moški", "ženski"],
+      "type": "enum",
+      "validation": {
+        "enum": ["moški", "ženski"]
+      },
       "required": true,
       "classification": "pii",
       "description": "The applicant's sex: moški (male) or ženski (female).",
@@ -131,8 +132,10 @@
     {
       "name": "maritalStatus",
       "label": "Zakonski stan",
-      "type": "string",
-      "enum": ["samski", "poročen", "živi ločeno", "razvezan", "vdovec", "vdova"],
+      "type": "enum",
+      "validation": {
+        "enum": ["samski", "poročen", "živi ločeno", "razvezan", "vdovec", "vdova"]
+      },
       "required": true,
       "classification": "pii",
       "description": "The applicant's marital status: samski (single), poročen (married), živi ločeno (separated), razvezan (divorced), vdovec (widower), or vdova (widow).",
@@ -143,26 +146,8 @@
       "label": "Podatki o starševski avtoriteti/zakonitega skrbnika",
       "type": "object",
       "required": false,
-      "description": "For minors, the surname, first name, address (if different from applicant's), and nationality of parental authority/legal guardian. Completed only if the applicant is a minor.",
-      "sourceRef": "Field 10 - V primeru mladoletnih oseb: priimek, ime, naslov in državljanstvo osebe s starševsko avtoriteto/zakonitega skrbnika / In the case of minors: ...",
-      "properties": {
-        "surname": {
-          "type": "string",
-          "description": "Guardian's surname."
-        },
-        "givenName": {
-          "type": "string",
-          "description": "Guardian's first name."
-        },
-        "address": {
-          "type": "string",
-          "description": "Guardian's address, if different from applicant's."
-        },
-        "nationality": {
-          "type": "string",
-          "description": "Guardian's nationality."
-        }
-      }
+      "description": "For minors, the parental authority/legal guardian's surname, first name, address (if different from applicant's), and nationality. Completed only if the applicant is a minor. Carried opaquely as a single object field (surname, givenName, address, nationality) rather than four separate top-level fields, consistent with this registry's convention for compact source subform blocks.",
+      "sourceRef": "Field 10 - V primeru mladoletnih oseb: priimek, ime, naslov in državljanstvo osebe s starševsko avtoriteto/zakonitega skrbnika / In the case of minors: ..."
     },
     {
       "name": "travelDocumentType",
@@ -193,8 +178,7 @@
     {
       "name": "travelDocumentDateOfIssue",
       "label": "Datum izdaje potne listine",
-      "type": "string",
-      "format": "date",
+      "type": "date",
       "required": true,
       "description": "The date the travel document was issued.",
       "sourceRef": "Field 11 - Datum izdaje / Date of issue"
@@ -202,8 +186,7 @@
     {
       "name": "travelDocumentValidUntil",
       "label": "Veljavna do",
-      "type": "string",
-      "format": "date",
+      "type": "date",
       "required": true,
       "description": "The date until which the travel document is valid.",
       "sourceRef": "Field 11 - Veljavna do / Valid until"
@@ -227,8 +210,7 @@
     {
       "name": "residencePermitValidUntil",
       "label": "Dovoljenje za prebivanje velja do",
-      "type": "string",
-      "format": "date",
+      "type": "date",
       "required": false,
       "description": "The date until which the residence permit is valid. Conditional on residencePermitNumber being provided.",
       "sourceRef": "Field 12 - Dovoljenje za prebivanje: velja do ... / Residence permit ... valid until"
@@ -246,7 +228,9 @@
       "name": "emailAddress",
       "label": "E-pošta",
       "type": "string",
-      "format": "email",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      },
       "required": true,
       "classification": "pii",
       "description": "The applicant's email address.",
@@ -288,8 +272,7 @@
     {
       "name": "intentedDateOfArrival",
       "label": "Predvideni datum prihoda",
-      "type": "string",
-      "format": "date",
+      "type": "date",
       "required": true,
       "description": "The applicant's intended date of arrival in Slovenia.",
       "sourceRef": "Field 17 - Predvideni datum prihoda / Intended date of arrival"
@@ -297,8 +280,7 @@
     {
       "name": "intentedDateOfDeparture",
       "label": "Predvideni datum odhoda",
-      "type": "string",
-      "format": "date",
+      "type": "date",
       "required": true,
       "description": "The applicant's intended date of departure from Slovenia.",
       "sourceRef": "Field 17 - Predvideni datum odhoda / Intended date of departure"
@@ -306,52 +288,24 @@
     {
       "name": "purposeOfVisa",
       "label": "Razlog za izdajo vizuma za dolgoročno bivanje",
-      "type": "object",
+      "type": "enum",
+      "validation": {
+        "enum": [
+          "familyReunification",
+          "diplomaticPosting",
+          "trainingCourses",
+          "economicInterest",
+          "highEducationScience",
+          "sportContract",
+          "journalistAccreditation",
+          "religiousCharityWork",
+          "humanitarianReasons",
+          "studentEmployment"
+        ]
+      },
       "required": true,
-      "description": "The primary purpose for which the long-term visa is being requested. Exactly one of the 10 purpose categories must be selected.",
-      "sourceRef": "Field 16 - Razlog za izdajo vizuma za dolgoročno bivanje / Purpose of the issue of a long-term visa",
-      "properties": {
-        "familyReunification": {
-          "type": "boolean",
-          "description": "Family reunification (a. združitev družine)"
-        },
-        "diplomaticPosting": {
-          "type": "boolean",
-          "description": "Work at diplomatic representation (b. nastop službe na DKP)"
-        },
-        "trainingCourses": {
-          "type": "boolean",
-          "description": "Education, training courses (c. izobraževanje, izpopolnjevanje)"
-        },
-        "economicInterest": {
-          "type": "boolean",
-          "description": "Economic interest of RS (d. gospodarski interes RS)"
-        },
-        "highEducationScience": {
-          "type": "boolean",
-          "description": "Interest of RS in field of high education and science (e. interes RS na področju visokega šolstva in znanosti)"
-        },
-        "sportContract": {
-          "type": "boolean",
-          "description": "Sport contract with legal entity in RS (f. šport-pogodba s pravno osebo v RS)"
-        },
-        "journalistAccreditation": {
-          "type": "boolean",
-          "description": "Reporter or journalist accreditation (g. akreditacija poročevalca oz. novinarja)"
-        },
-        "religiousCharityWork": {
-          "type": "boolean",
-          "description": "Religious or charity work (h. opravljanje duhovniškega ali karitativnega dela)"
-        },
-        "humanitarianReasons": {
-          "type": "boolean",
-          "description": "Humanitarian or serious professional or personal reasons (i. humanitarni in resni poklicni ali osebni razlogi)"
-        },
-        "studentEmployment": {
-          "type": "boolean",
-          "description": "Student employment on the basis of international agreement (j. študentsko delo – na podlagi mednarodnega sporazuma)"
-        }
-      }
+      "description": "The primary purpose for which the long-term visa is being requested. Exactly one of the 10 purpose categories printed on the form must be selected: familyReunification (a. združitev družine / family reunification), diplomaticPosting (b. nastop službe na DKP / work at diplomatic representation), trainingCourses (c. izobraževanje, izpopolnjevanje / education, training courses), economicInterest (d. gospodarski interes RS / economic interest of RS), highEducationScience (e. interes RS na področju visokega šolstva in znanosti / interest of RS in field of high education and science), sportContract (f. šport-pogodba s pravno osebo v RS / sport contract with legal entity in RS), journalistAccreditation (g. akreditacija poročevalca oz. novinarja / reporter or journalist accreditation), religiousCharityWork (h. opravljanje duhovniškega ali karitativnega dela / religious or charity work), humanitarianReasons (i. humanitarni in resni poklicni ali osebni razlogi / humanitarian or serious professional or personal reasons), studentEmployment (j. študentsko delo – na podlagi mednarodnega sporazuma / student employment on the basis of international agreement).",
+      "sourceRef": "Field 16 - Razlog za izdajo vizuma za dolgoročno bivanje / Purpose of the issue of a long-term visa"
     },
     {
       "name": "purposeDescription",
@@ -390,35 +344,8 @@
       "label": "Podatki o kontaktni osebi",
       "type": "object",
       "required": false,
-      "description": "The surname, first name, address, telephone, fax, and email address of a contact person in the company/organisation.",
-      "sourceRef": "Field 19 - Priimek, ime, naslov, telefon, faks ter e-pošta kontaktne osebe v podjetju/organizaciji / Surname, first name, address, telephone, telefax, and e-mail address of contact person in company/organisation",
-      "properties": {
-        "surname": {
-          "type": "string",
-          "description": "Contact person's surname."
-        },
-        "givenName": {
-          "type": "string",
-          "description": "Contact person's first name."
-        },
-        "address": {
-          "type": "string",
-          "description": "Contact person's address."
-        },
-        "telephoneNumber": {
-          "type": "string",
-          "description": "Contact person's telephone number."
-        },
-        "faxNumber": {
-          "type": "string",
-          "description": "Contact person's fax number."
-        },
-        "emailAddress": {
-          "type": "string",
-          "format": "email",
-          "description": "Contact person's email address."
-        }
-      }
+      "description": "The surname, first name, address, telephone, fax, and email address of a contact person in the company/organisation. Carried opaquely as a single object field (surname, givenName, address, telephoneNumber, faxNumber, emailAddress) rather than six separate top-level fields, consistent with this registry's convention for compact source subform blocks.",
+      "sourceRef": "Field 19 - Priimek, ime, naslov, telefon, faks ter e-pošta kontaktne osebe v podjetju/organizaciji / Surname, first name, address, telephone, telefax, and e-mail address of contact person in company/organisation"
     },
     {
       "name": "placeAndDateOfApplication",

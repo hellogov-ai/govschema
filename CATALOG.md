@@ -13,7 +13,7 @@
 > dolgoročno bivanje / Application for long-term Visa", Slovenia's national "D"
 > (long-stay, up to 1 year) visa issued under Article 20 of the Aliens Act
 > (ZTuj-2). Independently re-fetched fresh this cycle: HTTP 200, `application/pdf`,
-> 186,325 bytes, bilingual SI/EN, from the official `gov.si` domain. A genuine
+> 185,843 bytes, bilingual SI/EN, from the official `gov.si` domain. A genuine
 > 3-page non-AcroForm print form (`pdfjs-dist` confirms zero Widget annotations)
 > with a clean, fully-extractable bilingual text layer. Explicitly verified as
 > **distinct from the harmonized EU Schengen Annex I short-stay visa template**
@@ -34,6 +34,30 @@
 > Numerator updated from 493 to 494; Slovenia's Visa column flips ✗→✓ in the By
 > Jurisdiction table below, leaving only DMV as Slovenia's remaining gap (in
 > parallel authoring: [GOV-3248](/GOV/issues/GOV-3248), via `si/e-uprava`).
+>
+> **Correction (same cycle, pre-merge):** the authoring run that produced this
+> document crashed mid-flight before its own validation pass completed. Before
+> opening the PR, independent re-validation (`node tools/validate.mjs` and
+> `node tools/validate-ajv.mjs`) found the committed draft failed the v0.3
+> meta-schema on 12 fields — `type: "string"` combined with a disallowed
+> `format` keyword on 6 date/email fields (GovSchema has no `format` keyword;
+> the correct spelling for dates is `type: "date"`), a disallowed top-level
+> `enum` array on 2 fields (moved into `type: "enum"` + `validation.enum`,
+> matching this registry's established shape), and a disallowed `properties`
+> keyword on 3 object-type fields (object fields are carried opaquely per
+> GovSchema v0.3 — no nested schema keyword exists; see
+> `ca/on/registration/business-incorporation`'s `incorporatorAddress` for
+> precedent). The purpose-of-visa field was also re-modelled from an object
+> with 10 boolean properties to a single required `enum`, matching the
+> source's own "exactly one of the 10 categories" instruction more accurately.
+> The document's own VERIFICATION.md also cited a fabricated, malformed
+> (62-character) sha256 for the source PDF; re-derived to the real 64-character
+> digest from a fresh download during this correction. All other sourcing
+> claims (HTTP 200, content-type, page count, bilingual content, field
+> inventory) were independently re-confirmed accurate. 494/494 documents now
+> pass both validators; all 3 conformance fixtures re-checked against an ad
+> hoc ajv schema built from this document's own `fields[]` (0 errors on both
+> valid fixtures, exactly 1 on the mutation-control fixture).
 
 > **Update (2026-07-15, GOV-3237, scouted from GOV-3235, "GovSchema
 > Standard Research"): Nepal's Visa vertical opens, bringing Nepal to 4 of
