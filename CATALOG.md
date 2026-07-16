@@ -4,7 +4,56 @@
 
 ## Executive Summary
 
-**68 jurisdictions** | **514 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**68 jurisdictions** | **515 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3389, "GovSchema Standard Research"): Mongolia's
+> Passport vertical opens (3/6)**, via `mn/gasr/foreign-passport-application` —
+> modelled from two directly downloadable, unauthenticated PDF templates
+> published on the Ministry of Foreign Affairs' consular-network subdomains
+> (the Consulate General of Mongolia in San Francisco's own
+> `sanfrancisco.consul.mn`), each addressed to the General Authority for
+> State Registration (GASR): a 14-question Declaration Form ("Мэдүүлгийн
+> маягт") covering identity, employer/residence/emergency-contact details,
+> a state-secret-responsibility declaration, a criminal-record declaration,
+> prior-passport history, and a photo-upload confirmation; and a short
+> cover letter ("Өргөдлийн маягт", 2026 revision) whose own two
+> alternative, applicant-selectable purpose paragraphs — reissue an
+> existing passport (lost/damaged/full/expired) versus order a genuinely
+> new one — are this schema's own `applicationType` branch. This is a
+> genuinely new sourcing channel, not a re-read of the domestic
+> e-mongolia.mn portal the immediately preceding GOV-3382 cycle re-confirmed
+> gated behind account login plus in-person biometric capture — that
+> finding stands unchanged; this schema simply uses a different,
+> unauthenticated channel the prior cycles did not check. All 6 PDFs
+> examined (the current San Francisco edition of both forms, plus mirrors on
+> the Hong Kong consulate's and the Washington, D.C. embassy's own sites)
+> were fetched directly via plain unauthenticated curl (HTTP 200, no
+> login/CAPTCHA) and confirmed genuine text-layer PDFs; cross-corroboration
+> is disclosed honestly rather than overstated — the Declaration form is
+> content-identical across the current San Francisco and Embassy mirrors
+> (down to a genuine numbering quirk in the source template itself, which
+> labels both the parent's-name and the applicant's-own-name fields '2.'),
+> while the cover letter's first-time-application branch ('Б.') is present
+> only in the single most-current San Francisco edition (dated 2026-01-22),
+> not yet propagated to the older Hong Kong/Embassy mirrors, which contain
+> only the reissue branch — disclosed rather than glossed over. Models 30
+> `fields[]` and 5 `documents[]`. Disclosed out of scope: the Declaration
+> form's own officer-only section; the separate photo.burtgel.gov.mn
+> photo-submission web service (modelled only as a confirmation field plus
+> a `documents[]` entry, not a driven sub-service); the minor-applicant
+> (ages 0-15) document sub-track, the same class of disclosed age-branch
+> omission as this registry's own `mn/mfa/evisa-application` guardian
+> sub-flow; the power-of-attorney alternate ordering channel; and payment
+> mechanics beyond a sourced `documents[]` payment entry. This U.S.-
+> consular-network cover-letter variant also pre-prints the country of
+> residence as the United States, leaving only the city blank — disclosed
+> as a template-variant-specific detail, not a user-entered field. 2 valid
+> conformance fixtures (0 errors each — a first-time-branch minimal case
+> and a reissue-branch case exercising every `requiredWhen`-gated field)
+> plus 11 mutation-control fixtures (each raising exactly 1 error) are
+> committed under `conformance/mn/gasr/foreign-passport-application/1.0.0/`.
+> Both validators pass at 515/515. See the Passport vertical section below
+> and the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3382, "GovSchema Standard Research"): Mongolia's
 > Business Formation vertical opens (2/6)**, via
@@ -11490,7 +11539,19 @@
 
 ## By Vertical
 
-### Passport (48/68 jurisdictions — 71%)
+### Passport (49/68 jurisdictions — 72%)
+
+> **Correction (GOV-3389):** numerator updated from 48 to 49 following
+> Mongolia's Passport vertical opening via
+> `mn/gasr/foreign-passport-application` — Mongolia was already counted in
+> the 68-jurisdiction denominator (opened via GOV-3375's Visa schema, with
+> Business Formation added via GOV-3382), with Passport open/unscouted via
+> the domestic e-mongolia.mn portal but never checked via the MFA's own
+> consular-network PDF channel; this schema moves that column to ✓, which is
+> what moves the numerator — it does not change the denominator. See the
+> Executive Summary's GOV-3389 update above and the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scope
+> decision.
 
 > **Correction (GOV-3358):** numerator updated from 47 to 48 following
 > Spain's Passport vertical opening via
@@ -16049,7 +16110,7 @@ now closed.
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **MN** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
+| **MN** | 3 | ✓ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -17865,6 +17926,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Mongolia's remaining Taxes, DMV, and Passport verticals were
     re-screened this cycle and remain dead ends/too weak — see the
     "Confirmed dead ends" section below.
+33. **MN Passport opens (3/6), authored (GOV-3389, 2026-07-16).** The MFA's
+    consular network (`sanfrancisco.consul.mn` and mirrors on the Hong Kong
+    consulate's and Washington D.C. embassy's own sites) publishes two
+    directly downloadable, unauthenticated PDF templates — a Declaration
+    Form and a cover letter addressed to GASR — authored together as
+    `mn/gasr/foreign-passport-application`; see the Executive Summary
+    update above and the document's own VERIFICATION.md for the full
+    sourcing record. This is a genuinely new channel, not a re-test of the
+    domestic e-mongolia.mn portal's own dead-end finding below, which
+    stands unchanged.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
@@ -17879,6 +17950,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 - **MN Passport (e-mongolia.mn)** — GOV-3382, 2026-07-16 (re-screen).
   Confirmed to still require the e-Mongolia portal, whose own service
   catalogue sits behind account login plus in-person biometric capture.
+  This specific finding about e-mongolia.mn stands unchanged; it was
+  superseded, not overturned, by GOV-3389's discovery of a distinct,
+  unauthenticated MFA consular-network PDF channel that opened Mongolia's
+  Passport vertical via `mn/gasr/foreign-passport-application` without
+  ever touching this portal — see the Known Gaps list above.
 - **SK Visa (national D-visa)** — GOV-3288, 2026-07-16. MZV SR's own
   document repository hosts both a "national visa" PDF
   (`002-ziadost-o-narodne-vizum-SK.pdf`) and a "Schengen visa" PDF
@@ -18518,6 +18594,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3389 ("GovSchema Standard Research") — Mongolia Passport: authored
+  (see the Executive Summary above), opening Mongolia's Passport vertical
+  (3/6) via a genuinely new channel — the MFA's consular-network PDF
+  templates — rather than the already-confirmed-gated domestic
+  e-mongolia.mn portal.** Two disclosed backlog leads found but not
+  modelled this cycle: the minor-applicant (ages 0-15) document sub-track
+  the consulate's own checklist page names (birth certificate plus a
+  parent's ID card copy, in place of the adult applicant's own civil-ID-card
+  copy), a candidate for a future minor-version cycle following this
+  registry's own `mn/mfa/evisa-application` guardian-sub-flow precedent;
+  and the power-of-attorney alternate ordering channel ("Хоёр. Бусдад
+  итгэмжлэл олгох замаар шинэ паспорт захиалах"), a materially different
+  process (an in-Mongolia proxy orders the passport on the applicant's
+  behalf) named on the same consulate page but not fetched this cycle.
 
 - **GOV-3375 ("GovSchema Standard Research") — Mongolia: found and authored
   in the same cycle, opening the registry's 68th jurisdiction.** Two other
