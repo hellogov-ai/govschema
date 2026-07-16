@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**66 jurisdictions** | **509 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**66 jurisdictions** | **510 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3351, "GovSchema Standard Research"): Armenia's
+> Business Formation vertical opens (2 of 6)**, via
+> `am/moj/state-registration-limited-liability-company` — a single-founder
+> limited liability company (ՍՊԸ) registration, built from the State
+> Register of Legal Entities Agency's own downloadable Model Charter
+> (Կանոնադրության նմուշային ձև) and companion Sole Founder's Decision
+> (Հիմնադրի որոշում), the Armenian counterpart to this registry's own
+> `de/handelsregister/gmbh-formation-musterprotokoll`. This cycle's own
+> research scout re-screened all five of Armenia's remaining verticals
+> first: DMV (`roadpolice.am`/`car.mia.gov.am`, both `YesEm`-login-gated
+> with no downloadable specimen), Taxes (`src.am` publishes only
+> calculation-methodology PDFs; actual filing is exclusively through the
+> `YesEm`-gated `self-portal.taxservice.am`), and Passport/National ID
+> (`migration.e-gov.am`'s own service pages, both behind a Radware bot-check
+> wall on every fetch) were each confirmed dead ends. Business Formation was
+> the sole strong candidate: the modern `e-register.am` portal is itself
+> Radware-gated, but its own footer links to a still-live legacy mirror,
+> `old.e-register.am`, reachable via plain unauthenticated `curl`, serving
+> the Agency's genuine template library directly (confirmed via each
+> document's own OLE2/PDF magic bytes, not HTML error pages). Models 25
+> `fields[]` — company identity (name in Armenian, plus optional Russian/
+> English variants, each full and abbreviated), registered address, charter
+> capital (amount, share count, nominal value), the sole founder's identity
+> and address (with the Charter's own "if available" social-card-number
+> field modelled as this schema's one source-marked-optional field),
+> founding-decision administrative details, and the appointed director's
+> fuller identity/contact/employment-term particulars found only in the
+> Founder's Decision, not the Charter — plus 4 `documents[]` entries
+> (executed Charter, Founder's Decision, and both parties' identity
+> documents). Disclosed scope boundaries rather than silent omissions: the
+> multi-founder Charter variant and its Founders' Meeting Protocol sibling
+> (located by name in a joint-stock-company category page this cycle, but
+> whose LLC-specific specimen was not fetched), a corporate sole founder,
+> the separate Firm Name Registration Application pre-clearance step, and
+> the bot-gated modern online wizard itself are all left unmodelled. 2 valid
+> conformance fixtures (0 errors each) plus 6 mutation-control fixtures
+> (each raising exactly 1 error) are committed under
+> `conformance/am/moj/state-registration-limited-liability-company/1.0.0/`.
+> Both validators pass at 510/510, and `verify-sources.mjs` found 0 warnings
+> across the 5 URLs this schema cites. See the Business Formation vertical
+> section below and the document's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-16, GOV-3343, "GovSchema Standard Research"): Armenia
 > opens as this registry's 66th jurisdiction**, via `am/mfa/evisa-application` —
@@ -15758,7 +15801,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AM** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **AM** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18241,6 +18284,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3351 ("GovSchema Standard Research") — Armenia Business Formation:
+  authored (see the Executive Summary above), Armenia's DMV/Passport/Taxes/
+  National ID re-confirmed as dead ends rather than re-screened from
+  scratch.** A research scout found the modern `e-register.am` Business
+  Formation portal Radware-bot-gated, but its own footer links to a
+  still-live legacy mirror, `old.e-register.am`, serving the State Register
+  of Legal Entities Agency's genuine, unauthenticated template library —
+  see `am/moj/state-registration-limited-liability-company`. Armenia now
+  stands at 2 of 6 verticals (Visa, Business Formation). A multi-founder
+  LLC path (Founders' Meeting Protocol, located by name on a joint-stock-
+  company sibling category page but whose LLC-specific specimen was not
+  fetched this cycle) is a disclosed, open backlog candidate for a future
+  minor-version cycle.
 
 - **GOV-3343 ("GovSchema Standard Research") — Armenia: found and authored
   in the same cycle, opening the registry's 66th jurisdiction.** Scouted
