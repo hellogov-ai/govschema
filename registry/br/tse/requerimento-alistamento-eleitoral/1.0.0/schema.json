@@ -1,0 +1,653 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "br/tse/requerimento-alistamento-eleitoral",
+  "version": "1.0.0",
+  "title": "Brazil — First-Time Voter Registration (Requerimento de Alistamento Eleitoral / Título de Eleitor)",
+  "description": "The Tribunal Superior Eleitoral's (TSE) 'Autoatendimento Eleitoral - Título Net' online self-service system, scoped to the alistamento (first-time voter registration) pathway for a citizen resident in Brazilian territory who has never held a título de eleitor. Voter registration is a citizen-initiated administrative act in Brazil, not automatic: registration and voting are optional for citizens aged 16-17 but become mandatory at 18 under article 14 of the Federal Constitution, and an unregistered adult is barred from a published list of civic acts (passport/national-ID issuance, public-sector pay, public-tender participation). This document models the wizard's personal-data, address/polling-location, complementary-data (self-declared race/color, gender identity, quilombola/indigenous self-identification), and optional-contact steps, plus its required document uploads. Out of scope, each a distinct TSE-designated service: the separate 'Eleitorado no Exterior' pathway for citizens resident abroad (its own address/document shape, e.g. país/cepZZ/cidadeZZ fields observed but not modelled here); título transferência (change of electoral domicile) and revisão (data correction) of an EXISTING registration, which share this same wizard's components but add an electoral-debt eligibility gate (informacoesDebitos/opcaoMulta) not applicable to a first-time applicant; and justificativa (absence justification), a wholly separate service. IMPORTANT: TSE's own live system currently displays 'O atendimento remoto via Título Net está bloqueado entre os dias 07/05/2026 e 02/11/2026, conforme prevê a norma eleitoral vigente' — remote Título Net service, including alistamento, is nationwide-suspended from 2026-05-07 to 2026-11-02 under Brazilian electoral law's pre-election blackout rule (confirmed live 2026-07-16; see VERIFICATION.md). This document still accurately models the underlying process, which reopens after that date, but a live submission attempted before 2026-11-03 will be refused. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Brazil or the Tribunal Superior Eleitoral. This document describes the request only; it does not submit anything on the applicant's behalf.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BR",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Tribunal Superior Eleitoral",
+    "abbreviation": "TSE",
+    "url": "https://www.tse.jus.br"
+  },
+  "process": {
+    "type": "registration",
+    "language": "pt-BR"
+  },
+  "source": {
+    "url": "https://www.tse.jus.br/servicos-eleitorais/autoatendimento-eleitoral",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "Autoatendimento Eleitoral - Título Net (live Angular single-page application served from tn3.tse.jus.br, embedded on the URL above)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "IMPORTANT, CONFIRMED LIVE 2026-07-16 (Playwright, chromium, real desktop UA, no login): the autoatendimento-eleitoral page itself currently displays 'O atendimento remoto via Título Net está bloqueado entre os dias 07/05/2026 e 02/11/2026, conforme prevê a norma eleitoral vigente' — remote Título Net service, including alistamento, is nationwide-suspended 2026-05-07 to 2026-11-02 under Brazilian electoral law's pre-election blackout rule (Brazil holds municipal elections October 2026), confirming and updating the prior GOV-1483 cycle's own finding of the same blackout (that cycle used a live Playwright walk only; this cycle additionally decompiled the underlying bundle, which remains servable and accurate even while the runtime submission gate is closed). The menu item 'Tirar primeiro título' (get first title) is still listed and the SPA's compiled code (including every reactive-form definition below) is still served normally — only the runtime business-rule gate blocks a live submission before 2026-11-03. This document accurately models the underlying, currently-suspended process; see the top-level `description` field for the same disclosure. GOV-3274 (\"GovSchema Standard Research\"), a lead first identified and left as a disclosed, ready-to-author candidate by the prior GOV-3267 cycle (see CATALOG.md's 'Genuinely open, well-sourced candidates' section) after that cycle scouted it as a possible 'remaining voter registration' candidate per this routine's own standing brief. Título Net is a live-wizard service with no downloadable PDF/AcroForm equivalent (confirmed via TSE's own official step-by-step article, 'Veja o passo a passo para tirar o primeiro título pela internet', https://www.tse.jus.br/comunicacao/noticias/2021/Dezembro/veja-o-passo-a-passo-para-tirar-o-primeiro-titulo-pela-internet, and the official how-to article at https://www.tse.jus.br/servicos-eleitorais/titulo-eleitoral/autoatendimento-eleitoral/autoatendimento-eleitoral-titulo-net, both fetched directly via curl, HTTP 200, no login/CAPTCHA gate on the descriptive prose itself). Rather than relying on that prose alone (which names field categories but not exact internal shapes), the live production Angular bundle actually served to end users was independently fetched and decompiled: `https://tn3.tse.jus.br/main.js?id=2026-07-14-21`, HTTP 200, `content-type: application/javascript`, `content-length: 2529928`, `Last-Modified: Thu, 02 Jul 2026 22:37:05 GMT`, sha256 `c50f034b8d7c6e97cd18d5947a51f812ff32ca1809cbe1a982dac2b6b1eb03c2` (retrieved 2026-07-16). This is a minified but non-obfuscated Angular Ivy build: every field below was confirmed directly against a real `this.formBuilder.group({...})` reactive-form definition and its real Angular validators (`Validators.required`, custom validators named `apenasNomes`/`cpfValido`/`obrigatorioSe`/etc.) found in the bundle, not just informal `$parent`-style property-name guesses. Component-level confirmation used the `this.ehAlistamento` flag inside the shared 'Dados Pessoais' component to confirm which personal-data fields the alistamento (first-time-registration) flow specifically activates, since the same wizard components are reused across alistamento/transferência/revisão. Every documented `requiredWhen` condition below was independently traced to its own real conditional-validator call in the bundle (e.g. `etniaIndigena`/`falaLinguaIndigena` gated on `this.form.value.racaCor==ei.INDIGENA`; `contactEmail`/`confirmContactEmail` gated on `aceitaReceberEmail` via `obrigatorioSeOutroCampoEstiverPreenchido`); the enum values for `raceColor` (`BRANCA`/`PRETA`/`PARDA`/`AMARELA`/`INDIGENA`, the IBGE five-category race/color classification) and `gender` (`MASCULINO`/`FEMININO`) are the real internal string constants found in the bundle (`const ei=(()=>{...BRANCA=\"BRANCA\"...})()` and matching `Gt` label array; `MASCULINO`/`FEMININO` string literals inside `validarDocReservista`), not paraphrased. Several fields are disclosed, deliberate simplifications rather than full-precision modelling, each because GovSchema's `Condition` grammar (equality/inequality/set-membership against one other field) cannot express the bundle's own richer logic: `parent1Name`–`parent4Name`'s true requiredness depends on `indicadorOpcaoFiliacao`'s value being passed through a helper method (`deveHabilitarCampoFiliacaoPara`) whose accepted enum values were not independently confirmed this cycle, so all four are modelled optional; `militaryReservistCertificateNumber`'s true requiredness (`validarDocReservista`) depends on a computed 'turns 19 by the end of this calendar year' age check on `dateOfBirth` combined with `gender==MASCULINO`, modelled here as `requiredWhen gender equals MASCULINO` only (a broader net than the live form, disclosed rather than mis-modelled as a false precise match) — the live FAQ (https://www.tse.jus.br/servicos-eleitorais/titulo-eleitoral-faq) independently confirms this is a real, disclosed exception window ('pode solicitar o título sem a apresentação do certificado de quitação militar se estiver fora do período de conscrição'); `socialName`'s true enabling condition is a substring check for 'TRANS' inside the live `identidadeGenero` value (a dynamic, TSE Resolution 23.659/2021-driven reference list fetched from the live service and not embedded as a static bundle enum, so its full value set was not independently enumerated this cycle), modelled here as an always-optional field with the real condition disclosed in its own description rather than encoded. `maritalStatus`, `educationLevel`, `occupation`, `birthMunicipality`, `residencyBondType`, and `selfDeclaredGenderIdentity` are each backed by the live service's own external, API-fetched reference/lookup tables (confirmed present via `store.select`/`iniciarConsultar*` dispatch calls in the bundle, e.g. `municipioNascimento`'s options depend on the chosen `ufNascimento`) rather than a fixed enum baked into the client bundle; each is modelled as an open `string` per this registry's established convention for external code tables it cannot reproduce in full (see e.g. `co/dian/declaracion-renta-personas-naturales-formulario-210`'s own disclosed external-code-table fields), with `residencyBondType`'s real category glosses ('vínculo residencial, afetivo, familiar, profissional, comunitário ou de outra natureza') drawn instead from the official FAQ prose, a second independent source, since the bundle's own list is API-fetched at runtime. `quilombolaCommunityName`/`speaksQuilombolaLanguage`/`indigenousEthnicity`/`speaksIndigenousLanguage`/`isQuilombola` internally store `\"SIM\"`/`\"NAO\"` string tokens in the live form (confirmed via `.pipe(filter(W=>\"SIM\"!=W))` valueChanges guards), simplified here to GovSchema `boolean`/`enum` types respectively per this registry's standard house style for two-state toggles — disclosed as a type-level simplification, not a fidelity gap in the underlying yes/no semantics. Document requirements: `documentosObrigatorios` (the exact required-document set) is itself computed server-side per applicant (confirmed via the bundle's own `abaDocumentos.documentosObrigatorios` API-response field, not a static client-side list), so the four modelled entries reflect the TSE's own published baseline description (selfie holding ID, ID document, proof of residence, always; military-discharge proof for eligible men) from the official step-by-step article rather than an exhaustive enumeration of every server-computed edge case; `certidao` (`CERTIDAO_NASCIMENTO`, confirmed via the bundle's own `getTipoDocumento` switch mapping `certidao`→`CERTIDAO_NASCIMENTO`) is modelled as optional supporting evidence since neither the official guide's own four-photo baseline list nor the FAQ names it as a universally-required upload for a standard first-time applicant with another accepted ID document. Two valid mock scenarios (a salaried resident applicant volunteering as a poll worker; a self-declared indigenous applicant who speaks an indigenous language and opts out of email/SMS contact) plus 4 mutation-control fixtures (a missing statically-required field, a missing `quilombolaCommunityName` while `isQuilombola` is `SIM`, a missing `indigenousEthnicity` while `raceColor` is `INDIGENA`, and a missing required document) are committed under `conformance/br/tse/requerimento-alistamento-eleitoral/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`/`documents[]`, discarded after use, not committed) ran all 6: both valid scenarios at 0 errors, all 4 mutation controls each raising exactly 1 error, and confirmed every `requiredWhen` field reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "fullName",
+      "label": "Nome",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full legal name, at least two words, no special characters.",
+      "sourceRef": "Dados Pessoais step, formControl `nome` (Validators.required, apenasNomes, peloMenosDoisNomes, naoCaracteresEspeciais)"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Data de nascimento",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth. The live form requires it to be a valid past date and enforces a minimum age of 15 (registration is permitted from age 16, but the online request can be started at 15 ahead of a 16th birthday) plus internal plausibility caps (under 75/110 trigger extra confirmation prompts, not modelled as hard limits here).",
+      "sourceRef": "Dados Pessoais step, formControl `dataNascimento` (Validators.required, apenasDataPassada, apenasMaior15Anos, diaEhValido, mesEhValido)",
+      "validation": { "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+    },
+    {
+      "name": "parentageDeclarationOption",
+      "label": "Filiação",
+      "type": "string",
+      "required": true,
+      "description": "Selects which combination of parent/legal-guardian names below the applicant is declaring (e.g. both biological parents, one parent plus a socio-affective parent, a single parent). The live form's own accepted option set is resolved through an internal helper (`Xi.T`, a parentage-option enum/parser) whose exact string values were not independently confirmed this cycle — modelled as an open string pending a future verification pass; see VERIFICATION.md.",
+      "sourceRef": "Dados Pessoais step, formControl `indicadorOpcaoFiliacao` (Validators.required)"
+    },
+    {
+      "name": "parent1Name",
+      "label": "Filiação — nome 1 (ex.: mãe)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "First declared parent/legal-guardian name. True requiredness on the live form is conditional on `parentageDeclarationOption`'s value via an internal helper method not independently confirmed this cycle (disclosed simplification, see VERIFICATION.md); modelled here as optional.",
+      "sourceRef": "Dados Pessoais step, formControl `filiacao1` (apenasNomes, peloMenosDoisNomes, naoCaracteresEspeciais, obrigatorioSe(deveHabilitarCampoFiliacaoPara(MAE)))"
+    },
+    {
+      "name": "parent2Name",
+      "label": "Filiação — nome 2 (ex.: pai)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Second declared parent/legal-guardian name. See `parent1Name` for the disclosed requiredness simplification.",
+      "sourceRef": "Dados Pessoais step, formControl `filiacao2` (apenasNomes, peloMenosDoisNomes, naoCaracteresEspeciais, obrigatorioSe(deveHabilitarCampoFiliacaoPara(PAI)))"
+    },
+    {
+      "name": "parent3Name",
+      "label": "Filiação — nome 3 (segunda mãe/socioafetiva)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Third declared parent/legal-guardian name, used for a second mother/socio-affective parentage declaration. See `parent1Name` for the disclosed requiredness simplification.",
+      "sourceRef": "Dados Pessoais step, formControl `filiacao3` (apenasNomes, peloMenosDoisNomes, naoCaracteresEspeciais, obrigatorioSe(deveHabilitarCampoFiliacaoPara(MAE_2)))"
+    },
+    {
+      "name": "parent4Name",
+      "label": "Filiação — nome 4 (segundo pai/socioafetivo)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Fourth declared parent/legal-guardian name, used for a second father/socio-affective parentage declaration. See `parent1Name` for the disclosed requiredness simplification.",
+      "sourceRef": "Dados Pessoais step, formControl `filiacao4` (apenasNomes, peloMenosDoisNomes, naoCaracteresEspeciais, obrigatorioSe(deveHabilitarCampoFiliacaoPara(PAI_2)))"
+    },
+    {
+      "name": "cpf",
+      "label": "CPF",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's CPF (Cadastro de Pessoas Físicas), Brazil's individual taxpayer registry number. Format-validated when present but confirmed NOT statically required by the live form's own validator array.",
+      "sourceRef": "Dados Pessoais step, formControl `cpf` (cpfValido)",
+      "validation": { "pattern": "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$" }
+    },
+    {
+      "name": "idDocumentType",
+      "label": "Tipo de documento",
+      "type": "string",
+      "required": true,
+      "description": "The type of official identification document presented (e.g. RG/Carteira de Identidade, CIN, CTPS, CNH, passport). Backed by the live service's own external document-type reference list.",
+      "sourceRef": "Dados Pessoais step, formControl `tipoDoc` (Validators.required)"
+    },
+    {
+      "name": "idDocumentNumber",
+      "label": "Número do documento",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The identification document's number.",
+      "sourceRef": "Dados Pessoais step, formControl `numDoc` (Validators.required)"
+    },
+    {
+      "name": "idIssuingAuthority",
+      "label": "Órgão expedidor",
+      "type": "string",
+      "required": true,
+      "description": "The issuing authority of the identification document (e.g. SSP/UF), alphanumeric and punctuation only.",
+      "sourceRef": "Dados Pessoais step, formControl `orgaoExpedidor` (Validators.required, apenasAlfanumericosOuPontuacao)",
+      "validation": { "pattern": "^[A-Za-z0-9À-ÿ .\\-/]+$" }
+    },
+    {
+      "name": "gender",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's sex as recorded on the civil registry, used by the live form for the military-service (reservista) eligibility check — distinct from `selfDeclaredGenderIdentity` below.",
+      "sourceRef": "Dados Pessoais step, formControl `genero` (Validators.required); real string values confirmed inside `validarDocReservista`",
+      "validation": { "enum": ["MASCULINO", "FEMININO"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Estado civil",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's marital status. Backed by the live service's own external reference list; exact code values not independently confirmed this cycle (disclosed external code table, see VERIFICATION.md).",
+      "sourceRef": "Dados Pessoais step, formControl `estadoCivil` (Validators.required)"
+    },
+    {
+      "name": "educationLevel",
+      "label": "Grau de instrução",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's education level. Backed by the live service's own external reference list, cross-checked against `occupation` for compatibility by the live form (a soft warning prompt, not modelled here).",
+      "sourceRef": "Dados Pessoais step, formControl `grauInstrucao` (Validators.required)"
+    },
+    {
+      "name": "occupation",
+      "label": "Ocupação",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's declared occupation, selected from the live service's own large external occupation-code reference list.",
+      "sourceRef": "Dados Pessoais step, formControl `ocupacao` (Validators.required)"
+    },
+    {
+      "name": "birthState",
+      "label": "UF de nascimento",
+      "type": "string",
+      "required": true,
+      "description": "The Brazilian state (UF, two-letter code) where the applicant was born.",
+      "sourceRef": "Dados Pessoais step, formControl `ufNascimento` (Validators.required)",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "birthMunicipality",
+      "label": "Município de nascimento",
+      "type": "string",
+      "required": true,
+      "description": "The municipality where the applicant was born, selected from the live service's own external reference list filtered by `birthState`.",
+      "sourceRef": "Dados Pessoais step, formControl `municipioNascimento` (Validators.required)"
+    },
+    {
+      "name": "hasTwinSibling",
+      "label": "Possui irmão(ã) gêmeo(a)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant has a twin sibling, used by the Justiça Eleitoral to cross-check similar-identity registrations.",
+      "sourceRef": "Dados Pessoais step, formControl `possuiIrmaoGemeo` (Validators.required)"
+    },
+    {
+      "name": "wantsToBePollWorkerVolunteer",
+      "label": "Deseja ser mesário(a) voluntário(a)?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant wants to volunteer as a poll worker (mesário/mesária).",
+      "sourceRef": "Dados Pessoais step, formControl `desejaSerVoluntario` (Validators.required)"
+    },
+    {
+      "name": "hasDisability",
+      "label": "Possui alguma deficiência?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant has a disability requiring accommodation.",
+      "sourceRef": "Dados Pessoais step, formControl `possuiDeficiencia` (Validators.required)"
+    },
+    {
+      "name": "disabilityDescription",
+      "label": "Deficiência(s)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasDisability", "equals": true },
+      "classification": "health",
+      "description": "Free-text/selected description of the applicant's disability/disabilities, enabled only when `hasDisability` is true.",
+      "sourceRef": "Dados Pessoais step, formControl `listaDeficiencias` (enabled only when possuiDeficiencia is true, validarDeficiencias cross-field validator)"
+    },
+    {
+      "name": "militaryReservistCertificateNumber",
+      "label": "Certificado de reservista",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "gender", "equals": "MASCULINO" },
+      "description": "The applicant's military reservist certificate number. The live form's real condition additionally requires the applicant to be within the conscription age window (turning 19 within the current calendar year); that computed age check is not expressible in GovSchema's Condition grammar and is disclosed here as a broader-than-actual `requiredWhen` (see VERIFICATION.md and the official FAQ's own confirmation that men outside the conscription window may request the título without this document).",
+      "sourceRef": "Dados Pessoais step, formControl `reservista`; requiredness derived from the `validarDocReservista(dataNascimento, genero, reservista)` cross-field validator"
+    },
+    {
+      "name": "postalCode",
+      "label": "CEP",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's residential postal code (CEP), used by the live form to look up and pre-fill state/municipality/neighborhood/street.",
+      "sourceRef": "Endereço step, formControl `cep` (Validators.required)",
+      "validation": { "pattern": "^\\d{5}-?\\d{3}$" }
+    },
+    {
+      "name": "state",
+      "label": "UF",
+      "type": "string",
+      "required": true,
+      "description": "The Brazilian state (UF) of the applicant's residential address, resolved from `postalCode`.",
+      "sourceRef": "Endereço step, formControl `siglaUf` (Validators.required)",
+      "validation": { "pattern": "^[A-Z]{2}$" }
+    },
+    {
+      "name": "municipality",
+      "label": "Município",
+      "type": "string",
+      "required": true,
+      "description": "The municipality of the applicant's residential address, resolved from `postalCode`.",
+      "sourceRef": "Endereço step, formControl `municipio` (Validators.required)"
+    },
+    {
+      "name": "neighborhood",
+      "label": "Bairro",
+      "type": "string",
+      "required": true,
+      "description": "The neighborhood of the applicant's residential address, resolved from `postalCode`.",
+      "sourceRef": "Endereço step, formControl `bairro` (Validators.required)"
+    },
+    {
+      "name": "streetAddress",
+      "label": "Endereço",
+      "type": "string",
+      "required": true,
+      "description": "The street name of the applicant's residential address, resolved from `postalCode`.",
+      "sourceRef": "Endereço step, formControl `endereco` (Validators.required, naoCaracteresEspeciaisSimNumeros)"
+    },
+    {
+      "name": "addressNumber",
+      "label": "Número",
+      "type": "string",
+      "required": true,
+      "description": "The street number of the applicant's residential address, digits only.",
+      "sourceRef": "Endereço step, formControl `numero` (Validators.required, apenasNumeros)",
+      "validation": { "pattern": "^\\d+$" }
+    },
+    {
+      "name": "addressComplement",
+      "label": "Complemento",
+      "type": "string",
+      "required": false,
+      "description": "Optional address complement (apartment/unit, block, etc.).",
+      "sourceRef": "Endereço step, formControl `complemento` (naoCaracteresEspeciaisSimNumeros)"
+    },
+    {
+      "name": "residencyBondType",
+      "label": "Tipo de vínculo com o município",
+      "type": "string",
+      "required": true,
+      "description": "The nature of the applicant's connection to the municipality justifying their choice of electoral domicile. The live form fetches its option list from an external live reference table; the official FAQ names the real category glosses this list is drawn from: residencial (residential), afetivo (affective/relationship), familiar (family), profissional (professional), comunitário (community), or de outra natureza (other) — see VERIFICATION.md.",
+      "sourceRef": "Endereço step, formControl `tipoVinculo` (Validators.required); category glosses from the official Título Eleitoral FAQ"
+    },
+    {
+      "name": "residencyYears",
+      "label": "Tempo de vínculo — anos",
+      "type": "integer",
+      "required": true,
+      "description": "Whole years the applicant has held the declared bond with the municipality.",
+      "sourceRef": "Endereço step, formControl `anos` (Validators.required)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "residencyMonths",
+      "label": "Tempo de vínculo — meses",
+      "type": "integer",
+      "required": true,
+      "description": "Additional whole months (0-11) the applicant has held the declared bond with the municipality.",
+      "sourceRef": "Endereço step, formControl `meses` (Validators.required)",
+      "validation": { "minimum": 0, "maximum": 11 }
+    },
+    {
+      "name": "pollingLocation",
+      "label": "Local de votação",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's chosen polling location, selected from a list of available locations near the declared address.",
+      "sourceRef": "Local de Votação step, formControl `localVotacao` (Validators.required)"
+    },
+    {
+      "name": "accessiblePollingSectionOnly",
+      "label": "Somente seção acessível",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether to filter the polling-location list to accessible sections only.",
+      "sourceRef": "Local de Votação step, formControl `secaoAcessivel`"
+    },
+    {
+      "name": "selfDeclaredGenderIdentity",
+      "label": "Identidade de gênero",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's self-declared gender identity, per TSE Resolution 23.659/2021, independent of the civil-registry `gender` field above. The live form fetches its accepted value list from an external, dynamic reference table (`listaGeneros$`), not a fixed client-side enum; the full value set was not independently enumerated this cycle (disclosed external code table, see VERIFICATION.md).",
+      "sourceRef": "Dados Complementares step, formControl `identidadeGenero` (Validators.required)"
+    },
+    {
+      "name": "raceColor",
+      "label": "Raça/Cor",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's self-declared race/color, the standard IBGE five-category classification.",
+      "sourceRef": "Dados Complementares step, formControl `racaCor` (Validators.required); real string values confirmed via the bundle's own `ei` enum and `Gt` label-list constants",
+      "validation": { "enum": ["BRANCA", "PRETA", "PARDA", "AMARELA", "INDIGENA"] }
+    },
+    {
+      "name": "socialName",
+      "label": "Nome social",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's social name (nome social), for transgender/travesti applicants to be socially recognized under this name in the Cadastro Eleitoral. On the live form this field is only enabled when `selfDeclaredGenderIdentity`'s value contains the substring 'TRANS' — a condition GovSchema's Condition grammar cannot express (it supports only equality/membership against a known value set, not substring matching against a dynamic reference list); disclosed here as an always-optional field rather than a mis-modelled `requiredWhen`.",
+      "sourceRef": "Dados Complementares step, formControl `nomeSocial` (apenasNomes, peloMenosDoisNomes; enabled conditionally on `identidadeGenero`)"
+    },
+    {
+      "name": "isQuilombola",
+      "label": "Você se considera quilombola?",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Whether the applicant self-identifies as quilombola. The live form stores this as a 'SIM'/'NAO' string toggle (confirmed via its own valueChanges guard comparing against the literal 'SIM').",
+      "sourceRef": "Dados Complementares step, formControl `ehQuilombola` (Validators.required)",
+      "validation": { "enum": ["SIM", "NAO"] }
+    },
+    {
+      "name": "quilombolaCommunityName",
+      "label": "Qual o nome da comunidade quilombola?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isQuilombola", "equals": "SIM" },
+      "description": "Name of the applicant's quilombola community.",
+      "sourceRef": "Dados Complementares step, formControl `comunidadeQuilombola` (obrigatorioSe ehQuilombola===SIM)"
+    },
+    {
+      "name": "speaksQuilombolaLanguage",
+      "label": "Fala língua quilombola?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "isQuilombola", "equals": "SIM" },
+      "description": "Whether the applicant speaks a quilombola community language. Simplified from the live form's own internal 'SIM'/'NAO' string storage to a GovSchema boolean (disclosed type-level simplification, see VERIFICATION.md).",
+      "sourceRef": "Dados Complementares step, formControl `falaLinguaQuilombola` (obrigatorioSe ehQuilombola===SIM)"
+    },
+    {
+      "name": "quilombolaLanguageName",
+      "label": "Qual língua quilombola?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "speaksQuilombolaLanguage", "equals": true },
+      "description": "Name of the quilombola language spoken by the applicant.",
+      "sourceRef": "Dados Complementares step, formControl `linguaQuilombola` (obrigatorioSe falaLinguaQuilombola===SIM)"
+    },
+    {
+      "name": "indigenousEthnicity",
+      "label": "Etnia indígena",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "raceColor", "equals": "INDIGENA" },
+      "classification": "sensitive-pii",
+      "description": "The applicant's indigenous ethnicity, selected from the live service's own external reference list, required only when `raceColor` is INDIGENA.",
+      "sourceRef": "Dados Complementares step, formControl `etniaIndigena` (obrigatorioSe racaCor==INDIGENA)"
+    },
+    {
+      "name": "secondIndigenousEthnicity",
+      "label": "Segunda etnia",
+      "type": "string",
+      "required": false,
+      "description": "An optional second indigenous ethnicity, for applicants of mixed indigenous heritage.",
+      "sourceRef": "Dados Complementares step, formControl `segundaEtnia`"
+    },
+    {
+      "name": "speaksIndigenousLanguage",
+      "label": "Fala língua indígena?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "raceColor", "equals": "INDIGENA" },
+      "description": "Whether the applicant speaks an indigenous language. Simplified from the live form's own internal 'SIM'/'NAO' string storage to a GovSchema boolean (disclosed type-level simplification, see VERIFICATION.md).",
+      "sourceRef": "Dados Complementares step, formControl `falaLinguaIndigena` (obrigatorioSe racaCor==INDIGENA)"
+    },
+    {
+      "name": "indigenousLanguageName",
+      "label": "Qual língua indígena?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "speaksIndigenousLanguage", "equals": true },
+      "description": "Name of the indigenous language spoken by the applicant.",
+      "sourceRef": "Dados Complementares step, formControl `linguaIndigena` (obrigatorioSe falaLinguaIndigena)"
+    },
+    {
+      "name": "isLibrasInterpreter",
+      "label": "É intérprete da Língua Brasileira de Sinais (Libras)?",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant is a Brazilian Sign Language (Libras) interpreter.",
+      "sourceRef": "Dados Complementares step, formControl `ehInterpreteLibras` (Validators.required)",
+      "validation": { "enum": ["SIM", "NAO"] }
+    },
+    {
+      "name": "contactPhoneType",
+      "label": "Tipo de telefone",
+      "type": "string",
+      "required": false,
+      "description": "The optional contact phone's type (mobile/landline). Contact information is disclosed by the official guide as not mandatory but useful for the electoral office to reach the applicant. The live form supports up to three phone numbers; only the first is modelled here, the second/third being an unbounded-repeating-like structure deferred per this registry's convention (see VERIFICATION.md).",
+      "sourceRef": "Contato step, formControl `tipoTelefone1`"
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "Telefone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The optional contact phone number.",
+      "sourceRef": "Contato step, formControl `telefone1`"
+    },
+    {
+      "name": "contactName",
+      "label": "Nome para contato",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional name of the contact person, if different from the applicant.",
+      "sourceRef": "Contato step, formControl `nomeContato` (apenasNomes)"
+    },
+    {
+      "name": "wantsSmsUpdates",
+      "label": "Aceita receber mensagens?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant opts in to receive SMS updates about this request.",
+      "sourceRef": "Contato step, formControl `aceitaReceberMsg`"
+    },
+    {
+      "name": "wantsEmailUpdates",
+      "label": "Aceita receber e-mail?",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant opts in to receive email updates about this request.",
+      "sourceRef": "Contato step, formControl `aceitaReceberEmail`"
+    },
+    {
+      "name": "contactEmail",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsEmailUpdates", "equals": true },
+      "classification": "pii",
+      "description": "Contact email address, required only when the applicant opts in to email updates.",
+      "sourceRef": "Contato step, formControl `email` (emailValido; obrigatorioSeOutroCampoEstiverPreenchido email/aceitaReceberEmail)",
+      "validation": { "pattern": "^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$" }
+    },
+    {
+      "name": "confirmContactEmail",
+      "label": "Confirmar e-mail",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "wantsEmailUpdates", "equals": true },
+      "classification": "pii",
+      "description": "Confirmation re-entry of `contactEmail`, required only when the applicant opts in to email updates.",
+      "sourceRef": "Contato step, formControl `confirmarEmail` (pattern-validated email)",
+      "validation": { "pattern": "^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$" }
+    }
+  ],
+  "documents": [
+    {
+      "id": "selfieWithIdFile",
+      "label": "Selfie segurando o documento de identificação",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "maxBytes": 5242880, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "handling": "selfie-holding-official-id-document-face-fully-visible-no-caps-or-hats",
+      "sourceRef": "Documentos step, getTipoDocumento('selfie') -> FOTO_SEGURANDO_DOCUMENTO; official step-by-step guide and FAQ both confirm this as a universal requirement"
+    },
+    {
+      "id": "identityDocumentFile",
+      "label": "Documento de identificação (frente e verso)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "maxBytes": 5242880, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "sourceRef": "Documentos step, getTipoDocumento('docIdentficacao') -> IDENTIFICACAO"
+    },
+    {
+      "id": "proofOfResidenceFile",
+      "label": "Comprovante de residência",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "maxBytes": 5242880, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "sourceRef": "Documentos step, getTipoDocumento('comprovanteRes') -> COMPROVANTE_RESIDENCIA"
+    },
+    {
+      "id": "militaryDischargeProofFile",
+      "label": "Comprovante de quitação do serviço militar",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "gender", "equals": "MASCULINO" },
+      "belongsTo": "applicant",
+      "constraints": { "maxBytes": 5242880, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "sourceRef": "Documentos step, generic 'outros' upload slot (no dedicated document-type constant exists for it in getTipoDocumento's mapping); requirement per the official step-by-step guide ('Os homens com idade entre 18 e 45 anos também devem encaminhar o comprovante de quitação com o serviço militar') and the FAQ's conscription-window exception. As with `militaryReservistCertificateNumber`, the true condition additionally requires the applicant to be within the conscription age window — disclosed as a broader-than-actual `requiredWhen` in VERIFICATION.md."
+    },
+    {
+      "id": "birthCertificateFile",
+      "label": "Certidão de nascimento",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "constraints": { "maxBytes": 5242880, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "sourceRef": "Documentos step, getTipoDocumento('certidao') -> CERTIDAO_NASCIMENTO. Not named in the official guide's universal four-document baseline; modelled optional since the live form's exact per-applicant required-document set is computed server-side and may request this for applicants without another accepted photo ID (see VERIFICATION.md)."
+    }
+  ],
+  "steps": [
+    {
+      "id": "documents",
+      "title": "Documentos",
+      "next": "personal_data"
+    },
+    {
+      "id": "personal_data",
+      "title": "Dados Pessoais",
+      "fields": [
+        "fullName",
+        "dateOfBirth",
+        "parentageDeclarationOption",
+        "parent1Name",
+        "parent2Name",
+        "parent3Name",
+        "parent4Name",
+        "cpf",
+        "idDocumentType",
+        "idDocumentNumber",
+        "idIssuingAuthority",
+        "gender",
+        "maritalStatus",
+        "educationLevel",
+        "occupation",
+        "birthState",
+        "birthMunicipality",
+        "hasTwinSibling",
+        "wantsToBePollWorkerVolunteer",
+        "hasDisability",
+        "disabilityDescription",
+        "militaryReservistCertificateNumber"
+      ],
+      "next": "address_and_polling_location"
+    },
+    {
+      "id": "address_and_polling_location",
+      "title": "Endereço e Local de Votação",
+      "fields": [
+        "postalCode",
+        "state",
+        "municipality",
+        "neighborhood",
+        "streetAddress",
+        "addressNumber",
+        "addressComplement",
+        "residencyBondType",
+        "residencyYears",
+        "residencyMonths",
+        "pollingLocation",
+        "accessiblePollingSectionOnly"
+      ],
+      "next": "complementary_data"
+    },
+    {
+      "id": "complementary_data",
+      "title": "Dados Complementares",
+      "fields": [
+        "selfDeclaredGenderIdentity",
+        "raceColor",
+        "socialName",
+        "isQuilombola",
+        "quilombolaCommunityName",
+        "speaksQuilombolaLanguage",
+        "quilombolaLanguageName",
+        "indigenousEthnicity",
+        "secondIndigenousEthnicity",
+        "speaksIndigenousLanguage",
+        "indigenousLanguageName",
+        "isLibrasInterpreter"
+      ],
+      "next": "contact"
+    },
+    {
+      "id": "contact",
+      "title": "Contato",
+      "fields": [
+        "contactPhoneType",
+        "contactPhoneNumber",
+        "contactName",
+        "wantsSmsUpdates",
+        "wantsEmailUpdates",
+        "contactEmail",
+        "confirmContactEmail"
+      ]
+    }
+  ]
+}
