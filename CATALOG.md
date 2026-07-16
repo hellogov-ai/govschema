@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**66 jurisdictions** | **510 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**66 jurisdictions** | **511 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3358, "GovSchema Standard Research"): Spain's
+> Passport vertical opens, closing Spain to 6 of 6**, via
+> `es/maec/solicitud-pasaporte-ordinario` — the Ministerio de Asuntos
+> Exteriores, Unión Europea y Cooperación's (MAEC) own consular "Solicitud de
+> Pasaporte" form, the same ministry that already publishes this registry's
+> `es/maec/solicitud-visado-nacional`. A prior cycle (GOV-1861) had confirmed
+> Spain's Passport vertical a dead end, but that screening covered only the
+> domestic issuance channel (Documento Nacional de Identidad electrónico /
+> Policía Nacional, appointment-only, still no public specimen found this
+> cycle either); this cycle instead searched MAEC's own consulate subdomains
+> and found a genuine, unauthenticated, downloadable specimen — the same
+> domain family the existing Visa schema's own source lives on. Four
+> independent consulate mirrors (Buenos Aires, La Habana, Asunción, Miami)
+> were fetched and compared directly (`curl` + `pdfjs-dist`, not WebFetch
+> summaries); Buenos Aires's copy was picked as primary source for being both
+> the most recently revised (2022-05-12) and the most complete (the only one
+> of the four carrying `Estado Civil`/`Profesión`/postal-code sub-fields),
+> corroborated by La Habana's near-verbatim text match and by Miami's
+> independent 17-widget AcroForm layer confirming the same core identity
+> fields. Models 22 `fields[]` — identity, birth details (with a
+> Spain-only-conditional province-of-birth field), contact, an optional
+> Spanish DNI pair, family names, consular residence details, and a
+> six-option reason-for-application enum (initial/renewal, pages exhausted,
+> theft, loss, damaged, duplicate) gating the two prior-passport fields — and
+> 4 `documents[]` entries (photo; prior-document copy, gated on a
+> renewal/replacement reason; birth certificate; police report, gated on
+> theft/loss). Disclosed scope boundaries: the domestic issuance channel
+> remains a confirmed dead end, and one outlier mirror's own
+> parental-travel-authorization annex page (present on the Asunción copy
+> only, absent from the other three) is not modelled. 2 valid conformance
+> fixtures (0 errors each) plus 6 mutation-control fixtures (each raising
+> exactly 1 error) are committed under
+> `conformance/es/maec/solicitud-pasaporte-ordinario/1.0.0/`. Both validators
+> pass at 511/511. This closes Spain's Passport vertical, the sole gap
+> flagged in a research scout's own screening this cycle after its original
+> top candidate (an apparent Estonia National ID gap) turned out to be a
+> classifier false positive — Estonia had already reached 6/6 as of GOV-1970.
+> See the Passport vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3351, "GovSchema Standard Research"): Armenia's
 > Business Formation vertical opens (2 of 6)**, via
@@ -11325,7 +11365,18 @@
 
 ## By Vertical
 
-### Passport (47/66 jurisdictions — 71%)
+### Passport (48/66 jurisdictions — 73%)
+
+> **Correction (GOV-3358):** numerator updated from 47 to 48 following
+> Spain's Passport vertical opening via
+> `es/maec/solicitud-pasaporte-ordinario` — Spain was already counted in the
+> 66-jurisdiction denominator (added via earlier Business Formation/DMV/
+> Taxes/National ID/Visa schemas), with Passport its sole remaining open
+> vertical; this schema moves that column to ✓, which is what moves the
+> numerator — it does not change the denominator, and it brings Spain to
+> full 6/6 coverage. See the Executive Summary's GOV-3358 update above and
+> the document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scope decision.
 
 > **Correction (GOV-3281):** numerator updated from 46 to 47 following
 > Tanzania's Passport vertical opening via
@@ -15818,7 +15869,7 @@ now closed.
 | **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EC** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **ES** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ET** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
