@@ -1,0 +1,708 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mn/mfa/evisa-application",
+  "version": "1.0.0",
+  "title": "Mongolia Electronic Visa (e-Visa) Application",
+  "description": "The Immigration Agency of Mongolia's Electronic Visa Application System, served unauthenticated at evisa.mn (immigration.gov.mn's own e-visa channel, live since 2021 under the Law on the Legal Status of Foreigners). The live wizard has four named parts: (1) Document type & Nationality (nationality, passport type, and an \"applying for\" purpose category, plus an email address); (2) Personal information (passport and biographic details, current-residence and emergency-contact details, an address-in-Mongolia block with a real cascading Province -> District/Soum -> Subdistrict/Bag selector, a facial-photo upload, an optional supporting-document upload, three yes/no declarations, and an accommodation-confirmation document-type selector); (3) Purpose & Duration (a fifteen-question supplementary declaration plus expected arrival/departure dates); and (4) Data confirmation (a terms-and-conditions attestation followed by payment). This schema models parts 1-3 in full plus the part-4 attestation. Reaching part 2 onward requires confirming a one-time emailed link (a genuine double-opt-in email-confirmation gate, not a CAPTCHA or biometric check) sent to the address entered in part 1; this session controlled a real disposable-inbox address for that purpose (no real applicant's identity or a real government-issued credential was used or impersonated). Every field name, required-asterisk marking, and dropdown option list documented here was read directly from the wizard's own live-rendered HTML (all four parts' markup is present in a single page load via the jquery.steps plugin, gated only by CSS visibility, not by separate page requests) after that link was followed, not inferred or guessed. This schema does NOT model: the Guardian-information sub-flow (b_/e_-prefixed fields), which the site's own client-side logic shows only when its passport-photo OCR reads an applicant date of birth indicating an age under 18 -- a real-time computed condition this registry's Condition grammar cannot express (it references only static field-to-field comparisons, not a computed age-from-date-of-birth threshold), and which this session could not otherwise trigger without a fabricated minor's passport image; the three read-only \"Purpose of visit / Duration of stay / Number of entries requested\" spans on the Purpose & Duration step, which are server-computed displays driven by the Part 1 selections, not applicant-editable fields; and the payment step's own bank-transfer/merchant fields (`paymentPurpose`, `paymentRecipient`, `paymentAccount`, `paymentConsulate`, `paymentPayerType`, `paymentFullName`, `paymentEmail`, `paymentAmount`, `paymentFee`), excluded as payment mechanics rather than government-form data, consistent with this registry's own established convention. No application was actually submitted for payment and no fee was paid in producing this schema. Filing this application is a traveller action performed directly with the Immigration Agency of Mongolia through evisa.mn; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Mongolia or its Immigration Agency.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration Agency of Mongolia",
+    "abbreviation": "IAM",
+    "url": "https://www.evisa.mn"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.evisa.mn/en/apply",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "The live Electronic Visa Application System's own multi-step wizard at evisa.mn/en/apply, parts 1-4 (Document type & Nationality; Personal information; Purpose & Duration; Data confirmation), rendered server-side and inspected directly via a real browser session after confirming a one-time emailed continuation link."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3375 (\"GovSchema Standard Research\"), opening Mongolia as a new jurisdiction in this registry. Fetched https://www.evisa.mn/en/apply directly (HTTP 200) and drove it live with Playwright/Chromium (a real desktop-Chrome user agent, no login/CAPTCHA/WAF gate on the initial wizard load). Part 1 (nationality Egypt, passport type Ordinary, applying-for Tourism, a disposable-inbox email address) was submitted, producing a genuine emailed confirmation link from e-visa@immigration.gov.mn (SPF/DKIM-signed, sha256-verifiable headers recorded in VERIFICATION.md) rather than advancing the in-browser wizard directly -- a double-opt-in email-confirmation gate, not a CAPTCHA. Following that link reached parts 2-4's full markup in one page load (jquery.steps-based, not a lazy-loaded SPA), from which every field name, required-asterisk marking, and dropdown option list documented here was read directly, including a live-confirmed three-level cascading Province -> District/Soum -> Subdistrict/Bag address selector (Ulaanbaatar -> Bayangol -> 1-r khoroo among the real returned values) and the passport-photo upload's own OCR auto-fill behavior (confirmed from the wizard's own client-side logic, not just its instructional text). Models 52 `fields[]` across three steps, 3 `documents[]` (a passport-photo-page scan with declared OCR auto-fill, a facial photo, and an optional supporting document), and 2 `crossFieldValidation` rules (passport expiry after issue date; expected departure after expected arrival). 2 valid conformance fixtures (0 errors each) plus 7 mutation-control fixtures (each raising exactly 1 error, including both crossFieldValidation violations, an enum violation, and a pattern violation) are committed under `conformance/mn/mfa/evisa-application/1.0.0/`. Both validators pass. See VERIFICATION.md for the full sourcing record, including the disclosed Guardian-sub-flow and payment-step scope boundaries."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "document_type_and_nationality",
+      "title": "Document type & Nationality",
+      "fields": [
+        "nationality",
+        "passportType",
+        "applicationPurpose",
+        "email"
+      ],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": [
+        "firstName",
+        "lastName",
+        "identificationNumber",
+        "gender",
+        "passportNumber",
+        "dateOfBirth",
+        "passportNationality",
+        "countryOfBirth",
+        "passportIssuingCountry",
+        "placeOfBirth",
+        "maritalStatus",
+        "passportIssuedDate",
+        "passportExpiryDate",
+        "currentOccupation",
+        "homeAddress",
+        "homeContactPhone",
+        "emergencyContactName",
+        "emergencyContactPhone",
+        "mongoliaProvince",
+        "mongoliaDistrict",
+        "mongoliaSubdistrict",
+        "mongoliaFullAddress",
+        "mongoliaContactPhone",
+        "hasCriminalRecord",
+        "wasVisaDenied",
+        "appliedWithDifferentName",
+        "addressConfirmationDocumentType"
+      ],
+      "next": "purpose_and_duration"
+    },
+    {
+      "id": "purpose_and_duration",
+      "title": "Purpose & Duration",
+      "fields": [
+        "declaredFullName",
+        "declaredCitizenship",
+        "previousCitizenship",
+        "declaredPassportNumber",
+        "purposeOfVisitDetail",
+        "intendedLengthOfStay",
+        "needsVisaExtension",
+        "lostPassportHistory",
+        "priorInvitationDetails",
+        "transitCountries",
+        "socialNetworkUsage",
+        "countriesVisitedLast10Years",
+        "specializedSkillsOrTraining",
+        "mongolianRelatives",
+        "travelExpensesPayer",
+        "expectedArrivalDate",
+        "expectedDepartureDate"
+      ],
+      "next": "data_confirmation"
+    },
+    {
+      "id": "data_confirmation",
+      "title": "Data Confirmation",
+      "fields": [
+        "agreesToTermsAndConditions"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's nationality, selected from the live wizard's own 136-entry `#applicantCountryId` dropdown (a subset of all countries -- the applicant-facing list of nationalities this e-visa channel actually serves, not a full ISO country list). Modelled as a free-text string carrying the site's own opaque numeric option value (e.g. `1002` for Azerbaijan), matching this registry's own precedent for large source-controlled option lists (see `am/mfa/evisa-application`'s `birthCountry`) rather than reproducing all 136 values as an enum.",
+      "sourceRef": "Part 1, `<select id=\"applicantCountryId\" name=\"applicantCountryId\">`, 136 `<option value=\"...\">` entries, confirmed required via the field's own `<span class=\"danger\">*</span>` label marker"
+    },
+    {
+      "name": "passportType",
+      "label": "Type of Passport",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's passport type. Populated dynamically per selected `nationality` via a live POST to `/en/callPasstypeData` (confirmed via network trace); only one value, `Ordinary` (wire value `16218326865201`), was returned for the tested nationality (Egypt) this session -- other nationalities may unlock additional values (e.g. Diplomatic/Official/Service), not exhaustively tested. Modelled as a free-text string carrying the site's own opaque numeric option value rather than a hard enum, since the full cross-nationality option set was not confirmed.",
+      "sourceRef": "Part 1, `<select id=\"applicantPassTypeId\">`, populated via `POST /en/callPasstypeData`; confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "applicationPurpose",
+      "label": "Applying for",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's broad purpose-of-application category. Also populated dynamically per selected `nationality`/`passportType` via a live POST to `/en/checkPassportType`; two values, `TOURISM` (wire value `20`) and `SPORT OR CULTURAL EVENTS` (wire value `21`), were returned for the tested nationality this session -- other nationalities may unlock additional categories, not exhaustively tested. Modelled as a free-text string carrying the site's own opaque numeric option value for the same reason as `passportType`.",
+      "sourceRef": "Part 1, `<select id=\"applicantTypeId\">`, populated via `POST /en/checkPassportType`; confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's email address. A one-time confirmation link is emailed to this address; following it is required to reach Parts 2-4 (a genuine double-opt-in email-confirmation gate, confirmed live this session -- see VERIFICATION.md).",
+      "sourceRef": "Part 1, `<input id=\"email\" name=\"email\" type=\"email\">`, confirmed required via its own asterisk label marker",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first name. The passport-photo-page upload (see `documents[]`, `passportPhotoPage`) auto-fills this field via the site's own OCR pipeline; the field remains a plain, editable text input either way.",
+      "sourceRef": "Part 2, `<input id=\"firstName\" name=\"firstName\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's last name. Auto-fillable from the passport-photo-page OCR upload, same as `firstName`.",
+      "sourceRef": "Part 2, `<input id=\"lastName\" name=\"lastName\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "identificationNumber",
+      "label": "Identification number",
+      "type": "string",
+      "required": false,
+      "description": "An optional national/personal identification number for the applicant. The live field carries no asterisk and no `required`-class marker.",
+      "sourceRef": "Part 2, `<input id=\"optionalData\" name=\"optionalData\">` (no asterisk)"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's gender, a three-option radio group with real, confirmed wire values.",
+      "sourceRef": "Part 2, `<input type=\"radio\" name=\"gender\" id=\"M\" value=\"1\">` / `id=\"F\" value=\"2\">` / `id=\"O\" value=\"5\">`, confirmed required via the group's own asterisk label marker",
+      "validation": {
+        "enum": [
+          "1",
+          "2",
+          "5"
+        ]
+      }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport/travel document number. Auto-fillable from the passport-photo-page OCR upload.",
+      "sourceRef": "Part 2, `<input id=\"passportNumber\" name=\"passportNumber\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth, entered in the site's own `yyyy/mm/dd` format (confirmed via the live `pickadate` widget's own `format: \"yyyy/mm/dd\"` configuration). Auto-fillable from the passport-photo-page OCR upload; the site's own client-side logic computes the applicant's age from this value to decide whether to show the (unmodelled, disclosed) Guardian-information sub-flow for applicants under 18.",
+      "sourceRef": "Part 2, `<input id=\"dateOfBirth\" name=\"dateOfBirth\">` with `pickadate({format:\"yyyy/mm/dd\"})`, confirmed required via its own asterisk label marker",
+      "validation": {
+        "pattern": "^\\d{4}/\\d{2}/\\d{2}$"
+      }
+    },
+    {
+      "name": "passportNationality",
+      "label": "Current Nationality (as in Passport)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's nationality as it appears on their passport -- a distinct field from Part 1's own `nationality` selector, pre-filled with the Part 1 value by the site's own JavaScript but independently editable (a live, searchable country dropdown, not a fixed subset). Auto-fillable from the passport-photo-page OCR upload.",
+      "sourceRef": "Part 2, `<select id=\"countryOfNationality\" name=\"countryOfNationality\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's country of birth, selected from the live wizard's own full 255-entry `#countryOfBirth` dropdown (confirmed directly from the rendered option list -- e.g. Afghanistan, Algeria, Australia, Azerbaijan, ... through the full set). Modelled as a free-text string carrying the site's own option value rather than reproducing all 255 entries as an enum, matching this registry's own precedent for large country lists.",
+      "sourceRef": "Part 2, `<select id=\"countryOfBirth\" name=\"countryOfBirth\">`, 255 `<option>` entries, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "passportIssuingCountry",
+      "label": "Passport issuing country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The country that issued the applicant's passport, pre-filled from the applicant's nationality by the site's own JavaScript but independently editable.",
+      "sourceRef": "Part 2, `<select id=\"issuedCountryName\" name=\"issuedCountryName\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's place/city of birth, pre-filled from the applicant's nationality by the site's own JavaScript but independently editable.",
+      "sourceRef": "Part 2, `<select id=\"placeOfBirth\" name=\"placeOfBirth\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": false,
+      "description": "The applicant's marital status. The live field carries no asterisk and no `required`-class marker on its own `<label>`, modelled as optional on that basis. Four real, confirmed wire values, in the order presented by the live dropdown.",
+      "sourceRef": "Part 2, `<select id=\"maritalStatusId\" name=\"maritalStatusId\">`, options Married(201)/Widowed(203)/Divorced(16179601837661)/Single(16218326755461) (no asterisk)",
+      "validation": {
+        "enum": [
+          "201",
+          "203",
+          "16179601837661",
+          "16218326755461"
+        ]
+      }
+    },
+    {
+      "name": "passportIssuedDate",
+      "label": "Passport Issued Date",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The date the applicant's passport was issued, `yyyy/mm/dd` format.",
+      "sourceRef": "Part 2, `<input id=\"issuedDate\" name=\"issuedDate\">` with `pickadate({format:\"yyyy/mm/dd\"})`, confirmed required via its own asterisk label marker",
+      "validation": {
+        "pattern": "^\\d{4}/\\d{2}/\\d{2}$"
+      }
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Expiry Date",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The date the applicant's passport expires, `yyyy/mm/dd` format. The live page displays an advisory tooltip (\"Your passport must be valid for at least 6 months\") next to this field; this session did not confirm whether that minimum is also enforced server-side, so it is disclosed here rather than asserted as a hard `validation` rule. See `crossFieldValidation` for the passport issue/expiry ordering rule that is directly confirmed by the fields' own semantics.",
+      "sourceRef": "Part 2, `<input id=\"expiryDate\" name=\"expiryDate\">` with `pickadate({format:\"yyyy/mm/dd\"})`, confirmed required via its own asterisk label marker; \"valid for at least 6 months\" advisory tooltip text observed live but not confirmed server-enforced",
+      "validation": {
+        "pattern": "^\\d{4}/\\d{2}/\\d{2}$"
+      }
+    },
+    {
+      "name": "currentOccupation",
+      "label": "Current Occupation",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's current occupation. The live field carries no asterisk and no `required`-class marker.",
+      "sourceRef": "Part 2, `<input id=\"employerAddressOccupation\" name=\"employerAddressOccupation\">` (no asterisk)"
+    },
+    {
+      "name": "homeAddress",
+      "label": "Home Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's home-country residence address, free text.",
+      "sourceRef": "Part 2, `<input id=\"presentAddress\" name=\"presentAddress\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "homeContactPhone",
+      "label": "Contact telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's home-country contact telephone number.",
+      "sourceRef": "Part 2, `<input id=\"presentTelephoneNumber\" name=\"presentTelephoneNumber\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "emergencyContactName",
+      "label": "Emergency contact person name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The full name of the applicant's emergency contact person.",
+      "sourceRef": "Part 2, `<input id=\"emergencyPersonName\" name=\"emergencyPersonName\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact person number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The phone number of the applicant's emergency contact person.",
+      "sourceRef": "Part 2, `<input id=\"emergencyPersonNumber\" name=\"emergencyPersonNumber\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "mongoliaProvince",
+      "label": "City/Province",
+      "type": "enum",
+      "required": true,
+      "description": "The province (or Ulaanbaatar city) where the applicant will stay in Mongolia -- the top level of a real, live-confirmed three-level cascading address selector (Province -> District/Soum -> Subdistrict/Bag). All 21 real Mongolian first-level administrative divisions, confirmed directly from the live dropdown's own option list (numeric `value` attributes are Mongolia's own official province codes, e.g. `11` = Ulaanbaatar, `21` = Dornod).",
+      "sourceRef": "Part 2, `<select id=\"contactCity\" name=\"contactCity\">`, 21 `<option>` entries, confirmed required via its own asterisk label marker",
+      "validation": {
+        "enum": [
+          "11",
+          "21",
+          "22",
+          "23",
+          "41",
+          "42",
+          "43",
+          "44",
+          "45",
+          "46",
+          "48",
+          "61",
+          "62",
+          "63",
+          "64",
+          "65",
+          "67",
+          "81",
+          "82",
+          "83",
+          "84",
+          "85"
+        ]
+      }
+    },
+    {
+      "name": "mongoliaDistrict",
+      "label": "District/Soum",
+      "type": "string",
+      "required": true,
+      "description": "The district (Ulaanbaatar) or soum (rural province) where the applicant will stay, populated live via AJAX once `mongoliaProvince` is selected (confirmed this session: selecting Ulaanbaatar `11` populates 9 real districts -- Baganuur, Bagakhangai, Bayangol, Bayanzurkh, Nalaikh, Songinokhairkhan, Sukhbaatar, Khan-Uul, Chingeltei). Modelled as a free-text string carrying the site's own dependent-dropdown option value rather than an enum, since the full cross-province option set (21 provinces x their own districts) was not exhaustively enumerated this session.",
+      "sourceRef": "Part 2, `<select id=\"contactDistrict\" name=\"contactDistrict\">`, populated live once `contactCity` is set, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "mongoliaSubdistrict",
+      "label": "Subdistrict/Bag",
+      "type": "string",
+      "required": true,
+      "description": "The subdistrict (khoroo, in Ulaanbaatar) or bag (rural) where the applicant will stay, populated live via AJAX once `mongoliaDistrict` is selected (confirmed this session: selecting Bayangol district populates real khoroo entries \"1-r khoroo\" through \"5-r khoroo\"). Modelled as a free-text string for the same reason as `mongoliaDistrict`.",
+      "sourceRef": "Part 2, `<select id=\"contactStreet\" name=\"contactStreet\">`, populated live once `contactDistrict` is set, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "mongoliaFullAddress",
+      "label": "Full address",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's full street-level address in Mongolia (hotel, host, or tour accommodation), free text, under the live page's own \"Adress in Mongolia\" section heading.",
+      "sourceRef": "Part 2, `<input id=\"employerAddressCity\" name=\"employerAddressCity\">` (labelled \"Full address:\" under the \"Adress in Mongolia\" section), confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "mongoliaContactPhone",
+      "label": "Contact phone number",
+      "type": "string",
+      "required": true,
+      "description": "A phone number reachable while the applicant is in Mongolia, under the live page's own \"Adress in Mongolia\" section heading.",
+      "sourceRef": "Part 2, `<input id=\"employerAddressPhone\" name=\"employerAddressPhone\">` (labelled \"Contact phone number:\" under the \"Adress in Mongolia\" section), confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "hasCriminalRecord",
+      "label": "Have you ever been convicted of any offence or crime?",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's declaration of any prior criminal offence/conviction, a two-option Yes/No radio group with real, confirmed wire values.",
+      "sourceRef": "Part 2, `<input type=\"radio\" name=\"iscrime\" id=\"yes1\" value=\"1\">` / `id=\"no1\" value=\"0\">`, confirmed required via the group's own asterisk label marker",
+      "validation": {
+        "enum": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "wasVisaDenied",
+      "label": "Have you ever been denied a Mongolian visa?",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's declaration of any prior Mongolian visa denial, a two-option Yes/No radio group with real, confirmed wire values.",
+      "sourceRef": "Part 2, `<input type=\"radio\" name=\"isdenied\" id=\"yes2\" value=\"1\">` / `id=\"no2\" value=\"0\">`, confirmed required via the group's own asterisk label marker",
+      "validation": {
+        "enum": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "appliedWithDifferentName",
+      "label": "Have you ever applied for a Mongolian visa with a different name?",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's declaration of any prior Mongolian visa application under a different name, a two-option Yes/No radio group with real, confirmed wire values. When \"Yes\", the live page shows an additional warning to keep this answer consistent with the \"Address in Mongolia\" section, but does not reveal any further fields this session could confirm beyond that warning text.",
+      "sourceRef": "Part 2, `<input type=\"radio\" name=\"isdefirentName\" id=\"yes3\" value=\"1\">` / `id=\"no3\" value=\"0\">`, confirmed required via the group's own asterisk label marker",
+      "validation": {
+        "enum": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "addressConfirmationDocumentType",
+      "label": "Confirmation of address",
+      "type": "enum",
+      "required": true,
+      "description": "Which category of accommodation-confirmation document the applicant holds for their stay in Mongolia (the live dropdown's option text is itself the description of each category, not a short label). Three real, confirmed wire values.",
+      "sourceRef": "Part 2, `<select id=\"artiPath\" name=\"artiPath\">`, 3 `<option>` entries, confirmed required via its own asterisk label marker",
+      "validation": {
+        "enum": [
+          "16926055267613",
+          "16926055267614",
+          "16926055267615"
+        ]
+      }
+    },
+    {
+      "name": "declaredFullName",
+      "label": "Full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full name, re-declared on the Part 3 \"VISA APPLICATION FORM FOR FOREIGN NATIONAL\" supplementary declaration (a separate field from Part 2's `firstName`/`lastName`, not a client-side mirror of them).",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation28\" name=\"additionalInformation28\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "declaredCitizenship",
+      "label": "Citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's citizenship, re-declared on the Part 3 supplementary declaration.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation29\" name=\"additionalInformation29\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "previousCitizenship",
+      "label": "Previous citizenship if different from above",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Any previous citizenship different from the applicant's current one. The live field carries an asterisk (required) unconditionally -- this session found no separate toggle gating it on a \"was your citizenship ever different\" question, so applicants without a previous citizenship must enter a placeholder (e.g. \"N/A\") to satisfy it, per the source's own unconditional asterisk.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation16\" name=\"additionalInformation16\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "declaredPassportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport number, re-declared on the Part 3 supplementary declaration.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation30\" name=\"additionalInformation30\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "purposeOfVisitDetail",
+      "label": "Purpose of the visit to Mongolia",
+      "type": "string",
+      "required": true,
+      "description": "Free-text elaboration of the applicant's purpose of visit (distinct from Part 1's own coarse `applicationPurpose` category).",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation17\" name=\"additionalInformation17\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "intendedLengthOfStay",
+      "label": "Intended length of stay in Mongolia",
+      "type": "string",
+      "required": true,
+      "description": "Free-text statement of the applicant's intended length of stay.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation31\" name=\"additionalInformation31\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "needsVisaExtension",
+      "label": "Will you need extension of the visa during your stay?",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant anticipates needing a visa extension, a two-option Yes/No field with real, confirmed wire values.",
+      "sourceRef": "Part 3, `<input type=\"radio\" name=\"additionalInformation18\" id=\"additionalInformationYes18\" value=\"1\">` / `id=\"additionalInformationNo18\" value=\"0\">`, confirmed required via its own asterisk label marker",
+      "validation": {
+        "enum": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "lostPassportHistory",
+      "label": "If you ever lost a passport /when and where",
+      "type": "string",
+      "required": true,
+      "description": "Free-text declaration of any prior lost passport, including when and where.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation19\" name=\"additionalInformation19\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "priorInvitationDetails",
+      "label": "When and what organization or individual invited you for your previous visit to Mongolia?",
+      "type": "string",
+      "required": true,
+      "description": "Free-text declaration of any prior Mongolia visit's inviting organization or individual.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation20\" name=\"additionalInformation20\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "transitCountries",
+      "label": "Transit countries before visiting to Mongolia",
+      "type": "string",
+      "required": true,
+      "description": "Free-text list of countries the applicant will transit through before arriving in Mongolia.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation21\" name=\"additionalInformation21\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "socialNetworkUsage",
+      "label": "Do you use a social network, If so what social network and what is your username?",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Free-text declaration of the applicant's social-network usage and username(s), if any.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation22\" name=\"additionalInformation22\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "countriesVisitedLast10Years",
+      "label": "Provide a list of countries visited during the last 10 years",
+      "type": "string",
+      "required": true,
+      "description": "Free-text list of countries the applicant has visited in the last 10 years.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation24\" name=\"additionalInformation24\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "specializedSkillsOrTraining",
+      "label": "Do you have any specialized skills or training, such as firearms, explosives, nuclear, biological, or chemical experience?",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Free-text declaration of any specialized skills or training the applicant holds in the listed categories.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation25\" name=\"additionalInformation25\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "mongolianRelatives",
+      "label": "If you have any relatives who is a citizen of Mongolia or got married to Mongolian citizen /full name, address and phone",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Free-text declaration of any relatives who are Mongolian citizens or married to one, including full name, address, and phone.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation26\" name=\"additionalInformation26\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "travelExpensesPayer",
+      "label": "Individual or organization bearing the travel expenses",
+      "type": "string",
+      "required": true,
+      "description": "Free-text declaration of who (individual or organization) is bearing the applicant's travel expenses.",
+      "sourceRef": "Part 3, `<input id=\"additionalInformation27\" name=\"additionalInformation27\">`, confirmed required via its own asterisk label marker"
+    },
+    {
+      "name": "expectedArrivalDate",
+      "label": "Expected date of arrival",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's expected date of arrival in Mongolia, `yyyy/mm/dd` format. The live page displays an advisory note that this date cannot be the same as the application submission date; this session did not confirm that as a hard server rule, so it is disclosed here rather than asserted as a `validation` rule.",
+      "sourceRef": "Part 3, `<input id=\"expectedArrival\" name=\"expectedArrival\">` with `pickadate({format:\"yyyy/mm/dd\"})`, confirmed required via its own asterisk label marker; \"cannot be as same as the application submission date\" advisory text observed live but not confirmed server-enforced",
+      "validation": {
+        "pattern": "^\\d{4}/\\d{2}/\\d{2}$"
+      }
+    },
+    {
+      "name": "expectedDepartureDate",
+      "label": "Expected date of departure",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's expected date of departure from Mongolia, `yyyy/mm/dd` format.",
+      "sourceRef": "Part 3, `<input id=\"expectedDeparture\" name=\"expectedDeparture\">` with `pickadate({format:\"yyyy/mm/dd\"})`, confirmed required via its own asterisk label marker",
+      "validation": {
+        "pattern": "^\\d{4}/\\d{2}/\\d{2}$"
+      }
+    },
+    {
+      "name": "agreesToTermsAndConditions",
+      "label": "I agree to the terms and conditions",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant's attestation that they agree to the e-Visa system's terms and conditions, the final gate before payment.",
+      "sourceRef": "Part 4 (Data confirmation), `<input type=\"checkbox\" id=\"isaccept\" name=\"isaccept\">`, confirmed required (its own validation message \"This field is required.\" observed tied to this control)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportPhotoPage",
+      "label": "Passport photo page",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "ocr": {
+        "extractable": true,
+        "populatesFields": [
+          "firstName",
+          "lastName",
+          "passportNumber",
+          "passportNationality",
+          "dateOfBirth"
+        ]
+      },
+      "sourceRef": "Part 2's own upload prompt (\"STEP 1: Upload first page of your passport photo\", \"Please fill only first page of passport information and system will gather all personal data below\"), `<input type=\"file\" name=\"passportFront\">`; `accept=\"image/jpeg,image/png\"`-equivalent constraint stated in the same modal's own instructional text (\"You may upload JPG, PNG files only\"); OCR field-mapping confirmed directly from the wizard's own client-side response-handling code (`apply.v1743406415.js`), whose `switch` statement on the OCR response's `Key` values (`LastName`, `FirstName`/`Name`, `PassportNumber`, `Nationality`, `DateOfBirth`) writes each into the corresponding named input and also computes the applicant's age from `DateOfBirth` to decide whether to show the (unmodelled) Guardian-information sub-flow for applicants under 18."
+    },
+    {
+      "id": "facialPhoto",
+      "label": "Facial photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "Part 2, \"Facial photo\" section (\"Facial photo is required for the submission of your visa application. You may upload JPG, PNG files only.\"), `<input type=\"file\" name=\"photoPic\">`, confirmed required via its own \"This field is required\" validation message tied to this control."
+    },
+    {
+      "id": "supportingDocument",
+      "label": "Supporting document",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "OTHER",
+        "TICKET"
+      ],
+      "constraints": {
+        "mediaTypes": [
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "Part 2, \"Supporting Documents\" section, a repeatable `<select name=\"repeater-list[0][supportedDocType]\">` (2 confirmed options: OTHER wire value `16218327018991`, TICKET wire value `16218327021311`) paired with `<input type=\"file\" name=\"repeater-list[0][supportedDoc]\">` and an \"Add new file\" repeater control; no asterisk or required-class marker found on this section, modelled as optional on that basis."
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "passportExpiryAfterIssue",
+      "compare": {
+        "field": "passportExpiryDate",
+        "operator": "greaterThan",
+        "compareTo": "passportIssuedDate"
+      }
+    },
+    {
+      "id": "departureAfterArrival",
+      "compare": {
+        "field": "expectedDepartureDate",
+        "operator": "greaterThan",
+        "compareTo": "expectedArrivalDate"
+      }
+    }
+  ]
+}

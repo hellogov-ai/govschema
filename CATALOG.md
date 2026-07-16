@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**67 jurisdictions** | **512 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**68 jurisdictions** | **513 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3375, "GovSchema Standard Research"): Mongolia
+> opens as this registry's 68th jurisdiction**, via `mn/mfa/evisa-application` —
+> the Immigration Agency of Mongolia's own Electronic Visa Application System
+> at `evisa.mn` (live since 2021 under the Law on the Legal Status of
+> Foreigners), a genuinely unauthenticated, server-rendered, `jquery.steps`-based
+> multi-part wizard. This cycle first re-screened Uzbekistan's five remaining
+> non-Visa verticals and Ethiopia's Fayda National ID / e-Trade Business
+> Formation candidates and found both weaker (Uzbekistan's `my.gov.uz`
+> single-window portal service pages turned out to be Nuxt-rendered
+> marketing/description pages requiring an ESI/e-imzo digital-signature login
+> to reach the actual application form; Ethiopia's Fayda program is a
+> 5-demographic-field, device-captured-biometric enrollment with no online
+> form, and `etrade.gov.et` was unreachable this session), then found Mongolia
+> genuinely open via a plain web search for former-Soviet/Central-Asian-style
+> e-visa portals. Reaching Parts 2-4 requires following a one-time link
+> emailed after Part 1's submission — a genuine double-opt-in
+> email-confirmation gate (no CAPTCHA anywhere in Part 1's markup or network
+> traffic), which this cycle passed legitimately using a real, disposable
+> public inbox (no real applicant's identity was used or impersonated; the
+> received email's DKIM signature and `Received` mail-relay chain both trace
+> to Mongolia's own government infrastructure, confirmed directly). Models 49
+> `fields[]` across four named parts (Document type & Nationality; Personal
+> information — including a live-exercised three-level cascading
+> Province → District/Soum → Subdistrict/Bag address selector; Purpose &
+> Duration — a 15-question supplementary declaration; and the Data
+> Confirmation step's terms attestation), 3 `documents[]` (a passport-photo-page
+> scan whose declared `ocr.populatesFields` mirrors the site's own confirmed
+> client-side OCR auto-fill logic, a facial photo, and an optional supporting
+> document), and 2 `crossFieldValidation` rules (passport expiry after issue;
+> expected departure after arrival). Disclosed scope boundaries: a
+> Guardian-information sub-flow the site shows only when its OCR computes an
+> applicant age under 18 (a real-time computed condition this registry's
+> Condition grammar cannot express) and the payment step's own bank-transfer
+> fields are both excluded, consistent with this registry's established
+> conventions. 2 valid conformance fixtures (0 errors each) plus 7
+> mutation-control fixtures (each raising exactly 1 error, including both
+> `crossFieldValidation` rules) are committed under
+> `conformance/mn/mfa/evisa-application/1.0.0/`. Both validators pass at
+> 513/513. See the Visa vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3368, "GovSchema Standard Research"): Uzbekistan
 > opens as this registry's 67th jurisdiction**, via `uz/mfa/evisa-application` —
@@ -11409,7 +11450,7 @@
 
 ## By Vertical
 
-### Passport (48/67 jurisdictions — 72%)
+### Passport (48/68 jurisdictions — 71%)
 
 > **Correction (GOV-3358):** numerator updated from 47 to 48 following
 > Spain's Passport vertical opening via
@@ -11897,7 +11938,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (55/67 jurisdictions — 82%)
+### DMV — Vehicle Registration, Licensing, Permits (55/68 jurisdictions — 81%)
 
 > **Update (2026-07-16, GOV-3248, scouted from GOV-3246, "GovSchema
 > Standard Research"): Slovenia's DMV vertical opens**, via
@@ -12453,7 +12494,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (61/67 jurisdictions — 91%)
+### Business Formation — Incorporation, LLC, Company Registration (61/68 jurisdictions — 90%)
 
 > **Update (2026-07-16, GOV-3328, "GovSchema Standard Research"): Ecuador
 > opens this vertical (2 of 6 overall)**, via
@@ -13376,7 +13417,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (58/67 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (58/68 jurisdictions — 85%)
 
 > **Update (2026-07-16, GOV-3336, "GovSchema Standard Research"): Ecuador's
 > Taxes vertical opens, bringing Ecuador to 3 of 6 verticals**, via
@@ -14536,7 +14577,17 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (58/67 jurisdictions — 87%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (59/68 jurisdictions — 87%)
+
+> **Update (2026-07-16, GOV-3375, "GovSchema Standard Research"): Mongolia
+> opens as this registry's 68th jurisdiction, via this vertical**, via
+> `mn/mfa/evisa-application` — the Immigration Agency of Mongolia's live
+> Electronic Visa Application System at `evisa.mn`. See the Executive
+> Summary's GOV-3375 update above and the document's own VERIFICATION.md
+> for the full sourcing record, including the double-opt-in
+> email-confirmation gate this cycle passed legitimately via a real
+> disposable public inbox, and the disclosed Guardian-sub-flow/payment-step
+> scope boundaries.
 
 > **Update (2026-07-16, GOV-3368, "GovSchema Standard Research"): Uzbekistan
 > opens as this registry's 67th jurisdiction, via this vertical**, via
@@ -15257,7 +15308,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (48/67 jurisdictions — 72%)
+### National ID & Civic Documents (48/68 jurisdictions — 71%)
 
 > **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
 > Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
@@ -15948,6 +15999,7 @@ now closed.
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **MN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18392,6 +18444,37 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3375 ("GovSchema Standard Research") — Mongolia: found and authored
+  in the same cycle, opening the registry's 68th jurisdiction.** Two other
+  candidates were screened first and found weaker: Uzbekistan's five
+  remaining non-Visa verticals (DMV/Passport/Business Formation/Taxes/
+  National ID), all funnelled through the `my.gov.uz` single-window portal
+  — each service page checked (`/en/service/418` Passport, `/en/service/255`
+  Driver's License, `/en/service/58` Business Formation) turned out to be a
+  Nuxt-rendered marketing/description page requiring an ESI/e-imzo
+  digital-signature login to reach the actual application wizard, not a
+  live unauthenticated form; and Ethiopia's Fayda National ID (`id.gov.et`
+  — confirmed too thin, 5 demographic fields plus device-captured
+  biometrics with no online form) and e-Trade Business Formation
+  (`etrade.gov.et` — unreachable this session). Mongolia's own
+  `evisa.mn` (Immigration Agency of Mongolia, live since 2021) was found via
+  a plain web search for former-Soviet/Central-Asian-style e-visa portals —
+  see `mn/mfa/evisa-application`. Reaching Parts 2-4 of the wizard requires
+  following a one-time link emailed after Part 1's submission (a genuine
+  double-opt-in email-confirmation gate, no CAPTCHA anywhere in Part 1's
+  own markup or network traffic), passed legitimately this cycle via a real
+  disposable public inbox rather than left un-authored the way this
+  registry's `am/mfa/evisa-application`/`ge/mfa/evisa-application` schemas
+  had to stop short of their own CAPTCHA-plus-token or CAPTCHA gates.
+  Mongolia now stands at 1 of 6 verticals (Visa); DMV, Passport, Business
+  Formation, Taxes, and National ID remain open, unscreened backlog
+  candidates for a future cycle. Uzbekistan's five remaining verticals are
+  re-confirmed a poor near-term candidate (all login-gated behind the same
+  portal) rather than a hard dead end — a future cycle with a legitimate
+  ESI/e-imzo credential, or one that finds a ministry-specific mirror
+  outside `my.gov.uz` the way Armenia's Business Formation cycle (GOV-3351)
+  found `old.e-register.am`, could still complete one of these.
 
 - **GOV-3368 ("GovSchema Standard Research") — Uzbekistan: authored,
   opening the registry's 67th jurisdiction, reversing a prior
