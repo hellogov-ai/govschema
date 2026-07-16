@@ -4,11 +4,18 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **494 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **495 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
-> **Update (2026-07-16, GOV-3249, scouted from GOV-3246, "GovSchema
-> Standard Research"): Slovenia's Visa vertical opens, bringing Slovenia to 5 of
-> 6 verticals**, via `si/mzez/vloga-za-dolgorocni-vizum` — the Ministry of
+> **Update (2026-07-16, GOV-3248/GOV-3249, scouted from GOV-3246, "GovSchema
+> Standard Research"): Slovenia's DMV and Visa verticals both open, bringing
+> Slovenia to full 6 of 6 verticals** — the 31st jurisdiction at full coverage.
+> These landed as two separate same-cycle PRs; both are reproduced below in
+> the order they were authored, with the numerator/table reconciliation
+> noted at the end of the second.
+>
+> **GOV-3249 (Visa):**
+>
+> Via `si/mzez/vloga-za-dolgorocni-vizum` — the Ministry of
 > Foreign Affairs and European Integration's (MZEZ) "Prošnja za izdajo vizuma za
 > dolgoročno bivanje / Application for long-term Visa", Slovenia's national "D"
 > (long-stay, up to 1 year) visa issued under Article 20 of the Aliens Act
@@ -32,8 +39,9 @@
 > `conformance/si/mzez/vloga-za-dolgorocni-vizum/1.0.0/`. See the document's own
 > VERIFICATION.md for the full sourcing record and anti-duplication verification.
 > Numerator updated from 493 to 494; Slovenia's Visa column flips ✗→✓ in the By
-> Jurisdiction table below, leaving only DMV as Slovenia's remaining gap (in
-> parallel authoring: [GOV-3248](/GOV/issues/GOV-3248), via `si/e-uprava`).
+> Jurisdiction table below (Slovenia's DMV vertical opened the same cycle in a
+> separate PR, [GOV-3248](/GOV/issues/GOV-3248), via `si/e-uprava` — see below;
+> combined, Slovenia reaches full 6/6).
 >
 > **Correction (same cycle, pre-merge):** the authoring run that produced this
 > document crashed mid-flight before its own validation pass completed. Before
@@ -73,6 +81,70 @@
 > `familyMemberPhoneAndFax`. Field count is 40 (22 required, 18 optional), not
 > the 35 (22 required, 13 optional) after the crash-recovery fix. Both
 > validators still pass 494/494.
+>
+> **GOV-3248 (DMV):**
+>
+> Via `si/e-uprava/vloga-za-registracijo-vozila` — Slovenia's
+> "Vloga za registracijo vozila" (Application for Vehicle Registration),
+> Annex II of the Pravilnik o registraciji motornih in priklopnih vozil,
+> distributed as a static specimen from the eUprava e-government portal
+> (vehicle registration in Slovenia is carried out at a registracijska
+> organizacija — an authorized garage or the AMZS — not a single national
+> motor-vehicle agency; the form is agency-agnostic). Independently re-fetched
+> fresh this cycle: HTTP 200, `application/pdf;charset=UTF-8`, 66,363 bytes,
+> sha256 `e1b53c075ae40ff9e8a5d3c6df71b8dca0a26767142bc71fad9e498236cda032`
+> (re-derived from a fresh download). A genuine 2-page static specimen with
+> zero AcroForm widgets (`pdfjs-dist` confirms an empty `getAnnotations()` on
+> both pages) and a clean, directly-extractable Slovenian-only text layer,
+> cross-checked against a byte-identical companion `.docx` served from the
+> same host. One region — the "Postopek" (Procedure) label — is followed by a
+> large unlabelled gap in the extracted text; independently confirmed via a
+> `node-canvas` high-resolution render that the box is genuinely blank (no
+> printed checkbox options), so `procedureDescription` is modelled as
+> free-text rather than a fabricated `enum`. Covers the vehicle user's and
+> owner's identity/address, the vehicle's brand/commercial designation/VIN, an
+> attachments checklist, and — via three page-2 declaration blocks the source
+> bundles into the same specimen — an ownership-change declaration, a
+> de-registered-vehicle location declaration, and a free-text vehicle-data-
+> change description; the source's own office-only "IZPOLNI REGISTRACIJSKA
+> ORGANIZACIJA" block and both physical signature lines are excluded,
+> consistent with this registry's conventions. Driving-licence issuance
+> (vozniško dovoljenje) was screened the same cycle and confirmed a dead end
+> — in-person filing only, no static specimen. Models 25 `fields[]` plus one
+> `documents[]` attestation entry (the form's own truthfulness declaration,
+> quoted verbatim). 5 conformance fixtures (2 valid, 3 mutation-control)
+> committed under `conformance/si/e-uprava/vloga-za-registracijo-vozila/1.0.0/`.
+> See the document's own VERIFICATION.md for the full sourcing record.
+> Numerator updated from 494 to 495 (reflecting GOV-3249's Visa PR having
+> already landed on `main`); Slovenia's DMV column flips ✗→✓ in the By
+> Jurisdiction table below. **With both GOV-3248 (DMV) and GOV-3249 (Visa)
+> merged, Slovenia now reaches full 6/6 coverage — the 31st jurisdiction at
+> full coverage.**
+>
+> **This cycle also confirmed two dead ends screened under the parent GOV-3246
+> research cycle, disclosed here since no separate documentation-only PR is
+> planned:**
+> - **Croatia (HR)** — all three of its remaining verticals (Passport, DMV,
+>   National ID) are confirmed dead ends. MUP (mup.gov.hr) handles all three
+>   domestically: passports and ID cards are staff-printed-and-signed in
+>   person (the e-Zahtjev online channel requires a pre-existing certificated
+>   eOI — a chicken-and-egg gate, not a standalone unauthenticated form), and
+>   the consular channel is also in-person-only. Vehicle registration moved in
+>   2018 to authorized technical-inspection stations exclusively, with the
+>   output document (Prometna dozvola) system-generated, not applicant-filled;
+>   two thin ancillary PDFs exist (a trial-plates request, ~7 fields, and a
+>   vehicle storage declaration for deregistration, ~8 fields) but are too
+>   niche to represent the core DMV vertical. Croatia stays at its current 3/6
+>   (Taxes, Business Formation, Visa).
+> - **Moldova (MD)** — both of its remaining verticals (Passport, National ID)
+>   are confirmed dead ends. ASP (asp.gov.md) requires in-person submission
+>   with mandatory biometric capture (photo/fingerprints) for both the
+>   pașaport and buletin de identitate; no downloadable PDF/DOC application
+>   form exists anywhere in ASP's forms index, and the only related download
+>   is an unrelated population-registry-extract request. Consular offices
+>   abroad forward biometric data to ASP rather than producing documents
+>   locally. Moldova stays at its current 4/6 (DMV, Business Formation, Taxes,
+>   Visa).
 
 > **Update (2026-07-15, GOV-3237, scouted from GOV-3235, "GovSchema
 > Standard Research"): Nepal's Visa vertical opens, bringing Nepal to 4 of
@@ -11105,7 +11177,16 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (54/62 jurisdictions — 87%)
+### DMV — Vehicle Registration, Licensing, Permits (55/62 jurisdictions — 89%)
+
+> **Update (2026-07-16, GOV-3248, scouted from GOV-3246, "GovSchema
+> Standard Research"): Slovenia's DMV vertical opens**, via
+> `si/e-uprava/vloga-za-registracijo-vozila` — the "Vloga za registracijo
+> vozila" (Application for Vehicle Registration) specimen distributed from
+> the eUprava e-government portal. See the Executive Summary's GOV-3248
+> update above for the full sourcing record, field/document counts, and
+> disclosed judgment calls (notably the independently-confirmed-blank
+> "Postopek" procedure box). Numerator updated from 54 to 55.
 
 > **Update (2026-07-15, GOV-3227): Nigeria's DMV vertical opens, closing
 > Nigeria to full 6/6 coverage**, via `ng/frsc/vehicle-registration` — the
@@ -14991,7 +15072,7 @@ now closed.
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **SI** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -16778,6 +16859,38 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **SI DMV — driving-licence issuance (vozniško dovoljenje)** — GOV-3248,
+  2026-07-16. `e-uprava.gov.si` states the application "is filed directly
+  (in person) at the administrative unit," requiring the applicant's
+  signature before an official; no static downloadable specimen exists for
+  this flow, unlike vehicle registration on the same portal (see the
+  Executive Summary's GOV-3248 update above, which opened Slovenia's DMV
+  vertical via the vehicle-registration form instead). Do not re-attempt
+  without a genuinely new source.
+- **HR (Croatia) — Passport, DMV, National ID** — GOV-3246/GOV-3248,
+  2026-07-16. All three of Croatia's remaining verticals are confirmed dead
+  ends under MUP (mup.gov.hr), which handles all three domestically:
+  passports and ID cards are staff-printed-and-signed in person (the
+  e-Zahtjev online channel requires a pre-existing certificated eOI — a
+  chicken-and-egg gate, not a standalone unauthenticated form), and the
+  consular channel is also in-person-only. Vehicle registration moved in
+  2018 to authorized technical-inspection stations exclusively, with the
+  output document (Prometna dozvola) system-generated, not applicant-filled;
+  two thin ancillary PDFs exist (a trial-plates request, ~7 fields, and a
+  vehicle storage declaration for deregistration, ~8 fields) but are too
+  niche to represent the core DMV vertical. Croatia stays at 3/6 (Taxes,
+  Business Formation, Visa). Do not re-attempt without a genuinely new
+  source.
+- **MD (Moldova) — Passport, National ID** — GOV-3246/GOV-3248, 2026-07-16.
+  Both of Moldova's remaining verticals are confirmed dead ends under ASP
+  (asp.gov.md), which requires in-person submission with mandatory
+  biometric capture (photo/fingerprints) for both the pașaport and buletin
+  de identitate; no downloadable PDF/DOC application form exists anywhere in
+  ASP's forms index, and the only related download is an unrelated
+  population-registry-extract request. Consular offices abroad forward
+  biometric data to ASP rather than producing documents locally. Moldova
+  stays at 4/6 (DMV, Business Formation, Taxes, Visa). Do not re-attempt
+  without a genuinely new source.
 - **MK Visa (national visa application)** — GOV-3238, 2026-07-15. North
   Macedonia's own Ministry of Foreign Affairs and Foreign Trade
   (`mfa.gov.mk`, redesigned in a Laravel/Livewire CMS since the earlier
