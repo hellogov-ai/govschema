@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**65 jurisdictions** | **508 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**66 jurisdictions** | **509 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3343, "GovSchema Standard Research"): Armenia
+> opens as this registry's 66th jurisdiction**, via `am/mfa/evisa-application` —
+> the Ministry of Foreign Affairs' live e-Visa application at `evisa.mfa.am`,
+> an unauthenticated AngularJS single-page application architecturally
+> similar to this registry's own `ge/mfa/evisa-application` schema. The
+> source is not compiled/obfuscated output: the app's own bundled
+> `scripts/evisa.min.js` embeds every view's real, uncompiled HTML directly
+> in its AngularJS `$templateCache` — `name`, `ng-model`, `required`,
+> `ng-required`, `ng-pattern`, `minlength`/`maxlength` attributes are
+> grep-able as plain text, and the app's own static `evisa.enums` objects
+> (`SEX`, `VisaTypePurposes`, and the two duration values) give confirmed,
+> non-guessed enumerations, independently corroborated live against the
+> `/e-api/get/visaTypes` and `/e-api/get/birth-countries` JSON endpoints (a
+> plain GET succeeds once a same-origin `Referer`/`Origin` header is set).
+> This cycle re-verified, rather than assumed, exactly where the app's
+> CAPTCHA gate sits: a deliberately-invalid direct POST to
+> `/e-api/check-eligibility/is-eligible` (with a real session/XSRF-cookie
+> pair and the Spring-Security-expected `X-CSRF-TOKEN` header) confirmed the
+> CAPTCHA is enforced server-side on the separate, screening-only
+> "eligibility pre-check" form — not on the application form itself, which
+> instead is reached only via a one-time link the server emails after a
+> successful eligibility check (a real inbox this session did not control,
+> so those steps could not be interactively walked with Playwright, but
+> every field on them is already fully present as literal, uncompiled
+> markup in the fetched JS bundle). Models 24 `fields[]` across three steps
+> (passport & personal details; purpose, duration, and arrival date; and
+> the final terms-and-conditions attestation) and 0 `documents[]` (the
+> file-upload fields' exact required/optional combination is a runtime rule
+> this session had no way to exercise without solving that CAPTCHA and
+> owning a real inbox — disclosed as a scope boundary rather than guessed).
+> Also disclosed: an un-routed, apparently-stale duplicate template
+> (`views/request-details_bak.html`, using an older `permanentResidenceAddress`/
+> `permanentPhone` naming instead of the live `localResidenceAddress`/
+> `localPhone`) and an unrelated dead `views/apply-for-visa.html` fragment,
+> both present in the same JS bundle but wired to no Angular route. 2 valid
+> conformance fixtures (0 errors each) plus 6 mutation-control fixtures
+> (each raising exactly 1 error, including two distinct `requiredWhen`
+> cascade violations) are committed under
+> `conformance/am/mfa/evisa-application/1.0.0/`. Both validators pass at
+> 509/509. See the Visa vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3336, "GovSchema Standard Research"): Ecuador's
 > Taxes vertical opens (3 of 6)**, via
@@ -11240,7 +11282,7 @@
 
 ## By Vertical
 
-### Passport (47/65 jurisdictions — 72%)
+### Passport (47/66 jurisdictions — 71%)
 
 > **Correction (GOV-3281):** numerator updated from 46 to 47 following
 > Tanzania's Passport vertical opening via
@@ -11717,7 +11759,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (55/65 jurisdictions — 85%)
+### DMV — Vehicle Registration, Licensing, Permits (55/66 jurisdictions — 83%)
 
 > **Update (2026-07-16, GOV-3248, scouted from GOV-3246, "GovSchema
 > Standard Research"): Slovenia's DMV vertical opens**, via
@@ -12273,7 +12315,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (61/65 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (61/66 jurisdictions — 92%)
 
 > **Update (2026-07-16, GOV-3328, "GovSchema Standard Research"): Ecuador
 > opens this vertical (2 of 6 overall)**, via
@@ -13196,7 +13238,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (58/65 jurisdictions — 89%)
+### Taxes — Income Tax Return, Tax Filing (58/66 jurisdictions — 88%)
 
 > **Update (2026-07-16, GOV-3336, "GovSchema Standard Research"): Ecuador's
 > Taxes vertical opens, bringing Ecuador to 3 of 6 verticals**, via
@@ -14356,7 +14398,17 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (56/65 jurisdictions — 86%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (57/66 jurisdictions — 86%)
+
+> **Update (2026-07-16, GOV-3343, "GovSchema Standard Research"): Armenia
+> opens as this registry's 66th jurisdiction, via this vertical**, via
+> `am/mfa/evisa-application` — the Ministry of Foreign Affairs' live e-Visa
+> application at `evisa.mfa.am`. See the Executive Summary's GOV-3343
+> update above and the document's own VERIFICATION.md for the full
+> sourcing record and disclosed scope boundary (all `documents[]`
+> excluded, and the separate CAPTCHA-gated eligibility pre-check's own
+> fields excluded as a distinct screening form, not the application
+> itself).
 
 > **Update (2026-07-16, GOV-3321, "GovSchema Standard Research"): Georgia
 > opens as this registry's 65th jurisdiction, via this vertical**, via
@@ -15055,7 +15107,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (48/65 jurisdictions — 74%)
+### National ID & Civic Documents (48/66 jurisdictions — 73%)
 
 > **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
 > Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
@@ -15706,6 +15758,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **AM** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18188,6 +18241,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3343 ("GovSchema Standard Research") — Armenia: found and authored
+  in the same cycle, opening the registry's 66th jurisdiction.** Scouted
+  `evisa.mfa.am`, the Ministry of Foreign Affairs' e-Visa portal, as a
+  new-jurisdiction candidate architecturally similar to this registry's own
+  `ge/mfa/evisa-application` (a live, unauthenticated AngularJS SPA whose
+  bundled `scripts/evisa.min.js` embeds every view's real field markup
+  directly in its own `$templateCache`, uncompiled). Authored the same
+  cycle rather than deferred — see `am/mfa/evisa-application`, the
+  Executive Summary and Visa vertical section above, and the document's own
+  VERIFICATION.md for the full sourcing record, including the precise
+  CAPTCHA-plus-emailed-token gate boundary this cycle re-verified (the
+  gate sits on the separate eligibility pre-check, not the application
+  form itself) and the disclosed file-upload/`documents[]` scope
+  boundary.
 
 - **GOV-3336 ("GovSchema Standard Research") — Ecuador Taxes: authored
   (see the Executive Summary and Taxes vertical section above), Ecuador's
