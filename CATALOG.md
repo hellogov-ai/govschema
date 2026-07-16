@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **495 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **496 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3258, "GovSchema Standard Research"): Slovakia's
+> Passport vertical opens**, via `sk/mzv/ziadost-o-cestovny-pas` — the "Žiadosť
+> o cestovný pas" (Application for a Passport), a live HTML eForm (dataset
+> `MZV.RequestPassport` v2.0) published on the national eGovernment portal
+> `slovensko.sk` and filed via a Slovak diplomatic/consular office abroad,
+> under the Ministerstvo zahraničných vecí a európskych záležitostí SR
+> (Ministry of Foreign and European Affairs). Passport was Slovakia's sole
+> remaining fully unscreened vertical per this catalog's own Known Gaps
+> section (DMV, Business Formation, Taxes, and National ID were already open;
+> Visa is a confirmed duplicate of the harmonized Schengen Annex I template).
+> Discovered fresh this cycle by pattern-matching the same `slovensko.sk`
+> eForm-dataset URL convention that already sources the sibling
+> `sk/mzv/ziadost-o-obciansky-preukaz` (National ID) document — searching for
+> a Passport-namespaced dataset surfaced `MZV.RequestPassport`, live and
+> unauthenticated. Independently re-fetched and hashed this cycle: HTTP 200,
+> `text/html`, 116,460 bytes, sha256
+> `dd9999e8fd8b32c3c7461a6a86e353283bae364ad8ace624d88671824e444aad` (the
+> Ministry's own `mzv.sk` domain 403s every direct fetch — a WAF gate on that
+> host specifically, not on the `slovensko.sk` eForm host that actually serves
+> the live form). Models 64 `fields[]` across twelve sections (contact info,
+> applicant identity/reason, other/previous-passport particulars, birth
+> data, current Slovak ID document, permanent address, an optional
+> legal-representative section gated by a confirmed client-side visibility
+> toggle, and final confirmation) plus 6 `documents[]` entries transcribed
+> from the form's own "Potrebné doklady" notice. One disclosed judgment call
+> diverges from the sibling document's own precedent for an analogous field:
+> `applicantBirthNumber`/`deputyBirthNumber` are modelled with `requiredWhen`
+> gates tied to their "not yet assigned" checkboxes, since this form's own
+> static validation rules (unlike the sibling's) declare them unconditionally
+> required absent the checkbox — see the document's own VERIFICATION.md for
+> the full comparison and every other disclosed decision. 11 conformance
+> fixtures (2 valid, 9 mutation-control, each mutation raising exactly 1
+> error under an independent from-scratch mock validator) committed under
+> `conformance/sk/mzv/ziadost-o-cestovny-pas/1.0.0/`. Numerator updated from
+> 495 to 496; Slovakia's Passport column flips ✗→✓ in the By Jurisdiction
+> table below, bringing Slovakia to 5 of 6 verticals (Visa remains a
+> confirmed dead end/duplicate, its practical maximum).
 
 > **Update (2026-07-16, GOV-3248/GOV-3249, scouted from GOV-3246, "GovSchema
 > Standard Research"): Slovenia's DMV and Visa verticals both open, bringing
@@ -10721,7 +10759,17 @@
 
 ## By Vertical
 
-### Passport (45/62 jurisdictions — 73%)
+### Passport (46/62 jurisdictions — 74%)
+
+> **Correction (GOV-3258):** numerator updated from 45 to 46 following
+> Slovakia's Passport vertical opening via `sk/mzv/ziadost-o-cestovny-pas` —
+> Slovakia was already counted in the 62-jurisdiction denominator (added via
+> an earlier Business Formation/Taxes schema), with Passport its sole
+> remaining fully unscreened vertical; this schema moves that column to ✓,
+> which is what moves the numerator — it does not change the denominator.
+> See the Executive Summary's GOV-3258 update above and the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed judgment
+> call.
 
 > **Correction (GOV-3206):** numerator updated from 44 to 45 following
 > Nepal's Passport vertical opening via
@@ -15073,7 +15121,7 @@ now closed.
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
